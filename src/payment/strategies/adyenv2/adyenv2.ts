@@ -1,3 +1,7 @@
+export interface AdyenComponentCallbacks {
+    onChange?(state: AdyenCardState): void;
+}
+
 export interface AdyenHostWindow extends Window {
     AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
 }
@@ -158,27 +162,50 @@ export interface InputDetail {
     value?: string;
 }
 
-export interface AdyenThreeDS2Options {
+export interface AdditionalActionCallbacks {
     /**
-     * Specify Three3DS2Challenge Widget Size
+     * A callback that gets called before adyen component is loaded
      */
-    widgetSize?: string;
+    onBeforeLoad?(shopperInteraction?: boolean): void;
 
     /**
-     * A callback that gets called when adyen component is mounted
+     * A callback that gets called when adyen component is loaded
      */
-    onLoad(cancel: () => void): void;
+    onLoad?(cancel?: () => void): void;
 
     /**
      * A callback that gets called when adyen component verification
      * is completed
      */
-    onComplete(): void;
+    onComplete?(): void;
 }
 
-export enum ThreeDS2ComponentType {
+export interface AdyenThreeDS2Options extends AdditionalActionCallbacks {
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
+     */
+    widgetSize?: string;
+}
+
+export interface AdyenAdditionalActionOptions extends AdditionalActionCallbacks {
+    /**
+     * The location to insert the additional action component.
+     */
+    containerId: string;
+}
+
+export enum AdyenComponentType {
     ThreeDS2DeviceFingerprint = 'threeDS2DeviceFingerprint',
     ThreeDS2Challenge = 'threeDS2Challenge',
+    SecuredFields = 'securedfields',
+    IDEAL = 'ideal',
 }
 
 export interface ThreeDS2Result {
@@ -467,7 +494,16 @@ export interface AdyenComponent {
 
 export interface AdyenCheckout {
     create(type: string, componentOptions?: AdyenCreditCardComponentOptions |
-        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
+        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
+
+    createFromAction(action: AdyenAction): AdyenComponent;
+}
+
+export interface AdyenIdealComponentOptions {
+    /**
+     * Optional. Set to **false** to remove the bank logos from the iDEAL form.
+     */
+    showImage?: boolean;
 }
 
 export interface AdyenBaseCardComponentOptions {
@@ -565,6 +601,7 @@ export interface AdyenCardState {
 export interface AdyenCardDataPaymentMethodState {
     paymentMethod: AdyenCardPaymentMethodState;
 }
+
 export interface AdyenCardPaymentMethodState {
     encryptedCardNumber: string;
     encryptedExpiryMonth: string;
@@ -573,6 +610,7 @@ export interface AdyenCardPaymentMethodState {
     holderName?: string;
     type: string;
 }
+
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     fingerprintToken: string;
     onComplete(fingerprintData: any): void;
@@ -682,4 +720,73 @@ export interface ThreeDSRequiredErrorResponse {
         merchant_data?: string;
     };
     status: string;
+}
+
+export enum AdyenHTTPMethod {
+    GET = 'GET',
+    POST = 'POST',
+}
+
+export enum AdyenPaymentMethodType {
+    Scheme = 'scheme',
+    BCMC = 'bcmc',
+    IDEAL = 'ideal',
+    Giropay = 'giropay',
+}
+
+export enum AdyenActionType {
+    /*
+    * The payment qualifies for 3D Secure 2, and will go through either the frictionless
+    * or the challenge flow.
+    * */
+    ThreeDS2Fingerprint = 'threeDS2Fingerprint',
+
+    /*
+    * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
+    * */
+    ThreeDS2Challenge = 'threeDS2Challenge',
+
+    /*
+    * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
+    * */
+    Redirect = 'redirect',
+
+    /*
+    * The Component presents the QR code and calls the onAdditionalDetails event.
+    * */
+    QRCode = 'qrCode',
+
+    /*
+    * The Component displays the voucher which the shopper uses to complete the payment.
+    * */
+    Voucher = 'voucher',
+}
+
+export interface AdyenAction {
+    method: AdyenHTTPMethod;
+
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+
+    paymentMethodType: AdyenPaymentMethodType;
+
+    /*
+     * The Component performs additional front-end actions depending on the action.type.
+     * Your next steps depend on the type of action that the Component performs.
+     */
+    type: AdyenActionType;
+
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+export interface AdyenAdditionalAction {
+    resultCode: ResultCode;
+    action: string;
 }
