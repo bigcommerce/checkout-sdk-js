@@ -4,7 +4,7 @@
 
 A set of options that are required to initialize the AdyenV2 payment method.
 
-Once AdyenV2 payment is initialized, credit card form fields, provided by the payment provider as iFrames, will be inserted into the current page. These options provide a location and styling for each of the form fields.
+Once AdyenV2 payment is initialized, credit card form fields, provided by the payment provider as IFrames, will be inserted into the current page. These options provide a location and styling for each of the form fields.
 
 ## Hierarchy
 
@@ -14,6 +14,7 @@ Once AdyenV2 payment is initialized, credit card form fields, provided by the pa
 
 ### Properties
 
+* [additionalActionOptions](adyenv2paymentinitializeoptions.md#additionalactionoptions)
 * [cardVerificationContainerId](adyenv2paymentinitializeoptions.md#cardverificationcontainerid)
 * [containerId](adyenv2paymentinitializeoptions.md#containerid)
 * [options](adyenv2paymentinitializeoptions.md#options)
@@ -24,6 +25,15 @@ Once AdyenV2 payment is initialized, credit card form fields, provided by the pa
 
 ## Properties
 
+<a id="additionalactionoptions"></a>
+
+###  additionalActionOptions
+
+**● additionalActionOptions**: *[AdyenAdditionalActionOptions](adyenadditionalactionoptions.md)*
+
+A set of options that are required to initialize additional payment actions.
+
+___
 <a id="cardverificationcontainerid"></a>
 
 ### `<Optional>` cardVerificationContainerId
@@ -47,7 +57,8 @@ ___
 
 ### `<Optional>` options
 
-**● options**: *[Omit](../#omit)<[AdyenCreditCardComponentOptions](adyencreditcardcomponentoptions.md), "onChange">*
+**● options**: * [Omit](../#omit)<[AdyenCreditCardComponentOptions](adyencreditcardcomponentoptions.md), "onChange"> &#124; [AdyenIdealComponentOptions](adyenidealcomponentoptions.md)
+*
 
 Optional. Overwriting the default options
 
@@ -58,7 +69,7 @@ ___
 
 **● threeDS2ContainerId**: *`string`*
 
-The location to insert the Adyen 3DS V2 component.
+*__deprecated__*: The location to insert the Adyen 3DS V2 component. Use additionalActionOptions instead as this property will be removed in the future
 
 ___
 <a id="threeds2options"></a>
@@ -67,7 +78,7 @@ ___
 
 **● threeDS2Options**: *[AdyenThreeDS2Options](adyenthreeds2options.md)*
 
-ThreeDS2Options
+*__deprecated__*: Use additionalActionOptions instead as this property will be removed in the future
 
 ___
 

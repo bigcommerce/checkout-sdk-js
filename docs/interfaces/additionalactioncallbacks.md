@@ -1,41 +1,24 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenThreeDS2Options](../interfaces/adyenthreeds2options.md)
+[@bigcommerce/checkout-sdk](../README.md) > [AdditionalActionCallbacks](../interfaces/additionalactioncallbacks.md)
 
-# AdyenThreeDS2Options
+# AdditionalActionCallbacks
 
 ## Hierarchy
 
- [AdditionalActionCallbacks](additionalactioncallbacks.md)
+**AdditionalActionCallbacks**
 
-**↳ AdyenThreeDS2Options**
+↳  [AdyenAdditionalActionOptions](adyenadditionalactionoptions.md)
+
+↳  [AdyenThreeDS2Options](adyenthreeds2options.md)
 
 ## Index
 
-### Properties
-
-* [widgetSize](adyenthreeds2options.md#widgetsize)
-
 ### Methods
 
-* [onBeforeLoad](adyenthreeds2options.md#onbeforeload)
-* [onComplete](adyenthreeds2options.md#oncomplete)
-* [onLoad](adyenthreeds2options.md#onload)
+* [onBeforeLoad](additionalactioncallbacks.md#onbeforeload)
+* [onComplete](additionalactioncallbacks.md#oncomplete)
+* [onLoad](additionalactioncallbacks.md#onload)
 
 ---
-
-## Properties
-
-<a id="widgetsize"></a>
-
-### `<Optional>` widgetSize
-
-**● widgetSize**: * `undefined` &#124; `string`
-*
-
-Specify Three3DS2Challenge Widget Size
-
-Values '01' = 250px x 400px '02' = 390px x 400px '03' = 500px x 600px '04' = 600px x 400px '05' = 100% x 100%
-
-___
 
 ## Methods
 
