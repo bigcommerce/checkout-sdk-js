@@ -3,7 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { PaypalCommerceHostWindow, PaypalCommerceSDK } from './paypal-commerce-sdk';
+import { PaypalCommerceHostWindow, PaypalCommerceScriptOptions, PaypalCommerceSDK } from './paypal-commerce-sdk';
 
 export default class PaypalCommerceScriptLoader {
     private _window: PaypalCommerceHostWindow;
@@ -14,12 +14,15 @@ export default class PaypalCommerceScriptLoader {
         this._window = window;
     }
 
-    async loadPaypalCommerce(clientId: string, currency: string = 'USD'): Promise<PaypalCommerceSDK> {
-        if (!clientId) {
+    async loadPaypalCommerce(options: PaypalCommerceScriptOptions): Promise<PaypalCommerceSDK> {
+        if (!options || !options['client-id']) {
             throw new InvalidArgumentError();
         }
+        const params = (Object.keys(options) as Array<keyof PaypalCommerceScriptOptions>)
+            .map(key => `${key}=${options[key]}`)
+            .join('&');
 
-        const scriptSrc = `https://www.paypal.com/sdk/js?currency=${currency}&client-id=${clientId}`;
+        const scriptSrc = `https://www.paypal.com/sdk/js?${params}`;
 
         await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
 

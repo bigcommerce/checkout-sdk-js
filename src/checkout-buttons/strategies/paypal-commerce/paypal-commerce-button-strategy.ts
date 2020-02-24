@@ -1,6 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 
+import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
@@ -27,12 +28,27 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             throw new InvalidArgumentError();
         }
 
-        return this._paypalScriptLoader.loadPaypalCommerce(paypalOptions.clientId)
-            .then(paypal => {
-                return paypal.Buttons({
-                    createOrder: () => this._setupPayment(),
-                    onApprove: data => this._tokenizePayment(paymentMethod.id, data),
-                }).render(`#${options.containerId}`);
+        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
+            .then(state => {
+                const config = state.config.getStoreConfig();
+                const cart = state.cart.getCart();
+
+                if (!config) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                const paramsScript = {
+                    'client-id': paypalOptions.clientId,
+                    currency: config.currency.code,
+                };
+
+                return this._paypalScriptLoader.loadPaypalCommerce(paramsScript)
+                    .then(paypal => {
+                        return paypal.Buttons({
+                            createOrder: () => this._setupPayment(cart),
+                            onApprove: data => this._tokenizePayment(paymentMethod.id, data),
+                        }).render(`#${options.containerId}`);
+                    });
             });
     }
 
@@ -40,22 +56,17 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private _setupPayment(): Promise<string> {
+    private _setupPayment(cart?: Cart): Promise<string> {
+        const cartId = cart ? cart.id : '';
+        const url = '/api/storefront/payment/paypalcommerce';
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        };
 
-        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
-            .then(state => {
-                const url = '/api/storefront/payment/paypalcommerce';
-                const headers = {
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                };
-                const cart = state.cart.getCart();
-                const currentCartId = cart ? cart.id : '';
-
-                return this._requestSender.post(url, {
-                    headers,
-                    body: { cartId: currentCartId },
-                });
+        return this._requestSender.post(url, {
+                headers,
+                body: { cartId },
             })
             .then(res => res.body.orderId);
     }
