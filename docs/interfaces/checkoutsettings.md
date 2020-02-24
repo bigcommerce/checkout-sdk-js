@@ -28,8 +28,10 @@
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
 * [orderTermsAndConditionsLink](checkoutsettings.md#ordertermsandconditionslink)
 * [orderTermsAndConditionsType](checkoutsettings.md#ordertermsandconditionstype)
+* [privacyPolicyUrl](checkoutsettings.md#privacypolicyurl)
 * [realtimeShippingProviders](checkoutsettings.md#realtimeshippingproviders)
 * [remoteCheckoutProviders](checkoutsettings.md#remotecheckoutproviders)
+* [requiresMarketingConsent](checkoutsettings.md#requiresmarketingconsent)
 * [shippingQuoteFailedMessage](checkoutsettings.md#shippingquotefailedmessage)
 
 ---
@@ -166,6 +168,13 @@ ___
 **● orderTermsAndConditionsType**: *`string`*
 
 ___
+<a id="privacypolicyurl"></a>
+
+###  privacyPolicyUrl
+
+**● privacyPolicyUrl**: *`string`*
+
+___
 <a id="realtimeshippingproviders"></a>
 
 ###  realtimeShippingProviders
@@ -178,6 +187,13 @@ ___
 ###  remoteCheckoutProviders
 
 **● remoteCheckoutProviders**: *`any`[]*
+
+___
+<a id="requiresmarketingconsent"></a>
+
+###  requiresMarketingConsent
+
+**● requiresMarketingConsent**: *`boolean`*
 
 ___
 <a id="shippingquotefailedmessage"></a>

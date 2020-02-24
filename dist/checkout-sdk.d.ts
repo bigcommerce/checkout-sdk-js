@@ -1649,8 +1649,10 @@ declare interface CheckoutSettings {
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
+    privacyPolicyUrl: string;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
+    requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
 }
 
@@ -2814,6 +2816,7 @@ declare interface GooglePayPaymentInitializeOptions {
 declare interface GuestCredentials {
     id?: string;
     email: string;
+    marketingEmailConsent?: boolean;
 }
 
 declare interface HostedCardFieldOptions {

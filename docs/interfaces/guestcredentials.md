@@ -12,6 +12,7 @@
 
 * [email](guestcredentials.md#email)
 * [id](guestcredentials.md#id)
+* [marketingEmailConsent](guestcredentials.md#marketingemailconsent)
 
 ---
 
@@ -29,6 +30,14 @@ ___
 ### `<Optional>` id
 
 **● id**: * `undefined` &#124; `string`
+*
+
+___
+<a id="marketingemailconsent"></a>
+
+### `<Optional>` marketingEmailConsent
+
+**● marketingEmailConsent**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
