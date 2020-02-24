@@ -6,14 +6,13 @@ import { AmazonMaxoButtonParams, AmazonMaxoSDK } from './amazon-maxo';
 import AmazonMaxoScriptLoader from './amazon-maxo-script-loader';
 
 export default class AmazonMaxoPaymentProcessor {
-    //private _amazonMaxoClient?: AmazonMaxoClient;
     private _amazonMaxoSDK?: AmazonMaxoSDK;
     private _methodId?: string;
 
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _amazonMaxoScriptLoader: AmazonMaxoScriptLoader,
+        private _amazonMaxoScriptLoader: AmazonMaxoScriptLoader
     ) { }
 
     initialize(methodId: string): Promise<void> {
@@ -26,16 +25,11 @@ export default class AmazonMaxoPaymentProcessor {
         containerId: string,
         params: AmazonMaxoButtonParams
     ): HTMLElement {
-
         if (!this._amazonMaxoSDK) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         return this._amazonMaxoSDK.Pay.renderButton(containerId, params);
-    }
-
-    deinitialize(): Promise<void> {
-        return new Promise(() => { });
     }
 
     private _configureWallet(): Promise<void> {
@@ -50,11 +44,9 @@ export default class AmazonMaxoPaymentProcessor {
                 }
 
                 return this._amazonMaxoScriptLoader.load(paymentMethod)
-                    .then( (amazonMaxoClient) => {
-                        if (amazonMaxoClient) {
-                            this._amazonMaxoSDK = amazonMaxoClient;
-                        }
-                    })
+                    .then( amazonMaxoClient => {
+                        this._amazonMaxoSDK = amazonMaxoClient;
+                    });
             });
     }
 

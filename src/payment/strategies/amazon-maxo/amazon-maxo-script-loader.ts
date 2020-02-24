@@ -1,10 +1,9 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
-
 import PaymentMethod from '../../payment-method';
 
-import { AmazonMaxoHostWindow, AmazonMaxoSDK, AmazonMaxoRegions } from './amazon-maxo';
+import { AmazonMaxoHostWindow, AmazonMaxoRegions, AmazonMaxoSDK } from './amazon-maxo';
 
 export default class AmazonMaxoScriptLoader {
     constructor(
@@ -12,12 +11,12 @@ export default class AmazonMaxoScriptLoader {
         private _window: AmazonMaxoHostWindow = window
     ) {}
 
-    //verify the url depending to the zone
+    // verify the url depending to the zone
     load(method: PaymentMethod): Promise<AmazonMaxoSDK> {
-        const {            
+        const {
             initializationData: { region = 'us' } = {},
-        } = method;      
-                
+        } = method;
+
         const amazonMaxoRegion = (AmazonMaxoRegions as any)[region];
 
         return this._scriptLoader

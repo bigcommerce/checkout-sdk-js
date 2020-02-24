@@ -12,7 +12,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
     constructor(
         private _store: CheckoutStore,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor,        
+        private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -40,8 +40,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
             this._walletButton = undefined;
         }
 
-        return this._amazonMaxoPaymentProcessor.deinitialize()
-            .then(() => this._store.getState());
+        return Promise.resolve(this._store.getState());
     }
 
     signIn(): Promise<InternalCheckoutSelectors> {
@@ -79,22 +78,21 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        if(! paymentMethod ){
+        if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {config: {merchantId, testMode}, initializationData: {checkoutLanguage, ledgerCurrency, region}} = paymentMethod;
+        const {config: {merchantId, testMode}, initializationData: {checkoutLanguage, ledgerCurrency}} = paymentMethod;
 
-        if (!merchantId || !testMode ) {
+        if (!merchantId) {
             throw new InvalidArgumentError();
         }
 
         const amazonButtonOptions = {
             merchantId,
-            sandbox: testMode,
+            sandbox: !!testMode,
             checkoutLanguage,
             ledgerCurrency,
-            region,
             productType: 'PayAndShip',
             createCheckoutSession: {
                 url: `${config.links.siteLink}/remote-checkout-token/${this._getMethodId()}`,
@@ -112,21 +110,4 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
 
         return this._methodId;
     }
-
-/*
-    private _onPaymentSelectComplete(): void {
-        this._formPoster.postForm('/checkout.php', {
-            headers: {
-                Accept: 'text/html',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-    }
-
-    private _onError(error?: Error): void {
-        if (error && error.message !== 'CANCELED') {
-            throw error;
-        }
-    }
-*/
 }

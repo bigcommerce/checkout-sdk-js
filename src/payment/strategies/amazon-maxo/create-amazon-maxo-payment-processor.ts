@@ -17,6 +17,6 @@ export default function createAmazonMaxoPaymentProcessor(store: CheckoutStore): 
         new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender)
         ),
-        new AmazonMaxoScriptLoader(scriptLoader),
+        new AmazonMaxoScriptLoader(scriptLoader)
     );
 }

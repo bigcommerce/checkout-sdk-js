@@ -1,8 +1,8 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
-import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonMaxoPaymentInitializeOptions } from './strategies/amazon-maxo';
+import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';

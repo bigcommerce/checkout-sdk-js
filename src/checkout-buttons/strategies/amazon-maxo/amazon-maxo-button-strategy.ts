@@ -10,7 +10,6 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
 
     constructor(
         private _store: CheckoutStore,
-        //private _formPoster: FormPoster,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
     ) {}
@@ -31,14 +30,13 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
             });
     }
 
-
     deinitialize(): Promise<void> {
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
         }
 
-        return this._amazonMaxoPaymentProcessor.deinitialize();
+        return Promise.resolve();
     }
 
     private _createSignInButton(containerId: string): HTMLElement {
@@ -57,19 +55,19 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        if(! paymentMethod ){
+        if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const {config: {merchantId, testMode}, initializationData: {checkoutLanguage, ledgerCurrency, region}} = paymentMethod;
 
-        if (!merchantId || !testMode ) {
+        if (!merchantId) {
             throw new InvalidArgumentError();
         }
 
         const amazonButtonOptions = {
             merchantId,
-            sandbox: testMode,
+            sandbox: !!testMode,
             checkoutLanguage,
             ledgerCurrency,
             region,
@@ -90,20 +88,4 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
 
         return this._methodId;
     }
-/*
-    private _onPaymentSelectComplete(): void {
-        this._formPoster.postForm('/checkout.php', {
-            headers: {
-                Accept: 'text/html',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-    }
-
-    private _onError(error?: Error): void {
-        if (error && error.message !== 'CANCELED') {
-            throw error;
-        }
-    }
-    */
 }

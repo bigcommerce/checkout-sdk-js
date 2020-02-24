@@ -1,6 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutButtonMethodType } from './strategies';
+import { AmazonMaxoButtonInitializeOptions } from './strategies/amazon-maxo';
 import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
@@ -16,6 +17,12 @@ export interface CheckoutButtonOptions extends RequestOptions {
 }
 
 export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+    /**
+     * The options that are required to facilitate AmazonMaxo. They can be
+     * omitted unless you need to support AmazonMaxo.
+     */
+    amazonmaxo?: AmazonMaxoButtonInitializeOptions;
+
     /**
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.

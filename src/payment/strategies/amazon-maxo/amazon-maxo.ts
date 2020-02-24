@@ -5,12 +5,12 @@ export interface AmazonMaxoOptions {
 }
 
 export interface AmazonMaxoSDK {
-    Pay: AmazonMaxoClient
+    Pay: AmazonMaxoClient;
 }
 
 export interface AmazonMaxoClient {
     renderButton(containerId: string, params: AmazonMaxoButtonParams): HTMLElement;
-    bindChangeAction(): null
+    bindChangeAction(): null;
 }
 
 export interface AmazonMaxoHostWindow extends Window {
@@ -19,12 +19,12 @@ export interface AmazonMaxoHostWindow extends Window {
 
 export interface AmazonMaxoButtonParams {
     merchantId: string;
-    createCheckoutSession: AmazonMaxoCheckoutSession,
-    placement: AmazonMaxoPlacement,
-    ledgerCurrency: AmazonMaxoLedgerCurrency,
-    productType?: string,
-    checkoutLanguage?: AmazonMaxoCheckoutLanguage,
-    sandbox?: boolean
+    createCheckoutSession: AmazonMaxoCheckoutSession;
+    placement: AmazonMaxoPlacement;
+    ledgerCurrency: AmazonMaxoLedgerCurrency;
+    productType?: string;
+    checkoutLanguage?: AmazonMaxoCheckoutLanguage;
+    sandbox?: boolean;
 }
 
 export interface AmazonMaxoCheckoutSession {

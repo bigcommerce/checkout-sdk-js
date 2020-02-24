@@ -15,6 +15,7 @@
 
 ### Properties
 
+* [amazonmaxo](checkoutbuttoninitializeoptions.md#amazonmaxo)
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
@@ -29,6 +30,15 @@
 
 ## Properties
 
+<a id="amazonmaxo"></a>
+
+### `<Optional>` amazonmaxo
+
+**● amazonmaxo**: *[AmazonMaxoButtonInitializeOptions](amazonmaxobuttoninitializeoptions.md)*
+
+The options that are required to facilitate AmazonMaxo. They can be omitted unles you need to support AmazonMaxo.
+
+___
 <a id="braintreepaypal"></a>
 
 ### `<Optional>` braintreepaypal

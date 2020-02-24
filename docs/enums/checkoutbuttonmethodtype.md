@@ -7,7 +7,13 @@
 ---
 
 ## Enumeration members
+<a id="amazonmaxo"></a>
 
+###  AMAZON_MAXO
+
+**AMAZON_MAXO**:  = "amazonmaxo"
+
+___
 <a id="braintree_paypal"></a>
 
 ###  BRAINTREE_PAYPAL
