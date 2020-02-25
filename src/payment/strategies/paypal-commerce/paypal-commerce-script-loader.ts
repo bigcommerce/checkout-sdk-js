@@ -1,4 +1,5 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { kebabCase } from 'lodash';
 
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
@@ -15,11 +16,11 @@ export default class PaypalCommerceScriptLoader {
     }
 
     async loadPaypalCommerce(options: PaypalCommerceScriptOptions): Promise<PaypalCommerceSDK> {
-        if (!options || !options['client-id']) {
+        if (!options || !options.clientId) {
             throw new InvalidArgumentError();
         }
         const params = (Object.keys(options) as Array<keyof PaypalCommerceScriptOptions>)
-            .map(key => `${key}=${options[key]}`)
+            .map(key => `${kebabCase(key)}=${options[key]}`)
             .join('&');
 
         const scriptSrc = `https://www.paypal.com/sdk/js?${params}`;

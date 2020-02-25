@@ -20,6 +20,6 @@ export interface PaypalCommerceHostWindow extends Window {
 }
 
 export interface PaypalCommerceScriptOptions {
-    'client-id': string;
-    'currency': string;
+    clientId: string;
+    currency: string;
 }

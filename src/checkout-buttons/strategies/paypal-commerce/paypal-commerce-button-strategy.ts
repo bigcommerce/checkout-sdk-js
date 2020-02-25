@@ -37,8 +37,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
+                if (!cart) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCart);
+                }
+
                 const paramsScript = {
-                    'client-id': paypalOptions.clientId,
+                    clientId: paypalOptions.clientId,
                     currency: config.currency.code,
                 };
 
@@ -56,8 +60,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private _setupPayment(cart?: Cart): Promise<string> {
-        const cartId = cart ? cart.id : '';
+    private _setupPayment(cart: Cart): Promise<string> {
+        const cartId = cart.id;
         const url = '/api/storefront/payment/paypalcommerce';
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
