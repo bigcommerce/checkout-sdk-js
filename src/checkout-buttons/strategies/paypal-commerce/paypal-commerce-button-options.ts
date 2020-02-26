@@ -1,6 +1,6 @@
 export interface PaypalCommerceButtonInitializeOptions {
     /**
-     * The Client ID of the Paypal App
+     * A set of styling options for the checkout button.
      */
-    clientId: string;
+    style?: any;
 }

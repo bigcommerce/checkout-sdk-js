@@ -3,13 +3,15 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
-import { from } from 'rxjs';
+import { from, of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
+import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { ButtonsOptions, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -29,12 +31,14 @@ describe('PaypalCommerceButtonStrategy', () => {
     let eventEmitter: EventEmitter;
     let strategy: PaypalCommerceButtonStrategy;
     let requestSender: RequestSender;
+    let paymentMethod: PaymentMethod;
     let render: () => void;
     let orderID: string;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
+        paymentMethod = { ...getPaypalCommerce() };
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -43,9 +47,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
 
-        paypalOptions = {
-            clientId: 'abc',
-        };
+        paypalOptions = {};
 
         options = {
             containerId: 'paypalcommerce-container1',
@@ -97,7 +99,11 @@ describe('PaypalCommerceButtonStrategy', () => {
 
     });
 
-    it('throws error if PaypalCommerce options is not loaded', async () => {
+    it('throws error without clientId', async () => {
+        paymentMethod.initializationData.clientId = null;
+
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
         try {
             strategy = new PaypalCommerceButtonStrategy(
                 store,

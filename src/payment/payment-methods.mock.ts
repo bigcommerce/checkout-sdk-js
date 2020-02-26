@@ -92,6 +92,9 @@ export function getPaypalCommerce(): PaymentMethod {
             testMode: true,
             merchantId: 'JTS4DY7XFSQZE',
         },
+        initializationData: {
+          clientId: 'abc',
+        },
         type: 'PAYMENT_TYPE_API',
     };
 }

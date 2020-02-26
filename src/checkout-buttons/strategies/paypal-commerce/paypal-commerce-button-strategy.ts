@@ -22,9 +22,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
-        const paypalOptions = options.paypalCommerce;
 
-        if (!paypalOptions || !paypalOptions.clientId) {
+        if (!paymentMethod.initializationData.clientId) {
             throw new InvalidArgumentError();
         }
 
@@ -42,7 +41,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 }
 
                 const paramsScript = {
-                    clientId: paypalOptions.clientId,
+                    clientId: paymentMethod.initializationData.clientId,
                     currency: config.currency.code,
                 };
 
