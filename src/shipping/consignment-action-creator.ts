@@ -153,7 +153,7 @@ export default class ConsignmentActionCreator {
         options?: RequestOptions<CheckoutParams>
     ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => {
-            const consignment = this._getConsignmentRequestBody(address, store);
+            const consignment = this._getUpdateAddressRequestBody(address, store);
             const consignments = store.getState().consignments.getConsignments();
 
             if (consignments && consignments.length) {
@@ -284,7 +284,7 @@ export default class ConsignmentActionCreator {
         };
     }
 
-    private _getConsignmentRequestBody(
+    private _getUpdateAddressRequestBody(
         shippingAddress: AddressRequestBody,
         store: ReadableCheckoutStore
     ): ConsignmentRequestBody {
@@ -294,15 +294,14 @@ export default class ConsignmentActionCreator {
         if (!cart) {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
+        const { physicalItems, customItems = [] } = cart.lineItems;
 
         return {
             shippingAddress,
-            lineItems: (cart.lineItems && cart.lineItems.physicalItems || [])
-                .map(item => ({
-                    itemId: item.id,
-                    quantity: item.quantity,
-                })
-            ),
+            lineItems: [ ...physicalItems, ...customItems ].map(item => ({
+                itemId: item.id,
+                quantity: item.quantity,
+            })),
         };
     }
 
