@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.54.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.53.1...v1.54.0) (2020-02-24)
+
+
+### Features
+
+* **payment:** INT-2062 Support iDEAL & Giropay APM's through AdyenV2 gateway ([1334714](https://github.com/bigcommerce/checkout-sdk-js/commit/1334714))
+
+### [1.53.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.53.0...v1.53.1) (2020-02-24)
+
+
+### Bug Fixes
+
+* **shopper:** CHECKOUT-4640 Add support for marketing emails consent ([04714a1](https://github.com/bigcommerce/checkout-sdk-js/commit/04714a1))
+
 ## [1.53.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.52.1...v1.53.0) (2020-02-21)
 
 

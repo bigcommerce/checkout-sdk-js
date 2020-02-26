@@ -1,39 +1,36 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenThreeDS2Options](../interfaces/adyenthreeds2options.md)
+[@bigcommerce/checkout-sdk](../README.md) > [AdyenAdditionalActionOptions](../interfaces/adyenadditionalactionoptions.md)
 
-# AdyenThreeDS2Options
+# AdyenAdditionalActionOptions
 
 ## Hierarchy
 
  [AdditionalActionCallbacks](additionalactioncallbacks.md)
 
-**↳ AdyenThreeDS2Options**
+**↳ AdyenAdditionalActionOptions**
 
 ## Index
 
 ### Properties
 
-* [widgetSize](adyenthreeds2options.md#widgetsize)
+* [containerId](adyenadditionalactionoptions.md#containerid)
 
 ### Methods
 
-* [onBeforeLoad](adyenthreeds2options.md#onbeforeload)
-* [onComplete](adyenthreeds2options.md#oncomplete)
-* [onLoad](adyenthreeds2options.md#onload)
+* [onBeforeLoad](adyenadditionalactionoptions.md#onbeforeload)
+* [onComplete](adyenadditionalactionoptions.md#oncomplete)
+* [onLoad](adyenadditionalactionoptions.md#onload)
 
 ---
 
 ## Properties
 
-<a id="widgetsize"></a>
+<a id="containerid"></a>
 
-### `<Optional>` widgetSize
+###  containerId
 
-**● widgetSize**: * `undefined` &#124; `string`
-*
+**● containerId**: *`string`*
 
-Specify Three3DS2Challenge Widget Size
-
-Values '01' = 250px x 400px '02' = 390px x 400px '03' = 500px x 600px '04' = 600px x 400px '05' = 100% x 100%
+The location to insert the additional action component.
 
 ___
 

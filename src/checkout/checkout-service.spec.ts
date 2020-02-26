@@ -11,7 +11,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -42,6 +42,7 @@ import createCheckoutStore from './create-checkout-store';
 describe('CheckoutService', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
+    let customerRequestSender: CustomerRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
     let instrumentRequestSender: InstrumentRequestSender;
     let countryRequestSender: CountryRequestSender;
@@ -92,6 +93,7 @@ describe('CheckoutService', () => {
             .mockResolvedValue(getResponse(getCountriesResponseBody()));
 
         billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
+        customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(billingAddressRequestSender, 'updateAddress')
             .mockResolvedValue(getResponse(merge({}, getCheckout(), {
@@ -174,7 +176,10 @@ describe('CheckoutService', () => {
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            billingAddressRequestSender,
+            customerRequestSender
+        );
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
 

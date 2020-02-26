@@ -9,6 +9,22 @@ declare interface AccountInstrument extends BaseInstrument {
     type: 'account';
 }
 
+declare interface AdditionalActionCallbacks {
+    /**
+     * A callback that gets called before adyen component is loaded
+     */
+    onBeforeLoad?(shopperInteraction?: boolean): void;
+    /**
+     * A callback that gets called when adyen component is loaded
+     */
+    onLoad?(cancel?: () => void): void;
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete?(): void;
+}
+
 declare interface Address extends AddressRequestBody {
     country: string;
 }
@@ -31,6 +47,13 @@ declare interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
+}
+
+declare interface AdyenAdditionalActionOptions extends AdditionalActionCallbacks {
+    /**
+     * The location to insert the additional action component.
+     */
+    containerId: string;
 }
 
 declare interface AdyenBaseCardComponentOptions {
@@ -112,6 +135,13 @@ declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponent
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
 }
 
+declare interface AdyenIdealComponentOptions {
+    /**
+     * Optional. Set to **false** to remove the bank logos from the iDEAL form.
+     */
+    showImage?: boolean;
+}
+
 declare interface AdyenStyleOptions {
     /**
      * Base styling applied to the iframe. All styling extends from this style.
@@ -131,27 +161,25 @@ declare interface AdyenStyleOptions {
     validated?: CssProperties;
 }
 
-declare interface AdyenThreeDS2Options {
+declare interface AdyenThreeDS2Options extends AdditionalActionCallbacks {
     /**
      * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
      */
     widgetSize?: string;
-    /**
-     * A callback that gets called when adyen component is mounted
-     */
-    onLoad(cancel: () => void): void;
-    /**
-     * A callback that gets called when adyen component verification
-     * is completed
-     */
-    onComplete(): void;
 }
 
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.
  *
  * Once AdyenV2 payment is initialized, credit card form fields, provided by the
- * payment provider as iFrames, will be inserted into the current page. These
+ * payment provider as IFrames, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
  */
 declare interface AdyenV2PaymentInitializeOptions {
@@ -160,7 +188,8 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     containerId: string;
     /**
-     * The location to insert the Adyen 3DS V2 component.
+     * @deprecated The location to insert the Adyen 3DS V2 component.
+     * Use additionalActionOptions instead as this property will be removed in the future
      */
     threeDS2ContainerId: string;
     /**
@@ -168,13 +197,18 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     cardVerificationContainerId?: string;
     /**
-     * ThreeDS2Options
+     * @deprecated
+     * Use additionalActionOptions instead as this property will be removed in the future
      */
     threeDS2Options: AdyenThreeDS2Options;
     /**
+     * A set of options that are required to initialize additional payment actions.
+     */
+    additionalActionOptions: AdyenAdditionalActionOptions;
+    /**
      * Optional. Overwriting the default options
      */
-    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'>;
+    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
 }
 
 /**
@@ -1649,8 +1683,10 @@ declare interface CheckoutSettings {
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
+    privacyPolicyUrl: string;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
+    requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
 }
 
@@ -2814,6 +2850,7 @@ declare interface GooglePayPaymentInitializeOptions {
 declare interface GuestCredentials {
     id?: string;
     email: string;
+    marketingEmailConsent?: boolean;
 }
 
 declare interface HostedCardFieldOptions {
