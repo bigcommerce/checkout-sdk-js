@@ -19,7 +19,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(payload: OrderRequestBody, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(options.methodId);
 
@@ -41,8 +41,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData })));
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+        return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
