@@ -16,44 +16,35 @@ describe('PaypalCommerceScriptLoader', () => {
         loader = createScriptLoader();
         paypal = getPaypalCommerceMock();
 
+        jest.spyOn(loader, 'loadScript')
+            .mockImplementation(() => {
+                (window as PaypalCommerceHostWindow).paypal = paypal;
+
+                return Promise.resolve();
+            });
+
         paypalLoader = new PaypalCommerceScriptLoader(loader);
     });
 
-    it('loads PayPalCommerce script  with client Id and without currency', async () => {
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalCommerceHostWindow).paypal = paypal;
+    it('loads PayPalCommerce script  with client Id and currency USD', async () => {
+        const output = await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', currency: 'USD' });
 
-                return Promise.resolve();
-            });
-
-        const output = await paypalLoader.loadPaypalCommerce('aaa');
-
-        expect(loader.loadScript).toHaveBeenCalledWith('https://www.paypal.com/sdk/js?currency=USD&client-id=aaa', {async: true, attributes: {}});
+        expect(loader.loadScript).toHaveBeenCalledWith('https://www.paypal.com/sdk/js?client-id=aaa&currency=USD', {async: true, attributes: {}});
         expect(output).toEqual(paypal);
     });
 
-    it('loads PayPalCommerce script  with client Id and with currency', async () => {
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalCommerceHostWindow).paypal = paypal;
+    it('loads PayPalCommerce script  with client Id and with currency EUR', async () => {
+        const output = await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', currency: 'EUR' });
 
-                return Promise.resolve();
-            });
-
-        const output = await paypalLoader.loadPaypalCommerce('aaa', 'EUR');
-
-        expect(loader.loadScript).toHaveBeenCalledWith('https://www.paypal.com/sdk/js?currency=EUR&client-id=aaa', {async: true, attributes: {}});
+        expect(loader.loadScript).toHaveBeenCalledWith('https://www.paypal.com/sdk/js?client-id=aaa&currency=EUR', {async: true, attributes: {}});
         expect(output).toEqual(paypal);
     });
 
     it('throw error without client Id', async () => {
-        const expectedError = new InvalidArgumentError();
-
         try {
-            await paypalLoader.loadPaypalCommerce('');
+            await paypalLoader.loadPaypalCommerce({ clientId: '', currency: 'USD' });
         } catch (error) {
-            expect(error).toEqual(expectedError);
+            expect(error).toEqual( new InvalidArgumentError());
         }
     });
 
@@ -66,9 +57,25 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce('aaa');
+            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', currency: 'USD' });
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
+    });
+
+    it('throw error if unable window.paypal', async () => {
+        jest.spyOn(loader, 'loadScript')
+            .mockImplementation(() => {
+                (window as PaypalCommerceHostWindow).paypal = undefined;
+
+                return Promise.resolve();
+            });
+
+        try {
+            await paypalLoader.loadPaypalCommerce({clientId: 'aaa', currency: 'EUR'});
+        } catch (error) {
+            expect(error).toEqual(new PaymentMethodClientUnavailableError());
+        }
+
     });
 });

@@ -32,11 +32,11 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 const config = state.config.getStoreConfig();
                 const cart = state.cart.getCart();
 
-                if (!config) {
+                if (!config || !config.currency) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                if (!cart) {
+                if (!cart || !cart.id) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
 

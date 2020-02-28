@@ -7,7 +7,7 @@ import { from, of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
@@ -75,10 +75,12 @@ describe('PaypalCommerceButtonStrategy', () => {
             });
 
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockReturnValue(() => from([
-                createAction(CheckoutActionType.LoadCheckoutRequested),
-                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
-            ]));
+            .mockReturnValue(() => {
+                return from([
+                    createAction(CheckoutActionType.LoadCheckoutRequested),
+                    createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+                ]);
+            });
 
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
             .mockReturnValue(Promise.resolve(paypal));
@@ -97,53 +99,6 @@ describe('PaypalCommerceButtonStrategy', () => {
             requestSender
         );
 
-    });
-
-    it('throws error without clientId', async () => {
-        paymentMethod.initializationData.clientId = null;
-
-        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-
-        try {
-            strategy = new PaypalCommerceButtonStrategy(
-                store,
-                checkoutActionCreator,
-                paypalScriptLoader,
-                formPoster,
-                requestSender
-            );
-
-            options = {
-                containerId: 'paypalcommerce-container1',
-                methodId: CheckoutButtonMethodType.PAYPALCOMMERCE,
-            };
-
-            await strategy.initialize(options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(InvalidArgumentError);
-        }
-    });
-
-    it('throws error if payment method is not loaded', async () => {
-        try {
-            store = createCheckoutStore();
-            strategy = new PaypalCommerceButtonStrategy(
-                store,
-                checkoutActionCreator,
-                paypalScriptLoader,
-                formPoster,
-                requestSender
-            );
-
-            options = {
-                containerId: 'paypalcommerce-container1',
-                paypalCommerce: paypalOptions,
-            } as CheckoutButtonInitializeOptions;
-
-            await strategy.initialize(options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
-        }
     });
 
     it('initializes PaypalCommerce and PayPal JS clients', async () => {
@@ -253,5 +208,102 @@ describe('PaypalCommerceButtonStrategy', () => {
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
+    });
+
+    describe('throws error during initialize', () => {
+        it('without clientId', async () => {
+            paymentMethod.initializationData.clientId = null;
+
+            await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+            strategy = new PaypalCommerceButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                formPoster,
+                requestSender
+            );
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws error if payment method is not loaded', async () => {
+            try {
+                store = createCheckoutStore();
+                strategy = new PaypalCommerceButtonStrategy(
+                    store,
+                    checkoutActionCreator,
+                    paypalScriptLoader,
+                    formPoster,
+                    requestSender
+                );
+
+                options = {
+                    containerId: 'paypalcommerce-container1',
+                    paypalCommerce: paypalOptions,
+                } as CheckoutButtonInitializeOptions;
+
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throw error without config', async () => {
+            const state = getCheckoutStoreState();
+            const config = state.config;
+            delete config.data;
+
+            store = createCheckoutStore({ ...state, config });
+
+            strategy = new PaypalCommerceButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                formPoster,
+                requestSender
+            );
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingCheckoutConfig));
+            }
+        });
+
+        it('throw error without cart', async () => {
+            const state = getCheckoutStoreState();
+            delete state.cart.data;
+
+            store = createCheckoutStore(state);
+
+            strategy = new PaypalCommerceButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                formPoster,
+                requestSender
+            );
+            const checkout = getCheckout();
+            delete checkout.cart;
+
+            jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+                .mockReturnValue(() => {
+                    return from([
+                        createAction(CheckoutActionType.LoadCheckoutRequested),
+                        createAction(CheckoutActionType.LoadCheckoutSucceeded, checkout),
+                    ]);
+                });
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingCart));
+            }
+        });
     });
 });
