@@ -3,6 +3,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectSet, replace } from '../common/utility';
+import { CustomerActionType, UpdateCustomerAction } from '../customer';
 import { OrderAction, OrderActionType } from '../order';
 
 import BillingAddress from './billing-address';
@@ -40,7 +41,7 @@ function dataReducer(
 
 function errorsReducer(
     errors: BillingAddressErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction | BillingAddressAction | OrderAction
+    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateCustomerAction
 ): BillingAddressErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -57,10 +58,13 @@ function errorsReducer(
     case BillingAddressActionType.UpdateBillingAddressFailed:
         return objectSet(errors, 'updateError', action.payload);
 
+    case CustomerActionType.UpdateCustomerRequested:
+    case CustomerActionType.UpdateCustomerSucceeded:
     case BillingAddressActionType.ContinueAsGuestRequested:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
         return objectSet(errors, 'continueAsGuestError', undefined);
 
+    case CustomerActionType.UpdateCustomerFailed:
     case BillingAddressActionType.ContinueAsGuestFailed:
         return objectSet(errors, 'continueAsGuestError', action.payload);
 
@@ -71,7 +75,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: BillingAddressStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction | BillingAddressAction | OrderAction
+    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateCustomerAction
 ): BillingAddressStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -89,8 +93,11 @@ function statusesReducer(
         return objectSet(statuses, 'isUpdating', false);
 
     case BillingAddressActionType.ContinueAsGuestRequested:
+    case CustomerActionType.UpdateCustomerRequested:
         return objectSet(statuses, 'isContinuingAsGuest', true);
 
+    case CustomerActionType.UpdateCustomerSucceeded:
+    case CustomerActionType.UpdateCustomerFailed:
     case BillingAddressActionType.ContinueAsGuestFailed:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
         return objectSet(statuses, 'isContinuingAsGuest', false);
