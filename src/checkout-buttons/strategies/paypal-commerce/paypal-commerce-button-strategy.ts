@@ -5,7 +5,7 @@ import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
-import { ApproveDataOptions, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -21,48 +21,86 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const {
+            id: paymentId,
+            initializationData: { clientId, intent, isPayPalCreditAvailable },
+        } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const paypalOptions = options.paypalCommerce;
 
-        if (!paymentMethod.initializationData.clientId) {
+        if (!clientId) {
             throw new InvalidArgumentError();
         }
 
         return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
             .then(state => {
-                const config = state.config.getStoreConfig();
                 const cart = state.cart.getCart();
-
-                if (!config) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-                }
 
                 if (!cart) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
 
-                const paramsScript: PaypalCommerceScriptOptions = {
-                    clientId: paymentMethod.initializationData.clientId,
-                    currency: config.currency.code,
-                    commit: false,
-                    intent: paymentMethod.initializationData.intent,
+                const buttonParams: ButtonsOptions = {
+                    createOrder: () => this._setupPayment(cart),
+                    onApprove: data => this._tokenizePayment(paymentId, data),
                 };
 
-                if (!paymentMethod.initializationData.isPayPalCreditAvailable) {
+                if (paypalOptions && paypalOptions.style) {
+                    buttonParams.style = this._validateStyleParams(paypalOptions.style);
+                }
+
+                const paramsScript: PaypalCommerceScriptOptions = {
+                    clientId,
+                    intent,
+                    currency: cart.currency.code,
+                    commit: false,
+                };
+
+                if (!isPayPalCreditAvailable) {
                     paramsScript.disableFunding = 'credit';
                 }
 
                 return this._paypalScriptLoader.loadPaypalCommerce(paramsScript)
-                    .then(paypal => {
-                        return paypal.Buttons({
-                            createOrder: () => this._setupPayment(cart),
-                            onApprove: data => this._tokenizePayment(paymentMethod.id, data),
-                        }).render(`#${options.containerId}`);
-                    });
+                    .then(paypal => paypal.Buttons(buttonParams).render(`#${options.containerId}`));
             });
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
+    }
+
+    private _validateStyleParams(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+        const updatedStyle: PaypalButtonStyleOptions = { ...style };
+        const { label, color, layout, shape, height, tagline } = style;
+
+        if (label && !StyleButtonLabel[label]) {
+            delete updatedStyle.label;
+        }
+
+        if (layout && !StyleButtonLayout[layout]) {
+            delete updatedStyle.layout;
+        }
+
+        if (color && !StyleButtonColor[color]) {
+            delete updatedStyle.color;
+        }
+
+        if (shape && !StyleButtonShape[shape]) {
+            delete updatedStyle.shape;
+        }
+
+        if (typeof height === 'number') {
+            updatedStyle.height = height < 25
+                ? 25
+                : (height > 55 ? 55 : height);
+        } else {
+            delete updatedStyle.height;
+        }
+
+        if (typeof tagline !== 'boolean' || (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])) {
+            delete updatedStyle.tagline;
+        }
+
+        return updatedStyle;
     }
 
     private _setupPayment(cart: Cart): Promise<string> {

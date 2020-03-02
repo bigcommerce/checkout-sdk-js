@@ -12,7 +12,7 @@ import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
-import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -47,7 +47,13 @@ describe('PaypalCommerceButtonStrategy', () => {
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
 
-        paypalOptions = {};
+        paypalOptions = {
+            style: {
+                color: StyleButtonColor.white,
+                label: StyleButtonLabel.buynow,
+                height: 45,
+            },
+        };
 
         options = {
             containerId: 'paypalcommerce-container1',
@@ -126,6 +132,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypal.Buttons).toHaveBeenCalledWith({
             createOrder: expect.any(Function),
             onApprove: expect.any(Function),
+            style: paypalOptions.style,
         });
     });
 
@@ -135,7 +142,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(render).toHaveBeenCalled();
     });
 
-    it('check clientId, currency, commit, intent, disableFunding in paypalCommerce script', async () => {
+    it('calls loadPaypalCommerce with expected arguments', async () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
             .mockImplementation((options: PaypalCommerceScriptOptions) => {
                 (window as PaypalCommerceHostWindow).paypal = paypal;
@@ -156,7 +163,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         await strategy.initialize(options);
     });
 
-    it('check disableFunding in paypalCommerce script, if isPayPalCreditAvailable = true', async () => {
+    it('calls loadPaypalCommerce without disableFunding when isPayPalCreditAvailable = true', async () => {
         paymentMethod.initializationData.isPayPalCreditAvailable = true;
 
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
@@ -250,6 +257,55 @@ describe('PaypalCommerceButtonStrategy', () => {
         }
     });
 
+    describe('validate style for PaypalCommerce checkout button', () => {
+        it('invalid all data', async () => {
+            const style: any = {
+                layout: 'aaa',
+                color: 'aaa',
+                shape: 'aaa',
+                height: 5,
+                label: 'aaa',
+                tagline: true,
+            };
+
+            await strategy.initialize({ ...options, paypalCommerce: { style } });
+
+            expect(paypal.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                style: { height: 25 },
+            });
+        });
+
+        it('invalid height and valid other', async () => {
+            const style: any = {
+                height: 100,
+                tagline: true,
+                layout: 'horizontal',
+            };
+
+            await strategy.initialize({ ...options, paypalCommerce: { style } });
+
+            expect(paypal.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                style: { tagline: true, layout: 'horizontal', height: 55 },
+            });
+        });
+
+        it('invalid height - not number', async () => {
+            const style: any = { height: '' };
+
+            await strategy.initialize({ ...options, paypalCommerce: { style } });
+
+            expect(paypal.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+                style: {},
+            });
+        });
+    });
+
     describe('throws error during initialize', () => {
         it('without clientId', async () => {
             paymentMethod.initializationData.clientId = null;
@@ -290,28 +346,6 @@ describe('PaypalCommerceButtonStrategy', () => {
                 await strategy.initialize(options);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throw error without config', async () => {
-            const state = getCheckoutStoreState();
-            const config = state.config;
-            delete config.data;
-
-            store = createCheckoutStore({ ...state, config });
-
-            strategy = new PaypalCommerceButtonStrategy(
-                store,
-                checkoutActionCreator,
-                paypalScriptLoader,
-                formPoster,
-                requestSender
-            );
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingCheckoutConfig));
             }
         });
 
