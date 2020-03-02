@@ -12,7 +12,7 @@ import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
-import { ButtonsOptions, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -133,6 +133,46 @@ describe('PaypalCommerceButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(render).toHaveBeenCalled();
+    });
+
+    it('check clientId, currency, commit, intent, disableFunding in paypalCommerce script', async () => {
+        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+            .mockImplementation((options: PaypalCommerceScriptOptions) => {
+                (window as PaypalCommerceHostWindow).paypal = paypal;
+
+                const obj = {
+                    clientId: 'abc',
+                    commit: false,
+                    currency: 'USD',
+                    intent: 'capture',
+                    disableFunding: 'credit',
+                };
+
+                expect(options).toMatchObject(obj);
+
+                return Promise.resolve(paypal);
+            });
+
+        await strategy.initialize(options);
+    });
+
+    it('check disableFunding in paypalCommerce script, if isPayPalCreditAvailable = true', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+            .mockImplementation((options: PaypalCommerceScriptOptions) => {
+                (window as PaypalCommerceHostWindow).paypal = paypal;
+
+                const obj = { disableFunding: 'credit' };
+
+                expect(options).not.toMatchObject(obj);
+
+                return Promise.resolve(paypal);
+            });
+
+        await strategy.initialize(options);
     });
 
     it('throws error if unable to setting PayPalCommerce button', async () => {

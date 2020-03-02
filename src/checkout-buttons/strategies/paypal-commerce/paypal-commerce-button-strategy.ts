@@ -5,7 +5,7 @@ import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
-import { ApproveDataOptions, PaypalCommerceScriptLoader } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -40,10 +40,16 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
 
-                const paramsScript = {
+                const paramsScript: PaypalCommerceScriptOptions = {
                     clientId: paymentMethod.initializationData.clientId,
                     currency: config.currency.code,
+                    commit: false,
+                    intent: paymentMethod.initializationData.intent,
                 };
+
+                if (!paymentMethod.initializationData.isPayPalCreditAvailable) {
+                    paramsScript.disableFunding = 'credit';
+                }
 
                 return this._paypalScriptLoader.loadPaypalCommerce(paramsScript)
                     .then(paypal => {

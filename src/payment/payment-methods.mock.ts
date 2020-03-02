@@ -95,6 +95,8 @@ export function getPaypalCommerce(): PaymentMethod {
         initializationData: {
             clientId: 'abc',
             orderId: '3U4171152W1482642',
+            intent: 'capture',
+            isPayPalCreditAvailable: false,
         },
         type: 'PAYMENT_TYPE_API',
     };
