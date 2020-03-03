@@ -5,6 +5,7 @@ import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { Address } from '../address';
+import { getCart } from '../cart/carts.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../common/error/errors';
@@ -887,6 +888,19 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to update shipping address in first consignment', async () => {
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
+                ...getCart(),
+                lineItems: {
+                    ...getCart().lineItems,
+                    customItems: [
+                        {
+                            id: 'custom',
+                            quantity: 1,
+                        },
+                    ],
+                },
+            });
+
             await from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
@@ -898,6 +912,10 @@ describe('consignmentActionCreator', () => {
                     lineItems: [
                         {
                             itemId: '666',
+                            quantity: 1,
+                        },
+                        {
+                            itemId: 'custom',
                             quantity: 1,
                         },
                     ],
