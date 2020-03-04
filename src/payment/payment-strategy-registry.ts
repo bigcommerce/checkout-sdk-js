@@ -33,6 +33,10 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
+        if (paymentMethod.gateway === 'klarna') {
+            return PaymentStrategyType.KLARNAV2;
+        }
+
         const methodId = paymentMethod.gateway || paymentMethod.id;
 
         if (this._hasFactoryForMethod(methodId)) {
