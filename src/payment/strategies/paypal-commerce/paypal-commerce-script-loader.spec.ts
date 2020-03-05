@@ -26,13 +26,20 @@ describe('PaypalCommerceScriptLoader', () => {
         paypalLoader = new PaypalCommerceScriptLoader(loader);
     });
 
-    function checkParamsInScript(options: PaypalCommerceScriptOptions, equalStrings: string[]) {
+    describe('loads PayPalCommerce script with client Id, currency EUR, intent, disableFunding, commit', () => {
+        const options: PaypalCommerceScriptOptions = {
+            clientId: 'aaa',
+            currency: 'EUR',
+            disableFunding: 'credit',
+            intent: 'capture',
+        };
+
         it('check params in script', async () => {
             jest.spyOn(loader, 'loadScript')
                 .mockImplementation((url: string) => {
                     (window as PaypalCommerceHostWindow).paypal = paypal;
 
-                    equalStrings.forEach(str => {
+                    ['client-id=aaa', 'currency=EUR', 'disable-funding=credit', 'intent=capture' ].forEach(str => {
                         expect(url).toEqual(expect.stringContaining(str));
                     });
 
@@ -47,23 +54,6 @@ describe('PaypalCommerceScriptLoader', () => {
 
             expect(output).toEqual(paypal);
         });
-    }
-
-    describe('loads PayPalCommerce script with client Id, currency EUR, intent, disableFunding, commit', () => {
-        const options: PaypalCommerceScriptOptions = {
-            clientId: 'aaa',
-            currency: 'EUR',
-            disableFunding: 'credit',
-            intent: 'capture',
-        };
-
-        checkParamsInScript(options,
-            [
-                'client-id=aaa',
-                'currency=EUR',
-                'disable-funding=credit',
-                'intent=capture',
-            ]);
     });
 
     describe('loads PayPalCommerce script with client Id and currency USD',  () => {
@@ -72,7 +62,26 @@ describe('PaypalCommerceScriptLoader', () => {
             currency: 'USD',
         };
 
-        checkParamsInScript(options, ['client-id=aaa', 'currency=USD']);
+        it('check params in script', async () => {
+            jest.spyOn(loader, 'loadScript')
+                .mockImplementation((url: string) => {
+                    (window as PaypalCommerceHostWindow).paypal = paypal;
+
+                    [ 'client-id=aaa', 'currency=USD' ].forEach(str => {
+                        expect(url).toEqual(expect.stringContaining(str));
+                    });
+
+                    return Promise.resolve();
+                });
+
+            await paypalLoader.loadPaypalCommerce(options);
+        });
+
+        it('check paypal in window', async () => {
+            const output = await paypalLoader.loadPaypalCommerce(options);
+
+            expect(output).toEqual(paypal);
+        });
     });
 
     it('throw error without client Id', async () => {
