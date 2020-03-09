@@ -4,6 +4,7 @@ enum PaymentStrategyType {
     AFTERPAY = 'afterpay',
     AMAZON = 'amazon',
     BLUESNAPV2 = 'bluesnapv2',
+    CHECKOUTCOM = 'checkoutcom',
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',
