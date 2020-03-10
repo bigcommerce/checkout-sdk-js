@@ -28,6 +28,7 @@ A set of options that are required to initialize the payment step of the current
 * [googlepaybraintree](paymentinitializeoptions.md#googlepaybraintree)
 * [googlepaystripe](paymentinitializeoptions.md#googlepaystripe)
 * [klarna](paymentinitializeoptions.md#klarna)
+* [klarnav2](paymentinitializeoptions.md#klarnav2)
 * [masterpass](paymentinitializeoptions.md#masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
 * [params](paymentinitializeoptions.md#params)
@@ -138,6 +139,15 @@ ___
 **● klarna**: *[KlarnaPaymentInitializeOptions](klarnapaymentinitializeoptions.md)*
 
 The options that are required to initialize the Klarna payment method. They can be omitted unless you need to support Klarna.
+
+___
+<a id="klarnav2"></a>
+
+### `<Optional>` klarnav2
+
+**● klarnav2**: *[KlarnaV2PaymentInitializeOptions](klarnav2paymentinitializeoptions.md)*
+
+The options that are required to initialize the KlarnaV2 payment method. They can be omitted unless you need to support KlarnaV2.
 
 ___
 <a id="masterpass"></a>
