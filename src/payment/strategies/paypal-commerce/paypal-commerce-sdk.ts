@@ -21,5 +21,8 @@ export interface PaypalCommerceHostWindow extends Window {
 
 export interface PaypalCommerceScriptOptions {
     clientId: string;
-    currency: string;
+    currency?: string;
+    commit?: boolean;
+    intent?: 'capture' | 'authorize';
+    disableFunding?: 'credit';
 }
