@@ -73,6 +73,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'barclaycard',
         method: 'credit_card',
     },
+    checkoutcom: {
+        provider: 'checkoutcom',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
