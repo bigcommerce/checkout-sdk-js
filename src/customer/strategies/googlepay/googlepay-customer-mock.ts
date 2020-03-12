@@ -19,6 +19,26 @@ export enum Mode {
     Incomplete,
 }
 
+export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepayauthorizenet' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayAuthNet = { googlepayauthorizenet: { ...container } };
+    const googlepayAuthNetWithInvalidContainer = { googlepayauthorizenet: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete:
+            return { ...methodId };
+        case Mode.UndefinedMethodId:
+            return { ...undefinedMethodId, ...googlepayAuthNet };
+        case Mode.InvalidContainer:
+            return { ...methodId, ...googlepayAuthNetWithInvalidContainer };
+        default:
+            return { ...methodId, ...googlepayAuthNet };
+     }
+}
+
 export function getBraintreeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaybraintree' };
     const undefinedMethodId = { methodId: undefined };

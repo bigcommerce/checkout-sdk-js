@@ -9,7 +9,7 @@ import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payme
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
@@ -87,6 +87,18 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             new MasterpassScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register('googlepayauthorizenet', () =>
+        new GooglePayCustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayAuthorizeNetInitializer()
+            ),
+            formPoster
         )
     );
 
