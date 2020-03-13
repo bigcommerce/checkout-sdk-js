@@ -1,9 +1,181 @@
-export interface AdyenComponentCallbacks {
-    onChange?(state: AdyenCardState): void;
+export enum AdyenActionType {
+    /*
+    * The payment qualifies for 3D Secure 2, and will go through either the frictionless
+    * or the challenge flow.
+    * */
+    ThreeDS2Fingerprint = 'threeDS2Fingerprint',
+
+    /*
+    * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
+    * */
+    ThreeDS2Challenge = 'threeDS2Challenge',
+
+    /*
+    * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
+    * */
+    Redirect = 'redirect',
+
+    /*
+    * The Component presents the QR code and calls the onAdditionalDetails event.
+    * */
+    QRCode = 'qrCode',
+
+    /*
+    * The Component displays the voucher which the shopper uses to complete the payment.
+    * */
+    Voucher = 'voucher',
 }
 
-export interface AdyenHostWindow extends Window {
-    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
+export enum AdyenComponentType {
+    SecuredFields = 'securedfields',
+}
+
+export enum AdyenPaymentMethodType {
+    AliPay = 'alipay',
+    Bancontact = 'bcmc',
+    iDEAL = 'ideal',
+    CreditCard = 'scheme',
+    GiroPay = 'giropay',
+    SEPA = 'sepadirectdebit',
+    Sofort = 'directEbanking',
+    WeChatPayQR = 'wechatpayQR',
+}
+
+export enum HTTPMethod {
+    POST = 'POST',
+}
+
+export enum ResultCode {
+    ChallengeShopper = 'ChallengeShopper',
+    Error = 'Error',
+    IdentifyShopper = 'IdentifyShopper',
+}
+
+interface AdyenPaymentMethodState {
+    type: string;
+}
+
+interface CardDataPaymentMethodState {
+    paymentMethod: CardPaymentMethodState;
+}
+
+interface WechatDataPaymentMethodState {
+    paymentMethod: AdyenPaymentMethodState;
+}
+
+interface CardPaymentMethodState extends AdyenPaymentMethodState {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName?: string;
+}
+
+export interface AdyenAction {
+    method: HTTPMethod;
+
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+
+    paymentMethodType: AdyenPaymentMethodType;
+
+    /*
+     * The Component performs additional front-end actions depending on the action.type.
+     * Your next steps depend on the type of action that the Component performs.
+     */
+    type: AdyenActionType;
+
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+export interface AdyenAdditionalAction {
+    resultCode: ResultCode;
+    action: string;
+}
+
+export interface AdyenAdditionalActionCallbacks {
+    /**
+     * A callback that gets called before adyen component is loaded
+     */
+    onBeforeLoad?(shopperInteraction?: boolean): void;
+
+    /**
+     * A callback that gets called when adyen component is loaded
+     */
+    onLoad?(cancel?: () => void): void;
+
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete?(): void;
+}
+
+export interface AdyenAdditionalActionErrorResponse {
+    provider_data: AdyenAdditionalAction;
+    errors: [
+        {
+            code: string;
+        }
+    ];
+}
+
+export interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {
+    /**
+     * The location to insert the additional action component.
+     */
+    containerId: string;
+}
+
+export interface AdyenAdditionalActionState {
+    data: AdyenAdditionalAction;
+    isValid?: boolean;
+}
+
+export interface AdyenBaseCardComponentOptions {
+    /**
+     * Array of card brands that will be recognized by the component.
+     *
+     */
+    brands?: string[];
+
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: StyleOptions;
+}
+
+export interface AdyenComponentEvents {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenComponentState, component: AdyenComponent): void;
+
+    /**
+     * Called in case of an invalid card number, invalid expiry date, or
+     *  incomplete field. Called again when errors are cleared.
+     */
+    onError?(state: AdyenComponentState, component: AdyenComponent): void;
+}
+
+export interface AdyenCheckout {
+    create(type: string, componentOptions?: AdyenCreditCardComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
+
+    createFromAction(action: AdyenAction, componentOptions?: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions ): AdyenComponent;
+}
+
+export interface AdyenComponent {
+    mount(containerId: string): HTMLElement;
+    unmount(): void;
 }
 
 export interface AdyenConfiguration {
@@ -35,251 +207,78 @@ export interface AdyenConfiguration {
      * to override this function, you can also define an onChange event on the Component
      * level.
      */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+    onChange?(state: CardState, component?: AdyenComponent): void;
+
+    onAdditionalDetails?(state: CardState, component?: AdyenComponent): void;
 }
 
-export interface PaymentMethodsResponse {
+export interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
-     * Groups of payment methods.
-     */
-    groups?: AdyenPaymentMethodGroup[];
-
-    /**
-     * Detailed list of one-click payment methods.
-     */
-    oneClickPaymentMethods?: RecurringDetail;
-
-    /**
-     * Detailed list of payment methods required to generate payment forms.
-     */
-    paymentMethods?: AdyenPaymentMethod[];
-
-    /**
-     * List of all stored payment methods.
-     */
-    storedPaymentMethods?: AdyenStoredPaymentMethod[];
-}
-
-export interface AdyenPaymentMethod {
-    /**
-     * List of possible brands. For example: visa, mc.
-     */
-    brands?: string[];
-
-    /**
-     * The configuration of the payment method.
-     */
-    configuration?: object;
-
-    /**
-     * All input details to be provided to complete the payment with this payment
-     * method.
+     * Set an object containing the details array for type: scheme from
+     * the /paymentMethods response.
      */
     details?: InputDetail[];
 
     /**
-     * The group where this payment method belongs to.
+     * Set to true to show the checkbox to save card details for the next payment.
      */
-    group?: Group;
+    enableStoreDetails?: boolean;
 
     /**
-     * The displayable name of this payment method.
+     * Set to true to request the name of the card holder.
      */
-    name?: string;
+    hasHolderName?: boolean;
 
     /**
-     * Echo data required to send in next calls.
+     * Set to true to require the card holder name.
      */
-    paymentMethodData?: string;
+    holderNameRequired?: boolean;
 
     /**
-     * Indicates whether this payment method supports tokenization or not.
+     * Prefill the card holder name field. Supported from Card component
      */
-    supportsRecurring?: boolean;
+    holderName?: string;
 
     /**
-     * The unique payment method code.
+     * Defaults to ['mc','visa','amex']. Configure supported card types to
+     * facilitate brand recognition used in the Secured Fields onBrand callback.
+     * See list of available card types. If a shopper enters a card type not
+     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
      */
-    type?: string;
+    groupTypes?: string[];
+
+    /**
+     * Specify the sample values you want to appear for card detail input fields.
+     */
+    placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
 }
 
-export interface AdyenPaymentMethodGroup {
+export interface AdyenCustomCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
-     * The type to submit for any payment method in this group.
+     * Specify aria attributes for the input fields for web accessibility.
      */
-    groupType?: string;
+    ariaLabels?: CustomCardAriaLabels;
 
     /**
-     * The human-readable name of this group.
+     * Automatically shift the focus from date field to the CVC field.
      */
-    name?: string;
-
-    /**
-     * The types of payment methods that belong in this group.
-     */
-    types?: string[];
+    autofocus?: boolean;
 }
 
-export interface InputDetail {
-    /**
-     * Configuration parameters for the required input.
-     */
-    configuration?: object;
-
-    /**
-     * Input details can also be provided recursively.
-     */
-    details?: SubInputDetail[];
-
-    /**
-     * In case of a select, the URL from which to query the items.
-     */
-    itemSearchUrl?: string;
-
-    /**
-     * In case of a select, the items to choose from.
-     */
-    items?: Item[];
-
-    /**
-     * The value to provide in the result.
-     */
-    key?: string;
-
-    /**
-     * True if this input value is optional.
-     */
-    optional?: boolean;
-
-    /**
-     * The type of the required input.
-     */
-    type?: string;
-
-    /**
-     * The value can be pre-filled, if available.
-     */
-    value?: string;
+export interface AdyenError {
+    errorCode: string;
+    message: string;
 }
 
-export interface AdditionalActionCallbacks {
-    /**
-     * A callback that gets called before adyen component is loaded
-     */
-    onBeforeLoad?(shopperInteraction?: boolean): void;
-
-    /**
-     * A callback that gets called when adyen component is loaded
-     */
-    onLoad?(cancel?: () => void): void;
-
-    /**
-     * A callback that gets called when adyen component verification
-     * is completed
-     */
-    onComplete?(): void;
+export interface AdyenHostWindow extends Window {
+    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
 }
 
-export interface AdyenThreeDS2Options extends AdditionalActionCallbacks {
+export interface AdyenIdealComponentOptions {
     /**
-     * Specify Three3DS2Challenge Widget Size
-     *
-     * Values
-     * '01' = 250px x 400px
-     * '02' = 390px x 400px
-     * '03' = 500px x 600px
-     * '04' = 600px x 400px
-     * '05' = 100% x 100%
+     * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
-    widgetSize?: string;
-}
-
-export interface AdyenAdditionalActionOptions extends AdditionalActionCallbacks {
-    /**
-     * The location to insert the additional action component.
-     */
-    containerId: string;
-}
-
-export enum AdyenComponentType {
-    ThreeDS2DeviceFingerprint = 'threeDS2DeviceFingerprint',
-    ThreeDS2Challenge = 'threeDS2Challenge',
-    SecuredFields = 'securedfields',
-    IDEAL = 'ideal',
-}
-
-export interface ThreeDS2Result {
-    payment_data: string;
-    code: string;
-    token: string;
-}
-
-export interface ThreeDS1Result {
-    acs_url: string;
-    payer_auth_request: string;
-    callback_url: string;
-    merchant_data: string;
-}
-
-export interface SubInputDetail {
-    /**
-     * Configuration parameters for the required input.
-     */
-    configuration?: object;
-
-    /**
-     * In case of a select, the items to choose from.
-     */
-    items?: Item[];
-
-    /**
-     * The value to provide in the result.
-     */
-    key?: string;
-
-    /**
-     * True if this input is optional to provide.
-     */
-    optional?: boolean;
-
-    /**
-     * The type of the required input.
-     */
-    type?: string;
-
-    /**
-     * The value can be pre-filled, if available.
-     */
-    value?: string;
-}
-
-export interface Item {
-    /**
-     * The value to provide in the result.
-     */
-    id?: string;
-
-    /**
-     * The display name.
-     */
-    name?: string;
-}
-
-export interface Group {
-    /**
-     * The name of the group.
-     */
-    name?: string;
-
-    /**
-     * Echo data to be used if the payment method is displayed as part of this group.
-     */
-    paymentMethodData?: string;
-
-    /**
-     * The unique code of the group.
-     */
-    type?: string;
+    showImage?: boolean;
 }
 
 export interface AdyenStoredPaymentMethod {
@@ -334,33 +333,18 @@ export interface AdyenStoredPaymentMethod {
     type?: string;
 }
 
-export interface RecurringDetail extends AdyenPaymentMethod {
+export interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
     /**
-     * The reference that uniquely identifies the recurring detail.
+     * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
      */
-    recurringDetailReference?: string;
-
-    /**
-     * Contains information on previously stored payment details.
-     */
-    storedDetails?: StoredDetails;
-}
-
-export interface StoredDetails {
-    /**
-     * The stored bank account.
-     */
-    bank?: Bank;
-
-    /**
-     * The stored card information.
-     */
-    card?: Card;
-
-    /**
-     * The email associated with stored payment details.
-     */
-    emailAddress?: string;
+    widgetSize?: string;
 }
 
 export interface Bank {
@@ -476,192 +460,19 @@ export interface Card {
     startYear?: string;
 }
 
+export interface CardState {
+    data: CardDataPaymentMethodState;
+    isValid?: boolean;
+}
+
+export interface WechatState {
+    data: WechatDataPaymentMethodState;
+}
+
 export interface CreditCardPlaceHolder {
     encryptedCardNumber?: string;
     encryptedExpiryDate?: string;
     encryptedSecurityCode: string;
-}
-
-export interface SepaPlaceHolder {
-    ownerName?: string;
-    ibanNumber?: string;
-}
-
-export interface AdyenComponent {
-    mount(containerId: string): HTMLElement;
-    unmount(): void;
-}
-
-export interface AdyenCheckout {
-    create(type: string, componentOptions?: AdyenCreditCardComponentOptions |
-        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
-
-    createFromAction(action: AdyenAction): AdyenComponent;
-}
-
-export interface AdyenIdealComponentOptions {
-    /**
-     * Optional. Set to **false** to remove the bank logos from the iDEAL form.
-     */
-    showImage?: boolean;
-}
-
-export interface AdyenBaseCardComponentOptions {
-    /**
-     * Array of card brands that will be recognized by the component.
-     *
-     */
-    brands?: string[];
-
-    /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: AdyenStyleOptions;
-}
-
-export interface AdyenCardComponentEvents {
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
-}
-
-export interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
-    /**
-     * Set an object containing the details array for type: scheme from
-     * the /paymentMethods response.
-     */
-    details?: InputDetail[];
-
-    /**
-     * Set to true to show the checkbox to save card details for the next payment.
-     */
-    enableStoreDetails?: boolean;
-
-    /**
-     * Set to true to request the name of the card holder.
-     */
-    hasHolderName?: boolean;
-
-    /**
-     * Set to true to require the card holder name.
-     */
-    holderNameRequired?: boolean;
-
-    /**
-     * Prefill the card holder name field. Supported from Card component
-     */
-    holderName?: string;
-
-    /**
-     * Defaults to ['mc','visa','amex']. Configure supported card types to
-     * facilitate brand recognition used in the Secured Fields onBrand callback.
-     * See list of available card types. If a shopper enters a card type not
-     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
-     */
-    groupTypes?: string[];
-
-    /**
-     * Specify the sample values you want to appear for card detail input fields.
-     */
-    placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
-}
-
-export interface CustomCardAriaLabel {
-    label?: string;
-    iframeTitle?: string;
-}
-
-export interface AdyenCustomCardAriaLabels {
-    lang?: string;
-    encryptedCardNumber?: CustomCardAriaLabel;
-    encryptedExpiryDate?: CustomCardAriaLabel;
-    encryptedSecurityCode?: CustomCardAriaLabel;
-}
-
-export interface AdyenCustomCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
-    /**
-     * Specify aria attributes for the input fields for web accessibility.
-     */
-    ariaLabels?: AdyenCustomCardAriaLabels;
-
-    /**
-     * Automatically shift the focus from date field to the CVC field.
-     */
-    autofocus?: boolean;
-}
-
-export interface AdyenCardState {
-    data: AdyenCardDataPaymentMethodState;
-    isValid?: boolean;
-}
-
-export interface AdyenCardDataPaymentMethodState {
-    paymentMethod: AdyenCardPaymentMethodState;
-}
-
-export interface AdyenCardPaymentMethodState {
-    encryptedCardNumber: string;
-    encryptedExpiryMonth: string;
-    encryptedExpiryYear: string;
-    encryptedSecurityCode: string;
-    holderName?: string;
-    type: string;
-}
-
-export interface ThreeDS2DeviceFingerprintComponentOptions {
-    fingerprintToken: string;
-    onComplete(fingerprintData: any): void;
-    onError(error: AdyenError): void;
-}
-
-export enum ResultCode {
-    AuthenticationFinished = 'AuthenticationFinished',
-    Authorised = 'Authorised',
-    Cancelled = 'Cancelled',
-    ChallengeShopper = 'ChallengeShopper',
-    Error = 'Error',
-    IdentifyShopper = 'IdentifyShopper',
-    Pending = 'Pending',
-    Received = 'Received',
-    RedirectShopper = 'RedirectShopper',
-    Refused = 'Refused',
-}
-
-export interface ThreeDS2ChallengeComponentOptions {
-    challengeToken: string;
-    size?: string;
-    onComplete(fingerprintData: any): void;
-    onError(error: AdyenError): void;
-}
-
-export interface AdyenStyleOptions {
-    /**
-     * Base styling applied to the iframe. All styling extends from this style.
-     */
-    base?: CssProperties;
-
-    /**
-     * Styling applied when a field fails validation.
-     */
-    error?: CssProperties;
-
-    /**
-     * Styling applied to the field's placeholder values.
-     */
-    placeholder?: CssProperties;
-
-    /**
-     * Styling applied once a field passes validation.
-     */
-    validated?: CssProperties;
-}
-
-export interface AdyenError {
-    errorCode: string;
-    message: string;
 }
 
 export interface CssProperties {
@@ -696,97 +507,274 @@ export interface CssProperties {
     webkitTransition?: string;
 }
 
-export interface ThreeDS2OnComplete {
-    data: {
-        details: {
-            'threeds2.challengeResult'?: string;
-            'threeds2.fingerprint'?: string;
-            paymentData: string;
-        };
-    };
+export interface CustomCardAriaLabel {
+    label?: string;
+    iframeTitle?: string;
 }
 
-export interface ThreeDSRequiredErrorResponse {
-    errors: [
-        { code: string }
-    ];
-    three_ds_result: {
-        code: ResultCode;
-        token?: string;
-        payment_data?: string;
-        acs_url?: string;
-        callback_url?: string;
-        payer_auth_request?: string;
-        merchant_data?: string;
-    };
-    status: string;
+export interface CustomCardAriaLabels {
+    lang?: string;
+    encryptedCardNumber?: CustomCardAriaLabel;
+    encryptedExpiryDate?: CustomCardAriaLabel;
+    encryptedSecurityCode?: CustomCardAriaLabel;
 }
 
-export enum AdyenHTTPMethod {
-    GET = 'GET',
-    POST = 'POST',
-}
-
-export enum AdyenPaymentMethodType {
-    Scheme = 'scheme',
-    BCMC = 'bcmc',
-    IDEAL = 'ideal',
-    Giropay = 'giropay',
-}
-
-export enum AdyenActionType {
-    /*
-    * The payment qualifies for 3D Secure 2, and will go through either the frictionless
-    * or the challenge flow.
-    * */
-    ThreeDS2Fingerprint = 'threeDS2Fingerprint',
-
-    /*
-    * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
-    * */
-    ThreeDS2Challenge = 'threeDS2Challenge',
-
-    /*
-    * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
-    * */
-    Redirect = 'redirect',
-
-    /*
-    * The Component presents the QR code and calls the onAdditionalDetails event.
-    * */
-    QRCode = 'qrCode',
-
-    /*
-    * The Component displays the voucher which the shopper uses to complete the payment.
-    * */
-    Voucher = 'voucher',
-}
-
-export interface AdyenAction {
-    method: AdyenHTTPMethod;
+export interface Group {
+    /**
+     * The name of the group.
+     */
+    name?: string;
 
     /**
-     * Value that you need to submit in your /payments/details request when handling
-     * the redirect.
+     * Echo data to be used if the payment method is displayed as part of this group.
      */
-    paymentData: string;
-
-    paymentMethodType: AdyenPaymentMethodType;
-
-    /*
-     * The Component performs additional front-end actions depending on the action.type.
-     * Your next steps depend on the type of action that the Component performs.
-     */
-    type: AdyenActionType;
+    paymentMethodData?: string;
 
     /**
-     * The HTTP request method that you should use. After the shopper completes the payment,
-     * they will be redirected back to your returnURL using the same method.
+     * The unique code of the group.
      */
-    url: string;
+    type?: string;
 }
 
-export interface AdyenAdditionalAction {
-    resultCode: ResultCode;
-    action: string;
+export interface InputDetail {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+
+    /**
+     * Input details can also be provided recursively.
+     */
+    details?: SubInputDetail[];
+
+    /**
+     * In case of a select, the URL from which to query the items.
+     */
+    itemSearchUrl?: string;
+
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item[];
+
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+
+    /**
+     * True if this input value is optional.
+     */
+    optional?: boolean;
+
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
+export interface Item {
+    /**
+     * The value to provide in the result.
+     */
+    id?: string;
+
+    /**
+     * The display name.
+     */
+    name?: string;
+}
+
+export interface PaymentMethod {
+    /**
+     * List of possible brands. For example: visa, mc.
+     */
+    brands?: string[];
+
+    /**
+     * The configuration of the payment method.
+     */
+    configuration?: object;
+
+    /**
+     * All input details to be provided to complete the payment with this payment
+     * method.
+     */
+    details?: InputDetail[];
+
+    /**
+     * The group where this payment method belongs to.
+     */
+    group?: Group;
+
+    /**
+     * The displayable name of this payment method.
+     */
+    name?: string;
+
+    /**
+     * Echo data required to send in next calls.
+     */
+    paymentMethodData?: string;
+
+    /**
+     * Indicates whether this payment method supports tokenization or not.
+     */
+    supportsRecurring?: boolean;
+
+    /**
+     * The unique payment method code.
+     */
+    type?: string;
+}
+
+export interface PaymentMethodGroup {
+    /**
+     * The type to submit for any payment method in this group.
+     */
+    groupType?: string;
+
+    /**
+     * The human-readable name of this group.
+     */
+    name?: string;
+
+    /**
+     * The types of payment methods that belong in this group.
+     */
+    types?: string[];
+}
+
+export interface PaymentMethodsResponse {
+    /**
+     * Groups of payment methods.
+     */
+    groups?: PaymentMethodGroup[];
+
+    /**
+     * Detailed list of one-click payment methods.
+     */
+    oneClickPaymentMethods?: RecurringDetail;
+
+    /**
+     * Detailed list of payment methods required to generate payment forms.
+     */
+    paymentMethods?: PaymentMethod[];
+
+    /**
+     * List of all stored payment methods.
+     */
+    storedPaymentMethods?: AdyenStoredPaymentMethod[];
+}
+
+export interface RecurringDetail extends PaymentMethod {
+    /**
+     * The reference that uniquely identifies the recurring detail.
+     */
+    recurringDetailReference?: string;
+
+    /**
+     * Contains information on previously stored payment details.
+     */
+    storedDetails?: StoredDetails;
+}
+
+export interface SepaPlaceHolder {
+    ownerName?: string;
+    ibanNumber?: string;
+}
+
+export interface StoredDetails {
+    /**
+     * The stored bank account.
+     */
+    bank?: Bank;
+
+    /**
+     * The stored card information.
+     */
+    card?: Card;
+
+    /**
+     * The email associated with stored payment details.
+     */
+    emailAddress?: string;
+}
+
+export interface StyleOptions {
+    /**
+     * Base styling applied to the iframe. All styling extends from this style.
+     */
+    base?: CssProperties;
+
+    /**
+     * Styling applied when a field fails validation.
+     */
+    error?: CssProperties;
+
+    /**
+     * Styling applied to the field's placeholder values.
+     */
+    placeholder?: CssProperties;
+
+    /**
+     * Styling applied once a field passes validation.
+     */
+    validated?: CssProperties;
+}
+
+export interface SubInputDetail {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item[];
+
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+
+    /**
+     * True if this input is optional to provide.
+     */
+    optional?: boolean;
+
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
+export interface ThreeDS2ChallengeComponentOptions {
+    size?: string;
+    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onError(error: AdyenError): void;
+}
+
+export interface ThreeDS2DeviceFingerprintComponentOptions {
+    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onError(error: AdyenError): void;
+}
+
+export type AdyenComponentState = (
+    CardState | WechatState
+);
+
+export default function isCardState(param: any): param is CardState {
+    return param && typeof param.data.paymentMethod.encryptedCardNumber === 'string';
 }
