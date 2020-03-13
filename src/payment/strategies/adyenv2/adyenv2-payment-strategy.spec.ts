@@ -227,7 +227,26 @@ describe('AdyenV2PaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
 
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({methodId: 'scheme', paymentData: {formattedPayload: {bigpay_token : {credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER', token: '123', verification_value: 'ENCRYPTED_CVV'}, browser_info: {color_depth: 24, java_enabled: false,  language: 'en-US', screen_height: 0, screen_width: 0, time_zone_offset: expect.anything()}}}}));
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
+                    methodId: 'scheme',
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token : {
+                                credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER',
+                                token: '123',
+                                verification_value: 'ENCRYPTED_CVV',
+                            },
+                            browser_info: {
+                                color_depth: 24,
+                                java_enabled: false,
+                                language: 'en-US',
+                                screen_height: 0,
+                                screen_width: 0,
+                                time_zone_offset: expect.anything(),
+                            },
+                        },
+                    },
+                }));
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
             });
 
