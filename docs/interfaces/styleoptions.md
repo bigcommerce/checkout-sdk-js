@@ -1,19 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenStyleOptions](../interfaces/adyenstyleoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) > [StyleOptions](../interfaces/styleoptions.md)
 
-# AdyenStyleOptions
+# StyleOptions
 
 ## Hierarchy
 
-**AdyenStyleOptions**
+**StyleOptions**
 
 ## Index
 
 ### Properties
 
-* [base](adyenstyleoptions.md#base)
-* [error](adyenstyleoptions.md#error)
-* [placeholder](adyenstyleoptions.md#placeholder)
-* [validated](adyenstyleoptions.md#validated)
+* [base](styleoptions.md#base)
+* [error](styleoptions.md#error)
+* [placeholder](styleoptions.md#placeholder)
+* [validated](styleoptions.md#validated)
 
 ---
 

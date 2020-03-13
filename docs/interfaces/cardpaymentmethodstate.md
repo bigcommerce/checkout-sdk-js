@@ -1,21 +1,23 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenCardPaymentMethodState](../interfaces/adyencardpaymentmethodstate.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CardPaymentMethodState](../interfaces/cardpaymentmethodstate.md)
 
-# AdyenCardPaymentMethodState
+# CardPaymentMethodState
 
 ## Hierarchy
 
-**AdyenCardPaymentMethodState**
+ [AdyenPaymentMethodState](adyenpaymentmethodstate.md)
+
+**↳ CardPaymentMethodState**
 
 ## Index
 
 ### Properties
 
-* [encryptedCardNumber](adyencardpaymentmethodstate.md#encryptedcardnumber)
-* [encryptedExpiryMonth](adyencardpaymentmethodstate.md#encryptedexpirymonth)
-* [encryptedExpiryYear](adyencardpaymentmethodstate.md#encryptedexpiryyear)
-* [encryptedSecurityCode](adyencardpaymentmethodstate.md#encryptedsecuritycode)
-* [holderName](adyencardpaymentmethodstate.md#holdername)
-* [type](adyencardpaymentmethodstate.md#type)
+* [encryptedCardNumber](cardpaymentmethodstate.md#encryptedcardnumber)
+* [encryptedExpiryMonth](cardpaymentmethodstate.md#encryptedexpirymonth)
+* [encryptedExpiryYear](cardpaymentmethodstate.md#encryptedexpiryyear)
+* [encryptedSecurityCode](cardpaymentmethodstate.md#encryptedsecuritycode)
+* [holderName](cardpaymentmethodstate.md#holdername)
+* [type](cardpaymentmethodstate.md#type)
 
 ---
 

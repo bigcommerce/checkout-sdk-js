@@ -24,6 +24,14 @@
 **ΤAddressKey**: *`keyof Address`*
 
 ___
+<a id="adyencomponentstate"></a>
+
+###  AdyenComponentState
+
+**ΤAdyenComponentState**: * [CardState](interfaces/cardstate.md) &#124; [WechatState](interfaces/wechatstate.md)
+*
+
+___
 <a id="analyticsteptype"></a>
 
 ###  AnalyticStepType
