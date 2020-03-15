@@ -649,6 +649,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * omitted unles you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Authorize.Net GooglePay.
+     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }
 
 declare class CheckoutButtonInitializer {
@@ -743,6 +748,7 @@ declare interface CheckoutButtonInitializerOptions {
 declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
@@ -2558,6 +2564,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepaybraintree?: GooglePayCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -3414,6 +3425,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Braintree payment method.
      * They can be omitted unless you need to support GooglePay.

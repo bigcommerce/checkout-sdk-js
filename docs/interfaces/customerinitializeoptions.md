@@ -22,6 +22,7 @@ Some payment methods have specific requirements for setting the customer details
 * [amazon](customerinitializeoptions.md#amazon)
 * [braintreevisacheckout](customerinitializeoptions.md#braintreevisacheckout)
 * [chasepay](customerinitializeoptions.md#chasepay)
+* [googlepayauthorizenet](customerinitializeoptions.md#googlepayauthorizenet)
 * [googlepaybraintree](customerinitializeoptions.md#googlepaybraintree)
 * [googlepaystripe](customerinitializeoptions.md#googlepaystripe)
 * [masterpass](customerinitializeoptions.md#masterpass)
@@ -58,6 +59,15 @@ ___
 **● chasepay**: *[ChasePayCustomerInitializeOptions](chasepaycustomerinitializeoptions.md)*
 
 The options that are required to initialize the Chasepay payment method. They can be omitted unless you need to support Chasepay.
+
+___
+<a id="googlepayauthorizenet"></a>
+
+### `<Optional>` googlepayauthorizenet
+
+**● googlepayauthorizenet**: *[GooglePayCustomerInitializeOptions](googlepaycustomerinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method. They can be omitted unless you need to support GooglePay.
 
 ___
 <a id="googlepaybraintree"></a>

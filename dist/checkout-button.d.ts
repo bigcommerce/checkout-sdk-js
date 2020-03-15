@@ -105,6 +105,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * omitted unles you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Authorize.Net GooglePay.
+     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }
 
 declare class CheckoutButtonInitializer {
@@ -199,6 +204,7 @@ declare interface CheckoutButtonInitializerOptions {
 declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",

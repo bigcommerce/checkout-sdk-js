@@ -18,6 +18,7 @@
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
+* [googlepayauthorizenet](checkoutbuttoninitializeoptions.md#googlepayauthorizenet)
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#googlepaybraintree)
 * [googlepaystripe](checkoutbuttoninitializeoptions.md#googlepaystripe)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
@@ -54,6 +55,15 @@ ___
 **● containerId**: *`string`*
 
 The ID of a container which the checkout button should be inserted.
+
+___
+<a id="googlepayauthorizenet"></a>
+
+### `<Optional>` googlepayauthorizenet
+
+**● googlepayauthorizenet**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to facilitate Authorize.Net GooglePay. They can be omitted unles you need to support Authorize.Net GooglePay.
 
 ___
 <a id="googlepaybraintree"></a>
