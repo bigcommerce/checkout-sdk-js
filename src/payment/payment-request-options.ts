@@ -113,6 +113,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     chasepay?: ChasePayInitializeOptions;
 
     /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
+
+    /**
      * The options that are required to initialize the GooglePay Braintree payment method.
      * They can be omitted unless you need to support GooglePay.
      */

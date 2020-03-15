@@ -50,4 +50,10 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * omitted unles you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate Authorize.Net GooglePay.
+     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }
