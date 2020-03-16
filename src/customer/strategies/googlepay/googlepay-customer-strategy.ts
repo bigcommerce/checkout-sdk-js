@@ -80,6 +80,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _getGooglePayOptions(options: CustomerInitializeOptions): GooglePayCustomerInitializeOptions {
+        if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
+            return options.googlepayauthorizenet;
+        }
+
         if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }

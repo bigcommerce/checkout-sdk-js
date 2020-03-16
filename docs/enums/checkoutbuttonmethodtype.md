@@ -22,6 +22,13 @@ ___
 **BRAINTREE_PAYPAL_CREDIT**:  = "braintreepaypalcredit"
 
 ___
+<a id="googlepay_authorizenet"></a>
+
+###  GOOGLEPAY_AUTHORIZENET
+
+**GOOGLEPAY_AUTHORIZENET**:  = "googlepayauthorizenet"
+
+___
 <a id="googlepay_braintree"></a>
 
 ###  GOOGLEPAY_BRAINTREE

@@ -31,7 +31,7 @@ import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chas
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
 import { LegacyPaymentStrategy } from './strategies/legacy';
@@ -83,7 +83,6 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()),
-            formPoster,
             locale
         )
     );
@@ -117,6 +116,21 @@ export default function createPaymentStrategyRegistry(
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             new AmazonPayScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.AUTHORIZENET_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayAuthorizeNetInitializer()
+            )
         )
     );
 

@@ -9,22 +9,6 @@ declare interface AccountInstrument extends BaseInstrument {
     type: 'account';
 }
 
-declare interface AdditionalActionCallbacks {
-    /**
-     * A callback that gets called before adyen component is loaded
-     */
-    onBeforeLoad?(shopperInteraction?: boolean): void;
-    /**
-     * A callback that gets called when adyen component is loaded
-     */
-    onLoad?(cancel?: () => void): void;
-    /**
-     * A callback that gets called when adyen component verification
-     * is completed
-     */
-    onComplete?(): void;
-}
-
 declare interface Address extends AddressRequestBody {
     country: string;
 }
@@ -49,7 +33,23 @@ declare interface AddressRequestBody {
     }>;
 }
 
-declare interface AdyenAdditionalActionOptions extends AdditionalActionCallbacks {
+declare interface AdyenAdditionalActionCallbacks {
+    /**
+     * A callback that gets called before adyen component is loaded
+     */
+    onBeforeLoad?(shopperInteraction?: boolean): void;
+    /**
+     * A callback that gets called when adyen component is loaded
+     */
+    onLoad?(cancel?: () => void): void;
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete?(): void;
+}
+
+declare interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {
     /**
      * The location to insert the additional action component.
      */
@@ -66,33 +66,7 @@ declare interface AdyenBaseCardComponentOptions {
      * Set a style object to customize the input fields. See Styling Secured Fields
      * for a list of supported properties.
      */
-    styles?: AdyenStyleOptions;
-}
-
-declare interface AdyenCardComponentEvents {
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
-}
-
-declare interface AdyenCardDataPaymentMethodState {
-    paymentMethod: AdyenCardPaymentMethodState;
-}
-
-declare interface AdyenCardPaymentMethodState {
-    encryptedCardNumber: string;
-    encryptedExpiryMonth: string;
-    encryptedExpiryYear: string;
-    encryptedSecurityCode: string;
-    holderName?: string;
-    type: string;
-}
-
-declare interface AdyenCardState {
-    data: AdyenCardDataPaymentMethodState;
-    isValid?: boolean;
+    styles?: StyleOptions;
 }
 
 declare interface AdyenComponent {
@@ -100,7 +74,22 @@ declare interface AdyenComponent {
     unmount(): void;
 }
 
-declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
+declare interface AdyenComponentEvents {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenComponentState, component: AdyenComponent): void;
+    /**
+     * Called in case of an invalid card number, invalid expiry date, or
+     *  incomplete field. Called again when errors are cleared.
+     */
+    onError?(state: AdyenComponentState, component: AdyenComponent): void;
+}
+
+declare type AdyenComponentState = (CardState | WechatState);
+
+declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -142,26 +131,11 @@ declare interface AdyenIdealComponentOptions {
     showImage?: boolean;
 }
 
-declare interface AdyenStyleOptions {
-    /**
-     * Base styling applied to the iframe. All styling extends from this style.
-     */
-    base?: CssProperties;
-    /**
-     * Styling applied when a field fails validation.
-     */
-    error?: CssProperties;
-    /**
-     * Styling applied to the field's placeholder values.
-     */
-    placeholder?: CssProperties;
-    /**
-     * Styling applied once a field passes validation.
-     */
-    validated?: CssProperties;
+declare interface AdyenPaymentMethodState {
+    type: string;
 }
 
-declare interface AdyenThreeDS2Options extends AdditionalActionCallbacks {
+declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
     /**
      * Specify Three3DS2Challenge Widget Size
      *
@@ -525,6 +499,10 @@ declare enum ButtonType {
     Short = "short"
 }
 
+declare interface CardDataPaymentMethodState {
+    paymentMethod: CardPaymentMethodState;
+}
+
 declare interface CardElementProps extends BaseProps {
     value?: string;
     hidePostalCode?: boolean;
@@ -540,6 +518,19 @@ declare interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+}
+
+declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName?: string;
+}
+
+declare interface CardState {
+    data: CardDataPaymentMethodState;
+    isValid?: boolean;
 }
 
 declare interface Cart {
@@ -658,6 +649,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * omitted unles you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Authorize.Net GooglePay.
+     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }
 
 declare class CheckoutButtonInitializer {
@@ -752,6 +748,7 @@ declare interface CheckoutButtonInitializerOptions {
 declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
@@ -2567,6 +2564,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepaybraintree?: GooglePayCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -3424,6 +3426,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     chasepay?: ChasePayInitializeOptions;
     /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
+    /**
      * The options that are required to initialize the GooglePay Braintree payment method.
      * They can be omitted unless you need to support GooglePay.
      */
@@ -3861,6 +3868,25 @@ declare interface StripeV3PaymentInitializeOptions {
     style?: StripeStyleProps;
 }
 
+declare interface StyleOptions {
+    /**
+     * Base styling applied to the iframe. All styling extends from this style.
+     */
+    base?: CssProperties;
+    /**
+     * Styling applied when a field fails validation.
+     */
+    error?: CssProperties;
+    /**
+     * Styling applied to the field's placeholder values.
+     */
+    placeholder?: CssProperties;
+    /**
+     * Styling applied once a field passes validation.
+     */
+    validated?: CssProperties;
+}
+
 declare interface SubInputDetail {
     /**
      * Configuration parameters for the required input.
@@ -3922,6 +3948,14 @@ declare interface VaultedInstrument {
     instrumentId: string;
     ccCvv?: string;
     ccNumber?: string;
+}
+
+declare interface WechatDataPaymentMethodState {
+    paymentMethod: AdyenPaymentMethodState;
+}
+
+declare interface WechatState {
+    data: WechatDataPaymentMethodState;
 }
 
 /**

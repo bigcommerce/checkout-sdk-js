@@ -3,7 +3,7 @@ import PaymentMethod from '../../payment-method';
 import { BraintreeModuleCreator, GooglePayBraintreeSDK } from '../braintree';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
-type TokenizeType = 'AndroidPayCard' | 'CreditCard';
+export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
 export interface GooglePayInitializer {
     initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV2>;
@@ -123,6 +123,21 @@ export enum ButtonColor {
     White = 'white',
 }
 
+export interface TokenizationSpecification {
+    type: string;
+    parameters: {
+        gateway: string;
+        gatewayMerchantId?: string;
+        'braintree:apiVersion'?: string;
+        'braintree:clientKey'?: string;
+        'braintree:merchantId'?: string;
+        'braintree:sdkVersion'?: string;
+        'braintree:authorizationFingerprint'?: string;
+        'stripe:version'?: string;
+        'stripe:publishableKey'?: string;
+    };
+}
+
 export interface GooglePayPaymentDataRequestV2 {
     apiVersion: number;
     apiVersionMinor: number;
@@ -143,23 +158,11 @@ export interface GooglePayPaymentDataRequestV2 {
                 phoneNumberRequired?: boolean;
             };
         };
-        tokenizationSpecification?: {
-            type: string;
-            parameters: {
-                gateway: string;
-                gatewayMerchantId?: string;
-                'braintree:apiVersion'?: string;
-                'braintree:clientKey'?: string;
-                'braintree:merchantId'?: string;
-                'braintree:sdkVersion'?: string;
-                'braintree:authorizationFingerprint'?: string;
-                'stripe:version'?: string;
-                'stripe:publishableKey'?: string;
-            };
-        };
+        tokenizationSpecification?: TokenizationSpecification;
     }];
     transactionInfo: {
         currencyCode: string;
+        countryCode?: string;
         totalPriceStatus: string;
         totalPrice?: string;
         checkoutOption?: string;

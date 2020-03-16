@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
- [AdditionalActionCallbacks](additionalactioncallbacks.md)
+ [AdyenAdditionalActionCallbacks](adyenadditionalactioncallbacks.md)
 
 **↳ AdyenAdditionalActionOptions**
 

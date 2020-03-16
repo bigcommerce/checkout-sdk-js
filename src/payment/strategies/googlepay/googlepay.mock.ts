@@ -114,8 +114,17 @@ export function getPaymentMethodMock(): PaymentMethod {
             platformToken: 'platformToken',
             googleMerchantId: '123',
             googleMerchantName: 'name',
+            paymentGatewayId: '7654321',
         },
     };
+}
+
+export function getPaymentMethodMockForAuthNet(): PaymentMethod {
+    const paymentMethodMock = getPaymentMethodMock();
+    paymentMethodMock.supportedCards = ['VISA', 'AMEX', 'MC'];
+    paymentMethodMock.initializationData.storeCountry = 'US';
+
+    return paymentMethodMock;
 }
 
 export function getGooglePaymentDataPayload() {
@@ -162,6 +171,13 @@ export function getGooglePaymentDataMock(): GooglePaymentData {
     };
 }
 
+export function getGooglePaymentDataMockForAuthNet(): GooglePaymentData {
+    const googlePaymentDataMock = getGooglePaymentDataMock();
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    return googlePaymentDataMock;
+}
+
 export function getGoogleOrderRequestBody(): OrderRequestBody {
     return {
         useStoreCredit: true,
@@ -204,6 +220,52 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
         },
+    };
+}
+
+export function getGooglePayAuthorizeNetPaymentDataRequestMock(): GooglePayPaymentDataRequestV2 {
+    return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
+                parameters: {
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: [
+                        'VISA',
+                        'AMEX',
+                        'MASTERCARD',
+                    ],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: 'FULL',
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'authorizenet',
+                        gatewayMerchantId: '7654321',
+                    },
+                },
+            },
+        ],
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '1.00',
+            currencyCode: 'USD',
+            countryCode: 'US',
+        },
+        merchantInfo: {
+            merchantName: 'name',
+            merchantId: '123',
+            authJwt: 'platformToken',
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: { phoneNumberRequired: true },
     };
 }
 
@@ -278,6 +340,17 @@ export function getGooglePayTokenizePayloadStripe(): TokenizePayload {
         details: {
             cardType: 'MasterCard',
             lastFour: '1234',
+        },
+    };
+}
+
+export function getGooglePayTokenizePayloadAuthNet(): TokenizePayload {
+    return {
+        type: 'CARD',
+        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
         },
     };
 }

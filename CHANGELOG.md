@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.56.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.55.2...v1.56.0) (2020-03-15)
+
+
+### Features
+
+* **payment:** INT-1104 Add GooglePay on Auth.net ([98d8090](https://github.com/bigcommerce/checkout-sdk-js/commit/98d8090))
+
+### [1.55.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.55.1...v1.55.2) (2020-03-14)
+
+### [1.55.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.55.0...v1.55.1) (2020-03-13)
+
+
+### Code Refactoring
+
+* **payment:** INT-2350 Style the object syntax in the test so it can easily be read ([46990e2](https://github.com/bigcommerce/checkout-sdk-js/commit/46990e2))
+* **payment:** INT-2350 Use createFromAction for every payment method ([d1a62e9](https://github.com/bigcommerce/checkout-sdk-js/commit/d1a62e9))
+
 ## [1.55.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.54.0...v1.55.0) (2020-03-04)
 
 

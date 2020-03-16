@@ -32,7 +32,7 @@ ___
 
 ### `<Optional>` styles
 
-**● styles**: *[AdyenStyleOptions](adyenstyleoptions.md)*
+**● styles**: *[StyleOptions](styleoptions.md)*
 
 Set a style object to customize the input fields. See Styling Secured Fields for a list of supported properties.
 

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdditionalActionCallbacks](../interfaces/additionalactioncallbacks.md)
+[@bigcommerce/checkout-sdk](../README.md) > [AdyenAdditionalActionCallbacks](../interfaces/adyenadditionalactioncallbacks.md)
 
-# AdditionalActionCallbacks
+# AdyenAdditionalActionCallbacks
 
 ## Hierarchy
 
-**AdditionalActionCallbacks**
+**AdyenAdditionalActionCallbacks**
 
 ↳  [AdyenAdditionalActionOptions](adyenadditionalactionoptions.md)
 
@@ -14,9 +14,9 @@
 
 ### Methods
 
-* [onBeforeLoad](additionalactioncallbacks.md#onbeforeload)
-* [onComplete](additionalactioncallbacks.md#oncomplete)
-* [onLoad](additionalactioncallbacks.md#onload)
+* [onBeforeLoad](adyenadditionalactioncallbacks.md#onbeforeload)
+* [onComplete](adyenadditionalactioncallbacks.md#oncomplete)
+* [onLoad](adyenadditionalactioncallbacks.md#onload)
 
 ---
 

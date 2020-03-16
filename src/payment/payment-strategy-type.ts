@@ -3,6 +3,7 @@ enum PaymentStrategyType {
     AFFIRM = 'affirm',
     AFTERPAY = 'afterpay',
     AMAZON = 'amazon',
+    AUTHORIZENET_GOOGLE_PAY = 'googlepayauthorizenet',
     BLUESNAPV2 = 'bluesnapv2',
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
