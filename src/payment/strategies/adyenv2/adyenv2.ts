@@ -776,5 +776,5 @@ export type AdyenComponentState = (
 );
 
 export default function isCardState(param: any): param is CardState {
-    return param && typeof param.data.paymentMethod.encryptedCardNumber === 'string';
+    return param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string';
 }
