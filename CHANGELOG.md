@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.56.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.56.0...v1.56.1) (2020-03-17)
+
+
+### Bug Fixes
+
+* **payment:** INT-2418 Use SecurityNumber to validate safeguard ([e9cadb4](https://github.com/bigcommerce/checkout-sdk-js/commit/e9cadb4))
+
 ## [1.56.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.55.2...v1.56.0) (2020-03-15)
 
 
