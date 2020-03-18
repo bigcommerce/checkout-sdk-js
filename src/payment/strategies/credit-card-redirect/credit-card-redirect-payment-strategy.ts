@@ -49,8 +49,9 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        return await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
-        .catch(error => {
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
+        } catch (error) {
             if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
                 return Promise.reject(error);
             }
@@ -60,7 +61,7 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                 TermUrl: error.body.three_ds_result.callback_url || null,
                 MD: error.body.three_ds_result.merchant_data || null,
             }));
-        });
+        }
     }
 
     protected async _executeWithHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors>  {
