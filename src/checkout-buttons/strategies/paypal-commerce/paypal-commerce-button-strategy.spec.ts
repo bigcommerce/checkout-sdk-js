@@ -8,7 +8,7 @@ import { from, of } from 'rxjs';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { INTERNAL_USE_ONLY } from '../../../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
@@ -206,7 +206,7 @@ describe('PaypalCommerceButtonStrategy', () => {
 
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': ContentType.Json,
         };
 
         expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommerce', expect.objectContaining({
