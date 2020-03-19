@@ -4,7 +4,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { INTERNAL_USE_ONLY } from '../../../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -106,15 +106,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _setupPayment(cart: Cart): Promise<string> {
         const cartId = cart.id;
         const url = '/api/storefront/payment/paypalcommerce';
+        const body = { cartId };
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': ContentType.Json,
         };
 
-        return this._requestSender.post(url, {
-                headers,
-                body: { cartId },
-            })
+        return this._requestSender.post(url, { headers, body })
             .then(res => res.body.orderId);
     }
 
