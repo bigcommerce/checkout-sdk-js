@@ -11,6 +11,7 @@ enum PaymentStrategyType {
     AMAZONPAYV2 = 'amazonpay',
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',
+    CHECKOUTCOM = 'checkoutcom',
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',
