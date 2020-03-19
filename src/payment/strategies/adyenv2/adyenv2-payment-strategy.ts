@@ -80,15 +80,17 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 }
 
                 if (paymentData && isVaultedInstrument(paymentData) && isCardState(componentState)) {
-                    const { encryptedCardNumber, encryptedSecurityCode } = componentState.data.paymentMethod;
+                    const { encryptedCardNumber, encryptedSecurityCode, encryptedExpiryMonth, encryptedExpiryYear } = componentState.data.paymentMethod;
 
                     return this._store.dispatch(this._paymentActionCreator.submitPayment({
                         ...payment,
                         paymentData: {
                             formattedPayload: {
                                 bigpay_token: {
-                                    credit_card_number_confirmation: encryptedCardNumber,
                                     token: paymentData.instrumentId,
+                                    credit_card_number_confirmation: encryptedCardNumber,
+                                    expiry_month: encryptedExpiryMonth,
+                                    expiry_year: encryptedExpiryYear,
                                     verification_value: encryptedSecurityCode,
                                 },
                                 browser_info: getBrowserInfo(),

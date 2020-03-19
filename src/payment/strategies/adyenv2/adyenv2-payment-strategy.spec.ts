@@ -235,6 +235,8 @@ describe('AdyenV2PaymentStrategy', () => {
                                 credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER',
                                 token: '123',
                                 verification_value: 'ENCRYPTED_CVV',
+                                expiry_month: 'ENCRYPTED_EXPIRY_MONTH',
+                                expiry_year: 'ENCRYPTED_EXPIRY_YEAR',
                             },
                             browser_info: {
                                 color_depth: 24,
