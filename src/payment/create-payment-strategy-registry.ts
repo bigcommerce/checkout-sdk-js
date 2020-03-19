@@ -30,6 +30,7 @@ import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
@@ -147,6 +148,16 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM, () =>
+        new CreditCardRedirectPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            formPoster
         )
     );
 
