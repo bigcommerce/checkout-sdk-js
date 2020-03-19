@@ -209,6 +209,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
         switch (paymentMethodName) {
             case AdyenPaymentMethodType.CreditCard:
+            case AdyenPaymentMethodType.ACH:
             case AdyenPaymentMethodType.Bancontact:
             case AdyenPaymentMethodType.GiroPay:
             case AdyenPaymentMethodType.iDEAL:
@@ -238,6 +239,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             case AdyenPaymentMethodType.AliPay:
             case AdyenPaymentMethodType.Sofort:
+            case AdyenPaymentMethodType.Vipps:
             case AdyenPaymentMethodType.WeChatPayQR:
                 this._updateComponentState({
                     data: {

@@ -31,13 +31,15 @@ export enum AdyenComponentType {
 }
 
 export enum AdyenPaymentMethodType {
+    ACH = 'ach',
     AliPay = 'alipay',
     Bancontact = 'bcmc',
-    iDEAL = 'ideal',
     CreditCard = 'scheme',
+    iDEAL = 'ideal',
     GiroPay = 'giropay',
     SEPA = 'sepadirectdebit',
     Sofort = 'directEbanking',
+    Vipps = 'vipps',
     WeChatPayQR = 'wechatpayQR',
 }
 
