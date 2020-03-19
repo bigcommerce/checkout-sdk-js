@@ -7,6 +7,7 @@ enum PaymentStrategyType {
     AUTHORIZENET_GOOGLE_PAY = 'googlepayauthorizenet',
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',
+    CHECKOUTCOM = 'checkoutcom',
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',

@@ -66,7 +66,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    protected _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const paymentData = payment && payment.paymentData;
 
@@ -80,7 +80,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             );
     }
 
-    private _executeWithHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors>  {
+    protected _executeWithHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors>  {
         const { payment, ...order } = payload;
         const form = this._hostedForm;
 
@@ -98,7 +98,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.dispatch(this._orderActionCreator.loadCurrentOrder()));
     }
 
-    private _isHostedPaymentFormEnabled(): boolean {
+    protected _isHostedPaymentFormEnabled(): boolean {
         const { config } = this._store.getState();
         const { checkoutSettings: { isHostedPaymentFormEnabled = false } = {} } = config.getStoreConfig() || {};
 
