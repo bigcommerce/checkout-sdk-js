@@ -3,7 +3,7 @@ import { round } from 'lodash';
 import { PaymentMethod } from '../..';
 import { Checkout } from '../../../checkout';
 
-import { GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizationSpecification, TokenizePayload, TokenizeType } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizationSpecification, TokenizePayload, TokenizeType } from './googlepay';
 
 const baseRequest = {
     apiVersion: 2,
@@ -109,7 +109,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
                 allowedCardNetworks: supportedCards.map(card => card === 'MC' ? 'MASTERCARD' : card),
                 billingAddressRequired: true,
                 billingAddressParameters: {
-                    format: 'FULL',
+                    format: BillingAddressFormat.Full,
                     phoneNumberRequired: true,
                 },
             },

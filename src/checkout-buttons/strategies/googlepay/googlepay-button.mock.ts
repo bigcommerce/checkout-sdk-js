@@ -18,6 +18,7 @@ export enum Mode {
     Full,
     UndefinedContainer,
     InvalidContainer,
+    GooglePayAdyenV2,
     GooglePayAuthorizeNet,
     GooglePayBraintree,
     GooglePayStripe,
@@ -28,6 +29,7 @@ export function getCheckoutButtonOptions(mode: Mode = Mode.Full): CheckoutButton
     const containerId = 'googlePayCheckoutButton';
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
+    const googlepayadyenv2 = { googlepayadyenv2: { buttonType: ButtonType.Short } };
     const googlepayauthorizenet = { googlepaybraintree: { buttonType: ButtonType.Short } };
     const googlepaybraintree = { googlepaybraintree: { buttonType: ButtonType.Short } };
     const googlepaystripe = { googlepaystripe: { buttonType: ButtonType.Short } };
@@ -38,6 +40,9 @@ export function getCheckoutButtonOptions(mode: Mode = Mode.Full): CheckoutButton
         }
         case Mode.InvalidContainer: {
             return { ...methodId, ...invalidContainerId };
+        }
+        case Mode.GooglePayAdyenV2: {
+            return { ...methodId, containerId, ...googlepayadyenv2 };
         }
         case Mode.GooglePayAuthorizeNet: {
             return { ...methodId, containerId, ...googlepayauthorizenet };

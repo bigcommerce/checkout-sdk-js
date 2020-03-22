@@ -10,7 +10,7 @@ import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
 import { GooglePayBraintreeSDK } from '../braintree';
 
-import { GooglePaymentData, GooglePayAddress, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayAddress, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
 import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
@@ -119,14 +119,6 @@ export function getPaymentMethodMock(): PaymentMethod {
     };
 }
 
-export function getPaymentMethodMockForAuthNet(): PaymentMethod {
-    const paymentMethodMock = getPaymentMethodMock();
-    paymentMethodMock.supportedCards = ['VISA', 'AMEX', 'MC'];
-    paymentMethodMock.initializationData.storeCountry = 'US';
-
-    return paymentMethodMock;
-}
-
 export function getGooglePaymentDataPayload() {
     return {
         cardRequirements: {
@@ -169,13 +161,6 @@ export function getGooglePaymentDataMock(): GooglePaymentData {
         },
         shippingAddress: getGooglePayAddressMock(),
     };
-}
-
-export function getGooglePaymentDataMockForAuthNet(): GooglePaymentData {
-    const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
-
-    return googlePaymentDataMock;
 }
 
 export function getGoogleOrderRequestBody(): OrderRequestBody {
@@ -223,7 +208,76 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
     };
 }
 
-export function getGooglePayAuthorizeNetPaymentDataRequestMock(): GooglePayPaymentDataRequestV2 {
+// AdyenV2
+export function getAdyenV2PaymentDataMock(): GooglePaymentData {
+    const googlePaymentDataMock = getGooglePaymentDataMock();
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    return googlePaymentDataMock;
+}
+
+export function getAdyenV2PaymentDataRequest(): GooglePayPaymentDataRequestV2 {
+    return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
+                parameters: {
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'adyen',
+                        gatewayMerchantId: '7654321',
+                    },
+                },
+            },
+        ],
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '1.00',
+            currencyCode: 'USD',
+        },
+        merchantInfo: {
+            merchantName: 'name',
+            merchantId: '123',
+            authJwt: 'platformToken',
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: { phoneNumberRequired: true },
+    };
+}
+
+export function getAdyenV2PaymentMethodMock(): PaymentMethod {
+    const paymentMethodMock = getPaymentMethodMock();
+    paymentMethodMock.supportedCards = ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'];
+    paymentMethodMock.initializationData.gatewayMerchantId = '7654321';
+
+    return paymentMethodMock;
+}
+
+export function getAdyenV2TokenizedPayload(): TokenizePayload {
+    return {
+        type: 'CARD',
+        nonce: '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
+        },
+    };
+}
+
+// Auth.Net
+export function getAuthorizeNetPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
     return {
         apiVersion: 2,
         apiVersionMinor: 0,
@@ -239,7 +293,7 @@ export function getGooglePayAuthorizeNetPaymentDataRequestMock(): GooglePayPayme
                     ],
                     billingAddressRequired: true,
                     billingAddressParameters: {
-                        format: 'FULL',
+                        format: BillingAddressFormat.Full,
                         phoneNumberRequired: true,
                     },
                 },
@@ -269,7 +323,34 @@ export function getGooglePayAuthorizeNetPaymentDataRequestMock(): GooglePayPayme
     };
 }
 
-export function getGooglePayStripePaymentDataRequestMock(): GooglePayPaymentDataRequestV2 {
+export function getAuthorizeNetPaymentDataMock(): GooglePaymentData {
+    const googlePaymentDataMock = getGooglePaymentDataMock();
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    return googlePaymentDataMock;
+}
+
+export function getAuthorizeNetPaymentMethodMock(): PaymentMethod {
+    const paymentMethodMock = getPaymentMethodMock();
+    paymentMethodMock.supportedCards = ['VISA', 'AMEX', 'MC'];
+    paymentMethodMock.initializationData.storeCountry = 'US';
+
+    return paymentMethodMock;
+}
+
+export function getAuthorizeNetTokenizedPayload(): TokenizePayload {
+    return {
+        type: 'CARD',
+        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
+        },
+    };
+}
+
+// Stripe
+export function getStripePaymentDataRequest(): GooglePayPaymentDataRequestV2 {
     return {
         apiVersion: 2,
         apiVersionMinor: 0,
@@ -285,7 +366,7 @@ export function getGooglePayStripePaymentDataRequestMock(): GooglePayPaymentData
                 allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
                 billingAddressRequired: true,
                 billingAddressParameters: {
-                    format: 'FULL',
+                    format: BillingAddressFormat.Full,
                     phoneNumberRequired: true,
                 },
             },
@@ -311,7 +392,7 @@ export function getGooglePayStripePaymentDataRequestMock(): GooglePayPaymentData
     };
 }
 
-export function getGooglePaymentStripeDataMock(): GooglePaymentData {
+export function getStripePaymentDataMock(): GooglePaymentData {
     return {
         apiVersion: 2,
         apiVersionMinor: 0,
@@ -333,24 +414,13 @@ export function getGooglePaymentStripeDataMock(): GooglePaymentData {
     };
 }
 
-export function getGooglePayTokenizePayloadStripe(): TokenizePayload {
+export function getStripeTokenizedPayload(): TokenizePayload {
     return {
         nonce: 'nonce',
         type: 'AndroidPayCard',
         details: {
             cardType: 'MasterCard',
             lastFour: '1234',
-        },
-    };
-}
-
-export function getGooglePayTokenizePayloadAuthNet(): TokenizePayload {
-    return {
-        type: 'CARD',
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
-        details: {
-            cardType: 'MASTERCARD',
-            lastFour: '0304',
         },
     };
 }

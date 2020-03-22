@@ -61,27 +61,22 @@ describe('GooglePayCustomerStrategy', () => {
             formPoster
         );
 
+        jest.spyOn(formPoster, 'postForm')
+            .mockReturnValue(Promise.resolve());
         jest.spyOn(store, 'dispatch')
             .mockReturnValue(Promise.resolve(store.getState()));
-
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+            .mockReturnValue(paymentMethod);
         jest.spyOn(paymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethod);
-
-        jest.spyOn(formPoster, 'postForm')
-            .mockReturnValue(Promise.resolve());
-
-        container = document.createElement('div');
-        container.setAttribute('id', 'googlePayCheckoutButton');
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
-
         jest.spyOn(paymentProcessor, 'createButton')
             .mockReturnValue(walletButton);
 
-        container.appendChild(walletButton);
+        container = document.createElement('div');
+        container.setAttribute('id', 'googlePayCheckoutButton');
         document.body.appendChild(container);
     });
 
@@ -94,9 +89,7 @@ describe('GooglePayCustomerStrategy', () => {
     });
 
     describe('#initialize()', () => {
-
         describe('Payment method exist', () => {
-
             it('Creates the button', async () => {
                 customerInitializeOptions = getStripeCustomerInitializeOptions();
 
@@ -105,82 +98,57 @@ describe('GooglePayCustomerStrategy', () => {
                 expect(paymentProcessor.createButton).toHaveBeenCalled();
             });
 
-            it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', async () => {
+            it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', () => {
                 customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.Incomplete);
 
-                try {
-                    await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
-                }
+                expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
             });
 
-            it('fails to initialize the strategy if no methodid is supplied', async () => {
+            it('fails to initialize the strategy if no methodid is supplied', () => {
                 customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.UndefinedMethodId);
 
-                try {
-                    await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
-                }
+                expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
             });
 
-            it('fails to initialize the strategy if no valid container id is supplied', async () => {
+            it('fails to initialize the strategy if no valid container id is supplied', () => {
                 customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.InvalidContainer);
 
-                try {
-                    await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
-                }
+                return expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
             });
         });
     });
 
     describe('#deinitialize()', () => {
-        let customerInitializeOptions: CustomerInitializeOptions;
+        let containerId: string;
 
-        beforeEach(() => {
+        beforeAll(() => {
             customerInitializeOptions = getStripeCustomerInitializeOptions();
+            containerId = customerInitializeOptions.googlepaystripe ?
+                customerInitializeOptions.googlepaystripe.container : '';
         });
 
-        it('succesfully deinitializes the strategy', async () => {
+        it('successfully deinitializes the strategy', async () => {
             await strategy.initialize(customerInitializeOptions);
 
-            strategy.deinitialize();
+            const button = document.getElementById(containerId);
 
-            if (customerInitializeOptions.googlepaystripe) {
-                const button = document.getElementById(customerInitializeOptions.googlepaystripe.container);
+            expect(button).toHaveProperty('firstChild', walletButton);
 
-                if (button) {
-                    expect(button.firstChild).toBe(null);
-                }
-            }
+            await strategy.deinitialize();
 
-            // Prevent "After Each" failure
-            container = document.createElement('div');
-            document.body.appendChild(container);
+            expect(button).toHaveProperty('firstChild', null);
         });
 
         it('Validates if strategy is loaded before call deinitialize', async () => {
             await strategy.deinitialize();
 
-            if (customerInitializeOptions.googlepaystripe) {
-                const button = document.getElementById(customerInitializeOptions.googlepaystripe.container);
+            const button = document.getElementById(containerId);
 
-                if (button) {
-                    expect(button.firstChild).toBe(null);
-                }
-            }
-
-            // Prevent "After Each" failure
-            container = document.createElement('div');
-            document.body.appendChild(container);
+            expect(button).toHaveProperty('firstChild', null);
         });
     });
 
     describe('#signIn()', () => {
-
         it('throws error if trying to sign in programmatically', async () => {
             customerInitializeOptions = getStripeCustomerInitializeOptions();
 
@@ -197,7 +165,7 @@ describe('GooglePayCustomerStrategy', () => {
             await strategy.initialize(customerInitializeOptions);
         });
 
-        it('throws error if trying to sign out programmatically', async () => {
+        it('successfully signs out', async () => {
             const paymentId = {
                 providerId: 'googlepaystripe',
             };
@@ -236,25 +204,21 @@ describe('GooglePayCustomerStrategy', () => {
     });
 
     describe('#handleWalletButtonClick', () => {
-        let googlePayOptions: CustomerInitializeOptions;
-
-        beforeEach(() => {
-            googlePayOptions = {
+        it('handles wallet button event', async () => {
+            customerInitializeOptions = {
                 methodId: 'googlepaystripe',
                 googlepaystripe: {
                     container: 'googlePayCheckoutButton',
                 },
             };
-        });
 
-        it('handles wallet button event', async () => {
             jest.spyOn(paymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(getGooglePaymentDataMock()));
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(Promise.resolve());
 
-            await strategy.initialize(googlePayOptions).then(() => {
-                walletButton.click();
-            });
+            await strategy.initialize(customerInitializeOptions);
+
+            walletButton.click();
 
             expect(paymentProcessor.initialize).toHaveBeenCalled();
         });

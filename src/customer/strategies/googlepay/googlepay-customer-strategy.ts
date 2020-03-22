@@ -80,6 +80,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _getGooglePayOptions(options: CustomerInitializeOptions): GooglePayCustomerInitializeOptions {
+        if (options.methodId === 'googlepayadyenv2' && options.googlepayadyenv2) {
+            return options.googlepayadyenv2;
+        }
+
         if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
             return options.googlepayauthorizenet;
         }
@@ -95,6 +99,25 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         throw new InvalidArgumentError();
     }
 
+    @bind
+    private _handleWalletButtonClick(event: Event): Promise<void> {
+        event.preventDefault();
+
+        return this._googlePayPaymentProcessor.displayWallet()
+            .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
+                .then(() => {
+                    if (paymentData.shippingAddress) {
+                        this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
+                    }
+                }))
+            .then(() => this._onPaymentSelectComplete())
+            .catch(error => {
+                if (error && error.message !== 'CANCELED') {
+                    throw error;
+                }
+            });
+    }
+
     private _onPaymentSelectComplete(): void {
         this._formPoster.postForm('/checkout.php', {
             headers: {
@@ -102,26 +125,5 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
         });
-    }
-
-    private _onError(error?: Error): void {
-        if (error && error.message !== 'CANCELED') {
-            throw error;
-        }
-    }
-
-    @bind
-    private _handleWalletButtonClick(event: Event): Promise<void> {
-        event.preventDefault();
-
-        return this._googlePayPaymentProcessor.displayWallet()
-            .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => {
-                if (paymentData.shippingAddress) {
-                    this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
-                }
-            }))
-            .then(() => this._onPaymentSelectComplete())
-            .catch(error => this._onError(error));
     }
 }

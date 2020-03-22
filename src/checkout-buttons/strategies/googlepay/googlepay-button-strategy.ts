@@ -71,13 +71,17 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
         return this._googlePayPaymentProcessor.displayWallet()
             .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => {
-                if (paymentData.shippingAddress) {
-                    this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
-                }
-            }))
+                .then(() => {
+                    if (paymentData.shippingAddress) {
+                        this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
+                    }
+                }))
             .then(() => this._onPaymentSelectComplete())
-            .catch(error => this._onError(error));
+            .catch(error => {
+                if (error && error.message !== 'CANCELED') {
+                    throw error;
+                }
+            });
     }
 
     private _onPaymentSelectComplete(): void {
@@ -87,11 +91,5 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
         });
-    }
-
-    private _onError(error?: Error): void {
-        if (error && error.message !== 'CANCELED') {
-            throw error;
-        }
     }
 }

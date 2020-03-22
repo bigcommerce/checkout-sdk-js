@@ -8,14 +8,14 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethod, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
-import { getAuthNetCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
+import { getAdyenV2CustomerInitializeOptions, Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
@@ -49,7 +49,7 @@ describe('GooglePayCustomerStrategy', () => {
 
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayAuthorizeNetInitializer()
+            new GooglePayAdyenV2Initializer()
         );
 
         formPoster = createFormPoster();
@@ -91,7 +91,7 @@ describe('GooglePayCustomerStrategy', () => {
     describe('#initialize()', () => {
         describe('Payment method exist', () => {
             it('Creates the button', async () => {
-                customerInitializeOptions = getAuthNetCustomerInitializeOptions();
+                customerInitializeOptions = getAdyenV2CustomerInitializeOptions();
 
                 await strategy.initialize(customerInitializeOptions);
 
@@ -99,19 +99,19 @@ describe('GooglePayCustomerStrategy', () => {
             });
 
             it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', () => {
-                customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.Incomplete);
+                customerInitializeOptions = getAdyenV2CustomerInitializeOptions(Mode.Incomplete);
 
                 expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
             });
 
             it('fails to initialize the strategy if no methodid is supplied', () => {
-                customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.UndefinedMethodId);
+                customerInitializeOptions = getAdyenV2CustomerInitializeOptions(Mode.UndefinedMethodId);
 
                 expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
             });
 
             it('fails to initialize the strategy if no valid container id is supplied', () => {
-                customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.InvalidContainer);
+                customerInitializeOptions = getAdyenV2CustomerInitializeOptions(Mode.InvalidContainer);
 
                 return expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
             });
@@ -122,9 +122,9 @@ describe('GooglePayCustomerStrategy', () => {
         let containerId: string;
 
         beforeAll(() => {
-            customerInitializeOptions = getAuthNetCustomerInitializeOptions();
-            containerId = customerInitializeOptions.googlepayauthorizenet ?
-                customerInitializeOptions.googlepayauthorizenet.container : '';
+            customerInitializeOptions = getAdyenV2CustomerInitializeOptions();
+            containerId = customerInitializeOptions.googlepayadyenv2 ?
+                customerInitializeOptions.googlepayadyenv2.container : '';
         });
 
         it('successfully deinitializes the strategy', async () => {
@@ -150,7 +150,7 @@ describe('GooglePayCustomerStrategy', () => {
 
     describe('#signIn()', () => {
         it('throws error if trying to sign in programmatically', async () => {
-            customerInitializeOptions = getAuthNetCustomerInitializeOptions();
+            customerInitializeOptions = getAdyenV2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
 
@@ -160,14 +160,14 @@ describe('GooglePayCustomerStrategy', () => {
 
     describe('#signOut()', () => {
         beforeEach(async () => {
-            customerInitializeOptions = getAuthNetCustomerInitializeOptions();
+            customerInitializeOptions = getAdyenV2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
         });
 
         it('successfully signs out', async () => {
             const paymentId = {
-                providerId: 'googlepayauthorizenet',
+                providerId: 'googlepayadyenv2',
             };
 
             jest.spyOn(store.getState().payment, 'getPaymentId')
@@ -177,12 +177,12 @@ describe('GooglePayCustomerStrategy', () => {
                 .mockReturnValue('data');
 
             const options = {
-                methodId: 'googlepayauthorizenet',
+                methodId: 'googlepayadyenv2',
             };
 
             await strategy.signOut(options);
 
-            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('googlepayauthorizenet', options);
+            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('googlepayadyenv2', options);
             expect(store.dispatch).toHaveBeenCalled();
         });
 
@@ -194,7 +194,7 @@ describe('GooglePayCustomerStrategy', () => {
                 .mockReturnValue(paymentId);
 
             const options = {
-                methodId: 'googlepayauthorizenet',
+                methodId: 'googlepayadyenv2',
             };
 
             await strategy.signOut(options);
@@ -206,8 +206,8 @@ describe('GooglePayCustomerStrategy', () => {
     describe('#handleWalletButtonClick', () => {
         it('handles wallet button event', async () => {
             customerInitializeOptions = {
-                methodId: 'googlepayauthorizenet',
-                googlepayauthorizenet: {
+                methodId: 'googlepayadyenv2',
+                googlepayadyenv2: {
                     container: 'googlePayCheckoutButton',
                 },
             };

@@ -1,6 +1,5 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
@@ -11,8 +10,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
@@ -51,11 +49,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayBraintreeInitializer(
-                new BraintreeSDKCreator(
-                    new BraintreeScriptLoader(createScriptLoader())
-                )
-            )
+            new GooglePayAdyenV2Initializer()
         );
 
         formPoster = createFormPoster();
@@ -131,7 +125,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         let containerId: string;
 
         beforeAll(() => {
-            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayAuthorizeNet);
+            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayAdyenV2);
             containerId = checkoutButtonOptions.containerId;
         });
 
@@ -162,7 +156,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
     describe('#handleWalletButtonClick', () => {
         it('handles wallet button event', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayAuthorizeNet);
+            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayAdyenV2);
 
             jest.spyOn(paymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(getGooglePaymentDataMock()));
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());

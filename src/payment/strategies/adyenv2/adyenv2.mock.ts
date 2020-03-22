@@ -5,7 +5,7 @@ import Payment from '../../payment';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import { getCreditCardInstrument, getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
-import { AdyenAdditionalActionErrorResponse, AdyenCheckout, AdyenComponentState, AdyenConfiguration, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
+import { AdyenAdditionalActionErrorResponse, AdyenClient, AdyenComponentState, AdyenConfiguration, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
 
 function getAdditionalActionErrorResponse(resultCode: ResultCode): AdyenAdditionalActionErrorResponse {
     return {
@@ -52,14 +52,7 @@ export function getAdditionalActionError(resultCode: ResultCode): RequestError {
     }));
 }
 
-export function getAdyenConfiguration(): AdyenConfiguration {
-    return {
-        environment: 'test',
-        originKey: 'YOUR_ORIGIN_KEY',
-    };
-}
-
-export function getAdyenCheckout(): AdyenCheckout {
+export function getAdyenClient(): AdyenClient {
     return {
         create: jest.fn(() => {
             return {
@@ -74,6 +67,13 @@ export function getAdyenCheckout(): AdyenCheckout {
                 unmount: jest.fn(),
             };
         }),
+    };
+}
+
+export function getAdyenConfiguration(): AdyenConfiguration {
+    return {
+        environment: 'test',
+        originKey: 'YOUR_ORIGIN_KEY',
     };
 }
 

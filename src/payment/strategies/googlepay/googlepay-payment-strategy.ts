@@ -7,6 +7,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
+import { AdyenPaymentMethodType } from '../adyenv2';
 import PaymentStrategy from '../payment-strategy';
 
 import { GooglePaymentData, PaymentMethodData } from './googlepay';
@@ -98,22 +99,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _paymentInstrumentSelected(paymentData: GooglePaymentData) {
-        if (!this._methodId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+    private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
+        if (options.methodId === 'googlepayadyenv2' && options.googlepayadyenv2) {
+            return options.googlepayadyenv2;
         }
 
-        const methodId = this._methodId;
-
-        // TODO: Revisit how we deal with GooglePaymentData after receiving it from Google
-        return this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => Promise.all([
-                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
-                this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
-            ]));
-    }
-
-    private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
         if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
             return options.googlepayauthorizenet;
         }
@@ -145,9 +135,20 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
+        let nonce;
+
+        if (this._methodId === 'googlepayadyenv2') {
+            nonce = {
+                type: AdyenPaymentMethodType.GooglePay,
+                googlePayToken: paymentMethod.initializationData.nonce,
+            };
+        } else {
+            nonce = paymentMethod.initializationData.nonce;
+        }
+
         const paymentData = {
             method: this._methodId,
-            nonce: paymentMethod.initializationData.nonce,
+            nonce: JSON.stringify(nonce),
             cardInformation: paymentMethod.initializationData.card_information,
         };
 
@@ -182,5 +183,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                     }
                 });
         }, { methodId }), { queueId: 'widgetInteraction' });
+    }
+
+    private async _paymentInstrumentSelected(paymentData: GooglePaymentData) {
+        if (!this._methodId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const methodId = this._methodId;
+
+        // TODO: Revisit how we deal with GooglePaymentData after receiving it from Google
+        await this._googlePayPaymentProcessor.handleSuccess(paymentData);
+
+        return await Promise.all([
+            this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
+            this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
+        ]);
     }
 }

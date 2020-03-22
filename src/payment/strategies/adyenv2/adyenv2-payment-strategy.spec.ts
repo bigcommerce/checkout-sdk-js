@@ -18,8 +18,8 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { AdyenAdditionalActionState, AdyenComponentState, AdyenError, AdyenPaymentMethodType, AdyenV2PaymentStrategy, AdyenV2ScriptLoader, ResultCode } from '.';
-import { AdyenCheckout, AdyenComponent } from './adyenv2';
-import { getAdditionalActionError, getAdyenCheckout, getAdyenError, getComponentState, getInitializeOptions, getInitializeOptionsWithNoCallbacks, getInitializeOptionsWithUndefinedWidgetSize, getOrderRequestBody, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithVaultedInstrument, getUnknownError } from './adyenv2.mock';
+import { AdyenComponent } from './adyenv2';
+import { getAdditionalActionError, getAdyenClient, getAdyenError, getComponentState, getInitializeOptions, getInitializeOptionsWithNoCallbacks, getInitializeOptionsWithUndefinedWidgetSize, getOrderRequestBody, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithVaultedInstrument, getUnknownError } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
@@ -78,7 +78,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
     describe('#Initializes & Executes', () => {
         let options: PaymentInitializeOptions;
-        const adyenCheckout: AdyenCheckout = getAdyenCheckout();
+        const adyenCheckout = getAdyenClient();
         let paymentComponent: AdyenComponent;
         let cardVerificationComponent: AdyenComponent;
 
@@ -135,15 +135,17 @@ describe('AdyenV2PaymentStrategy', () => {
             it('does not load adyen V2 if initialization options are not provided', () => {
                 options.adyenv2 = undefined;
 
-                expect(() => strategy.initialize(options))
-                    .toThrow(InvalidArgumentError);
+                const response = strategy.initialize(options);
+
+                return expect(response).rejects.toThrow(InvalidArgumentError);
             });
 
             it('does not load adyen V2 if paymentMethod is not provided', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
-                expect(() => strategy.initialize(options))
-                    .toThrow(MissingDataError);
+                const response = strategy.initialize(options);
+
+                return expect(response).rejects.toThrow(MissingDataError);
             });
 
             it('does not create adyen card verification component', async () => {
@@ -470,11 +472,11 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('deinitialize adyen payment strategy', async () => {
-            const adyenCheckout = getAdyenCheckout();
-            const adyenComponent = adyenCheckout.create('scheme', {});
+            const adyenClient = getAdyenClient();
+            const adyenComponent = adyenClient.create('scheme', {});
 
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-            jest.spyOn(adyenCheckout, 'create').mockReturnValue(adyenComponent);
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenClient, 'create').mockReturnValue(adyenComponent);
 
             await strategy.initialize(getInitializeOptions());
             const promise = strategy.deinitialize();

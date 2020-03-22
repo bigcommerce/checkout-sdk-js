@@ -1,38 +1,38 @@
 import GooglePayAuthorizeNetInitializer from './googlepay-authorizenet-initializer';
-import { getCheckoutMock, getGooglePaymentDataMockForAuthNet, getGooglePayAuthorizeNetPaymentDataRequestMock, getGooglePayTokenizePayloadAuthNet, getPaymentMethodMockForAuthNet } from './googlepay.mock';
+import { getAuthorizeNetPaymentDataMock,  getAuthorizeNetPaymentDataRequest,  getAuthorizeNetPaymentMethodMock, getAuthorizeNetTokenizedPayload, getCheckoutMock } from './googlepay.mock';
 
 describe('GooglePayAuthorizeNetInitializer', () => {
-    let googlePayAuthorizeNetInitializer: GooglePayAuthorizeNetInitializer;
+    let googlePayInitializer: GooglePayAuthorizeNetInitializer;
 
     beforeEach(() => {
-        googlePayAuthorizeNetInitializer = new GooglePayAuthorizeNetInitializer();
+        googlePayInitializer = new GooglePayAuthorizeNetInitializer();
     });
 
     it('creates an instance of GooglePayAuthorizeNetInitializer', () => {
-        expect(googlePayAuthorizeNetInitializer).toBeInstanceOf(GooglePayAuthorizeNetInitializer);
+        expect(googlePayInitializer).toBeInstanceOf(GooglePayAuthorizeNetInitializer);
     });
 
     describe('#initialize', () => {
         it('initializes the google pay configuration for authorize.net', async () => {
-            const initialize = await googlePayAuthorizeNetInitializer.initialize(
+            const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
-                getPaymentMethodMockForAuthNet(),
+                getAuthorizeNetPaymentMethodMock(),
                 false
             );
 
-            expect(initialize).toEqual(getGooglePayAuthorizeNetPaymentDataRequestMock());
+            expect(initialize).toEqual(getAuthorizeNetPaymentDataRequest());
         });
     });
 
     describe('#teardown', () => {
-        it('teardowns the initializer', () => expect(googlePayAuthorizeNetInitializer.teardown()).resolves.toBeUndefined());
+        it('teardown the initializer', () => expect(googlePayInitializer.teardown()).resolves.toBeUndefined());
     });
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', () => {
-            const tokenizePayload = googlePayAuthorizeNetInitializer.parseResponse(getGooglePaymentDataMockForAuthNet());
+            const tokenizePayload = googlePayInitializer.parseResponse(getAuthorizeNetPaymentDataMock());
 
-            expect(tokenizePayload).toEqual(getGooglePayTokenizePayloadAuthNet());
+            expect(tokenizePayload).toEqual(getAuthorizeNetTokenizedPayload());
         });
     });
 });
