@@ -10,7 +10,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -50,7 +50,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayAuthorizeNetInitializer()
+            new GooglePayAdyenV2Initializer()
         );
 
         formPoster = createFormPoster();
@@ -88,7 +88,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('Creates the button', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
@@ -96,7 +96,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         });
 
         it('Validates if strategy has been initialized', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
@@ -104,7 +104,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         });
 
         it('fails to initialize the strategy if no container id is supplied', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, Mode.UndefinedContainer);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.UndefinedContainer);
 
             try {
                 await strategy.initialize(checkoutButtonOptions);
@@ -114,7 +114,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         });
 
         it('fails to initialize the strategy if no valid container id is supplied', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, Mode.InvalidContainer);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.InvalidContainer);
 
             await expect(strategy.initialize(checkoutButtonOptions))
                 .rejects.toThrow(InvalidArgumentError);
@@ -125,7 +125,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         let containerId: string;
 
         beforeAll(() => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, Mode.GooglePayAuthorizeNet);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.GooglePayAdyenV2);
             containerId = checkoutButtonOptions.containerId;
         });
 
@@ -156,7 +156,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
     describe('#handleWalletButtonClick', () => {
         it('handles wallet button event', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, Mode.GooglePayAuthorizeNet);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.GooglePayAdyenV2);
 
             jest.spyOn(paymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(getGooglePaymentDataMock()));
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
@@ -166,7 +166,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
             await strategy.initialize(checkoutButtonOptions);
 
             walletButton.click();
-            expect(paymentProcessor.initialize).toHaveBeenCalledWith(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET);
+            expect(paymentProcessor.initialize).toHaveBeenCalledWith(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2);
         });
     });
 });

@@ -66,18 +66,21 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     @bind
-    private _handleWalletButtonClick(event: Event): Promise<void> {
+    private async _handleWalletButtonClick(event: Event): Promise<void> {
         event.preventDefault();
 
-        return this._googlePayPaymentProcessor.displayWallet()
-            .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => {
-                if (paymentData.shippingAddress) {
-                    this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
-                }
-            }))
-            .then(() => this._onPaymentSelectComplete())
-            .catch(error => this._onError(error));
+        try {
+            const paymentData = await this._googlePayPaymentProcessor.displayWallet();
+            await this._googlePayPaymentProcessor.handleSuccess(paymentData);
+            if (paymentData.shippingAddress) {
+                await this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
+            }
+            await this._onPaymentSelectComplete();
+        } catch (error) {
+            if (error && error.message !== 'CANCELED') {
+                throw error;
+            }
+        }
     }
 
     private _onPaymentSelectComplete(): void {
@@ -87,11 +90,5 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
         });
-    }
-
-    private _onError(error?: Error): void {
-        if (error && error.message !== 'CANCELED') {
-            throw error;
-        }
     }
 }

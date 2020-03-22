@@ -4,7 +4,7 @@ import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 
-import { GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 
 export default class GooglePayStripeInitializer implements GooglePayInitializer {
     initialize(
@@ -60,7 +60,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
                     allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
                     billingAddressRequired: true,
                     billingAddressParameters: {
-                        format: 'FULL',
+                        format: BillingAddressFormat.Full,
                         phoneNumberRequired: true,
                     },
                 },

@@ -6,7 +6,7 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
-import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 import { PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
@@ -58,6 +58,18 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             new MasterpassScriptLoader(scriptLoader)
         ));
+
+    registry.register(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, () =>
+        new GooglePayButtonStrategy(
+            store,
+            formPoster,
+            checkoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayAdyenV2Initializer()
+            )
+        )
+    );
 
     registry.register(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, () =>
         new GooglePayButtonStrategy(

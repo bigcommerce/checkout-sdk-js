@@ -7,6 +7,7 @@ import { Registry } from '../common/registry';
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
 import { BraintreePaypalButtonStrategy } from './strategies/braintree';
+import { GooglePayButtonStrategy } from './strategies/googlepay';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -21,5 +22,21 @@ describe('createCheckoutButtonRegistry', () => {
 
     it('returns registry with Braintree PayPal Credit registered', () => {
         expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Adyen Credit registered', () => {
+        expect(registry.get('googlepayadyenv2')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Authorize.Net Credit registered', () => {
+        expect(registry.get('googlepayauthorizenet')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Braintree Credit registered', () => {
+        expect(registry.get('googlepaybraintree')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Stripe Credit registered', () => {
+        expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 });

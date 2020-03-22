@@ -5,7 +5,7 @@ import { MissingDataError, MissingDataErrorType } from '../../../common/error/er
 import PaymentMethod from '../../payment-method';
 import { BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
 
-import { GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 import { GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
@@ -108,7 +108,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                     allowedCardNetworks: googlePayBraintreeDataRequestV1.cardRequirements.allowedCardNetworks,
                     billingAddressRequired: true,
                     billingAddressParameters: {
-                        format: 'FULL',
+                        format: BillingAddressFormat.Full,
                         phoneNumberRequired: true,
                     },
                 },

@@ -165,8 +165,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const methodId = this._methodId;
-
         const {
             onError = () => {},
             onPaymentSelect = () => {},
@@ -181,6 +179,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                         onError(error);
                     }
                 });
-        }, { methodId }), { queueId: 'widgetInteraction' });
+        }, { methodId: this._methodId }), { queueId: 'widgetInteraction' });
     }
 }

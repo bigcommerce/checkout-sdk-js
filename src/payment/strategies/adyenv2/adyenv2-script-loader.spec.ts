@@ -4,7 +4,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { AdyenHostWindow } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import { getAdyenCheckout, getAdyenConfiguration } from './adyenv2.mock';
+import { getAdyenClient, getAdyenConfiguration } from './adyenv2.mock';
 
 describe('AdyenV2ScriptLoader', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
@@ -20,7 +20,7 @@ describe('AdyenV2ScriptLoader', () => {
     });
 
     describe('#load()', () => {
-        const adyenClient = getAdyenCheckout();
+        const adyenClient = getAdyenClient();
         const configuration = getAdyenConfiguration();
         const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.6.0/adyen.js';
         const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.6.0/adyen.css';
@@ -60,16 +60,6 @@ describe('AdyenV2ScriptLoader', () => {
 
                 return Promise.resolve();
             });
-
-            try {
-                await adyenV2ScriptLoader.load(configuration);
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
-            }
-        });
-
-        it('throws an error when stylesheet is not loaded', async () => {
-            stylesheetLoader.loadStylesheet = jest.fn(() => Promise.reject());
 
             try {
                 await adyenV2ScriptLoader.load(configuration);
