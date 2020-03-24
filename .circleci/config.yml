@@ -19,27 +19,13 @@ version: 2.1
 orbs:
   ci: bigcommerce/internal@volatile
   node: bigcommerce/internal-node@volatile
-  checkout-sdk-js:
-    commands:
-      install_dependencies:
-        steps:
-          - restore_cache:
-              keys:
-                - checkout-sdk-js
-          - run:
-              name: "Install NPM dependencies"
-              command: npm ci
-          - save_cache:
-              key: checkout-sdk-js
-              paths:
-                - ~/.npm
 
 jobs:
   test:
     <<: *node_executor
     steps:
       - ci/pre-setup
-      - checkout-sdk-js/install_dependencies
+      - node/npm-install
       - run:
           name: "Run unit tests"
           command: npm run test:series -- --coverage
@@ -51,7 +37,7 @@ jobs:
     <<: *node_executor
     steps:
       - ci/pre-setup
-      - checkout-sdk-js/install_dependencies
+      - node/npm-install
       - run:
           name: "Run linter"
           command: npm run lint
@@ -77,7 +63,7 @@ jobs:
     <<: *node_executor
     steps:
       - ci/pre-setup
-      - checkout-sdk-js/install_dependencies
+      - node/npm-install
       - run:
           name: "Configure Git user"
           command: |
@@ -112,7 +98,7 @@ jobs:
     <<: *node_executor
     steps:
       - ci/pre-setup
-      - checkout-sdk-js/install_dependencies
+      - node/npm-install
       - attach_workspace:
           at: /tmp
       - run:
