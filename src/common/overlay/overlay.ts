@@ -1,36 +1,54 @@
+import getOverlayStyle from './overlay-style';
+
 export interface OverlayOptions {
     background?: string;
     id?: string;
     transitionDuration?: number;
+    hasCloseButton?: boolean;
+    innerHtml?: HTMLElement | DocumentFragment;
 }
 
 export interface OverlayShowOptions {
     onClick?(event: MouseEvent): void;
+    onClickClose?(event: MouseEvent): void;
+}
+
+export interface Elements {
+    element: HTMLElement;
+    mainElement: HTMLElement;
+    closeElement?: HTMLElement;
 }
 
 export default class Overlay {
     private _element: HTMLElement;
+    private _mainElement: HTMLElement;
+    private _closeElement?: HTMLElement;
     private _unregisterClick?: () => void;
 
     constructor(options?: OverlayOptions) {
-        this._element = this._createElement(options);
+        const { element, closeElement, mainElement } = this._createElements(options);
+
+        this._element = element;
+        this._closeElement = closeElement;
+        this._mainElement = mainElement;
     }
 
     show(options?: OverlayShowOptions): void {
-        if (this._element.parentElement) {
+
+        if (this._mainElement.parentElement) {
             return;
         }
 
         this._registerClick(options);
 
-        document.body.appendChild(this._element);
+        document.body.appendChild(this._mainElement);
 
         // Fade In
         setTimeout(() => this._element.style.opacity = '1');
     }
 
     remove(): void {
-        if (!this._element.parentElement) {
+        if (!this._mainElement.parentElement) {
             return;
         }
 
@@ -43,30 +61,66 @@ export default class Overlay {
         setTimeout(() => this._element.style.opacity = '0');
     }
 
-    private _createElement(options?: OverlayOptions): HTMLElement {
+    private _createElements(options?: OverlayOptions): Elements {
         const element = document.createElement('div');
         const {
             background = 'rgba(0, 0, 0, 0.8)',
-            id = null,
+            id = 'checkoutOverlay',
             transitionDuration = 400,
+            hasCloseButton,
+            innerHtml,
         } = options || {};
-
-        element.style.background = background;
-        element.style.display = 'block';
-        element.style.height = '100%';
-        element.style.left = '0px';
-        element.style.opacity = '0';
-        element.style.position = 'fixed';
-        element.style.top = '0px';
-        element.style.transition = `opacity ${transitionDuration}ms ease-out`;
-        element.style.width = '100%';
-        element.style.zIndex = '2147483647';
+        let mainElement = element;
+        let closeElement: HTMLElement | undefined;
+        let classLayout: string | undefined;
+        let classClose: string | undefined;
+        let classOverlayText: string | undefined;
 
         if (id) {
             element.id = id;
         }
 
-        return element;
+        if (innerHtml) {
+            const overlayText = document.createElement('div');
+            classOverlayText = `${id}--overlayText`;
+            overlayText.className = classOverlayText;
+            overlayText.appendChild(innerHtml);
+
+            element.appendChild(overlayText);
+        }
+
+        if (hasCloseButton) {
+            classClose = `${id}--close`;
+            closeElement = document.createElement('div');
+            closeElement.className =  classClose;
+
+            classLayout = `${id}--layout`;
+            mainElement = document.createElement('div');
+            mainElement.className = classLayout;
+
+            mainElement.appendChild(element);
+            mainElement.appendChild(closeElement);
+        }
+
+        mainElement.appendChild(getOverlayStyle({ id, background, transitionDuration, classLayout, classOverlayText, classClose }));
+
+        return { element, closeElement, mainElement };
+    }
+
+    private _addEventListener(element?: HTMLElement, onClick?: (event: MouseEvent) => void): void {
+        if (!element || !onClick) {
+           return;
+        }
+
+        element.addEventListener('click', onClick);
+    }
+
+    private _removeEventListener(element?: HTMLElement, onClick?: (event: MouseEvent) => void): void {
+        if (!element || !onClick) {
+            return;
+        }
+
+        element.removeEventListener('click', onClick);
     }
 
     private _registerClick(options?: OverlayShowOptions): void {
@@ -74,32 +128,34 @@ export default class Overlay {
             this._unregisterClick();
         }
 
-        if (options && options.onClick) {
-            const { onClick } = options;
+        if (options) {
+            const { onClick, onClickClose } = options;
 
-            this._element.addEventListener('click', onClick);
+            this._addEventListener(this._element, onClick);
+            this._addEventListener(this._closeElement, onClickClose);
 
             this._unregisterClick = () => {
-                this._element.removeEventListener('click', onClick);
+                this._removeEventListener(this._element, onClick);
+                this._removeEventListener(this._closeElement, onClickClose);
                 this._unregisterClick = undefined;
             };
         }
     }
 
     private _removeAfterTransition(): void {
-        const handeTransition: (event: Event) => void = event => {
+        const handleTransition: (event: Event) => void = event => {
             // NOTE: `event` is not correctly typed in this version of TS
             if ((event as TransitionEvent).propertyName !== 'opacity') {
                 return;
             }
 
-            if (this._element.parentElement) {
-                this._element.parentElement.removeChild(this._element);
+            if (this._mainElement.parentElement) {
+                this._mainElement.remove();
             }
 
-            this._element.removeEventListener('transitionend', handeTransition);
+            this._element.removeEventListener('transitionend', handleTransition);
         };
 
-        this._element.addEventListener('transitionend', handeTransition);
+        this._element.addEventListener('transitionend', handleTransition);
     }
 }

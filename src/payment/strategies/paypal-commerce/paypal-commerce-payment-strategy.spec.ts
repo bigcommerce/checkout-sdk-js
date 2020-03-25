@@ -1,4 +1,5 @@
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -16,7 +17,7 @@ import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import PaypalCommercePaymentStrategy from './paypal-commerce-payment-strategy';
+import { PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender } from './index';
 
 describe('PaypalCommercePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -27,11 +28,17 @@ describe('PaypalCommercePaymentStrategy', () => {
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
     let options: PaymentInitializeOptions;
+    let requestSender: RequestSender;
+    let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
+    let paypalCommerceRequestSender: PaypalCommerceRequestSender;
 
     beforeEach(() => {
         paymentMethod = { ...getPaypalCommerce() };
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        requestSender = createRequestSender();
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor();
+        paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
 
         store = createCheckoutStore(getCheckoutStoreState());
         options = { methodId: paymentMethod.id };
@@ -44,10 +51,17 @@ describe('PaypalCommercePaymentStrategy', () => {
         paymentActionCreator = {} as PaymentActionCreator;
         paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
 
+        paypalCommercePaymentProcessor.initialize = jest.fn();
+        paypalCommercePaymentProcessor.paymentPayPal = jest.fn(() => new Promise(resolve => resolve()));
+
+        paypalCommerceRequestSender.setupPayment = jest.fn(() => ({ orderId: 'orderId', approveUrl: 'approveUrl' }));
+
         paypalCommercePaymentStrategy = new PaypalCommercePaymentStrategy(
             store,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
+            paypalCommerceRequestSender,
+            paypalCommercePaymentProcessor
         );
     });
 
@@ -107,6 +121,19 @@ describe('PaypalCommercePaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
+        it('calls setupPayment and paymentPayPal without orderId (paypal) in paymentMethod', async () => {
+            paymentMethod.initializationData.orderId = null;
+
+            await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+            await paypalCommercePaymentStrategy.initialize(options);
+
+            await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
+
+            expect(paypalCommerceRequestSender.setupPayment).toHaveBeenCalled();
+            expect(paypalCommercePaymentProcessor.paymentPayPal).toHaveBeenCalled();
+        });
+
         it('throw error without payment data', async () => {
             orderRequestBody.payment = undefined;
 
@@ -121,20 +148,6 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         it('throw error with mistake in methodId', async () => {
             options.methodId = '';
-            await paypalCommercePaymentStrategy.initialize(options);
-
-            try {
-                await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
-            } catch (error) {
-                expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
-            }
-        });
-
-        it('throw error without orderId (paypal) in paymentMethod', async () => {
-            paymentMethod.initializationData.orderId = null;
-
-            await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-
             await paypalCommercePaymentStrategy.initialize(options);
 
             try {
