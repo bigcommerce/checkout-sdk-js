@@ -50,7 +50,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed because "payload.payment.gatewayId" argument is not provided.');
         }
 
-        return this._authorize(paymentPayload.methodId, gatewayId)
+        return this._authorize(paymentPayload.methodId)
             .then(({ authorization_token: authorizationToken }) => this._store.dispatch(
                 this._remoteCheckoutActionCreator.initializePayment(gatewayId, { authorizationToken })
             ))
@@ -58,9 +58,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
                 this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: paymentPayload,
-                    // Note: API currently doesn't support using Store Credit with Klarna.
-                    // To prevent deducting customer's store credit, set it as false.
-                    useStoreCredit: false,
+                    useStoreCredit: payload.useStoreCredit,
                 }, options)
             ));
     }
@@ -74,8 +72,14 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to load widget because "options.klarnav2" argument is not provided.');
         }
 
-        const { methodId, klarnav2: { container, onLoad } } = options;
+        const { methodId, gatewayId, klarnav2: { container, onLoad } } = options;
         const state = this._store.getState();
+
+        if (!gatewayId) {
+            throw new InvalidArgumentError('Unable to proceed because "payload.payment.gatewayId" argument is not provided.');
+        }
+
+        this._updateOrder(gatewayId);
 
         return new Promise<KlarnaLoadResponse>(resolve => {
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -137,7 +141,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
         await this._paymentMethodActionCreator.loadPaymentMethod(gatewayId).toPromise();
     }
 
-    private _authorize(methodId: string, gatewayId: string): Promise<KlarnaAuthorizationResponse> {
+    private _authorize(methodId: string): Promise<KlarnaAuthorizationResponse> {
         return new Promise<KlarnaAuthorizationResponse>((resolve, reject) => {
             const billingAddress = this._store.getState().billingAddress.getBillingAddress();
             const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
@@ -147,8 +151,6 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             }
 
             const updateSessionData = this._getUpdateSessionData(billingAddress, shippingAddress);
-
-            this._updateOrder(gatewayId);
 
             if (!this._klarnaPayments) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);

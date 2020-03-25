@@ -79,6 +79,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 methodId: paymentMethod.id,
                 gatewayId: paymentMethod.gateway,
             },
+            useStoreCredit: true,
         });
 
         loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
@@ -104,12 +105,12 @@ describe('KlarnaV2PaymentStrategy', () => {
         const onLoad = jest.fn();
 
         beforeEach(async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container', onLoad } });
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container', onLoad } });
         });
 
         it('throws InvalidArgumentError when klarnav2 is not provided',  async () => {
             const rejectedSpy = jest.fn();
-            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } }).catch(rejectedSpy);
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarna: { container: '#container', onLoad } }).catch(rejectedSpy);
             expect(rejectedSpy).toHaveBeenCalledWith(new InvalidArgumentError('Unable to load widget because "options.klarnav2" argument is not provided.'));
         });
 
@@ -131,7 +132,7 @@ describe('KlarnaV2PaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });
         });
 
         it('authorizes against klarnav2', () => {
@@ -156,7 +157,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
 
-            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });
             strategy.execute(payload);
 
             expect(klarnaPayments.authorize)
@@ -178,7 +179,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
 
-            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });
 
             strategy.execute(payload);
 
@@ -199,7 +200,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 scriptLoader
             );
 
-            strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });
 
             try {
                 await strategy.execute(payload);
@@ -215,7 +216,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 .toHaveBeenCalledWith('klarna', { authorizationToken: 'bar' });
 
             expect(orderActionCreator.submitOrder)
-                .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: false }, undefined);
+                .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: true }, undefined);
 
             expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
