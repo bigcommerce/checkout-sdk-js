@@ -12,7 +12,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import isCardState, { AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenCheckout, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenConfiguration, AdyenError, AdyenPaymentMethodType } from './adyenv2';
+import isCardState, { isAccountState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenCheckout, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenConfiguration, AdyenError, AdyenPaymentMethodType } from './adyenv2';
 import AdyenV2PaymentInitializeOptions from './adyenv2-initialize-options';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
@@ -79,24 +79,33 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
 
-                if (paymentData && isVaultedInstrument(paymentData) && isCardState(componentState)) {
-                    const { encryptedCardNumber, encryptedSecurityCode, encryptedExpiryMonth, encryptedExpiryYear } = componentState.data.paymentMethod;
+                if (paymentData && isVaultedInstrument(paymentData)) {
+                    let bigpayToken = {};
+                    if (isCardState(componentState)) {
+                        const { encryptedCardNumber, encryptedSecurityCode, encryptedExpiryMonth, encryptedExpiryYear } = componentState.data.paymentMethod;
 
-                    return this._store.dispatch(this._paymentActionCreator.submitPayment({
-                        ...payment,
-                        paymentData: {
-                            formattedPayload: {
-                                bigpay_token: {
-                                    token: paymentData.instrumentId,
-                                    credit_card_number_confirmation: encryptedCardNumber,
-                                    expiry_month: encryptedExpiryMonth,
-                                    expiry_year: encryptedExpiryYear,
-                                    verification_value: encryptedSecurityCode,
+                        bigpayToken = {
+                            credit_card_number_confirmation: encryptedCardNumber,
+                            expiry_month: encryptedExpiryMonth,
+                            expiry_year: encryptedExpiryYear,
+                            verification_value: encryptedSecurityCode,
+                        };
+                    }
+
+                    if (isCardState(componentState) || isAccountState(componentState)) {
+                        return this._store.dispatch(this._paymentActionCreator.submitPayment({
+                            ...payment,
+                            paymentData: {
+                                formattedPayload: {
+                                    bigpay_token: {
+                                        ...bigpayToken,
+                                        token: paymentData.instrumentId,
+                                    },
+                                    browser_info: getBrowserInfo(),
                                 },
-                                browser_info: getBrowserInfo(),
                             },
-                        },
-                    }));
+                        }));
+                    }
                 }
 
                 const paymentPayload = {

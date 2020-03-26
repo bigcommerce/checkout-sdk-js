@@ -13,6 +13,22 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'adyenv2',
         method: 'bcmc',
     },
+    'adyenv2.ideal': {
+        provider: 'adyenv2',
+        method: 'ideal',
+    },
+    'adyenv2.sepadirectdebit': {
+        provider: 'adyenv2',
+        method: 'sepadirectdebit',
+    },
+    'adyenv2.directEbanking': {
+        provider: 'adyenv2',
+        method: 'directEbanking',
+    },
+    'adyenv2.giropay': {
+        provider: 'adyenv2',
+        method: 'giropay',
+    },
     braintree: {
         provider: 'braintree',
         method: 'credit_card',

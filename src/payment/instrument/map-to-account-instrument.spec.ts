@@ -6,7 +6,7 @@ describe('mapToAccountInstrument', () => {
             bigpay_token: 'my-bigpay-token',
             trusted_shipping_address: true,
             provider: 'braintree',
-            method_type: 'paypal',
+            method_type: 'account',
             method: 'paypal',
             default_instrument: false,
             external_id: 'test@external-id.com',
