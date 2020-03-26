@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.57.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.56.2...v1.57.0) (2020-03-26)
+
+
+### Features
+
+* **payment:** INT-1710 Add support for ACH & Vipps on Adyen ([76a51ca](https://github.com/bigcommerce/checkout-sdk-js/commit/76a51ca))
+
 ### [1.56.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.56.1...v1.56.2) (2020-03-19)
 
 
