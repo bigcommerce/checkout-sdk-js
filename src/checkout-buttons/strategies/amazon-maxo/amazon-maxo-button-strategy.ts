@@ -5,7 +5,6 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy {
-    private _methodId?: string;
     private _walletButton?: HTMLElement;
 
     constructor(
@@ -14,20 +13,14 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
         private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
     ) { }
 
-    initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const { containerId, methodId } = options;
-
-        if (!containerId) {
-            throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
-        }
-
-        this._methodId = methodId;
-
-        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
-            .then(() => this._amazonMaxoPaymentProcessor.initialize(this._getMethodId()))
-            .then(() => {
-                this._walletButton = this._createSignInButton(containerId);
-            });
+    async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+            const { containerId, methodId } = options;
+            if (!containerId) {
+                throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
+            }
+            await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+            await this._amazonMaxoPaymentProcessor.initialize(methodId);
+            this._walletButton = this._createSignInButton(containerId, methodId);
     }
 
     deinitialize(): Promise<void> {
@@ -39,7 +32,7 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
         return Promise.resolve();
     }
 
-    private _createSignInButton(containerId: string): HTMLElement {
+    private _createSignInButton(containerId: string, methodId: string): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
 
         if (!container) {
@@ -47,7 +40,7 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
         }
 
         const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethod(this._getMethodId());
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
         const config = state.config.getStoreConfig();
 
@@ -86,20 +79,12 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
             productType: 'PayAndShip',
             createCheckoutSession: {
                 method: checkoutSessionMethod,
-                url: `${config.links.siteLink}/remote-checkout-token/${this._getMethodId()}`,
+                url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
             placement: AmazonMaxoPlacement.Cart,
         };
 
         return this._amazonMaxoPaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
-    }
-
-    private _getMethodId(): string {
-        if (!this._methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        return this._methodId;
     }
 }

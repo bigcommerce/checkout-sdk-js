@@ -78,13 +78,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
         document.body.removeChild(container);
     });
 
-    it('creates an instance of AmazonMaxoCustomerStrategy', () => {
-        expect(strategy).toBeInstanceOf(AmazonMaxoCustomerStrategy);
-    });
-
     describe('#initialize()', () => {
-
-        describe('Payment method exist', () => {
 
             it('Creates the button', async () => {
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
@@ -97,43 +91,42 @@ describe('AmazonMaxoCustomerStrategy', () => {
             it('fails to initialize the strategy if no AmazonMaxoCustomerInitializeOptions is provided ', async () => {
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.Incomplete);
 
-                await expect( () => strategy.initialize(customerInitializeOptions) ).toThrow(InvalidArgumentError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
             });
 
             it('fails to initialize the strategy if no methodid is supplied', async () => {
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.UndefinedMethodId);
 
-                await expect( () => strategy.initialize(customerInitializeOptions) ).toThrow(MissingDataError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
             });
 
             it('fails to create button if method is not assigned', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions) ).rejects.toThrow(MissingDataError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
             });
 
             it('fails to create button if config is not initialized', async () => {
                 jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions) ).rejects.toThrow(MissingDataError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
             });
 
             it('fails to create button if merchantId is not supplied', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getPaymentMethodMockUndefinedMerchant());
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions) ).rejects.toThrow(InvalidArgumentError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
             });
 
             it('fails to initialize the strategy if no valid container id is supplied', async () => {
                 customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.InvalidContainer);
 
-                await expect(strategy.initialize(customerInitializeOptions) ).rejects.toThrow(InvalidArgumentError);
+                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
 
             });
-        });
     });
 
     describe('#deinitialize()', () => {
@@ -145,15 +138,22 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
         it('succesfully deinitializes the strategy', async () => {
             await strategy.initialize(customerInitializeOptions);
-
             strategy.deinitialize();
-
             if (customerInitializeOptions.amazonmaxo) {
-                const button = document.getElementById(customerInitializeOptions.amazonmaxo.container);
+                // tslint:disable-next-line:no-non-null-assertion
+                const button = document.getElementById(customerInitializeOptions.amazonmaxo!.container);
+                // tslint:disable-next-line:no-non-null-assertion
+                expect(button!.firstChild).toBe(null);
+            }
+        });
 
-                if (button) {
-                    expect(button.firstChild).toBe(null);
-                }
+        it('run deinitializes without calling initialize', () => {
+            strategy.deinitialize();
+            if (customerInitializeOptions.amazonmaxo) {
+                // tslint:disable-next-line:no-non-null-assertion
+                const button = document.getElementById(customerInitializeOptions.amazonmaxo!.container);
+                // tslint:disable-next-line:no-non-null-assertion
+                expect(button!.firstChild).not.toBe(null);
             }
         });
     });

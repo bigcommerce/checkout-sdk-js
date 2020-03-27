@@ -92,7 +92,17 @@ describe('AmazonMaxoButtonStrategy', () => {
 
                 await strategy.initialize(checkoutButtonOptions);
 
-                expect(paymentProcessor.createButton).toHaveBeenCalled();
+                expect(paymentProcessor.createButton).toHaveBeenCalledWith(
+                    '#amazonmaxoCheckoutButton', {
+                        checkoutLanguage: 'en_US',
+                        createCheckoutSession: {url: 'https://store-k1drp8k8.bcapp.dev/remote-checkout/amazonmaxo/payment-session'},
+                        ledgerCurrency: 'USD',
+                        merchantId: 'checkout_amazonmaxo',
+                        placement: 'Cart',
+                        productType: 'PayAndShip',
+                        region: 'us',
+                        sandbox: true,
+                    });
             });
 
             it('fails to create button if not PaymentMethod is supplied', async () => {
@@ -116,11 +126,10 @@ describe('AmazonMaxoButtonStrategy', () => {
                 await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
             });
 
-            it('Validates if strategy has been initialized by spying on payment Processor initialize method', async () => {
+            it('initialises the payment processor once', async () => {
                 checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
 
                 await strategy.initialize(checkoutButtonOptions);
-
                 strategy.initialize(checkoutButtonOptions);
 
                 expect(paymentProcessor.initialize).toHaveBeenCalledTimes(1);
@@ -129,7 +138,7 @@ describe('AmazonMaxoButtonStrategy', () => {
             it('fails to initialize the strategy if not container id is supplied', async () => {
                 checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions(Mode.UndefinedContainer);
 
-                await expect(() => strategy.initialize(checkoutButtonOptions)).toThrow(InvalidArgumentError);
+                await expect( strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
             });
 
             it('fails to initialize the strategy if not a valid container id is supplied', async () => {
@@ -137,7 +146,6 @@ describe('AmazonMaxoButtonStrategy', () => {
 
                 await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
             });
-
         });
     });
 
@@ -167,5 +175,9 @@ describe('AmazonMaxoButtonStrategy', () => {
             }
         });
 
+        it('run deinitializes without calling initialize', async () => {
+
+            await expect(strategy.deinitialize()).resolves.toBe(undefined);
+        });
     });
 });

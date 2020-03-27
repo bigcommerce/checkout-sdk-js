@@ -57,6 +57,10 @@ describe('AmazonMaxoPaymentProcessor', () => {
             jest.spyOn(amazonMaxoScriptLoader, 'load').mockReturnValue(Promise.resolve(amazonMaxoSDK));
         });
 
+        it('creates an instance of AmazonMaxoPaymentProcessor', () => {
+            expect(processor).toBeInstanceOf(AmazonMaxoPaymentProcessor);
+        });
+
         it('initializes processor successfully', async () => {
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAmazonMaxo());

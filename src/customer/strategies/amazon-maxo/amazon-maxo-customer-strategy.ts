@@ -6,7 +6,6 @@ import { CustomerInitializeOptions, CustomerRequestOptions } from '../../custome
 import CustomerStrategy from '../customer-strategy';
 
 export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
-    private _methodId?: string;
     private _walletButton?: HTMLElement;
 
     constructor(
@@ -15,23 +14,18 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
         private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
     ) {}
 
-    initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonmaxo } = options;
-
         if (!amazonmaxo) {
             throw new InvalidArgumentError('Unable to proceed because "options.amazonmaxo" argument is not provided.');
         }
-
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+        await this._amazonMaxoPaymentProcessor.initialize(methodId);
+        this._walletButton =  this._createSignInButton(amazonmaxo.container, methodId);
 
-        this._methodId = methodId;
-
-        return this._amazonMaxoPaymentProcessor.initialize(methodId)
-            .then(() => { this._walletButton = this._createSignInButton(amazonmaxo.container);
-            })
-            .then(() => this._store.getState());
+        return this._store.getState();
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
@@ -62,22 +56,16 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    private _createSignInButton(containerId: string): HTMLElement {
+    private _createSignInButton(containerId: string, methodId: string): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
-        if (!this._methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
         const state = this._store.getState();
-        const paymentMethod =  state.paymentMethods.getPaymentMethod(this._methodId);
-
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
         const config = state.config.getStoreConfig();
-
         if (!config) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
@@ -101,7 +89,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
         } = paymentMethod;
 
         if (!merchantId) {
-            throw new InvalidArgumentError();
+            throw new InvalidArgumentError('Unable to create sign-in button without valid merchant ID.');
         }
 
         const amazonButtonOptions = {
@@ -113,7 +101,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
             productType: 'PayAndShip',
             createCheckoutSession: {
                 method: checkoutSessionMethod,
-                url: `${config.links.siteLink}/remote-checkout-token/${this._methodId}`,
+                url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
             placement: AmazonMaxoPlacement.Checkout,

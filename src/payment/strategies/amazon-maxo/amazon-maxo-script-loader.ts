@@ -11,21 +11,18 @@ export default class AmazonMaxoScriptLoader {
         private _window: AmazonMaxoHostWindow = window
     ) {}
 
-    load(method: PaymentMethod): Promise<AmazonMaxoSDK> {
+    async load(method: PaymentMethod): Promise<AmazonMaxoSDK> {
         const {
             initializationData: { region = 'us' } = {},
         } = method;
 
-        const amazonMaxoRegion = (AmazonMaxoRegions as any)[region];
+        const amazonMaxoRegion  = (AmazonMaxoRegions as any)[region];
 
-        return this._scriptLoader
-            .loadScript(`https://static-${amazonMaxoRegion}.payments-amazon.com/checkout.js`)
-            .then(() => {
-                if (!this._window.amazon) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
+        await this._scriptLoader.loadScript(`https://static-${amazonMaxoRegion}.payments-amazon.com/checkout.js`);
+        if (!this._window.amazon) {
+            throw new PaymentMethodClientUnavailableError();
+        }
 
-                return this._window.amazon;
-            });
+        return this._window.amazon;
     }
 }

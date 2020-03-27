@@ -47,7 +47,7 @@ export function getAmazonMaxoButtonParamsMock(): AmazonMaxoButtonParams {
     return {
         checkoutLanguage: 'en_US' as AmazonMaxoCheckoutLanguage,
         createCheckoutSession: {
-            url: 'https://my-dev-store.store.bcdev/remote-checkout-token/amazonmaxo',
+            url: 'https://my-dev-store.store.bcdev/remote-checkout/amazonmaxo/payment-session',
         },
         ledgerCurrency: 'USD' as AmazonMaxoLedgerCurrency,
         merchantId: 'checkout_amazonmaxo',

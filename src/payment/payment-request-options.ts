@@ -1,7 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
-import { AmazonMaxoPaymentInitializeOptions } from './strategies/amazon-maxo';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
@@ -24,7 +23,6 @@ export interface PaymentRequestOptions extends RequestOptions {
      * The identifier of the payment method.
      */
     methodId: string;
-
     /**
      * The identifier of the payment provider providing the payment method. This
      * option is only required if the provider offers multiple payment options.
@@ -57,12 +55,6 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * method. They can be omitted unless you need to support AmazonPay.
      */
     amazon?: AmazonPayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the AmazonMaxo payment
-     * method. They can be omitted unless you need to support AmazonMaxo.
-     */
-    amazonmaxo?: AmazonMaxoPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the BlueSnapV2 payment method.
