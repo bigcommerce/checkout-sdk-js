@@ -30,7 +30,7 @@ describe('PaypalCommerceScriptLoader', () => {
         const options: PaypalCommerceScriptOptions = {
             clientId: 'aaa',
             currency: 'EUR',
-            disableFunding: 'credit',
+            disableFunding: ['credit', 'card'],
             intent: 'capture',
         };
 
@@ -39,7 +39,7 @@ describe('PaypalCommerceScriptLoader', () => {
                 .mockImplementation((url: string) => {
                     (window as PaypalCommerceHostWindow).paypal = paypal;
 
-                    ['client-id=aaa', 'currency=EUR', 'disable-funding=credit', 'intent=capture' ].forEach(str => {
+                    ['client-id=aaa', 'currency=EUR', 'disable-funding=credit,card', 'intent=capture'].forEach(str => {
                         expect(url).toEqual(expect.stringContaining(str));
                     });
 

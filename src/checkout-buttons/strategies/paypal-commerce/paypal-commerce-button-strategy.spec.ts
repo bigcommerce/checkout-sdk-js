@@ -8,11 +8,10 @@ import { from, of } from 'rxjs';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
-import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
+import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -30,6 +29,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     let options: CheckoutButtonInitializeOptions;
     let eventEmitter: EventEmitter;
     let strategy: PaypalCommerceButtonStrategy;
+    let paypalCommerceRequestSender: PaypalCommerceRequestSender;
     let requestSender: RequestSender;
     let paymentMethod: PaymentMethod;
     let render: () => void;
@@ -38,6 +38,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
+        paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
         paymentMethod = { ...getPaypalCommerce() };
 
         checkoutActionCreator = new CheckoutActionCreator(
@@ -91,10 +92,13 @@ describe('PaypalCommerceButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
             .mockReturnValue(Promise.resolve(paypal));
 
+        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+            .mockReturnValue(Promise.resolve(paypal));
+
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
-        jest.spyOn(requestSender, 'post')
+        jest.spyOn(paypalCommerceRequestSender, 'setupPayment')
             .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({body: '123'})));
 
         strategy = new PaypalCommerceButtonStrategy(
@@ -102,7 +106,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             checkoutActionCreator,
             paypalScriptLoader,
             formPoster,
-            requestSender
+            paypalCommerceRequestSender
         );
 
     });
@@ -152,7 +156,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                     commit: false,
                     currency: 'USD',
                     intent: 'capture',
-                    disableFunding: 'credit',
+                    disableFunding: ['card', 'credit'],
                 };
 
                 expect(options).toMatchObject(obj);
@@ -172,7 +176,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             .mockImplementation((options: PaypalCommerceScriptOptions) => {
                 (window as PaypalCommerceHostWindow).paypal = paypal;
 
-                const obj = { disableFunding: 'credit' };
+                const obj = { disableFunding: ['credit'] };
 
                 expect(options).not.toMatchObject(obj);
 
@@ -204,15 +208,8 @@ describe('PaypalCommerceButtonStrategy', () => {
 
         await new Promise(resolve => process.nextTick(resolve));
 
-        const headers = {
-            'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            'Content-Type': ContentType.Json,
-        };
-
-        expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommerce', expect.objectContaining({
-            body: {cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7'},
-            headers,
-        }));
+        expect(paypalCommerceRequestSender.setupPayment)
+            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
@@ -317,7 +314,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 checkoutActionCreator,
                 paypalScriptLoader,
                 formPoster,
-                requestSender
+                paypalCommerceRequestSender
             );
 
             try {
@@ -335,7 +332,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                     checkoutActionCreator,
                     paypalScriptLoader,
                     formPoster,
-                    requestSender
+                    paypalCommerceRequestSender
                 );
 
                 options = {
@@ -360,7 +357,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 checkoutActionCreator,
                 paypalScriptLoader,
                 formPoster,
-                requestSender
+                paypalCommerceRequestSender
             );
             const checkout = getCheckout();
             delete checkout.cart;
