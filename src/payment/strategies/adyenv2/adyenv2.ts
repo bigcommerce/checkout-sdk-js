@@ -31,13 +31,15 @@ export enum AdyenComponentType {
 }
 
 export enum AdyenPaymentMethodType {
+    ACH = 'ach',
     AliPay = 'alipay',
     Bancontact = 'bcmc',
-    iDEAL = 'ideal',
     CreditCard = 'scheme',
+    iDEAL = 'ideal',
     GiroPay = 'giropay',
     SEPA = 'sepadirectdebit',
     Sofort = 'directEbanking',
+    Vipps = 'vipps',
     WeChatPayQR = 'wechatpayQR',
 }
 
@@ -776,5 +778,6 @@ export type AdyenComponentState = (
 );
 
 export default function isCardState(param: any): param is CardState {
-    return param && typeof param.data.paymentMethod.encryptedCardNumber === 'string';
+    return param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string' ||
+        typeof param.data.paymentMethod.encryptedExpiryMonth === 'string';
 }
