@@ -17,6 +17,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
+import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -60,7 +61,8 @@ export default class CheckoutService {
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
-        private _storeCreditActionCreator: StoreCreditActionCreator
+        private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _subscriptionsActionCreator: SubscriptionsActionCreator
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -516,6 +518,19 @@ export default class CheckoutService {
         const action = this._customerStrategyActionCreator.deinitialize(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
+    }
+
+    /**
+     * Updates the subscriptions associated to an email.
+     *
+     * @param subscriptions - The email and associated subscriptions to update.
+     * @param options - Options for continuing as a guest.
+     * @returns A promise that resolves to the current state.
+     */
+    updateSubscriptions(subscriptions: Subscriptions, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._subscriptionsActionCreator.updateSubscriptions(subscriptions, options);
+
+        return this._dispatch(action, { queueId: 'subscriptions' });
     }
 
     /**

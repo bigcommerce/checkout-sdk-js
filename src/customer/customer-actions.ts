@@ -2,7 +2,6 @@ import { Action } from '@bigcommerce/data-store';
 
 import { LoadCheckoutAction } from '../checkout';
 
-import { CurrentCustomer } from './customer';
 import { InternalCustomerResponseData } from './internal-customer-responses';
 
 export enum CustomerActionType {
@@ -13,14 +12,9 @@ export enum CustomerActionType {
     SignOutCustomerRequested = 'SIGN_OUT_CUSTOMER_REQUESTED',
     SignOutCustomerSucceeded = 'SIGN_OUT_CUSTOMER_SUCCEEDED',
     SignOutCustomerFailed = 'SIGN_OUT_CUSTOMER_FAILED',
-
-    UpdateCustomerRequested = 'UPDATE_CUSTOMER_REQUESTED',
-    UpdateCustomerSucceeded = 'UPDATE_CUSTOMER_SUCCEEDED',
-    UpdateCustomerFailed = 'UPDATE_CUSTOMER_FAILED',
 }
 
 export type CustomerAction =
-    UpdateCustomerAction |
     SignInCustomerAction |
     SignOutCustomerAction;
 
@@ -35,11 +29,6 @@ export type SignOutCustomerAction =
     SignOutCustomerSucceededAction |
     SignOutCustomerFailedAction |
     LoadCheckoutAction;
-
-export type UpdateCustomerAction =
-    UpdateCustomerRequestedAction |
-    UpdateCustomerSucceededAction |
-    UpdateCustomerFailedAction;
 
 export interface SignInCustomerRequestedAction extends Action {
     type: CustomerActionType.SignInCustomerRequested;
@@ -63,16 +52,4 @@ export interface SignOutCustomerSucceededAction extends Action<InternalCustomerR
 
 export interface SignOutCustomerFailedAction extends Action<Error> {
     type: CustomerActionType.SignOutCustomerFailed;
-}
-
-export interface UpdateCustomerRequestedAction extends Action {
-    type: CustomerActionType.UpdateCustomerRequested;
-}
-
-export interface UpdateCustomerSucceededAction extends Action<CurrentCustomer> {
-    type: CustomerActionType.UpdateCustomerSucceeded;
-}
-
-export interface UpdateCustomerFailedAction extends Action<Error> {
-    type: CustomerActionType.UpdateCustomerFailed;
 }

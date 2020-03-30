@@ -11,7 +11,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -30,6 +30,7 @@ import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -42,7 +43,6 @@ import createCheckoutStore from './create-checkout-store';
 describe('CheckoutService', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
-    let customerRequestSender: CustomerRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
     let instrumentRequestSender: InstrumentRequestSender;
     let countryRequestSender: CountryRequestSender;
@@ -67,6 +67,8 @@ describe('CheckoutService', () => {
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
+    let subscriptionsRequestSender: SubscriptionsRequestSender;
+    let subscriptionsActionCreator: SubscriptionsActionCreator;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
     let storeCreditRequestSender: StoreCreditRequestSender;
@@ -93,7 +95,10 @@ describe('CheckoutService', () => {
             .mockResolvedValue(getResponse(getCountriesResponseBody()));
 
         billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
-        customerRequestSender = new CustomerRequestSender(requestSender);
+        subscriptionsRequestSender = new SubscriptionsRequestSender(requestSender);
+        subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender);
+
+        jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockResolvedValue(getResponse({}));
 
         jest.spyOn(billingAddressRequestSender, 'updateAddress')
             .mockResolvedValue(getResponse(merge({}, getCheckout(), {
@@ -178,7 +183,7 @@ describe('CheckoutService', () => {
 
         billingAddressActionCreator = new BillingAddressActionCreator(
             billingAddressRequestSender,
-            customerRequestSender
+            subscriptionsActionCreator
         );
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
@@ -235,7 +240,8 @@ describe('CheckoutService', () => {
             new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator,
             spamProtectionActionCreator,
-            new StoreCreditActionCreator(storeCreditRequestSender)
+            new StoreCreditActionCreator(storeCreditRequestSender),
+            subscriptionsActionCreator
         );
     });
 
@@ -365,6 +371,26 @@ describe('CheckoutService', () => {
             const state = await checkoutService.loadCheckout();
 
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#updateSubscriptions()', () => {
+        it('updates subscriptions', async () => {
+            const state = await checkoutService.updateSubscriptions({
+                email: 'foo@bar.com',
+                acceptsAbandonedCartEmails: true,
+                acceptsMarketingNewsletter: false,
+            });
+
+            expect(subscriptionsRequestSender.updateSubscriptions)
+                .toHaveBeenCalledWith({
+                    email: 'foo@bar.com',
+                    acceptsAbandonedCartEmails: true,
+                    acceptsMarketingNewsletter: false,
+                 }, undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
         });
     });
 

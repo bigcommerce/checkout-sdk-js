@@ -7,23 +7,24 @@ import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { CustomerAction, CustomerActionType, CustomerRequestSender, GuestCredentials } from '../customer';
+import { GuestCredentials } from '../customer';
+import { SubscriptionsActionCreator, UpdateSubscriptionsAction } from '../subscription';
 
 import { BillingAddressRequestSender } from '.';
 import { BillingAddressUpdateRequestBody } from './billing-address';
 import { BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
-import { UnableToContinueAsGuestError, UpdateCustomerError } from './errors';
+import { UnableToContinueAsGuestError } from './errors';
 
 export default class BillingAddressActionCreator {
     constructor(
         private _requestSender: BillingAddressRequestSender,
-        private _customerRequestSender: CustomerRequestSender
+        private _subscriptionActionCreator: SubscriptionsActionCreator
     ) {}
 
     continueAsGuest(
         credentials: GuestCredentials,
         options?: RequestOptions
-    ): ThunkAction<ContinueAsGuestAction | CustomerAction, InternalCheckoutSelectors> {
+    ): ThunkAction<ContinueAsGuestAction | UpdateSubscriptionsAction, InternalCheckoutSelectors> {
         return store => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
@@ -120,27 +121,16 @@ export default class BillingAddressActionCreator {
             marketingEmailConsent,
         }: GuestCredentials,
         options?: RequestOptions
-    ): Observable<CustomerAction> {
+    ): Observable<UpdateSubscriptionsAction> {
         if (marketingEmailConsent === undefined || marketingEmailConsent === null) {
             return empty();
         }
 
-        return concat(
-            of(createAction(CustomerActionType.UpdateCustomerRequested)),
-            defer(async () => {
-                const { body } = await this._customerRequestSender.updateCustomer({
-                    email,
-                    acceptsMarketing: marketingEmailConsent,
-                }, options);
-
-                return createAction(CustomerActionType.UpdateCustomerSucceeded, body);
-            })
-        ).pipe(
-            catchError(error => throwErrorAction(
-                CustomerActionType.UpdateCustomerFailed,
-                new UpdateCustomerError(error)
-            ))
-        );
+        return this._subscriptionActionCreator.updateSubscriptions({
+            email,
+            acceptsMarketingNewsletter: marketingEmailConsent,
+            acceptsAbandonedCartEmails: marketingEmailConsent,
+        }, options);
     }
 
     private _createOrUpdateBillingAddress(

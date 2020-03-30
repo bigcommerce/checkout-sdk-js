@@ -3,8 +3,8 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectSet, replace } from '../common/utility';
-import { CustomerActionType, UpdateCustomerAction } from '../customer';
 import { OrderAction, OrderActionType } from '../order';
+import { SubscriptionsActionType, UpdateSubscriptionsAction } from '../subscription';
 
 import BillingAddress from './billing-address';
 import { BillingAddressAction, BillingAddressActionType } from './billing-address-actions';
@@ -41,7 +41,7 @@ function dataReducer(
 
 function errorsReducer(
     errors: BillingAddressErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateCustomerAction
+    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateSubscriptionsAction
 ): BillingAddressErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -58,13 +58,13 @@ function errorsReducer(
     case BillingAddressActionType.UpdateBillingAddressFailed:
         return objectSet(errors, 'updateError', action.payload);
 
-    case CustomerActionType.UpdateCustomerRequested:
-    case CustomerActionType.UpdateCustomerSucceeded:
+    case SubscriptionsActionType.UpdateSubscriptionsRequested:
+    case SubscriptionsActionType.UpdateSubscriptionsSucceeded:
     case BillingAddressActionType.ContinueAsGuestRequested:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
         return objectSet(errors, 'continueAsGuestError', undefined);
 
-    case CustomerActionType.UpdateCustomerFailed:
+    case SubscriptionsActionType.UpdateSubscriptionsFailed:
     case BillingAddressActionType.ContinueAsGuestFailed:
         return objectSet(errors, 'continueAsGuestError', action.payload);
 
@@ -75,7 +75,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: BillingAddressStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateCustomerAction
+    action: CheckoutAction | BillingAddressAction | OrderAction | UpdateSubscriptionsAction
 ): BillingAddressStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -93,11 +93,11 @@ function statusesReducer(
         return objectSet(statuses, 'isUpdating', false);
 
     case BillingAddressActionType.ContinueAsGuestRequested:
-    case CustomerActionType.UpdateCustomerRequested:
+    case SubscriptionsActionType.UpdateSubscriptionsRequested:
         return objectSet(statuses, 'isContinuingAsGuest', true);
 
-    case CustomerActionType.UpdateCustomerSucceeded:
-    case CustomerActionType.UpdateCustomerFailed:
+    case SubscriptionsActionType.UpdateSubscriptionsSucceeded:
+    case SubscriptionsActionType.UpdateSubscriptionsFailed:
     case BillingAddressActionType.ContinueAsGuestFailed:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
         return objectSet(statuses, 'isContinuingAsGuest', false);

@@ -21,11 +21,3 @@ export interface CustomerGroup  {
     id: number;
     name: string;
 }
-
-// todo: Eventually we should
-// (1) Merge CurrentCustomer with Customer (once done in API first);
-// (2) Rename `Customer` to `CheckoutCustomer` (breaking change)
-export interface CurrentCustomer {
-    email: string;
-    acceptsMarketing: boolean;
-}
