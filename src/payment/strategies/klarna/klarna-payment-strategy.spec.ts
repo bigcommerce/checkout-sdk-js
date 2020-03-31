@@ -75,6 +75,7 @@ describe('KlarnaPaymentStrategy', () => {
                 methodId: paymentMethod.id,
                 gatewayId: paymentMethod.gateway,
             },
+            useStoreCredit: true,
         });
 
         loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
@@ -214,7 +215,7 @@ describe('KlarnaPaymentStrategy', () => {
                 .toHaveBeenCalledWith('klarna', { authorizationToken: 'bar' });
 
             expect(orderActionCreator.submitOrder)
-                .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: false }, undefined);
+                .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: true }, undefined);
 
             expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
