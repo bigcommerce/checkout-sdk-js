@@ -80,53 +80,52 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
     describe('#initialize()', () => {
 
-            it('Creates the button', async () => {
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+        it('Creates the button', async () => {
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await strategy.initialize(customerInitializeOptions);
+            await strategy.initialize(customerInitializeOptions);
 
-                expect(paymentProcessor.createButton).toHaveBeenCalled();
-            });
+            expect(paymentProcessor.createButton).toHaveBeenCalled();
+        });
 
-            it('fails to initialize the strategy if no AmazonMaxoCustomerInitializeOptions is provided ', async () => {
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.Incomplete);
+        it('fails to initialize the strategy if no AmazonMaxoCustomerInitializeOptions is provided ', async () => {
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.Incomplete);
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
+        });
 
-            it('fails to initialize the strategy if no methodid is supplied', async () => {
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.UndefinedMethodId);
+        it('fails to initialize the strategy if no methodid is supplied', async () => {
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.UndefinedMethodId);
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
+        });
 
-            it('fails to create button if method is not assigned', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+        it('fails to create button if method is not assigned', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
+        });
 
-            it('fails to create button if config is not initialized', async () => {
-                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+        it('fails to create button if config is not initialized', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
+        });
 
-            it('fails to create button if merchantId is not supplied', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getPaymentMethodMockUndefinedMerchant());
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+        it('fails to create button if merchantId is not supplied', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getPaymentMethodMockUndefinedMerchant());
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
+        });
 
-            it('fails to initialize the strategy if no valid container id is supplied', async () => {
-                customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.InvalidContainer);
+        it('fails to initialize the strategy if no valid container id is supplied', async () => {
+            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.InvalidContainer);
 
-                await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
-
-            });
+            await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
+        });
     });
 
     describe('#deinitialize()', () => {
@@ -212,5 +211,4 @@ describe('AmazonMaxoCustomerStrategy', () => {
             expect(store.getState).toHaveBeenCalledTimes(3);
         });
     });
-
 });

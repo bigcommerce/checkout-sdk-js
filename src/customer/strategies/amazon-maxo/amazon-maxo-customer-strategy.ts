@@ -23,7 +23,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
         await this._amazonMaxoPaymentProcessor.initialize(methodId);
-        this._walletButton =  this._createSignInButton(amazonmaxo.container, methodId);
+        this._walletButton = this._createSignInButton(amazonmaxo.container, methodId);
 
         return this._store.getState();
     }

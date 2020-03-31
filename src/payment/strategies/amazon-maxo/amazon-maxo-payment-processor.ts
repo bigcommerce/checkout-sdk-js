@@ -29,22 +29,17 @@ export default class AmazonMaxoPaymentProcessor {
         return this._amazonMaxoSDK.Pay.renderButton(containerId, params);
     }
 
-    private _configureWallet(): Promise<void> {
+    private async _configureWallet(): Promise<void> {
         const methodId = this._getMethodId();
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
-                const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
-                if (!paymentMethod) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                return this._amazonMaxoScriptLoader.load(paymentMethod)
-                    .then(amazonMaxoClient => {
-                        this._amazonMaxoSDK = amazonMaxoClient;
-                    });
-            });
+        const amazonMaxoClient = await this._amazonMaxoScriptLoader.load(paymentMethod);
+        this._amazonMaxoSDK = amazonMaxoClient;
     }
 
     private _getMethodId(): string {
