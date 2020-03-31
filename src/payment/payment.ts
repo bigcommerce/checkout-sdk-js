@@ -117,9 +117,11 @@ export interface FormattedHostedInstrument {
 
 export interface FormattedVaultedInstrument {
     bigpay_token: {
-        credit_card_number_confirmation?: string;
-        verification_value?: string;
         token: string;
+        credit_card_number_confirmation?: string;
+        expiry_month?: string;
+        expiry_year?: string;
+        verification_value?: string;
     } | string | null;
 }
 
