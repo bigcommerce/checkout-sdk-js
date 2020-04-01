@@ -19,7 +19,13 @@ export default class PaypalCommerceScriptLoader {
         if (!options || !options.clientId) {
             throw new InvalidArgumentError();
         }
-        const params = (Object.keys(options) as Array<keyof PaypalCommerceScriptOptions>)
+
+        const { disableFunding } = options;
+        const updatedOptions = disableFunding
+            ? { ...options, disableFunding: disableFunding.join(',') }
+            : options;
+
+        const params = (Object.keys(updatedOptions) as Array<keyof PaypalCommerceScriptOptions>)
             .map(key => `${kebabCase(key)}=${options[key]}`)
             .join('&');
 

@@ -3,6 +3,11 @@ export interface ApproveDataOptions {
     orderID: string;
 }
 
+export interface OrderData {
+    orderId: string;
+    approveUrl: string;
+}
+
 export enum StyleButtonLabel {
     paypal = 'paypal',
     checkout = 'checkout',
@@ -54,10 +59,18 @@ export interface PaypalCommerceHostWindow extends Window {
     paypal?: PaypalCommerceSDK;
 }
 
+export interface PaypalCommerceInitializationData {
+    clientId: string;
+    intent?: 'capture' | 'authorize';
+    isPayPalCreditAvailable?: boolean;
+}
+
+export type DisableFundingType = Array<'credit' | 'card'>;
+
 export interface PaypalCommerceScriptOptions {
     clientId: string;
     currency?: string;
     commit?: boolean;
     intent?: 'capture' | 'authorize';
-    disableFunding?: 'credit';
+    disableFunding?: DisableFundingType;
 }

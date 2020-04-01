@@ -1,11 +1,9 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
-import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, DisableFundingType, PaypalButtonStyleOptions, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -16,56 +14,64 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         private _checkoutActionCreator: CheckoutActionCreator,
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _formPoster: FormPoster,
-        private _requestSender: RequestSender
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
     ) {}
 
-    initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const state = this._store.getState();
+    async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+        let state = this._store.getState();
         const {
             id: paymentId,
-            initializationData: { clientId, intent, isPayPalCreditAvailable },
+            initializationData,
         } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
-        const paypalOptions = options.paypalCommerce;
 
-        if (!clientId) {
+        if (!initializationData.clientId) {
             throw new InvalidArgumentError();
         }
 
-        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
-            .then(state => {
-                const cart = state.cart.getCart();
+        state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+        const cart = state.cart.getCart();
+        const paypalOptions = options.paypalCommerce;
 
-                if (!cart) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCart);
-                }
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
 
-                const buttonParams: ButtonsOptions = {
-                    createOrder: () => this._setupPayment(cart),
-                    onApprove: data => this._tokenizePayment(paymentId, data),
-                };
+        const buttonParams: ButtonsOptions = {
+            createOrder: () => this._setupPayment(cart.id),
+            onApprove: data => this._tokenizePayment(paymentId, data),
+        };
 
-                if (paypalOptions && paypalOptions.style) {
-                    buttonParams.style = this._validateStyleParams(paypalOptions.style);
-                }
+        if (paypalOptions && paypalOptions.style) {
+            buttonParams.style = this._validateStyleParams(paypalOptions.style);
+        }
 
-                const paramsScript: PaypalCommerceScriptOptions = {
-                    clientId,
-                    intent,
-                    currency: cart.currency.code,
-                    commit: false,
-                };
+        const paramsScript = this._getParamsScript(initializationData, cart);
+        const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript);
 
-                if (!isPayPalCreditAvailable) {
-                    paramsScript.disableFunding = 'credit';
-                }
-
-                return this._paypalScriptLoader.loadPaypalCommerce(paramsScript)
-                    .then(paypal => paypal.Buttons(buttonParams).render(`#${options.containerId}`));
-            });
+        return paypal.Buttons(buttonParams).render(`#${options.containerId}`);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
+    }
+
+    private async _setupPayment(cartId: string): Promise<string> {
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId);
+
+        return orderId;
+    }
+
+    private _tokenizePayment(paymentId: string, { orderID }: ApproveDataOptions) {
+        if (!orderID) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        return this._formPoster.postForm('/checkout.php', {
+            payment_type: 'paypal',
+            action: 'set_external_checkout',
+            provider: paymentId,
+            order_id: orderID,
+        });
     }
 
     private _validateStyleParams(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
@@ -103,29 +109,20 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return updatedStyle;
     }
 
-    private _setupPayment(cart: Cart): Promise<string> {
-        const cartId = cart.id;
-        const url = '/api/storefront/payment/paypalcommerce';
-        const body = { cartId };
-        const headers = {
-            'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            'Content-Type': ContentType.Json,
-        };
+    private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {
+        const { clientId, intent, isPayPalCreditAvailable } = initializationData;
+        const disableFunding: DisableFundingType = [ 'card' ];
 
-        return this._requestSender.post(url, { headers, body })
-            .then(res => res.body.orderId);
-    }
-
-    private _tokenizePayment(paymentId: string, data: ApproveDataOptions) {
-        if (!data.orderID) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        if (!isPayPalCreditAvailable) {
+            disableFunding.push('credit');
         }
 
-        return this._formPoster.postForm('/checkout.php', {
-            payment_type: 'paypal',
-            action: 'set_external_checkout',
-            provider: paymentId,
-            order_id: data.orderID,
-        });
+        return {
+            clientId,
+            commit: false,
+            currency: cart.currency.code,
+            disableFunding,
+            intent,
+        };
     }
 }
