@@ -49,29 +49,48 @@ async function getBaseConfig() {
     };
 };
 
-const babelLoaderRule = {
-    test: /\.[tj]s$/,
-    include: srcPath,
-    loader: 'babel-loader',
-    options: {
-        presets: [
-            [
-                '@babel/preset-env',
-                {
-                    corejs: 3,
-                    targets: [
-                        'defaults',
-                        'ie 11',
-                    ],
-                    useBuiltIns: 'usage',
-                },
-            ]
+const babelEnvPreset = [
+    '@babel/preset-env',
+    {
+        corejs: 3,
+        targets: [
+            'defaults',
+            'ie 11',
         ],
+        useBuiltIns: 'usage',
     },
-};
+];
+
+const babelLoaderRules = [
+    {
+        test: /\.[tj]s$/,
+        loader: 'babel-loader',
+        include: srcPath,
+        options: {
+            presets: [
+                babelEnvPreset,
+            ],
+        },
+    },
+    {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: path.join(__dirname, 'node_modules'),
+        exclude: [
+            /\/node_modules\/core-js\//,
+            /\/node_modules\/webpack\//,
+        ],
+        options: {
+            presets: [
+                babelEnvPreset,
+            ],
+            sourceType: 'unambiguous',
+        }
+    },
+];
 
 module.exports = {
-    babelLoaderRule,
+    babelLoaderRules,
     getBaseConfig,
     libraryEntries,
     libraryName,

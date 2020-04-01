@@ -5,7 +5,7 @@ const { DefinePlugin } = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const { getNextVersion, transformManifest } = require('./scripts/webpack');
-const { babelLoaderRule, getBaseConfig, libraryEntries, libraryName, srcPath } = require('./webpack-common.config');
+const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName, srcPath } = require('./webpack-common.config');
 
 const baseOutputPath = path.join(__dirname, 'dist-server');
 
@@ -27,7 +27,7 @@ async function getServerConfig(options, argv) {
         },
         module: {
             rules: [
-                babelLoaderRule,
+                ...babelLoaderRules,
                 ...baseConfig.module.rules,
             ],
         },
@@ -62,7 +62,7 @@ async function getServerLoaderConfig(options, argv) {
         },
         module: {
             rules: [
-                babelLoaderRule,
+                ...babelLoaderRules,
                 ...baseConfig.module.rules,
             ],
         },
