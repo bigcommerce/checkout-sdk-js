@@ -394,6 +394,26 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isUpdatingSubscriptions()', () => {
+        it('returns true if updating subscriptions', () => {
+            jest.spyOn(selectors.subscriptions, 'isUpdating').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isUpdatingSubscriptions()).toEqual(true);
+            expect(selectors.subscriptions.isUpdating).toHaveBeenCalled();
+        });
+
+        it('returns false if not updating subscriptions', () => {
+            jest.spyOn(selectors.subscriptions, 'isUpdating').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isUpdatingSubscriptions()).toEqual(false);
+            expect(selectors.subscriptions.isUpdating).toHaveBeenCalled();
+        });
+    });
+
     describe('#isContinuingAsGuest()', () => {
         it('returns true if continuing as guest', () => {
             jest.spyOn(selectors.billingAddress, 'isContinuingAsGuest').mockReturnValue(true);

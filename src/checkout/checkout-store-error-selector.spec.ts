@@ -379,6 +379,26 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
+    describe('#getUpdateSubscriptionsError()', () => {
+        it('returns error if there is an error when updating subscriptions', () => {
+            jest.spyOn(selectors.subscriptions, 'getUpdateError').mockReturnValue(errorResponse);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getUpdateSubscriptionsError()).toEqual(errorResponse);
+            expect(selectors.subscriptions.getUpdateError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when updating subscriptions', () => {
+            jest.spyOn(selectors.subscriptions, 'getUpdateError').mockReturnValue(undefined);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getUpdateSubscriptionsError()).toEqual(undefined);
+            expect(selectors.subscriptions.getUpdateError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getContinueAsGuestError()', () => {
         it('returns error if there is an error', () => {
             jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(errorResponse);

@@ -152,6 +152,13 @@ export default interface CheckoutStoreErrorSelector {
     getUpdateBillingAddressError(): Error | undefined;
 
     /**
+     * Returns an error if unable to update subscriptions.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateSubscriptionsError(): Error | undefined;
+
+    /**
      * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
@@ -303,6 +310,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getSelectShippingOptionError: getSelectShippingOptionError(state),
             getContinueAsGuestError: state.billingAddress.getContinueAsGuestError,
             getUpdateBillingAddressError: state.billingAddress.getUpdateError,
+            getUpdateSubscriptionsError: state.subscriptions.getUpdateError,
             getUpdateShippingAddressError: state.shippingStrategies.getUpdateAddressError,
             getDeleteConsignmentError: state.consignments.getDeleteError,
             getUpdateConsignmentError: state.consignments.getUpdateError,

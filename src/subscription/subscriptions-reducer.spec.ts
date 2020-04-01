@@ -7,7 +7,7 @@ import { SubscriptionsActionType } from '../subscription';
 import subscriptionsReducer from './subscriptions-reducer';
 import SubscriptionsState from './subscriptions-state';
 
-describe('billingAddressReducer', () => {
+describe('subscriptionsReducer', () => {
     let initialState: SubscriptionsState;
 
     beforeEach(() => {
