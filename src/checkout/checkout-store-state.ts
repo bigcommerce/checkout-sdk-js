@@ -11,6 +11,7 @@ import { InstrumentState } from '../payment/instrument';
 import { RemoteCheckoutState } from '../remote-checkout';
 import { ConsignmentState, ShippingCountryState, ShippingStrategyState } from '../shipping';
 import { StoreCreditState } from '../store-credit';
+import { SubscriptionsState } from '../subscription';
 
 import CheckoutState from './checkout-state';
 
@@ -34,5 +35,6 @@ export default interface CheckoutStoreState {
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
     shippingStrategies: ShippingStrategyState;
+    subscriptions: SubscriptionsState;
     storeCredit: StoreCreditState;
 }

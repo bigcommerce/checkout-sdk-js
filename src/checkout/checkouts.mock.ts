@@ -134,6 +134,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
         shippingStrategies: { data: {}, errors: {}, statuses: {} },
+        subscriptions: { errors: {}, statuses: {} },
         storeCredit: { errors: {}, statuses: {} },
     };
 }

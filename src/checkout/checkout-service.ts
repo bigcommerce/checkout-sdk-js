@@ -540,7 +540,7 @@ export default class CheckoutService {
      * continue. Once they provide their email address, it will be stored as a
      * part of their billing address.
      *
-     * @param credentials - The guest credentials to use.
+     * @param credentials - The guest credentials to use, with optional subscriptions.
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */

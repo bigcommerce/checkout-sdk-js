@@ -13,6 +13,7 @@ import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
 import { createStoreCreditSelectorFactory } from '../store-credit';
+import { createSubscriptionsSelectorFactory } from '../subscription';
 
 import { createCheckoutSelectorFactory } from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
@@ -47,6 +48,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createOrderSelector = createOrderSelectorFactory();
     const createPaymentSelector = createPaymentSelectorFactory();
     const createStoreCreditSelector = createStoreCreditSelectorFactory();
+    const createSubscriptionsSelector = createSubscriptionsSelectorFactory();
 
     return (state, options = {}) => {
         const billingAddress = createBillingAddressSelector(state.billingAddress);
@@ -66,6 +68,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const shippingAddress = createShippingAddressSelector(state.consignments);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
         const shippingStrategies = createShippingStrategySelector(state.shippingStrategies);
+        const subscriptions = createSubscriptionsSelector(state.subscriptions);
         const storeCredit = createStoreCreditSelector(state.storeCredit);
 
         // Compose selectors
@@ -96,6 +99,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             shippingAddress,
             shippingCountries,
             shippingStrategies,
+            subscriptions,
             storeCredit,
         };
 

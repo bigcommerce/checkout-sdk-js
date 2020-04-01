@@ -118,18 +118,20 @@ export default class BillingAddressActionCreator {
     private _updateCustomerConsent(
         {
             email,
-            marketingEmailConsent,
+            acceptsAbandonedCartEmails,
+            acceptsMarketingNewsletter,
         }: GuestCredentials,
         options?: RequestOptions
     ): Observable<UpdateSubscriptionsAction> {
-        if (marketingEmailConsent === undefined || marketingEmailConsent === null) {
+        if ((acceptsAbandonedCartEmails === undefined || acceptsAbandonedCartEmails === null) &&
+            (acceptsMarketingNewsletter === undefined || acceptsMarketingNewsletter === null)) {
             return empty();
         }
 
         return this._subscriptionActionCreator.updateSubscriptions({
             email,
-            acceptsMarketingNewsletter: marketingEmailConsent,
-            acceptsAbandonedCartEmails: marketingEmailConsent,
+            acceptsMarketingNewsletter: acceptsMarketingNewsletter || false,
+            acceptsAbandonedCartEmails: acceptsAbandonedCartEmails || false,
         }, options);
     }
 

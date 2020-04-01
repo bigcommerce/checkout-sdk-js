@@ -13,6 +13,7 @@ import { instrumentReducer } from '../payment/instrument';
 import { remoteCheckoutReducer } from '../remote-checkout';
 import { consignmentReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
 import { storeCreditReducer } from '../store-credit';
+import { subscriptionsReducer } from '../subscription';
 
 import checkoutReducer from './checkout-reducer';
 import CheckoutStoreState from './checkout-store-state';
@@ -38,6 +39,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
         shippingStrategies: shippingStrategyReducer,
+        subscriptions: subscriptionsReducer,
         storeCredit: storeCreditReducer,
     });
 }

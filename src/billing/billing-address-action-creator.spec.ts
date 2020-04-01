@@ -104,7 +104,7 @@ describe('BillingAddressActionCreator', () => {
             it('emits customer actions if marketingEmailConsent is true', async () => {
                 actions = await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
                 })(store))
                     .pipe(toArray())
                     .toPromise();
@@ -121,7 +121,7 @@ describe('BillingAddressActionCreator', () => {
 
                 actions = await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
                 })(store))
                     .pipe(
                         catchError(error => {
@@ -145,7 +145,7 @@ describe('BillingAddressActionCreator', () => {
             it('sends request to update subscriptions if marketingEmailConsent is false', async () => {
                 await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: false,
+                    acceptsAbandonedCartEmails: false,
                 }, {})(store))
                     .toPromise();
 
@@ -159,7 +159,8 @@ describe('BillingAddressActionCreator', () => {
             it('sends request to update subscriptions if marketingEmailConsent is true', async () => {
                 await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
+                    acceptsMarketingNewsletter: true,
                 }, {})(store))
                     .toPromise();
 
