@@ -1,6 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayCustomerInitializeOptions } from './strategies/amazon';
+import { AmazonMaxoCustomerInitializeOptions } from './strategies/amazon-maxo';
 import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
@@ -33,6 +34,12 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Amazon Pay.
      */
     amazon?: AmazonPayCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Amazon Maxo.
+     */
+    amazonmaxo?: AmazonMaxoCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout
