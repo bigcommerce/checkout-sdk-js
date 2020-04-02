@@ -2,7 +2,7 @@ const path = require('path');
 const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-const { babelLoaderRule, getBaseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
+const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
 
 const outputPath = path.join(__dirname, 'dist');
 
@@ -21,7 +21,7 @@ async function getUmdConfig(options, argv) {
         },
         module: {
             rules: [
-                babelLoaderRule,
+                ...babelLoaderRules,
                 ...baseConfig.module.rules,
             ],
         },
