@@ -43,7 +43,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._stripeScriptLoader.load(paymentMethod.initializationData.stripePublishableKey)
+        return this._stripeScriptLoader.load(paymentMethod.initializationData.stripePublishableKey, paymentMethod.initializationData.stripeConnectedAccount)
             .then(stripeJs => {
                 this._stripeV3Client = stripeJs;
                 const elements = this._stripeV3Client.elements();

@@ -10,7 +10,7 @@ export default class StripeV3ScriptLoader {
         private _window: StripeHostWindow = window
     ) {}
 
-    load(publishableKey: string): Promise<StripeV3Client> {
+    load(publishableKey: string, stripeAccount: string): Promise<StripeV3Client> {
         return this._scriptLoader
             .loadScript('https://js.stripe.com/v3/')
             .then(() => {
@@ -20,6 +20,7 @@ export default class StripeV3ScriptLoader {
 
                 return this._window.Stripe(publishableKey, {
                     betas: ['payment_intent_beta_3'],
+                    stripeAccount,
                 });
             });
     }
