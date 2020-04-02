@@ -239,6 +239,33 @@ export function getAffirm(): PaymentMethod {
     };
 }
 
+export function getAmazonPayv2(): PaymentMethod {
+    return {
+        config: {
+            displayName: 'AMAZON PAY',
+            helpText: '',
+            isVaultingEnabled: false,
+            merchantId: 'checkout_amazonpay',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        id: 'amazonpay',
+        initializationData: {
+            checkoutLanguage: 'en_US',
+            ledgerCurrency: 'USD',
+            region: 'us',
+        },
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA' ,
+            'AMEX',
+            'MC',
+        ],
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
