@@ -9,40 +9,42 @@ import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { CustomerAction, CustomerActionType, CustomerRequestSender } from '../customer';
+import { SubscriptionsActionCreator, SubscriptionsActionType, SubscriptionsRequestSender, UpdateSubscriptionsAction } from '../subscription';
+import { UpdateSubscriptionsError } from '../subscription/errors';
 
 import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressAction, BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
 import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
-import { UpdateCustomerError } from './errors';
 
 describe('BillingAddressActionCreator', () => {
     let address: AddressRequestBody;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let billingAddressRequestSender: BillingAddressRequestSender;
-    let customerRequestSender: CustomerRequestSender;
+    let subscriptionsRequestSender: SubscriptionsRequestSender;
+    let subscriptionsActionCreator: SubscriptionsActionCreator;
     let errorResponse: Response<Error>;
     let response: Response<Checkout>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
-    let actions: Array<BillingAddressAction | CustomerAction> | BillingAddressAction | ContinueAsGuestAction | CustomerAction | undefined;
+    let actions: Array<BillingAddressAction | UpdateSubscriptionsAction> | BillingAddressAction | ContinueAsGuestAction | UpdateSubscriptionsAction | undefined;
 
     beforeEach(() => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
         billingAddressRequestSender = new BillingAddressRequestSender(createRequestSender());
-        customerRequestSender = new CustomerRequestSender(createRequestSender());
+        subscriptionsRequestSender = new SubscriptionsRequestSender(createRequestSender());
+        subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender);
 
         jest.spyOn(billingAddressRequestSender, 'updateAddress').mockImplementation(() => Promise.resolve(response));
         jest.spyOn(billingAddressRequestSender, 'createAddress').mockImplementation(() => Promise.resolve(response));
-        jest.spyOn(customerRequestSender, 'updateCustomer').mockImplementation(() => Promise.resolve(response));
+        jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockImplementation(() => Promise.resolve(response));
 
         billingAddressActionCreator = new BillingAddressActionCreator(
             billingAddressRequestSender,
-            customerRequestSender
+            subscriptionsActionCreator
         );
         address = getBillingAddress();
     });
@@ -102,24 +104,24 @@ describe('BillingAddressActionCreator', () => {
             it('emits customer actions if marketingEmailConsent is true', async () => {
                 actions = await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
                 })(store))
                     .pipe(toArray())
                     .toPromise();
 
-                expect(actions).toContainEqual({ type: CustomerActionType.UpdateCustomerRequested });
-                expect(actions).toContainEqual({ type: CustomerActionType.UpdateCustomerSucceeded, payload: response.body });
+                expect(actions).toContainEqual({ type: SubscriptionsActionType.UpdateSubscriptionsRequested });
+                expect(actions).toContainEqual({ type: SubscriptionsActionType.UpdateSubscriptionsSucceeded, payload: response.body });
             });
 
             it('emits failed customer actions if failed to update', async () => {
-                jest.spyOn(customerRequestSender, 'updateCustomer')
+                jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
                 const errorHandler = jest.fn();
 
                 actions = await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
                 })(store))
                     .pipe(
                         catchError(error => {
@@ -132,37 +134,40 @@ describe('BillingAddressActionCreator', () => {
                     .toPromise();
 
                 expect(errorHandler)
-                    .toHaveBeenCalledWith(createErrorAction(CustomerActionType.UpdateCustomerFailed, new UpdateCustomerError()));
+                    .toHaveBeenCalledWith(createErrorAction(SubscriptionsActionType.UpdateSubscriptionsFailed, new UpdateSubscriptionsError()));
 
-                expect(actions).toContainEqual({ type: CustomerActionType.UpdateCustomerRequested });
+                expect(actions).toContainEqual({ type: SubscriptionsActionType.UpdateSubscriptionsRequested });
                 expect(actions).toContainEqual(expect.objectContaining({
-                    type: CustomerActionType.UpdateCustomerFailed,
+                    type: SubscriptionsActionType.UpdateSubscriptionsFailed,
                 }));
             });
 
-            it('sends request to update customer if marketingEmailConsent is false', async () => {
+            it('sends request to update subscriptions if marketingEmailConsent is false', async () => {
                 await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: false,
+                    acceptsAbandonedCartEmails: false,
                 }, {})(store))
                     .toPromise();
 
-                expect(customerRequestSender.updateCustomer).toHaveBeenCalledWith({
+                expect(subscriptionsRequestSender.updateSubscriptions).toHaveBeenCalledWith({
                     email: guestCredentials.email,
-                    acceptsMarketing: false,
+                    acceptsAbandonedCartEmails: false,
+                    acceptsMarketingNewsletter: false,
                 }, {});
             });
 
-            it('sends request to update customer if marketingEmailConsent is true', async () => {
+            it('sends request to update subscriptions if marketingEmailConsent is true', async () => {
                 await from(billingAddressActionCreator.continueAsGuest({
                     ...guestCredentials,
-                    marketingEmailConsent: true,
+                    acceptsAbandonedCartEmails: true,
+                    acceptsMarketingNewsletter: true,
                 }, {})(store))
                     .toPromise();
 
-                expect(customerRequestSender.updateCustomer).toHaveBeenCalledWith({
+                expect(subscriptionsRequestSender.updateSubscriptions).toHaveBeenCalledWith({
                     email: guestCredentials.email,
-                    acceptsMarketing: true,
+                    acceptsAbandonedCartEmails: true,
+                    acceptsMarketingNewsletter: true,
                 }, {});
             });
 

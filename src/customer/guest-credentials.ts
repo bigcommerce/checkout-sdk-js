@@ -1,5 +1,8 @@
-export default interface GuestCredentials {
+import { Subscriptions } from '../subscription';
+
+export type GuestCredentials = Partial<Subscriptions> & {
     id?: string;
     email: string;
-    marketingEmailConsent?: boolean;
-}
+};
+
+export default GuestCredentials;

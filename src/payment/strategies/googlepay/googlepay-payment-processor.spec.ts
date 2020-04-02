@@ -7,9 +7,9 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../..
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
-import { CustomerRequestSender } from '../../../customer';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
@@ -36,7 +36,9 @@ describe('GooglePayPaymentProcessor', () => {
         const scriptLoader = createScriptLoader();
         billingAddressActionCreator = new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
-            new CustomerRequestSender(requestSender)
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(requestSender)
+            )
         );
 
         store = createCheckoutStore({

@@ -10,7 +10,6 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStor
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
-import { CustomerRequestSender } from '../../../customer';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -18,6 +17,7 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import PaymentMethod from '../../payment-method';
 import { getAmazonPay, getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -98,7 +98,7 @@ describe('AmazonPayPaymentStrategy', () => {
         });
         billingAddressActionCreator = new BillingAddressActionCreator(
             billingAddressRequestSender,
-            new CustomerRequestSender(createRequestSender())
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(createRequestSender()))
         );
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,

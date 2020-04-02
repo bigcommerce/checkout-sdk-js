@@ -7,7 +7,7 @@ import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
@@ -15,6 +15,7 @@ import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/ins
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -69,12 +70,13 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderRequestSender,
         new CheckoutValidator(checkoutRequestSender)
     );
+    const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
 
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
-            new CustomerRequestSender(requestSender)
+            subscriptionsActionCreator
         ),
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
@@ -95,7 +97,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
         spamProtectionActionCreator,
-        new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender))
+        new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),
+        subscriptionsActionCreator
     );
 }
 

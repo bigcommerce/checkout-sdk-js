@@ -4,9 +4,9 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { CustomerActionType } from '../customer';
 import { OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { SubscriptionsActionType } from '../subscription';
 
 import { BillingAddressActionType } from './billing-address-actions';
 import billingAddressReducer from './billing-address-reducer';
@@ -62,7 +62,7 @@ describe('billingAddressReducer', () => {
     });
 
     it('returns pending when continueAsGuest requested', () => {
-        const action = createAction(BillingAddressActionType.ContinueAsGuestRequested, new RequestError(getErrorResponse()));
+        const action = createAction(BillingAddressActionType.ContinueAsGuestRequested);
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -71,8 +71,8 @@ describe('billingAddressReducer', () => {
         });
     });
 
-    it('returns pending when customer update requested', () => {
-        const action = createAction(CustomerActionType.UpdateCustomerRequested, new RequestError(getErrorResponse()));
+    it('returns pending when subscriptions update requested', () => {
+        const action = createAction(SubscriptionsActionType.UpdateSubscriptionsRequested);
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -96,8 +96,8 @@ describe('billingAddressReducer', () => {
         });
     });
 
-    it('returns clean state when customer updated', () => {
-        const action = createAction(CustomerActionType.UpdateCustomerSucceeded, new RequestError(getErrorResponse()));
+    it('returns clean state when subscriptions updated', () => {
+        const action = createAction(SubscriptionsActionType.UpdateSubscriptionsSucceeded, {});
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -116,8 +116,8 @@ describe('billingAddressReducer', () => {
         });
     });
 
-    it('returns error when customer failed to update', () => {
-        const action = createAction(CustomerActionType.UpdateCustomerFailed, new RequestError(getErrorResponse()));
+    it('returns error when subscriptions failed to update', () => {
+        const action = createAction(SubscriptionsActionType.UpdateSubscriptionsFailed, new RequestError(getErrorResponse()));
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({

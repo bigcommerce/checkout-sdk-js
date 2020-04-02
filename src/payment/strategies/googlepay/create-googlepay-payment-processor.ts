@@ -3,8 +3,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { CheckoutRequestSender, CheckoutStore } from '../../../checkout';
-import { CustomerRequestSender } from '../../../customer';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 
@@ -25,7 +25,9 @@ export default function createGooglePayPaymentProcessor(store: CheckoutStore, in
         initializer,
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
-            new CustomerRequestSender(requestSender)
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(requestSender)
+            )
         ),
         new ConsignmentActionCreator(
             new ConsignmentRequestSender(requestSender),

@@ -310,6 +310,13 @@ export default interface CheckoutStoreStatusSelector {
      * @returns True if the payment step is pending, otherwise false.
      */
     isPaymentStepPending(): boolean;
+
+    /**
+     * Checks whether the subscriptions are being updated.
+     *
+     * @returns True if updating subscriptions, otherwise false.
+     */
+    isUpdatingSubscriptions(): boolean;
 }
 
 export type CheckoutStoreStatusSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreStatusSelector;
@@ -397,6 +404,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),
             isUpdatingBillingAddress: state.billingAddress.isUpdating,
+            isUpdatingSubscriptions: state.subscriptions.isUpdating,
             isContinuingAsGuest: state.billingAddress.isContinuingAsGuest,
             isUpdatingShippingAddress: state.shippingStrategies.isUpdatingAddress,
             isUpdatingConsignment: state.consignments.isUpdating,

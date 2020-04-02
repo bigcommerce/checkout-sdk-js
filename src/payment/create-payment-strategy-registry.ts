@@ -5,12 +5,12 @@ import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { CustomerRequestSender } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -59,7 +59,7 @@ export default function createPaymentStrategyRegistry(
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const billingAddressActionCreator = new BillingAddressActionCreator(
         new BillingAddressRequestSender(requestSender),
-        new CustomerRequestSender(requestSender)
+        new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
     );
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
