@@ -10,6 +10,7 @@ import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import { supportedCountries, supportedCountriesRequiringStates } from '../klarnav2';
 import PaymentStrategy from '../payment-strategy';
 
 import KlarnaCredit, { KlarnaAddress, KlarnaLoadResponse, KlarnaUpdateSessionParams } from './klarna-credit';
@@ -18,7 +19,6 @@ import KlarnaScriptLoader from './klarna-script-loader';
 export default class KlarnaPaymentStrategy implements PaymentStrategy {
     private _klarnaCredit?: KlarnaCredit;
     private _unsubscribe?: (() => void);
-    private _supportedEUCountries = ['AT', 'DE', 'DK', 'FI', 'GB', 'NL', 'NO', 'SE', 'CH'];
 
     constructor(
         private _store: CheckoutStore,
@@ -113,7 +113,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
     }
 
     private _getUpdateSessionData(billingAddress: BillingAddress, shippingAddress?: Address): KlarnaUpdateSessionParams {
-        if (!includes(this._supportedEUCountries, billingAddress.countryCode)) {
+        if (!includes([...supportedCountries, ...supportedCountriesRequiringStates], billingAddress.countryCode)) {
             return {};
         }
 
@@ -128,6 +128,10 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
         return data;
     }
 
+    private _needsStateCode(countryCode: string) {
+        return includes(supportedCountriesRequiringStates, countryCode);
+    }
+
     private _mapToKlarnaAddress(address: Address, email?: string): KlarnaAddress {
         const klarnaAddress: KlarnaAddress = {
             street_address: address.address1,
@@ -136,7 +140,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
             given_name: address.firstName,
             family_name: address.lastName,
             postal_code: address.postalCode,
-            region: address.stateOrProvince,
+            region: this._needsStateCode(address.countryCode) ? address.stateOrProvinceCode : address.stateOrProvince,
             email,
         };
 

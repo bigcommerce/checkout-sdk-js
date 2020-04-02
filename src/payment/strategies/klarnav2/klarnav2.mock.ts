@@ -49,6 +49,13 @@ export function getEUBillingAddress(): BillingAddress {
     };
 }
 
+export function getOCBillingAddress(): BillingAddress {
+    return {
+        ...getEUBillingAddress(),
+        countryCode: 'AU',
+    };
+}
+
 export function getEUBillingAddressWithNoPhone(): BillingAddress {
     return {
         id: '55c96cda6f04c',
@@ -108,6 +115,23 @@ export function getKlarnaV2UpdateSessionParamsPhone(): KlarnaUpdateSessionParams
             family_name: 'Tester',
             postal_code: '95555',
             region: 'California',
+            email: 'test@bigcommerce.com',
+            phone: '555-555-5555',
+        },
+    };
+}
+
+export function getKlarnaV2UpdateSessionParamsForOC(): KlarnaUpdateSessionParams {
+    return {
+        ...getKlarnaV2UpdateSessionParamsPhone(),
+        billing_address: {
+            street_address: '12345 Testing Way',
+            city: 'Some City',
+            country: 'AU',
+            given_name: 'Test',
+            family_name: 'Tester',
+            postal_code: '95555',
+            region: 'CA',
             email: 'test@bigcommerce.com',
             phone: '555-555-5555',
         },

@@ -21,7 +21,7 @@ import { getKlarna } from '../../payment-methods.mock';
 import KlarnaCredit from './klarna-credit';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
 import KlarnaScriptLoader from './klarna-script-loader';
-import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getKlarnaUpdateSessionParams, getKlarnaUpdateSessionParamsPhone } from './klarna.mock';
+import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getKlarnaUpdateSessionParams, getKlarnaUpdateSessionParamsForOC, getKlarnaUpdateSessionParamsPhone, getOCBillingAddress } from './klarna.mock';
 
 describe('KlarnaPaymentStrategy', () => {
     let initializePaymentAction: Observable<Action>;
@@ -161,6 +161,28 @@ describe('KlarnaPaymentStrategy', () => {
 
             expect(klarnaCredit.authorize)
                 .toHaveBeenCalledWith(getKlarnaUpdateSessionParamsPhone(), expect.any(Function));
+        });
+
+        it('loads widget in OC', async () => {
+            store = store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                billingAddress: { data: getOCBillingAddress(), errors: {}, statuses: {} },
+            });
+            strategy = new KlarnaPaymentStrategy(
+                store,
+                orderActionCreator,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                scriptLoader
+            );
+            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
+
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container' } });
+            strategy.execute(payload);
+
+            expect(klarnaCredit.authorize)
+                .toHaveBeenCalledWith(getKlarnaUpdateSessionParamsForOC(), expect.any(Function));
         });
 
         it('loads widget in EU with no phone', async () => {

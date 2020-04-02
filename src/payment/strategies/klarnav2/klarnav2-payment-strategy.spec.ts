@@ -21,7 +21,7 @@ import { getKlarna } from '../../payment-methods.mock';
 import KlarnaPayments from './klarna-payments';
 import KlarnaV2PaymentStrategy from './klarnav2-payment-strategy';
 import KlarnaV2ScriptLoader from './klarnav2-script-loader';
-import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getEUShippingAddress, getKlarnaV2UpdateSessionParams, getKlarnaV2UpdateSessionParamsPhone } from './klarnav2.mock';
+import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getEUShippingAddress, getKlarnaV2UpdateSessionParams, getKlarnaV2UpdateSessionParamsForOC, getKlarnaV2UpdateSessionParamsPhone, getOCBillingAddress } from './klarnav2.mock';
 
 describe('KlarnaV2PaymentStrategy', () => {
     let initializePaymentAction: Observable<Action>;
@@ -162,6 +162,28 @@ describe('KlarnaV2PaymentStrategy', () => {
 
             expect(klarnaPayments.authorize)
                 .toHaveBeenCalledWith({ payment_method_category: paymentMethod.id }, getKlarnaV2UpdateSessionParamsPhone(), expect.any(Function));
+        });
+
+        it('loads widget in OC', async () => {
+            store = store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                billingAddress: { data: getOCBillingAddress(), errors: {}, statuses: {} },
+            });
+            strategy = new KlarnaV2PaymentStrategy(
+                store,
+                orderActionCreator,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                scriptLoader
+            );
+            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+
+            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            strategy.execute(payload);
+
+            expect(klarnaPayments.authorize)
+                .toHaveBeenCalledWith({ payment_method_category: paymentMethod.id }, getKlarnaV2UpdateSessionParamsForOC(), expect.any(Function));
         });
 
         it('loads widget in EU with no phone', async () => {
