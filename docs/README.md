@@ -72,6 +72,14 @@ ___
 *
 
 ___
+<a id="guestcredentials"></a>
+
+###  GuestCredentials
+
+**ΤGuestCredentials**: * `Partial`<[Subscriptions](interfaces/subscriptions.md)> & `object`
+*
+
+___
 <a id="hostedcreditcardinstrument"></a>
 
 ###  HostedCreditCardInstrument

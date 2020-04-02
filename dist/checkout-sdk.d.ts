@@ -835,6 +835,7 @@ declare class CheckoutService {
     private _shippingStrategyActionCreator;
     private _spamProtectionActionCreator;
     private _storeCreditActionCreator;
+    private _subscriptionsActionCreator;
     private _storeProjection;
     private _errorTransformer;
     private _selectorsFactory;
@@ -1188,13 +1189,21 @@ declare class CheckoutService {
      */
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Updates the subscriptions associated to an email.
+     *
+     * @param subscriptions - The email and associated subscriptions to update.
+     * @param options - Options for continuing as a guest.
+     * @returns A promise that resolves to the current state.
+     */
+    updateSubscriptions(subscriptions: Subscriptions, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Continues to check out as a guest.
      *
      * The customer is required to provide their email address in order to
      * continue. Once they provide their email address, it will be stored as a
      * part of their billing address.
      *
-     * @param credentials - The guest credentials to use.
+     * @param credentials - The guest credentials to use, with optional subscriptions.
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */
@@ -1814,6 +1823,12 @@ declare interface CheckoutStoreErrorSelector {
      */
     getUpdateBillingAddressError(): Error | undefined;
     /**
+     * Returns an error if unable to update subscriptions.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateSubscriptionsError(): Error | undefined;
+    /**
      * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
@@ -2363,6 +2378,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if the payment step is pending, otherwise false.
      */
     isPaymentStepPending(): boolean;
+    /**
+     * Checks whether the subscriptions are being updated.
+     *
+     * @returns True if updating subscriptions, otherwise false.
+     */
+    isUpdatingSubscriptions(): boolean;
 }
 
 declare interface Consignment {
@@ -2849,11 +2870,10 @@ declare interface GooglePayPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
-declare interface GuestCredentials {
+declare type GuestCredentials = Partial<Subscriptions> & {
     id?: string;
     email: string;
-    marketingEmailConsent?: boolean;
-}
+};
 
 declare interface HostedCardFieldOptions {
     accessibilityLabel?: string;
@@ -3912,6 +3932,12 @@ declare interface SubInputDetail {
      * The value can be pre-filled, if available.
      */
     value?: string;
+}
+
+declare interface Subscriptions {
+    email: string;
+    acceptsMarketingNewsletter: boolean;
+    acceptsAbandonedCartEmails: boolean;
 }
 
 declare interface Tax {

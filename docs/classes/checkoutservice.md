@@ -56,6 +56,7 @@ This object can be used to collect all information that is required for checkout
 * [updateCheckout](checkoutservice.md#updatecheckout)
 * [updateConsignment](checkoutservice.md#updateconsignment)
 * [updateShippingAddress](checkoutservice.md#updateshippingaddress)
+* [updateSubscriptions](checkoutservice.md#updatesubscriptions)
 
 ---
 
@@ -187,7 +188,7 @@ ___
 
 ###  continueAsGuest
 
-▸ **continueAsGuest**(credentials: *[GuestCredentials](../interfaces/guestcredentials.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **continueAsGuest**(credentials: *[GuestCredentials](../#guestcredentials)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Continues to check out as a guest.
 
@@ -197,7 +198,7 @@ The customer is required to provide their email address in order to continue. On
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| credentials | [GuestCredentials](../interfaces/guestcredentials.md) |  The guest credentials to use. |
+| credentials | [GuestCredentials](../#guestcredentials) |  The guest credentials to use, with optional subscriptions. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -1186,6 +1187,25 @@ console.log(state.data.getShippingAddress());
 | ------ | ------ | ------ |
 | address | `Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)> |  The address to be used for shipping. |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)<[CheckoutParams](../interfaces/checkoutparams.md)> |  Options for updating the shipping address. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="updatesubscriptions"></a>
+
+###  updateSubscriptions
+
+▸ **updateSubscriptions**(subscriptions: *[Subscriptions](../interfaces/subscriptions.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Updates the subscriptions associated to an email.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| subscriptions | [Subscriptions](../interfaces/subscriptions.md) |  The email and associated subscriptions to update. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

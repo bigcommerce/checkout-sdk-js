@@ -46,6 +46,7 @@ This object has a set of getters that would return an error if an action is not 
 * [getUpdateCheckoutError](checkoutstoreerrorselector.md#getupdatecheckouterror)
 * [getUpdateConsignmentError](checkoutstoreerrorselector.md#getupdateconsignmenterror)
 * [getUpdateShippingAddressError](checkoutstoreerrorselector.md#getupdateshippingaddresserror)
+* [getUpdateSubscriptionsError](checkoutstoreerrorselector.md#getupdatesubscriptionserror)
 
 ---
 
@@ -511,6 +512,19 @@ ___
 ▸ **getUpdateShippingAddressError**():  `Error` &#124; `undefined`
 
 Returns an error if unable to update shipping address.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to update, otherwise undefined.
+
+___
+<a id="getupdatesubscriptionserror"></a>
+
+###  getUpdateSubscriptionsError
+
+▸ **getUpdateSubscriptionsError**():  `Error` &#124; `undefined`
+
+Returns an error if unable to update subscriptions.
 
 **Returns:**  `Error` &#124; `undefined`
 
