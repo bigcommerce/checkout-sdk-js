@@ -179,7 +179,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
 
-            await strategy.initialize({ methodId: paymentMethod.id, klarnav2: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });
             strategy.execute(payload);
 
             expect(klarnaPayments.authorize)
