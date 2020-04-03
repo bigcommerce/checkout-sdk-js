@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.59.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.58.0...v1.59.0) (2020-04-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5178 Add hasDefaultStoredInstrument property to PaymentMethodConfig to fix default stored instruments feature ([b2f559b](https://github.com/bigcommerce/checkout-sdk-js/commit/b2f559b))
+
+
+### Features
+
+* **payment:** INT-2452 Add billing and shipping for klarna ([d264abf](https://github.com/bigcommerce/checkout-sdk-js/commit/d264abf))
+
 ## [1.58.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.57.0...v1.58.0) (2020-04-02)
 
 

@@ -13,6 +13,7 @@
 * [cardCode](paymentmethodconfig.md#cardcode)
 * [displayName](paymentmethodconfig.md#displayname)
 * [enablePaypal](paymentmethodconfig.md#enablepaypal)
+* [hasDefaultStoredInstrument](paymentmethodconfig.md#hasdefaultstoredinstrument)
 * [helpText](paymentmethodconfig.md#helptext)
 * [is3dsEnabled](paymentmethodconfig.md#is3dsenabled)
 * [isVaultingCvvEnabled](paymentmethodconfig.md#isvaultingcvvenabled)
@@ -49,6 +50,14 @@ ___
 ### `<Optional>` enablePaypal
 
 **● enablePaypal**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
+<a id="hasdefaultstoredinstrument"></a>
+
+### `<Optional>` hasDefaultStoredInstrument
+
+**● hasDefaultStoredInstrument**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
