@@ -17,6 +17,7 @@ export default function createRequestErrorFactory(): RequestErrorFactory {
         'order_completion_error',
         'order_could_not_be_finalized_error',
         'order_create_failed',
+        'product_unavailable',
         'provider_fatal_error',
         'provider_setup_error',
         'stock_too_low',
