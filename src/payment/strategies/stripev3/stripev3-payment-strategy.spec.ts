@@ -124,18 +124,20 @@ describe('StripeV3PaymentStrategy', () => {
             return expect(promise).resolves.toBe(store.getState());
         });
 
-        it('does not load stripe V3 if initialization options are not provided', () => {
+        it('does not load stripe V3 if initialization options are not provided', async () => {
             stripeV3Options.stripev3 = undefined;
 
-            expect(() => strategy.initialize(stripeV3Options))
-                .toThrow(InvalidArgumentError);
+            const response = strategy.initialize(stripeV3Options);
+
+            return expect(response).rejects.toThrow(InvalidArgumentError);
         });
 
         it('does not load stripe V3 if paymentMethod is not provided', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
-            expect(() => strategy.initialize(stripeV3Options))
-                .toThrow(MissingDataError);
+            const response = strategy.initialize(stripeV3Options);
+
+            return expect(response).rejects.toThrow(MissingDataError);
         });
     });
 
