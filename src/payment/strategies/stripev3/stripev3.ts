@@ -7,6 +7,7 @@ export interface StripeHostWindow extends Window {
 
 export interface StripeV3JsOptions {
     betas: string[];
+    stripeAccount: string;
 }
 
 export interface StripeV3Client {

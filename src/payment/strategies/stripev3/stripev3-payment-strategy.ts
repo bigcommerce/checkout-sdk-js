@@ -30,7 +30,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         private _stripeScriptLoader: StripeV3ScriptLoader
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const stripeOptions = options.stripev3;
 
         if (!stripeOptions) {
@@ -43,20 +43,17 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._stripeScriptLoader.load(paymentMethod.initializationData.stripePublishableKey)
-            .then(stripeJs => {
-                this._stripeV3Client = stripeJs;
-                const elements = this._stripeV3Client.elements();
-                const cardElement = elements.create('card', {
-                    style: stripeOptions.style,
-                });
+        this._stripeV3Client = await this._stripeScriptLoader.load(
+            paymentMethod.initializationData.stripePublishableKey,
+            paymentMethod.initializationData.stripeConnectedAccount);
+        const elements = this._stripeV3Client.elements();
+        const cardElement = elements.create('card', {
+            style: stripeOptions.style,
+        });
+        cardElement.mount(`#${stripeOptions.containerId}`);
+        this._cardElement = cardElement;
 
-                cardElement.mount(`#${stripeOptions.containerId}`);
-
-                this._cardElement = cardElement;
-
-                return Promise.resolve(this._store.getState());
-            });
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
