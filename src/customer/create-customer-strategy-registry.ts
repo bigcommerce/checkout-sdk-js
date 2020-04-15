@@ -53,7 +53,7 @@ export default function createCustomerStrategyRegistry(
         )
     );
 
-    registry.register('amazonmaxo', () =>
+    registry.register('amazonpay', () =>
         new AmazonMaxoCustomerStrategy(
             store,
             remoteCheckoutActionCreator,

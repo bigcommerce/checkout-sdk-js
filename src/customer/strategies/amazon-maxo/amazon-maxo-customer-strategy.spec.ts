@@ -63,7 +63,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
             .mockReturnValue(paymentMethod);
 
         container = document.createElement('div');
-        container.setAttribute('id', 'amazonmaxoCheckoutButton');
+        container.setAttribute('id', 'amazonpayCheckoutButton');
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
 
@@ -138,9 +138,9 @@ describe('AmazonMaxoCustomerStrategy', () => {
         it('succesfully deinitializes the strategy', async () => {
             await strategy.initialize(customerInitializeOptions);
             strategy.deinitialize();
-            if (customerInitializeOptions.amazonmaxo) {
+            if (customerInitializeOptions.amazonpay) {
                 // tslint:disable-next-line:no-non-null-assertion
-                const button = document.getElementById(customerInitializeOptions.amazonmaxo!.container);
+                const button = document.getElementById(customerInitializeOptions.amazonpay!.container);
                 // tslint:disable-next-line:no-non-null-assertion
                 expect(button!.firstChild).toBe(null);
             }
@@ -148,9 +148,9 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
         it('run deinitializes without calling initialize', () => {
             strategy.deinitialize();
-            if (customerInitializeOptions.amazonmaxo) {
+            if (customerInitializeOptions.amazonpay) {
                 // tslint:disable-next-line:no-non-null-assertion
-                const button = document.getElementById(customerInitializeOptions.amazonmaxo!.container);
+                const button = document.getElementById(customerInitializeOptions.amazonpay!.container);
                 // tslint:disable-next-line:no-non-null-assertion
                 expect(button!.firstChild).not.toBe(null);
             }
@@ -176,7 +176,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
         it('throws error if trying to sign out programmatically', async () => {
             const paymentId = {
-                providerId: 'amazonmaxo',
+                providerId: 'amazonpay',
             };
 
             jest.spyOn(store.getState().payment, 'getPaymentId')
@@ -186,12 +186,12 @@ describe('AmazonMaxoCustomerStrategy', () => {
                 .mockReturnValue('data');
 
             const options = {
-                methodId: 'amazonmaxo',
+                methodId: 'amazonpay',
             };
 
             await strategy.signOut(options);
 
-            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('amazonmaxo', options);
+            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('amazonpay', options);
             expect(store.dispatch).toHaveBeenCalled();
         });
 
@@ -203,7 +203,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
                 .mockReturnValue(paymentId);
 
             const options = {
-                methodId: 'amazonmaxo',
+                methodId: 'amazonpay',
             };
 
             await strategy.signOut(options);

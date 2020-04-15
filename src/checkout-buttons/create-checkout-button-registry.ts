@@ -109,7 +109,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register(CheckoutButtonMethodType.AMAZON_MAXO, () =>
+    registry.register(CheckoutButtonMethodType.AMAZON_PAY, () =>
         new AmazonMaxoButtonStrategy(
             store,
             checkoutActionCreator,

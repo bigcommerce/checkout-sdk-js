@@ -9,8 +9,8 @@ export enum Mode {
 }
 
 export function getAmazonMaxoCheckoutButtonOptions(mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
-    const methodId = { methodId: CheckoutButtonMethodType.AMAZON_MAXO };
-    const containerId = 'amazonmaxoCheckoutButton';
+    const methodId = { methodId: CheckoutButtonMethodType.AMAZON_PAY };
+    const containerId = 'amazonpayCheckoutButton';
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
     const amazonMaxoOptions = { containerId, getAmazonMaxoButtonParamsMock };

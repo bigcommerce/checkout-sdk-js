@@ -70,7 +70,7 @@ describe('AmazonMaxoButtonStrategy', () => {
             .mockReturnValue(Promise.resolve());
 
         container = document.createElement('div');
-        container.setAttribute('id', 'amazonmaxoCheckoutButton');
+        container.setAttribute('id', 'amazonpayCheckoutButton');
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
 
@@ -92,11 +92,11 @@ describe('AmazonMaxoButtonStrategy', () => {
             await strategy.initialize(checkoutButtonOptions);
 
             expect(paymentProcessor.createButton).toHaveBeenCalledWith(
-                '#amazonmaxoCheckoutButton', {
+                '#amazonpayCheckoutButton', {
                     checkoutLanguage: 'en_US',
-                    createCheckoutSession: {url: 'https://store-k1drp8k8.bcapp.dev/remote-checkout/amazonmaxo/payment-session'},
+                    createCheckoutSession: {url: 'https://store-k1drp8k8.bcapp.dev/remote-checkout/amazonpay/payment-session'},
                     ledgerCurrency: 'USD',
-                    merchantId: 'checkout_amazonmaxo',
+                    merchantId: 'checkout_amazonpay',
                     placement: 'Cart',
                     productType: 'PayAndShip',
                     region: 'us',

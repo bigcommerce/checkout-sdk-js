@@ -15,15 +15,15 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId, amazonmaxo } = options;
-        if (!amazonmaxo) {
-            throw new InvalidArgumentError('Unable to proceed because "options.amazonmaxo" argument is not provided.');
+        const { methodId, amazonpay } = options;
+        if (!amazonpay) {
+            throw new InvalidArgumentError('Unable to proceed because "options.amazonpay" argument is not provided.');
         }
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
         await this._amazonMaxoPaymentProcessor.initialize(methodId);
-        this._walletButton = this._createSignInButton(amazonmaxo.container, methodId);
+        this._walletButton = this._createSignInButton(amazonpay.container, methodId);
 
         return this._store.getState();
     }
@@ -39,7 +39,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via Amazon, the shopper must click on "Amazon Maxo" button.'
+            'In order to sign in via Amazon, the shopper must click on "Amazon Pay" button.'
         );
     }
 

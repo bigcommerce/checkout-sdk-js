@@ -17,12 +17,12 @@ export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
 
 export function getPaymentMethodMock(region = 'us'): PaymentMethod {
     return {
-        id: 'amazonmaxo',
+        id: 'amazonpay',
         config: {
-            displayName: 'AMAZON MAXO',
+            displayName: 'AMAZON PAY',
             helpText: '',
             isVaultingEnabled: false,
-            merchantId: 'checkout_amazonmaxo',
+            merchantId: 'checkout_amazonpay',
             requireCustomerCode: false,
             testMode: true,
         },
@@ -47,10 +47,10 @@ export function getAmazonMaxoButtonParamsMock(): AmazonMaxoButtonParams {
     return {
         checkoutLanguage: 'en_US' as AmazonMaxoCheckoutLanguage,
         createCheckoutSession: {
-            url: 'https://my-dev-store.store.bcdev/remote-checkout/amazonmaxo/payment-session',
+            url: 'https://my-dev-store.store.bcdev/remote-checkout/amazonpay/payment-session',
         },
         ledgerCurrency: 'USD' as AmazonMaxoLedgerCurrency,
-        merchantId: 'checkout_amazonmaxo',
+        merchantId: 'checkout_amazonpay',
         placement: 'Checkout' as AmazonMaxoPlacement,
         productType: 'PayAndShip',
         sandbox: true,
