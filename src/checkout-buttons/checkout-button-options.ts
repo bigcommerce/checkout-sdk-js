@@ -22,7 +22,7 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The options that are required to facilitate AmazonMaxo. They can be
      * omitted unless you need to support AmazonMaxo.
      */
-    amazonmaxo?: AmazonMaxoButtonInitializeOptions;
+    amazonpay?: AmazonMaxoButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree PayPal. They can be

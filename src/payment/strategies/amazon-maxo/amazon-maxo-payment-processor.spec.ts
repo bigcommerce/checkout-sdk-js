@@ -66,7 +66,7 @@ describe('AmazonMaxoPaymentProcessor', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAmazonMaxo());
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
 
-            await processor.initialize('amazonMaxo');
+            await processor.initialize('amazonpay');
 
             expect(amazonMaxoScriptLoader.load).toHaveBeenCalled();
         });
@@ -76,7 +76,7 @@ describe('AmazonMaxoPaymentProcessor', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
 
-            await expect(processor.initialize('amazonmaxo') ).rejects.toThrow(MissingDataError);
+            await expect(processor.initialize('amazonpay') ).rejects.toThrow(MissingDataError);
         });
     });
 
@@ -97,7 +97,7 @@ describe('AmazonMaxoPaymentProcessor', () => {
         });
 
         it('creates the html button element', async () => {
-            await processor.initialize('amazonMaxo');
+            await processor.initialize('amazonpay');
             await processor.createButton('container', getAmazonMaxoButtonParamsMock());
 
             expect(clientMock.renderButton).toHaveBeenCalled();

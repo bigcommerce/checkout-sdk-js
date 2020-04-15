@@ -242,14 +242,14 @@ export function getAffirm(): PaymentMethod {
 export function getAmazonMaxo(): PaymentMethod {
     return {
         config: {
-            displayName: 'AMAZON MAXO',
+            displayName: 'AMAZON PAY',
             helpText: '',
             isVaultingEnabled: false,
-            merchantId: 'checkout_amazonmaxo',
+            merchantId: 'checkout_amazonpay',
             requireCustomerCode: false,
             testMode: true,
         },
-        id: 'amazonmaxo',
+        id: 'amazonpay',
         initializationData: {
             checkoutLanguage: 'en_US',
             ledgerCurrency: 'USD',

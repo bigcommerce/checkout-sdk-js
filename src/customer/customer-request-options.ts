@@ -39,7 +39,7 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the customer step of checkout
      * when using Amazon Maxo.
      */
-    amazonmaxo?: AmazonMaxoCustomerInitializeOptions;
+    amazonpay?: AmazonMaxoCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout
