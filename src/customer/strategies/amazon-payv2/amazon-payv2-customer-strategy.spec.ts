@@ -6,22 +6,22 @@ import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { PaymentMethod } from '../../../payment';
-import { getAmazonMaxo, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonMaxoPaymentProcessor, AmazonMaxoPaymentProcessor } from '../../../payment/strategies/amazon-maxo';
-import { getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-maxo/amazon-maxo.mock';
+import { getAmazonPayv2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { createAmazonPayv2PaymentProcessor, AmazonPayv2PaymentProcessor } from '../../../payment/strategies/amazon-payv2';
+import { getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-payv2/amazon-payv2.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
-import AmazonMaxoCustomerStrategy from './amazon-maxo-customer-strategy';
-import { getAmazonMaxoCustomerInitializeOptions, Mode } from './amazon-maxo-customer.mock';
+import AmazonPayv2CustomerStrategy from './amazon-payv2-customer-strategy';
+import { getAmazonPayv2CustomerInitializeOptions, Mode } from './amazon-payv2-customer.mock';
 
-describe('AmazonMaxoCustomerStrategy', () => {
+describe('AmazonPayv2CustomerStrategy', () => {
     let container: HTMLDivElement;
     let customerInitializeOptions: CustomerInitializeOptions;
     let paymentMethod: PaymentMethod;
-    let paymentProcessor: AmazonMaxoPaymentProcessor;
+    let paymentProcessor: AmazonPayv2PaymentProcessor;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
@@ -29,7 +29,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
     let walletButton: HTMLAnchorElement;
 
     beforeEach(() => {
-        paymentMethod = getAmazonMaxo();
+        paymentMethod = getAmazonPayv2();
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
@@ -45,9 +45,9 @@ describe('AmazonMaxoCustomerStrategy', () => {
             new RemoteCheckoutRequestSender(requestSender)
         );
 
-        paymentProcessor = createAmazonMaxoPaymentProcessor(store);
+        paymentProcessor = createAmazonPayv2PaymentProcessor(store);
 
-        strategy = new AmazonMaxoCustomerStrategy(
+        strategy = new AmazonPayv2CustomerStrategy(
             store,
             remoteCheckoutActionCreator,
             paymentProcessor
@@ -81,48 +81,48 @@ describe('AmazonMaxoCustomerStrategy', () => {
     describe('#initialize()', () => {
 
         it('Creates the button', async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
 
             expect(paymentProcessor.createButton).toHaveBeenCalled();
         });
 
-        it('fails to initialize the strategy if no AmazonMaxoCustomerInitializeOptions is provided ', async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.Incomplete);
+        it('fails to initialize the strategy if no AmazonPayv2CustomerInitializeOptions is provided ', async () => {
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions(Mode.Incomplete);
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
         });
 
         it('fails to initialize the strategy if no methodid is supplied', async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.UndefinedMethodId);
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions(Mode.UndefinedMethodId);
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('fails to create button if method is not assigned', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('fails to create button if config is not initialized', async () => {
             jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('fails to create button if merchantId is not supplied', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getPaymentMethodMockUndefinedMerchant());
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
         });
 
         it('fails to initialize the strategy if no valid container id is supplied', async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions(Mode.InvalidContainer);
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions(Mode.InvalidContainer);
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
         });
@@ -132,7 +132,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
         let customerInitializeOptions: CustomerInitializeOptions;
 
         beforeEach(() => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
         });
 
         it('succesfully deinitializes the strategy', async () => {
@@ -159,7 +159,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
     describe('#signIn()', () => {
         it('throws error if trying to sign in programmatically', async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
 
@@ -169,7 +169,7 @@ describe('AmazonMaxoCustomerStrategy', () => {
 
     describe('#signOut()', () => {
         beforeEach(async () => {
-            customerInitializeOptions = getAmazonMaxoCustomerInitializeOptions();
+            customerInitializeOptions = getAmazonPayv2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
         });

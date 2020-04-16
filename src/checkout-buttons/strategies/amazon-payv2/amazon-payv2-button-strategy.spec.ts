@@ -9,28 +9,28 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
-import { getAmazonMaxo, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonMaxoPaymentProcessor, AmazonMaxoPaymentProcessor } from '../../../payment/strategies/amazon-maxo';
-import { getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-maxo/amazon-maxo.mock';
+import { getAmazonPayv2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { createAmazonPayv2PaymentProcessor, AmazonPayv2PaymentProcessor } from '../../../payment/strategies/amazon-payv2';
+import { getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-payv2/amazon-payv2.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
-import AmazonMaxoButtonStrategy from './amazon-maxo-button-strategy';
-import { getAmazonMaxoCheckoutButtonOptions, Mode } from './amazon-maxo-button.mock';
+import AmazonPayv2ButtonStrategy from './amazon-payv2-button-strategy';
+import { getAmazonPayv2CheckoutButtonOptions, Mode } from './amazon-payv2-button.mock';
 
-describe('AmazonMaxoButtonStrategy', () => {
+describe('AmazonPayv2ButtonStrategy', () => {
     let container: HTMLDivElement;
     let formPoster: FormPoster;
     let checkoutButtonOptions: CheckoutButtonInitializeOptions;
     let paymentMethod: PaymentMethod;
-    let paymentProcessor: AmazonMaxoPaymentProcessor;
+    let paymentProcessor: AmazonPayv2PaymentProcessor;
     let checkoutActionCreator: CheckoutActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
-    let strategy: AmazonMaxoButtonStrategy;
+    let strategy: AmazonPayv2ButtonStrategy;
     let walletButton: HTMLAnchorElement;
 
     beforeEach(() => {
-        paymentMethod = getAmazonMaxo();
+        paymentMethod = getAmazonPayv2();
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
@@ -47,11 +47,11 @@ describe('AmazonMaxoButtonStrategy', () => {
             new ConfigActionCreator(new ConfigRequestSender(requestSender))
         );
 
-        paymentProcessor = createAmazonMaxoPaymentProcessor(store);
+        paymentProcessor = createAmazonPayv2PaymentProcessor(store);
 
         formPoster = createFormPoster();
 
-        strategy = new AmazonMaxoButtonStrategy(
+        strategy = new AmazonPayv2ButtonStrategy(
             store,
             checkoutActionCreator,
             paymentProcessor
@@ -87,7 +87,7 @@ describe('AmazonMaxoButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('Creates the button', async () => {
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions();
 
             await strategy.initialize(checkoutButtonOptions);
 
@@ -106,27 +106,27 @@ describe('AmazonMaxoButtonStrategy', () => {
 
         it('fails to create button if not PaymentMethod is supplied', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions();
 
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('fails to create button if config is not initialized', async () => {
             jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions();
 
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(MissingDataError);
         });
 
         it('fails to create button if merchantId is not supplied', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getPaymentMethodMockUndefinedMerchant());
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions();
 
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
         });
 
         it('initialises the payment processor once', async () => {
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions();
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions();
 
             await strategy.initialize(checkoutButtonOptions);
             strategy.initialize(checkoutButtonOptions);
@@ -135,13 +135,13 @@ describe('AmazonMaxoButtonStrategy', () => {
         });
 
         it('fails to initialize the strategy if not container id is supplied', async () => {
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions(Mode.UndefinedContainer);
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions(Mode.UndefinedContainer);
 
             await expect( strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
         });
 
         it('fails to initialize the strategy if not a valid container id is supplied', async () => {
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions(Mode.InvalidContainer);
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions(Mode.InvalidContainer);
 
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
         });
@@ -151,7 +151,7 @@ describe('AmazonMaxoButtonStrategy', () => {
         let checkoutButtonOptions: CheckoutButtonInitializeOptions;
 
         beforeEach(() => {
-            checkoutButtonOptions = getAmazonMaxoCheckoutButtonOptions(Mode.Full);
+            checkoutButtonOptions = getAmazonPayv2CheckoutButtonOptions(Mode.Full);
             container = document.createElement('div');
         });
 
