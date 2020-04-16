@@ -239,7 +239,7 @@ export function getAffirm(): PaymentMethod {
     };
 }
 
-export function getAmazonMaxo(): PaymentMethod {
+export function getAmazonPayv2(): PaymentMethod {
     return {
         config: {
             displayName: 'AMAZON PAY',

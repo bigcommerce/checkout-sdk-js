@@ -7,22 +7,22 @@ export enum Mode {
     Incomplete,
 }
 
-export function getAmazonMaxoCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getAmazonPayv2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'amazonpay' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'amazonpayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const amazonMaxo = { amazonpay: { ...container } };
-    const amazonMaxoWithInvalidContainer = { amazonpay: { ...invalidContainer } };
+    const amazonPayv2 = { amazonpay: { ...container } };
+    const amazonPayv2WithInvalidContainer = { amazonpay: { ...invalidContainer } };
 
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
         case Mode.UndefinedMethodId:
-            return { ...undefinedMethodId, ...amazonMaxo };
+            return { ...undefinedMethodId, ...amazonPayv2 };
         case Mode.InvalidContainer:
-            return { ...methodId, ...amazonMaxoWithInvalidContainer };
+            return { ...methodId, ...amazonPayv2WithInvalidContainer };
         default:
-            return { ...methodId, ...amazonMaxo };
+            return { ...methodId, ...amazonPayv2 };
      }
 }

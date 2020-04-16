@@ -1,8 +1,8 @@
 import PaymentMethod from '../../payment-method';
 
-import { AmazonMaxoButtonParams, AmazonMaxoCheckoutLanguage, AmazonMaxoLedgerCurrency, AmazonMaxoPlacement, AmazonMaxoSDK } from './amazon-maxo';
+import { AmazonPayv2ButtonParams, AmazonPayv2CheckoutLanguage, AmazonPayv2LedgerCurrency, AmazonPayv2Placement, AmazonPayv2SDK } from './amazon-payv2';
 
-export function getAmazonMaxoSDKMock(): AmazonMaxoSDK {
+export function getAmazonPayv2SDKMock(): AmazonPayv2SDK {
     return {
         Pay: {
             renderButton: jest.fn(),
@@ -43,15 +43,15 @@ export function getPaymentMethodMock(region = 'us'): PaymentMethod {
     };
 }
 
-export function getAmazonMaxoButtonParamsMock(): AmazonMaxoButtonParams {
+export function getAmazonPayv2ButtonParamsMock(): AmazonPayv2ButtonParams {
     return {
-        checkoutLanguage: 'en_US' as AmazonMaxoCheckoutLanguage,
+        checkoutLanguage: 'en_US' as AmazonPayv2CheckoutLanguage,
         createCheckoutSession: {
             url: 'https://my-dev-store.store.bcdev/remote-checkout/amazonpay/payment-session',
         },
-        ledgerCurrency: 'USD' as AmazonMaxoLedgerCurrency,
+        ledgerCurrency: 'USD' as AmazonPayv2LedgerCurrency,
         merchantId: 'checkout_amazonpay',
-        placement: 'Checkout' as AmazonMaxoPlacement,
+        placement: 'Checkout' as AmazonPayv2Placement,
         productType: 'PayAndShip',
         sandbox: true,
     };

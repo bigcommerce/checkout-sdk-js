@@ -5,18 +5,18 @@ import { CheckoutStore } from '../../../checkout';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 
-import AmazonMaxoPaymentProcessor from './amazon-maxo-payment-processor';
-import AmazonMaxoScriptLoader from './amazon-maxo-script-loader';
+import AmazonPayv2PaymentProcessor from './amazon-payv2-payment-processor';
+import AmazonPayv2ScriptLoader from './amazon-payv2-script-loader';
 
-export default function createAmazonMaxoPaymentProcessor(store: CheckoutStore): AmazonMaxoPaymentProcessor {
+export default function createAmazonPayv2PaymentProcessor(store: CheckoutStore): AmazonPayv2PaymentProcessor {
     const requestSender = createRequestSender();
     const scriptLoader = getScriptLoader();
 
-    return new AmazonMaxoPaymentProcessor(
+    return new AmazonPayv2PaymentProcessor(
         store,
         new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender)
         ),
-        new AmazonMaxoScriptLoader(scriptLoader)
+        new AmazonPayv2ScriptLoader(scriptLoader)
     );
 }

@@ -1,17 +1,17 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
-import { AmazonMaxoPaymentProcessor, AmazonMaxoPlacement } from '../../../payment/strategies/amazon-maxo';
+import { AmazonPayv2PaymentProcessor, AmazonPayv2Placement } from '../../../payment/strategies/amazon-payv2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
-export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
+export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
 
     constructor(
         private _store: CheckoutStore,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
+        private _amazonPayv2PaymentProcessor: AmazonPayv2PaymentProcessor
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -22,7 +22,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-        await this._amazonMaxoPaymentProcessor.initialize(methodId);
+        await this._amazonPayv2PaymentProcessor.initialize(methodId);
         this._walletButton = this._createSignInButton(amazonpay.container, methodId);
 
         return this._store.getState();
@@ -104,9 +104,9 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
                 url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
-            placement: AmazonMaxoPlacement.Checkout,
+            placement: AmazonPayv2Placement.Checkout,
         };
 
-        return this._amazonMaxoPaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
+        return this._amazonPayv2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
     }
 }
