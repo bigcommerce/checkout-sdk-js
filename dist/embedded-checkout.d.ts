@@ -27,6 +27,12 @@ declare interface ChecklistStyles extends BlockElementStyles {
     checked?: BlockElementStyles;
 }
 
+declare interface CustomError extends Error {
+    message: string;
+    type: string;
+    subtype?: string;
+}
+
 declare class EmbeddedCheckout {
     private _iframeCreator;
     private _messageListener;
@@ -89,6 +95,21 @@ declare interface EmbeddedCheckoutFrameLoadedEvent {
 
 declare interface EmbeddedCheckoutLoadedEvent {
     type: EmbeddedCheckoutEventType.CheckoutLoaded;
+}
+
+declare interface EmbeddedCheckoutMessenger {
+    postComplete(): void;
+    postError(payload: Error | CustomError): void;
+    postFrameError(payload: Error | CustomError): void;
+    postFrameLoaded(payload?: EmbeddedContentOptions): void;
+    postLoaded(): void;
+    postSignedOut(): void;
+    receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void;
+}
+
+declare interface EmbeddedCheckoutMessengerOptions {
+    parentOrigin: string;
+    parentWindow?: Window;
 }
 
 declare interface EmbeddedCheckoutOptions {
@@ -172,6 +193,33 @@ declare interface StepStyles extends BlockElementStyles {
 declare interface TextInputStyles extends InputStyles {
     placeholder?: InlineElementStyles;
 }
+
+/**
+ * Create an instance of `EmbeddedCheckoutMessenger`.
+ *
+ * @remarks
+ * The object is responsible for posting messages to the parent window from the
+ * iframe when certain events have occurred. For example, when the checkout
+ * form is first loaded, you should notify the parent window about it.
+ *
+ * The iframe can only be embedded in domains that are allowed by the store.
+ *
+ * ```ts
+ * const messenger = createEmbeddedCheckoutMessenger({
+ *     parentOrigin: 'https://some/website',
+ * });
+ *
+ * messenger.postFrameLoaded();
+ * ```
+ *
+ * @alpha
+ * Please note that this feature is currently in an early stage of development.
+ * Therefore the API is unstable and not ready for public consumption.
+ *
+ * @param options - Options for creating `EmbeddedCheckoutMessenger`
+ * @returns - An instance of `EmbeddedCheckoutMessenger`
+ */
+export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
 
 /**
  * Embed the checkout form in an iframe.
