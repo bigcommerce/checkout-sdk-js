@@ -11,6 +11,7 @@ enum PaymentStrategyType {
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
+    LAYBUY = 'laybuy',
     LEGACY = 'legacy',
     OFFLINE = 'offline',
     OFFSITE = 'offsite',
