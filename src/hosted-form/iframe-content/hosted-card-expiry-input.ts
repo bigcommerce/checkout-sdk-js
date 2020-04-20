@@ -15,7 +15,7 @@ export default class HostedCardExpiryInput extends HostedInput {
      * @internal
      */
     constructor(
-        containerId: string,
+        form: HTMLFormElement,
         placeholder: string,
         accessibilityLabel: string,
         autocomplete: string,
@@ -30,7 +30,7 @@ export default class HostedCardExpiryInput extends HostedInput {
     ) {
         super(
             HostedFieldType.CardExpiry,
-            containerId,
+            form,
             placeholder,
             accessibilityLabel,
             autocomplete,

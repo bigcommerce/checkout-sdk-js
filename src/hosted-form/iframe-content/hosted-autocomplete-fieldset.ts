@@ -1,6 +1,5 @@
 import { kebabCase } from 'lodash';
 
-import { InvalidHostedFormConfigError } from '../errors';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
@@ -10,7 +9,7 @@ export default class HostedAutocompleteFieldset {
     private _inputs: HTMLInputElement[];
 
     constructor(
-        private _containerId: string,
+        private _form: HTMLFormElement,
         private _fieldTypes: HostedFieldType[],
         private _inputAggregator: HostedInputAggregator
     ) {
@@ -18,13 +17,7 @@ export default class HostedAutocompleteFieldset {
     }
 
     attach(): void {
-        const container = document.getElementById(this._containerId);
-
-        if (!container) {
-            throw new InvalidHostedFormConfigError('Unable to proceed because the provided container ID is not valid.');
-        }
-
-        this._inputs.forEach(input => container.appendChild(input));
+        this._inputs.forEach(input => this._form.appendChild(input));
     }
 
     detach(): void {

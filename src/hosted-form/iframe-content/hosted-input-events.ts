@@ -14,6 +14,7 @@ export enum HostedInputEventType {
     Blurred = 'HOSTED_INPUT:BLURRED',
     Changed = 'HOSTED_INPUT:CHANGED',
     CardTypeChanged = 'HOSTED_INPUT:CARD_TYPE_CHANGED',
+    Entered = 'HOSTED_INPUT:ENTERED',
     Focused = 'HOSTED_INPUT:FOCUSED',
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
@@ -28,6 +29,7 @@ export interface HostedInputEventMap {
     [HostedInputEventType.Blurred]: HostedInputBlurEvent;
     [HostedInputEventType.Changed]: HostedInputChangeEvent;
     [HostedInputEventType.CardTypeChanged]: HostedInputCardTypeChangeEvent;
+    [HostedInputEventType.Entered]: HostedInputEnterEvent;
     [HostedInputEventType.Focused]: HostedInputFocusEvent;
     [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
     [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
@@ -42,6 +44,7 @@ export type HostedInputEvent = (
     HostedInputBlurEvent |
     HostedInputChangeEvent |
     HostedInputCardTypeChangeEvent |
+    HostedInputEnterEvent |
     HostedInputFocusEvent |
     HostedInputSubmitSuccessEvent |
     HostedInputSubmitErrorEvent |
@@ -89,6 +92,13 @@ export interface HostedInputCardTypeChangeEvent {
 
 export interface HostedInputFocusEvent {
     type: HostedInputEventType.Focused;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+export interface HostedInputEnterEvent {
+    type: HostedInputEventType.Entered;
     payload: {
         fieldType: HostedFieldType;
     };

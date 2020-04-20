@@ -11,7 +11,7 @@ import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
 describe('HostedCardExpiryInput', () => {
-    let container: HTMLDivElement;
+    let container: HTMLFormElement;
     let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'post' | 'setTarget'>;
     let expiryFormatter: Pick<CardExpiryFormatter, 'format'>;
@@ -42,8 +42,11 @@ describe('HostedCardExpiryInput', () => {
         paymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
+        container = document.createElement('form');
+        document.body.appendChild(container);
+
         input = new HostedCardExpiryInput(
-            'input-container',
+            container,
             'Expiration',
             'Card expiration',
             'cc-expiry',
@@ -56,10 +59,6 @@ describe('HostedCardExpiryInput', () => {
             paymentHandler as HostedInputPaymentHandler,
             expiryFormatter as CardExpiryFormatter
         );
-
-        container = document.createElement('div');
-        container.id = 'input-container';
-        document.body.appendChild(container);
     });
 
     afterEach(() => {

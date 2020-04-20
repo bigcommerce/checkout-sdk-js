@@ -7,9 +7,9 @@ import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
-import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
+import { HostedInputEnterEvent, HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
-type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidate'>;
+type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
 
 export default class HostedForm {
     private _bin?: string;
@@ -19,14 +19,15 @@ export default class HostedForm {
         private _fields: HostedField[],
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
-        eventCallbacks: HostedFormEventCallbacks
+        private _eventCallbacks: HostedFormEventCallbacks
     ) {
-        const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = eventCallbacks;
+        const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
 
         this._eventListener.addListener(HostedInputEventType.Blurred, ({ payload }) => onBlur(payload));
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => onCardTypeChange(payload));
         this._eventListener.addListener(HostedInputEventType.Focused, ({ payload }) => onFocus(payload));
         this._eventListener.addListener(HostedInputEventType.Validated, ({ payload }) => onValidate(payload));
+        this._eventListener.addListener(HostedInputEventType.Entered, this._handleEnter);
 
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => this._cardType = payload.cardType);
         this._eventListener.addListener(HostedInputEventType.BinChanged, ({ payload }) => this._bin = payload.bin);
@@ -78,4 +79,20 @@ export default class HostedForm {
 
         return field;
     }
+
+    private _handleEnter: (event: HostedInputEnterEvent) => Promise<void> = async ({ payload }) => {
+        try {
+            await this.validate();
+        } catch (error) {
+            // Catch form validation error because we want to trigger `onEnter`
+            // irrespective of the validation result.
+            if (error.name !== 'InvalidHostedFormValueError') {
+                throw error;
+            }
+        }
+
+        const { onEnter = noop } = this._eventCallbacks;
+
+        onEnter(payload);
+    };
 }

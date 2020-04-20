@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
-import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType, HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
@@ -14,7 +13,7 @@ import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
 
 describe('HostedInput', () => {
-    let container: HTMLDivElement;
+    let container: HTMLFormElement;
     let eventEmitter: EventEmitter;
     let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
@@ -77,9 +76,12 @@ describe('HostedInput', () => {
             })),
         };
 
+        container = document.createElement('form');
+        document.body.appendChild(container);
+
         input = new HostedInput(
             HostedFieldType.CardName,
-            'input-container',
+            container,
             'Full name',
             'Cardholder name',
             'cc-name',
@@ -91,10 +93,6 @@ describe('HostedInput', () => {
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler
         );
-
-        container = document.createElement('div');
-        container.id = 'input-container';
-        document.body.appendChild(container);
     });
 
     afterEach(() => {
@@ -179,13 +177,6 @@ describe('HostedInput', () => {
 
         expect(links.map(link => link.href))
             .toEqual(fontUrls);
-    });
-
-    it('throws error if container cannot be found', () => {
-        container.remove();
-
-        expect(() => input.attach())
-            .toThrowError(InvalidHostedFormConfigError);
     });
 
     it('notifies input change', () => {
@@ -276,6 +267,20 @@ describe('HostedInput', () => {
 
         expect(paymentHandler.handle)
             .toHaveBeenCalledWith(event);
+    });
+
+    it('emits event when enter key is pressed', () => {
+        input.attach();
+
+        container.dispatchEvent(new Event('submit'));
+
+        expect(eventPoster.post)
+            .toHaveBeenCalledWith({
+                type: HostedInputEventType.Entered,
+                payload: {
+                    fieldType: HostedFieldType.CardName,
+                },
+            });
     });
 
     it('cleans up when it detaches', () => {
