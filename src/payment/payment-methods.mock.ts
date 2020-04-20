@@ -486,6 +486,24 @@ export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     };
 }
 
+export function getBolt(): PaymentMethod {
+    return {
+        id: 'bolt',
+        logoUrl: '',
+        method: 'bolt',
+        supportedCards: [],
+        config: {
+            displayName: 'Bolt',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            publishableKey: 'publishableKey',
+        },
+        clientToken: 'clientToken',
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
