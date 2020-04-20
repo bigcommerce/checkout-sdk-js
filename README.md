@@ -9,6 +9,8 @@ The SDK has a convenient application interface for starting and completing a che
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Installation](#installation)
+    - [Using NPM package](#using-npm-package)
+    - [Using CDN URL](#using-cdn-url)
 - [Requirements](#requirements)
     - [Browser support](#browser-support)
     - [Framework](#framework)
@@ -65,11 +67,37 @@ The Checkout JS SDK is the easiest way to build a bespoke checkout into your sto
 
 ## Installation
 
+### Using NPM package
+
 You can install this library using [npm](https://www.npmjs.com/get-npm).
 
 ```sh
 npm install --save @bigcommerce/checkout-sdk
 ```
+
+### Using CDN URL
+
+You can also use this library by referencing a CDN URL.
+
+```
+https://checkout-sdk.bigcommerce.com/v1/loader.js
+```
+
+The main benefit of using the script URL above is that your application can automatically receive backward compatible updates and bug fixes from us, without having to manually perform an upgrade.
+
+Once the above script is loaded, `checkoutKitLoader` instance will be available in the `window` and you can use it to load the module that you need for your application. i.e.:
+
+```js
+const module = await checkoutKitLoader.load('checkout-sdk');
+const service = module.createCheckoutService();
+```
+
+Currently, there are three modules available for public use:
+**checkout-sdk**: This is the main module that contains all the public exports of the package.
+**checkout-button**: This sub-module can be used to initialize checkout buttons in the storefront once a cart is created (i.e.: cart page).
+**embedded-checkout**: This sub-module can be used to embed our Optimized One-Page Checkout in non-native storefronts (i.e.: Wordpress).
+
+Please refer to the usage guide below for more information on each of them.
 
 
 ## Requirements
@@ -77,6 +105,8 @@ npm install --save @bigcommerce/checkout-sdk
 ### Browser support
 
 We release the library in ES5 so you don't have to do additional transpilation in order to use it. However, you do require the [Promise polyfill](https://github.com/stefanpenner/es6-promise) if you need to support older browsers, such as IE11.
+
+On the other hand, the CDN version already contains the necessary polyfill for it to work in IE11.
 
 ### Framework
 
