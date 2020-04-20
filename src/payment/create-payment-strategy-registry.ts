@@ -25,6 +25,7 @@ import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
+import { BoltPaymentStrategy } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
@@ -430,6 +431,14 @@ export default function createPaymentStrategyRegistry(
             new StripeScriptLoader(scriptLoader)
         )
     );
+
+    registry.register(PaymentStrategyType.BOLT, () =>
+        new BoltPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        )
+);
 
     return registry;
 }
