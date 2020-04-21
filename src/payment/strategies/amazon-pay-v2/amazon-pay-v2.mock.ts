@@ -1,12 +1,13 @@
 import PaymentMethod from '../../payment-method';
 
-import { AmazonPayv2ButtonParams, AmazonPayv2CheckoutLanguage, AmazonPayv2LedgerCurrency, AmazonPayv2Placement, AmazonPayv2SDK } from './amazon-payv2';
+import { AmazonPayV2ButtonParams, AmazonPayV2CheckoutLanguage, AmazonPayV2LedgerCurrency, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
 
-export function getAmazonPayv2SDKMock(): AmazonPayv2SDK {
+export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
         Pay: {
             renderButton: jest.fn(),
             bindChangeAction: jest.fn(),
+            signout: jest.fn(),
         },
     };
 }
@@ -43,15 +44,15 @@ export function getPaymentMethodMock(region = 'us'): PaymentMethod {
     };
 }
 
-export function getAmazonPayv2ButtonParamsMock(): AmazonPayv2ButtonParams {
+export function getAmazonPayV2ButtonParamsMock(): AmazonPayV2ButtonParams {
     return {
-        checkoutLanguage: 'en_US' as AmazonPayv2CheckoutLanguage,
+        checkoutLanguage: 'en_US' as AmazonPayV2CheckoutLanguage,
         createCheckoutSession: {
             url: 'https://my-dev-store.store.bcdev/remote-checkout/amazonpay/payment-session',
         },
-        ledgerCurrency: 'USD' as AmazonPayv2LedgerCurrency,
+        ledgerCurrency: 'USD' as AmazonPayV2LedgerCurrency,
         merchantId: 'checkout_amazonpay',
-        placement: 'Checkout' as AmazonPayv2Placement,
+        placement: 'Checkout' as AmazonPayV2Placement,
         productType: 'PayAndShip',
         sandbox: true,
     };

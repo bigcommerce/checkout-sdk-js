@@ -1,26 +1,29 @@
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { AmazonPayv2PaymentProcessor, AmazonPayv2Placement } from '../../../payment/strategies/amazon-payv2';
+import { AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class AmazonPayv2ButtonStrategy implements CheckoutButtonStrategy {
+export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy {
     private _walletButton?: HTMLElement;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _amazonPayv2PaymentProcessor: AmazonPayv2PaymentProcessor
+        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor
     ) { }
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-            const { containerId, methodId } = options;
-            if (!containerId) {
-                throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
-            }
-            await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-            await this._amazonPayv2PaymentProcessor.initialize(methodId);
-            this._walletButton = this._createSignInButton(containerId, methodId);
+        const { containerId, methodId } = options;
+
+        if (!containerId || !methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
+        }
+
+        await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+        await this._amazonPayV2PaymentProcessor.initialize(methodId);
+
+        this._walletButton = this._createSignInButton(containerId, methodId);
     }
 
     deinitialize(): Promise<void> {
@@ -33,7 +36,7 @@ export default class AmazonPayv2ButtonStrategy implements CheckoutButtonStrategy
     }
 
     private _createSignInButton(containerId: string, methodId: string): HTMLElement {
-        const container = document.querySelector(`#${containerId}`);
+        const container = document.getElementById(containerId);
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
@@ -41,7 +44,7 @@ export default class AmazonPayv2ButtonStrategy implements CheckoutButtonStrategy
 
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-
+        const cart = state.cart.getCart();
         const config = state.config.getStoreConfig();
 
         if (!config) {
@@ -76,15 +79,19 @@ export default class AmazonPayv2ButtonStrategy implements CheckoutButtonStrategy
             checkoutLanguage,
             ledgerCurrency,
             region,
-            productType: 'PayAndShip',
+            productType: cart && cart.lineItems.physicalItems.length === 0 ?
+                AmazonPayV2PayOptions.PayOnly :
+                AmazonPayV2PayOptions.PayAndShip,
             createCheckoutSession: {
                 method: checkoutSessionMethod,
                 url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
-            placement: AmazonPayv2Placement.Cart,
+            placement: AmazonPayV2Placement.Cart,
         };
 
-        return this._amazonPayv2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
+        this._amazonPayV2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
+
+        return container;
     }
 }
