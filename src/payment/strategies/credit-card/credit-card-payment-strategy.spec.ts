@@ -196,4 +196,58 @@ describe('CreditCardPaymentStrategy', () => {
                 .toHaveBeenCalledWith(loadOrderAction);
         });
     });
+
+    describe('when hosted form is enabled but hosted fields are not present for rendering', () => {
+        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+        let initializeOptions: PaymentInitializeOptions;
+        let loadOrderAction: Observable<LoadOrderSucceededAction>;
+        let state: InternalCheckoutSelectors;
+
+        beforeEach(() => {
+            form = {
+                attach: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(() => Promise.resolve()),
+                validate: jest.fn(() => Promise.resolve()),
+            };
+            initializeOptions = {
+                creditCard: {
+                    form: {
+                        fields: {},
+                    },
+                },
+                methodId: 'authorizenet',
+            };
+            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
+            state = store.getState();
+
+            jest.spyOn(state.config, 'getStoreConfig')
+                .mockReturnValue(merge(
+                    getConfig().storeConfig,
+                    { checkoutSettings: { isHostedPaymentFormEnabled: true } }
+                ));
+
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValue(loadOrderAction);
+
+            jest.spyOn(formFactory, 'create')
+                .mockReturnValue(form);
+        });
+
+        it('does not create hosted form', async () => {
+            await strategy.initialize(initializeOptions);
+
+            expect(formFactory.create)
+                .not.toHaveBeenCalled();
+        });
+
+        it('does not submit with hosted form', async () => {
+            const payload = getOrderRequestBody();
+
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(payload);
+
+            expect(form.submit)
+                .not.toHaveBeenCalled();
+        });
+    });
 });

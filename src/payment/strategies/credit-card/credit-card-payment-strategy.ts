@@ -1,3 +1,5 @@
+import { isNil, values } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { HostedForm, HostedFormFactory } from '../../../hosted-form';
@@ -10,6 +12,7 @@ import PaymentStrategy from '../payment-strategy';
 
 export default class CreditCardPaymentStrategy implements PaymentStrategy {
     protected _hostedForm?: HostedForm;
+    protected _shouldRenderHostedForm?: boolean;
 
     constructor(
         protected _store: CheckoutStore,
@@ -19,7 +22,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
     ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._isHostedPaymentFormEnabled() ?
+        return this._isHostedPaymentFormEnabled() && this._shouldRenderHostedForm ?
             this._executeWithHostedForm(payload, options) :
             this._executeWithoutHostedForm(payload, options);
     }
@@ -29,7 +32,9 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
     }
 
     initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isHostedPaymentFormEnabled()) {
+        if (!this._isHostedPaymentFormEnabled() || !this._isHostedFieldAvailable(options)) {
+            this._shouldRenderHostedForm = false;
+
             return Promise.resolve(this._store.getState());
         }
 
@@ -46,6 +51,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
 
         return form.attach()
             .then(() => {
+                this._shouldRenderHostedForm = true;
                 this._hostedForm = form;
 
                 return this._store.getState();
@@ -97,5 +103,9 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
         const { checkoutSettings: { isHostedPaymentFormEnabled = false } = {} } = config.getStoreConfig() || {};
 
         return isHostedPaymentFormEnabled;
+    }
+
+    private _isHostedFieldAvailable(options?: PaymentInitializeOptions): boolean {
+        return !(values(options && options.creditCard && options.creditCard.form.fields).every(isNil));
     }
 }
