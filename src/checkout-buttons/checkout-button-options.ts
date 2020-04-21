@@ -1,7 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutButtonMethodType } from './strategies';
-import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-payv2';
+import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-pay-v2';
 import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';

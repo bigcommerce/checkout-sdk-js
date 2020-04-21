@@ -1,28 +1,29 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
-import { AmazonPayv2PaymentProcessor, AmazonPayv2Placement } from '../../../payment/strategies/amazon-payv2';
+import { AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
-export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
+export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
 
     constructor(
         private _store: CheckoutStore,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _amazonPayv2PaymentProcessor: AmazonPayv2PaymentProcessor
+        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonpay } = options;
+
         if (!amazonpay) {
             throw new InvalidArgumentError('Unable to proceed because "options.amazonpay" argument is not provided.');
         }
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-        await this._amazonPayv2PaymentProcessor.initialize(methodId);
+        await this._amazonPayV2PaymentProcessor.initialize(methodId);
         this._walletButton = this._createSignInButton(amazonpay.container, methodId);
 
         return this._store.getState();
@@ -43,7 +44,7 @@ export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
         );
     }
 
-    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    async signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const payment = state.payment.getPaymentId();
 
@@ -51,13 +52,15 @@ export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
             return Promise.resolve(this._store.getState());
         }
 
+        await this._amazonPayV2PaymentProcessor.signout(payment.providerId);
+
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
     }
 
     private _createSignInButton(containerId: string, methodId: string): HTMLElement {
-        const container = document.querySelector(`#${containerId}`);
+        const container = document.getElementById(containerId);
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
@@ -66,6 +69,8 @@ export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
         const config = state.config.getStoreConfig();
+        const cart = state.cart.getCart();
+
         if (!config) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
@@ -98,15 +103,19 @@ export default class AmazonPayv2CustomerStrategy implements CustomerStrategy {
             checkoutLanguage,
             ledgerCurrency,
             region,
-            productType: 'PayAndShip',
+            productType: cart && cart.lineItems.physicalItems.length === 0 ?
+                AmazonPayV2PayOptions.PayOnly :
+                AmazonPayV2PayOptions.PayAndShip,
             createCheckoutSession: {
                 method: checkoutSessionMethod,
                 url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
-            placement: AmazonPayv2Placement.Checkout,
+            placement: AmazonPayV2Placement.Checkout,
         };
 
-        return this._amazonPayv2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
+        this._amazonPayV2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
+
+        return container;
     }
 }

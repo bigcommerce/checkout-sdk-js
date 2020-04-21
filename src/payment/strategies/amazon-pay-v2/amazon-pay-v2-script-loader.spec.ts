@@ -2,55 +2,55 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { AmazonPayv2HostWindow, AmazonPayv2SDK } from './amazon-payv2';
-import AmazonPayv2ScriptLoader from './amazon-payv2-script-loader';
-import { getAmazonPayv2SDKMock, getPaymentMethodMock } from './amazon-payv2.mock';
+import { AmazonPayV2HostWindow, AmazonPayV2SDK } from './amazon-pay-v2';
+import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
+import { getAmazonPayV2SDKMock, getPaymentMethodMock } from './amazon-pay-v2.mock';
 
-describe('AmazonPayv2ScriptLoader', () => {
-    let amazonPayv2ScriptLoader: AmazonPayv2ScriptLoader;
+describe('AmazonPayV2ScriptLoader', () => {
+    let amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader;
     let scriptLoader: ScriptLoader;
-    let mockWindow: AmazonPayv2HostWindow;
+    let mockWindow: AmazonPayV2HostWindow;
 
     beforeEach(() => {
-        mockWindow = {} as AmazonPayv2HostWindow;
+        mockWindow = {} as AmazonPayV2HostWindow;
         scriptLoader = {} as ScriptLoader;
-        amazonPayv2ScriptLoader = new AmazonPayv2ScriptLoader(scriptLoader, mockWindow);
+        amazonPayV2ScriptLoader = new AmazonPayV2ScriptLoader(scriptLoader, mockWindow);
     });
 
     describe('#load()', () => {
-        let amazonPayv2SDK: AmazonPayv2SDK;
+        let amazonPayV2SDK: AmazonPayV2SDK;
 
         beforeEach(() => {
-            amazonPayv2SDK = getAmazonPayv2SDKMock();
+            amazonPayV2SDK = getAmazonPayV2SDKMock();
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.amazon = amazonPayv2SDK;
+                mockWindow.amazon = amazonPayV2SDK;
 
                 return Promise.resolve();
             });
         });
 
         it('loads the USA SDK if US region is passed on Payment Method', async () => {
-            await amazonPayv2ScriptLoader.load(getPaymentMethodMock());
+            await amazonPayV2ScriptLoader.load(getPaymentMethodMock());
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://static-na.payments-amazon.com/checkout.js');
         });
 
         it('loads the Europe SDK if EU region is passed on Payment Method', async () => {
-            await amazonPayv2ScriptLoader.load(getPaymentMethodMock('de'));
+            await amazonPayV2ScriptLoader.load(getPaymentMethodMock('de'));
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://static-eu.payments-amazon.com/checkout.js');
         });
 
         it('loads the Japan SDK if JP region is passed on Payment Method', async () => {
-            await amazonPayv2ScriptLoader.load(getPaymentMethodMock('jp'));
+            await amazonPayV2ScriptLoader.load(getPaymentMethodMock('jp'));
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://static-fe.payments-amazon.com/checkout.js');
         });
 
         it('returns the SDK from the window', async () => {
-            const sdk = await amazonPayv2ScriptLoader.load(getPaymentMethodMock());
+            const sdk = await amazonPayV2ScriptLoader.load(getPaymentMethodMock());
 
-            expect(sdk).toBe(amazonPayv2SDK);
+            expect(sdk).toBe(amazonPayV2SDK);
         });
 
         it('throws an error when window is not set', async () => {
@@ -60,7 +60,7 @@ describe('AmazonPayv2ScriptLoader', () => {
                 return Promise.resolve();
             });
 
-            await expect(amazonPayv2ScriptLoader.load(getPaymentMethodMock())).rejects.toThrow(PaymentMethodClientUnavailableError);
+            await expect(amazonPayV2ScriptLoader.load(getPaymentMethodMock())).rejects.toThrow(PaymentMethodClientUnavailableError);
         });
     });
 });
