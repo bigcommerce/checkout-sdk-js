@@ -28,6 +28,7 @@ import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { SignInEmailActionCreator, SignInEmailRequestSender } from '../signin-email';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
@@ -67,6 +68,8 @@ describe('CheckoutService', () => {
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
+    let signInEmailActionCreator: SignInEmailActionCreator;
+    let signInEmailRequestSender: SignInEmailRequestSender;
     let subscriptionsRequestSender: SubscriptionsRequestSender;
     let subscriptionsActionCreator: SubscriptionsActionCreator;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
@@ -99,6 +102,14 @@ describe('CheckoutService', () => {
         subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender);
 
         jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockResolvedValue(getResponse({}));
+
+        signInEmailRequestSender = new SignInEmailRequestSender(requestSender);
+        signInEmailActionCreator = new SignInEmailActionCreator(signInEmailRequestSender);
+
+        jest.spyOn(signInEmailRequestSender, 'sendSignInEmail').mockResolvedValue(getResponse({
+            sent_email: 'foo@bar.com',
+            expiry: 0,
+        }));
 
         jest.spyOn(billingAddressRequestSender, 'updateAddress')
             .mockResolvedValue(getResponse(merge({}, getCheckout(), {
@@ -239,6 +250,7 @@ describe('CheckoutService', () => {
             paymentStrategyActionCreator,
             new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator,
+            signInEmailActionCreator,
             spamProtectionActionCreator,
             new StoreCreditActionCreator(storeCreditRequestSender),
             subscriptionsActionCreator
@@ -371,6 +383,18 @@ describe('CheckoutService', () => {
             const state = await checkoutService.loadCheckout();
 
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#sendSignInEmail()', () => {
+        it('sends sign-in email', async () => {
+            const state = await checkoutService.sendSignInEmail('foo@bar.com');
+
+            expect(signInEmailRequestSender.sendSignInEmail)
+                .toHaveBeenCalledWith('foo@bar.com', undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
         });
     });
 

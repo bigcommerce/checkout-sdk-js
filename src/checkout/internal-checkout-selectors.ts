@@ -11,6 +11,7 @@ import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from 
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
+import { SignInEmailSelector } from '../signin-email';
 import { StoreCreditSelector } from '../store-credit';
 import { SubscriptionsSelector } from '../subscription';
 
@@ -38,6 +39,7 @@ export default interface InternalCheckoutSelectors {
     shippingAddress: ShippingAddressSelector;
     shippingCountries: ShippingCountrySelector;
     shippingStrategies: ShippingStrategySelector;
+    signInEmail: SignInEmailSelector;
     subscriptions: SubscriptionsSelector;
     storeCredit: StoreCreditSelector;
 }

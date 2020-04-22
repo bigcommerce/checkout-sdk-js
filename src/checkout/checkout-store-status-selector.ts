@@ -255,6 +255,13 @@ export default interface CheckoutStoreStatusSelector {
     isRemovingCoupon(): boolean;
 
     /**
+     * Checks whether a sign-in email is being sent.
+     *
+     * @returns True if sending a sign-in email, otherwise false
+     */
+    isSendingSignInEmail(): boolean;
+
+    /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
@@ -419,6 +426,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingInstruments: state.instruments.isLoading,
             isDeletingInstrument: state.instruments.isDeleting,
             isLoadingConfig: state.config.isLoading,
+            isSendingSignInEmail: state.signInEmail.isSending,
             isCustomerStepPending: isCustomerStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),
         };

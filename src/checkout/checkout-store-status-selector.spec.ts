@@ -374,6 +374,26 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isSendingSignInEmail()', () => {
+        it('returns true if sending', () => {
+            jest.spyOn(selectors.signInEmail, 'isSending').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isSendingSignInEmail()).toEqual(true);
+            expect(selectors.signInEmail.isSending).toHaveBeenCalled();
+        });
+
+        it('returns false if not sending', () => {
+            jest.spyOn(selectors.signInEmail, 'isSending').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isSendingSignInEmail()).toEqual(false);
+            expect(selectors.signInEmail.isSending).toHaveBeenCalled();
+        });
+    });
+
     describe('#isUpdatingBillingAddress()', () => {
         it('returns true if updating billing address', () => {
             jest.spyOn(selectors.billingAddress, 'isUpdating').mockReturnValue(true);

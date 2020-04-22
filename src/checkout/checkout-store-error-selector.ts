@@ -259,6 +259,13 @@ export default interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to load, otherwise undefined.
      */
     getLoadConfigError(): Error | undefined;
+
+    /**
+     * Returns an error if unable to send sign-in email.
+     *
+     * @returns The error object if unable to send email, otherwise undefined.
+     */
+    getSignInEmailError(): Error | undefined;
 }
 
 export type CheckoutStoreErrorSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreErrorSelector;
@@ -324,6 +331,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getLoadInstrumentsError: state.instruments.getLoadError,
             getDeleteInstrumentError: state.instruments.getDeleteError,
             getLoadConfigError: state.config.getLoadError,
+            getSignInEmailError: state.signInEmail.getSendError,
         };
 
         return {

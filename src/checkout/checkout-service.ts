@@ -15,6 +15,7 @@ import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import { SignInEmailActionCreator } from '../signin-email';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
@@ -60,6 +61,7 @@ export default class CheckoutService {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
+        private _signInEmailActionCreator: SignInEmailActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _subscriptionsActionCreator: SubscriptionsActionCreator
@@ -518,6 +520,21 @@ export default class CheckoutService {
         const action = this._customerStrategyActionCreator.deinitialize(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
+    }
+
+    /**
+     * Sends a email that contains a single-use sign-in link. When clicked, this link
+     * signs in the customer without requiring any password.
+     *
+     * @internal
+     * @param email - The email to be sent the sign-in link.
+     * @param options - Options for the send email request.
+     * @returns A promise that resolves to the current state.
+     */
+    sendSignInEmail(email: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._signInEmailActionCreator.sendSignInEmail(email, options);
+
+        return this._dispatch(action, { queueId: 'signInEmail' });
     }
 
     /**

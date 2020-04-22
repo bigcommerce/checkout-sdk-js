@@ -59,6 +59,26 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
+    describe('#getSignInEmailError()', () => {
+        it('returns error if theres one', () => {
+            jest.spyOn(selectors.signInEmail, 'getSendError').mockReturnValue(errorResponse);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getSignInEmailError()).toEqual(errorResponse);
+            expect(selectors.signInEmail.getSendError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is no error', () => {
+            jest.spyOn(selectors.signInEmail, 'getSendError').mockReturnValue(undefined);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getSignInEmailError()).toEqual(undefined);
+            expect(selectors.signInEmail.getSendError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getUpdateCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
             jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(errorResponse);
