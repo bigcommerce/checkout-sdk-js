@@ -2,7 +2,6 @@ import { kebabCase } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { parseUrl } from '../../common/url';
-import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType, HostedFieldValidateRequestEvent } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
@@ -24,7 +23,7 @@ export default class HostedInput {
      */
     constructor(
         protected _type: HostedFieldType,
-        protected _containerId: string,
+        protected _form: HTMLFormElement,
         protected _placeholder: string,
         protected _accessibilityLabel: string,
         protected _autocomplete: string,
@@ -64,13 +63,8 @@ export default class HostedInput {
     }
 
     attach(): void {
-        const container = document.getElementById(this._containerId);
-
-        if (!container) {
-            throw new InvalidHostedFormConfigError('Unable to proceed because the provided container ID is not valid.');
-        }
-
-        container.appendChild(this._input);
+        this._form.appendChild(this._input);
+        this._form.addEventListener('submit', this._handleSubmit);
 
         this._loadFonts();
 
@@ -88,6 +82,7 @@ export default class HostedInput {
             this._input.parentElement.removeChild(this._input);
         }
 
+        this._form.removeEventListener('submit', this._handleSubmit);
         this._unloadFonts();
 
         this._eventListener.stopListen();
@@ -201,8 +196,8 @@ export default class HostedInput {
 
         this._isTouched = true;
 
-        this._validateForm();
         this._formatValue(value);
+        this._validateForm();
         this._notifyChange(value);
 
         this._previousValue = value;
@@ -239,5 +234,16 @@ export default class HostedInput {
 
     private _handleValidate: (event: HostedFieldValidateRequestEvent) => void = () => {
         this._validateForm();
+    };
+
+    private _handleSubmit: (event: Event) => void = event => {
+        event.preventDefault();
+
+        this._eventPoster.post({
+            type: HostedInputEventType.Entered,
+            payload: {
+                fieldType: this._type,
+            },
+        });
     };
 }

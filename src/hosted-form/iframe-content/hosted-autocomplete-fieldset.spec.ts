@@ -5,21 +5,21 @@ import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 
 describe('HostedAutocompleteFieldset', () => {
-    let container: HTMLElement;
+    let container: HTMLFormElement;
     let fieldset: HostedAutocompleteFieldset;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputs'>;
 
     beforeEach(() => {
         inputAggregator = { getInputs: jest.fn() };
+
+        container = document.createElement('form');
+        document.body.appendChild(container);
+
         fieldset = new HostedAutocompleteFieldset(
-            'input-container',
+            container,
             [HostedFieldType.CardExpiry, HostedFieldType.CardName],
             inputAggregator as HostedInputAggregator
         );
-
-        container = document.createElement('div');
-        container.id = 'input-container';
-        document.body.appendChild(container);
     });
 
     afterEach(() => {

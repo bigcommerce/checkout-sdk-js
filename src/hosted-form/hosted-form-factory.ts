@@ -54,7 +54,7 @@ export default class HostedFormFactory {
             fields,
             new IframeEventListener(host),
             new HostedFormOrderDataTransformer(this._store),
-            pick(options, 'onBlur', 'onFocus', 'onCardTypeChange', 'onValidate')
+            pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate')
         );
     }
 

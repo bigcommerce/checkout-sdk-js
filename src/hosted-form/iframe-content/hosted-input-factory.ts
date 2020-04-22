@@ -24,7 +24,7 @@ export default class HostedInputFactory {
     ) {}
 
     create(
-        containerId: string,
+        form: HTMLFormElement,
         type: HostedFieldType,
         styles: HostedInputStylesMap = {},
         fontUrls: string[] = [],
@@ -35,27 +35,26 @@ export default class HostedInputFactory {
         const autocomplete = mapToAutocompleteType(type);
 
         if (type === HostedFieldType.CardNumber) {
-            return this._createNumberInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+            return this._createNumberInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
         }
 
         if (type === HostedFieldType.CardNumberVerification) {
-            return this._createNumberInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createNumberInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
         }
 
         if (type === HostedFieldType.CardExpiry) {
-            return this._createExpiryInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+            return this._createExpiryInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
         }
 
         if (type === HostedFieldType.CardCodeVerification) {
-            return this._createInput(type, containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
         }
 
-        return this._createInput(type, containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+        return this._createInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
     }
 
     private _createExpiryInput(
-        containerId:
-        string,
+        form: HTMLFormElement,
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
@@ -63,7 +62,7 @@ export default class HostedInputFactory {
         autocomplete: string = ''
     ): HostedCardExpiryInput {
         return new HostedCardExpiryInput(
-            containerId,
+            form,
             placeholder,
             accessibilityLabel,
             autocomplete,
@@ -79,7 +78,7 @@ export default class HostedInputFactory {
     }
 
     private _createNumberInput(
-        containerId: string,
+        form: HTMLFormElement,
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
@@ -88,7 +87,7 @@ export default class HostedInputFactory {
         cardInstrument?: CardInstrument
     ): HostedCardNumberInput {
         return new HostedCardNumberInput(
-            containerId,
+            form,
             placeholder,
             accessibilityLabel,
             autocomplete,
@@ -100,7 +99,7 @@ export default class HostedInputFactory {
             new HostedInputValidator(cardInstrument),
             this._createPaymentHandler(cardInstrument),
             new HostedAutocompleteFieldset(
-                containerId,
+                form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
                 new HostedInputAggregator(window.parent)
             ),
@@ -110,7 +109,7 @@ export default class HostedInputFactory {
 
     private _createInput(
         type: HostedFieldType,
-        containerId: string,
+        form: HTMLFormElement,
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
@@ -120,7 +119,7 @@ export default class HostedInputFactory {
     ): HostedInput {
         return new HostedInput(
             type,
-            containerId,
+            form,
             placeholder,
             accessibilityLabel,
             autocomplete,

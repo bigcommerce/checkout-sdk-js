@@ -14,7 +14,7 @@ import HostedInputValidator from './hosted-input-validator';
 
 describe('HostedCardNumberInput', () => {
     let autocompleteFieldset: HostedAutocompleteFieldset;
-    let container: HTMLDivElement;
+    let container: HTMLFormElement;
     let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
     let input: HostedInput;
@@ -25,8 +25,11 @@ describe('HostedCardNumberInput', () => {
     let styles: HostedInputStylesMap;
 
     beforeEach(() => {
+        container = document.createElement('form');
+        document.body.appendChild(container);
+
         autocompleteFieldset = new HostedAutocompleteFieldset(
-            'input-container',
+            container,
             [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
             new HostedInputAggregator(window.parent)
         );
@@ -51,7 +54,7 @@ describe('HostedCardNumberInput', () => {
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         input = new HostedCardNumberInput(
-            'input-container',
+            container,
             'Full name',
             'Cardholder name',
             'cc-name',
@@ -65,10 +68,6 @@ describe('HostedCardNumberInput', () => {
             autocompleteFieldset,
             numberFormatter as CardNumberFormatter
         );
-
-        container = document.createElement('div');
-        container.id = 'input-container';
-        document.body.appendChild(container);
     });
 
     afterEach(() => {

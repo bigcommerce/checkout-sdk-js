@@ -1,5 +1,6 @@
 import { IframeEventListener } from '../../common/iframe';
 import { getCardInstrument } from '../../payment/instrument/instrument.mock';
+import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
@@ -8,6 +9,7 @@ import HostedInputFactory from './hosted-input-factory';
 import HostedInputInitializer from './hosted-input-initializer';
 
 describe('HostedInputInitializer', () => {
+    let container: HTMLElement;
     let eventListener: IframeEventListener<HostedFieldEventMap>;
     let factory: Pick<HostedInputFactory, 'create'>;
     let initializer: HostedInputInitializer;
@@ -23,11 +25,19 @@ describe('HostedInputInitializer', () => {
             eventListener
         );
 
+        container = document.createElement('div');
+        container.id = 'input-container';
+        document.body.appendChild(container);
+
         jest.spyOn(input, 'attach')
             .mockImplementation();
 
         jest.spyOn(factory, 'create')
             .mockReturnValue(input);
+    });
+
+    afterEach(() => {
+        container.remove();
     });
 
     it('creates new hosted input', async () => {
@@ -49,7 +59,7 @@ describe('HostedInputInitializer', () => {
 
         expect(factory.create)
             .toHaveBeenCalledWith(
-                'input-container',
+                expect.any(HTMLFormElement),
                 HostedFieldType.CardNumber,
                 { default: { color: 'rgb(0, 0, 0)' } },
                 [],
@@ -83,5 +93,12 @@ describe('HostedInputInitializer', () => {
 
         expect(await initializer.initialize('input-container'))
             .toEqual(input);
+    });
+
+    it('throws error if container cannot be found', () => {
+        container.remove();
+
+        expect(() => initializer.initialize('input-container'))
+            .toThrowError(InvalidHostedFormConfigError);
     });
 });

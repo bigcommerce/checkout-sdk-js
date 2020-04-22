@@ -9,7 +9,7 @@ import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 describe('HostedForm', () => {
-    let callbacks: Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidate'>;
+    let callbacks: Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onEnter' | 'onFocus' | 'onValidate'>;
     let eventListener: IframeEventListener<HostedInputEventMap>;
     let fields: HostedField[];
     let form: HostedForm;
@@ -20,11 +20,13 @@ describe('HostedForm', () => {
         detach: jest.fn(),
         getType: jest.fn(),
         submitForm: jest.fn(),
+        validateForm: jest.fn(),
     };
 
     beforeEach(() => {
         callbacks = {
             onBlur: jest.fn(),
+            onEnter: jest.fn(),
             onFocus: jest.fn(),
             onCardTypeChange: jest.fn(),
             onValidate: jest.fn(),
@@ -155,6 +157,36 @@ describe('HostedForm', () => {
 
         expect(callbacks.onBlur)
             .toHaveBeenCalledWith({ fieldType: HostedFieldType.CardCode });
+    });
+
+    it('notifies when enter key is pressed', async () => {
+        jest.spyOn(fields[0], 'validateForm')
+            .mockResolvedValue(undefined);
+
+        eventListener.trigger({
+            type: HostedInputEventType.Entered,
+            payload: { fieldType: HostedFieldType.CardCode },
+        });
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(callbacks.onEnter)
+            .toHaveBeenCalledWith({ fieldType: HostedFieldType.CardCode });
+    });
+
+    it('validates form when enter key is pressed', async () => {
+        jest.spyOn(fields[0], 'validateForm')
+            .mockResolvedValue(undefined);
+
+        eventListener.trigger({
+            type: HostedInputEventType.Entered,
+            payload: { fieldType: HostedFieldType.CardCode },
+        });
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(fields[0].validateForm)
+            .toHaveBeenCalled();
     });
 
     it('returns card type', () => {

@@ -13,20 +13,20 @@ describe('HostedInputFactory', () => {
     });
 
     it('creates card number field', () => {
-        expect(factory.create('input-container', HostedFieldType.CardNumber))
+        expect(factory.create(document.createElement('form'), HostedFieldType.CardNumber))
             .toBeInstanceOf(HostedCardNumberInput);
     });
 
     it('creates card expiry field', () => {
-        expect(factory.create('input-container', HostedFieldType.CardExpiry))
+        expect(factory.create(document.createElement('form'), HostedFieldType.CardExpiry))
             .toBeInstanceOf(HostedCardExpiryInput);
     });
 
     it('creates regular input field for other field types', () => {
-        expect(factory.create('input-container', HostedFieldType.CardCode))
+        expect(factory.create(document.createElement('form'), HostedFieldType.CardCode))
             .toBeInstanceOf(HostedInput);
 
-        expect(factory.create('input-container', HostedFieldType.CardName))
+        expect(factory.create(document.createElement('form'), HostedFieldType.CardName))
             .toBeInstanceOf(HostedInput);
     });
 });
