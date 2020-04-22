@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.60.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.60.0...v1.60.1) (2020-04-22)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-4774 Handle no hosted fields to be rendered scenario ([84acf19](https://github.com/bigcommerce/checkout-sdk-js/commit/84acf19))
+
 ## [1.60.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.59.0...v1.60.0) (2020-04-16)
 
 
