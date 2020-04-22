@@ -5,7 +5,7 @@ import { ContentType } from '../common/http-request';
 import { Subscriptions } from './subscriptions';
 import SubscriptionsRequestSender from './subscriptions-request-sender';
 
-describe('CustomerRequestSender', () => {
+describe('SubscriptionsRequestSender', () => {
     let subscriptionsRequestSender: SubscriptionsRequestSender;
     let requestSender: RequestSender;
 

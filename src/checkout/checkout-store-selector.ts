@@ -15,6 +15,7 @@ import { Order } from '../order';
 import { PaymentMethod } from '../payment';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
 import { Consignment, ShippingOption } from '../shipping';
+import { SignInEmail } from '../signin-email';
 
 import Checkout from './checkout';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -48,6 +49,13 @@ export default interface CheckoutStoreSelector {
      * @returns The configuration object if it is loaded, otherwise undefined.
      */
     getConfig(): StoreConfig | undefined;
+
+    /**
+     * Gets the sign-in email.
+     *
+     * @returns The sign-in email object if sent, otherwise undefined
+     */
+    getSignInEmail(): SignInEmail | undefined;
 
     /**
      * Gets the shipping address of the current checkout.
@@ -397,6 +405,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getCustomer => clone(getCustomer)
     );
 
+    const getSignInEmail = createSelector(
+        ({ signInEmail }: InternalCheckoutSelectors) => signInEmail.getEmail,
+        getEmail => clone(getEmail)
+    );
+
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
         isPaymentDataRequired => clone(isPaymentDataRequired)
@@ -463,6 +476,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getCustomer: getCustomer(state),
             isPaymentDataRequired: isPaymentDataRequired(state),
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
+            getSignInEmail: getSignInEmail(state),
             getInstruments: getInstruments(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),

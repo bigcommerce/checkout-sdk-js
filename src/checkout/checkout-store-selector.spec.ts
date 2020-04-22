@@ -34,6 +34,10 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getOrder()).toEqual(internalSelectors.order.getOrder());
     });
 
+    it('returns sign-in email', () => {
+        expect(selector.getSignInEmail()).toEqual(internalSelectors.signInEmail.getEmail());
+    });
+
     it('returns config', () => {
         expect(selector.getConfig()).toEqual(internalSelectors.config.getStoreConfig());
     });
