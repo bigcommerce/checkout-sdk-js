@@ -17,6 +17,7 @@
 
 * [onBlur](hostedformoptions.md#onblur)
 * [onCardTypeChange](hostedformoptions.md#oncardtypechange)
+* [onEnter](hostedformoptions.md#onenter)
 * [onFocus](hostedformoptions.md#onfocus)
 * [onValidate](hostedformoptions.md#onvalidate)
 
@@ -67,6 +68,21 @@ ___
 | Param | Type |
 | ------ | ------ |
 | data | [HostedFieldCardTypeChangeEventData](../#hostedfieldcardtypechangeeventdata) |
+
+**Returns:** `void`
+
+___
+<a id="onenter"></a>
+
+### `<Optional>` onEnter
+
+▸ **onEnter**(data: *[HostedFieldEnterEventData](../#hostedfieldentereventdata)*): `void`
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| data | [HostedFieldEnterEventData](../#hostedfieldentereventdata) |
 
 **Returns:** `void`
 

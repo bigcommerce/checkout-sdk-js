@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.61.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.60.1...v1.61.0) (2020-04-23)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4842 Trigger event when "enter" key is pressed in one of hosted payment fields ([a9f9e86](https://github.com/bigcommerce/checkout-sdk-js/commit/a9f9e86))
+
+
+### Features
+
+* **shopper:** CHECKOUT-4799 Add Sign-in Email support ([bbea61e](https://github.com/bigcommerce/checkout-sdk-js/commit/bbea61e))
+
 ### [1.60.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.60.0...v1.60.1) (2020-04-22)
 
 

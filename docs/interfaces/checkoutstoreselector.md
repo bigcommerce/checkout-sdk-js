@@ -34,6 +34,7 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getShippingAddressFields](checkoutstoreselector.md#getshippingaddressfields)
 * [getShippingCountries](checkoutstoreselector.md#getshippingcountries)
 * [getShippingOptions](checkoutstoreselector.md#getshippingoptions)
+* [getSignInEmail](checkoutstoreselector.md#getsigninemail)
 * [isPaymentDataRequired](checkoutstoreselector.md#ispaymentdatarequired)
 * [isPaymentDataSubmitted](checkoutstoreselector.md#ispaymentdatasubmitted)
 
@@ -341,6 +342,19 @@ If there is no shipping address assigned to the current checkout, the list of sh
 **Returns:**  [ShippingOption](shippingoption.md)[] &#124; `undefined`
 
 The list of shipping options if any, otherwise undefined.
+
+___
+<a id="getsigninemail"></a>
+
+###  getSignInEmail
+
+▸ **getSignInEmail**():  [SignInEmail](signinemail.md) &#124; `undefined`
+
+Gets the sign-in email.
+
+**Returns:**  [SignInEmail](signinemail.md) &#124; `undefined`
+
+The sign-in email object if sent, otherwise undefined
 
 ___
 <a id="ispaymentdatarequired"></a>

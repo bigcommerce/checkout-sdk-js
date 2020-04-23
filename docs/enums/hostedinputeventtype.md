@@ -50,6 +50,13 @@ ___
 **Changed**:  = "HOSTED_INPUT:CHANGED"
 
 ___
+<a id="entered"></a>
+
+###  Entered
+
+**Entered**:  = "HOSTED_INPUT:ENTERED"
+
+___
 <a id="focused"></a>
 
 ###  Focused

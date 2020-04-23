@@ -109,6 +109,17 @@ ___
 `Optional`  cardType:  `undefined` &#124; `string`
 
 ___
+<a id="hostedfieldentereventdata"></a>
+
+###  HostedFieldEnterEventData
+
+**ΤHostedFieldEnterEventData**: *`object`*
+
+#### Type declaration
+
+ fieldType: [HostedFieldType](enums/hostedfieldtype.md)
+
+___
 <a id="hostedfieldfocuseventdata"></a>
 
 ###  HostedFieldFocusEventData

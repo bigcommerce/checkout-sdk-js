@@ -39,6 +39,7 @@ This object has a set of getters that would return an error if an action is not 
 * [getRemoveCouponError](checkoutstoreerrorselector.md#getremovecouponerror)
 * [getRemoveGiftCertificateError](checkoutstoreerrorselector.md#getremovegiftcertificateerror)
 * [getSelectShippingOptionError](checkoutstoreerrorselector.md#getselectshippingoptionerror)
+* [getSignInEmailError](checkoutstoreerrorselector.md#getsigninemailerror)
 * [getSignInError](checkoutstoreerrorselector.md#getsigninerror)
 * [getSignOutError](checkoutstoreerrorselector.md#getsignouterror)
 * [getSubmitOrderError](checkoutstoreerrorselector.md#getsubmitordererror)
@@ -417,6 +418,19 @@ A consignment ID should be provided when checking for an error for a specific co
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to select, otherwise undefined.
+
+___
+<a id="getsigninemailerror"></a>
+
+###  getSignInEmailError
+
+▸ **getSignInEmailError**():  `Error` &#124; `undefined`
+
+Returns an error if unable to send sign-in email.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to send email, otherwise undefined.
 
 ___
 <a id="getsigninerror"></a>

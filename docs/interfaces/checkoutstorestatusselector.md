@@ -42,6 +42,7 @@ This object has a set of getters that return true if an action is in progress. F
 * [isRemovingCoupon](checkoutstorestatusselector.md#isremovingcoupon)
 * [isRemovingGiftCertificate](checkoutstorestatusselector.md#isremovinggiftcertificate)
 * [isSelectingShippingOption](checkoutstorestatusselector.md#isselectingshippingoption)
+* [isSendingSignInEmail](checkoutstorestatusselector.md#issendingsigninemail)
 * [isSigningIn](checkoutstorestatusselector.md#issigningin)
 * [isSigningOut](checkoutstorestatusselector.md#issigningout)
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
@@ -449,6 +450,18 @@ A consignment ID should be provided when checking if a shipping option is being 
 
 **Returns:** `boolean`
 True if selecting a shipping option, otherwise false.
+
+___
+<a id="issendingsigninemail"></a>
+
+###  isSendingSignInEmail
+
+▸ **isSendingSignInEmail**(): `boolean`
+
+Checks whether a sign-in email is being sent.
+
+**Returns:** `boolean`
+True if sending a sign-in email, otherwise false
 
 ___
 <a id="issigningin"></a>
