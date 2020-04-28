@@ -19,6 +19,10 @@ enum PaymentStrategyType {
      * @internal
      */
     PAYPAL_COMMERCE = 'paypalcommerce',
+    /**
+     * @internal
+     */
+    PAYPAL_COMMERCE_CREDIT = 'paypalcommercecredit',
     SAGE_PAY = 'sagepay',
     SQUARE = 'squarev2',
     STRIPEV3 = 'stripev3',

@@ -9,8 +9,8 @@ export default class PaypalCommerceRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    async setupPayment(cartId: string): Promise<OrderData> {
-        const url = '/api/storefront/payment/paypalcommerce';
+    async setupPayment(provider: string, cartId: string): Promise<OrderData> {
+        const url = `/api/storefront/payment/${provider}`;
         const body = { cartId };
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,

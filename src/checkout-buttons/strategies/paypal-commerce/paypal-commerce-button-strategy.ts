@@ -33,7 +33,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalOptions = options.paypalCommerce;
 
         const buttonParams: ButtonsOptions = {
-            createOrder: () => this._setupPayment(cart.id),
+            createOrder: () => this._setupPayment(options.methodId, cart.id),
             onApprove: data => this._tokenizePayment(paymentId, data),
         };
 
@@ -51,8 +51,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private async _setupPayment(cartId: string): Promise<string> {
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId);
+    private async _setupPayment(methodId: string, cartId: string): Promise<string> {
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(methodId, cartId);
 
         return orderId;
     }

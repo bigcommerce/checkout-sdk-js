@@ -25,7 +25,7 @@ describe('PaypalCommerceRequestSender', () => {
         });
 
         it('create order (post request to server) when PayPalCommerce payment details are setup payment', async () => {
-            await paypalCommerceRequestSender.setupPayment('abc');
+            await paypalCommerceRequestSender.setupPayment('paypalcommerce', 'abc');
 
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
