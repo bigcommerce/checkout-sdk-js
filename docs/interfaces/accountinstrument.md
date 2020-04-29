@@ -15,6 +15,8 @@
 * [bigpayToken](accountinstrument.md#bigpaytoken)
 * [defaultInstrument](accountinstrument.md#defaultinstrument)
 * [externalId](accountinstrument.md#externalid)
+* [iban](accountinstrument.md#iban)
+* [issuer](accountinstrument.md#issuer)
 * [method](accountinstrument.md#method)
 * [provider](accountinstrument.md#provider)
 * [trustedShippingAddress](accountinstrument.md#trustedshippingaddress)
@@ -45,11 +47,27 @@ ___
 **● externalId**: *`string`*
 
 ___
+<a id="iban"></a>
+
+### `<Optional>` iban
+
+**● iban**: * `undefined` &#124; `string`
+*
+
+___
+<a id="issuer"></a>
+
+### `<Optional>` issuer
+
+**● issuer**: * `undefined` &#124; `string`
+*
+
+___
 <a id="method"></a>
 
 ###  method
 
-**● method**: *"paypal"*
+**● method**: *`string`*
 
 ___
 <a id="provider"></a>
@@ -70,7 +88,7 @@ ___
 
 ###  type
 
-**● type**: *"account"*
+**● type**: *`string`*
 
 ___
 

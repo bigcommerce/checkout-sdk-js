@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.62.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.61.0...v1.62.0) (2020-04-29)
+
+
+### Features
+
+* **payment:** INT-2428 Modified filter to accept AccountInstruments ([7eab61b](https://github.com/bigcommerce/checkout-sdk-js/commit/7eab61b))
+
 ## [1.61.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.60.1...v1.61.0) (2020-04-23)
 
 
