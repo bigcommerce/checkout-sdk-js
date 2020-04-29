@@ -26,7 +26,10 @@ export interface CardInternalInstrument extends BaseInternalInstrument {
 
 export interface AccountInternalInstrument extends BaseInternalInstrument {
     external_id: string;
-    method_type: 'paypal';
+    method: string;
+    method_type: string;
+    iban?: string;
+    issuer?: string;
 }
 
 export interface InstrumentsResponseBody {

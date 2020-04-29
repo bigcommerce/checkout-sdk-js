@@ -8,7 +8,9 @@ export function mapToAccountInstrument(instrument: AccountInternalInstrument): A
         provider: instrument.provider,
         externalId: instrument.external_id,
         trustedShippingAddress: instrument.trusted_shipping_address,
-        method: instrument.method_type,
-        type: 'account',
+        method: instrument.method,
+        type: instrument.method_type,
+        iban: instrument.iban,
+        issuer: instrument.issuer,
     };
 }

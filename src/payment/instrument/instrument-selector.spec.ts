@@ -18,13 +18,6 @@ describe('InstrumentSelector', () => {
     });
 
     describe('#getInstruments()', () => {
-        it('returns only card instruments if no method is passed', () => {
-            instrumentSelector = createInstrumentSelector(state.instruments);
-
-            expect(instrumentSelector.getInstruments())
-                .not.toContainEqual(expect.objectContaining({ externalId: expect.any(String) }));
-        });
-
         it('returns only supported instruments if no method is passed', () => {
             set(state, 'instruments.data[0].provider', 'invalid');
             set(state, 'instruments.data[0].method', 'card');

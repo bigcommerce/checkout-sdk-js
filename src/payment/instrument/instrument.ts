@@ -22,8 +22,10 @@ export interface CardInstrument extends BaseInstrument {
 
 export interface AccountInstrument extends BaseInstrument {
     externalId: string;
-    method: 'paypal';
-    type: 'account';
+    method: string;
+    iban?: string;
+    issuer?: string;
+    type: string;
 }
 
 export interface VaultAccessToken {

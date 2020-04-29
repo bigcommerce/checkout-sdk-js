@@ -4,14 +4,13 @@ import { filter, flatMap, isMatch, values } from 'lodash';
 import { createSelector } from '../../common/selector';
 import PaymentMethod from '../payment-method';
 
-import PaymentInstrument, { CardInstrument } from './instrument';
+import PaymentInstrument, { AccountInstrument, CardInstrument } from './instrument';
 import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
 import supportedInstruments from './supported-payment-instruments';
 
 export default interface InstrumentSelector {
     getCardInstrument(instrumentId: string): CardInstrument | undefined;
-    // TODO: Rename to `getCardInstruments`
-    getInstruments(): CardInstrument[] | undefined;
+    getInstruments(): PaymentInstrument[] | undefined;
     getInstrumentsByPaymentMethod(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
     getInstrumentsMeta(): InstrumentMeta | undefined;
     getLoadError(): Error | undefined;
@@ -68,7 +67,13 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
                 })
             );
 
-            return cardInstruments;
+            const accountInstruments = flatMap(supportedInstruments, account =>
+                filter(instruments, (instrument: PaymentInstrument): instrument is AccountInstrument => {
+                    return isMatch(instrument, account);
+                })
+            );
+
+            return [...cardInstruments, ...accountInstruments];
         }
     );
 

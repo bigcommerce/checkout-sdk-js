@@ -477,6 +477,14 @@ export interface CreditCardPlaceHolder {
     encryptedSecurityCode: string;
 }
 
+interface AccountDataPaymentMethodState {
+    paymentMethod: AdyenPaymentMethodState;
+}
+
+export interface AccountState {
+    data: AccountDataPaymentMethodState;
+}
+
 export interface CssProperties {
     background?: string;
     color?: string;
@@ -780,4 +788,10 @@ export type AdyenComponentState = (
 export default function isCardState(param: any): param is CardState {
     return param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string' ||
         typeof param.data.paymentMethod.encryptedExpiryMonth === 'string';
+}
+
+export function isAccountState(param: any): param is AccountState {
+    const bankSupported = ['ideal', 'sepadirectdebit', 'directEbanking', 'giropay'];
+
+    return bankSupported.indexOf(param.data.paymentMethod.type) !== -1;
 }
