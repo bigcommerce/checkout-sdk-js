@@ -6,6 +6,10 @@ enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPE = 'googlepaystripe',
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
+    /**
+     * @internal
+     */
+    PAYPALCOMMERCE = 'paypalcommerce',
 }
 
 export default CheckoutButtonMethodType;

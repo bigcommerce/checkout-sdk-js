@@ -82,6 +82,26 @@ export function getPaypalExpress(): PaymentMethod {
     };
 }
 
+export function getPaypalCommerce(): PaymentMethod {
+    return {
+        id: 'paypalcommerce',
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            testMode: true,
+            merchantId: 'JTS4DY7XFSQZE',
+        },
+        initializationData: {
+            clientId: 'abc',
+            orderId: '3U4171152W1482642',
+            intent: 'capture',
+            isPayPalCreditAvailable: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getPaypal(): PaymentMethod {
     return {
         id: 'paypal',
@@ -458,6 +478,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePay(),
         getKlarna(),
         getPaypalExpress(),
+        getPaypalCommerce(),
         getSquare(),
         getStripeV3(),
     ];
