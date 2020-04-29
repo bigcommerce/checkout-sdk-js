@@ -1,3 +1,5 @@
+import { AdyenApplePayComponentOptions } from './applepay';
+
 export enum AdyenActionType {
     /*
     * The payment qualifies for 3D Secure 2, and will go through either the frictionless
@@ -33,6 +35,7 @@ export enum AdyenComponentType {
 export enum AdyenPaymentMethodType {
     ACH = 'ach',
     AliPay = 'alipay',
+    ApplePay = 'applepay',
     Bancontact = 'bcmc',
     CreditCard = 'scheme',
     iDEAL = 'ideal',
@@ -179,6 +182,14 @@ export interface AdyenClient {
 export interface AdyenComponent {
     mount(containerId: string): HTMLElement;
     unmount(): void;
+}
+
+export interface AdyenApplePayComponent extends AdyenComponent {
+    /**
+     * Check whether Apple Pay is available to the shopper.
+     * Protocol, web browser, Apple Pay version, Device, etc.
+     */
+    isAvailable(): Promise<boolean>;
 }
 
 export interface AdyenConfiguration {
@@ -787,7 +798,10 @@ export type AdyenComponentState = (
 );
 
 export type AdyenComponentOptions = (
-    AdyenCreditCardComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions
+    | AdyenCreditCardComponentOptions
+    | AdyenIdealComponentOptions
+    | AdyenCustomCardComponentOptions
+    | AdyenApplePayComponentOptions
 );
 
 export default function isCardState(param: any): param is CardState {
