@@ -93,9 +93,9 @@ const service = module.createCheckoutService();
 ```
 
 Currently, there are three modules available for public use:
-**checkout-sdk**: This is the main module that contains all the public exports of the package.
-**checkout-button**: This sub-module can be used to initialize checkout buttons in the storefront once a cart is created (i.e.: cart page).
-**embedded-checkout**: This sub-module can be used to embed our Optimized One-Page Checkout in non-native storefronts (i.e.: Wordpress).
+* **checkout-sdk**: This is the main module that contains all the public exports of the package.
+* **checkout-button**: This sub-module can be used to initialize checkout buttons in the storefront once a cart is created (i.e.: cart page).
+* **embedded-checkout**: This sub-module can be used to embed our Optimized One-Page Checkout in non-native storefronts (i.e.: Wordpress).
 
 Please refer to the usage guide below for more information on each of them.
 
