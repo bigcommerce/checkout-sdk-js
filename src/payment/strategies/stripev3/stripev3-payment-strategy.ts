@@ -1,10 +1,9 @@
 import { some } from 'lodash';
 
 import { Address } from '../../../address';
-import { BillingAddress } from '../../../billing';
+import { isBillingAddressLike } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
-import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
@@ -15,10 +14,12 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { StripeAddress, StripeBillingDetails, StripeCardElement, StripeHandleCardPaymentOptions, StripePaymentMethodData, StripeShippingDetails, StripeV3Client } from './stripev3';
+import { StripeV3PaymentInitializeOptions } from '.';
+import { BillingDetails, Shipping, StripeCardElement, StripeV3Client } from './stripev3';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 
 export default class StripeV3PaymentStrategy implements PaymentStrategy {
+    private _initializeOptions?: PaymentInitializeOptions;
     private _stripeV3Client?: StripeV3Client;
     private _cardElement?: StripeCardElement;
 
@@ -31,110 +32,49 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const stripeOptions = options.stripev3;
+        this._initializeOptions = options;
+        await this._loadStripeJs();
+        this._mountElement(this._getStripeInitializeOptions());
 
-        if (!stripeOptions) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.stripev3" argument is not provided.');
+        return Promise.resolve(this._store.getState());
+    }
+
+    async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const { payment, ...order } = orderRequest;
+
+        if (!payment || !payment.paymentData) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(options.methodId);
+        const { paymentData, methodId } = payment;
+
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+        if (isVaultedInstrument(paymentData)) {
+            try {
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+            } catch (paymentError) {
+                if (!(paymentError instanceof RequestError) || !some(paymentError.body.errors, { code: 'three_d_secure_required' })) {
+                    return Promise.reject(paymentError);
+                }
+
+                const clientSecret = paymentError.body.three_ds_result.token;
+
+                return this._confirmPayment(clientSecret, methodId, true);
+            }
+        }
+
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
         if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._stripeV3Client = await this._stripeScriptLoader.load(
-            paymentMethod.initializationData.stripePublishableKey,
-            paymentMethod.initializationData.stripeConnectedAccount);
-        const elements = this._stripeV3Client.elements();
-        const cardElement = elements.create('card', {
-            style: stripeOptions.style,
-        });
-        cardElement.mount(`#${stripeOptions.containerId}`);
-        this._cardElement = cardElement;
+        const clientSecret = paymentMethod.clientToken;
+        const { shouldSaveInstrument = false } = paymentData as HostedInstrument;
 
-        return Promise.resolve(this._store.getState());
-    }
-
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { payment, ...order } = payload;
-        const paymentData = payment && payment.paymentData;
-        const shouldSaveInstrument = Boolean(paymentData && (paymentData as HostedInstrument).shouldSaveInstrument);
-
-        if (!payment) {
-            throw new PaymentArgumentInvalidError(['payment']);
-        }
-
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => {
-                if (paymentData && isVaultedInstrument(paymentData)) {
-                    return this._store.dispatch(this._paymentActionCreator.submitPayment({...payment, paymentData}))
-                        .catch(error => {
-                            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
-                                return Promise.reject(error);
-                            }
-
-                            return this._getStripeJs().handleCardPayment(error.body.three_ds_result.token)
-                                .then(stripeResponse => {
-                                    if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
-                                        throw new PaymentMethodFailedError(stripeResponse.error && stripeResponse.error.message);
-                                    }
-
-                                    const paymentPayload = {
-                                        methodId: payment.methodId,
-                                        paymentData: {
-                                            nonce: stripeResponse.paymentIntent.id,
-                                        },
-                                    };
-
-                                    return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
-                                });
-                        });
-                }
-
-                return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId))
-                    .then(state => {
-                        const paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
-                        const paymentIntent = paymentMethod && paymentMethod.clientToken;
-
-                        if (!this._cardElement) {
-                            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                        }
-
-                        return this._getStripeJs().createPaymentMethod('card', this._cardElement, this._mapStripePaymentMethodOptions())
-                            .then(stripePaymentMethod => {
-                                if (stripePaymentMethod.error || !stripePaymentMethod.paymentMethod.id) {
-                                    throw new PaymentMethodFailedError(stripePaymentMethod.error && stripePaymentMethod.error.message);
-                                }
-
-                                if (!paymentIntent) {
-                                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                                }
-
-                                const stripeCardPaymentOptions = {
-                                    ...this._mapStripeCardPaymentOptions(shouldSaveInstrument),
-                                    payment_method: stripePaymentMethod.paymentMethod.id,
-                                };
-
-                                return this._getStripeJs().handleCardPayment(paymentIntent, stripeCardPaymentOptions);
-                            })
-                            .then(stripeResponse => {
-                                if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
-                                    throw new PaymentMethodFailedError(stripeResponse.error && stripeResponse.error.message);
-                                }
-
-                                const paymentPayload = {
-                                    methodId: payment.methodId,
-                                    paymentData: {
-                                        nonce: stripeResponse.paymentIntent.id,
-                                        shouldSaveInstrument,
-                                    },
-                                };
-
-                                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
-                            });
-                    });
-            });
+        return this._confirmPayment(clientSecret, methodId, false, shouldSaveInstrument);
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -142,14 +82,44 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._cardElement) {
-            this._cardElement.unmount();
-        }
+        this._unmountElement();
 
         return Promise.resolve(this._store.getState());
     }
 
-    private _getStripeJs(): StripeV3Client {
+    private _getInitializeOptions() {
+        if (!this._initializeOptions) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._initializeOptions;
+    }
+
+    private async _loadStripeJs() {
+        if (this._stripeV3Client) { return; }
+
+        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(this._getInitializeOptions().methodId);
+
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount } } = paymentMethod;
+
+        this._stripeV3Client = await this._stripeScriptLoader.load(stripePublishableKey, stripeConnectedAccount);
+    }
+
+    private _getStripeInitializeOptions() {
+        const { stripev3 } = this._getInitializeOptions();
+
+        if (!stripev3) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.stripev3" argument is not provided.');
+        }
+
+        return stripev3;
+    }
+
+    private _getStripeJs() {
         if (!this._stripeV3Client) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -157,126 +127,125 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this._stripeV3Client;
     }
 
-    private _mapStripeBillingAddress(billingAddress: BillingAddress | undefined): StripeAddress | undefined {
-        if (!billingAddress) {
-            return undefined;
+    private _mountElement({ style, containerId }: StripeV3PaymentInitializeOptions) {
+        if (!this._cardElement) {
+            const elements = this._getStripeJs().elements();
+            this._cardElement = elements.create('card', { style });
         }
 
-        return {
-            city: billingAddress.city,
-            country: billingAddress.countryCode,
-            line1: billingAddress.address1,
-            line2: billingAddress.address2,
-            postal_code: billingAddress.postalCode,
-            state: billingAddress.stateOrProvinceCode,
-        };
+        this._cardElement.mount('#' + containerId);
     }
 
-    private _mapStripeShippingAddress(shippingAddress: Address | undefined): StripeAddress {
-        if (!shippingAddress) {
-            return { };
+    private _getCardElement() {
+        if (!this._cardElement) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return {
-            city: shippingAddress.city,
-            country: shippingAddress.countryCode,
-            line1: shippingAddress.address1,
-            line2: shippingAddress.address2,
-            postal_code: shippingAddress.postalCode,
-            state: shippingAddress.stateOrProvinceCode,
-        };
+        return this._cardElement;
     }
 
-    private _mapStripeBillingDetails({ billingAddress, customer }: { billingAddress?: BillingAddress; customer?: Customer } = {}): StripeBillingDetails {
-        const stripeBillingDetails = {
-            address: this._mapStripeBillingAddress(billingAddress),
-        };
-
-        if (customer) {
-            return {
-                ...stripeBillingDetails,
-                email: customer.email,
-                name: `${customer.firstName} ${customer.lastName}`,
-            };
+    private _unmountElement() {
+        if (this._cardElement) {
+            this._cardElement.unmount();
         }
-
-        if (billingAddress) {
-            return {
-                ...stripeBillingDetails,
-                email: billingAddress.email,
-                name: `${billingAddress.firstName} ${billingAddress.lastName}`,
-            };
-        }
-
-        return {
-            name: 'Guest',
-        };
     }
 
-    private _mapStripeShippingDetails({ shippingAddress, customer }: { shippingAddress?: Address ; customer?: Customer } = {}): StripeShippingDetails {
-        const stripeShippingDetails = {
-            address: this._mapStripeShippingAddress(shippingAddress),
-        };
-
-        if (customer) {
-            return {
-                ...stripeShippingDetails,
-                name: `${customer.firstName} ${customer.lastName}`,
-            };
-        }
-
-        if (shippingAddress) {
-            return {
-                ...stripeShippingDetails,
-                name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
-            };
-        }
-
-        return {
-            ...stripeShippingDetails,
-            name: 'Guest',
-        };
-    }
-
-    private _getCustomer(): Customer | undefined {
+    private _mapStripeAdreess(address: Address | undefined, padding: boolean = false) {
         const customer = this._store.getState().customer.getCustomer();
 
-        if (customer) {
-            if (customer.firstName === '' || customer.lastName === '' || customer.email === '') {
-                return undefined;
+        let result = {};
+
+        if (address) {
+            const {
+                city,
+                countryCode: country,
+                address1: line1,
+                address2: line2,
+                postalCode,
+                stateOrProvinceCode: state,
+            } = address;
+
+            result = { address: { city, country, line1, line2, postal_code: postalCode, state } };
+
+            if (isBillingAddressLike(address)) {
+                const { email, phone } = address || { ...customer, phone: '' };
+                result = { ...result, email, phone };
             }
+        } else if (padding) {
+            result = { address: { line1: '' } };
         }
 
-        return customer;
-    }
-
-    private _mapStripeCardPaymentOptions(shouldSaveInstrument: boolean): StripeHandleCardPaymentOptions {
-        const customer = this._getCustomer();
-        const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
-
-        const shippingDetails = {
-            shipping: this._mapStripeShippingDetails({ shippingAddress, customer }),
-        };
-
-        if (customer) {
-            return {
-                ...shippingDetails,
-                receipt_email: customer.email,
-                save_payment_method: shouldSaveInstrument,
-            };
-        } else {
-            return {
-                ...shippingDetails,
-            };
-        }
-    }
-
-    private _mapStripePaymentMethodOptions(): StripePaymentMethodData {
-        const customer = this._getCustomer();
-        const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+        const { firstName, lastName } = address || customer || { firstName: 'Guest', lastName: '' };
 
         return {
-            billing_details: this._mapStripeBillingDetails({ billingAddress, customer }),
+            ...result,
+            name: `${firstName} ${lastName}`.trim(),
         };
+    }
+
+    private _mapStripeBillingDetails() {
+        const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+
+        return this._mapStripeAdreess(billingAddress) as BillingDetails;
+    }
+
+    private _mapStripeShippingInfo() {
+        const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
+
+        return this._mapStripeAdreess(shippingAddress, true) as Shipping;
+    }
+
+    private _mapStripeCardPaymentOptions(shouldSaveInstrument: boolean) {
+        let result = {};
+
+        result = { shipping: this._mapStripeShippingInfo() };
+
+        if (shouldSaveInstrument) {
+            result = { ...result, setup_future_usage: 'off_session' };
+        }
+
+        return result;
+    }
+
+    private async _confirmPayment(
+        clientSecret: string | undefined,
+        methodId: string,
+        isVaultedInstrument: boolean,
+        shouldSaveInstrument: boolean = false
+    ) {
+        if (!clientSecret) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        let data;
+        let paymentData = {};
+
+        if (!isVaultedInstrument) {
+            data = {
+                payment_method: {
+                    card: this._getCardElement(),
+                    billing_details: this._mapStripeBillingDetails(),
+                },
+                ...this._mapStripeCardPaymentOptions(shouldSaveInstrument),
+            };
+
+            paymentData = { shouldSaveInstrument };
+        }
+
+        const { error, paymentIntent } = await this._getStripeJs().confirmCardPayment(clientSecret, data);
+
+        if (error || !paymentIntent) {
+            throw new PaymentMethodFailedError(error && error.message);
+        }
+
+        const paymentPayload = {
+            methodId,
+            paymentData: {
+                nonce: paymentIntent.id,
+                ...paymentData,
+            },
+        };
+
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 }

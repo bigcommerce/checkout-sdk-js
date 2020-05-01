@@ -4,7 +4,7 @@ import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { StripeHandleCardPaymentOptions, StripePaymentIntentResponse, StripePaymentMethodData, StripeV3Client } from './stripev3';
+import { PaymentIntentConfirmParams, PaymentMethodCreateParams, StripeV3Client } from './stripev3';
 
 export function getStripeV3JsMock(): StripeV3Client {
     return {
@@ -18,8 +18,7 @@ export function getStripeV3JsMock(): StripeV3Client {
                 }),
             };
         }),
-        handleCardPayment: jest.fn(),
-        createPaymentMethod: jest.fn(),
+        confirmCardPayment: jest.fn(),
     };
 }
 
@@ -31,7 +30,7 @@ export function getStripeV3InitializeOptionsMock(): PaymentInitializeOptions {
             style: {
                 base: {
                     color: '#32325D',
-                    fontWeight: 500,
+                    fontWeight: '500',
                     fontFamily: 'Inter UI, Open Sans, Segoe UI, sans-serif',
                     fontSize: '16px',
                     fontSmoothing: 'antialiased',
@@ -58,7 +57,29 @@ export function getStripeV3OrderRequestBodyMock(): OrderRequestBody {
     };
 }
 
-export function getStripeV3HandleCardResponse(): StripePaymentIntentResponse {
+export function getStripeV3OrderRequestBodySIMock(): OrderRequestBody {
+    return {
+        payment: {
+            methodId: 'stripev3',
+            paymentData: {
+                shouldSaveInstrument: true,
+            },
+        },
+    };
+}
+
+export function getStripeV3OrderRequestBodyVIMock(): OrderRequestBody {
+    return {
+        payment: {
+            methodId: 'stripev3',
+            paymentData: {
+                instrumentId: 'token',
+            },
+        },
+    };
+}
+
+export function getConfirmCardPaymentResponse() {
     return {
         paymentIntent: {
             id: 'pi_1234',
@@ -66,7 +87,7 @@ export function getStripeV3HandleCardResponse(): StripePaymentIntentResponse {
     };
 }
 
-export function getStripePaymentMethodOptionsWithSignedUser(): StripePaymentMethodData {
+export function getStripePaymentMethodOptionsWithSignedUser(): PaymentMethodCreateParams {
     const billingAddress = getBillingAddress();
     const customer = getCustomer();
 
@@ -81,12 +102,13 @@ export function getStripePaymentMethodOptionsWithSignedUser(): StripePaymentMeth
                 state: billingAddress.stateOrProvinceCode,
             },
             email: customer.email,
-            name: `${customer.firstName} ${customer.lastName}`,
+            phone: billingAddress.phone,
+            name: `${billingAddress.firstName} ${billingAddress.lastName}`,
         },
     };
 }
 
-export function getStripePaymentMethodOptionsWithGuestUser(): StripePaymentMethodData {
+export function getStripePaymentMethodOptionsWithGuestUser(): PaymentMethodCreateParams {
     const billingAddress = getBillingAddress();
 
     return {
@@ -100,12 +122,13 @@ export function getStripePaymentMethodOptionsWithGuestUser(): StripePaymentMetho
                 state: billingAddress.stateOrProvinceCode,
             },
             email: billingAddress.email,
+            phone: billingAddress.phone,
             name: `${billingAddress.firstName} ${billingAddress.lastName}`,
         },
     };
 }
 
-export function getStripePaymentMethodOptionsWithGuestUserWithoutAddress(): StripePaymentMethodData {
+export function getStripePaymentMethodOptionsWithGuestUserWithoutAddress(): PaymentMethodCreateParams {
     return {
         billing_details: {
             name: 'Guest',
@@ -113,28 +136,7 @@ export function getStripePaymentMethodOptionsWithGuestUserWithoutAddress(): Stri
     };
 }
 
-export function getStripeCardPaymentOptionsWithSignedUser(): StripeHandleCardPaymentOptions {
-    const customer = getCustomer();
-    const shippingAddress = getShippingAddress();
-
-    return {
-        shipping: {
-            address: {
-                city: shippingAddress.city,
-                country: shippingAddress.countryCode,
-                line1: shippingAddress.address1,
-                line2: shippingAddress.address2,
-                postal_code: shippingAddress.postalCode,
-                state: shippingAddress.stateOrProvinceCode,
-            },
-            name: `${customer.firstName} ${customer.lastName}`,
-        },
-        receipt_email: customer.email,
-        save_payment_method: false,
-    };
-}
-
-export function getStripeCardPaymentOptionsWithGuestUser(): StripeHandleCardPaymentOptions {
+export function getStripeCardPaymentOptionsWithSignedUser(): PaymentIntentConfirmParams {
     const shippingAddress = getShippingAddress();
 
     return {
@@ -152,10 +154,28 @@ export function getStripeCardPaymentOptionsWithGuestUser(): StripeHandleCardPaym
     };
 }
 
-export function getStripeCardPaymentOptionsWithGuestUserWithoutAddress(): StripeHandleCardPaymentOptions {
+export function getStripeCardPaymentOptionsWithGuestUser(): PaymentIntentConfirmParams {
+    const shippingAddress = getShippingAddress();
+
     return {
         shipping: {
-            address: { },
+            address: {
+                city: shippingAddress.city,
+                country: shippingAddress.countryCode,
+                line1: shippingAddress.address1,
+                line2: shippingAddress.address2,
+                postal_code: shippingAddress.postalCode,
+                state: shippingAddress.stateOrProvinceCode,
+            },
+            name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+        },
+    };
+}
+
+export function getStripeCardPaymentOptionsWithGuestUserWithoutAddress(): PaymentIntentConfirmParams {
+    return {
+        shipping: {
+            address: { line1: '' },
             name: 'Guest',
         },
     };
