@@ -24,7 +24,7 @@ The SDK has a convenient application interface for starting and completing a che
         - [Set shipping option](#set-shipping-option)
     - [Set billing details](#set-billing-details)
     - [Apply coupon or gift certificate](#apply-coupon-or-gift-certificate)
-    - [Initialize spam protection](#initialize-spam-protection)
+    - [Execute spam protection check](#execute-spam-protection-check)
     - [Submit payment and order](#submit-payment-and-order)
         - [Load payment methods](#load-payment-methods)
         - [Initialize payment method](#initialize-payment-method)
@@ -93,9 +93,9 @@ const service = module.createCheckoutService();
 ```
 
 Currently, there are three modules available for public use:
-**checkout-sdk**: This is the main module that contains all the public exports of the package.
-**checkout-button**: This sub-module can be used to initialize checkout buttons in the storefront once a cart is created (i.e.: cart page).
-**embedded-checkout**: This sub-module can be used to embed our Optimized One-Page Checkout in non-native storefronts (i.e.: Wordpress).
+* **checkout-sdk**: This is the main module that contains all the public exports of the package.
+* **checkout-button**: This sub-module can be used to initialize checkout buttons in the storefront once a cart is created (i.e.: cart page).
+* **embedded-checkout**: This sub-module can be used to embed our Optimized One-Page Checkout in non-native storefronts (i.e.: Wordpress).
 
 Please refer to the usage guide below for more information on each of them.
 
@@ -258,12 +258,14 @@ await service.removeCoupon('COUPON');
 await service.removeGiftCertificate('GIFT');
 ```
 
-### Initialize spam protection
+### Execute spam protection check
 
 You can also enable bot protection to prevent bots and other types of automated abuse from creating orders. Note that enabling this feature increases checkout friction, which may affect conversions. As such, we recommend leaving this feature out if your store is not encountering bots.
 
+You should call this method before `submitOrder` method is called (i.e.: when the shopper first gets to the payment step).
+
 ```js
-await service.initializeSpamProtection({ containerId: 'spamProtectionContainer' });
+await service.executeSpamCheck();
 ```
 
 ### Submit payment and order
