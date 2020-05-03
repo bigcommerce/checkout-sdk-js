@@ -1118,8 +1118,6 @@ describe('CheckoutService', () => {
         it('executes spam check', async () => {
             await checkoutService.executeSpamCheck();
 
-            expect(spamProtectionActionCreator.initialize)
-                .toHaveBeenCalled();
             expect(spamProtectionActionCreator.execute)
                 .toHaveBeenCalled();
         });

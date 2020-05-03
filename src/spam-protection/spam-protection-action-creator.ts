@@ -49,15 +49,9 @@ export default class SpamProtectionActionCreator {
     }
 
     execute(): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
-        return store => {
-            const state = store.getState();
-            const checkout = state.checkout.getCheckout();
-
-            if (!checkout) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-            }
-
-            const { shouldExecuteSpamCheck } = checkout;
+        return store => defer(() => {
+            const { checkout } = store.getState();
+            const { id: checkoutId, shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
 
             if (!shouldExecuteSpamCheck) {
                 return empty();
@@ -65,19 +59,21 @@ export default class SpamProtectionActionCreator {
 
             return concat(
                 of(createAction(SpamProtectionActionType.ExecuteRequested, undefined)),
+                this.initialize()(store),
                 this._googleRecaptcha.execute()
                     .pipe(take(1))
-                    .pipe(switchMap(({ error, token }) => {
+                    .pipe(switchMap(async ({ error, token }) => {
                         if (error || !token) {
                             throw new SpamProtectionFailedError();
                         }
 
-                        return this._requestSender.validate(checkout.id, token)
-                            .then(({ body }) => createAction(SpamProtectionActionType.ExecuteSucceeded, body));
+                        const { body } = await this._requestSender.validate(checkoutId, token);
+
+                        return createAction(SpamProtectionActionType.ExecuteSucceeded, body);
                     }))
             ).pipe(
                 catchError(error => throwErrorAction(SpamProtectionActionType.ExecuteFailed, error))
             );
-        };
+        });
     }
 }

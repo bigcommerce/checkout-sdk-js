@@ -102,8 +102,12 @@ describe('GoogleRecaptcha', () => {
             }
         });
 
-        it('throws an error if google recaptcha is not initialized', () => {
-            expect(() => googleRecaptcha.execute()).toThrow(NotInitializedError);
+        it('throws an error if google recaptcha is not initialized', async () => {
+            try {
+                await googleRecaptcha.execute().toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
         });
 
         it('execute google recaptcha', async () => {

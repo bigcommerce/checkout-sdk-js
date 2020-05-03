@@ -8,6 +8,10 @@ import { NotInitializedError, NotInitializedErrorType } from '../common/error/er
 import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError, SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptchaScriptLoader from './google-recaptcha-script-loader';
 
+const TIMEOUT = 7000;
+const RETRY_INTERVAL = 250;
+const MAX_RETRIES = TIMEOUT / RETRY_INTERVAL;
+
 export interface RecaptchaResult {
     error?: Error;
     token?: string;
@@ -59,39 +63,35 @@ export default class GoogleRecaptcha {
     }
 
     execute(): Observable<RecaptchaResult> {
-        const event$ = this._event$;
-        const recaptcha = this._recaptcha;
-
-        if (!event$ || !recaptcha) {
-            throw new NotInitializedError(NotInitializedErrorType.SpamProtectionNotInitialized);
-        }
-
-        const timeout = 7000;
-        const retryInterval = 250;
-        const maxRetries = timeout / retryInterval;
-
         return defer(() => {
-            const element = document.querySelector('iframe[src*="bframe"]');
+            const event$ = this._event$;
+            const recaptcha = this._recaptcha;
 
-            return element ?
-                of(element) :
-                throwError(new SpamProtectionNotLoadedError());
-        })
-            .pipe(
-                retryWhen(errors => errors.pipe(
-                    delay(retryInterval),
-                    switchMap((error, index) =>
-                        index < maxRetries ? of(error) : throwError(error)
-                    )
-                )),
-                switchMap(element => {
-                    this._watchRecaptchaChallengeWindow(event$, element);
-                    recaptcha.execute();
+            if (!event$ || !recaptcha) {
+                throw new NotInitializedError(NotInitializedErrorType.SpamProtectionNotInitialized);
+            }
 
-                    return event$;
-                }),
-                catchError(error => of({ error }))
-            );
+            return defer(() => {
+                const element = document.querySelector('iframe[src*="bframe"]');
+
+                return element ? of(element) : throwError(new SpamProtectionNotLoadedError());
+            })
+                .pipe(
+                    retryWhen(errors => errors.pipe(
+                        delay(RETRY_INTERVAL),
+                        switchMap((error, index) =>
+                            index < MAX_RETRIES ? of(error) : throwError(error)
+                        )
+                    )),
+                    switchMap(element => {
+                        this._watchRecaptchaChallengeWindow(event$, element);
+                        recaptcha.execute();
+
+                        return event$;
+                    }),
+                    catchError(error => of({ error }))
+                );
+        });
     }
 
     private _watchRecaptchaChallengeWindow(event: Subject<RecaptchaResult>, element: Element) {
