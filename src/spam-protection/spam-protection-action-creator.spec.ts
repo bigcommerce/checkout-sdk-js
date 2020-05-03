@@ -9,6 +9,7 @@ import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import createSpamProtection from './create-spam-protection';
+import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError } from './errors';
 import GoogleRecaptcha, { RecaptchaResult } from './google-recaptcha';
 import SpamProtectionActionCreator from './spam-protection-action-creator';
 import { SpamProtectionActionType } from './spam-protection-actions';
@@ -116,6 +117,71 @@ describe('SpamProtectionActionCreator', () => {
                 { type: SpamProtectionActionType.InitializeRequested },
                 { type: SpamProtectionActionType.InitializeSucceeded },
                 { type: SpamProtectionActionType.ExecuteSucceeded, payload: response.body },
+            ]);
+        });
+
+        it('emits error actions if unable to execute spam protection due to cancellation', async () => {
+            const store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
+                checkout: {
+                    data: {
+                        shouldExecuteSpamCheck: true,
+                    },
+                },
+            }));
+            const error = new SpamProtectionChallengeNotCompletedError();
+
+            $event.next({ error });
+
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(spamProtectionActionCreator.execute()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.InitializeRequested },
+                { type: SpamProtectionActionType.InitializeSucceeded },
+                {
+                    type: SpamProtectionActionType.ExecuteFailed,
+                    payload: error,
+                    error: true,
+                },
+            ]);
+        });
+
+        it('emits error actions if unable to execute spam protection due to unknown error', async () => {
+            const store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
+                checkout: {
+                    data: {
+                        shouldExecuteSpamCheck: true,
+                    },
+                },
+            }));
+
+            $event.next({ error: new Error() });
+
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(spamProtectionActionCreator.execute()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.InitializeRequested },
+                { type: SpamProtectionActionType.InitializeSucceeded },
+                {
+                    type: SpamProtectionActionType.ExecuteFailed,
+                    payload: expect.any(SpamProtectionFailedError),
+                    error: true,
+                },
             ]);
         });
 

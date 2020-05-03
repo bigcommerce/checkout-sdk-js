@@ -6,7 +6,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
-import { SpamProtectionFailedError } from './errors';
+import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
 import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection-actions';
 import { SpamProtectionOptions } from './spam-protection-options';
@@ -63,6 +63,10 @@ export default class SpamProtectionActionCreator {
                 this._googleRecaptcha.execute()
                     .pipe(take(1))
                     .pipe(switchMap(async ({ error, token }) => {
+                        if (error instanceof SpamProtectionChallengeNotCompletedError) {
+                            throw error;
+                        }
+
                         if (error || !token) {
                             throw new SpamProtectionFailedError();
                         }
