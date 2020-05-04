@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.63.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.63.0...v1.63.1) (2020-05-04)
+
+
+### Bug Fixes
+
+* **spam-protection:** CHECKOUT-4852 Make sure spam protection execution status is accurate ([be0221d](https://github.com/bigcommerce/checkout-sdk-js/commit/be0221d))
+* **spam-protection:** CHECKOUT-4852 Rethrow spam protection cancellation error ([0294b2b](https://github.com/bigcommerce/checkout-sdk-js/commit/0294b2b))
+
 ## [1.63.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.62.0...v1.63.0) (2020-04-29)
 
 
