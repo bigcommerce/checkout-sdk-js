@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.64.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.63.1...v1.64.0) (2020-05-05)
+
+
+### Features
+
+* **payment:** PAYPAL-293 Implement paypalcommercecredit provider ([ceaaa69](https://github.com/bigcommerce/checkout-sdk-js/commit/ceaaa69))
+
 ### [1.63.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.63.0...v1.63.1) (2020-05-04)
 
 
