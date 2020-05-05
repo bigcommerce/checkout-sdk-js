@@ -33,7 +33,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const orderId = paymentMethod.initializationData.orderId || await this._getOrderId();
+        const orderId = paymentMethod.initializationData.orderId || await this._getOrderId(options.methodId);
 
         const paymentData =  {
             formattedPayload: {
@@ -60,10 +60,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private async _getOrderId(): Promise<string> {
+    private async _getOrderId(methodId: string): Promise<string> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
-        const { approveUrl, orderId } = await this._paypalCommerceRequestSender.setupPayment(cart.id);
+        const { approveUrl, orderId } = await this._paypalCommerceRequestSender.setupPayment(methodId, cart.id);
 
         await this._paypalCommercePaymentProcessor.paymentPayPal(approveUrl);
 

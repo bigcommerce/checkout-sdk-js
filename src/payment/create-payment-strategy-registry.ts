@@ -249,6 +249,16 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.PAYPAL_COMMERCE_CREDIT, () =>
+        new PaypalCommercePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            new PaypalCommerceRequestSender(requestSender),
+            new PaypalCommercePaymentProcessor()
+        )
+    );
+
     registry.register(PaymentStrategyType.SAGE_PAY, () =>
         new SagePayPaymentStrategy(
             store,

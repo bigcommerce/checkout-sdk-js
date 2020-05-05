@@ -209,7 +209,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(paypalCommerceRequestSender.setupPayment)
-            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+            .toHaveBeenCalledWith('paypalcommerce', 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
