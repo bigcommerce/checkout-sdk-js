@@ -115,6 +115,8 @@ interface StripeElementStyleVariant extends StripeElementCSSProperties {
     '::-ms-clear'?: StripeElementCSSProperties & {display: string};
 }
 
+export type StripeElementType = 'card' | 'idealBank';
+
 /**
  * Customize the appearance of an element using CSS properties passed in a `Style` object,
  * which consists of CSS properties nested under objects for each variant.
@@ -141,11 +143,11 @@ export interface StripeElementStyle {
     invalid?: StripeElementStyleVariant;
 }
 
-export interface StripeCardElementOptions {
+export interface StripeElementOptions {
     style?: StripeElementStyle;
 }
 
-export interface StripeCardElement {
+export interface StripeElement {
     /**
      * The `element.mount` method attaches your element to the DOM.
      */
@@ -166,12 +168,17 @@ export interface StripeCardElement {
 
 export interface StripeElements {
     /**
-     * Creates a `CardElement`.
+     * Creates a `CardElement` | `IdealBankElement`.
      */
     create(
-        elementType: 'card',
-        options?: StripeCardElementOptions
-    ): StripeCardElement;
+        elementType: StripeElementType,
+        options?: StripeElementOptions
+    ): StripeElement;
+
+    /**
+     * Looks up a previously created `Element` by its type.
+     */
+    getElement(elementType: StripeElementType): StripeElement | null;
 }
 
 interface AccountAddressParam {
@@ -308,7 +315,11 @@ export interface PaymentMethodCreateParams {
 }
 
 interface CreatePaymentMethodCardData extends PaymentMethodCreateParams {
-    card: StripeCardElement;
+    card: StripeElement;
+}
+
+interface CreatePaymentMethodIdealData extends PaymentMethodCreateParams {
+    ideal: StripeElement;
 }
 
 /**
@@ -323,6 +334,27 @@ export interface ConfirmCardPaymentData extends PaymentIntentConfirmParams {
      * @recommended
      */
     payment_method?: CreatePaymentMethodCardData;
+}
+
+  /**
+   * Data to be sent with a `stripe.confirmIdealPayment` request.
+   * Refer to the [Payment Intents API](https://stripe.com/docs/api/payment_intents/confirm) for a full list of parameters.
+   */
+export interface ConfirmIdealPaymentData extends PaymentIntentConfirmParams {
+    /*
+    * An object containing data to create a `PaymentMethod` with.
+    * This field is optional if a `PaymentMethod` has already been attached to this `PaymentIntent`.
+    *
+    * @recommended
+    */
+    payment_method?: CreatePaymentMethodIdealData;
+
+    /**
+     * The url your customer will be directed to after they complete authentication.
+     *
+     * @recommended
+     */
+    return_url?: string;
 }
 
 /**
@@ -363,6 +395,18 @@ export interface StripeV3Client {
         clientSecret: string,
         data?: ConfirmCardPaymentData
     ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+
+    /**
+     * Use `stripe.confirmIdealPayment` in the [iDEAL Payments with Payment Methods](https://stripe.com/docs/payments/ideal) flow when the customer submits your payment form.
+     * When called, it will confirm the `PaymentIntent` with `data` you provide, and it will automatically redirect the customer to the authorize the transaction.
+     * Once authorization is complete, the customer will be redirected back to your specified `return_url`.
+     *
+     * @docs https://stripe.com/docs/js/payment_intents/confirm_ideal_payment
+     */
+    confirmIdealPayment(
+        clientSecret: string,
+        data?: ConfirmIdealPaymentData
+      ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
 }
 
 export interface StripeV3JsOptions {

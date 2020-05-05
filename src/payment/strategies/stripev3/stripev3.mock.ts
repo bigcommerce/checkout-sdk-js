@@ -16,9 +16,11 @@ export function getStripeV3JsMock(): StripeV3Client {
                         unmount: jest.fn(),
                     };
                 }),
+                getElement: jest.fn().mockReturnValue(null),
             };
         }),
         confirmCardPayment: jest.fn(),
+        confirmIdealPayment: jest.fn(),
     };
 }
 
@@ -26,6 +28,7 @@ export function getStripeV3InitializeOptionsMock(): PaymentInitializeOptions {
     return {
         methodId: 'stripev3',
         stripev3: {
+            type: 'card',
             containerId: 'stripeContainerId',
             style: {
                 base: {
@@ -42,6 +45,19 @@ export function getStripeV3InitializeOptionsMock(): PaymentInitializeOptions {
                     color: '#E25950',
                 },
             },
+        },
+    };
+}
+
+export function getStripeV3InitializeOptionsMockForIdeal(): PaymentInitializeOptions {
+    const mock = getStripeV3InitializeOptionsMock();
+
+    return {
+        ...mock,
+        stripev3: {
+            containerId: '',
+            ...mock.stripev3,
+            type: 'idealBank',
         },
     };
 }

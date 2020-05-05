@@ -25,7 +25,7 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { StripeV3Client } from './stripev3';
 import StripeV3PaymentStrategy from './stripev3-payment-strategy';
 import StripeV3ScriptLoader from './stripev3-script-loader';
-import { getConfirmCardPaymentResponse, getStripeCardPaymentOptionsWithGuestUser, getStripeCardPaymentOptionsWithGuestUserWithoutAddress, getStripeCardPaymentOptionsWithSignedUser, getStripePaymentMethodOptionsWithGuestUser, getStripePaymentMethodOptionsWithGuestUserWithoutAddress, getStripePaymentMethodOptionsWithSignedUser, getStripeV3InitializeOptionsMock, getStripeV3JsMock, getStripeV3OrderRequestBodyMock, getStripeV3OrderRequestBodySIMock, getStripeV3OrderRequestBodyVIMock } from './stripev3.mock';
+import { getConfirmCardPaymentResponse, getStripeCardPaymentOptionsWithGuestUser, getStripeCardPaymentOptionsWithGuestUserWithoutAddress, getStripeCardPaymentOptionsWithSignedUser, getStripePaymentMethodOptionsWithGuestUser, getStripePaymentMethodOptionsWithGuestUserWithoutAddress, getStripePaymentMethodOptionsWithSignedUser, getStripeV3InitializeOptionsMock, getStripeV3InitializeOptionsMockForIdeal, getStripeV3JsMock, getStripeV3OrderRequestBodyMock, getStripeV3OrderRequestBodySIMock, getStripeV3OrderRequestBodyVIMock } from './stripev3.mock';
 
 describe('StripeV3PaymentStrategy', () => {
     let errorResponse3DS: RequestError;
@@ -122,13 +122,14 @@ describe('StripeV3PaymentStrategy', () => {
             expect(stripeScriptLoader.load).toHaveBeenCalled();
         });
 
-        it('loads a single instance of stripe v3 script', async () => {
+        it('loads a single instance of StripeV3Client and StripeElements', async () => {
             jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
 
             await expect(strategy.initialize(stripeV3Options)).resolves.toBe(store.getState());
             await expect(strategy.initialize(stripeV3Options)).resolves.toBe(store.getState());
 
             expect(stripeScriptLoader.load).toHaveBeenCalledTimes(1);
+            expect(stripeV3JsMock.elements).toHaveBeenCalledTimes(1);
         });
 
         it('does not load stripe V3 if initialization options are not provided', () => {
@@ -147,6 +148,40 @@ describe('StripeV3PaymentStrategy', () => {
             const promise = strategy.initialize(stripeV3Options);
 
             return expect(promise).rejects.toThrow(MissingDataError);
+        });
+
+        it('mounts a stripe card element', async () => {
+            const { create, getElement } = stripeV3JsMock.elements();
+            stripeV3JsMock.elements = jest.fn().mockReturnValue({ create, getElement });
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(stripeV3Options);
+
+            expect(create).toHaveBeenCalledWith('card', expect.anything());
+        });
+
+        it('mounts a stripe ideal element', async () => {
+            const { create, getElement } = stripeV3JsMock.elements();
+            stripeV3JsMock.elements = jest.fn().mockReturnValue({ create, getElement });
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(getStripeV3InitializeOptionsMockForIdeal());
+
+            expect(create).toHaveBeenCalledWith('idealBank', expect.anything());
+        });
+
+        it('mounts a previously created stripe element', async () => {
+            const { create: getElement, getElement: create } = stripeV3JsMock.elements();
+            stripeV3JsMock.elements = jest.fn().mockReturnValue({ create, getElement });
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(stripeV3Options);
+
+            expect(getElement).toHaveBeenCalledWith('card');
+            expect(create).not.toHaveBeenCalled();
         });
     });
 

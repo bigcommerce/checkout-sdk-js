@@ -1,4 +1,4 @@
-import { StripeElementStyle } from './stripev3';
+import { StripeElementStyle, StripeElementType } from './stripev3';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -8,6 +8,11 @@ import { StripeElementStyle } from './stripev3';
  * options provide a location and styling for each of the form fields.
  */
 export default interface StripeV3PaymentInitializeOptions {
+    /**
+     * The type of element to create.
+     */
+    type: StripeElementType;
+
     /**
      * The location to insert the credit card number form field.
      */
