@@ -1,10 +1,13 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
+import { FlashMessage } from './config';
 import ConfigSelector, { createConfigSelectorFactory, ConfigSelectorFactory } from './config-selector';
+import ConfigState from './config-state';
 
 describe('ConfigSelector', () => {
     let configSelector: ConfigSelector;
+    let configStateWithMessages: ConfigState;
     let createConfigSelector: ConfigSelectorFactory;
     let state: CheckoutStoreState;
 
@@ -32,6 +35,51 @@ describe('ConfigSelector', () => {
 
             // tslint:disable-next-line:no-non-null-assertion
             expect(configSelector.getContextConfig()).toEqual(state.config.data!.context);
+        });
+    });
+
+    describe('#getFlashMessages', () => {
+        const flashMessages: FlashMessage[] = [
+            { type: 'info', message: 'm_info' },
+            { type: 'error', message: 'm_error' },
+            { type: 'warning', message: 'm_warning' },
+            { type: 'success', message: 'm_success' },
+        ];
+
+        beforeEach(() => {
+            configStateWithMessages = {
+                ...state.config,
+                data: {
+                    // tslint:disable-next-line: no-non-null-assertion
+                    ...state.config.data!,
+                    context: {
+                        // tslint:disable-next-line: no-non-null-assertion
+                        ...state.config.data!.context,
+                        flashMessages,
+                    },
+                },
+            };
+        });
+
+        it('returns all the flash messages', () => {
+            configSelector = createConfigSelector(configStateWithMessages);
+
+            expect(configSelector.getFlashMessages())
+                .toEqual(flashMessages);
+        });
+
+        it('returns the flash message matching the provided filter', () => {
+            configSelector = createConfigSelector(configStateWithMessages);
+
+            expect(configSelector.getFlashMessages('error'))
+                .toEqual([flashMessages[1]]);
+        });
+
+        it('returns empty array when no messages available', () => {
+            configSelector = createConfigSelector(state.config);
+
+            expect(configSelector.getFlashMessages())
+                .toEqual([]);
         });
     });
 

@@ -6,7 +6,7 @@ import { BillingAddress } from '../billing';
 import { Cart } from '../cart';
 import { createSelector } from '../common/selector';
 import { cloneResult as clone } from '../common/utility';
-import { StoreConfig } from '../config';
+import { FlashMessage, FlashMessageType, StoreConfig } from '../config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { FormField } from '../form';
@@ -146,6 +146,17 @@ export default interface CheckoutStoreSelector {
      * undefined if otherwise.
      */
     getSelectedPaymentMethod(): PaymentMethod | undefined;
+
+    /**
+     * Gets the available flash messages.
+     *
+     * Flash messages contain messages set by the server,
+     * e.g: when trying to sign in using an invalid email link.
+     *
+     * @param type - The type of flash messages to be returned. Optional
+     * @returns The flash messages if available, otherwise undefined.
+     */
+    getFlashMessages(type?: FlashMessageType): FlashMessage[] | undefined;
 
     /**
      * Gets the current cart.
@@ -453,6 +464,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         })
     );
 
+    const getFlashMessages = createSelector(
+        ({ config }: InternalCheckoutSelectors) => config.getFlashMessages,
+        getFlashMessages => clone(getFlashMessages)
+    );
+
     return memoizeOne((
         state: InternalCheckoutSelectors
     ): CheckoutStoreSelector => {
@@ -460,6 +476,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getCheckout: getCheckout(state),
             getOrder: getOrder(state),
             getConfig: getConfig(state),
+            getFlashMessages: getFlashMessages(state),
             getShippingAddress: getShippingAddress(state),
             getShippingOptions: getShippingOptions(state),
             getConsignments: getConsignments(state),

@@ -108,10 +108,17 @@ export interface CustomizationConfig {
     languageData: any[];
 }
 
+export type FlashMessageType = 'error' | 'info' | 'warning' | 'success';
+
+export interface FlashMessage {
+    type: FlashMessageType;
+    message: string;
+}
+
 export interface ContextConfig {
     checkoutId?: string;
     geoCountryCode: string;
-    flashMessages: any[];
+    flashMessages: FlashMessage[];
     payment: {
         formId?: string;
         token?: string;
