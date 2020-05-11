@@ -286,12 +286,57 @@ describe('AdyenV2PaymentStrategy', () => {
                     .mockReturnValueOnce(submitPaymentAction);
 
                 options = getInitializeOptionsWithUndefinedWidgetSize();
+
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBody());
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
                 expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
+            });
+
+            it('calls submit payment with SEPA component', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
+
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.GiroPay));
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
+            });
+
+            it('calls submitPayment when paying with vaulted account', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
+
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                options = getInitializeOptions(true);
+
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBodyWithVaultedInstrument(AdyenPaymentMethodType.GiroPay));
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
+                    methodId: 'giropay',
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token : {
+                                token: '123',
+                            },
+                            browser_info: {
+                                color_depth: 24,
+                                java_enabled: false,
+                                language: 'en-US',
+                                screen_height: 0,
+                                screen_width: 0,
+                                time_zone_offset: expect.anything(),
+                            },
+                        },
+                    },
+                }));
+                expect(adyenCheckout.create).toHaveBeenCalledTimes(0);
             });
 
             it('returns 3DS2 ChallengeShopper flow with no callbacks', async () => {
