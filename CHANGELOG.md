@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.66.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.65.0...v1.66.0) (2020-05-12)
+
+
+### Code Refactoring
+
+* **payment:** INT-2611 Update the klarna session before load the widget ([4905de5](https://github.com/bigcommerce/checkout-sdk-js/commit/4905de5))
+
+
+### Features
+
+* **common:** CHECKOUT-4879 Expose flash messages ([f9c71e5](https://github.com/bigcommerce/checkout-sdk-js/commit/f9c71e5))
+
 ## [1.65.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.64.0...v1.65.0) (2020-05-06)
 
 

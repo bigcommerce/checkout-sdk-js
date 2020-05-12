@@ -2040,6 +2040,16 @@ declare interface CheckoutStoreSelector {
      */
     getSelectedPaymentMethod(): PaymentMethod | undefined;
     /**
+     * Gets the available flash messages.
+     *
+     * Flash messages contain messages set by the server,
+     * e.g: when trying to sign in using an invalid email link.
+     *
+     * @param type - The type of flash messages to be returned. Optional
+     * @returns The flash messages if available, otherwise undefined.
+     */
+    getFlashMessages(type?: FlashMessageType): FlashMessage[] | undefined;
+    /**
      * Gets the current cart.
      *
      * @returns The current cart object if it is loaded, otherwise undefined.
@@ -2762,6 +2772,13 @@ declare interface EmbeddedCheckoutStyles {
 declare interface EmbeddedContentOptions {
     contentId?: string;
 }
+
+declare interface FlashMessage {
+    type: FlashMessageType;
+    message: string;
+}
+
+declare type FlashMessageType = 'error' | 'info' | 'warning' | 'success';
 
 declare interface FormField {
     name: string | AddressKey;

@@ -56,6 +56,14 @@ ___
 **ΤConsignmentsRequestBody**: *[ConsignmentCreateRequestBody](interfaces/consignmentcreaterequestbody.md)[]*
 
 ___
+<a id="flashmessagetype"></a>
+
+###  FlashMessageType
+
+**ΤFlashMessageType**: * "error" &#124; "info" &#124; "warning" &#124; "success"
+*
+
+___
 <a id="formfieldfieldtype"></a>
 
 ###  FormFieldFieldType

@@ -23,6 +23,7 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getConsignments](checkoutstoreselector.md#getconsignments)
 * [getCoupons](checkoutstoreselector.md#getcoupons)
 * [getCustomer](checkoutstoreselector.md#getcustomer)
+* [getFlashMessages](checkoutstoreselector.md#getflashmessages)
 * [getGiftCertificates](checkoutstoreselector.md#getgiftcertificates)
 * [getInstruments](checkoutstoreselector.md#getinstruments)
 * [getOrder](checkoutstoreselector.md#getorder)
@@ -166,6 +167,27 @@ Gets the current customer.
 
 The current customer object if it is loaded, otherwise
 undefined.
+
+___
+<a id="getflashmessages"></a>
+
+###  getFlashMessages
+
+▸ **getFlashMessages**(type?: *[FlashMessageType](../#flashmessagetype)*):  [FlashMessage](flashmessage.md)[] &#124; `undefined`
+
+Gets the available flash messages.
+
+Flash messages contain messages set by the server, e.g: when trying to sign in using an invalid email link.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` type | [FlashMessageType](../#flashmessagetype) |  The type of flash messages to be returned. Optional |
+
+**Returns:**  [FlashMessage](flashmessage.md)[] &#124; `undefined`
+
+The flash messages if available, otherwise undefined.
 
 ___
 <a id="getgiftcertificates"></a>
