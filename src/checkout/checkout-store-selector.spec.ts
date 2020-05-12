@@ -30,6 +30,10 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getCheckout()).toEqual(internalSelectors.checkout.getCheckout());
     });
 
+    it('returns flash messages', () => {
+        expect(selector.getFlashMessages()).toEqual(internalSelectors.config.getFlashMessages());
+    });
+
     it('returns order', () => {
         expect(selector.getOrder()).toEqual(internalSelectors.order.getOrder());
     });
