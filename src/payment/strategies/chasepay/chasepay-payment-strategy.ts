@@ -7,6 +7,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentMethodCancelledError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -240,7 +241,10 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
 
     private _createOrder(payment: Payment, useStoreCredit?: boolean, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, options))
-            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
+            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
+            .catch(error => getGoogleRecapthaToken(this._store, error)
+                .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment(payment, token)))
+            );
     }
 
     @bind

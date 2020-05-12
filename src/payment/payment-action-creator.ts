@@ -1,10 +1,11 @@
-import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, from, of } from 'rxjs';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { concat, from, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
+// import { CardingProtectionActionCreator } from '../spam-protection';
 
 import Payment, { FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
@@ -18,11 +19,11 @@ export default class PaymentActionCreator {
         private _paymentRequestTransformer: PaymentRequestTransformer
     ) {}
 
-    submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
+    submitPayment(payment: Payment, paymentRecaptchaToken?: string): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(PaymentActionType.SubmitPaymentRequested)),
             from(this._paymentRequestSender.submitPayment(
-                this._paymentRequestTransformer.transform(payment, store.getState())
+                this._paymentRequestTransformer.transform(payment, store.getState(), paymentRecaptchaToken)
             ))
                 .pipe(
                     switchMap(({ body }) => concat(
@@ -31,7 +32,15 @@ export default class PaymentActionCreator {
                     ))
                 )
         ).pipe(
-            catchError(error => throwErrorAction(PaymentActionType.SubmitPaymentFailed, error))
+            catchError(error => {
+                const { additional_action_required, status } = error.body;
+
+                if (status === 'additional_action_required' && additional_action_required && additional_action_required.type === 'recaptcha_v2_verification') {
+                    return concat(of(error), throwError(createErrorAction('additional_action_required', error.body)));
+                }
+
+                return throwErrorAction(PaymentActionType.SubmitPaymentFailed, error);
+            })
         );
     }
 

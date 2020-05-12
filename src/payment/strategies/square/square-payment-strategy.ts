@@ -6,6 +6,7 @@ import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from 
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -63,9 +64,11 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         return this._getNonceInstrument(payment.methodId)
             .then(paymentData =>
                 this._store.dispatch(this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options))
-                .then(() =>
-                    this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
-                ));
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
+                    .catch(error => getGoogleRecapthaToken(this._store, error)
+                        .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }, token)))
+                    )
+            ));
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {

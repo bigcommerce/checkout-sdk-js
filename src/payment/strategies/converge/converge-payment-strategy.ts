@@ -5,6 +5,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
@@ -30,6 +31,9 @@ export default class ConvergePaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
+                    .catch(error => getGoogleRecapthaToken(this._store, error)
+                        .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }, token)))
+                    )
             )
             .catch(error => {
                 if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {

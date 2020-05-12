@@ -2,6 +2,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
@@ -56,8 +57,9 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                     this._preparePaymentData(payment) :
                     Promise.resolve(payment as Payment)
             )
-            .then(payment =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            .then(payment => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
+            .catch(error => getGoogleRecapthaToken(this._store, error)
+                .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment(payment, token)))
             )
             .catch((error: Error) => this._handleError(error));
     }

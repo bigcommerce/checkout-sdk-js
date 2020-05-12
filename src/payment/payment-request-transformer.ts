@@ -19,7 +19,7 @@ export default class PaymentRequestTransformer {
     private _cardExpiryFormatter = new CardExpiryFormatter();
     private _cardNumberFormatter = new CardNumberFormatter();
 
-    transform(payment: Payment, checkoutState: InternalCheckoutSelectors): PaymentRequestBody {
+    transform(payment: Payment, checkoutState: InternalCheckoutSelectors, paymentRecaptchaToken?: string): PaymentRequestBody {
         const billingAddress = checkoutState.billingAddress.getBillingAddress();
         const checkout = checkoutState.checkout.getCheckout();
         const customer = checkoutState.customer.getCustomer();
@@ -45,8 +45,8 @@ export default class PaymentRequestTransformer {
         }
 
         return {
+            additionalAction: this._getAdditionalAction(paymentRecaptchaToken),
             authToken,
-            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             customer: internalCustomer,
             billingAddress: billingAddress && mapToInternalAddress(billingAddress),
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, consignments),
@@ -55,6 +55,7 @@ export default class PaymentRequestTransformer {
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
+            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             quoteMeta: {
                 request: {
                     ...paymentMeta,
@@ -130,5 +131,16 @@ export default class PaymentRequestTransformer {
                 ccName: values.cardName || '',
                 ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
             };
+    }
+
+    private _getAdditionalAction(paymentRecaptchaToken?: string) {
+        return paymentRecaptchaToken ?
+            {
+                type: 'recaptcha_v2_verification',
+                data: {
+                    human_verification_token: paymentRecaptchaToken,
+                },
+            } :
+            undefined;
     }
 }

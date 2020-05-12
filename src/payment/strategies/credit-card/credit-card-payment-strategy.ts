@@ -5,6 +5,7 @@ import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } fr
 import { HostedForm, HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -75,8 +76,9 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
+            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData })))
+            .catch(error => getGoogleRecapthaToken(this._store, error)
+                .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }, token)))
             );
     }
 
@@ -95,6 +97,9 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
         return form.validate()
             .then(() => this._store.dispatch(this._orderActionCreator.submitOrder(order, options)))
             .then(() => form.submit(payment))
+            .catch(error => getGoogleRecapthaToken(this._store, error)
+                .then((token: string) => form.submit(payment, token))
+            )
             .then(() => this._store.dispatch(this._orderActionCreator.loadCurrentOrder()));
     }
 

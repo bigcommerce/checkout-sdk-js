@@ -5,6 +5,7 @@ import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment, { HostedInstrument } from '../../payment';
@@ -91,7 +92,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     }
 
                     if (isCardState(componentState) || isAccountState(componentState)) {
-                        return this._store.dispatch(this._paymentActionCreator.submitPayment({
+                        const paymentPayload = {
                             ...payment,
                             paymentData: {
                                 formattedPayload: {
@@ -102,7 +103,12 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                                     browser_info: getBrowserInfo(),
                                 },
                             },
-                        }));
+                        };
+
+                        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                            .catch(error => getGoogleRecapthaToken(this._store, error)
+                                .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload, token)))
+                            );
                     }
                 }
 

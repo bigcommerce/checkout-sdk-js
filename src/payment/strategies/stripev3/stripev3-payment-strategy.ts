@@ -7,6 +7,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getGoogleRecapthaToken } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
@@ -87,7 +88,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                                         },
                                     };
 
-                                    return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                                    return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                                        .catch(error => getGoogleRecapthaToken(this._store, error)
+                                            .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload, token)))
+                                        );
                                 });
                         });
                 }
@@ -131,7 +135,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                                     },
                                 };
 
-                                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                                    .catch(error => getGoogleRecapthaToken(this._store, error)
+                                        .then((token: string) => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload, token)))
+                                    );
                             });
                     });
             });

@@ -12,7 +12,7 @@ export default class HostedFormOrderDataTransformer {
         private _store: ReadableCheckoutStore
     ) {}
 
-    transform(payload: OrderPaymentRequestBody): HostedFormOrderData {
+    transform(payload: OrderPaymentRequestBody, paymentRecaptchaToken?: string): HostedFormOrderData {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getConfig();
@@ -22,7 +22,7 @@ export default class HostedFormOrderDataTransformer {
         const payment = omit(payload.paymentData, 'ccExpiry', 'ccName', 'ccNumber', 'ccCvv') as HostedCreditCardInstrument;
         const paymentMethod = state.paymentMethods.getPaymentMethod(payload.methodId, payload.gatewayId);
         const paymentMethodMeta = state.paymentMethods.getPaymentMethodsMeta();
-
+        const additionalAction = this._getAdditionalAction(paymentRecaptchaToken);
         const authToken = instrumentMeta && payment && isVaultedInstrument(payment) ?
             `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
             state.payment.getPaymentToken();
@@ -32,6 +32,7 @@ export default class HostedFormOrderDataTransformer {
         }
 
         return {
+            additionalAction,
             authToken,
             checkout,
             config,
@@ -41,5 +42,16 @@ export default class HostedFormOrderDataTransformer {
             paymentMethod,
             paymentMethodMeta,
         };
+    }
+
+    private _getAdditionalAction(paymentRecaptchaToken?: string) {
+        return paymentRecaptchaToken ?
+            {
+                type: 'recaptcha_v2_verification',
+                data: {
+                    human_verification_token: paymentRecaptchaToken,
+                },
+            } :
+            undefined;
     }
 }

@@ -59,10 +59,10 @@ export default class HostedForm {
         });
     }
 
-    async submit(payload: OrderPaymentRequestBody): Promise<void> {
+    async submit(payload: OrderPaymentRequestBody, paymentRecaptchaToken?: string): Promise<void> {
         return await this._getFirstField().submitForm(
             this._fields.map(field => field.getType()),
-            this._payloadTransformer.transform(payload)
+            this._payloadTransformer.transform(payload, paymentRecaptchaToken)
         );
     }
 
