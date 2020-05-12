@@ -79,9 +79,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed because "payload.payment.gatewayId" argument is not provided.');
         }
 
-        this._updateOrder(gatewayId);
-
-        return new Promise<KlarnaLoadResponse>(resolve => {
+        return this._updateOrder(gatewayId).then(() => new Promise<KlarnaLoadResponse>(resolve => {
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
             if (!this._klarnaPayments || !paymentMethod.clientToken) {
@@ -93,9 +91,10 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
                 if (onLoad) {
                     onLoad(response);
                 }
+
                 resolve(response);
             });
-        });
+        }));
     }
 
     private _getUpdateSessionData(billingAddress: BillingAddress, shippingAddress?: Address): KlarnaUpdateSessionParams {
