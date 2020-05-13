@@ -304,14 +304,22 @@ describe('OrderActionCreator', () => {
             await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .toPromise();
 
-            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(getInternalOrderRequestBody(), undefined);
+            expect(orderRequestSender.submitOrder)
+                .toHaveBeenCalledWith(
+                    getInternalOrderRequestBody(),
+                    { headers: { checkoutVariant: 'default' } }
+                );
         });
 
         it('submits order payload without payment data', async () => {
             await from(orderActionCreator.submitOrder(omit(getOrderRequestBody(), 'payment'))(store))
                 .toPromise();
 
-            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(omit(getInternalOrderRequestBody(), 'payment'), undefined);
+            expect(orderRequestSender.submitOrder)
+                .toHaveBeenCalledWith(
+                    omit(getInternalOrderRequestBody(), 'payment'),
+                    { headers: { checkoutVariant: 'default' } }
+                );
         });
 
         it('does not submit order if cart verification fails', async () => {

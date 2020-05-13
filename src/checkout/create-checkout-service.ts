@@ -5,7 +5,7 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
-import { ConfigActionCreator, ConfigRequestSender, ConfigState } from '../config';
+import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -53,6 +53,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const config: ConfigState = {
         meta: {
             externalSource: options && options.externalSource,
+            variantIdentificationToken: (window as ConfigWindow).checkoutVariantIdentificationToken,
         },
         errors: {},
         statuses: {},

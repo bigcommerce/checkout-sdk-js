@@ -119,6 +119,19 @@ describe('OrderRequestSender', () => {
                 body: payload,
             });
         });
+
+        it('submits order with checkout variant header when provided', async () => {
+            const payload = {};
+            const headers = { checkoutVariant: 'default' };
+
+            await orderRequestSender.submitOrder(payload, { headers });
+
+            expect(requestSender.post)
+                .toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
+                    body: payload,
+                    headers: { 'X-Checkout-Variant': headers.checkoutVariant },
+                });
+        });
     });
 
     describe('#finalizeOrder()', () => {

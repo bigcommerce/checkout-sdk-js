@@ -68,6 +68,7 @@ export default class OrderActionCreator {
             defer(() => {
                 const state = store.getState();
                 const externalSource = state.config.getExternalSource();
+                const variantIdentificationToken = state.config.getVariantIdentificationToken();
                 const checkout = state.checkout.getCheckout();
 
                 if (!checkout) {
@@ -80,11 +81,18 @@ export default class OrderActionCreator {
 
                 return from(
                     this._checkoutValidator.validate(checkout, options)
-                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(
-                            payload,
-                            checkout.customerMessage,
-                            externalSource
-                        ), options))
+                        .then(() => this._orderRequestSender.submitOrder(
+                            this._mapToOrderRequestBody(
+                                payload,
+                                checkout.customerMessage,
+                                externalSource
+                            ),
+                            {
+                                ...options,
+                                headers: {
+                                    checkoutVariant: variantIdentificationToken,
+                                },
+                            }))
                 ).pipe(
                     switchMap(response => concat(
                         // TODO: Remove once we can submit orders using storefront API

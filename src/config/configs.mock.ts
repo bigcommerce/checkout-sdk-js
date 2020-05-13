@@ -133,6 +133,7 @@ export function getConfigState(): ConfigState {
         data: getConfig(),
         meta: {
             externalSource: 'Partner',
+            variantIdentificationToken: 'default',
         },
         errors: {},
         statuses: {},
