@@ -3,11 +3,12 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, DisableFundingType, PaypalButtonStyleOptions, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalButtonStyleOptions, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
+    providerId?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -20,9 +21,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         let state = this._store.getState();
         const {
-            id: paymentId,
+            id: providerId,
             initializationData,
         } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        this.providerId = providerId;
 
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
@@ -33,8 +35,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalOptions = options.paypalCommerce;
 
         const buttonParams: ButtonsOptions = {
-            createOrder: () => this._setupPayment(options.methodId, cart.id),
-            onApprove: data => this._tokenizePayment(paymentId, data),
+            onClick: data => this._handleClickButtonProvider(providerId, data),
+            createOrder: () => this._setupPayment(cart.id),
+            onApprove: data => this._tokenizePayment(data),
         };
 
         if (paypalOptions && paypalOptions.style) {
@@ -48,16 +51,26 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     deinitialize(): Promise<void> {
+        this.providerId = undefined;
+
         return Promise.resolve();
     }
 
-    private async _setupPayment(methodId: string, cartId: string): Promise<string> {
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(methodId, cartId);
+    private _handleClickButtonProvider(providerId: string, { fundingSource }: ClickDataOptions): void {
+        this.providerId = fundingSource === 'credit' ? 'paypalcommercecredit' : providerId;
+    }
+
+    private async _setupPayment(cartId: string): Promise<string> {
+        if (!this.providerId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(this.providerId, cartId);
 
         return orderId;
     }
 
-    private _tokenizePayment(paymentId: string, { orderID }: ApproveDataOptions) {
+    private _tokenizePayment({ orderID }: ApproveDataOptions) {
         if (!orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
@@ -65,7 +78,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: paymentId,
+            provider: this.providerId,
             order_id: orderID,
         });
     }
