@@ -65,7 +65,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const cart = state.cart.getCartOrThrow();
         const { approveUrl, orderId } = await this._paypalCommerceRequestSender.setupPayment(methodId, cart.id);
 
-        await this._paypalCommercePaymentProcessor.paymentPayPal(approveUrl);
+        if (approveUrl) {
+            await this._paypalCommercePaymentProcessor.paymentPayPal(approveUrl);
+        }
 
         return orderId;
     }
