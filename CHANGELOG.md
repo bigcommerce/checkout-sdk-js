@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.67.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.66.0...v1.67.0) (2020-05-14)
+
+
+### Features
+
+* **checkout:** INT-2497 Add elavon to supported instruments whitelist ([b145268](https://github.com/bigcommerce/checkout-sdk-js/commit/b145268))
+* **payment:** INT-2437 Add support for GooglePay on Adyen ([4853677](https://github.com/bigcommerce/checkout-sdk-js/commit/4853677))
+
 ## [1.66.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.65.0...v1.66.0) (2020-05-12)
 
 

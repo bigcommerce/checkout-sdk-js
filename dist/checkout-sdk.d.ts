@@ -750,6 +750,7 @@ declare interface CheckoutButtonInitializerOptions {
 declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_STRIPE = "googlepaystripe",
@@ -2616,6 +2617,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepayadyenv2?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -3494,6 +3500,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Authorize.Net
      * payment method. They can be omitted unless you need to support GooglePay.

@@ -25,6 +25,7 @@ A set of options that are required to initialize the payment step of the current
 * [chasepay](paymentinitializeoptions.md#chasepay)
 * [creditCard](paymentinitializeoptions.md#creditcard)
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
+* [googlepayadyenv2](paymentinitializeoptions.md#googlepayadyenv2)
 * [googlepayauthorizenet](paymentinitializeoptions.md#googlepayauthorizenet)
 * [googlepaybraintree](paymentinitializeoptions.md#googlepaybraintree)
 * [googlepaystripe](paymentinitializeoptions.md#googlepaystripe)
@@ -113,6 +114,15 @@ ___
 *
 
 The identifier of the payment provider providing the payment method. This option is only required if the provider offers multiple payment options. i.e.: Adyen and Klarna.
+
+___
+<a id="googlepayadyenv2"></a>
+
+### `<Optional>` googlepayadyenv2
+
+**● googlepayadyenv2**: *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay Authorize.Net payment method. They can be omitted unless you need to support GooglePay.
 
 ___
 <a id="googlepayauthorizenet"></a>
