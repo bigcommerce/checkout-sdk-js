@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.68.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.67.1...v1.68.0) (2020-05-14)
+
+
+### Features
+
+* **payment:** PAYPAL-365 choses paypalcredit method on the checkout ([cfae602](https://github.com/bigcommerce/checkout-sdk-js/commit/cfae602))
+
 ### [1.67.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.67.0...v1.67.1) (2020-05-14)
 
 
