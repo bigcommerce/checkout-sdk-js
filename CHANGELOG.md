@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.67.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.67.0...v1.67.1) (2020-05-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-406 Checkout order after approval issue ([438bf2b](https://github.com/bigcommerce/checkout-sdk-js/commit/438bf2b))
+
 ## [1.67.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.66.0...v1.67.0) (2020-05-14)
 
 
