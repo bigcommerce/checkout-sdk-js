@@ -34,6 +34,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     let paymentMethod: PaymentMethod;
     let render: () => void;
     let orderID: string;
+    let fundingSource: string;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -63,11 +64,16 @@ describe('PaypalCommerceButtonStrategy', () => {
         };
 
         orderID = 'ORDER_ID';
+        fundingSource = 'paypal';
         eventEmitter = new EventEmitter();
         paypal = getPaypalCommerceMock();
 
         render = jest.spyOn(paypal, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
+                eventEmitter.on('onClick', () => {
+                    options.onClick({ fundingSource });
+                });
+
                 eventEmitter.on('createOrder', () => {
                     options.createOrder();
                 });
@@ -134,6 +140,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(paypal.Buttons).toHaveBeenCalledWith({
+            onClick: expect.any(Function),
             createOrder: expect.any(Function),
             onApprove: expect.any(Function),
             style: paypalOptions.style,
@@ -212,6 +219,21 @@ describe('PaypalCommerceButtonStrategy', () => {
             .toHaveBeenCalledWith('paypalcommerce', 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
     });
 
+    it('create order with credit (post request to server) when PayPalCommerce payment details are setup payment', async () => {
+        fundingSource = 'credit';
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('onClick');
+
+        eventEmitter.emit('createOrder');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(paypalCommerceRequestSender.setupPayment)
+            .toHaveBeenCalledWith('paypalcommercecredit', 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+    });
+
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
         await strategy.initialize(options);
 
@@ -223,6 +245,25 @@ describe('PaypalCommerceButtonStrategy', () => {
             payment_type: 'paypal',
             action: 'set_external_checkout',
             provider: CheckoutButtonMethodType.PAYPALCOMMERCE,
+            order_id: orderID,
+        }));
+    });
+
+    it('post payment details with credit to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
+        fundingSource = 'credit';
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('onClick');
+
+        eventEmitter.emit('approve');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+            payment_type: 'paypal',
+            action: 'set_external_checkout',
+            provider: CheckoutButtonMethodType.PAYPALCOMMERCE + 'credit',
             order_id: orderID,
         }));
     });
@@ -268,6 +309,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             await strategy.initialize({ ...options, paypalCommerce: { style } });
 
             expect(paypal.Buttons).toHaveBeenCalledWith({
+                onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 style: { height: 25 },
@@ -284,6 +326,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             await strategy.initialize({ ...options, paypalCommerce: { style } });
 
             expect(paypal.Buttons).toHaveBeenCalledWith({
+                onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 style: { tagline: true, layout: 'horizontal', height: 55 },
@@ -296,6 +339,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             await strategy.initialize({ ...options, paypalCommerce: { style } });
 
             expect(paypal.Buttons).toHaveBeenCalledWith({
+                onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 style: {},

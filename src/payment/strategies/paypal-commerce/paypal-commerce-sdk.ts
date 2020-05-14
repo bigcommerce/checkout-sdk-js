@@ -3,6 +3,10 @@ export interface ApproveDataOptions {
     orderID: string;
 }
 
+export interface ClickDataOptions {
+    fundingSource: string;
+}
+
 export interface OrderData {
     orderId: string;
     approveUrl: string;
@@ -62,6 +66,7 @@ export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     createOrder(): Promise<string>;
     onApprove(data: ApproveDataOptions): void;
+    onClick(data: ClickDataOptions): void;
 }
 
 export interface PaypalCommerceSDK {
