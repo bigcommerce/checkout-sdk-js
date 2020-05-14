@@ -37,6 +37,7 @@ export enum AdyenPaymentMethodType {
     CreditCard = 'scheme',
     iDEAL = 'ideal',
     GiroPay = 'giropay',
+    GooglePay = 'paywithgoogle',
     SEPA = 'sepadirectdebit',
     Sofort = 'directEbanking',
     Vipps = 'vipps',
@@ -169,8 +170,8 @@ export interface AdyenComponentEvents {
     onError?(state: AdyenComponentState, component: AdyenComponent): void;
 }
 
-export interface AdyenCheckout {
-    create(type: string, componentOptions?: AdyenCreditCardComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
+export interface AdyenClient {
+    create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
     createFromAction(action: AdyenAction, componentOptions?: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions ): AdyenComponent;
 }
@@ -273,7 +274,7 @@ export interface AdyenError {
 }
 
 export interface AdyenHostWindow extends Window {
-    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
+    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenClient;
 }
 
 export interface AdyenIdealComponentOptions {
@@ -783,6 +784,10 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
 
 export type AdyenComponentState = (
     CardState | WechatState
+);
+
+export type AdyenComponentOptions = (
+    AdyenCreditCardComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions
 );
 
 export default function isCardState(param: any): param is CardState {

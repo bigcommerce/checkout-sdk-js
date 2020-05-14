@@ -84,10 +84,6 @@ describe('GooglePayCustomerStrategy', () => {
         document.body.removeChild(container);
     });
 
-    it('creates an instance of GooglePayCustomerStrategy', () => {
-        expect(strategy).toBeInstanceOf(GooglePayCustomerStrategy);
-    });
-
     describe('#initialize()', () => {
         describe('Payment method exist', () => {
             it('Creates the button', async () => {
@@ -98,22 +94,31 @@ describe('GooglePayCustomerStrategy', () => {
                 expect(paymentProcessor.createButton).toHaveBeenCalled();
             });
 
-            it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', () => {
+            it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', async () => {
                 customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.Incomplete);
 
-                expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
+                try {
+                    await strategy.initialize(customerInitializeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                }
             });
 
-            it('fails to initialize the strategy if no methodid is supplied', () => {
+            it('fails to initialize the strategy if no methodid is supplied', async () => {
                 customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.UndefinedMethodId);
 
-                expect(() => strategy.initialize(customerInitializeOptions)).toThrow(InvalidArgumentError);
+                try {
+                    await strategy.initialize(customerInitializeOptions);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                }
             });
 
-            it('fails to initialize the strategy if no valid container id is supplied', () => {
+            it('fails to initialize the strategy if no valid container id is supplied', async () => {
                 customerInitializeOptions = getAuthNetCustomerInitializeOptions(Mode.InvalidContainer);
 
-                return expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
+                await expect(strategy.initialize(customerInitializeOptions))
+                    .rejects.toThrow(InvalidArgumentError);
             });
         });
     });
@@ -127,14 +132,14 @@ describe('GooglePayCustomerStrategy', () => {
                 customerInitializeOptions.googlepayauthorizenet.container : '';
         });
 
-        it('succesfully deinitializes the strategy', async () => {
+        it('successfully deinitializes the strategy', async () => {
             await strategy.initialize(customerInitializeOptions);
 
             const button = document.getElementById(containerId);
 
             expect(button).toHaveProperty('firstChild', walletButton);
 
-            strategy.deinitialize();
+            await strategy.deinitialize();
 
             expect(button).toHaveProperty('firstChild', null);
         });
@@ -165,7 +170,7 @@ describe('GooglePayCustomerStrategy', () => {
             await strategy.initialize(customerInitializeOptions);
         });
 
-        it('succesfully signs out', async () => {
+        it('successfully signs out', async () => {
             const paymentId = {
                 providerId: 'googlepayauthorizenet',
             };
@@ -197,9 +202,8 @@ describe('GooglePayCustomerStrategy', () => {
                 methodId: 'googlepayauthorizenet',
             };
 
-            await strategy.signOut(options);
-
-            expect(store.getState).toHaveBeenCalledTimes(3);
+            expect(await strategy.signOut(options)).toEqual(store.getState());
+            expect(store.getState).toHaveBeenCalledTimes(4);
         });
     });
 
@@ -216,11 +220,11 @@ describe('GooglePayCustomerStrategy', () => {
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(Promise.resolve());
 
+            expect(paymentProcessor.initialize).not.toHaveBeenCalled();
             await strategy.initialize(customerInitializeOptions);
 
             walletButton.click();
-
-            expect(paymentProcessor.initialize).toHaveBeenCalled();
+            expect(paymentProcessor.initialize).toHaveBeenCalledWith('googlepayauthorizenet');
         });
     });
 });

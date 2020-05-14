@@ -17,7 +17,7 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
-import { getBraintreeCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
+import { getBraintreeCustomerInitializeOptions,  Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
@@ -57,7 +57,6 @@ describe('GooglePayCustomerStrategy', () => {
                 )
             )
         );
-
         formPoster = createFormPoster();
 
         strategy = new GooglePayCustomerStrategy(
@@ -67,27 +66,22 @@ describe('GooglePayCustomerStrategy', () => {
             formPoster
         );
 
+        jest.spyOn(formPoster, 'postForm')
+            .mockReturnValue(Promise.resolve());
         jest.spyOn(store, 'dispatch')
             .mockReturnValue(Promise.resolve(store.getState()));
-
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+            .mockReturnValue(paymentMethod);
         jest.spyOn(paymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethod);
-
-        jest.spyOn(formPoster, 'postForm')
-            .mockReturnValue(Promise.resolve());
-
-        container = document.createElement('div');
-        container.setAttribute('id', 'googlePayCheckoutButton');
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
-
         jest.spyOn(paymentProcessor, 'createButton')
             .mockReturnValue(walletButton);
 
-        container.appendChild(walletButton);
+        container = document.createElement('div');
+        container.setAttribute('id', 'googlePayCheckoutButton');
         document.body.appendChild(container);
     });
 
@@ -95,14 +89,8 @@ describe('GooglePayCustomerStrategy', () => {
         document.body.removeChild(container);
     });
 
-    it('creates an instance of GooglePayCustomerStrategy', () => {
-        expect(strategy).toBeInstanceOf(GooglePayCustomerStrategy);
-    });
-
     describe('#initialize()', () => {
-
         describe('Payment method exist', () => {
-
             it('Creates the button', async () => {
                 customerInitializeOptions = getBraintreeCustomerInitializeOptions();
 
@@ -116,8 +104,8 @@ describe('GooglePayCustomerStrategy', () => {
 
                 try {
                     await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
                 }
             });
 
@@ -126,62 +114,47 @@ describe('GooglePayCustomerStrategy', () => {
 
                 try {
                     await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
                 }
             });
 
             it('fails to initialize the strategy if no valid container id is supplied', async () => {
                 customerInitializeOptions = getBraintreeCustomerInitializeOptions(Mode.InvalidContainer);
 
-                try {
-                    await strategy.initialize(customerInitializeOptions);
-                } catch (e) {
-                    expect(e).toBeInstanceOf(InvalidArgumentError);
-                }
+                await expect(strategy.initialize(customerInitializeOptions))
+                    .rejects.toThrow(InvalidArgumentError);
             });
         });
     });
 
     describe('#deinitialize()', () => {
-        let customerInitializeOptions: CustomerInitializeOptions;
+        let containerId: string;
 
-        beforeEach(() => {
+        beforeAll(() => {
             customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+            containerId = customerInitializeOptions.googlepaybraintree ?
+                customerInitializeOptions.googlepaybraintree.container : '';
         });
 
-        it('succesfully deinitializes the strategy', async () => {
+        it('successfully deinitializes the strategy', async () => {
             await strategy.initialize(customerInitializeOptions);
 
-            strategy.deinitialize();
+            const button = document.getElementById(containerId);
 
-            if (customerInitializeOptions.googlepaybraintree) {
-                const button = document.getElementById(customerInitializeOptions.googlepaybraintree.container);
+            expect(button).toHaveProperty('firstChild', walletButton);
 
-                if (button) {
-                    expect(button.firstChild).toBe(null);
-                }
-            }
+            await strategy.deinitialize();
 
-            // Prevent "After Each" failure
-            container = document.createElement('div');
-            document.body.appendChild(container);
+            expect(button).toHaveProperty('firstChild', null);
         });
 
         it('Validates if strategy is loaded before call deinitialize', async () => {
             await strategy.deinitialize();
 
-            if (customerInitializeOptions.googlepaybraintree) {
-                const button = document.getElementById(customerInitializeOptions.googlepaybraintree.container);
+            const button = document.getElementById(containerId);
 
-                if (button) {
-                    expect(button.firstChild).toBe(null);
-                }
-            }
-
-            // Prevent "After Each" failure
-            container = document.createElement('div');
-            document.body.appendChild(container);
+            expect(button).toHaveProperty('firstChild', null);
         });
     });
 
@@ -202,7 +175,7 @@ describe('GooglePayCustomerStrategy', () => {
             await strategy.initialize(customerInitializeOptions);
         });
 
-        it('throws error if trying to sign out programmatically', async () => {
+        it('successfully signs out', async () => {
             const paymentId = {
                 providerId: 'googlepaybraintree',
             };
@@ -234,34 +207,29 @@ describe('GooglePayCustomerStrategy', () => {
                 methodId: 'googlepaybraintree',
             };
 
-            await strategy.signOut(options);
-
-            expect(store.getState).toHaveBeenCalledTimes(3);
+            expect(await strategy.signOut(options)).toEqual(store.getState());
+            expect(store.getState).toHaveBeenCalledTimes(4);
         });
     });
 
     describe('#handleWalletButtonClick', () => {
-        let googlePayOptions: CustomerInitializeOptions;
-
-        beforeEach(() => {
-            googlePayOptions = {
+        it('handles wallet button event', async () => {
+            customerInitializeOptions = {
                 methodId: 'googlepaybraintree',
                 googlepaybraintree: {
                     container: 'googlePayCheckoutButton',
                 },
             };
-        });
 
-        it('handles wallet button event', async () => {
             jest.spyOn(paymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(getGooglePaymentDataMock()));
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(Promise.resolve());
 
-            await strategy.initialize(googlePayOptions).then(() => {
-                walletButton.click();
-            });
+            expect(paymentProcessor.initialize).not.toHaveBeenCalled();
+            await strategy.initialize(customerInitializeOptions);
 
-            expect(paymentProcessor.initialize).toHaveBeenCalled();
+            walletButton.click();
+            expect(paymentProcessor.initialize).toHaveBeenCalledWith('googlepaybraintree');
         });
     });
 });

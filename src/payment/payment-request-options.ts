@@ -124,6 +124,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the GooglePay Authorize.Net
      * payment method. They can be omitted unless you need to support GooglePay.
      */
+    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
     googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
 
     /**

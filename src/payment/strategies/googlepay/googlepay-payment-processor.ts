@@ -23,7 +23,7 @@ export default class GooglePayPaymentProcessor {
         private _googlePayScriptLoader: GooglePayScriptLoader,
         private _googlePayInitializer: GooglePayInitializer,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _consigmentActionCreator: ConsignmentActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _requestSender: RequestSender
     ) {}
 
@@ -68,7 +68,7 @@ export default class GooglePayPaymentProcessor {
 
     updateShippingAddress(shippingAddress: GooglePayAddress): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._consigmentActionCreator.updateAddress(this._mapGooglePayAddressToShippingAddress(shippingAddress))
+            this._consignmentActionCreator.updateAddress(this._mapGooglePayAddressToShippingAddress(shippingAddress))
         );
     }
 

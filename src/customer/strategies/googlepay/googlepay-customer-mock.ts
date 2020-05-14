@@ -19,6 +19,30 @@ export enum Mode {
     Incomplete,
 }
 
+export function getAdyenV2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepayadyenv2' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayAdyenV2 = { googlepayadyenv2: { ...container } };
+    const googlepayAdyenV2WithInvalidContainer = { googlepayadyenv2: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete: {
+            return { ...methodId };
+        }
+        case Mode.UndefinedMethodId: {
+            return { ...undefinedMethodId, ...googlepayAdyenV2 };
+        }
+        case Mode.InvalidContainer: {
+            return { ...methodId, ...googlepayAdyenV2WithInvalidContainer };
+        }
+        default: {
+            return { ...methodId, ...googlepayAdyenV2 };
+        }
+    }
+}
+
 export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayauthorizenet' };
     const undefinedMethodId = { methodId: undefined };

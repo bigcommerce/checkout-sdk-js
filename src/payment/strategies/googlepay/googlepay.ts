@@ -138,6 +138,17 @@ export interface TokenizationSpecification {
     };
 }
 
+export enum BillingAddressFormat {
+    /*
+     * Name, country code, and postal code (default).
+     */
+    Min = 'MIN',
+    /*
+     * Name, street address, locality, region, country code, and postal code.
+     */
+    Full = 'FULL',
+}
+
 export interface GooglePayPaymentDataRequestV2 {
     apiVersion: number;
     apiVersionMinor: number;
@@ -154,7 +165,7 @@ export interface GooglePayPaymentDataRequestV2 {
             allowPrepaidCards?: boolean;
             billingAddressRequired?: boolean;
             billingAddressParameters?: {
-                format?: string;
+                format?: BillingAddressFormat;
                 phoneNumberRequired?: boolean;
             };
         };
