@@ -19,7 +19,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { AdyenAdditionalActionState, AdyenComponentState, AdyenError, AdyenPaymentMethodType, AdyenV2PaymentStrategy, AdyenV2ScriptLoader, ResultCode } from '.';
 import { AdyenComponent } from './adyenv2';
-import { getAdditionalActionError, getAdyenClient, getAdyenError, getComponentState, getInitializeOptions, getInitializeOptionsWithNoCallbacks, getInitializeOptionsWithUndefinedWidgetSize, getOrderRequestBody, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithVaultedInstrument, getUnknownError } from './adyenv2.mock';
+import { getAdditionalActionError, getAdyenClient, getAdyenError, getComponentState, getFailingComponent, getInitializeOptions, getInitializeOptionsWithNoCallbacks, getInitializeOptionsWithUndefinedWidgetSize, getOrderRequestBody, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithVaultedInstrument, getUnknownError } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
@@ -148,6 +148,30 @@ describe('AdyenV2PaymentStrategy', () => {
                 await strategy.initialize(options);
 
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
+            });
+
+            it('fails mounting scheme payment component', async () => {
+                paymentComponent = getFailingComponent();
+
+                await expect(strategy.initialize(options))
+                    .rejects.toThrow(NotInitializedError);
+            });
+
+            it('fails mounting GiroPay payment component', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
+
+                paymentComponent = getFailingComponent();
+
+                await expect(strategy.initialize(options))
+                    .rejects.toThrow(NotInitializedError);
+            });
+
+            it('fails mounting card verification component', async () => {
+                cardVerificationComponent = getFailingComponent();
+
+                await expect(strategy.initialize(options))
+                    .rejects.toThrow(NotInitializedError);
             });
 
             it('does not call adyenCheckout.create when initializing AliPay', async () => {
