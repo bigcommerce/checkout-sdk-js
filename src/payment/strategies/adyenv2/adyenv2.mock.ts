@@ -99,13 +99,14 @@ export function getComponentState(isValid: boolean = true): AdyenComponentState 
     };
 }
 
-export function getInitializeOptions(): PaymentInitializeOptions {
+export function getInitializeOptions(hasVaultedInstruments = false): PaymentInitializeOptions {
     return {
         methodId: 'adyenv2',
         adyenv2: {
             containerId: 'adyen-scheme-component-field',
             cardVerificationContainerId: 'adyen-custom-card-component-field',
             threeDS2ContainerId: 'adyen-scheme-3ds-component-field',
+            hasVaultedInstruments,
             options: {
                 hasHolderName: true,
                 styles: {},
