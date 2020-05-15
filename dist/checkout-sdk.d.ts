@@ -173,6 +173,10 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     cardVerificationContainerId?: string;
     /**
+     * True if the Adyen component has some Vaulted instrument
+     */
+    hasVaultedInstruments?: boolean;
+    /**
      * @deprecated
      * Use additionalActionOptions instead as this property will be removed in the future
      */

@@ -17,6 +17,7 @@ Once AdyenV2 payment is initialized, credit card form fields, provided by the pa
 * [additionalActionOptions](adyenv2paymentinitializeoptions.md#additionalactionoptions)
 * [cardVerificationContainerId](adyenv2paymentinitializeoptions.md#cardverificationcontainerid)
 * [containerId](adyenv2paymentinitializeoptions.md#containerid)
+* [hasVaultedInstruments](adyenv2paymentinitializeoptions.md#hasvaultedinstruments)
 * [options](adyenv2paymentinitializeoptions.md#options)
 * [threeDS2ContainerId](adyenv2paymentinitializeoptions.md#threeds2containerid)
 * [threeDS2Options](adyenv2paymentinitializeoptions.md#threeds2options)
@@ -51,6 +52,16 @@ ___
 **● containerId**: *`string`*
 
 The location to insert the Adyen component.
+
+___
+<a id="hasvaultedinstruments"></a>
+
+### `<Optional>` hasVaultedInstruments
+
+**● hasVaultedInstruments**: * `undefined` &#124; `false` &#124; `true`
+*
+
+True if the Adyen component has some Vaulted instrument
 
 ___
 <a id="options"></a>

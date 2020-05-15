@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.69.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.68.0...v1.69.0) (2020-05-15)
+
+
+### Features
+
+* **payment:** INT-2612 Pay with vaulted SEPA accounts ([a97533f](https://github.com/bigcommerce/checkout-sdk-js/commit/a97533f))
+
 ## [1.68.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.67.1...v1.68.0) (2020-05-14)
 
 
