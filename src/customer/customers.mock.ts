@@ -12,6 +12,7 @@ export function getGuestCustomer(): Customer {
         isGuest: true,
         lastName: '',
         storeCredit: 0,
+        shouldEncourageSignIn: false,
         customerGroup: {
             id: 0,
             name: '',
@@ -27,6 +28,7 @@ export function getCustomer(): Customer {
         fullName: 'Foo Bar',
         lastName: 'Bar',
         storeCredit: 0,
+        shouldEncourageSignIn: false,
         addresses: [
             {
                 ...getShippingAddress(),
