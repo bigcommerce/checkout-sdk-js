@@ -23,54 +23,6 @@ export function getGooglePaySDKMock(): GooglePaySDK {
     };
 }
 
-export function getGooglePayBraintreeMock(): GooglePayBraintreeSDK {
-    return {
-        createPaymentDataRequest: jest.fn(() => getGooglePayBraintreePaymentDataRequest()),
-        parseResponse: jest.fn(),
-        teardown: jest.fn(() => Promise.resolve()),
-    };
-}
-
-export function getGooglePayBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
-    return {
-        allowedPaymentMethods: [],
-        apiVersion: 1,
-        cardRequirements: {
-            allowedCardNetworks: [],
-            billingAddressFormat: '',
-            billingAddressRequired: true,
-        },
-        environment: '',
-        i: {
-            googleTransactionId: '',
-            startTimeMs: 1,
-        },
-        merchantInfo: {
-            authJwt: '',
-            merchantId: '',
-            merchantName: '',
-        },
-        paymentMethodTokenizationParameters: {
-            parameters: {
-                'braintree:apiVersion': '',
-                'braintree:authorizationFingerprint': '',
-                'braintree:merchantId': '',
-                'braintree:metadata': '',
-                'braintree:sdkVersion': '',
-                gateway: '',
-            },
-            tokenizationType: '',
-        },
-        shippingAddressRequired: true,
-        phoneNumberRequired: true,
-        transactionInfo: {
-            currencyCode: '',
-            totalPrice: '',
-            totalPriceStatus: '',
-        },
-    };
-}
-
 export function getCheckoutMock(): Checkout {
     return {
         id: '1',
@@ -106,7 +58,7 @@ export function getPaymentMethodMock(): PaymentMethod {
         id: 'id',
         config: {} as PaymentMethodConfig,
         method: 'method',
-        supportedCards: [] as string[],
+        supportedCards: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
         type: '',
         clientToken: 'token',
         nonce: 'nonce',
@@ -115,28 +67,6 @@ export function getPaymentMethodMock(): PaymentMethod {
             googleMerchantId: '123',
             googleMerchantName: 'name',
             paymentGatewayId: '7654321',
-        },
-    };
-}
-
-export function getGooglePaymentDataPayload() {
-    return {
-        cardRequirements: {
-            billingAddressFormat: 'FULL',
-            billingAddressRequired: true,
-        },
-        emailRequired: true,
-        merchantInfo: {
-            authJwt: 'platformToken',
-            merchantId: '123',
-            merchantName: 'name',
-        },
-        phoneNumberRequired: true,
-        shippingAddressRequired: true,
-        transactionInfo: {
-            currencyCode: 'USD',
-            totalPrice: '1.00',
-            totalPriceStatus: 'FINAL',
         },
     };
 }
@@ -211,7 +141,7 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
 // AdyenV2
 export function getAdyenV2PaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token = `{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}`;
 
     return googlePaymentDataMock;
 }
@@ -259,8 +189,7 @@ export function getAdyenV2PaymentDataRequest(): GooglePayPaymentDataRequestV2 {
 
 export function getAdyenV2PaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
-    paymentMethodMock.supportedCards = ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'];
-    paymentMethodMock.initializationData.gatewayMerchantId = '7654321';
+    paymentMethodMock.initializationData.gatewayMerchantId = paymentMethodMock.initializationData.paymentGatewayId;
 
     return paymentMethodMock;
 }
@@ -286,11 +215,7 @@ export function getAuthorizeNetPaymentDataRequest(): GooglePayPaymentDataRequest
                 type: 'CARD',
                 parameters: {
                     allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: [
-                        'VISA',
-                        'AMEX',
-                        'MASTERCARD',
-                    ],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
                     billingAddressRequired: true,
                     billingAddressParameters: {
                         format: BillingAddressFormat.Full,
@@ -332,7 +257,6 @@ export function getAuthorizeNetPaymentDataMock(): GooglePaymentData {
 
 export function getAuthorizeNetPaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
-    paymentMethodMock.supportedCards = ['VISA', 'AMEX', 'MC'];
     paymentMethodMock.initializationData.storeCountry = 'US';
 
     return paymentMethodMock;
@@ -345,6 +269,77 @@ export function getAuthorizeNetTokenizedPayload(): TokenizePayload {
         details: {
             cardType: 'MASTERCARD',
             lastFour: '0304',
+        },
+    };
+}
+
+// Braintree
+export function getGooglePayBraintreeMock(): GooglePayBraintreeSDK {
+    return {
+        createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
+        parseResponse: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getBraintreePaymentDataPayload() {
+    return {
+        cardRequirements: {
+            billingAddressFormat: 'FULL',
+            billingAddressRequired: true,
+        },
+        emailRequired: true,
+        merchantInfo: {
+            authJwt: 'platformToken',
+            merchantId: '123',
+            merchantName: 'name',
+        },
+        phoneNumberRequired: true,
+        shippingAddressRequired: true,
+        transactionInfo: {
+            currencyCode: 'USD',
+            totalPrice: '1.00',
+            totalPriceStatus: 'FINAL',
+        },
+    };
+}
+
+export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
+    return {
+        allowedPaymentMethods: [],
+        apiVersion: 1,
+        cardRequirements: {
+            allowedCardNetworks: [],
+            billingAddressFormat: '',
+            billingAddressRequired: true,
+        },
+        environment: '',
+        i: {
+            googleTransactionId: '',
+            startTimeMs: 1,
+        },
+        merchantInfo: {
+            authJwt: '',
+            merchantId: '',
+            merchantName: '',
+        },
+        paymentMethodTokenizationParameters: {
+            parameters: {
+                'braintree:apiVersion': '',
+                'braintree:authorizationFingerprint': '',
+                'braintree:merchantId': '',
+                'braintree:metadata': '',
+                'braintree:sdkVersion': '',
+                gateway: '',
+            },
+            tokenizationType: '',
+        },
+        shippingAddressRequired: true,
+        phoneNumberRequired: true,
+        transactionInfo: {
+            currencyCode: '',
+            totalPrice: '',
+            totalPriceStatus: '',
         },
     };
 }
@@ -375,7 +370,7 @@ export function getStripePaymentDataRequest(): GooglePayPaymentDataRequestV2 {
                 parameters: {
                     gateway: 'stripe',
                     'stripe:version': undefined,
-                    'stripe:publishableKey': undefined,
+                    'stripe:publishableKey': 'STRIPE_PUBLISHABLE_KEY/STRIPE_CONNECTED_ACCOUNT',
                 },
             },
         }],
@@ -412,6 +407,14 @@ export function getStripePaymentDataMock(): GooglePaymentData {
         },
         shippingAddress: getGooglePayAddressMock(),
     };
+}
+
+export function getStripePaymentMethodMock(): PaymentMethod {
+    const paymentMethodMock = getPaymentMethodMock();
+    paymentMethodMock.initializationData.stripePublishableKey = 'STRIPE_PUBLISHABLE_KEY';
+    paymentMethodMock.initializationData.stripeConnectedAccount = 'STRIPE_CONNECTED_ACCOUNT';
+
+    return paymentMethodMock;
 }
 
 export function getStripeTokenizedPayload(): TokenizePayload {
