@@ -5,6 +5,7 @@ export default interface Payment {
     methodId: string;
     gatewayId?: string;
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
+    paymentRecaptchaToken?: string;
 }
 
 export type PaymentInstrument = (

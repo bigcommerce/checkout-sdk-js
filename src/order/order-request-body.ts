@@ -40,4 +40,10 @@ export interface OrderPaymentRequestBody {
      * instrument.
      */
     paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | VaultedInstrument;
+
+    /**
+     * The token returned by Google Rechaptcha when carding protection is enabled.
+     * This is required if human verification action is required by BigPay.
+     */
+    paymentRecaptchaToken?: string;
 }

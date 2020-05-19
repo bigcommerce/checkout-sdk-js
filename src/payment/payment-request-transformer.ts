@@ -10,6 +10,7 @@ import { CardExpiryFormatter, CardNumberFormatter, HostedInputValues } from '../
 import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
+import { AdditionalAction } from '.';
 import isVaultedInstrument, { isFormattedVaultedInstrument } from './is-vaulted-instrument';
 import Payment, { CreditCardInstrument, HostedCreditCardInstrument, HostedVaultedInstrument, VaultedInstrument } from './payment';
 import PaymentMethod from './payment-method';
@@ -45,8 +46,8 @@ export default class PaymentRequestTransformer {
         }
 
         return {
+            additionalAction: !payment.paymentRecaptchaToken ? undefined : this._getAdditionalAction(payment.paymentRecaptchaToken),
             authToken,
-            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             customer: internalCustomer,
             billingAddress: billingAddress && mapToInternalAddress(billingAddress),
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, consignments),
@@ -55,6 +56,7 @@ export default class PaymentRequestTransformer {
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
+            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             quoteMeta: {
                 request: {
                     ...paymentMeta,
@@ -130,5 +132,14 @@ export default class PaymentRequestTransformer {
                 ccName: values.cardName || '',
                 ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
             };
+    }
+
+    private _getAdditionalAction(paymentRecaptchaToken?: string): AdditionalAction {
+        return {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: paymentRecaptchaToken,
+            },
+        };
     }
 }
