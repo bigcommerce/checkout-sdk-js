@@ -17,28 +17,39 @@ describe('SignInEmailRequestSender', () => {
     });
 
     describe('#sendSignInEmail()', () => {
-        it('sends sign-in email', async () => {
-            await signInEmailRequestSender.sendSignInEmail('foo');
+        it('sends sign-in email with current location as default', async () => {
+            await signInEmailRequestSender.sendSignInEmail({
+                email: 'foo',
+            });
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 '/login.php?action=passwordless_login',
                 {
-                    body: { email: 'foo' },
+                    body: {
+                        email: 'foo',
+                        redirect_url: '/',
+                    },
                     headers: { Accept: ContentType.JsonV1 },
                     timeout: undefined,
                 }
             );
         });
 
-        it('sends sign-in email with timeout', async () => {
+        it('sends sign-in email with provided optional parameters', async () => {
             const options = { timeout: createTimeout() };
-            await signInEmailRequestSender.sendSignInEmail('foo', options);
+            await signInEmailRequestSender.sendSignInEmail({
+                email: 'foo',
+                redirectUrl: 'foo.bar',
+            }, options);
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 '/login.php?action=passwordless_login',
                 {
                     ...options,
-                    body: { email: 'foo' },
+                    body: {
+                        email: 'foo',
+                        redirect_url: 'foo.bar',
+                    },
                     headers: { Accept: ContentType.JsonV1 },
                 }
             );

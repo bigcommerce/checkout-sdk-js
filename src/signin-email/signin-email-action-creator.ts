@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 
+import { SignInEmailRequestBody } from './signin-email';
 import { SendSignInEmailAction, SignInEmailActionType } from './signin-email-actions';
 import SignInEmailRequestSender from './signin-email-request-sender';
 
@@ -14,13 +15,13 @@ export default class SignInEmailActionCreator {
     ) {}
 
     sendSignInEmail(
-        email: string,
+        emailRequest: SignInEmailRequestBody,
         options?: RequestOptions
     ): Observable<SendSignInEmailAction> {
         return concat(
             of(createAction(SignInEmailActionType.SendSignInEmailRequested)),
             defer(async () => {
-                const { body } = await this._requestSender.sendSignInEmail(email, options);
+                const { body } = await this._requestSender.sendSignInEmail(emailRequest, options);
 
                 return createAction(SignInEmailActionType.SendSignInEmailSucceeded, body);
             })

@@ -1,5 +1,5 @@
 export * from './signin-email-actions';
-export { SignInEmail } from './signin-email';
+export { SignInEmail, SignInEmailRequestBody } from './signin-email';
 
 export { default as SignInEmailRequestSender } from './signin-email-request-sender';
 export { default as SignInEmailActionCreator } from './signin-email-action-creator';

@@ -15,7 +15,7 @@ import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
-import { SignInEmailActionCreator } from '../signin-email';
+import { SignInEmailActionCreator, SignInEmailRequestBody } from '../signin-email';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
@@ -527,12 +527,12 @@ export default class CheckoutService {
      * signs in the customer without requiring any password.
      *
      * @internal
-     * @param email - The email to be sent the sign-in link.
+     * @param signInEmailRequest - The sign-in email request values.
      * @param options - Options for the send email request.
      * @returns A promise that resolves to the current state.
      */
-    sendSignInEmail(email: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._signInEmailActionCreator.sendSignInEmail(email, options);
+    sendSignInEmail(signInEmailRequest: SignInEmailRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._signInEmailActionCreator.sendSignInEmail(signInEmailRequest, options);
 
         return this._dispatch(action, { queueId: 'signInEmail' });
     }
