@@ -1,4 +1,7 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
+
 import { IframeEventListener } from '../common/iframe';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
@@ -14,6 +17,7 @@ describe('HostedForm', () => {
     let fields: HostedField[];
     let form: HostedForm;
     let payloadTransformer: Pick<HostedFormOrderDataTransformer, 'transform'>;
+    let paymentHumanVerificationHandler;
 
     const fieldPrototype: Partial<HostedField> = {
         attach: jest.fn(),
@@ -50,12 +54,14 @@ describe('HostedForm', () => {
 
         eventListener = new IframeEventListener('https://store.foobar.com');
         payloadTransformer = { transform: jest.fn() };
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
 
         form = new HostedForm(
             fields,
             eventListener,
             payloadTransformer as HostedFormOrderDataTransformer,
-            callbacks
+            callbacks,
+            paymentHumanVerificationHandler
         );
     });
 

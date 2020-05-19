@@ -1,6 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
@@ -8,7 +8,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
+import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
@@ -68,7 +68,8 @@ export default function createPaymentStrategyRegistry(
     const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender));
     const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
     const storeCreditActionCreator = new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender));
-    const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
+    const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+    const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender));
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));

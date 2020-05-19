@@ -3,8 +3,8 @@ import { noop, without } from 'lodash';
 import { RequestError } from '../common/error/errors';
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
-import { AdditionalAction } from '../payment';
-import { getVerificationAdditionalAction } from '../spam-protection';
+import { PaymentAdditionalAction } from '../payment';
+import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
@@ -22,7 +22,8 @@ export default class HostedForm {
         private _fields: HostedField[],
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
-        private _eventCallbacks: HostedFormEventCallbacks
+        private _eventCallbacks: HostedFormEventCallbacks,
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
     ) {
         const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
 
@@ -67,11 +68,11 @@ export default class HostedForm {
             this._fields.map(field => field.getType()),
             this._payloadTransformer.transform(payload)
         )
-            .catch((error: RequestError) =>
-                getVerificationAdditionalAction(error)
-                    .then((additinalAction: AdditionalAction) => this._getFirstField().submitForm(
+            .catch(async (error: RequestError) =>
+                await this._paymentHumanVerificationHandler.handle(error)
+                    .then(async (additionalAction: PaymentAdditionalAction) => await this._getFirstField().submitForm(
                         this._fields.map(field => field.getType()),
-                        this._payloadTransformer.transform(payload, additinalAction)
+                        this._payloadTransformer.transform(payload, additionalAction)
                     ))
             );
     }

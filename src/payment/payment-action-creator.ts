@@ -5,9 +5,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
-import { getVerificationAdditionalAction } from '../spam-protection';
+import { PaymentHumanVerificationHandler } from '../spam-protection';
 
-import AdditionalAction from './additional-action';
 import Payment, { FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
@@ -17,7 +16,8 @@ export default class PaymentActionCreator {
     constructor(
         private _paymentRequestSender: PaymentRequestSender,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentRequestTransformer: PaymentRequestTransformer
+        private _paymentRequestTransformer: PaymentRequestTransformer,
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
     ) {}
 
     submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
@@ -29,7 +29,7 @@ export default class PaymentActionCreator {
                         this._paymentRequestTransformer.transform(payment, store.getState())
                     );
                 } catch (error) {
-                    const additionalAction: AdditionalAction = await getVerificationAdditionalAction(error);
+                    const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
 
                     return await this._paymentRequestSender.submitPayment(
                         this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())

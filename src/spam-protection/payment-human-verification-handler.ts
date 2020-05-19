@@ -1,59 +1,66 @@
-import { createScriptLoader } from '@bigcommerce/script-loader';
-import { concat, defer, Observable } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
-import { createSpamProtection } from './';
+import { RequestError } from '../common/error/errors';
+import { PaymentAdditionalAction } from '../payment';
+
 import { CardingProtectionChallengeNotCompletedError, CardingProtectionFailedError, SpamProtectionChallengeNotCompletedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
-import { SpamProtectionOptions } from './spam-protection-options';
 
 export default class PaymentHumanVerificationHandler {
-    _googleRecaptcha: GoogleRecaptcha;
+    private _googleRecaptcha: GoogleRecaptcha;
 
-    constructor(
-        private _recaptchaSitekey: string
-    ) {
-        this._googleRecaptcha = createSpamProtection(createScriptLoader());
+    constructor(googleRecaptcha: GoogleRecaptcha) {
+        this._googleRecaptcha = googleRecaptcha;
     }
 
-    async initialize(options?: SpamProtectionOptions): Promise<void> {
-        const cardingProtectionElementId = options ? options.containerId : 'cardingProtectionContainer';
+    async handle(error: RequestError): Promise<PaymentAdditionalAction> {
+
+        if (!this._isPaymentHumanVerificationRequest(error)) {
+            throw error;
+        }
+
+        await this._initialize(error.body.additional_action_required.data.key);
+
+        return this._googleRecaptcha.execute()
+            .pipe(take(1))
+            .pipe(switchMap(async ({ error, token }) => {
+                if (error instanceof SpamProtectionChallengeNotCompletedError) {
+                    throw new CardingProtectionChallengeNotCompletedError();
+                }
+
+                if (error || !token) {
+                    throw new CardingProtectionFailedError();
+                }
+
+                return {
+                    type: 'recaptcha_v2_verification',
+                    data: {
+                        human_verification_token: token,
+                    },
+                };
+            })).toPromise();
+    }
+
+    private _initialize(recaptchaSitekey: string): Promise<void> {
+        const cardingProtectionElementId = 'cardingProtectionContainer';
 
         let cardingProtectionElement = document.getElementById(cardingProtectionElementId);
         if (cardingProtectionElement && cardingProtectionElement.parentNode) {
-                cardingProtectionElement.parentNode.removeChild(cardingProtectionElement);
-            }
+            cardingProtectionElement.parentNode.removeChild(cardingProtectionElement);
+        }
 
         cardingProtectionElement = document.createElement('div');
         cardingProtectionElement.setAttribute('id', cardingProtectionElementId);
         document.body.appendChild(cardingProtectionElement);
 
-        return await this._googleRecaptcha.load(cardingProtectionElementId, this._recaptchaSitekey);
+        return this._googleRecaptcha.load(cardingProtectionElementId, recaptchaSitekey);
     }
 
-    execute(): Observable<any> {
-        return defer(() => {
-            return concat(
-                this.initialize(),
-                this._googleRecaptcha.execute()
-                    .pipe(take(1))
-                    .pipe(switchMap(async ({ error, token }) => {
-                        if (error instanceof SpamProtectionChallengeNotCompletedError) {
-                            throw new CardingProtectionChallengeNotCompletedError();
-                        }
+    private _isPaymentHumanVerificationRequest(error: RequestError): boolean {
+        const { additional_action_required, status } = error.body;
 
-                        if (error || !token) {
-                            throw new CardingProtectionFailedError();
-                        }
-
-                        return {
-                            type: 'recaptcha_v2_verification',
-                            data: {
-                                human_verification_token: token,
-                            },
-                        };
-                    }))
-            );
-        });
+        return status === 'additional_action_required'
+            && additional_action_required
+            && additional_action_required.type === 'recaptcha_v2_verification';
     }
 }

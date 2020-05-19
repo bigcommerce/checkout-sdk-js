@@ -4,12 +4,12 @@ import { InternalCustomer } from '../customer';
 import { InternalOrder } from '../order';
 import { InternalShippingOption } from '../shipping';
 
-import AdditionalAction from './additional-action';
 import { PaymentInstrument } from './payment';
+import PaymentAdditionalAction from './payment-additional-action';
 import PaymentMethod from './payment-method';
 
 export default interface PaymentRequestBody {
-    additionalAction?: AdditionalAction;
+    additionalAction?: PaymentAdditionalAction;
     authToken: string;
     billingAddress?: InternalAddress;
     cart?: InternalCart;

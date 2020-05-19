@@ -1,4 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
@@ -9,6 +10,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { CancellablePromise } from '../common/utility';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import createPaymentClient from './create-payment-client';
 import { PaymentMethodCancelledError } from './errors';
@@ -24,6 +26,7 @@ describe('PaymentActionCreator', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentRequestSender: PaymentRequestSender;
     let paymentRequestTransformer: PaymentRequestTransformer;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let store: CheckoutStore;
 
     beforeEach(() => {
@@ -31,6 +34,7 @@ describe('PaymentActionCreator', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
         paymentRequestTransformer = new PaymentRequestTransformer();
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
 
         jest.spyOn(orderRequestSender, 'loadOrder')
             .mockReturnValue(Promise.resolve(getResponse(getOrder())));
@@ -42,7 +46,7 @@ describe('PaymentActionCreator', () => {
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
+        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     });
 
     describe('#submitPayment()', () => {

@@ -3,7 +3,7 @@ export * from './payment-method-actions';
 export * from './payment-method-types';
 export * from './payment-status-types';
 
-export { default as AdditionalAction, CardingProtectionActionData } from './additional-action';
+export { default as PaymentAdditionalAction, CardingProtectionActionData } from './payment-additional-action';
 export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
 export { default as isNonceLike } from './is-nonce-like';

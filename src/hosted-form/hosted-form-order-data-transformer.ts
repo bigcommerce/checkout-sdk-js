@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { ReadableCheckoutStore } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { OrderPaymentRequestBody } from '../order';
-import { isVaultedInstrument, AdditionalAction, HostedCreditCardInstrument } from '../payment';
+import { isVaultedInstrument, HostedCreditCardInstrument, PaymentAdditionalAction } from '../payment';
 
 import HostedFormOrderData from './hosted-form-order-data';
 
@@ -12,7 +12,7 @@ export default class HostedFormOrderDataTransformer {
         private _store: ReadableCheckoutStore
     ) {}
 
-    transform(payload: OrderPaymentRequestBody, additionalAction?: AdditionalAction): HostedFormOrderData {
+    transform(payload: OrderPaymentRequestBody, additionalAction?: PaymentAdditionalAction): HostedFormOrderData {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getConfig();

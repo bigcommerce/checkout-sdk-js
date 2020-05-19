@@ -1,3 +1,4 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { pick } from 'lodash';
 
 import { ReadableCheckoutStore } from '../checkout';
@@ -5,6 +6,7 @@ import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 import { CardInstrument } from '../payment/instrument';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
@@ -54,7 +56,8 @@ export default class HostedFormFactory {
             fields,
             new IframeEventListener(host),
             new HostedFormOrderDataTransformer(this._store),
-            pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate')
+            pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate'),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
     }
 

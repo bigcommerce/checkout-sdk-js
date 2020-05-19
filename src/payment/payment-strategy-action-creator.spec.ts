@@ -15,7 +15,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../orde
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
-import { createSpamProtection, GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
+import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
@@ -41,6 +41,7 @@ describe('PaymentStrategyActionCreator', () => {
     let strategy: PaymentStrategy;
     let noPaymentDataStrategy: PaymentStrategy;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
 
     beforeEach(() => {
@@ -49,6 +50,7 @@ describe('PaymentStrategyActionCreator', () => {
         requestSender = createRequestSender();
         paymentClient = createPaymentClient();
         spamProtection = createSpamProtection(createScriptLoader());
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
         registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
@@ -60,7 +62,8 @@ describe('PaymentStrategyActionCreator', () => {
             new PaymentActionCreator(
                 new PaymentRequestSender(createPaymentClient()),
                 orderActionCreator,
-                new PaymentRequestTransformer()
+                new PaymentRequestTransformer(),
+                paymentHumanVerificationHandler
             ),
             new HostedFormFactory(store)
         );
