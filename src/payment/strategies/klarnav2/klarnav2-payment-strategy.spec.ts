@@ -99,6 +99,8 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         jest.spyOn(scriptLoader, 'load')
             .mockImplementation(() => Promise.resolve(klarnaPayments));
+
+        jest.spyOn(store, 'subscribe');
     });
 
     describe('#initialize()', () => {
@@ -116,6 +118,11 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         it('loads script when initializing strategy', () => {
             expect(scriptLoader.load).toHaveBeenCalledTimes(1);
+        });
+
+        it('loads store subscribe once', () => {
+            store.notifyState();
+            expect(store.subscribe).toHaveBeenCalledTimes(1);
         });
 
         it('loads payments widget', () => {
