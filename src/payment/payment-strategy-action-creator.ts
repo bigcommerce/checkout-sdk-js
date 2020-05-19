@@ -4,11 +4,11 @@ import { catchError } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
-import { MissingDataError, MissingDataErrorType, RequestError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { getGoogleRecaptchaToken, SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
+import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
@@ -47,11 +47,8 @@ export default class PaymentStrategyActionCreator {
                     strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                 }
 
-                return strategy.execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                    .catch((error: RequestError) =>
-                        getGoogleRecaptchaToken(store, error)
-                            .then((token: string) => strategy.execute({ ...payload, payment: { ...payment, paymentRecaptchaToken: token } }, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId }))
-                    )
+                return strategy
+                    .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
                     .then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
             })
         ).pipe(

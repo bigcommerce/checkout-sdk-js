@@ -1,11 +1,13 @@
 import { BrowserInfo } from '../common/browser-info';
 import { Omit } from '../common/types';
 
+import AdditionalAction from './additional-action';
+
 export default interface Payment {
     methodId: string;
     gatewayId?: string;
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
-    paymentRecaptchaToken?: string;
+    additionalAction?: AdditionalAction;
 }
 
 export type PaymentInstrument = (

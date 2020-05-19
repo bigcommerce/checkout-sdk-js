@@ -1,7 +1,10 @@
 import { noop, without } from 'lodash';
 
+import { RequestError } from '../common/error/errors';
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
+import { AdditionalAction } from '../payment';
+import { getVerificationAdditionalAction } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
@@ -63,7 +66,14 @@ export default class HostedForm {
         return await this._getFirstField().submitForm(
             this._fields.map(field => field.getType()),
             this._payloadTransformer.transform(payload)
-        );
+        )
+            .catch((error: RequestError) =>
+                getVerificationAdditionalAction(error)
+                    .then((additinalAction: AdditionalAction) => this._getFirstField().submitForm(
+                        this._fields.map(field => field.getType()),
+                        this._payloadTransformer.transform(payload, additinalAction)
+                    ))
+            );
     }
 
     async validate(): Promise<void> {
