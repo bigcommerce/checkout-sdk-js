@@ -1,5 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
+import { BillingAddressActionType, ContinueAsGuestAction } from '../billing';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { objectMerge } from '../common/utility';
 
@@ -8,9 +9,9 @@ import CustomerState, { DEFAULT_STATE } from './customer-state';
 
 export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,
-    action: CheckoutAction
+    action: CheckoutAction | ContinueAsGuestAction
 ): CustomerState {
-    const reducer = combineReducers<CustomerState, CheckoutAction>({
+    const reducer = combineReducers<CustomerState, CheckoutAction | ContinueAsGuestAction>({
         data: dataReducer,
     });
 
@@ -19,9 +20,10 @@ export default function customerReducer(
 
 function dataReducer(
     data: Customer | undefined,
-    action: CheckoutAction
+    action: CheckoutAction | ContinueAsGuestAction
 ): Customer | undefined {
     switch (action.type) {
+    case BillingAddressActionType.ContinueAsGuestSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
         return objectMerge(data, action.payload && action.payload.customer);
 
