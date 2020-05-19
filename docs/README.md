@@ -213,21 +213,6 @@ ___
 
 ▸ **createCheckoutButtonInitializer**(options?: *[CheckoutButtonInitializerOptions](interfaces/checkoutbuttoninitializeroptions.md)*): [CheckoutButtonInitializer](classes/checkoutbuttoninitializer.md)
 
-Creates an instance of `CheckoutButtonInitializer`.
-
-```js
-const initializer = createCheckoutButtonInitializer();
-
-initializer.initializeButton({
-    methodId: 'braintreepaypal',
-    braintreepaypal: {
-        container: '#checkoutButton',
-    },
-});
-```
-
-*__alpha__*: Please note that `CheckoutButtonInitializer` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-
 **Parameters:**
 
 | Param | Type | Description |
@@ -243,18 +228,6 @@ ___
 ###  createCheckoutService
 
 ▸ **createCheckoutService**(options?: *[CheckoutServiceOptions](interfaces/checkoutserviceoptions.md)*): [CheckoutService](classes/checkoutservice.md)
-
-Creates an instance of `CheckoutService`.
-
-```js
-const service = createCheckoutService();
-
-service.subscribe(state => {
-    console.log(state);
-});
-
-service.loadCheckout();
-```
 
 **Parameters:**
 
@@ -272,20 +245,6 @@ ___
 
 ▸ **createCurrencyService**(config: *[StoreConfig](interfaces/storeconfig.md)*): [CurrencyService](classes/currencyservice.md)
 
-Creates an instance of `CurrencyService`.
-
-```js
-const { data } = checkoutService.getState();
-const config = data.getConfig();
-const checkout = data.getCheckout();
-const currencyService = createCurrencyService(config);
-
-currencyService.toStoreCurrency(checkout.grandTotal);
-currencyService.toCustomerCurrency(checkout.grandTotal);
-```
-
-*__alpha__*: Please note that `CurrencyService` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-
 **Parameters:**
 
 | Param | Type | Description |
@@ -301,22 +260,6 @@ ___
 ###  createEmbeddedCheckoutMessenger
 
 ▸ **createEmbeddedCheckoutMessenger**(options: *[EmbeddedCheckoutMessengerOptions](interfaces/embeddedcheckoutmessengeroptions.md)*): [EmbeddedCheckoutMessenger](interfaces/embeddedcheckoutmessenger.md)
-
-Create an instance of `EmbeddedCheckoutMessenger`.
-
-The object is responsible for posting messages to the parent window from the iframe when certain events have occurred. For example, when the checkout form is first loaded, you should notify the parent window about it.
-
-The iframe can only be embedded in domains that are allowed by the store.
-
-```ts
-const messenger = createEmbeddedCheckoutMessenger({
-    parentOrigin: 'https://some/website',
-});
-
-messenger.postFrameLoaded();
-```
-
-*__alpha__*: Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 
@@ -334,15 +277,6 @@ ___
 
 ▸ **createLanguageService**(config?: *`Partial`<[LanguageConfig](interfaces/languageconfig.md)>*): [LanguageService](classes/languageservice.md)
 
-Creates an instance of `LanguageService`.
-
-```js
-const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
-const service = createLanguageService(language);
-
-console.log(service.translate('address.city_label'));
-```
-
 **Parameters:**
 
 | Param | Type | Description |
@@ -358,18 +292,6 @@ ___
 ###  createStepTracker
 
 ▸ **createStepTracker**(checkoutService: *[CheckoutService](classes/checkoutservice.md)*, stepTrackerConfig?: *[StepTrackerConfig](interfaces/steptrackerconfig.md)*): [StepTracker](interfaces/steptracker.md)
-
-Creates an instance of `StepTracker`.
-
-```js
-const checkoutService = createCheckoutService();
-await checkoutService.loadCheckout();
-const stepTracker = createStepTracker(checkoutService);
-
-stepTracker.trackCheckoutStarted();
-```
-
-*__alpha__*: Please note that `StepTracker` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 
@@ -387,17 +309,6 @@ ___
 ###  embedCheckout
 
 ▸ **embedCheckout**(options: *[EmbeddedCheckoutOptions](interfaces/embeddedcheckoutoptions.md)*): `Promise`<[EmbeddedCheckout](classes/embeddedcheckout.md)>
-
-Embed the checkout form in an iframe.
-
-Once the iframe is embedded, it will automatically resize according to the size of the checkout form. It will also notify the parent window when certain events have occurred. i.e.: when the form is loaded and ready to be used.
-
-```js
-embedCheckout({
-    url: 'https://checkout/url',
-    containerId: 'container-id',
-});
-```
 
 **Parameters:**
 

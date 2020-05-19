@@ -2,8 +2,6 @@
 
 # RequestOptions
 
-A set of options for configuring an asynchronous request.
-
 ## Type parameters
 
 #### TParams 
@@ -36,16 +34,12 @@ A set of options for configuring an asynchronous request.
 
 **● params**: *[TParams]()*
 
-The parameters of the request, if required.
-
 ___
 <a id="timeout"></a>
 
 ### `<Optional>` timeout
 
 **● timeout**: *`Timeout`*
-
-Provide this option if you want to cancel or time out the request. If the timeout object completes before the request, the request will be cancelled.
 
 ___
 

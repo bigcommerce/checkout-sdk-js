@@ -18,6 +18,7 @@
 * [id](customer.md#id)
 * [isGuest](customer.md#isguest)
 * [lastName](customer.md#lastname)
+* [shouldEncourageSignIn](customer.md#shouldencouragesignin)
 * [storeCredit](customer.md#storecredit)
 
 ---
@@ -78,6 +79,13 @@ ___
 ###  lastName
 
 **● lastName**: *`string`*
+
+___
+<a id="shouldencouragesignin"></a>
+
+###  shouldEncourageSignIn
+
+**● shouldEncourageSignIn**: *`boolean`*
 
 ___
 <a id="storecredit"></a>

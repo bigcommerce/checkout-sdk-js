@@ -23,7 +23,5 @@
 **● showImage**: * `undefined` &#124; `false` &#124; `true`
 *
 
-Optional. Set to **false** to remove the bank logos from the iDEAL form.
-
 ___
 

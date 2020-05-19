@@ -2,10 +2,6 @@
 
 # CheckoutStoreSelector
 
-Responsible for getting the state of the current checkout.
-
-This object has a set of methods that allow you to get a specific piece of checkout information, such as shipping and billing details.
-
 ## Hierarchy
 
 **CheckoutStoreSelector**
@@ -49,8 +45,6 @@ This object has a set of methods that allow you to get a specific piece of check
 
 ▸ **getBillingAddress**():  [BillingAddress](billingaddress.md) &#124; `undefined`
 
-Gets the billing address of an order.
-
 **Returns:**  [BillingAddress](billingaddress.md) &#124; `undefined`
 
 The billing address object if it is loaded, otherwise undefined.
@@ -61,8 +55,6 @@ ___
 ###  getBillingAddressFields
 
 ▸ **getBillingAddressFields**(countryCode: *`string`*): [FormField](formfield.md)[]
-
-Gets a set of form fields that should be presented to customers in order to capture their billing address for a specific country.
 
 **Parameters:**
 
@@ -81,8 +73,6 @@ ___
 
 ▸ **getBillingCountries**():  [Country](country.md)[] &#124; `undefined`
 
-Gets a list of countries available for billing.
-
 **Returns:**  [Country](country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
@@ -93,8 +83,6 @@ ___
 ###  getCart
 
 ▸ **getCart**():  [Cart](cart.md) &#124; `undefined`
-
-Gets the current cart.
 
 **Returns:**  [Cart](cart.md) &#124; `undefined`
 
@@ -107,8 +95,6 @@ ___
 
 ▸ **getCheckout**():  [Checkout](checkout.md) &#124; `undefined`
 
-Gets the current checkout.
-
 **Returns:**  [Checkout](checkout.md) &#124; `undefined`
 
 The current checkout if it is loaded, otherwise undefined.
@@ -119,8 +105,6 @@ ___
 ###  getConfig
 
 ▸ **getConfig**():  [StoreConfig](storeconfig.md) &#124; `undefined`
-
-Gets the checkout configuration of a store.
 
 **Returns:**  [StoreConfig](storeconfig.md) &#124; `undefined`
 
@@ -133,10 +117,6 @@ ___
 
 ▸ **getConsignments**():  [Consignment](consignment.md)[] &#124; `undefined`
 
-Gets a list of consignments.
-
-If there are no consignments created for to the current checkout, the list will be empty.
-
 **Returns:**  [Consignment](consignment.md)[] &#124; `undefined`
 
 The list of consignments if any, otherwise undefined.
@@ -147,8 +127,6 @@ ___
 ###  getCoupons
 
 ▸ **getCoupons**():  [Coupon](coupon.md)[] &#124; `undefined`
-
-Gets a list of coupons that are applied to the current checkout.
 
 **Returns:**  [Coupon](coupon.md)[] &#124; `undefined`
 
@@ -161,8 +139,6 @@ ___
 
 ▸ **getCustomer**():  [Customer](customer.md) &#124; `undefined`
 
-Gets the current customer.
-
 **Returns:**  [Customer](customer.md) &#124; `undefined`
 
 The current customer object if it is loaded, otherwise
@@ -174,10 +150,6 @@ ___
 ###  getFlashMessages
 
 ▸ **getFlashMessages**(type?: *[FlashMessageType](../#flashmessagetype)*):  [FlashMessage](flashmessage.md)[] &#124; `undefined`
-
-Gets the available flash messages.
-
-Flash messages contain messages set by the server, e.g: when trying to sign in using an invalid email link.
 
 **Parameters:**
 
@@ -196,8 +168,6 @@ ___
 
 ▸ **getGiftCertificates**():  [GiftCertificate](giftcertificate.md)[] &#124; `undefined`
 
-Gets a list of gift certificates that are applied to the current checkout.
-
 **Returns:**  [GiftCertificate](giftcertificate.md)[] &#124; `undefined`
 
 The list of applied gift certificates if there is any, otherwise undefined.
@@ -210,8 +180,6 @@ ___
 ▸ **getInstruments**():  [Instrument](../#instrument)[] &#124; `undefined`
 
 ▸ **getInstruments**(paymentMethod: *[PaymentMethod](paymentmethod.md)*):  [PaymentInstrument](../#paymentinstrument)[] &#124; `undefined`
-
-Gets a list of payment instruments associated with the current customer.
 
 **Returns:**  [Instrument](../#instrument)[] &#124; `undefined`
 
@@ -232,8 +200,6 @@ ___
 
 ▸ **getOrder**():  [Order](order.md) &#124; `undefined`
 
-Gets the current order.
-
 **Returns:**  [Order](order.md) &#124; `undefined`
 
 The current order if it is loaded, otherwise undefined.
@@ -244,10 +210,6 @@ ___
 ###  getPaymentMethod
 
 ▸ **getPaymentMethod**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*):  [PaymentMethod](paymentmethod.md) &#124; `undefined`
-
-Gets a payment method by an id.
-
-The method returns undefined if unable to find a payment method with the specified id, either because it is not available for the customer, or it is not loaded.
 
 **Parameters:**
 
@@ -268,8 +230,6 @@ ___
 
 ▸ **getPaymentMethods**():  [PaymentMethod](paymentmethod.md)[] &#124; `undefined`
 
-Gets a list of payment methods available for checkout.
-
 **Returns:**  [PaymentMethod](paymentmethod.md)[] &#124; `undefined`
 
 The list of payment methods if it is loaded, otherwise undefined.
@@ -280,8 +240,6 @@ ___
 ###  getSelectedPaymentMethod
 
 ▸ **getSelectedPaymentMethod**():  [PaymentMethod](paymentmethod.md) &#124; `undefined`
-
-Gets the payment method that is selected for checkout.
 
 **Returns:**  [PaymentMethod](paymentmethod.md) &#124; `undefined`
 
@@ -295,8 +253,6 @@ ___
 
 ▸ **getSelectedShippingOption**():  [ShippingOption](shippingoption.md) &#124; `undefined`
 
-Gets the selected shipping option for the current checkout.
-
 **Returns:**  [ShippingOption](shippingoption.md) &#124; `undefined`
 
 The shipping option object if there is a selected option,
@@ -309,10 +265,6 @@ ___
 
 ▸ **getShippingAddress**():  [Address](address.md) &#124; `undefined`
 
-Gets the shipping address of the current checkout.
-
-If the address is partially complete, it may not have shipping options associated with it.
-
 **Returns:**  [Address](address.md) &#124; `undefined`
 
 The shipping address object if it is loaded, otherwise
@@ -324,8 +276,6 @@ ___
 ###  getShippingAddressFields
 
 ▸ **getShippingAddressFields**(countryCode: *`string`*): [FormField](formfield.md)[]
-
-Gets a set of form fields that should be presented to customers in order to capture their shipping address for a specific country.
 
 **Parameters:**
 
@@ -344,8 +294,6 @@ ___
 
 ▸ **getShippingCountries**():  [Country](country.md)[] &#124; `undefined`
 
-Gets a list of countries available for shipping.
-
 **Returns:**  [Country](country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
@@ -356,10 +304,6 @@ ___
 ###  getShippingOptions
 
 ▸ **getShippingOptions**():  [ShippingOption](shippingoption.md)[] &#124; `undefined`
-
-Gets a list of shipping options available for the shipping address.
-
-If there is no shipping address assigned to the current checkout, the list of shipping options will be empty.
 
 **Returns:**  [ShippingOption](shippingoption.md)[] &#124; `undefined`
 
@@ -372,8 +316,6 @@ ___
 
 ▸ **getSignInEmail**():  [SignInEmail](signinemail.md) &#124; `undefined`
 
-Gets the sign-in email.
-
 **Returns:**  [SignInEmail](signinemail.md) &#124; `undefined`
 
 The sign-in email object if sent, otherwise undefined
@@ -384,18 +326,6 @@ ___
 ###  isPaymentDataRequired
 
 ▸ **isPaymentDataRequired**(useStoreCredit?: * `undefined` &#124; `false` &#124; `true`*): `boolean`
-
-Checks if payment data is required or not.
-
-If payment data is required, customers should be prompted to enter their payment details.
-
-```js
-if (state.checkout.isPaymentDataRequired()) {
-    // Render payment form
-} else {
-    // Render "Payment is not required for this order" message
-}
-```
 
 **Parameters:**
 
@@ -412,10 +342,6 @@ ___
 ###  isPaymentDataSubmitted
 
 ▸ **isPaymentDataSubmitted**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*): `boolean`
-
-Checks if payment data is submitted or not.
-
-If payment data is already submitted using a payment method, customers should not be prompted to enter their payment details again.
 
 **Parameters:**
 

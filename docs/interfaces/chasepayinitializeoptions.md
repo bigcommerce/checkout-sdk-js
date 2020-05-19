@@ -29,8 +29,6 @@
 **● logoContainer**: * `undefined` &#124; `string`
 *
 
-This container is used to host the chasepay branding logo. It should be an HTML element.
-
 ___
 <a id="walletbutton"></a>
 
@@ -38,8 +36,6 @@ ___
 
 **● walletButton**: * `undefined` &#124; `string`
 *
-
-This walletButton is used to set an event listener, provide an element ID if you want users to be able to launch the ChasePay wallet modal by clicking on a button. It should be an HTML element.
 
 ___
 
@@ -51,8 +47,6 @@ ___
 
 ▸ **onCancel**(): `void`
 
-A callback that gets called when the customer cancels their payment selection.
-
 **Returns:** `void`
 
 ___
@@ -61,8 +55,6 @@ ___
 ### `<Optional>` onPaymentSelect
 
 ▸ **onPaymentSelect**(): `void`
-
-A callback that gets called when the customer selects a payment option.
 
 **Returns:** `void`
 

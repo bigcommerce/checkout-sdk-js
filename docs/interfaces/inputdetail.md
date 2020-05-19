@@ -30,16 +30,12 @@
 **● configuration**: * `undefined` &#124; `object`
 *
 
-Configuration parameters for the required input.
-
 ___
 <a id="details"></a>
 
 ### `<Optional>` details
 
 **● details**: *[SubInputDetail](subinputdetail.md)[]*
-
-Input details can also be provided recursively.
 
 ___
 <a id="itemsearchurl"></a>
@@ -49,16 +45,12 @@ ___
 **● itemSearchUrl**: * `undefined` &#124; `string`
 *
 
-In case of a select, the URL from which to query the items.
-
 ___
 <a id="items"></a>
 
 ### `<Optional>` items
 
 **● items**: *[Item](item.md)[]*
-
-In case of a select, the items to choose from.
 
 ___
 <a id="key"></a>
@@ -68,8 +60,6 @@ ___
 **● key**: * `undefined` &#124; `string`
 *
 
-The value to provide in the result.
-
 ___
 <a id="optional"></a>
 
@@ -77,8 +67,6 @@ ___
 
 **● optional**: * `undefined` &#124; `false` &#124; `true`
 *
-
-True if this input value is optional.
 
 ___
 <a id="type"></a>
@@ -88,8 +76,6 @@ ___
 **● type**: * `undefined` &#124; `string`
 *
 
-The type of the required input.
-
 ___
 <a id="value"></a>
 
@@ -97,8 +83,6 @@ ___
 
 **● value**: * `undefined` &#124; `string`
 *
-
-The value can be pre-filled, if available.
 
 ___
 

@@ -31,10 +31,6 @@
 **● widgetSize**: * `undefined` &#124; `string`
 *
 
-Specify Three3DS2Challenge Widget Size
-
-Values '01' = 250px x 400px '02' = 390px x 400px '03' = 500px x 600px '04' = 600px x 400px '05' = 100% x 100%
-
 ___
 
 ## Methods
@@ -44,8 +40,6 @@ ___
 ### `<Optional>` onBeforeLoad
 
 ▸ **onBeforeLoad**(shopperInteraction?: * `undefined` &#124; `false` &#124; `true`*): `void`
-
-A callback that gets called before adyen component is loaded
 
 **Parameters:**
 
@@ -62,8 +56,6 @@ ___
 
 ▸ **onComplete**(): `void`
 
-A callback that gets called when adyen component verification is completed
-
 **Returns:** `void`
 
 ___
@@ -72,8 +64,6 @@ ___
 ### `<Optional>` onLoad
 
 ▸ **onLoad**(cancel?: * `undefined` &#124; `function`*): `void`
-
-A callback that gets called when adyen component is loaded
 
 **Parameters:**
 

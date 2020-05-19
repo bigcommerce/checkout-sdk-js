@@ -36,16 +36,12 @@
 
 **● braintreepaypal**: *[BraintreePaypalButtonInitializeOptions](braintreepaypalbuttoninitializeoptions.md)*
 
-The options that are required to facilitate Braintree PayPal. They can be omitted unless you need to support Braintree PayPal.
-
 ___
 <a id="braintreepaypalcredit"></a>
 
 ### `<Optional>` braintreepaypalcredit
 
 **● braintreepaypalcredit**: *[BraintreePaypalButtonInitializeOptions](braintreepaypalbuttoninitializeoptions.md)*
-
-The options that are required to facilitate Braintree Credit. They can be omitted unless you need to support Braintree Credit.
 
 ___
 <a id="containerid"></a>
@@ -54,16 +50,12 @@ ___
 
 **● containerId**: *`string`*
 
-The ID of a container which the checkout button should be inserted.
-
 ___
 <a id="googlepayauthorizenet"></a>
 
 ### `<Optional>` googlepayauthorizenet
 
 **● googlepayauthorizenet**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
-
-The options that are required to facilitate Authorize.Net GooglePay. They can be omitted unles you need to support Authorize.Net GooglePay.
 
 ___
 <a id="googlepaybraintree"></a>
@@ -72,16 +64,12 @@ ___
 
 **● googlepaybraintree**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
 
-The options that are required to facilitate Braintree GooglePay. They can be omitted unles you need to support Braintree GooglePay.
-
 ___
 <a id="googlepaystripe"></a>
 
 ### `<Optional>` googlepaystripe
 
 **● googlepaystripe**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
-
-The options that are required to facilitate Stripe GooglePay. They can be omitted unles you need to support Stripe GooglePay.
 
 ___
 <a id="methodid"></a>
@@ -90,16 +78,12 @@ ___
 
 **● methodId**: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*
 
-The identifier of the payment method.
-
 ___
 <a id="params"></a>
 
 ### `<Optional>` params
 
 **● params**: *[TParams]()*
-
-The parameters of the request, if required.
 
 ___
 <a id="paypal"></a>
@@ -108,16 +92,12 @@ ___
 
 **● paypal**: *[PaypalButtonInitializeOptions](paypalbuttoninitializeoptions.md)*
 
-The options that are required to facilitate PayPal. They can be omitted unless you need to support Paypal.
-
 ___
 <a id="timeout"></a>
 
 ### `<Optional>` timeout
 
 **● timeout**: *`Timeout`*
-
-Provide this option if you want to cancel or time out the request. If the timeout object completes before the request, the request will be cancelled.
 
 ___
 

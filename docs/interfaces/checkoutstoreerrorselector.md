@@ -2,10 +2,6 @@
 
 # CheckoutStoreErrorSelector
 
-Responsible for getting the error of any asynchronous checkout action, if there is any.
-
-This object has a set of getters that would return an error if an action is not executed successfully. For example, if you are unable to submit an order, you can use this object to retrieve the reason for the failure.
-
 ## Hierarchy
 
 **CheckoutStoreErrorSelector**
@@ -59,8 +55,6 @@ This object has a set of getters that would return an error if an action is not 
 
 ▸ **getApplyCouponError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
-Returns an error if unable to apply a coupon code.
-
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
@@ -71,8 +65,6 @@ ___
 ###  getApplyGiftCertificateError
 
 ▸ **getApplyGiftCertificateError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
-
-Returns an error if unable to apply a gift certificate.
 
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
@@ -85,8 +77,6 @@ ___
 
 ▸ **getApplyStoreCreditError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
-Returns an error if unable to apply store credit.
-
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
@@ -97,8 +87,6 @@ ___
 ###  getContinueAsGuestError
 
 ▸ **getContinueAsGuestError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to continue as guest.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -111,8 +99,6 @@ ___
 
 ▸ **getCreateConsignmentsError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to create consignments.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to create, otherwise undefined.
@@ -123,10 +109,6 @@ ___
 ###  getDeleteConsignmentError
 
 ▸ **getDeleteConsignmentError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to delete a consignment.
-
-A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
 
 **Parameters:**
 
@@ -144,8 +126,6 @@ ___
 ###  getDeleteInstrumentError
 
 ▸ **getDeleteInstrumentError**(instrumentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to delete a payment instrument.
 
 **Parameters:**
 
@@ -173,8 +153,6 @@ ___
 
 ▸ **getFinalizeOrderError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to finalize the current order.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to finalize, otherwise undefined.
@@ -185,8 +163,6 @@ ___
 ###  getInitializeCustomerError
 
 ▸ **getInitializeCustomerError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to initialize the customer step of a checkout process.
 
 **Parameters:**
 
@@ -205,8 +181,6 @@ ___
 
 ▸ **getInitializePaymentError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
 
-Returns an error if unable to initialize a specific payment method.
-
 **Parameters:**
 
 | Param | Type | Description |
@@ -223,8 +197,6 @@ ___
 ###  getInitializeShippingError
 
 ▸ **getInitializeShippingError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to initialize the shipping step of a checkout process.
 
 **Parameters:**
 
@@ -243,8 +215,6 @@ ___
 
 ▸ **getLoadBillingCountriesError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load billing countries.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -255,8 +225,6 @@ ___
 ###  getLoadCartError
 
 ▸ **getLoadCartError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to load the current cart.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -269,8 +237,6 @@ ___
 
 ▸ **getLoadCheckoutError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load the current checkout.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -281,8 +247,6 @@ ___
 ###  getLoadConfigError
 
 ▸ **getLoadConfigError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to load the checkout configuration of a store.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -295,8 +259,6 @@ ___
 
 ▸ **getLoadInstrumentsError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load payment instruments.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -308,8 +270,6 @@ ___
 
 ▸ **getLoadOrderError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load the current order.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -320,8 +280,6 @@ ___
 ###  getLoadPaymentMethodError
 
 ▸ **getLoadPaymentMethodError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to load a specific payment method.
 
 **Parameters:**
 
@@ -340,8 +298,6 @@ ___
 
 ▸ **getLoadPaymentMethodsError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load payment methods.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -352,8 +308,6 @@ ___
 ###  getLoadShippingCountriesError
 
 ▸ **getLoadShippingCountriesError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to load shipping countries.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -366,8 +320,6 @@ ___
 
 ▸ **getLoadShippingOptionsError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to load shipping options.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to load, otherwise undefined.
@@ -378,8 +330,6 @@ ___
 ###  getRemoveCouponError
 
 ▸ **getRemoveCouponError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
-
-Returns an error if unable to remove a coupon code.
 
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
@@ -392,8 +342,6 @@ ___
 
 ▸ **getRemoveGiftCertificateError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
-Returns an error if unable to remove a gift certificate.
-
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to remove, otherwise undefined.
@@ -404,10 +352,6 @@ ___
 ###  getSelectShippingOptionError
 
 ▸ **getSelectShippingOptionError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to select a shipping option.
-
-A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
 
 **Parameters:**
 
@@ -426,8 +370,6 @@ ___
 
 ▸ **getSignInEmailError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to send sign-in email.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to send email, otherwise undefined.
@@ -438,8 +380,6 @@ ___
 ###  getSignInError
 
 ▸ **getSignInError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to sign in.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -452,8 +392,6 @@ ___
 
 ▸ **getSignOutError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to sign out.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to sign out, otherwise undefined.
@@ -464,8 +402,6 @@ ___
 ###  getSubmitOrderError
 
 ▸ **getSubmitOrderError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to submit the current order.
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -478,8 +414,6 @@ ___
 
 ▸ **getUpdateBillingAddressError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to update billing address.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to update, otherwise undefined.
@@ -491,8 +425,6 @@ ___
 
 ▸ **getUpdateCheckoutError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to update the current checkout.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to update, otherwise undefined.
@@ -503,10 +435,6 @@ ___
 ###  getUpdateConsignmentError
 
 ▸ **getUpdateConsignmentError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
-
-Returns an error if unable to update a consignment.
-
-A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
 
 **Parameters:**
 
@@ -525,8 +453,6 @@ ___
 
 ▸ **getUpdateShippingAddressError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to update shipping address.
-
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to update, otherwise undefined.
@@ -537,8 +463,6 @@ ___
 ###  getUpdateSubscriptionsError
 
 ▸ **getUpdateSubscriptionsError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to update subscriptions.
 
 **Returns:**  `Error` &#124; `undefined`
 

@@ -147,6 +147,7 @@ declare interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
+    shouldEncourageSignIn: boolean;
     customerGroup?: CustomerGroup;
 }
 

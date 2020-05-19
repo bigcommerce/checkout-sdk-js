@@ -25,16 +25,12 @@
 
 **● brands**: *`string`[]*
 
-Array of card brands that will be recognized by the component.
-
 ___
 <a id="styles"></a>
 
 ### `<Optional>` styles
 
 **● styles**: *[StyleOptions](styleoptions.md)*
-
-Set a style object to customize the input fields. See Styling Secured Fields for a list of supported properties.
 
 ___
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.69.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.0...v1.69.1) (2020-05-19)
+
+
+### Bug Fixes
+
+* **shopper:** CHECKOUT-4742 Update customer object when continuing as guest ([c83c50f](https://github.com/bigcommerce/checkout-sdk-js/commit/c83c50f))
+
 ## [1.69.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.68.0...v1.69.0) (2020-05-15)
 
 
