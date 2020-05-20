@@ -80,8 +80,6 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
                     }
 
                     if (state === ZipModalEvent.CheckoutReferred && checkoutId) {
-                        await this._prepareForReferredRegistration(payment.methodId, checkoutId);
-
                         return resolve();
                     }
 
@@ -95,11 +93,14 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
 
                     reject(new PaymentMethodInvalidError());
                 },
-                onCheckout: openModal => {
+                onCheckout: async openModal => {
                     if (!this._paymentMethod || !this._paymentMethod.clientToken) {
                         throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                     }
 
+                    const clientToken = JSON.parse(this._paymentMethod.clientToken);
+
+                    await this._prepareForReferredRegistration(payment.methodId, clientToken.id);
                     openModal(JSON.parse(this._paymentMethod.clientToken));
                 },
             });
