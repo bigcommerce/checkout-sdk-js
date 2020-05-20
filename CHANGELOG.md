@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.69.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.1...v1.69.2) (2020-05-20)
+
+
+### Bug Fixes
+
+* **shopper:** CHECKOUT-4897 Add redirect_to to SignInEmail ([b020bfa](https://github.com/bigcommerce/checkout-sdk-js/commit/b020bfa))
+
 ### [1.69.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.0...v1.69.1) (2020-05-19)
 
 
