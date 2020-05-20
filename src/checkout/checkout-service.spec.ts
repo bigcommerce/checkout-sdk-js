@@ -388,10 +388,12 @@ describe('CheckoutService', () => {
 
     describe('#sendSignInEmail()', () => {
         it('sends sign-in email', async () => {
-            const state = await checkoutService.sendSignInEmail('foo@bar.com');
+            const state = await checkoutService.sendSignInEmail({ email: 'foo@bar.com' });
 
             expect(signInEmailRequestSender.sendSignInEmail)
-                .toHaveBeenCalledWith('foo@bar.com', undefined);
+                .toHaveBeenCalledWith({
+                    email: 'foo@bar.com',
+                }, undefined);
 
             expect(state.data.getCheckout())
                 .toEqual(store.getState().checkout.getCheckout());

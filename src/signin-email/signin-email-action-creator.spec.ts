@@ -30,7 +30,9 @@ describe('SubscriptionsActionCreator', () => {
     describe('#sendSignInEmail()', () => {
         describe('when store has a signed-in shopper', () => {
             it('emits billing actions if able to continue as guest', async () => {
-                const actions = await from(signInEmailActionCreator.sendSignInEmail('f'))
+                const actions = await from(signInEmailActionCreator.sendSignInEmail({
+                    email: 'f',
+                }))
                     .pipe(toArray())
                     .toPromise();
 
@@ -46,7 +48,9 @@ describe('SubscriptionsActionCreator', () => {
 
                 const errorHandler = jest.fn(action => of(action));
 
-                const actions = await from(signInEmailActionCreator.sendSignInEmail('f'))
+                const actions = await from(signInEmailActionCreator.sendSignInEmail({
+                    email: 'f',
+                }))
                     .pipe(
                         catchError(errorHandler),
                         toArray()
@@ -61,10 +65,14 @@ describe('SubscriptionsActionCreator', () => {
             });
 
             it('sends request to create billing address', async () => {
-                await from(signInEmailActionCreator.sendSignInEmail('f', {}))
+                await from(signInEmailActionCreator.sendSignInEmail({
+                    email: 'f',
+                    redirectUrl: 'f.c',
+                }, {}))
                     .toPromise();
 
-                expect(signInEmailRequestSender.sendSignInEmail).toHaveBeenCalledWith('f', {});
+                expect(signInEmailRequestSender.sendSignInEmail)
+                    .toHaveBeenCalledWith({ email: 'f', redirectUrl: 'f.c' }, {});
             });
         });
     });
