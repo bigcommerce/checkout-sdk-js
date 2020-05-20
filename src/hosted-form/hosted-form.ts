@@ -1,9 +1,7 @@
 import { noop, without } from 'lodash';
 
-import { RequestError } from '../common/error/errors';
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
-import { PaymentAdditionalAction } from '../payment';
 import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
@@ -64,17 +62,19 @@ export default class HostedForm {
     }
 
     async submit(payload: OrderPaymentRequestBody): Promise<void> {
-        return await this._getFirstField().submitForm(
-            this._fields.map(field => field.getType()),
-            this._payloadTransformer.transform(payload)
-        )
-            .catch(async (error: RequestError) =>
-                await this._paymentHumanVerificationHandler.handle(error)
-                    .then(async (additionalAction: PaymentAdditionalAction) => await this._getFirstField().submitForm(
-                        this._fields.map(field => field.getType()),
-                        this._payloadTransformer.transform(payload, additionalAction)
-                    ))
+        try {
+            return await this._getFirstField().submitForm(
+                this._fields.map(field => field.getType()),
+                this._payloadTransformer.transform(payload)
             );
+        } catch (error) {
+            const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+
+            return await this._getFirstField().submitForm(
+                this._fields.map(field => field.getType()),
+                this._payloadTransformer.transform(payload, additionalAction)
+            );
+        }
     }
 
     async validate(): Promise<void> {

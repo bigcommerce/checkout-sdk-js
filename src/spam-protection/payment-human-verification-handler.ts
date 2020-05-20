@@ -7,11 +7,10 @@ import { CardingProtectionChallengeNotCompletedError, CardingProtectionFailedErr
 import GoogleRecaptcha from './google-recaptcha';
 
 export default class PaymentHumanVerificationHandler {
-    private _googleRecaptcha: GoogleRecaptcha;
 
-    constructor(googleRecaptcha: GoogleRecaptcha) {
-        this._googleRecaptcha = googleRecaptcha;
-    }
+    constructor(
+        private _googleRecaptcha: GoogleRecaptcha
+    ) {}
 
     async handle(error: RequestError): Promise<PaymentAdditionalAction> {
 

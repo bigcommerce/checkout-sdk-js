@@ -156,4 +156,18 @@ describe('PaymentRequestTransformer', () => {
                 instrumentId: 'abcdefg',
             });
     });
+
+    it('returns additinalAction within request if provided in payment parameter', () => {
+        const additionalActionMock = {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: 'googleRecaptchaToken',
+            },
+        };
+        payment.additionalAction = additionalActionMock;
+
+        const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
+
+        expect(paymentRequestBodyResponse.additionalAction).toEqual(additionalActionMock);
+    });
 });
