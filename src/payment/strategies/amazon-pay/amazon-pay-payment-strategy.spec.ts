@@ -294,7 +294,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('reinitializes payment method before submitting order', async () => {
-        const payload = getOrderRequestBody();
+        const payload = omit(getOrderRequestBody(), 'useStoreCredit');
         const options = { methodId: paymentMethod.id };
         const { referenceId = '' } = getRemoteCheckoutStateData().amazon || {};
 
@@ -304,7 +304,11 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutActionCreator.initializePayment)
-            .toHaveBeenCalledWith(payload.payment && payload.payment.methodId, { referenceId, useStoreCredit: false });
+            // tslint:disable-next-line: no-non-null-assertion
+            .toHaveBeenCalledWith(payload.payment!.methodId, {
+                referenceId,
+                useStoreCredit: undefined,
+            });
 
         expect(orderActionCreator.submitOrder)
             .toHaveBeenCalledWith({
