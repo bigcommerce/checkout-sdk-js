@@ -47,7 +47,10 @@ export default class OrderRequestSender {
 
         return this._requestSender.post(url, {
             body,
-            headers: headers && omitBy({ 'X-Checkout-Variant': headers.checkoutVariant }, isNil),
+            headers: omitBy({
+                'X-Checkout-Variant': headers && headers.checkoutVariant,
+                'X-Checkout-SDK-Version': LIBRARY_VERSION,
+            }, isNil),
             timeout,
         });
     }
