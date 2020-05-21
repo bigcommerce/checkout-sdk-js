@@ -87,7 +87,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { payment: { paymentData, ...paymentPayload }, useStoreCredit = false } = payload;
+        const { payment: { paymentData, ...paymentPayload }, useStoreCredit } = payload;
 
         if (options && this._paymentMethod && this._paymentMethod.config.is3dsEnabled) {
             return this._processPaymentWith3ds(
@@ -236,7 +236,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<never> {
+    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean | undefined, options: PaymentRequestOptions): Promise<never> {
         return new Promise((_, reject) => {
             if (!this._window.OffAmazonPayments) {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
@@ -247,7 +247,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                 referenceId,
                 (confirmationFlow: AmazonPayConfirmationFlow) => {
                     return this._store.dispatch(
-                        this._orderActionCreator.submitOrder({useStoreCredit}, options)
+                        this._orderActionCreator.submitOrder({ useStoreCredit }, options)
                     )
                         .then(() => this._store.dispatch(
                             this._remoteCheckoutActionCreator.initializePayment(methodId, {
