@@ -3353,6 +3353,12 @@ declare interface NonceGenerationError {
     field: string;
 }
 
+declare interface NonceInstrument {
+    nonce: string;
+    shouldSaveInstrument?: boolean;
+    deviceSessionId?: string;
+}
+
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 declare interface Order {
@@ -3403,10 +3409,10 @@ declare interface OrderPaymentRequestBody {
      */
     gatewayId?: string;
     /**
-     * An object that contains the details of a credit card or vaulted payment
-     * instrument.
+     * An object that contains the details of a credit card, vaulted payment
+     * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | VaultedInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;

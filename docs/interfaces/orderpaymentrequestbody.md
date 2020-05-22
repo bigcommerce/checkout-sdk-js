@@ -37,7 +37,7 @@ ___
 
 ### `<Optional>` paymentData
 
-**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [HostedInstrument](hostedinstrument.md) &#124; [HostedCreditCardInstrument](../#hostedcreditcardinstrument) &#124; [HostedVaultedInstrument](../#hostedvaultedinstrument) &#124; [VaultedInstrument](vaultedinstrument.md)
+**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [HostedInstrument](hostedinstrument.md) &#124; [HostedCreditCardInstrument](../#hostedcreditcardinstrument) &#124; [HostedVaultedInstrument](../#hostedvaultedinstrument) &#124; [NonceInstrument](nonceinstrument.md) &#124; [VaultedInstrument](vaultedinstrument.md)
 *
 
 ___

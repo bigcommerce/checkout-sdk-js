@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.70.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.2...v1.70.0) (2020-05-22)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4904 Pass Store Credit properly to amazon pay ([6900644](https://github.com/bigcommerce/checkout-sdk-js/commit/6900644))
+
+
+### Features
+
+* **checkout:** INT-2577 Create a strategy for Bolt ([484eab8](https://github.com/bigcommerce/checkout-sdk-js/commit/484eab8))
+* **payment:** INT-2613 remove receipt_email in stripe-strategy ([9c10454](https://github.com/bigcommerce/checkout-sdk-js/commit/9c10454))
+
 ### [1.69.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.1...v1.69.2) (2020-05-20)
 
 
