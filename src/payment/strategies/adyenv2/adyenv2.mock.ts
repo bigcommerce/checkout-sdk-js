@@ -1,3 +1,5 @@
+import { LoadScriptOptions } from '@bigcommerce/script-loader';
+
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
@@ -203,4 +205,14 @@ export function getUnknownError(): RequestError {
         ...getUnknownErrorResponse(),
         ...getErrorPaymentResponseBody(),
     }));
+}
+
+export function getLoadScriptOptions(): LoadScriptOptions {
+    return {
+        async: false,
+        attributes: {
+            integrity: 'sha384-j+P95C9gdyJZ9LTUtvrMDElDvFEeTCelUsE89yfnDfP7nbOXS3N0+e5nb0CLTdx/',
+            crossorigin: 'anonymous',
+        },
+    };
 }
