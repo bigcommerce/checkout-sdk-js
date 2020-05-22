@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.70.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.70.0...v1.70.1) (2020-05-22)
+
+
+### Code Refactoring
+
+* **payment:** INT-2684 Upgrade Adyen Component Library ([a872a4c](https://github.com/bigcommerce/checkout-sdk-js/commit/a872a4c))
+
 ## [1.70.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.69.2...v1.70.0) (2020-05-22)
 
 
