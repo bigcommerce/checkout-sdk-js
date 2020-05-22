@@ -129,7 +129,6 @@ export function getStripeCardPaymentOptionsWithSignedUser(): StripeHandleCardPay
             },
             name: `${customer.firstName} ${customer.lastName}`,
         },
-        receipt_email: customer.email,
         save_payment_method: false,
     };
 }

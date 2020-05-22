@@ -261,7 +261,6 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         if (customer) {
             return {
                 ...shippingDetails,
-                receipt_email: customer.email,
                 save_payment_method: shouldSaveInstrument,
             };
         } else {
