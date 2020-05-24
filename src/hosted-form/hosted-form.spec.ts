@@ -1,4 +1,10 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
+
+import { RequestError } from '../common/error/errors';
+import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 import { IframeEventListener } from '../common/iframe';
+import { PaymentAdditionalAction } from '../payment';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
@@ -14,6 +20,9 @@ describe('HostedForm', () => {
     let fields: HostedField[];
     let form: HostedForm;
     let payloadTransformer: Pick<HostedFormOrderDataTransformer, 'transform'>;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
+    let errorResponse: RequestError;
+    let additionalActionMock: PaymentAdditionalAction;
 
     const fieldPrototype: Partial<HostedField> = {
         attach: jest.fn(),
@@ -50,13 +59,40 @@ describe('HostedForm', () => {
 
         eventListener = new IframeEventListener('https://store.foobar.com');
         payloadTransformer = { transform: jest.fn() };
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
 
         form = new HostedForm(
             fields,
             eventListener,
             payloadTransformer as HostedFormOrderDataTransformer,
-            callbacks
+            callbacks,
+            paymentHumanVerificationHandler
         );
+
+        errorResponse = {
+            ...getErrorResponse(),
+            body: {
+                ...getErrorResponseBody(),
+                status: 'additional_action_required',
+                additional_action_required: {
+                    type: 'recaptcha_v2_verification',
+                    data: {
+                        key: 'recaptchakey123',
+                    },
+                },
+            },
+            errors: [],
+            name: '',
+            type: '',
+            message: '',
+        };
+
+        additionalActionMock = {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: 'googleRecaptchaToken',
+            },
+        };
     });
 
     it('attaches all fields to document', async () => {
@@ -108,6 +144,56 @@ describe('HostedForm', () => {
             .toHaveBeenCalledWith(payload);
         expect(field.submitForm)
             .toHaveBeenCalledWith(fields.map(field => field.getType()), data);
+    });
+
+    it('submits payment again after human verification performed', async () => {
+        // tslint:disable-next-line:no-non-null-assertion
+        const field = fields.find(field => field.getType() === HostedFieldType.CardNumber)!;
+        const data = getHostedFormOrderData();
+        const payload = {
+            methodId: 'authorizenet',
+            paymentData: { shouldSaveInstrument: true },
+        };
+
+        jest.spyOn(field, 'submitForm')
+            .mockResolvedValue(errorResponse);
+
+        jest.spyOn(payloadTransformer, 'transform')
+            .mockReturnValue(data);
+
+        await form.submit(payload);
+
+        expect(field.submitForm)
+            .toHaveBeenCalledTimes(2);
+    });
+
+    it('executes human verification when verification requested error returned', async () => {
+        // tslint:disable-next-line:no-non-null-assertion
+        const field = fields.find(field => field.getType() === HostedFieldType.CardNumber)!;
+        const data = getHostedFormOrderData();
+        const payload = {
+            methodId: 'authorizenet',
+            paymentData: { shouldSaveInstrument: true },
+        };
+
+        jest.spyOn(field, 'submitForm')
+            .mockRejectedValue(errorResponse);
+
+        jest.spyOn(payloadTransformer, 'transform')
+            .mockReturnValue(data);
+
+        const errorHandler = jest.spyOn(paymentHumanVerificationHandler, 'handle')
+            .mockReturnValue(Promise.resolve(additionalActionMock));
+
+        try {
+            await form.submit(payload);
+        } catch {
+            errorHandler();
+        }
+
+        expect(errorHandler).toHaveBeenCalled();
+        expect(paymentHumanVerificationHandler.handle)
+            .toHaveBeenCalledWith(errorResponse);
     });
 
     it('notifies when card type changes', () => {

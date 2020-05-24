@@ -1,6 +1,7 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -10,6 +11,7 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestB
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
@@ -34,6 +36,8 @@ describe('BlueSnapV2PaymentStrategy', () => {
     let payload: OrderRequestBody;
     let store: CheckoutStore;
     let strategy: BlueSnapV2PaymentStrategy;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
+
     let submitOrderAction: Observable<SubmitOrderAction>;
     let cancelPayment: () => void;
 
@@ -45,10 +49,12 @@ describe('BlueSnapV2PaymentStrategy', () => {
         );
         paymentRequestTransformer = new PaymentRequestTransformer();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient());
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
-            paymentRequestTransformer
+            paymentRequestTransformer,
+            paymentHumanVerificationHandler
         );
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));

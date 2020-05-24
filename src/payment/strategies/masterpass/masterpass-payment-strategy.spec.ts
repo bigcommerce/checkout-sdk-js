@@ -12,6 +12,7 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentRequestSender } from '../../../payment';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import { getMasterpass, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
@@ -61,7 +62,8 @@ describe('MasterpassPaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
 
         scriptLoader = new MasterpassScriptLoader(createScriptLoader());

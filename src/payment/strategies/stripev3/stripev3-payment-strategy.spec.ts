@@ -14,6 +14,7 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestS
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -59,7 +60,8 @@ describe('StripeV3PaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader))
         );
 
         errorResponse = new RequestError(getResponse({

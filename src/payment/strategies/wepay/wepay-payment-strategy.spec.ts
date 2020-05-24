@@ -9,6 +9,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -47,7 +48,8 @@ describe('WepayPaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
 
         strategy = new WepayPaymentStrategy(

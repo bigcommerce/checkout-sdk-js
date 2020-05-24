@@ -5,11 +5,12 @@ import { InternalOrder } from '../order';
 import { InternalShippingOption } from '../shipping';
 
 import { PaymentInstrument } from './payment';
+import PaymentAdditionalAction from './payment-additional-action';
 import PaymentMethod from './payment-method';
 
 export default interface PaymentRequestBody {
+    additionalAction?: PaymentAdditionalAction;
     authToken: string;
-    payment?: PaymentInstrument;
     billingAddress?: InternalAddress;
     cart?: InternalCart;
     customer?: InternalCustomer;
@@ -17,6 +18,7 @@ export default interface PaymentRequestBody {
     orderMeta?: {
         deviceFingerprint?: string;
     };
+    payment?: PaymentInstrument;
     paymentMethod?: PaymentMethod;
     quoteMeta?: {
         request?: {

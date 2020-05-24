@@ -17,7 +17,7 @@ import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreato
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -105,7 +105,8 @@ describe('ChasePayPaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(

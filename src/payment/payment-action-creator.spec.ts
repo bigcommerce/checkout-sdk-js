@@ -1,19 +1,23 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
-import { getResponse } from '../common/http-request/responses.mock';
+import { RequestError } from '../common/error/errors';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { CancellablePromise } from '../common/utility';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import createPaymentClient from './create-payment-client';
 import { PaymentMethodCancelledError } from './errors';
 import PaymentActionCreator from './payment-action-creator';
 import { PaymentActionType } from './payment-actions';
+import PaymentAdditionalAction from './payment-additional-action';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 import { getErrorPaymentResponseBody, getPayment, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
@@ -24,13 +28,17 @@ describe('PaymentActionCreator', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentRequestSender: PaymentRequestSender;
     let paymentRequestTransformer: PaymentRequestTransformer;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let store: CheckoutStore;
+    let errorResponse: RequestError;
+    let additionalActionMock: PaymentAdditionalAction;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreStateWithOrder());
         orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
         paymentRequestTransformer = new PaymentRequestTransformer();
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
 
         jest.spyOn(orderRequestSender, 'loadOrder')
             .mockReturnValue(Promise.resolve(getResponse(getOrder())));
@@ -42,7 +50,32 @@ describe('PaymentActionCreator', () => {
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
+        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
+
+        errorResponse = {
+            ...getErrorResponse(),
+            body: {
+                ...getErrorPaymentResponseBody(),
+                status: 'additional_action_required',
+                additional_action_required: {
+                    type: 'recaptcha_v2_verification',
+                    data: {
+                        key: 'recaptchakey123',
+                    },
+                },
+            },
+            errors: [],
+            name: '',
+            type: '',
+            message: '',
+        };
+
+        additionalActionMock = {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: 'googleRecaptchaToken',
+            },
+        };
     });
 
     describe('#submitPayment()', () => {
@@ -102,6 +135,42 @@ describe('PaymentActionCreator', () => {
 
             expect(paymentRequestSender.submitPayment)
                 .toHaveBeenCalledWith(getPaymentRequestBody());
+        });
+
+        it('executes human verification when verification requested error returned', async () => {
+            jest.spyOn(paymentRequestSender, 'submitPayment').mockReturnValue(
+                Promise.reject(errorResponse)
+            );
+            const errorHandler = jest.spyOn(paymentHumanVerificationHandler, 'handle')
+                .mockReturnValue(Promise.resolve(additionalActionMock));
+
+            await from(paymentActionCreator.submitPayment(getPayment())(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+
+            return expect(paymentHumanVerificationHandler.handle).toHaveBeenCalledWith(errorResponse);
+        });
+
+        it('sends payment request again after human verification performed', async () => {
+            jest.spyOn(paymentRequestSender, 'submitPayment').mockReturnValue(
+                Promise.reject(errorResponse)
+            );
+            const errorHandler = await jest.spyOn(paymentHumanVerificationHandler, 'handle')
+                .mockReturnValue(Promise.resolve(additionalActionMock));
+
+            await from(paymentActionCreator.submitPayment(getPayment())(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(paymentRequestSender.submitPayment).toHaveBeenCalledTimes(2);
         });
     });
 

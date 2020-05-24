@@ -1,9 +1,10 @@
 import { Checkout } from '../checkout';
 import { Config } from '../config';
 import { Order, OrderMeta } from '../order';
-import { HostedCreditCardInstrument, HostedVaultedInstrument, PaymentInstrumentMeta, PaymentMethod, PaymentMethodMeta } from '../payment';
+import { HostedCreditCardInstrument, HostedVaultedInstrument, PaymentAdditionalAction, PaymentInstrumentMeta, PaymentMethod, PaymentMethodMeta } from '../payment';
 
 export default interface HostedFormOrderData {
+    additionalAction?: PaymentAdditionalAction;
     authToken: string;
     checkout?: Checkout;
     config?: Config;

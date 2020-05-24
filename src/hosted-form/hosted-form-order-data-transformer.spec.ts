@@ -65,4 +65,23 @@ describe('HostedFormOrderDataTransformer', () => {
         expect(result.authToken)
             .toEqual('JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
     });
+
+    it('returns AdditionalAction object within response if received as a parameter', () => {
+        const additionalActionMock = {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: 'googleRecaptchaToken',
+            },
+        };
+
+        const result = transformer.transform(
+            {
+                methodId: 'authorizenet',
+                paymentData: { instrumentId: '123' },
+            },
+            additionalActionMock
+        );
+
+        expect(result.additionalAction).toEqual(additionalActionMock);
+    });
 });

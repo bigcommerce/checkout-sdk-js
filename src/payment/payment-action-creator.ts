@@ -1,10 +1,11 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, from, of } from 'rxjs';
+import { concat, defer, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
+import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import Payment, { FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
@@ -15,15 +16,26 @@ export default class PaymentActionCreator {
     constructor(
         private _paymentRequestSender: PaymentRequestSender,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentRequestTransformer: PaymentRequestTransformer
+        private _paymentRequestTransformer: PaymentRequestTransformer,
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
     ) {}
 
     submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(PaymentActionType.SubmitPaymentRequested)),
-            from(this._paymentRequestSender.submitPayment(
-                this._paymentRequestTransformer.transform(payment, store.getState())
-            ))
+            defer(async () => {
+                try {
+                    return await this._paymentRequestSender.submitPayment(
+                        this._paymentRequestTransformer.transform(payment, store.getState())
+                    );
+                } catch (error) {
+                    const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+
+                    return await this._paymentRequestSender.submitPayment(
+                        this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
+                    );
+                }
+            })
                 .pipe(
                     switchMap(({ body }) => concat(
                         this._orderActionCreator.loadCurrentOrder()(store),

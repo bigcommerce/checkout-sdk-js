@@ -16,6 +16,7 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentRequestSender } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -73,7 +74,8 @@ describe('ZipPaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(createRequestSender())

@@ -45,8 +45,8 @@ export default class PaymentRequestTransformer {
         }
 
         return {
+            additionalAction: payment.additionalAction,
             authToken,
-            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             customer: internalCustomer,
             billingAddress: billingAddress && mapToInternalAddress(billingAddress),
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, consignments),
@@ -55,6 +55,7 @@ export default class PaymentRequestTransformer {
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
+            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             quoteMeta: {
                 request: {
                     ...paymentMeta,

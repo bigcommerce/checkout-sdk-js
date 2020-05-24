@@ -2,6 +2,7 @@ import { noop, without } from 'lodash';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
+import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
@@ -19,7 +20,8 @@ export default class HostedForm {
         private _fields: HostedField[],
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
-        private _eventCallbacks: HostedFormEventCallbacks
+        private _eventCallbacks: HostedFormEventCallbacks,
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
     ) {
         const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
 
@@ -60,10 +62,19 @@ export default class HostedForm {
     }
 
     async submit(payload: OrderPaymentRequestBody): Promise<void> {
-        return await this._getFirstField().submitForm(
-            this._fields.map(field => field.getType()),
-            this._payloadTransformer.transform(payload)
-        );
+        try {
+            return await this._getFirstField().submitForm(
+                this._fields.map(field => field.getType()),
+                this._payloadTransformer.transform(payload)
+            );
+        } catch (error) {
+            const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+
+            return await this._getFirstField().submitForm(
+                this._fields.map(field => field.getType()),
+                this._payloadTransformer.transform(payload, additionalAction)
+            );
+        }
     }
 
     async validate(): Promise<void> {

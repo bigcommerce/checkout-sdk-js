@@ -21,6 +21,7 @@ export default class GoogleRecaptcha {
     private _event$?: Subject<RecaptchaResult>;
     private _recaptcha?: ReCaptchaV2.ReCaptcha;
     private _memoized: (recaptcha: ReCaptchaV2.ReCaptcha, sitekey: string, container: HTMLElement | null) => Subject<RecaptchaResult>;
+    private _widgetId?: number;
 
     constructor(
         private googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader,
@@ -33,14 +34,14 @@ export default class GoogleRecaptcha {
                 throw new Error();
             }
 
-            recaptcha.render(container.id, {
+            this._widgetId = recaptcha.render(container.id, {
                 sitekey,
                 size: 'invisible',
                 callback: () => {
                     event$.next({
-                        token: recaptcha.getResponse(),
+                        token: recaptcha.getResponse(this._widgetId),
                     });
-                    recaptcha.reset();
+                    recaptcha.reset(this._widgetId);
                 },
                 'error-callback': () => {
                     event$.next({
@@ -85,7 +86,7 @@ export default class GoogleRecaptcha {
                     )),
                     switchMap(element => {
                         this._watchRecaptchaChallengeWindow(event$, element);
-                        recaptcha.execute();
+                        recaptcha.execute(this._widgetId);
 
                         return event$;
                     }),
