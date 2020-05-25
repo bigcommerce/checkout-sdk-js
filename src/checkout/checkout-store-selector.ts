@@ -341,7 +341,8 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             const billingAddress = getBillingAddress();
             const context = getContextConfig();
             const isEmptyBillingAddress = !billingAddress ||
-                values(omit(billingAddress, 'email', 'id')).every(val => !val || !val.length);
+                values(omit(billingAddress, 'shouldSaveAddress', 'email', 'id'))
+                    .every(val => !val || !val.length);
 
             if (isEmptyBillingAddress) {
                 if (!context || !context.geoCountryCode) {

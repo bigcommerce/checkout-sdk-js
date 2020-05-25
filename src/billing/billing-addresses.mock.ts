@@ -16,6 +16,7 @@ export function getBillingAddress(): BillingAddress {
         country: 'United States',
         countryCode: 'US',
         postalCode: '95555',
+        shouldSaveAddress: true,
         phone: '555-555-5555',
         customFields: [],
     };
