@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.71.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.70.1...v1.71.0) (2020-05-25)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5425 add missing paymentHumanVerificationHandler dep of BoltPaymentStrategy ([#885](https://github.com/bigcommerce/checkout-sdk-js/issues/885)) ([a7618a6](https://github.com/bigcommerce/checkout-sdk-js/commit/a7618a6))
+
+
+### Features
+
+* **payment:** PAYMENTS-5425 Implement the UX for Carding remediation solution ([#875](https://github.com/bigcommerce/checkout-sdk-js/issues/875)) ([cbaa2d3](https://github.com/bigcommerce/checkout-sdk-js/commit/cbaa2d3))
+
 ### [1.70.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.70.0...v1.70.1) (2020-05-22)
 
 
