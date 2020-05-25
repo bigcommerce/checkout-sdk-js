@@ -1,6 +1,7 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -8,6 +9,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -24,6 +26,7 @@ describe('BoltPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let options: PaymentRequestOptions;
     let payload: OrderRequestBody;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let store: CheckoutStore;
     let strategy: BoltPaymentStrategy;
     let submitOrderAction: Observable<SubmitOrderAction>;
@@ -37,10 +40,12 @@ describe('BoltPaymentStrategy', () => {
         );
         paymentRequestTransformer = new PaymentRequestTransformer();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient());
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
-            paymentRequestTransformer
+            paymentRequestTransformer,
+            paymentHumanVerificationHandler
         );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
