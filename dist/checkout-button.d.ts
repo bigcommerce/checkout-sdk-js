@@ -3,6 +3,7 @@ import { createTimeout } from '@bigcommerce/request-sender';
 
 declare interface Address extends AddressRequestBody {
     country: string;
+    shouldSaveAddress?: boolean;
 }
 
 declare interface AddressRequestBody {

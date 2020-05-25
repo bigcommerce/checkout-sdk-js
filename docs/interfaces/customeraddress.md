@@ -24,6 +24,7 @@
 * [lastName](customeraddress.md#lastname)
 * [phone](customeraddress.md#phone)
 * [postalCode](customeraddress.md#postalcode)
+* [shouldSaveAddress](customeraddress.md#shouldsaveaddress)
 * [stateOrProvince](customeraddress.md#stateorprovince)
 * [stateOrProvinceCode](customeraddress.md#stateorprovincecode)
 * [type](customeraddress.md#type)
@@ -114,6 +115,14 @@ ___
 ###  postalCode
 
 **● postalCode**: *`string`*
+
+___
+<a id="shouldsaveaddress"></a>
+
+### `<Optional>` shouldSaveAddress
+
+**● shouldSaveAddress**: * `undefined` &#124; `false` &#124; `true`
+*
 
 ___
 <a id="stateorprovince"></a>

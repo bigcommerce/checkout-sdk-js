@@ -25,6 +25,7 @@
 * [lastName](billingaddress.md#lastname)
 * [phone](billingaddress.md#phone)
 * [postalCode](billingaddress.md#postalcode)
+* [shouldSaveAddress](billingaddress.md#shouldsaveaddress)
 * [stateOrProvince](billingaddress.md#stateorprovince)
 * [stateOrProvinceCode](billingaddress.md#stateorprovincecode)
 
@@ -122,6 +123,14 @@ ___
 ###  postalCode
 
 **● postalCode**: *`string`*
+
+___
+<a id="shouldsaveaddress"></a>
+
+### `<Optional>` shouldSaveAddress
+
+**● shouldSaveAddress**: * `undefined` &#124; `false` &#124; `true`
+*
 
 ___
 <a id="stateorprovince"></a>

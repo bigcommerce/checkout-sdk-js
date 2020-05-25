@@ -13,6 +13,7 @@ declare interface AccountInstrument extends BaseInstrument {
 
 declare interface Address extends AddressRequestBody {
     country: string;
+    shouldSaveAddress?: boolean;
 }
 
 declare type AddressKey = keyof Address;

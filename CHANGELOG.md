@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.72.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.71.0...v1.72.0) (2020-05-25)
+
+
+### Features
+
+* **common:** CHECKOUT-4760 Expose shouldSaveAddress attribute ([1f6ff20](https://github.com/bigcommerce/checkout-sdk-js/commit/1f6ff20))
+
 ## [1.71.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.70.1...v1.71.0) (2020-05-25)
 
 
