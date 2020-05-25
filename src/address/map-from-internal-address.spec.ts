@@ -8,6 +8,6 @@ import mapFromInternalAddress from './map-from-internal-address';
 describe('mapFromInternalAddress()', () => {
     it('maps from internal address', () => {
         expect(mapFromInternalAddress(getInternalBillingAddress()))
-            .toEqual(omit(getBillingAddress(), 'email'));
+            .toEqual(omit(getBillingAddress(), 'email', 'shouldSaveAddress'));
     });
 });

@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { omit } from 'lodash';
 import { of } from 'rxjs';
 
 import { ConsignmentRequestSender } from '../..';
@@ -163,7 +164,7 @@ describe('AmazonPayShippingStrategy', () => {
             });
 
         expect(consignmentActionCreator.updateAddress)
-            .toHaveBeenCalledWith(getShippingAddress());
+            .toHaveBeenCalledWith(omit(getShippingAddress(), 'shouldSaveAddress'));
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeShippingAction);
         expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);

@@ -372,7 +372,7 @@ describe('AmazonPayPaymentStrategy', () => {
                 referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
             }));
 
-        const { email, ...address } = getBillingAddress();
+        const { email, shouldSaveAddress, ...address } = getBillingAddress();
 
         expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);

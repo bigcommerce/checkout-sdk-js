@@ -2,6 +2,7 @@ export type AddressKey = keyof Address;
 
 export default interface Address extends AddressRequestBody {
     country: string;
+    shouldSaveAddress?: boolean;
 }
 
 export interface AddressRequestBody {
