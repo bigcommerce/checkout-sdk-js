@@ -14,11 +14,12 @@ import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreato
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
+import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayPaymentStrategy from './googlepay-payment-strategy';
-import GooglePayStripeInitializer from './googlepay-stripe-initializer';
 import { getGoogleOrderRequestBody, getGooglePaymentDataMock } from './googlepay.mock';
 
 describe('GooglePayPaymentStrategy', () => {
@@ -48,8 +49,9 @@ describe('GooglePayPaymentStrategy', () => {
         const configRequestSender = new ConfigRequestSender(requestSender);
         const configActionCreator = new ConfigActionCreator(configRequestSender);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
+        const scriptLoader = createScriptLoader();
         const paymentClient = createPaymentClient(store);
-        const spamProtection = createSpamProtection(createScriptLoader());
+        const spamProtection = createSpamProtection(scriptLoader);
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
@@ -63,7 +65,7 @@ describe('GooglePayPaymentStrategy', () => {
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader))
         );
         orderActionCreator = new OrderActionCreator(
             paymentClient,
@@ -74,7 +76,11 @@ describe('GooglePayPaymentStrategy', () => {
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayStripeInitializer()
+            new GooglePayBraintreeInitializer(
+                new BraintreeSDKCreator(
+                    new BraintreeScriptLoader(createScriptLoader())
+                )
+            )
         );
 
         strategy = new GooglePayPaymentStrategy(
@@ -345,6 +351,94 @@ describe('GooglePayPaymentStrategy', () => {
                 expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingPayment));
             }
         });
+
+        it('submits json encoded nonce for googlepayadyenv2', async () => {
+            const googlePaymentMethodData = {
+                initializationData: {
+                    nonce: 'token',
+                    card_information: 'ci',
+                },
+            };
+            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+
+            await strategy.initialize({
+                methodId: 'googlepayadyenv2',
+                googlepayadyenv2: googlePayOptions.googlepaybraintree,
+            });
+
+            await strategy.execute(getGoogleOrderRequestBody());
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'googlepayadyenv2',
+                paymentData: {
+                    nonce: '{"type":"paywithgoogle","googlePayToken":"token"}',
+                    method: 'googlepayadyenv2',
+                    cardInformation: 'ci',
+                },
+            });
+        });
+
+        it('submits json encoded nonce for authorizenet', async () => {
+            const googlePaymentMethodData = {
+                initializationData: {
+                    nonce: 'token',
+                    card_information: 'ci',
+                },
+            };
+            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+
+            await strategy.initialize({
+                methodId: 'googlepayauthorizenet',
+                googlepayauthorizenet: googlePayOptions.googlepaybraintree,
+            });
+
+            await strategy.execute(getGoogleOrderRequestBody());
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'googlepayauthorizenet',
+                paymentData: {
+                    nonce: 'token',
+                    method: 'googlepayauthorizenet',
+                    cardInformation: 'ci',
+                },
+            });
+        });
+
+        it('submits json encoded nonce for stripe', async () => {
+            const googlePaymentMethodData = {
+                initializationData: {
+                    nonce: 'token',
+                    card_information: 'ci',
+                },
+            };
+            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+
+            await strategy.initialize({
+                methodId: 'googlepaystripe',
+                googlepaystripe: googlePayOptions.googlepaybraintree,
+            });
+
+            await strategy.execute(getGoogleOrderRequestBody());
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'googlepaystripe',
+                paymentData: {
+                    nonce: 'token',
+                    method: 'googlepaystripe',
+                    cardInformation: 'ci',
+                },
+            });
+        });
+
     });
 
     describe('#finalize()', () => {
