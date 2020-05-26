@@ -1,3 +1,5 @@
+import { LoadScriptOptions } from '@bigcommerce/script-loader';
+
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
@@ -70,10 +72,17 @@ export function getAdyenClient(): AdyenClient {
     };
 }
 
-export function getAdyenConfiguration(): AdyenConfiguration {
+export function getTestAdyenConfiguration(): AdyenConfiguration {
     return {
         environment: 'test',
-        originKey: 'YOUR_ORIGIN_KEY',
+        originKey: 'YOUR_TEST_ORIGIN_KEY',
+    };
+}
+
+export function getLiveAdyenConfiguration(): AdyenConfiguration {
+    return {
+        environment: 'live',
+        originKey: 'YOUR_LIVE_ORIGIN_KEY',
     };
 }
 
@@ -212,4 +221,19 @@ export function getUnknownError(): RequestError {
         ...getUnknownErrorResponse(),
         ...getErrorPaymentResponseBody(),
     }));
+}
+
+export function getLoadScriptOptions(environment: string | undefined): LoadScriptOptions {
+    const checksums: { [id: string]: string } = {
+        test: 'sha384-j+P95C9gdyJZ9LTUtvrMDElDvFEeTCelUsE89yfnDfP7nbOXS3N0+e5nb0CLTdx/',
+        live: 'sha384-rwJ33r9d5uXn5L8KSr4UqcaSaAHs2NQNjtNCvclBkZ8P36yDAXQq65YPX+q1LiEr',
+    };
+
+    return {
+        async: false,
+        attributes: {
+            integrity: checksums[environment ? environment : 'test'],
+            crossorigin: 'anonymous',
+        },
+    };
 }
