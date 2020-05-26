@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.72.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.0...v1.72.1) (2020-05-26)
+
+
+### Bug Fixes
+
+* **payment:** INT-2690 Expose AdyenV2 as a valid GooglePay gateway ([97d32e3](https://github.com/bigcommerce/checkout-sdk-js/commit/97d32e3))
+
 ## [1.72.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.71.0...v1.72.0) (2020-05-25)
 
 
