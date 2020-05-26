@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.72.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.1...v1.72.2) (2020-05-26)
+
+
+### Bug Fixes
+
+* **payment:** INT-2691 Remove integrity & crossorigin attributes ([fb007e9](https://github.com/bigcommerce/checkout-sdk-js/commit/fb007e9))
+* **payment:** INT-2691 Remove integrity & crossorigin attributes ([db6ccf9](https://github.com/bigcommerce/checkout-sdk-js/commit/db6ccf9))
+
 ### [1.72.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.0...v1.72.1) (2020-05-26)
 
 
