@@ -10,7 +10,7 @@ export function mapToAccountInstrument(instrument: AccountInternalInstrument): A
         trustedShippingAddress: instrument.trusted_shipping_address,
         method: instrument.method,
         type: instrument.method_type,
-        iban: instrument.iban,
+        accountNumber: instrument.account_number,
         issuer: instrument.issuer,
     };
 }

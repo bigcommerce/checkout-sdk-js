@@ -28,7 +28,7 @@ export interface AccountInternalInstrument extends BaseInternalInstrument {
     external_id: string;
     method: string;
     method_type: string;
-    iban?: string;
+    account_number?: string;
     issuer?: string;
 }
 
