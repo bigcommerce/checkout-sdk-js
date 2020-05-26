@@ -4,7 +4,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { AdyenHostWindow } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import { getAdyenClient, getAdyenConfiguration, getLoadScriptOptions } from './adyenv2.mock';
+import { getAdyenClient, getAdyenConfiguration } from './adyenv2.mock';
 
 describe('AdyenV2ScriptLoader', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
@@ -44,7 +44,7 @@ describe('AdyenV2ScriptLoader', () => {
         it('loads the JS and CSS', async () => {
             await adyenV2ScriptLoader.load(configuration);
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl, getLoadScriptOptions());
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
             expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
         });
 
