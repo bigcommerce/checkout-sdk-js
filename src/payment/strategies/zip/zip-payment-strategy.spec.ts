@@ -7,7 +7,7 @@ import { of, Observable } from 'rxjs';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { NotInitializedError } from '../../../common/error/errors';
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
@@ -194,6 +194,25 @@ describe('ZipPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, zipOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
+            }
+        });
+
+        it('fails to execute the strategy if clientToken is missing', async () => {
+            const paymentMethodMockNoCLientToken = {
+                ...paymentMethodMock,
+                clientToken: null,
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethodMockNoCLientToken);
+            await strategy.initialize(zipOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, zipOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
             }
