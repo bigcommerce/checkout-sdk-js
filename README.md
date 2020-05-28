@@ -303,6 +303,8 @@ await service.initializePayment({
 
 And then, you can ask the customer to provide payment details required by their chosen payment method. If the method is executed successfully, you will create an order and thereby complete the checkout process.
 
+We may require human verification to be completed before payment can be processed, which will be handled during this step.
+
 ```js
 const payment = {
     methodId: 'braintree',
