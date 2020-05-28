@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.75.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.74.0...v1.75.0) (2020-05-28)
+
+
+### Bug Fixes
+
+* **payment:** INT-2674 Fix redirect to home on safari ([661f503](https://github.com/bigcommerce/checkout-sdk-js/commit/661f503))
+
+
+### Features
+
+* **payment:** INT-2668 Increase code coverage for adyenv2 payment strategy ([a327e59](https://github.com/bigcommerce/checkout-sdk-js/commit/a327e59))
+* **payment:** PAYMENTS-5443 Update docs to include human verification at payment step ([b50b04e](https://github.com/bigcommerce/checkout-sdk-js/commit/b50b04e))
+
 ## [1.74.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.73.0...v1.74.0) (2020-05-28)
 
 
