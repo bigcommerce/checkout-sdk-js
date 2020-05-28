@@ -1,5 +1,4 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { RequestError } from '../../../common/error/errors';
@@ -32,13 +31,12 @@ export default class LaybuyPaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment({...payment, paymentData}));
         } catch (error) {
-
-            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'additional_action_required' })) {
+            if (!this._isAdditionalActionRequired(error)) {
                 return Promise.reject(error);
             }
 
             return new Promise(() => {
-                this._formPoster.postForm(error.body.provider_data.redirect_url, { });
+                this._formPoster.postForm(error.body.additional_action_required.data.redirect_url, { });
             });
         }
     }
@@ -53,5 +51,13 @@ export default class LaybuyPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
+    }
+
+    private _isAdditionalActionRequired(error: RequestError): boolean {
+        const { additional_action_required, status } = error.body;
+
+        return status === 'additional_action_required'
+            && additional_action_required
+            && additional_action_required.type === 'offsite_redirect';
     }
 }

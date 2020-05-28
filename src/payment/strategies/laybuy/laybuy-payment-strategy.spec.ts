@@ -105,13 +105,13 @@ describe('LaybuyPaymentStrategy', () => {
         it('redirect to Laybuy if additional action is required', async () => {
             const error = new RequestError(getResponse({
                 ...getErrorPaymentResponseBody(),
-                errors: [
-                    { code: 'additional_action_required' },
-                ],
-                provider_data: {
-                    redirect_url: 'https://sandbox-payment.laybuy..com',
+                additional_action_required: {
+                    data : {
+                        redirect_url: 'https://sandbox-payment.laybuy..com',
+                    },
+                    type: 'offsite_redirect',
                 },
-                status: 'error',
+                status: 'additional_action_required',
             }));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
