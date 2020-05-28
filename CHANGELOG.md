@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.74.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.73.0...v1.74.0) (2020-05-28)
+
+
+### Features
+
+* **payment:** INT-2541 Add Laybuy strategy ([#837](https://github.com/bigcommerce/checkout-sdk-js/issues/837)) ([7e3f936](https://github.com/bigcommerce/checkout-sdk-js/commit/7e3f936))
+
 ## [1.73.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.2...v1.73.0) (2020-05-28)
 
 
