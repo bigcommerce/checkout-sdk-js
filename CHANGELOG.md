@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.73.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.2...v1.73.0) (2020-05-28)
+
+
+### Features
+
+* **checkout:** CHECKOUT-4754 Send a header to indicate the version of the SDK used to place an order ([3efccbb](https://github.com/bigcommerce/checkout-sdk-js/commit/3efccbb))
+* **checkout:** CHECKOUT-4754 Send an additional header to provide information about the checkout variant that is used to pay for an order ([e1224e2](https://github.com/bigcommerce/checkout-sdk-js/commit/e1224e2))
+
 ### [1.72.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.72.1...v1.72.2) (2020-05-26)
 
 
