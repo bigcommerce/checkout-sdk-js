@@ -6,3 +6,4 @@ export { default as ConfigSelector, ConfigSelectorFactory, createConfigSelectorF
 export { default as configReducer } from './config-reducer';
 export { default as ConfigRequestSender } from './config-request-sender';
 export { default as ConfigState, DEFAULT_STATE } from './config-state';
+export { default as ConfigWindow } from './config-window';

@@ -1,4 +1,5 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
+import { isNil, omitBy } from 'lodash';
 
 import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
 
@@ -6,6 +7,12 @@ import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
 import OrderParams from './order-params';
+
+export interface SubmitOrderRequestOptions extends RequestOptions {
+    headers?: {
+        checkoutVariant?: string;
+    };
+}
 
 export default class OrderRequestSender {
     constructor(
@@ -35,10 +42,17 @@ export default class OrderRequestSender {
         });
     }
 
-    submitOrder(body: InternalOrderRequestBody, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(body: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
-        return this._requestSender.post(url, { body, timeout });
+        return this._requestSender.post(url, {
+            body,
+            headers: omitBy({
+                'X-Checkout-Variant': headers && headers.checkoutVariant,
+                'X-Checkout-SDK-Version': LIBRARY_VERSION,
+            }, isNil),
+            timeout,
+        });
     }
 
     finalizeOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {

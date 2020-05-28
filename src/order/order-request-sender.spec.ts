@@ -103,9 +103,10 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.submitOrder(payload);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
+            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', expect.objectContaining({
                 body: payload,
-            });
+                headers: expect.anything(),
+            }));
         });
 
         it('submits order and returns response with timeout', async () => {
@@ -114,10 +115,40 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.submitOrder(payload, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
+            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order', expect.objectContaining({
                 ...options,
                 body: payload,
-            });
+            }));
+        });
+
+        it('submits order with checkout variant header and library version when variant is provided', async () => {
+            const payload = {};
+            const headers = { checkoutVariant: 'default' };
+
+            await orderRequestSender.submitOrder(payload, { headers });
+
+            expect(requestSender.post)
+                .toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
+                    body: payload,
+                    headers: {
+                        'X-Checkout-Variant': headers.checkoutVariant,
+                        'X-Checkout-SDK-Version': expect.any(String),
+                    },
+                });
+        });
+
+        it('submits order with library version', async () => {
+            const payload = {};
+
+            await orderRequestSender.submitOrder(payload);
+
+            expect(requestSender.post)
+                .toHaveBeenCalledWith('/internalapi/v1/checkout/order', {
+                    body: payload,
+                    headers: {
+                        'X-Checkout-SDK-Version': expect.any(String),
+                    },
+                });
         });
     });
 

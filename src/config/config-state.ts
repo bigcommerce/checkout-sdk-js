@@ -9,6 +9,7 @@ export default interface ConfigState {
 
 export interface ConfigMetaState {
     externalSource?: string;
+    variantIdentificationToken?: string;
 }
 
 export interface ConfigErrorsState {
