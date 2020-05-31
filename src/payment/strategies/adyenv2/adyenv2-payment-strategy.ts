@@ -65,6 +65,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = payload;
         const paymentData = payment && payment.paymentData;
         const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument;
+        const setAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).setAsDefaultInstrument;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -101,6 +102,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                                         token: paymentData.instrumentId,
                                     },
                                     browser_info: getBrowserInfo(),
+                                    set_as_default_stored_instrument: setAsDefaultInstrument || null,
                                 },
                             },
                         }));
@@ -119,11 +121,12 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                             },
                             browser_info: getBrowserInfo(),
                             vault_payment_instrument: shouldSaveInstrument,
+                            set_as_default_stored_instrument: setAsDefaultInstrument || null,
                         },
                     },
                 }));
             })
-            .catch(error => this._processAdditionalAction(error, shouldSaveInstrument));
+            .catch(error => this._processAdditionalAction(error, shouldSaveInstrument, setAsDefaultInstrument));
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -330,7 +333,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private async _processAdditionalAction(error: unknown, shouldSaveInstrument?: boolean): Promise<InternalCheckoutSelectors> {
+    private async _processAdditionalAction(error: unknown, shouldSaveInstrument?: boolean, setAsDefaultInstrument?: boolean): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
             return Promise.reject(error);
         }
@@ -343,10 +346,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 paymentData: {
                     ...payment.paymentData,
                     shouldSaveInstrument,
+                    setAsDefaultInstrument,
                 },
             }));
         } catch (error) {
-            return this._processAdditionalAction(error, shouldSaveInstrument);
+            return this._processAdditionalAction(error, shouldSaveInstrument, setAsDefaultInstrument);
         }
     }
 

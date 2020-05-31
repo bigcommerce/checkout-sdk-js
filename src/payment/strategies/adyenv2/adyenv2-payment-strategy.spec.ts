@@ -1,3 +1,5 @@
+// TODO: setAsDefaultInstrument tests
+
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
@@ -248,7 +250,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
                     methodId: 'scheme',
                     paymentData: {
-                        formattedPayload: {
+                        formattedPayload: expect.objectContaining({
                             bigpay_token : {
                                 credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER',
                                 token: '123',
@@ -264,7 +266,7 @@ describe('AdyenV2PaymentStrategy', () => {
                                 screen_width: 0,
                                 time_zone_offset: expect.anything(),
                             },
-                        },
+                        }),
                     },
                 }));
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
@@ -371,7 +373,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
                     methodId: 'giropay',
                     paymentData: {
-                        formattedPayload: {
+                        formattedPayload: expect.objectContaining({
                             bigpay_token : {
                                 token: '123',
                             },
@@ -383,7 +385,7 @@ describe('AdyenV2PaymentStrategy', () => {
                                 screen_width: 0,
                                 time_zone_offset: expect.anything(),
                             },
-                        },
+                        }),
                     },
                 }));
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(0);

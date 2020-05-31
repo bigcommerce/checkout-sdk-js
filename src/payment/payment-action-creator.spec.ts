@@ -49,6 +49,8 @@ describe('PaymentActionCreator', () => {
         jest.spyOn(paymentRequestSender, 'submitPayment')
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
+        jest.spyOn(paymentRequestTransformer, 'transform');
+
         orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
 
@@ -248,6 +250,44 @@ describe('PaymentActionCreator', () => {
                     error: true,
                 },
             ]);
+        });
+
+        it('passes "set_as_default_stored_instrument" flag as null to the paymentRequestTransformer when vaulting, but not as default', () => {
+            const payment = getPayment();
+
+            paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId, undefined, true)(store);
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(expect.anything(), expect.anything());
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            set_as_default_stored_instrument: null,
+                        }),
+                    }),
+                }),
+                expect.anything()
+            );
+        });
+
+        it('passes "set_as_default_stored_instrument" flag as true to the paymentRequestTransformer when vaulting and making default', () => {
+            const payment = getPayment();
+
+            paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId, undefined, true, undefined, undefined, true)(store);
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(expect.anything(), expect.anything());
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            set_as_default_stored_instrument: true,
+                        }),
+                    }),
+                }),
+                expect.anything()
+            );
         });
     });
 });

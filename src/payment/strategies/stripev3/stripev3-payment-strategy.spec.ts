@@ -261,6 +261,31 @@ describe('StripeV3PaymentStrategy', () => {
             }
         });
 
+        it('passes on the "make default" flag when submitting payment with a stored instrument', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'stripev3',
+                    paymentData: {
+                        instrumentId: 'token',
+                        setAsDefaultInstrument: true,
+                    },
+                },
+            };
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(options);
+            await strategy.execute(payload);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        setAsDefaultInstrument: true,
+                    }),
+                })
+            );
+        });
+
         it('creates the order and submit payment with alipay', async () => {
             paymentMethodMock = { ...getStripeV3(StripeElementType.Alipay), clientToken: 'myToken' };
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));

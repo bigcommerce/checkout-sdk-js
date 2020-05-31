@@ -53,7 +53,8 @@ export default class PaymentActionCreator {
         instrumentId?: string,
         shouldSaveInstrument?: boolean,
         target?: string,
-        promise?: Promise<undefined>
+        promise?: Promise<undefined>,
+        setAsDefaultInstrument?: boolean
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
             let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
@@ -61,7 +62,12 @@ export default class PaymentActionCreator {
             if (instrumentId) {
                 paymentData = { formattedPayload: { bigpay_token: instrumentId } };
             } else if (shouldSaveInstrument) {
-                paymentData = { formattedPayload: { vault_payment_instrument: shouldSaveInstrument } };
+                paymentData = {
+                    formattedPayload: {
+                        vault_payment_instrument: shouldSaveInstrument,
+                        set_as_default_stored_instrument: setAsDefaultInstrument || null,
+                    },
+                };
             }
 
             const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId, paymentData }, store.getState());

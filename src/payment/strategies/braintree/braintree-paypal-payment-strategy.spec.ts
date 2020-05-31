@@ -155,6 +155,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 paymentData: {
                     formattedPayload: {
                         vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
                         device_info: 'my_session_id',
                         paypal_account: {
                             token: 'my_tokenized_card',
@@ -220,6 +221,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 paymentData: {
                     formattedPayload: {
                         vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
                         device_info: null,
                         paypal_account: {
                             token: 'some-nonce',
@@ -334,6 +336,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: {
                             vault_payment_instrument: null,
+                            set_as_default_stored_instrument: null,
                             device_info: 'my_session_id',
                             paypal_account: {
                                 token: 'my_tokenized_card',
@@ -379,6 +382,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: {
                             vault_payment_instrument: true,
+                            set_as_default_stored_instrument: null,
                             device_info: 'my_session_id',
                             paypal_account: {
                                 token: 'my_tokenized_card',
@@ -420,6 +424,55 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
                 expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
+            });
+
+            it('sends set_as_default_stored_instrument set to null when vaulting and NOT making default', async () => {
+                paymentMethodMock.config.isVaultingEnabled = true;
+
+                await braintreePaypalPaymentStrategy.initialize(options);
+                await braintreePaypalPaymentStrategy.execute({
+                    payment: {
+                        methodId: 'braintreepaypal',
+                        paymentData: {
+                            shouldSaveInstrument: true,
+                        },
+                    },
+                }, options);
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: {
+                            formattedPayload: expect.objectContaining({
+                                set_as_default_stored_instrument: null,
+                            }),
+                        },
+                    })
+                );
+            });
+
+            it('sends set_as_default_stored_instrument set to true when vaulting and making default', async () => {
+                paymentMethodMock.config.isVaultingEnabled = true;
+
+                await braintreePaypalPaymentStrategy.initialize(options);
+                await braintreePaypalPaymentStrategy.execute({
+                    payment: {
+                        methodId: 'braintreepaypal',
+                        paymentData: {
+                            shouldSaveInstrument: true,
+                            setAsDefaultInstrument: true,
+                        },
+                    },
+                }, options);
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: {
+                            formattedPayload: expect.objectContaining({
+                                set_as_default_stored_instrument: true,
+                            }),
+                        },
+                    })
+                );
             });
 
             it('throws if vaulting is enabled and trying to save an instrument', async () => {
