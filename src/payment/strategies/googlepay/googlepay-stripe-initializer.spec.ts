@@ -1,5 +1,5 @@
 import GooglePayStripeInitializer from './googlepay-stripe-initializer';
-import { getCheckoutMock, getPaymentMethodMock, getStripePaymentDataMock, getStripePaymentDataRequest, getStripeTokenizedPayload } from './googlepay.mock';
+import { getCheckoutMock, getStripePaymentDataMock, getStripePaymentDataRequest, getStripePaymentMethodMock, getStripeTokenizedPayload } from './googlepay.mock';
 
 describe('GooglePayStripeInitializer', () => {
     let googlePayInitializer: GooglePayStripeInitializer;
@@ -16,7 +16,7 @@ describe('GooglePayStripeInitializer', () => {
         it('initializes the google pay configuration for Stripe', async () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
-                getPaymentMethodMock(),
+                getStripePaymentMethodMock(),
                 false
             );
 
