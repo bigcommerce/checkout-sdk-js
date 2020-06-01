@@ -18,6 +18,7 @@ import KlarnaV2ScriptLoader from './klarnav2-script-loader';
 
 export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     private _klarnaPayments?: KlarnaPayments;
+    private _unsubscribe?: (() => void);
 
     constructor(
         private _store: CheckoutStore,
@@ -30,11 +31,30 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._klarnav2ScriptLoader.load()
             .then(klarnaPayments => { this._klarnaPayments = klarnaPayments; })
-            .then(() => this._loadPaymentsWidget(options))
+            .then(() => {
+                this._unsubscribe = this._store.subscribe(
+                    state => {
+                        if (state.paymentStrategies.isInitialized(options.methodId)) {
+                            this._loadPaymentsWidget(options);
+                        }
+                    },
+                    state => {
+                        const checkout = state.checkout.getCheckout();
+
+                        return checkout && checkout.outstandingBalance;
+                    }
+                );
+
+                return this._loadPaymentsWidget(options);
+            })
             .then(() => this._store.getState());
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
+
         return Promise.resolve(this._store.getState());
     }
 
