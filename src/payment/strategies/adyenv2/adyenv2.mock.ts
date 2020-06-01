@@ -1,4 +1,4 @@
-import { LoadScriptOptions } from '@bigcommerce/script-loader';
+import { LoadScriptOptions, LoadStylesheetOptions } from '@bigcommerce/script-loader';
 
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
@@ -233,6 +233,16 @@ export function getLoadScriptOptions(environment: string | undefined): LoadScrip
         async: false,
         attributes: {
             integrity: checksums[environment ? environment : 'test'],
+            crossorigin: 'anonymous',
+        },
+    };
+}
+
+export function getLoadStylesheetOptions(): LoadStylesheetOptions {
+    return {
+        prepend: true,
+        attributes: {
+            integrity: 'sha384-y1lKqffK5z+ENzddmGIfP3bcMRobxkjDt/9lyPAvV9H3JXbJYxCSD6L8TdyRMCGM',
             crossorigin: 'anonymous',
         },
     };

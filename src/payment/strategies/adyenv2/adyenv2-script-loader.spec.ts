@@ -4,7 +4,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { AdyenHostWindow } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import { getAdyenClient, getLiveAdyenConfiguration, getLoadScriptOptions, getTestAdyenConfiguration } from './adyenv2.mock';
+import { getAdyenClient, getLiveAdyenConfiguration, getLoadScriptOptions, getLoadStylesheetOptions, getTestAdyenConfiguration } from './adyenv2.mock';
 
 describe('AdyenV2ScriptLoader', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
@@ -12,6 +12,7 @@ describe('AdyenV2ScriptLoader', () => {
     let stylesheetLoader: StylesheetLoader;
     let mockWindow: AdyenHostWindow;
     const adyenClient = getAdyenClient();
+    const loadStylesheetOptions = getLoadStylesheetOptions();
 
     afterEach(() => {
         jest.restoreAllMocks();
@@ -44,7 +45,7 @@ describe('AdyenV2ScriptLoader', () => {
             await adyenV2ScriptLoader.load(configuration);
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl, getLoadScriptOptions('test'));
-            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl, loadStylesheetOptions);
         });
 
         it('returns the JS from the window', async () => {
@@ -77,7 +78,7 @@ describe('AdyenV2ScriptLoader', () => {
             await adyenV2ScriptLoader.load(configuration);
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl, getLoadScriptOptions('live'));
-            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl, loadStylesheetOptions);
         });
 
         it('returns the JS from the window', async () => {
