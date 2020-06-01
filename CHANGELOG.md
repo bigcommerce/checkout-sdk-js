@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.76.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.75.0...v1.76.0) (2020-06-01)
+
+
+### Features
+
+* **checkout:** INT-2001 Reload widget when apply store credit checkbox state changes ([a133618](https://github.com/bigcommerce/checkout-sdk-js/commit/a133618))
+* **payment:** INT-2629 Relate stripeConnectedAccount while initilializing GooglePay ([a62dc1d](https://github.com/bigcommerce/checkout-sdk-js/commit/a62dc1d))
+
 ## [1.75.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.74.0...v1.75.0) (2020-05-28)
 
 
