@@ -19,6 +19,8 @@ export interface ShippingStrategyErrorsState {
     updateAddressMethodId?: string;
     selectOptionError?: Error;
     selectOptionMethodId?: string;
+    widgetInteractionError?: Error;
+    widgetInteractionMethodId?: string;
 }
 
 export interface ShippingStrategyStatusesState {
@@ -30,6 +32,8 @@ export interface ShippingStrategyStatusesState {
     isSelectingOption?: boolean;
     updateAddressMethodId?: string;
     selectOptionMethodId?: string;
+    isWidgetInteracting?: boolean;
+    widgetInteractionMethodId?: string;
 }
 
 export const DEFAULT_STATE: ShippingStrategyState = {

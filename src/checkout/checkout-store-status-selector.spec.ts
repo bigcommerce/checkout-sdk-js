@@ -841,4 +841,78 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
     });
+
+    describe('#isShippingStepPending()', () => {
+        it('returns true if widget is interacting', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isWidgetInteracting').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(selectors.shippingStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns false if widget is not interacting', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isWidgetInteracting').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(selectors.shippingStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is initializing', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isInitializing').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not initializing', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isInitializing').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is updating address', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isUpdatingAddress').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not updating address', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isUpdatingAddress').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is selecting option', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isSelectingOption').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not selecting option', () => {
+            jest.spyOn(selectors.shippingStrategies, 'isSelectingOption').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
+        });
+    });
 });
