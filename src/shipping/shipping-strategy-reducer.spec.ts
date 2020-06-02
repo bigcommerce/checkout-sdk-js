@@ -210,4 +210,47 @@ describe('shippingStrategyReducer()', () => {
             isSelectingOption: false,
         });
     });
+
+    it('returns pending flag as true if interacting with widget', () => {
+        const action = createAction(
+            ShippingStrategyActionType.WidgetInteractionStarted,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
+            widgetInteractionMethodId: 'foobar',
+            isWidgetInteracting: true,
+        });
+    });
+
+    it('returns pending flag as false if interacting with widget has finished', () => {
+        const action = createAction(
+            ShippingStrategyActionType.WidgetInteractionFinished,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
+            widgetInteractionMethodId: undefined,
+            isWidgetInteracting: false,
+        });
+    });
+
+    it('returns error if widget interaction has failed', () => {
+        const action = createErrorAction(
+            ShippingStrategyActionType.WidgetInteractionFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(shippingStrategyReducer(initialState, action).errors).toEqual({
+            widgetInteractionMethodId: 'foobar',
+            widgetInteractionError: action.payload,
+        });
+
+        expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
+            isWidgetInteracting: false,
+        });
+    });
 });

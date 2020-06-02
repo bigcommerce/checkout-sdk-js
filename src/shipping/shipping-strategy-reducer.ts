@@ -99,6 +99,19 @@ function errorsReducer(
             selectOptionMethodId: action.meta && action.meta.methodId,
         });
 
+    case ShippingStrategyActionType.WidgetInteractionStarted:
+    case ShippingStrategyActionType.WidgetInteractionFinished:
+        return objectMerge(errors, {
+            widgetInteractionError: undefined,
+            widgetInteractionMethodId: undefined,
+        });
+
+    case ShippingStrategyActionType.WidgetInteractionFailed:
+        return objectMerge(errors, {
+            widgetInteractionError: action.payload,
+            widgetInteractionMethodId: action.meta && action.meta.methodId,
+        });
+
     default:
         return errors;
     }
@@ -159,6 +172,19 @@ function statusesReducer(
         return objectMerge(statuses, {
             isSelectingOption: false,
             selectOptionMethodId: undefined,
+        });
+
+    case ShippingStrategyActionType.WidgetInteractionStarted:
+        return objectMerge(statuses, {
+            isWidgetInteracting: true,
+            widgetInteractionMethodId: action.meta && action.meta.methodId,
+        });
+
+    case ShippingStrategyActionType.WidgetInteractionFinished:
+    case ShippingStrategyActionType.WidgetInteractionFailed:
+        return objectMerge(statuses, {
+            isWidgetInteracting: false,
+            widgetInteractionMethodId: undefined,
         });
 
     default:

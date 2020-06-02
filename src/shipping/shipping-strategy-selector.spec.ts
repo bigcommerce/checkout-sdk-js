@@ -83,6 +83,36 @@ describe('ShippingStrategySelector', () => {
         });
     });
 
+    describe('#getWidgetInteractingError()', () => {
+        it('returns error if widget interaction failed', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+            });
+
+            expect(selector.getWidgetInteractionError()).toEqual(getErrorResponse());
+        });
+
+        it('returns error if unable to initialize specific method', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+            });
+
+            expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
+            expect(selector.getInitializeError('bar')).toEqual(undefined);
+        });
+
+        it('does not return error if able to initialize', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                errors: {},
+            });
+
+            expect(selector.getInitializeError()).toEqual(undefined);
+        });
+    });
+
     describe('#isUpdatingAddress()', () => {
         it('returns true if updating address', () => {
             selector = createShippingStrategySelector({
@@ -165,6 +195,36 @@ describe('ShippingStrategySelector', () => {
 
             expect(selector.isInitialized('foobar')).toEqual(false);
             expect(selector.isInitialized('bar')).toEqual(false);
+        });
+    });
+
+    describe('#isWidgetInteracting()', () => {
+        it('returns true if any method is interacting with a widget', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(true);
+        });
+
+        it('returns true if a specific method is interacting with a widget', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
+            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+        });
+
+        it('returns false if not interacting with a widget', () => {
+            selector = createShippingStrategySelector({
+                ...state.shippingStrategy,
+                statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(false);
         });
     });
 });

@@ -8,10 +8,12 @@ export default interface ShippingStrategySelector {
     getUpdateAddressError(methodId?: string): Error | undefined;
     getSelectOptionError(methodId?: string): Error | undefined;
     getInitializeError(methodId?: string): Error | undefined;
+    getWidgetInteractionError(methodId?: string): Error | undefined;
     isUpdatingAddress(methodId?: string): boolean;
     isSelectingOption(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
 }
 
 export type ShippingStrategySelectorFactory = (state: ShippingStrategyState) => ShippingStrategySelector;
@@ -50,6 +52,18 @@ export function createShippingStrategySelectorFactory(): ShippingStrategySelecto
             }
 
             return initializeError;
+        }
+    );
+
+    const getWidgetInteractionError = createSelector(
+        (state: ShippingStrategyState) => state.errors.widgetInteractionMethodId,
+        (state: ShippingStrategyState) => state.errors.widgetInteractionError,
+        (widgetInteractionMethodId, widgetInteractionError) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return;
+            }
+
+            return widgetInteractionError;
         }
     );
 
@@ -99,6 +113,18 @@ export function createShippingStrategySelectorFactory(): ShippingStrategySelecto
         }
     );
 
+    const isWidgetInteracting = createSelector(
+        (state: ShippingStrategyState) => state.statuses.widgetInteractionMethodId,
+        (state: ShippingStrategyState) => state.statuses.isWidgetInteracting,
+        (widgetInteractionMethodId, isWidgetInteracting) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isWidgetInteracting;
+        }
+    );
+
     return memoizeOne((
         state: ShippingStrategyState = DEFAULT_STATE
     ): ShippingStrategySelector => {
@@ -106,10 +132,12 @@ export function createShippingStrategySelectorFactory(): ShippingStrategySelecto
             getUpdateAddressError: getUpdateAddressError(state),
             getSelectOptionError: getSelectOptionError(state),
             getInitializeError: getInitializeError(state),
+            getWidgetInteractionError: getWidgetInteractionError(state),
             isUpdatingAddress: isUpdatingAddress(state),
             isSelectingOption: isSelectingOption(state),
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
+            isWidgetInteracting: isWidgetInteracting(state),
         };
     });
 }
