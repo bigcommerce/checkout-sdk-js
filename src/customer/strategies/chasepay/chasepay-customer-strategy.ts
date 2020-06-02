@@ -116,7 +116,7 @@ export default class ChasePayCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    private _setExternalCheckoutData(payload: ChasePaySuccessPayload, requestId: string): Promise<Response> {
+    private _setExternalCheckoutData(payload: ChasePaySuccessPayload, requestId: string): Promise<Response<any>> {
         const url = `checkout.php?provider=chasepay&action=set_external_checkout`;
         const options = {
             headers: {

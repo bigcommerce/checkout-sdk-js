@@ -19,6 +19,6 @@ export default class PaypalCommerceRequestSender {
 
         const res = await this._requestSender.post(url, { headers, body });
 
-        return res.body;
+        return res.body as OrderData;
     }
 }

@@ -5,20 +5,22 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
+import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 
 import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
 import CustomerRequestSender from './customer-request-sender';
+import { InternalCustomerResponseBody } from './internal-customer-responses';
 import { getCustomerResponseBody } from './internal-customers.mock';
 
 describe('CustomerActionCreator', () => {
     let customerRequestSender: CustomerRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
     let customerActionCreator: CustomerActionCreator;
-    let errorResponse: Response;
-    let response: Response;
+    let errorResponse: Response<ErrorResponseBody>;
+    let response: Response<InternalCustomerResponseBody>;
     let store: CheckoutStore;
 
     beforeEach(() => {

@@ -128,7 +128,7 @@ export default class EmbeddedCheckout {
             return Promise.resolve(this._options.url);
         }
 
-        return this._requestSender.post(this._options.url)
+        return this._requestSender.post<{ redirectUrl: string }>(this._options.url)
             .then(({ body: { redirectUrl } }) => redirectUrl)
             .catch(response => Promise.reject(new InvalidLoginTokenError(response)));
     }

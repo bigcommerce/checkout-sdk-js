@@ -27,7 +27,7 @@ export function getPaymentResponse<T>(data: T, headers = {}, status = 200, statu
     };
 }
 
-export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request'): Response {
+export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request'): Response<any> {
     return {
         body,
         status,

@@ -159,7 +159,7 @@ describe('CardinalThreeDSecureFlow', () => {
         });
 
         describe('if 3DS is required', () => {
-            let response: Response;
+            let response: Response<any>;
 
             beforeEach(() => {
                 response = getResponse({

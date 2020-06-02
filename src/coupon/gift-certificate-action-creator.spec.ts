@@ -2,8 +2,9 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
+import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import GiftCertificateActionCreator from './gift-certificate-action-creator';
@@ -11,10 +12,10 @@ import { GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
 
 describe('GiftCertificateActionCreator', () => {
-    let errorResponse: Response;
+    let errorResponse: Response<ErrorResponseBody>;
     let giftCertificateActionCreator: GiftCertificateActionCreator;
     let giftCertificateRequestSender: GiftCertificateRequestSender;
-    let response: Response;
+    let response: Response<Checkout>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
 

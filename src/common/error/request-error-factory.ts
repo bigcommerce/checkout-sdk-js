@@ -19,7 +19,7 @@ export default class RequestErrorFactory {
         this._factoryMethods[type] = factoryMethod;
     }
 
-    createError(response: Response, message?: string): RequestError {
+    createError(response: Response<any>, message?: string): RequestError {
         const factoryMethod = this._factoryMethods[this._getType(response)] || this._factoryMethods.default;
 
         return factoryMethod(response, message);
@@ -75,4 +75,4 @@ export default class RequestErrorFactory {
     }
 }
 
-export type ErrorFactoryMethod = (response: Response, message?: string) => RequestError;
+export type ErrorFactoryMethod<T = any> = (response: Response<T>, message?: string) => RequestError;
