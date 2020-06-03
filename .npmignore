@@ -5,5 +5,3 @@
 /temp
 /dist/tsdoc-metadata.json
 /dist-server
-# Git ignored but not NPM ignored
-dist/esm
