@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.76.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.76.1...v1.76.2) (2020-06-04)
+
+
+### Bug Fixes
+
+* **payment:** INT-2726 Revert Fix redirect to home on safari ([03fe0f4](https://github.com/bigcommerce/checkout-sdk-js/commit/03fe0f4))
+
 ### [1.76.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.76.0...v1.76.1) (2020-06-02)
 
 ## [1.76.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.75.0...v1.76.0) (2020-06-01)
