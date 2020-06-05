@@ -142,6 +142,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             <a class="v-learn v-learn-default" style="text-align: right; display: block; font-size: 10px; color: #003366;" href="#" data-locale="en_US">Tell Me More</a>`;
 
         const visaCheckoutButton = document.createElement('div');
+        visaCheckoutButton.style.display = 'flex';
+        visaCheckoutButton.style.flexDirection = 'column';
         visaCheckoutButton.style.visibility = 'hidden';
         visaCheckoutButton.className = buttonClass;
         visaCheckoutButton.innerHTML = buttonTemplate;
