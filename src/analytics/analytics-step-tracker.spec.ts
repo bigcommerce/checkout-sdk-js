@@ -127,7 +127,7 @@ describe('AnalyticsStepTracker', () => {
             expect(analytics.track).toHaveBeenCalledWith(
                 'Checkout Started',
                 expect.objectContaining({
-                    coupon: 'savebig2015,279F507D817E3E7',
+                    coupon: 'SAVEBIG2015,279F507D817E3E7',
                 })
             );
         });
@@ -256,7 +256,7 @@ describe('AnalyticsStepTracker', () => {
                 expect(analytics.track).toHaveBeenCalledWith(
                     'Order Completed',
                     expect.objectContaining({
-                        coupon: 'savebig2015,279F507D817E3E7',
+                        coupon: 'SAVEBIG2015,279F507D817E3E7',
                     })
                 );
             });

@@ -257,7 +257,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             shipping: this.toShopperCurrency(shipping),
             tax: this.toShopperCurrency(tax),
             discount: this.toShopperCurrency(discount),
-            coupon: (coupons || []).map(coupon => coupon.code).join(','),
+            coupon: (coupons || []).map(coupon => coupon.code.toUpperCase()).join(','),
             currency: code,
             products: this.getProducts(extraItemsData, lineItems),
         };
