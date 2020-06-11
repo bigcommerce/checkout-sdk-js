@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.77.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.0...v1.77.1) (2020-06-11)
+
+
+### Code Refactoring
+
+* **payment:** INT-2614 renaming values for iban/accountnumber ([a8955dd](https://github.com/bigcommerce/checkout-sdk-js/commit/a8955dd))
+
 ## [1.77.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.76.2...v1.77.0) (2020-06-11)
 
 

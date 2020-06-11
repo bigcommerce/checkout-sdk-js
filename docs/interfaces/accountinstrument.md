@@ -12,10 +12,10 @@
 
 ### Properties
 
+* [accountNumber](accountinstrument.md#accountnumber)
 * [bigpayToken](accountinstrument.md#bigpaytoken)
 * [defaultInstrument](accountinstrument.md#defaultinstrument)
 * [externalId](accountinstrument.md#externalid)
-* [iban](accountinstrument.md#iban)
 * [issuer](accountinstrument.md#issuer)
 * [method](accountinstrument.md#method)
 * [provider](accountinstrument.md#provider)
@@ -26,6 +26,14 @@
 
 ## Properties
 
+<a id="accountnumber"></a>
+
+### `<Optional>` accountNumber
+
+**● accountNumber**: * `undefined` &#124; `string`
+*
+
+___
 <a id="bigpaytoken"></a>
 
 ###  bigpayToken
@@ -45,14 +53,6 @@ ___
 ###  externalId
 
 **● externalId**: *`string`*
-
-___
-<a id="iban"></a>
-
-### `<Optional>` iban
-
-**● iban**: * `undefined` &#124; `string`
-*
 
 ___
 <a id="issuer"></a>
