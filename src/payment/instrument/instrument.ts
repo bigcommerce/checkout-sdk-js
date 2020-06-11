@@ -23,7 +23,7 @@ export interface CardInstrument extends BaseInstrument {
 export interface AccountInstrument extends BaseInstrument {
     externalId: string;
     method: string;
-    iban?: string;
+    accountNumber?: string;
     issuer?: string;
     type: string;
 }
