@@ -119,7 +119,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {
-        const { clientId, intent, isPayPalCreditAvailable } = initializationData;
+        const { clientId, intent, isPayPalCreditAvailable, merchantId } = initializationData;
         const disableFunding: DisableFundingType = [ 'card' ];
 
         if (!isPayPalCreditAvailable) {
@@ -128,6 +128,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         return {
             clientId,
+            merchantId,
             commit: false,
             currency: cart.currency.code,
             disableFunding,

@@ -16,7 +16,7 @@ export default class PaypalCommerceScriptLoader {
     }
 
     async loadPaypalCommerce(options: PaypalCommerceScriptOptions): Promise<PaypalCommerceSDK> {
-        if (!options || !options.clientId) {
+        if (!options || !options.clientId || !options.merchantId) {
             throw new InvalidArgumentError();
         }
 

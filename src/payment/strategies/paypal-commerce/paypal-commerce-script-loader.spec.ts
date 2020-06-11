@@ -29,6 +29,7 @@ describe('PaypalCommerceScriptLoader', () => {
     describe('loads PayPalCommerce script with client Id, currency EUR, intent, disableFunding, commit', () => {
         const options: PaypalCommerceScriptOptions = {
             clientId: 'aaa',
+            merchantId: 'bbb',
             currency: 'EUR',
             disableFunding: ['credit', 'card'],
             intent: 'capture',
@@ -59,6 +60,7 @@ describe('PaypalCommerceScriptLoader', () => {
     describe('loads PayPalCommerce script with client Id and currency USD',  () => {
         const options: PaypalCommerceScriptOptions = {
             clientId: 'aaa',
+            merchantId: 'bbb',
             currency: 'USD',
         };
 
@@ -86,7 +88,15 @@ describe('PaypalCommerceScriptLoader', () => {
 
     it('throw error without client Id', async () => {
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: '', currency: 'USD' });
+            await paypalLoader.loadPaypalCommerce({ clientId: '', merchantId: 'bbb', currency: 'USD' });
+        } catch (error) {
+            expect(error).toEqual( new InvalidArgumentError());
+        }
+    });
+
+    it('throw error without merchant Id', async () => {
+        try {
+            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: '', currency: 'USD' });
         } catch (error) {
             expect(error).toEqual( new InvalidArgumentError());
         }
@@ -101,7 +111,7 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', currency: 'USD' });
+            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: 'bbb', currency: 'USD' });
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
@@ -116,7 +126,7 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce({clientId: 'aaa', currency: 'EUR'});
+            await paypalLoader.loadPaypalCommerce({clientId: 'aaa', merchantId: 'bbb', currency: 'EUR'});
         } catch (error) {
             expect(error).toEqual(new PaymentMethodClientUnavailableError());
         }
