@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.77.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.76.2...v1.77.0) (2020-06-11)
+
+
+### Bug Fixes
+
+* **common:** INT-2308 Align button Tell me more at checkout section ([a6010bc](https://github.com/bigcommerce/checkout-sdk-js/commit/a6010bc))
+
+
+### Features
+
+* **common:** ORDERS-3323 Ensure coupon codes are upper case. ([269c236](https://github.com/bigcommerce/checkout-sdk-js/commit/269c236))
+* **payment:** INT-2722 Upgrade Adyen component library ([b10d0c7](https://github.com/bigcommerce/checkout-sdk-js/commit/b10d0c7))
+* **payment:** PAYPAL-483 Pass merchant ID on PayPal button for PPCP ([20f1756](https://github.com/bigcommerce/checkout-sdk-js/commit/20f1756))
+
 ### [1.76.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.76.1...v1.76.2) (2020-06-04)
 
 
