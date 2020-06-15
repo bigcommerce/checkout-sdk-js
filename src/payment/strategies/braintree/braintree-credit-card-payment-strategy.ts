@@ -15,6 +15,7 @@ import BraintreePaymentProcessor from './braintree-payment-processor';
 
 export default class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
     private _is3dsEnabled?: boolean;
+    private _deviceSessionId?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -24,21 +25,25 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
-            .then(state => {
-                const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
 
-                if (!paymentMethod || !paymentMethod.clientToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
+        const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
-                this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
-                this._is3dsEnabled = paymentMethod.config.is3dsEnabled;
+        if (!paymentMethod || !paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
-                return this._store.getState();
-            })
-            .catch((error: Error) => this._handleError(error));
+        try {
+            this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
+            this._is3dsEnabled = paymentMethod.config.is3dsEnabled;
+
+            this._deviceSessionId = await this._braintreePaymentProcessor.getSessionId();
+        } catch (error) {
+            this._handleError(error);
+        }
+
+        return this._store.getState();
     }
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -87,7 +92,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         return isVaultedInstrument(paymentData);
     }
 
-    private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
+    private async _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
         const { paymentData } = payment;
         const state = this._store.getState();
 
@@ -106,11 +111,10 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
-        const tokenizedCard = this._is3dsEnabled ?
-            this._braintreePaymentProcessor.verifyCard(payment, billingAddress, order.orderAmount) :
-            this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
+        const updatedPaymentData = this._is3dsEnabled ?
+            await this._braintreePaymentProcessor.verifyCard(payment, billingAddress, order.orderAmount) :
+            await this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
 
-        return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
-            .then(paymentData => ({ ...payment, paymentData }));
+        return ({...payment, paymentData: {...updatedPaymentData, deviceSessionId: this._deviceSessionId} });
     }
 }
