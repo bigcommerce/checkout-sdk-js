@@ -158,16 +158,6 @@ describe('AdyenV2PaymentStrategy', () => {
                     .rejects.toThrow(NotInitializedError);
             });
 
-            it('fails mounting GiroPay payment component', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
-
-                paymentComponent = getFailingComponent();
-
-                await expect(strategy.initialize(options))
-                    .rejects.toThrow(NotInitializedError);
-            });
-
             it('fails mounting card verification component', async () => {
                 cardVerificationComponent = getFailingComponent();
 
@@ -178,6 +168,15 @@ describe('AdyenV2PaymentStrategy', () => {
             it('does not call adyenCheckout.create when initializing AliPay', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.AliPay));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).not.toBeCalled();
+            });
+
+            it('does not call adyenCheckout.create when initializing GiroPay', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
 
                 await strategy.initialize(options);
 
@@ -322,10 +321,10 @@ describe('AdyenV2PaymentStrategy', () => {
 
             it('calls submit payment with SEPA component', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.SEPA));
 
                 await strategy.initialize(options);
-                await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.GiroPay));
+                await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.SEPA));
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(1);

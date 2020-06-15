@@ -258,7 +258,6 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                     break;
 
-                case AdyenPaymentMethodType.GiroPay:
                 case AdyenPaymentMethodType.iDEAL:
                 case AdyenPaymentMethodType.SEPA:
                     if (!adyenv2.hasVaultedInstruments) {
@@ -286,6 +285,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     break;
 
                 case AdyenPaymentMethodType.AliPay:
+                case AdyenPaymentMethodType.GiroPay:
                 case AdyenPaymentMethodType.Sofort:
                 case AdyenPaymentMethodType.Vipps:
                 case AdyenPaymentMethodType.WeChatPayQR:
