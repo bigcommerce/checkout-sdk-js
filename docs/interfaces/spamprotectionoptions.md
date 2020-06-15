@@ -13,8 +13,10 @@
 ### Properties
 
 * [body](spamprotectionoptions.md#body)
+* [cache](spamprotectionoptions.md#cache)
 * [containerId](spamprotectionoptions.md#containerid)
 * [credentials](spamprotectionoptions.md#credentials)
+* [encodeParams](spamprotectionoptions.md#encodeparams)
 * [headers](spamprotectionoptions.md#headers)
 * [method](spamprotectionoptions.md#method)
 * [params](spamprotectionoptions.md#params)
@@ -31,6 +33,14 @@
 **● body**: *`any`*
 
 ___
+<a id="cache"></a>
+
+### `<Optional>` cache
+
+**● cache**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
 <a id="containerid"></a>
 
 ###  containerId
@@ -43,6 +53,14 @@ ___
 ### `<Optional>` credentials
 
 **● credentials**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
+<a id="encodeparams"></a>
+
+### `<Optional>` encodeParams
+
+**● encodeParams**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

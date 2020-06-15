@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.77.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.1...v1.77.2) (2020-06-15)
+
+
+### Bug Fixes
+
+* **payment:** INT-2759 Do not mount GiroPay component while initializing payment strategy ([7bc9e54](https://github.com/bigcommerce/checkout-sdk-js/commit/7bc9e54))
+
 ### [1.77.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.0...v1.77.1) (2020-06-11)
 
 
