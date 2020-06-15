@@ -80,7 +80,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
                     }
 
                     if (state === ZipModalEvent.CheckoutReferred && checkoutId) {
-                        await this._prepareForReferredRegistration(payment.methodId, checkoutId);
+                        await this._prepareForReferredRegistration(payment.methodId, checkoutId, true);
 
                         return resolve();
                     }
@@ -95,10 +95,14 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
 
                     reject(new PaymentMethodInvalidError());
                 },
-                onCheckout: openModal => {
+                onCheckout: async openModal => {
                     if (!this._paymentMethod || !this._paymentMethod.clientToken) {
                         throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                     }
+
+                    const clientToken = JSON.parse(this._paymentMethod.clientToken);
+
+                    await this._prepareForReferredRegistration(payment.methodId, clientToken.id, false);
 
                     openModal(JSON.parse(this._paymentMethod.clientToken));
                 },
@@ -119,7 +123,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _prepareForReferredRegistration(provider: string, externalId: string): Promise<Response<any>> {
+    private _prepareForReferredRegistration(provider: string, externalId: string, additionalActions: boolean): Promise<Response> {
         const url = `/api/storefront/payment/${provider}/save-external-id`;
         const options = {
             headers: {
@@ -129,6 +133,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             body: {
                 externalId,
                 provider,
+                additionalActions,
             },
         };
 
