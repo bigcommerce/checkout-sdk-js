@@ -7,8 +7,8 @@ import { RequestError } from '../../common/error/errors';
  * using a payment method because the method has invalid configuration or is in
  * an invalid state.
  */
-export default class PaymentMethodInvalidError extends RequestError {
-    constructor(response?: Response) {
+export default class PaymentMethodInvalidError<T = any> extends RequestError<T> {
+    constructor(response?: Response<T>) {
         super(response, { message: 'There is a problem processing your payment. Please try again later.' });
 
         this.name = 'PaymentMethodInvalidError';

@@ -1,6 +1,7 @@
 import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { getResponse } from '../common/http-request/responses.mock';
+import { CountryResponseBody } from '../geography';
 
 import { getShippingCountriesResponseBody } from './shipping-countries.mock';
 import ShippingCountryRequestSender from './shipping-country-request-sender';
@@ -15,7 +16,7 @@ describe('ShippingCountryRequestSender', () => {
     });
 
     describe('#loadCountries()', () => {
-        let response: Response;
+        let response: Response<CountryResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getShippingCountriesResponseBody());

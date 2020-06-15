@@ -4,7 +4,7 @@ import { merge } from 'lodash';
 import { from, of, ReplaySubject, Subject } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 
@@ -20,7 +20,7 @@ describe('SpamProtectionActionCreator', () => {
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let spamProtectionRequestSender: SpamProtectionRequestSender;
     let googleRecaptcha: GoogleRecaptcha;
-    let response: Response;
+    let response: Response<Checkout>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let $event: Subject<RecaptchaResult>;

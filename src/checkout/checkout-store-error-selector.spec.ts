@@ -1,5 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { createCheckoutStoreErrorSelectorFactory, CheckoutStoreErrorSelectorFactory } from './checkout-store-error-selector';
@@ -9,7 +10,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreErrorSelector', () => {
     let createCheckoutStoreErrorSelector: CheckoutStoreErrorSelectorFactory;
-    let errorResponse: Response;
+    let errorResponse: Response<ErrorResponseBody>;
     let selectors: InternalCheckoutSelectors;
 
     beforeEach(() => {

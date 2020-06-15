@@ -14,7 +14,7 @@ export default class PaymentRequestSender {
         private _client: any
     ) {}
 
-    submitPayment(payload: PaymentRequestBody): Promise<Response> {
+    submitPayment(payload: PaymentRequestBody): Promise<Response<any>> {
         return new Promise((resolve, reject) => {
             this._client.submitPayment(payload, (error: any, response: any) => {
                 if (error) {
@@ -32,7 +32,7 @@ export default class PaymentRequestSender {
         });
     }
 
-    private _transformResponse(response: any): Response {
+    private _transformResponse(response: any): Response<any> {
         return {
             headers: response.headers,
             body: response.data,

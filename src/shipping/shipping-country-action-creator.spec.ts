@@ -14,7 +14,7 @@ describe('ShippingCountryActionCreator', () => {
     let requestSender: ShippingCountryRequestSender;
     let shippingCountryActionCreator: ShippingCountryActionCreator;
     let errorResponse: Response<ErrorResponseBody>;
-    let response: Response;
+    let response: Response<any>;
 
     beforeEach(() => {
         response = getResponse({ data: getCountries() });

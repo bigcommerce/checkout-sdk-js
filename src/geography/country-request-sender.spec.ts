@@ -4,6 +4,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 
 import { getCountriesResponseBody } from './countries.mock';
 import CountryRequestSender from './country-request-sender';
+import { CountryResponseBody } from './country-responses';
 
 describe('CountryRequestSender', () => {
     let countryRequestSender: CountryRequestSender;
@@ -15,7 +16,7 @@ describe('CountryRequestSender', () => {
     });
 
     describe('#loadCountries()', () => {
-        let response: Response;
+        let response: Response<CountryResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getCountriesResponseBody());

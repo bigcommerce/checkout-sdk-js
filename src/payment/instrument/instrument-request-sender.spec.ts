@@ -8,6 +8,7 @@ import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 
 import { InstrumentRequestContext } from './instrument';
 import InstrumentRequestSender from './instrument-request-sender';
+import { InternalVaultAccessTokenResponseBody } from './instrument-response-body';
 import { deleteInstrumentResponseBody, getErrorInstrumentResponseBody, getInstruments, getInternalInstrumentsResponseBody, getLoadInstrumentsResponseBody, getVaultAccessToken, getVaultAccessTokenResponseBody, instrumentRequestContext } from './instrument.mock';
 
 describe('InstrumentRequestSender', () => {
@@ -34,7 +35,7 @@ describe('InstrumentRequestSender', () => {
     });
 
     describe('#getVaultAccessToken()', () => {
-        let response: Response;
+        let response: Response<InternalVaultAccessTokenResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getVaultAccessTokenResponseBody());

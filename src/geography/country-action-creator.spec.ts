@@ -2,6 +2,7 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { getCountries } from './countries.mock';
@@ -12,8 +13,8 @@ import CountryRequestSender from './country-request-sender';
 describe('CountryActionCreator', () => {
     let countryRequestSender: CountryRequestSender;
     let countryActionCreator: CountryActionCreator;
-    let errorResponse: Response;
-    let response: Response;
+    let errorResponse: Response<ErrorResponseBody>;
+    let response: Response<any>;
 
     beforeEach(() => {
         response = getResponse({ data: getCountries() });

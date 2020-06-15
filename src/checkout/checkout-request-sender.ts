@@ -16,7 +16,7 @@ export default class CheckoutRequestSender {
         const url = `/api/storefront/checkout/${id}`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.get(url, {
+        return this._requestSender.get<Checkout>(url, {
             params: {
                 include: joinOrMergeIncludes(CHECKOUT_DEFAULT_INCLUDES, include),
             },

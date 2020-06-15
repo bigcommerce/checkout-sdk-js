@@ -4,6 +4,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 
 import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
+import { InternalCustomerResponseBody } from './internal-customer-responses';
 import { getCustomerResponseBody } from './internal-customers.mock';
 
 describe('CustomerRequestSender', () => {
@@ -21,7 +22,7 @@ describe('CustomerRequestSender', () => {
 
     describe('#signInCustomer()', () => {
         let credentials: CustomerCredentials;
-        let response: Response;
+        let response: Response<InternalCustomerResponseBody>;
 
         beforeEach(() => {
             credentials = { email: 'foo@bar.com', password: 'foobar' };
@@ -52,7 +53,7 @@ describe('CustomerRequestSender', () => {
     });
 
     describe('#signOutCustomer()', () => {
-        let response: Response;
+        let response: Response<InternalCustomerResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getCustomerResponseBody());
