@@ -13,6 +13,7 @@ enum PaymentStrategyType {
     BOLT = 'bolt',
     CHECKOUTCOM = 'checkoutcom',
     CREDIT_CARD = 'creditcard',
+    CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',

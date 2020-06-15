@@ -87,6 +87,26 @@ export function getBraintreeCustomerInitializeOptions(mode: Mode = Mode.Full): C
      }
 }
 
+export function getCheckoutcomCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepaycheckoutcom' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayCheckoutcom = { googlepaycheckoutcom: { ...container } };
+    const googlepayCheckoutcomWithInvalidContainer = { googlepaycheckoutcom: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete:
+            return { ...methodId };
+        case Mode.UndefinedMethodId:
+            return { ...undefinedMethodId, ...googlepayCheckoutcom };
+        case Mode.InvalidContainer:
+            return { ...methodId, ...googlepayCheckoutcomWithInvalidContainer };
+        default:
+            return { ...methodId, ...googlepayCheckoutcom };
+     }
+}
+
 export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaystripe' };
     const undefinedMethodId = { methodId: undefined };

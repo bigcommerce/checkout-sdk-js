@@ -8,7 +8,7 @@ export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 export interface GooglePayInitializer {
     initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV2>;
     teardown(): Promise<void>;
-    parseResponse(paymentData: GooglePaymentData): TokenizePayload;
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
 
 export interface GooglePayCreator extends BraintreeModuleCreator<GooglePayBraintreeSDK> {}

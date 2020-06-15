@@ -62,7 +62,8 @@ export default class GooglePayPaymentProcessor {
     }
 
     handleSuccess(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> {
-        return this._postForm(this._googlePayInitializer.parseResponse(paymentData))
+        return this._googlePayInitializer.parseResponse(paymentData)
+            .then(tokenizePayload => this._postForm(tokenizePayload))
             .then(() => this._updateBillingAddress(paymentData));
     }
 
