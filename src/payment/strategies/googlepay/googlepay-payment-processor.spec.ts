@@ -190,10 +190,10 @@ describe('GooglePayPaymentProcessor', () => {
     });
 
     describe('#handleSuccess', () => {
-        let tokenizePayload: TokenizePayload;
+        let tokenizePayload: Promise<TokenizePayload>;
 
         beforeEach(() => {
-            tokenizePayload = {
+            tokenizePayload = Promise.resolve({
                 details: {
                     cardType: 'MasterCard',
                     lastFour: '4111',
@@ -203,7 +203,7 @@ describe('GooglePayPaymentProcessor', () => {
                 nonce: 'nonce',
                 description: '',
                 binData: {},
-            } as TokenizePayload;
+            }) as Promise<TokenizePayload>;
 
             const googlePayIsReadyToPayResponse = {
                 result: true,

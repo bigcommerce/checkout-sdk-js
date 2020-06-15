@@ -31,8 +31,8 @@ describe('GooglePayAuthorizeNetInitializer', () => {
     });
 
     describe('#parseResponse', () => {
-        it('parses a response from google pay payload received', () => {
-            const tokenizePayload = googlePayInitializer.parseResponse(getAuthorizeNetPaymentDataMock());
+        it('parses a response from google pay payload received', async () => {
+            const tokenizePayload = await googlePayInitializer.parseResponse(getAuthorizeNetPaymentDataMock());
 
             expect(tokenizePayload).toEqual(getAuthorizeNetTokenizedPayload());
         });

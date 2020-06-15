@@ -22,7 +22,7 @@ export default class GooglePayAdyenV2Initializer implements GooglePayInitializer
         return Promise.resolve();
     }
 
-    parseResponse(paymentData: GooglePaymentData): TokenizePayload {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         const {
             paymentMethodData: {
                 type,
@@ -34,14 +34,14 @@ export default class GooglePayAdyenV2Initializer implements GooglePayInitializer
             },
         } = paymentData;
 
-        return {
+        return Promise.resolve({
             type: type as TokenizeType,
             nonce: token,
             details: {
                 cardType,
                 lastFour,
             },
-        };
+        });
     }
 
     private _getGooglePayPaymentDataRequest(

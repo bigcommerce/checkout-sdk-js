@@ -462,6 +462,25 @@ export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
 
+export function getCheckoutcom(): PaymentMethod {
+    return {
+        id: 'checkoutcom',
+        logoUrl: '',
+        method: 'checkoutcom',
+        supportedCards: [],
+        config: {
+            displayName: 'Checkout.com',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            checkoutcomkey: 'key',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
+}
+
 export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
@@ -475,6 +494,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getBraintreePaypal(),
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
+        getCheckoutcom(),
         getGooglePay(),
         getKlarna(),
         getPaypalExpress(),

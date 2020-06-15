@@ -42,10 +42,10 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._braintreeSDKCreator.teardown();
     }
 
-    parseResponse(paymentData: GooglePaymentData): TokenizePayload {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         const payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token).androidPayCards[0];
 
-        return {
+        return Promise.resolve({
             nonce: payload.nonce,
             type: payload.type,
             description: payload.description,
@@ -55,7 +55,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 lastTwo: payload.details.lastTwo,
             },
             binData: payload.binData,
-        };
+        });
     }
 
     private _createGooglePayPayload(

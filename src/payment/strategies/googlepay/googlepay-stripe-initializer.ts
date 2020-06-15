@@ -23,18 +23,18 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
         return Promise.resolve();
     }
 
-    parseResponse(paymentData: GooglePaymentData): TokenizePayload {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         try {
             const payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
 
-            return {
+            return Promise.resolve({
                 nonce: payload.id,
                 type: payload.type,
                 details: {
                     cardType: payload.card.brand,
                     lastFour: payload.card.last4,
                 },
-            };
+            });
         } catch (err) {
             throw new InvalidArgumentError('Unable to parse response from Google Pay.');
         }

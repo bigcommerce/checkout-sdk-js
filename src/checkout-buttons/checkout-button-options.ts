@@ -54,6 +54,12 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     googlepaybraintree?: GooglePayButtonInitializeOptions;
 
     /**
+     * The options that are required to facilitate Checkout.com GooglePay. They can be
+     * omitted unles you need to support Checkout.com GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
+
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
      * omitted unles you need to support Stripe GooglePay.
      */

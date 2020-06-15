@@ -2,6 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -15,6 +16,7 @@ import { FinalizeOrderAction, LoadOrderSucceededAction, OrderActionCreator, Orde
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -50,7 +52,8 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
 
         formPoster = createFormPoster();

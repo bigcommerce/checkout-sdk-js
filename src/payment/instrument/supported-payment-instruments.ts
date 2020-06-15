@@ -45,6 +45,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'elavon',
         method: 'credit_card',
     },
+    checkoutcom: {
+        provider: 'checkoutcom',
+        method: 'credit_card',
+    },
     stripe: {
         provider: 'stripe',
         method: 'credit_card',
@@ -71,10 +75,6 @@ const supportedInstruments: SupportedInstruments = {
     },
     'barclaycard.credit_card': {
         provider: 'barclaycard',
-        method: 'credit_card',
-    },
-    checkoutcom: {
-        provider: 'checkoutcom',
         method: 'credit_card',
     },
 };

@@ -427,3 +427,89 @@ export function getStripeTokenizedPayload(): TokenizePayload {
         },
     };
 }
+
+export function getGooglePayTokenizePayloadAuthNet(): TokenizePayload {
+    return {
+        type: 'CARD',
+        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
+        },
+    };
+}
+
+export function getGooglePayCheckoutcomPaymentDataRequestMock(): GooglePayPaymentDataRequestV2 {
+    return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        merchantInfo: {
+            authJwt: 'platformToken',
+            merchantId: '123',
+            merchantName: 'name',
+        },
+        allowedPaymentMethods: [{
+            type: 'CARD',
+            parameters: {
+                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                billingAddressRequired: true,
+                billingAddressParameters: {
+                    format: BillingAddressFormat.Full,
+                    phoneNumberRequired: true,
+                },
+            },
+            tokenizationSpecification: {
+                type: 'PAYMENT_GATEWAY',
+                parameters: {
+                    gateway: 'checkoutltd',
+                    gatewayMerchantId: undefined,
+                },
+            },
+        }],
+        transactionInfo: {
+            currencyCode: 'USD',
+            totalPriceStatus: 'FINAL',
+            totalPrice: '1.00',
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: {
+            phoneNumberRequired: true,
+        },
+    };
+}
+
+export function getGooglePaymentCheckoutcomDataMock(): GooglePaymentData {
+    return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        email: 'carlos.lopez@bigcommerce.com',
+        paymentMethodData: {
+            description: 'Mastercard •••• 0304',
+            info: {
+                billingAddress: getGooglePayAddressMock(),
+                cardDetails: '0304',
+                cardNetwork: 'MASTERCARD',
+            },
+            tokenizationData: {
+                token: `{"signature":"s","protocolVersion":"ECv1","signedMessage":"sm"}`,
+                type: 'PAYMENT_GATEWAY',
+            },
+            type: 'CARD',
+        },
+        shippingAddress: getGooglePayAddressMock(),
+    };
+}
+
+export function getGooglePayTokenizePayloadCheckoutcom(): TokenizePayload {
+    return {
+        nonce: 'parsedToken',
+        type: 'CreditCard',
+        description: 'Mastercard •••• 0304',
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
+        },
+    };
+}
