@@ -25,6 +25,7 @@ export interface PaymentRequestOptions extends RequestOptions {
      * The identifier of the payment method.
      */
     methodId: string;
+
     /**
      * The identifier of the payment provider providing the payment method. This
      * option is only required if the provider offers multiple payment options.
@@ -59,7 +60,7 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     amazon?: AmazonPayPaymentInitializeOptions;
 
     /**
-     * The options that are required to initialize the Amazon Pay payment
+     * The options that are required to initialize the AmazonPayV2 payment
      * method. They can be omitted unless you need to support AmazonPayV2.
      */
     amazonpay?: AmazonPayV2PaymentInitializeOptions;
