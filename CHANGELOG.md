@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.77.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.2...v1.77.3) (2020-06-16)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-453 Submit device data to Braintree/Kount ([6506716](https://github.com/bigcommerce/checkout-sdk-js/commit/6506716))
+
 ### [1.77.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.1...v1.77.2) (2020-06-15)
 
 
