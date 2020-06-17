@@ -18,6 +18,9 @@ export interface AmazonPayV2HostWindow extends Window {
     amazon?: AmazonPayV2SDK;
 }
 
+/**
+ * @alpha
+ */
 export interface AmazonPayV2ButtonParams {
     merchantId: string;
     createCheckoutSession: AmazonPayV2CheckoutSession;
@@ -28,6 +31,9 @@ export interface AmazonPayV2ButtonParams {
     sandbox?: boolean;
 }
 
+/**
+ * @alpha
+ */
 export interface AmazonPayV2CheckoutSession {
     url: string;
     method?: string;
@@ -48,6 +54,9 @@ export enum AmazonPayV2Regions {
     us = 'na',
 }
 
+/**
+ * @alpha
+ */
 export enum AmazonPayV2CheckoutLanguage {
     es_ES = 'es_ES',
     en_GB = 'en_GB',
@@ -58,6 +67,9 @@ export enum AmazonPayV2CheckoutLanguage {
     ja_JP = 'ja_JP',
 }
 
+/**
+ * @alpha
+ */
 export enum AmazonPayV2Placement {
     Home = 'Home',
     Product = 'Product',
@@ -66,6 +78,9 @@ export enum AmazonPayV2Placement {
     Other = 'Other',
 }
 
+/**
+ * @alpha
+ */
 export enum AmazonPayV2LedgerCurrency {
     eu = 'EUR',
     jp = 'JPY',

@@ -21,6 +21,7 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
+     * @alpha
      */
     amazonpay?: AmazonPayV2ButtonInitializeOptions;
 

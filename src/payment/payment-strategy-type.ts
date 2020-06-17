@@ -5,6 +5,9 @@ enum PaymentStrategyType {
     AFTERPAY = 'afterpay',
     AMAZON = 'amazon',
     AUTHORIZENET_GOOGLE_PAY = 'googlepayauthorizenet',
+    /**
+     * @alpha
+     */
     AMAZONPAYV2 = 'amazonpay',
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',

@@ -9,6 +9,7 @@
 export default interface AmazonPayV2CustomerInitializeOptions {
     /**
      * The ID of a container which the sign-in button should insert into.
+     * @alpha
      */
     container: string;
 }
