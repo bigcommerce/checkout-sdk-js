@@ -15,6 +15,7 @@ enum PaymentStrategyType {
     CREDIT_CARD = 'creditcard',
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
     CYBERSOURCE = 'cybersource',
+    ELAVON = 'elavon',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
     LAYBUY = 'laybuy',

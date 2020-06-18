@@ -13,7 +13,7 @@ export default interface Payment {
 export type PaymentInstrument = (
     CreditCardInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
+    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | ElavonInstrument> |
     HostedCreditCardInstrument |
     HostedInstrument |
     NonceInstrument |
@@ -99,6 +99,10 @@ export interface PaypalInstrument {
         token: string;
         email: string | null;
     };
+}
+
+export interface ElavonInstrument {
+    ip_address: string;
 }
 
 interface AdyenV2Token extends FormattedVaultedInstrument {
