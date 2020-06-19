@@ -39,17 +39,17 @@ export default class ElavonPaymentStrategy extends CreditCardPaymentStrategy {
         return this._store.dispatch(
             this._orderActionCreator.submitOrder(orderRequest, options)
         )
-        .then( () =>
-            this._store.dispatch(this._paymentActionCreator.submitPayment({
-                ...payment,
-                paymentData: {
-                    ...paymentData,
-                    formattedPayload: {
-                        ip_address: ip,
+        .then( () => {
+            return this._store.dispatch(this._paymentActionCreator.submitPayment({
+                    ...payment,
+                    paymentData: {
+                        ...paymentData,
+                        formattedPayload: {
+                            ip_address: ip,
+                        },
                     },
-                },
-            }))
-        )
+                }));
+        })
         .catch((error: Error) => this._handleError(error));
 
     }
