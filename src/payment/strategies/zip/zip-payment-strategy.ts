@@ -123,7 +123,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _prepareForReferredRegistration(provider: string, externalId: string, additionalActions: boolean): Promise<Response> {
+    private _prepareForReferredRegistration(provider: string, externalId: string, additionalActions: boolean): Promise<Response<any>> {
         const url = `/api/storefront/payment/${provider}/save-external-id`;
         const options = {
             headers: {
