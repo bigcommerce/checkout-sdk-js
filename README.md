@@ -415,7 +415,16 @@ timeout.complete(); // Aborts the update
 
 ## API reference
 
-You can learn more about the API by reading the [API reference](docs/README.md).
+We provide an extensive [API reference](docs/README.md).
+
+The functions provided by the SDK are:
+* [createCheckoutService](docs/README.md#createcheckoutservice)
+* [createCheckoutButtonInitializer](docs/README.md#createcheckoutbuttoninitializer)
+* [createEmbeddedCheckoutMessenger](docs/README.md#createembeddedcheckoutmessenger)
+* [createLanguageService](docs/README.md#createlanguageservice)
+* [createCurrencyService](docs/README.md#createcurrencyservice)
+* [createStepTracker](docs/README.md#createsteptracker)
+* [embedCheckout](docs/README.md#embedcheckout)
 
 
 ## See also

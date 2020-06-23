@@ -81,8 +81,6 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(chasePayScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(JPMC));
-        jest.spyOn(JPMC.ChasePay, 'isChasePayUp')
-            .mockReturnValue(true);
         jest.spyOn(JPMC.ChasePay, 'insertBrandings');
         jest.spyOn(JPMC.ChasePay, 'showLoadingAnimation');
         jest.spyOn(JPMC.ChasePay, 'startCheckout');

@@ -139,11 +139,11 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             }),
             this._braintreePaymentProcessor.getSessionId(),
         ]).then(([
-            { nonce, details },
+            { nonce, details } = {} as any,
             sessionId,
         ]) => ({
             ...payment,
-            paymentData: this._formattedPayload(nonce, details.email, sessionId, paymentData.shouldSaveInstrument),
+            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, paymentData.shouldSaveInstrument),
         }));
     }
 
