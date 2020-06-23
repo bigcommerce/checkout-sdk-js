@@ -308,6 +308,17 @@ export default interface CheckoutStoreStatusSelector {
     isCustomerStepPending(): boolean;
 
     /**
+     * Checks whether the shipping step of a checkout is in a pending state.
+     *
+     * The shipping step is considered to be pending if it is in the process of
+     * initializing, updating address, selecting a shipping option, and/or
+     * interacting with a shipping widget.
+     *
+     * @returns True if the shipping step is pending, otherwise false.
+     */
+    isShippingStepPending(): boolean;
+
+    /**
      * Checks whether the payment step of a checkout is in a pending state.
      *
      * The payment step is considered to be pending if it is in the process of
@@ -358,6 +369,21 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
                 isInitializing(methodId) ||
                 isSigningIn(methodId) ||
                 isSigningOut(methodId) ||
+                isWidgetInteracting(methodId)
+            );
+        }
+    );
+
+    const isShippingStepPending = createSelector(
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isInitializing,
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isUpdatingAddress,
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isSelectingOption,
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isWidgetInteracting,
+        (isInitializing, isUpdatingAddress, isSelectingOption, isWidgetInteracting) => (methodId?: string) => {
+            return (
+                isInitializing(methodId) ||
+                isUpdatingAddress(methodId) ||
+                isSelectingOption(methodId) ||
                 isWidgetInteracting(methodId)
             );
         }
@@ -428,6 +454,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingConfig: state.config.isLoading,
             isSendingSignInEmail: state.signInEmail.isSending,
             isCustomerStepPending: isCustomerStepPending(state),
+            isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),
         };
 

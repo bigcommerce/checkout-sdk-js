@@ -349,4 +349,48 @@ describe('ShippingStrategyActionCreator', () => {
             ]);
         });
     });
+
+    describe('#widgetInteraction()', () => {
+        it('executes widget interaction callback', async () => {
+            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const options = { methodId: 'default' };
+            const fakeMethod = jest.fn(() => Promise.resolve());
+            await actionCreator.widgetInteraction(fakeMethod, options)
+                .pipe(toArray())
+                .toPromise();
+
+            expect(fakeMethod).toHaveBeenCalled();
+        });
+
+        it('emits action to notify widget interaction in progress', async () => {
+            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ShippingStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: ShippingStrategyActionType.WidgetInteractionFinished, meta: { methodId: 'default' } },
+            ]);
+        });
+
+        it('emits error action if widget interaction fails', async () => {
+            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const signInError = new Error();
+            const errorHandler = jest.fn(action => of(action));
+
+            const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' })
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: ShippingStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: ShippingStrategyActionType.WidgetInteractionFailed, error: true, payload: signInError, meta: { methodId: 'default' } },
+            ]);
+        });
+    });
 });

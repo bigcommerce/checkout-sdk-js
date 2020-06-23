@@ -5,6 +5,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
@@ -12,6 +13,7 @@ import { PaypalScriptLoader } from '../payment/strategies/paypal';
 import { PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
+import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
@@ -128,6 +130,14 @@ export default function createCheckoutButtonRegistry(
             new PaypalCommerceScriptLoader(scriptLoader),
             formPoster,
             new PaypalCommerceRequestSender(requestSender)
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.AMAZON_PAY_V2, () =>
+        new AmazonPayV2ButtonStrategy(
+            store,
+            checkoutActionCreator,
+            createAmazonPayV2PaymentProcessor(store)
         )
     );
 

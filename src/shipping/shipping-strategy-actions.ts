@@ -13,13 +13,17 @@ export enum ShippingStrategyActionType {
     DeinitializeFailed = 'SHIPPING_STRATEGY_DEINITIALIZE_FAILED',
     DeinitializeRequested = 'SHIPPING_STRATEGY_DEINITIALIZE_REQUESTED',
     DeinitializeSucceeded = 'SHIPPING_STRATEGY_DEINITIALIZE_SUCCEEDED',
+    WidgetInteractionStarted = 'SHIPPING_STRATEGY_WIDGET_INTERACTION_STARTED',
+    WidgetInteractionFinished = 'SHIPPING_STRATEGY_WIDGET_INTERACTION_FINISHED',
+    WidgetInteractionFailed = 'SHIPPING_STRATEGY_WIDGET_INTERACTION_FAILED',
 }
 
 export type ShippingStrategyAction =
     ShippingStrategyUpdateAddressAction |
     ShippingStrategySelectOptionAction |
     ShippingStrategyInitializeAction |
-    ShippingStrategyDeinitializeAction;
+    ShippingStrategyDeinitializeAction |
+    ShippingStrategyWidgetAction;
 
 export type ShippingStrategyUpdateAddressAction =
     UpdateAddressRequestedAction |
@@ -40,6 +44,11 @@ export type ShippingStrategyDeinitializeAction =
     DeinitializeRequestedAction |
     DeinitializeSucceededAction |
     DeinitializeFailedAction;
+
+export type ShippingStrategyWidgetAction =
+    WidgetInteractionStartedAction |
+    WidgetInteractionFinishedAction |
+    WidgetInteractionFailedAction;
 
 export interface UpdateAddressRequestedAction extends Action {
     type: ShippingStrategyActionType.UpdateAddressRequested;
@@ -87,4 +96,16 @@ export interface DeinitializeSucceededAction extends Action {
 
 export interface DeinitializeFailedAction extends Action<Error> {
     type: ShippingStrategyActionType.DeinitializeFailed;
+}
+
+export interface WidgetInteractionStartedAction extends Action {
+    type: ShippingStrategyActionType.WidgetInteractionStarted;
+}
+
+export interface WidgetInteractionFinishedAction extends Action {
+    type: ShippingStrategyActionType.WidgetInteractionFinished;
+}
+
+export interface WidgetInteractionFailedAction extends Action<Error> {
+    type: ShippingStrategyActionType.WidgetInteractionFailed;
 }

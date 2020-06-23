@@ -6,7 +6,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
 import { ShippingInitializeOptions, ShippingRequestOptions } from './shipping-request-options';
-import { ShippingStrategyActionType, ShippingStrategyDeinitializeAction, ShippingStrategyInitializeAction, ShippingStrategySelectOptionAction, ShippingStrategyUpdateAddressAction } from './shipping-strategy-actions';
+import { ShippingStrategyAction, ShippingStrategyActionType, ShippingStrategyDeinitializeAction, ShippingStrategyInitializeAction, ShippingStrategySelectOptionAction, ShippingStrategyUpdateAddressAction } from './shipping-strategy-actions';
 import { ShippingStrategy } from './strategies';
 
 export default class ShippingStrategyActionCreator {
@@ -98,6 +98,23 @@ export default class ShippingStrategyActionCreator {
                 .catch(error => {
                     observer.error(createErrorAction(ShippingStrategyActionType.DeinitializeFailed, error, { methodId }));
                 });
+        });
+    }
+
+    widgetInteraction(method: () => Promise<any>, options?: ShippingRequestOptions): Observable<ShippingStrategyAction> {
+        return Observable.create((observer: Observer<ShippingStrategyAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(ShippingStrategyActionType.WidgetInteractionStarted, undefined, meta));
+
+            method().then(() => {
+                observer.next(createAction(ShippingStrategyActionType.WidgetInteractionFinished, undefined, meta));
+                observer.complete();
+            })
+            .catch(error => {
+                observer.error(createErrorAction(ShippingStrategyActionType.WidgetInteractionFailed, error, meta));
+            });
         });
     }
 }

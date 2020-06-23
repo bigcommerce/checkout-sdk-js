@@ -7,6 +7,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
+import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
@@ -18,6 +19,7 @@ import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayCustomerStrategy } from './strategies/amazon';
+import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
@@ -60,6 +62,14 @@ export default function createCustomerStrategyRegistry(
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,
             new AmazonPayScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register('amazonpay', () =>
+        new AmazonPayV2CustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createAmazonPayV2PaymentProcessor(store)
         )
     );
 
