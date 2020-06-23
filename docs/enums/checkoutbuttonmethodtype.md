@@ -8,6 +8,13 @@
 
 ## Enumeration members
 
+<a id="amazon_pay_v2"></a>
+
+###  AMAZON_PAY_V2
+
+**AMAZON_PAY_V2**:  = "amazonpay"
+
+___
 <a id="braintree_paypal"></a>
 
 ###  BRAINTREE_PAYPAL

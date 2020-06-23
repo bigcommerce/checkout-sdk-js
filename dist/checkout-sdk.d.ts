@@ -296,6 +296,126 @@ declare interface AmazonPayShippingInitializeOptions {
     onReady?(reference: AmazonPayOrderReference): void;
 }
 
+declare interface AmazonPayV2ButtonInitializeOptions {
+    /**
+     * @alpha
+     */
+    containerId: string;
+    /**
+     * A set of options to render the AmazonPayV2 checkout button.
+     * @alpha
+     */
+    options: AmazonPayV2ButtonParams;
+}
+
+/**
+ * @alpha
+ */
+declare interface AmazonPayV2ButtonParams {
+    merchantId: string;
+    createCheckoutSession: AmazonPayV2CheckoutSession;
+    placement: AmazonPayV2Placement;
+    ledgerCurrency: AmazonPayV2LedgerCurrency;
+    productType?: string;
+    checkoutLanguage?: AmazonPayV2CheckoutLanguage;
+    sandbox?: boolean;
+}
+
+/**
+ * @alpha
+ */
+declare enum AmazonPayV2CheckoutLanguage {
+    es_ES = "es_ES",
+    en_GB = "en_GB",
+    en_US = "en_US",
+    de_DE = "de_DE",
+    fr_FR = "fr_FR",
+    it_IT = "it_IT",
+    ja_JP = "ja_JP"
+}
+
+/**
+ * @alpha
+ */
+declare interface AmazonPayV2CheckoutSession {
+    url: string;
+    method?: string;
+    extractAmazonCheckoutSessionId?: string;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout in order to support AmazonPayV2.
+ *
+ * When AmazonPayV2 is initialized, a sign-in button will be inserted into the
+ * DOM. When the customer clicks on it, they will be redirected to Amazon to
+ * sign in.
+ */
+declare interface AmazonPayV2CustomerInitializeOptions {
+    /**
+     * The ID of a container which the sign-in button should insert into.
+     * @alpha
+     */
+    container: string;
+}
+
+/**
+ * @alpha
+ */
+declare enum AmazonPayV2LedgerCurrency {
+    eu = "EUR",
+    jp = "JPY",
+    uk = "GBP",
+    us = "USD"
+}
+
+/**
+ * A set of options that are required to initialize the payment step of
+ * checkout in order to support AmazonPayV2.
+ *
+ * When AmazonPayV2 is initialized, a change payment button will be bound.
+ * When the customer clicks on it, they will be redirected to Amazon to
+ * select a different payment method.
+ */
+declare interface AmazonPayV2PaymentInitializeOptions {
+    /**
+     * This editButtonId is used to set an event listener, provide an element ID
+     * if you want users to be able to select a different payment method by
+     * clicking on a button. It should be an HTML element.
+     * @alpha
+     */
+    editButtonId?: string;
+}
+
+/**
+ * @alpha
+ */
+declare enum AmazonPayV2Placement {
+    Home = "Home",
+    Product = "Product",
+    Cart = "Cart",
+    Checkout = "Checkout",
+    Other = "Other"
+}
+
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support AmazonPayV2.
+ *
+ * When AmazonPayV2 is initialized, a change shipping button will be bound.
+ * When the customer clicks on it, they will be redirected to Amazon to
+ * select a different shipping address.
+ */
+declare interface AmazonPayV2ShippingInitializeOptions {
+    /**
+     * This editAddressButtonId is used to set an event listener, provide an
+     * element ID if you want users to be able to select a different shipping
+     * address by clicking on a button. It should be an HTML element.
+     * @alpha
+     */
+    editAddressButtonId?: string;
+}
+
 declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
@@ -628,6 +748,12 @@ declare class CheckoutButtonErrorSelector {
 
 declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     /**
+     * The options that are required to facilitate AmazonPayV2. They can be
+     * omitted unless you need to support AmazonPayV2.
+     * @alpha
+     */
+    amazonpay?: AmazonPayV2ButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.
      */
@@ -753,6 +879,10 @@ declare interface CheckoutButtonInitializerOptions {
 }
 
 declare enum CheckoutButtonMethodType {
+    /**
+     * @alpha
+     */
+    AMAZON_PAY_V2 = "amazonpay",
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
@@ -2406,6 +2536,16 @@ declare interface CheckoutStoreStatusSelector {
      */
     isCustomerStepPending(): boolean;
     /**
+     * Checks whether the shipping step of a checkout is in a pending state.
+     *
+     * The shipping step is considered to be pending if it is in the process of
+     * initializing, updating address, selecting a shipping option, and/or
+     * interacting with a shipping widget.
+     *
+     * @returns True if the shipping step is pending, otherwise false.
+     */
+    isShippingStepPending(): boolean;
+    /**
      * Checks whether the payment step of a checkout is in a pending state.
      *
      * The payment step is considered to be pending if it is in the process of
@@ -2604,6 +2744,12 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Amazon Pay.
      */
     amazon?: AmazonPayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using AmazonPayV2.
+     * @alpha
+     */
+    amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Visa Checkout provided by Braintree.
@@ -3467,6 +3613,12 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     amazon?: AmazonPayPaymentInitializeOptions;
     /**
+     * The options that are required to initialize the AmazonPayV2 payment
+     * method. They can be omitted unless you need to support AmazonPayV2.
+     * @alpha
+     */
+    amazonpay?: AmazonPayV2PaymentInitializeOptions;
+    /**
      * The options that are required to initialize the BlueSnapV2 payment method.
      * They can be omitted unless you need to support BlueSnapV2.
      */
@@ -3731,6 +3883,12 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using Amazon Pay.
      */
     amazon?: AmazonPayShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using AmazonPayV2.
+     * @alpha
+     */
+    amazonpay?: AmazonPayV2ShippingInitializeOptions;
 }
 
 declare interface ShippingOption {

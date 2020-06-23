@@ -16,6 +16,7 @@
 ### Properties
 
 * [amazon](customerinitializeoptions.md#amazon)
+* [amazonpay](customerinitializeoptions.md#amazonpay)
 * [braintreevisacheckout](customerinitializeoptions.md#braintreevisacheckout)
 * [chasepay](customerinitializeoptions.md#chasepay)
 * [googlepayadyenv2](customerinitializeoptions.md#googlepayadyenv2)
@@ -36,6 +37,13 @@
 ### `<Optional>` amazon
 
 **● amazon**: *[AmazonPayCustomerInitializeOptions](amazonpaycustomerinitializeoptions.md)*
+
+___
+<a id="amazonpay"></a>
+
+### `<Optional>` amazonpay
+
+**● amazonpay**: *[AmazonPayV2CustomerInitializeOptions](amazonpayv2customerinitializeoptions.md)*
 
 ___
 <a id="braintreevisacheckout"></a>

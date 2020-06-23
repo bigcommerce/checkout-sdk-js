@@ -15,6 +15,7 @@
 
 ### Properties
 
+* [amazonpay](checkoutbuttoninitializeoptions.md#amazonpay)
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
@@ -30,6 +31,13 @@
 
 ## Properties
 
+<a id="amazonpay"></a>
+
+### `<Optional>` amazonpay
+
+**● amazonpay**: *[AmazonPayV2ButtonInitializeOptions](amazonpayv2buttoninitializeoptions.md)*
+
+___
 <a id="braintreepaypal"></a>
 
 ### `<Optional>` braintreepaypal

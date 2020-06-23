@@ -16,6 +16,7 @@
 ### Properties
 
 * [amazon](shippinginitializeoptions.md#amazon)
+* [amazonpay](shippinginitializeoptions.md#amazonpay)
 * [methodId](shippinginitializeoptions.md#methodid)
 * [params](shippinginitializeoptions.md#params)
 * [timeout](shippinginitializeoptions.md#timeout)
@@ -29,6 +30,13 @@
 ### `<Optional>` amazon
 
 **● amazon**: *[AmazonPayShippingInitializeOptions](amazonpayshippinginitializeoptions.md)*
+
+___
+<a id="amazonpay"></a>
+
+### `<Optional>` amazonpay
+
+**● amazonpay**: *[AmazonPayV2ShippingInitializeOptions](amazonpayv2shippinginitializeoptions.md)*
 
 ___
 <a id="methodid"></a>

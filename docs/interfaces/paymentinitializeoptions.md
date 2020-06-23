@@ -17,6 +17,7 @@
 
 * [adyenv2](paymentinitializeoptions.md#adyenv2)
 * [amazon](paymentinitializeoptions.md#amazon)
+* [amazonpay](paymentinitializeoptions.md#amazonpay)
 * [bluesnapv2](paymentinitializeoptions.md#bluesnapv2)
 * [braintree](paymentinitializeoptions.md#braintree)
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
@@ -53,6 +54,13 @@ ___
 ### `<Optional>` amazon
 
 **● amazon**: *[AmazonPayPaymentInitializeOptions](amazonpaypaymentinitializeoptions.md)*
+
+___
+<a id="amazonpay"></a>
+
+### `<Optional>` amazonpay
+
+**● amazonpay**: *[AmazonPayV2PaymentInitializeOptions](amazonpayv2paymentinitializeoptions.md)*
 
 ___
 <a id="bluesnapv2"></a>

@@ -39,6 +39,7 @@
 * [isRemovingGiftCertificate](checkoutstorestatusselector.md#isremovinggiftcertificate)
 * [isSelectingShippingOption](checkoutstorestatusselector.md#isselectingshippingoption)
 * [isSendingSignInEmail](checkoutstorestatusselector.md#issendingsigninemail)
+* [isShippingStepPending](checkoutstorestatusselector.md#isshippingsteppending)
 * [isSigningIn](checkoutstorestatusselector.md#issigningin)
 * [isSigningOut](checkoutstorestatusselector.md#issigningout)
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
@@ -382,6 +383,16 @@ ___
 
 **Returns:** `boolean`
 True if sending a sign-in email, otherwise false
+
+___
+<a id="isshippingsteppending"></a>
+
+###  isShippingStepPending
+
+▸ **isShippingStepPending**(): `boolean`
+
+**Returns:** `boolean`
+True if the shipping step is pending, otherwise false.
 
 ___
 <a id="issigningin"></a>

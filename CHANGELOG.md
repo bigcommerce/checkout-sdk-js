@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.78.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.3...v1.78.0) (2020-06-23)
+
+
+### Features
+
+* **payment:** INT-2113 Checkout button and customer strategy ([908a04d](https://github.com/bigcommerce/checkout-sdk-js/commit/908a04d))
+* **payment:** INT-2119 adding payment and shipping strategies ([c0e9cf3](https://github.com/bigcommerce/checkout-sdk-js/commit/c0e9cf3))
+* **payment:** INT-2119 Create WidgetInteraction action for Shipping Strategy ([ee6757d](https://github.com/bigcommerce/checkout-sdk-js/commit/ee6757d))
+
 ### [1.77.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.2...v1.77.3) (2020-06-16)
 
 
