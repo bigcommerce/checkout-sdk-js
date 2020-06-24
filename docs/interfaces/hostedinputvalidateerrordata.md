@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedInputValidateErrorData](../interfaces/hostedinputvalidateerrordata.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedInputValidateErrorData](hostedinputvalidateerrordata.md)
 
-# HostedInputValidateErrorData
+# Interface: HostedInputValidateErrorData
 
 ## Hierarchy
 
-**HostedInputValidateErrorData**
+* **HostedInputValidateErrorData**
 
 ## Index
 
@@ -14,29 +14,20 @@
 * [message](hostedinputvalidateerrordata.md#message)
 * [type](hostedinputvalidateerrordata.md#type)
 
----
-
 ## Properties
-
-<a id="fieldtype"></a>
 
 ###  fieldType
 
-**● fieldType**: *`string`*
+• **fieldType**: *string*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
-
-___
-
+• **type**: *string*

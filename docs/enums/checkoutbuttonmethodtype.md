@@ -1,74 +1,73 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutButtonMethodType](checkoutbuttonmethodtype.md)
 
-# CheckoutButtonMethodType
+# Enumeration: CheckoutButtonMethodType
 
 ## Index
 
----
+### Enumeration members
+
+* [AMAZON_PAY_V2](checkoutbuttonmethodtype.md#amazon_pay_v2)
+* [BRAINTREE_PAYPAL](checkoutbuttonmethodtype.md#braintree_paypal)
+* [BRAINTREE_PAYPAL_CREDIT](checkoutbuttonmethodtype.md#braintree_paypal_credit)
+* [GOOGLEPAY_ADYENV2](checkoutbuttonmethodtype.md#googlepay_adyenv2)
+* [GOOGLEPAY_AUTHORIZENET](checkoutbuttonmethodtype.md#googlepay_authorizenet)
+* [GOOGLEPAY_BRAINTREE](checkoutbuttonmethodtype.md#googlepay_braintree)
+* [GOOGLEPAY_STRIPE](checkoutbuttonmethodtype.md#googlepay_stripe)
+* [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
+* [PAYPALEXPRESS](checkoutbuttonmethodtype.md#paypalexpress)
 
 ## Enumeration members
 
-<a id="amazon_pay_v2"></a>
-
 ###  AMAZON_PAY_V2
 
-**AMAZON_PAY_V2**:  = "amazonpay"
+• **AMAZON_PAY_V2**: = "amazonpay"
+
+**`alpha`** 
 
 ___
-<a id="braintree_paypal"></a>
 
 ###  BRAINTREE_PAYPAL
 
-**BRAINTREE_PAYPAL**:  = "braintreepaypal"
+• **BRAINTREE_PAYPAL**: = "braintreepaypal"
 
 ___
-<a id="braintree_paypal_credit"></a>
 
 ###  BRAINTREE_PAYPAL_CREDIT
 
-**BRAINTREE_PAYPAL_CREDIT**:  = "braintreepaypalcredit"
+• **BRAINTREE_PAYPAL_CREDIT**: = "braintreepaypalcredit"
 
 ___
-<a id="googlepay_adyenv2"></a>
 
 ###  GOOGLEPAY_ADYENV2
 
-**GOOGLEPAY_ADYENV2**:  = "googlepayadyenv2"
+• **GOOGLEPAY_ADYENV2**: = "googlepayadyenv2"
 
 ___
-<a id="googlepay_authorizenet"></a>
 
 ###  GOOGLEPAY_AUTHORIZENET
 
-**GOOGLEPAY_AUTHORIZENET**:  = "googlepayauthorizenet"
+• **GOOGLEPAY_AUTHORIZENET**: = "googlepayauthorizenet"
 
 ___
-<a id="googlepay_braintree"></a>
 
 ###  GOOGLEPAY_BRAINTREE
 
-**GOOGLEPAY_BRAINTREE**:  = "googlepaybraintree"
+• **GOOGLEPAY_BRAINTREE**: = "googlepaybraintree"
 
 ___
-<a id="googlepay_stripe"></a>
 
 ###  GOOGLEPAY_STRIPE
 
-**GOOGLEPAY_STRIPE**:  = "googlepaystripe"
+• **GOOGLEPAY_STRIPE**: = "googlepaystripe"
 
 ___
-<a id="masterpass"></a>
 
 ###  MASTERPASS
 
-**MASTERPASS**:  = "masterpass"
+• **MASTERPASS**: = "masterpass"
 
 ___
-<a id="paypalexpress"></a>
 
 ###  PAYPALEXPRESS
 
-**PAYPALEXPRESS**:  = "paypalexpress"
-
-___
-
+• **PAYPALEXPRESS**: = "paypalexpress"

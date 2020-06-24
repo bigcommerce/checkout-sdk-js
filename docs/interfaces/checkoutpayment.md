@@ -1,55 +1,44 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutPayment](../interfaces/checkoutpayment.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutPayment](checkoutpayment.md)
 
-# CheckoutPayment
+# Interface: CheckoutPayment
 
 ## Hierarchy
 
-**CheckoutPayment**
+* **CheckoutPayment**
 
 ## Index
 
 ### Properties
 
 * [detail](checkoutpayment.md#detail)
-* [gatewayId](checkoutpayment.md#gatewayid)
+* [gatewayId](checkoutpayment.md#optional-gatewayid)
 * [providerId](checkoutpayment.md#providerid)
 * [providerType](checkoutpayment.md#providertype)
 
----
-
 ## Properties
-
-<a id="detail"></a>
 
 ###  detail
 
-**● detail**: *`object`*
+• **detail**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- step: `string`
-
-___
-<a id="gatewayid"></a>
-
-### `<Optional>` gatewayId
-
-**● gatewayId**: * `undefined` &#124; `string`
-*
+* **step**: *string*
 
 ___
-<a id="providerid"></a>
+
+### `Optional` gatewayId
+
+• **gatewayId**? : *undefined | string*
+
+___
 
 ###  providerId
 
-**● providerId**: *`string`*
+• **providerId**: *string*
 
 ___
-<a id="providertype"></a>
 
 ###  providerType
 
-**● providerType**: *`string`*
-
-___
-
+• **providerType**: *string*

@@ -1,14 +1,17 @@
-[@bigcommerce/checkout-sdk](../README.md) > [StandardError](../classes/standarderror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [StandardError](standarderror.md)
 
-# StandardError
+# Class: StandardError
+
+This error type should not be constructed directly. It is a base class for
+all custom errors thrown in this library.
 
 ## Hierarchy
 
- `Error`
+* [Error](../interfaces/amazonpaywidgeterror.md#error)
 
-**↳ StandardError**
+  ↳ **StandardError**
 
-↳  [RequestError](requesterror.md)
+  ↳ [RequestError](requesterror.md)
 
 ## Implements
 
@@ -16,70 +19,74 @@
 
 ## Index
 
+### Constructors
+
+* [constructor](standarderror.md#constructor)
+
 ### Properties
 
 * [message](standarderror.md#message)
 * [name](standarderror.md#name)
-* [stack](standarderror.md#stack)
+* [stack](standarderror.md#optional-stack)
 * [type](standarderror.md#type)
-* [Error](standarderror.md#error)
-
----
+* [Error](standarderror.md#static-error)
 
 ## Constructors
 
-<a id="constructor"></a>
-
 ###  constructor
 
-⊕ **new StandardError**(message?: * `undefined` &#124; `string`*): [StandardError](standarderror.md)
+\+ **new StandardError**(`message?`: undefined | string): *[StandardError](standarderror.md)*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` message |  `undefined` &#124; `string`|
+Name | Type |
+------ | ------ |
+`message?` | undefined &#124; string |
 
-**Returns:** [StandardError](standarderror.md)
-
-___
+**Returns:** *[StandardError](standarderror.md)*
 
 ## Properties
 
-<a id="message"></a>
-
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[message](../interfaces/customerror.md#message)*
+
+*Inherited from [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[message](../interfaces/amazonpaywidgeterror.md#message)*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[name](../interfaces/customerror.md#name)*
+
+*Overrides [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[name](../interfaces/amazonpaywidgeterror.md#name)*
 
 ___
-<a id="stack"></a>
 
-### `<Optional>` stack
+### `Optional` stack
 
-**● stack**: * `undefined` &#124; `string`
-*
+• **stack**? : *undefined | string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[stack](../interfaces/customerror.md#optional-stack)*
+
+*Inherited from [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[stack](../interfaces/amazonpaywidgeterror.md#optional-stack)*
+
+*Overrides [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[stack](../interfaces/amazonpaywidgeterror.md#optional-stack)*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
+• **type**: *string*
 
-___
-<a id="error"></a>
-
-### `<Static>` Error
-
-**● Error**: *`ErrorConstructor`*
+*Implementation of [CustomError](../interfaces/customerror.md).[type](../interfaces/customerror.md#type)*
 
 ___
 
+### `Static` Error
+
+▪ **Error**: *ErrorConstructor*

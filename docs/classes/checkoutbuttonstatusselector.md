@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutButtonStatusSelector](../classes/checkoutbuttonstatusselector.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutButtonStatusSelector](checkoutbuttonstatusselector.md)
 
-# CheckoutButtonStatusSelector
+# Class: CheckoutButtonStatusSelector
 
 ## Hierarchy
 
-**CheckoutButtonStatusSelector**
+* **CheckoutButtonStatusSelector**
 
 ## Index
 
@@ -13,38 +13,30 @@
 * [isDeinitializingButton](checkoutbuttonstatusselector.md#isdeinitializingbutton)
 * [isInitializingButton](checkoutbuttonstatusselector.md#isinitializingbutton)
 
----
-
 ## Methods
-
-<a id="isdeinitializingbutton"></a>
 
 ###  isDeinitializingButton
 
-▸ **isDeinitializingButton**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*): `boolean`
+▸ **isDeinitializingButton**(`methodId?`: [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)): *boolean*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
+Name | Type |
+------ | ------ |
+`methodId?` | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
-**Returns:** `boolean`
+**Returns:** *boolean*
 
 ___
-<a id="isinitializingbutton"></a>
 
 ###  isInitializingButton
 
-▸ **isInitializingButton**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*): `boolean`
+▸ **isInitializingButton**(`methodId?`: [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)): *boolean*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
+Name | Type |
+------ | ------ |
+`methodId?` | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
-**Returns:** `boolean`
-
-___
-
+**Returns:** *boolean*

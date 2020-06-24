@@ -1,27 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedInstrument](../interfaces/hostedinstrument.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedInstrument](hostedinstrument.md)
 
-# HostedInstrument
+# Interface: HostedInstrument
 
 ## Hierarchy
 
-**HostedInstrument**
+* **HostedInstrument**
 
 ## Index
 
 ### Properties
 
-* [shouldSaveInstrument](hostedinstrument.md#shouldsaveinstrument)
-
----
+* [shouldSaveInstrument](hostedinstrument.md#optional-shouldsaveinstrument)
 
 ## Properties
 
-<a id="shouldsaveinstrument"></a>
+### `Optional` shouldSaveInstrument
 
-### `<Optional>` shouldSaveInstrument
-
-**● shouldSaveInstrument**: * `undefined` &#124; `false` &#124; `true`
-*
-
-___
-
+• **shouldSaveInstrument**? : *undefined | false | true*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [FlashMessage](../interfaces/flashmessage.md)
+[@bigcommerce/checkout-sdk](../README.md) › [FlashMessage](flashmessage.md)
 
-# FlashMessage
+# Interface: FlashMessage
 
 ## Hierarchy
 
-**FlashMessage**
+* **FlashMessage**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [message](flashmessage.md#message)
 * [type](flashmessage.md#type)
 
----
-
 ## Properties
-
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[FlashMessageType](../#flashmessagetype)*
-
-___
-
+• **type**: *[FlashMessageType](../README.md#flashmessagetype)*

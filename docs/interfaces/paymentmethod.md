@@ -1,111 +1,89 @@
-[@bigcommerce/checkout-sdk](../README.md) > [PaymentMethod](../interfaces/paymentmethod.md)
+[@bigcommerce/checkout-sdk](../README.md) › [PaymentMethod](paymentmethod.md)
 
-# PaymentMethod
+# Interface: PaymentMethod
 
 ## Hierarchy
 
-**PaymentMethod**
+* **PaymentMethod**
 
 ## Index
 
 ### Properties
 
-* [clientToken](paymentmethod.md#clienttoken)
+* [clientToken](paymentmethod.md#optional-clienttoken)
 * [config](paymentmethod.md#config)
-* [gateway](paymentmethod.md#gateway)
+* [gateway](paymentmethod.md#optional-gateway)
 * [id](paymentmethod.md#id)
-* [initializationData](paymentmethod.md#initializationdata)
-* [logoUrl](paymentmethod.md#logourl)
+* [initializationData](paymentmethod.md#optional-initializationdata)
+* [logoUrl](paymentmethod.md#optional-logourl)
 * [method](paymentmethod.md#method)
-* [nonce](paymentmethod.md#nonce)
-* [returnUrl](paymentmethod.md#returnurl)
+* [nonce](paymentmethod.md#optional-nonce)
+* [returnUrl](paymentmethod.md#optional-returnurl)
 * [supportedCards](paymentmethod.md#supportedcards)
 * [type](paymentmethod.md#type)
 
----
-
 ## Properties
 
-<a id="clienttoken"></a>
+### `Optional` clientToken
 
-### `<Optional>` clientToken
-
-**● clientToken**: * `undefined` &#124; `string`
-*
+• **clientToken**? : *undefined | string*
 
 ___
-<a id="config"></a>
 
 ###  config
 
-**● config**: *[PaymentMethodConfig](paymentmethodconfig.md)*
+• **config**: *[PaymentMethodConfig](paymentmethodconfig.md)*
 
 ___
-<a id="gateway"></a>
 
-### `<Optional>` gateway
+### `Optional` gateway
 
-**● gateway**: * `undefined` &#124; `string`
-*
+• **gateway**? : *undefined | string*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
+• **id**: *string*
 
 ___
-<a id="initializationdata"></a>
 
-### `<Optional>` initializationData
+### `Optional` initializationData
 
-**● initializationData**: *`any`*
-
-___
-<a id="logourl"></a>
-
-### `<Optional>` logoUrl
-
-**● logoUrl**: * `undefined` &#124; `string`
-*
+• **initializationData**? : *any*
 
 ___
-<a id="method"></a>
+
+### `Optional` logoUrl
+
+• **logoUrl**? : *undefined | string*
+
+___
 
 ###  method
 
-**● method**: *`string`*
+• **method**: *string*
 
 ___
-<a id="nonce"></a>
 
-### `<Optional>` nonce
+### `Optional` nonce
 
-**● nonce**: * `undefined` &#124; `string`
-*
+• **nonce**? : *undefined | string*
 
 ___
-<a id="returnurl"></a>
 
-### `<Optional>` returnUrl
+### `Optional` returnUrl
 
-**● returnUrl**: * `undefined` &#124; `string`
-*
+• **returnUrl**? : *undefined | string*
 
 ___
-<a id="supportedcards"></a>
 
 ###  supportedCards
 
-**● supportedCards**: *`string`[]*
+• **supportedCards**: *string[]*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
-
-___
-
+• **type**: *string*

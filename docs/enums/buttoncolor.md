@@ -1,32 +1,29 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ButtonColor](../enums/buttoncolor.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ButtonColor](buttoncolor.md)
 
-# ButtonColor
+# Enumeration: ButtonColor
 
 ## Index
 
----
+### Enumeration members
+
+* [Black](buttoncolor.md#black)
+* [Default](buttoncolor.md#default)
+* [White](buttoncolor.md#white)
 
 ## Enumeration members
 
-<a id="black"></a>
-
 ###  Black
 
-**Black**:  = "black"
+• **Black**: = "black"
 
 ___
-<a id="default"></a>
 
 ###  Default
 
-**Default**:  = "default"
+• **Default**: = "default"
 
 ___
-<a id="white"></a>
 
 ###  White
 
-**White**:  = "white"
-
-___
-
+• **White**: = "white"

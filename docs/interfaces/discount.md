@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Discount](../interfaces/discount.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Discount](discount.md)
 
-# Discount
+# Interface: Discount
 
 ## Hierarchy
 
-**Discount**
+* **Discount**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [discountedAmount](discount.md#discountedamount)
 * [id](discount.md#id)
 
----
-
 ## Properties
-
-<a id="discountedamount"></a>
 
 ###  discountedAmount
 
-**● discountedAmount**: *`number`*
+• **discountedAmount**: *number*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
-
-___
-
+• **id**: *string*

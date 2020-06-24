@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ShopperCurrency](../interfaces/shoppercurrency.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ShopperCurrency](shoppercurrency.md)
 
-# ShopperCurrency
+# Interface: ShopperCurrency
 
 ## Hierarchy
 
- [StoreCurrency](storecurrency.md)
+* [StoreCurrency](storecurrency.md)
 
-**↳ ShopperCurrency**
+  ↳ **ShopperCurrency**
 
 ## Index
 
@@ -21,64 +21,62 @@
 * [symbolLocation](shoppercurrency.md#symbollocation)
 * [thousandsSeparator](shoppercurrency.md#thousandsseparator)
 
----
-
 ## Properties
-
-<a id="code"></a>
 
 ###  code
 
-**● code**: *`string`*
+• **code**: *string*
+
+*Inherited from [ShopperCurrency](shoppercurrency.md).[code](shoppercurrency.md#code)*
 
 ___
-<a id="decimalplaces"></a>
 
 ###  decimalPlaces
 
-**● decimalPlaces**: *`string`*
+• **decimalPlaces**: *string*
+
+*Inherited from [ShopperCurrency](shoppercurrency.md).[decimalPlaces](shoppercurrency.md#decimalplaces)*
 
 ___
-<a id="decimalseparator"></a>
 
 ###  decimalSeparator
 
-**● decimalSeparator**: *`string`*
+• **decimalSeparator**: *string*
+
+*Inherited from [ShopperCurrency](shoppercurrency.md).[decimalSeparator](shoppercurrency.md#decimalseparator)*
 
 ___
-<a id="exchangerate"></a>
 
 ###  exchangeRate
 
-**● exchangeRate**: *`number`*
+• **exchangeRate**: *number*
 
 ___
-<a id="istransactional"></a>
 
 ###  isTransactional
 
-**● isTransactional**: *`boolean`*
+• **isTransactional**: *boolean*
 
 ___
-<a id="symbol"></a>
 
 ###  symbol
 
-**● symbol**: *`string`*
+• **symbol**: *string*
+
+*Inherited from [ShopperCurrency](shoppercurrency.md).[symbol](shoppercurrency.md#symbol)*
 
 ___
-<a id="symbollocation"></a>
 
 ###  symbolLocation
 
-**● symbolLocation**: *`string`*
+• **symbolLocation**: *string*
+
+*Inherited from [ShopperCurrency](shoppercurrency.md).[symbolLocation](shoppercurrency.md#symbollocation)*
 
 ___
-<a id="thousandsseparator"></a>
 
 ###  thousandsSeparator
 
-**● thousandsSeparator**: *`string`*
+• **thousandsSeparator**: *string*
 
-___
-
+*Inherited from [ShopperCurrency](shoppercurrency.md).[thousandsSeparator](shoppercurrency.md#thousandsseparator)*

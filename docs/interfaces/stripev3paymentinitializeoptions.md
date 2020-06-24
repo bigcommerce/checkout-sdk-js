@@ -1,34 +1,36 @@
-[@bigcommerce/checkout-sdk](../README.md) > [StripeV3PaymentInitializeOptions](../interfaces/stripev3paymentinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [StripeV3PaymentInitializeOptions](stripev3paymentinitializeoptions.md)
 
-# StripeV3PaymentInitializeOptions
+# Interface: StripeV3PaymentInitializeOptions
+
+A set of options that are required to initialize the Stripe payment method.
+
+Once Stripe payment is initialized, credit card form fields, provided by the
+payment provider as iframes, will be inserted into the current page. These
+options provide a location and styling for each of the form fields.
 
 ## Hierarchy
 
-**StripeV3PaymentInitializeOptions**
+* **StripeV3PaymentInitializeOptions**
 
 ## Index
 
 ### Properties
 
 * [containerId](stripev3paymentinitializeoptions.md#containerid)
-* [style](stripev3paymentinitializeoptions.md#style)
-
----
+* [style](stripev3paymentinitializeoptions.md#optional-style)
 
 ## Properties
 
-<a id="containerid"></a>
-
 ###  containerId
 
-**● containerId**: *`string`*
+• **containerId**: *string*
 
-___
-<a id="style"></a>
-
-### `<Optional>` style
-
-**● style**: *[StripeStyleProps](stripestyleprops.md)*
+The location to insert the credit card number form field.
 
 ___
 
+### `Optional` style
+
+• **style**? : *[StripeStyleProps](stripestyleprops.md)*
+
+The set of CSS styles to apply to all form fields.

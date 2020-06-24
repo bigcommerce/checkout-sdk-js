@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [WechatDataPaymentMethodState](../interfaces/wechatdatapaymentmethodstate.md)
+[@bigcommerce/checkout-sdk](../README.md) › [WechatDataPaymentMethodState](wechatdatapaymentmethodstate.md)
 
-# WechatDataPaymentMethodState
+# Interface: WechatDataPaymentMethodState
 
 ## Hierarchy
 
-**WechatDataPaymentMethodState**
+* **WechatDataPaymentMethodState**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [paymentMethod](wechatdatapaymentmethodstate.md#paymentmethod)
 
----
-
 ## Properties
-
-<a id="paymentmethod"></a>
 
 ###  paymentMethod
 
-**● paymentMethod**: *[AdyenPaymentMethodState](adyenpaymentmethodstate.md)*
-
-___
-
+• **paymentMethod**: *[AdyenPaymentMethodState](adyenpaymentmethodstate.md)*

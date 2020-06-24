@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutMessenger](../interfaces/embeddedcheckoutmessenger.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutMessenger](embeddedcheckoutmessenger.md)
 
-# EmbeddedCheckoutMessenger
+# Interface: EmbeddedCheckoutMessenger
 
 ## Hierarchy
 
-**EmbeddedCheckoutMessenger**
+* **EmbeddedCheckoutMessenger**
 
 ## Index
 
@@ -18,95 +18,88 @@
 * [postSignedOut](embeddedcheckoutmessenger.md#postsignedout)
 * [receiveStyles](embeddedcheckoutmessenger.md#receivestyles)
 
----
-
 ## Methods
-
-<a id="postcomplete"></a>
 
 ###  postComplete
 
-▸ **postComplete**(): `void`
+▸ **postComplete**(): *void*
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="posterror"></a>
 
 ###  postError
 
-▸ **postError**(payload: * `Error` &#124; [CustomError](customerror.md)*): `void`
+▸ **postError**(`payload`: [Error](amazonpaywidgeterror.md#error) | [CustomError](customerror.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| payload |  `Error` &#124; [CustomError](customerror.md)|
+Name | Type |
+------ | ------ |
+`payload` | [Error](amazonpaywidgeterror.md#error) &#124; [CustomError](customerror.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="postframeerror"></a>
 
 ###  postFrameError
 
-▸ **postFrameError**(payload: * `Error` &#124; [CustomError](customerror.md)*): `void`
+▸ **postFrameError**(`payload`: [Error](amazonpaywidgeterror.md#error) | [CustomError](customerror.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| payload |  `Error` &#124; [CustomError](customerror.md)|
+Name | Type |
+------ | ------ |
+`payload` | [Error](amazonpaywidgeterror.md#error) &#124; [CustomError](customerror.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="postframeloaded"></a>
 
 ###  postFrameLoaded
 
-▸ **postFrameLoaded**(payload?: *[EmbeddedContentOptions](embeddedcontentoptions.md)*): `void`
+▸ **postFrameLoaded**(`payload?`: [EmbeddedContentOptions](embeddedcontentoptions.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` payload | [EmbeddedContentOptions](embeddedcontentoptions.md) |
+Name | Type |
+------ | ------ |
+`payload?` | [EmbeddedContentOptions](embeddedcontentoptions.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="postloaded"></a>
 
 ###  postLoaded
 
-▸ **postLoaded**(): `void`
+▸ **postLoaded**(): *void*
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="postsignedout"></a>
 
 ###  postSignedOut
 
-▸ **postSignedOut**(): `void`
+▸ **postSignedOut**(): *void*
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="receivestyles"></a>
 
 ###  receiveStyles
 
-▸ **receiveStyles**(handler: *`function`*): `void`
+▸ **receiveStyles**(`handler`: function): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| handler | `function` |
+▪ **handler**: *function*
 
-**Returns:** `void`
+▸ (`styles`: [EmbeddedCheckoutStyles](embeddedcheckoutstyles.md)): *void*
 
-___
+**Parameters:**
 
+Name | Type |
+------ | ------ |
+`styles` | [EmbeddedCheckoutStyles](embeddedcheckoutstyles.md) |
+
+**Returns:** *void*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ShopperConfig](../interfaces/shopperconfig.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ShopperConfig](shopperconfig.md)
 
-# ShopperConfig
+# Interface: ShopperConfig
 
 ## Hierarchy
 
-**ShopperConfig**
+* **ShopperConfig**
 
 ## Index
 
@@ -14,29 +14,20 @@
 * [passwordRequirements](shopperconfig.md#passwordrequirements)
 * [showNewsletterSignup](shopperconfig.md#shownewslettersignup)
 
----
-
 ## Properties
-
-<a id="defaultnewslettersignup"></a>
 
 ###  defaultNewsletterSignup
 
-**● defaultNewsletterSignup**: *`boolean`*
+• **defaultNewsletterSignup**: *boolean*
 
 ___
-<a id="passwordrequirements"></a>
 
 ###  passwordRequirements
 
-**● passwordRequirements**: *[PasswordRequirements](passwordrequirements.md)*
+• **passwordRequirements**: *[PasswordRequirements](passwordrequirements.md)*
 
 ___
-<a id="shownewslettersignup"></a>
 
 ###  showNewsletterSignup
 
-**● showNewsletterSignup**: *`boolean`*
-
-___
-
+• **showNewsletterSignup**: *boolean*

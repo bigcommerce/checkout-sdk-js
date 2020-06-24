@@ -1,81 +1,76 @@
-[@bigcommerce/checkout-sdk](../README.md) > [PaypalButtonInitializeOptions](../interfaces/paypalbuttoninitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [PaypalButtonInitializeOptions](paypalbuttoninitializeoptions.md)
 
-# PaypalButtonInitializeOptions
+# Interface: PaypalButtonInitializeOptions
 
 ## Hierarchy
 
-**PaypalButtonInitializeOptions**
+* **PaypalButtonInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [allowCredit](paypalbuttoninitializeoptions.md#allowcredit)
+* [allowCredit](paypalbuttoninitializeoptions.md#optional-allowcredit)
 * [clientId](paypalbuttoninitializeoptions.md#clientid)
-* [style](paypalbuttoninitializeoptions.md#style)
+* [style](paypalbuttoninitializeoptions.md#optional-style)
 
 ### Methods
 
-* [onAuthorizeError](paypalbuttoninitializeoptions.md#onauthorizeerror)
-* [onPaymentError](paypalbuttoninitializeoptions.md#onpaymenterror)
-
----
+* [onAuthorizeError](paypalbuttoninitializeoptions.md#optional-onauthorizeerror)
+* [onPaymentError](paypalbuttoninitializeoptions.md#optional-onpaymenterror)
 
 ## Properties
 
-<a id="allowcredit"></a>
+### `Optional` allowCredit
 
-### `<Optional>` allowCredit
+• **allowCredit**? : *undefined | false | true*
 
-**● allowCredit**: * `undefined` &#124; `false` &#124; `true`
-*
+Whether or not to show a credit button.
 
 ___
-<a id="clientid"></a>
 
 ###  clientId
 
-**● clientId**: *`string`*
+• **clientId**: *string*
+
+The Client ID of the Paypal App
 
 ___
-<a id="style"></a>
 
-### `<Optional>` style
+### `Optional` style
 
-**● style**: *`Pick`<[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md),  "layout" &#124; "size" &#124; "color" &#124; "label" &#124; "shape" &#124; "tagline" &#124; "fundingicons">*
+• **style**? : *Pick‹[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md), "layout" | "size" | "color" | "label" | "shape" | "tagline" | "fundingicons"›*
 
-___
+A set of styling options for the checkout button.
 
 ## Methods
 
-<a id="onauthorizeerror"></a>
+### `Optional` onAuthorizeError
 
-### `<Optional>` onAuthorizeError
+▸ **onAuthorizeError**(`error`: [StandardError](../classes/standarderror.md)): *void*
 
-▸ **onAuthorizeError**(error: *[StandardError](../classes/standarderror.md)*): `void`
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| error | [StandardError](../classes/standarderror.md) |  The error object describing the failure. |
-
-**Returns:** `void`
-
-___
-<a id="onpaymenterror"></a>
-
-### `<Optional>` onPaymentError
-
-▸ **onPaymentError**(error: *[StandardError](../classes/standarderror.md)*): `void`
+A callback that gets called if unable to authorize and tokenize payment.
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| error | [StandardError](../classes/standarderror.md) |  The error object describing the failure. |
+Name | Type | Description |
+------ | ------ | ------ |
+`error` | [StandardError](../classes/standarderror.md) | The error object describing the failure.  |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
 
+### `Optional` onPaymentError
+
+▸ **onPaymentError**(`error`: [StandardError](../classes/standarderror.md)): *void*
+
+A callback that gets called if unable to submit payment.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`error` | [StandardError](../classes/standarderror.md) | The error object describing the failure.  |
+
+**Returns:** *void*

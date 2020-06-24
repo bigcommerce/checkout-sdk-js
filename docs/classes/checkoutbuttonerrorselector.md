@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutButtonErrorSelector](../classes/checkoutbuttonerrorselector.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutButtonErrorSelector](checkoutbuttonerrorselector.md)
 
-# CheckoutButtonErrorSelector
+# Class: CheckoutButtonErrorSelector
 
 ## Hierarchy
 
-**CheckoutButtonErrorSelector**
+* **CheckoutButtonErrorSelector**
 
 ## Index
 
@@ -13,38 +13,30 @@
 * [getDeinitializeButtonError](checkoutbuttonerrorselector.md#getdeinitializebuttonerror)
 * [getInitializeButtonError](checkoutbuttonerrorselector.md#getinitializebuttonerror)
 
----
-
 ## Methods
-
-<a id="getdeinitializebuttonerror"></a>
 
 ###  getDeinitializeButtonError
 
-▸ **getDeinitializeButtonError**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*):  `Error` &#124; `undefined`
+▸ **getDeinitializeButtonError**(`methodId?`: [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)): *[Error](../interfaces/amazonpaywidgeterror.md#error) | undefined*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
+Name | Type |
+------ | ------ |
+`methodId?` | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
-**Returns:**  `Error` &#124; `undefined`
+**Returns:** *[Error](../interfaces/amazonpaywidgeterror.md#error) | undefined*
 
 ___
-<a id="getinitializebuttonerror"></a>
 
 ###  getInitializeButtonError
 
-▸ **getInitializeButtonError**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*):  `Error` &#124; `undefined`
+▸ **getInitializeButtonError**(`methodId?`: [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)): *[Error](../interfaces/amazonpaywidgeterror.md#error) | undefined*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
+Name | Type |
+------ | ------ |
+`methodId?` | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
-**Returns:**  `Error` &#124; `undefined`
-
-___
-
+**Returns:** *[Error](../interfaces/amazonpaywidgeterror.md#error) | undefined*

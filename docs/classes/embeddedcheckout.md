@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckout](../classes/embeddedcheckout.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckout](embeddedcheckout.md)
 
-# EmbeddedCheckout
+# Class: EmbeddedCheckout
 
 ## Hierarchy
 
-**EmbeddedCheckout**
+* **EmbeddedCheckout**
 
 ## Index
 
@@ -13,26 +13,18 @@
 * [attach](embeddedcheckout.md#attach)
 * [detach](embeddedcheckout.md#detach)
 
----
-
 ## Methods
-
-<a id="attach"></a>
 
 ###  attach
 
-▸ **attach**(): `Promise`<`this`>
+▸ **attach**(): *Promise‹this›*
 
-**Returns:** `Promise`<`this`>
+**Returns:** *Promise‹this›*
 
 ___
-<a id="detach"></a>
 
 ###  detach
 
-▸ **detach**(): `void`
+▸ **detach**(): *void*
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

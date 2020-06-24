@@ -1,27 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutParams](../interfaces/checkoutparams.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutParams](checkoutparams.md)
 
-# CheckoutParams
+# Interface: CheckoutParams
 
 ## Hierarchy
 
-**CheckoutParams**
+* **CheckoutParams**
 
 ## Index
 
 ### Properties
 
-* [include](checkoutparams.md#include)
-
----
+* [include](checkoutparams.md#optional-include)
 
 ## Properties
 
-<a id="include"></a>
+### `Optional` include
 
-### `<Optional>` include
-
-**● include**: * [CheckoutIncludes](../enums/checkoutincludes.md)[] &#124; [CheckoutIncludeParam](../#checkoutincludeparam)
-*
-
-___
-
+• **include**? : *[CheckoutIncludes](../enums/checkoutincludes.md)[] | [CheckoutIncludeParam](../README.md#checkoutincludeparam)*

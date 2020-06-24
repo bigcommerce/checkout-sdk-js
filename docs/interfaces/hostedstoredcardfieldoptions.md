@@ -1,54 +1,48 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedStoredCardFieldOptions](../interfaces/hostedstoredcardfieldoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedStoredCardFieldOptions](hostedstoredcardfieldoptions.md)
 
-# HostedStoredCardFieldOptions
+# Interface: HostedStoredCardFieldOptions
 
 ## Hierarchy
 
- [HostedCardFieldOptions](hostedcardfieldoptions.md)
+* [HostedCardFieldOptions](hostedcardfieldoptions.md)
 
-**↳ HostedStoredCardFieldOptions**
+  ↳ **HostedStoredCardFieldOptions**
 
 ## Index
 
 ### Properties
 
-* [accessibilityLabel](hostedstoredcardfieldoptions.md#accessibilitylabel)
+* [accessibilityLabel](hostedstoredcardfieldoptions.md#optional-accessibilitylabel)
 * [containerId](hostedstoredcardfieldoptions.md#containerid)
 * [instrumentId](hostedstoredcardfieldoptions.md#instrumentid)
-* [placeholder](hostedstoredcardfieldoptions.md#placeholder)
-
----
+* [placeholder](hostedstoredcardfieldoptions.md#optional-placeholder)
 
 ## Properties
 
-<a id="accessibilitylabel"></a>
+### `Optional` accessibilityLabel
 
-### `<Optional>` accessibilityLabel
+• **accessibilityLabel**? : *undefined | string*
 
-**● accessibilityLabel**: * `undefined` &#124; `string`
-*
+*Inherited from [HostedCardFieldOptions](hostedcardfieldoptions.md).[accessibilityLabel](hostedcardfieldoptions.md#optional-accessibilitylabel)*
 
 ___
-<a id="containerid"></a>
 
 ###  containerId
 
-**● containerId**: *`string`*
+• **containerId**: *string*
+
+*Inherited from [HostedCardFieldOptions](hostedcardfieldoptions.md).[containerId](hostedcardfieldoptions.md#containerid)*
 
 ___
-<a id="instrumentid"></a>
 
 ###  instrumentId
 
-**● instrumentId**: *`string`*
-
-___
-<a id="placeholder"></a>
-
-### `<Optional>` placeholder
-
-**● placeholder**: * `undefined` &#124; `string`
-*
+• **instrumentId**: *string*
 
 ___
 
+### `Optional` placeholder
+
+• **placeholder**? : *undefined | string*
+
+*Inherited from [HostedCardFieldOptions](hostedcardfieldoptions.md).[placeholder](hostedcardfieldoptions.md#optional-placeholder)*

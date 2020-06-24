@@ -1,54 +1,40 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutServiceOptions](../interfaces/checkoutserviceoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutServiceOptions](checkoutserviceoptions.md)
 
-# CheckoutServiceOptions
+# Interface: CheckoutServiceOptions
 
 ## Hierarchy
 
-**CheckoutServiceOptions**
+* **CheckoutServiceOptions**
 
 ## Index
 
 ### Properties
 
-* [externalSource](checkoutserviceoptions.md#externalsource)
-* [host](checkoutserviceoptions.md#host)
-* [locale](checkoutserviceoptions.md#locale)
-* [shouldWarnMutation](checkoutserviceoptions.md#shouldwarnmutation)
-
----
+* [externalSource](checkoutserviceoptions.md#optional-externalsource)
+* [host](checkoutserviceoptions.md#optional-host)
+* [locale](checkoutserviceoptions.md#optional-locale)
+* [shouldWarnMutation](checkoutserviceoptions.md#optional-shouldwarnmutation)
 
 ## Properties
 
-<a id="externalsource"></a>
+### `Optional` externalSource
 
-### `<Optional>` externalSource
-
-**● externalSource**: * `undefined` &#124; `string`
-*
-
-___
-<a id="host"></a>
-
-### `<Optional>` host
-
-**● host**: * `undefined` &#124; `string`
-*
-
-___
-<a id="locale"></a>
-
-### `<Optional>` locale
-
-**● locale**: * `undefined` &#124; `string`
-*
-
-___
-<a id="shouldwarnmutation"></a>
-
-### `<Optional>` shouldWarnMutation
-
-**● shouldWarnMutation**: * `undefined` &#124; `false` &#124; `true`
-*
+• **externalSource**? : *undefined | string*
 
 ___
 
+### `Optional` host
+
+• **host**? : *undefined | string*
+
+___
+
+### `Optional` locale
+
+• **locale**? : *undefined | string*
+
+___
+
+### `Optional` shouldWarnMutation
+
+• **shouldWarnMutation**? : *undefined | false | true*

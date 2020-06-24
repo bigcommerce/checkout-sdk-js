@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenComponent](../interfaces/adyencomponent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AdyenComponent](adyencomponent.md)
 
-# AdyenComponent
+# Interface: AdyenComponent
 
 ## Hierarchy
 
-**AdyenComponent**
+* **AdyenComponent**
 
 ## Index
 
@@ -13,32 +13,24 @@
 * [mount](adyencomponent.md#mount)
 * [unmount](adyencomponent.md#unmount)
 
----
-
 ## Methods
-
-<a id="mount"></a>
 
 ###  mount
 
-▸ **mount**(containerId: *`string`*): `HTMLElement`
+▸ **mount**(`containerId`: string): *HTMLElement*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| containerId | `string` |
+Name | Type |
+------ | ------ |
+`containerId` | string |
 
-**Returns:** `HTMLElement`
+**Returns:** *HTMLElement*
 
 ___
-<a id="unmount"></a>
 
 ###  unmount
 
-▸ **unmount**(): `void`
+▸ **unmount**(): *void*
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

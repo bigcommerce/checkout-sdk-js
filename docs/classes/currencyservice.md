@@ -1,10 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CurrencyService](../classes/currencyservice.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CurrencyService](currencyservice.md)
 
-# CurrencyService
+# Class: CurrencyService
+
+Responsible for formatting and converting currencies.
 
 ## Hierarchy
 
-**CurrencyService**
+* **CurrencyService**
 
 ## Index
 
@@ -13,38 +15,30 @@
 * [toCustomerCurrency](currencyservice.md#tocustomercurrency)
 * [toStoreCurrency](currencyservice.md#tostorecurrency)
 
----
-
 ## Methods
-
-<a id="tocustomercurrency"></a>
 
 ###  toCustomerCurrency
 
-▸ **toCustomerCurrency**(amount: *`number`*): `string`
+▸ **toCustomerCurrency**(`amount`: number): *string*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| amount | `number` |
+Name | Type |
+------ | ------ |
+`amount` | number |
 
-**Returns:** `string`
+**Returns:** *string*
 
 ___
-<a id="tostorecurrency"></a>
 
 ###  toStoreCurrency
 
-▸ **toStoreCurrency**(amount: *`number`*): `string`
+▸ **toStoreCurrency**(`amount`: number): *string*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| amount | `number` |
+Name | Type |
+------ | ------ |
+`amount` | number |
 
-**Returns:** `string`
-
-___
-
+**Returns:** *string*

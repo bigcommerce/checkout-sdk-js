@@ -1,39 +1,38 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayV2LedgerCurrency](../enums/amazonpayv2ledgercurrency.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayV2LedgerCurrency](amazonpayv2ledgercurrency.md)
 
-# AmazonPayV2LedgerCurrency
+# Enumeration: AmazonPayV2LedgerCurrency
+
+**`alpha`** 
 
 ## Index
 
----
+### Enumeration members
+
+* [eu](amazonpayv2ledgercurrency.md#eu)
+* [jp](amazonpayv2ledgercurrency.md#jp)
+* [uk](amazonpayv2ledgercurrency.md#uk)
+* [us](amazonpayv2ledgercurrency.md#us)
 
 ## Enumeration members
 
-<a id="eu"></a>
-
 ###  eu
 
-**eu**:  = "EUR"
+• **eu**: = "EUR"
 
 ___
-<a id="jp"></a>
 
 ###  jp
 
-**jp**:  = "JPY"
+• **jp**: = "JPY"
 
 ___
-<a id="uk"></a>
 
 ###  uk
 
-**uk**:  = "GBP"
+• **uk**: = "GBP"
 
 ___
-<a id="us"></a>
 
 ###  us
 
-**us**:  = "USD"
-
-___
-
+• **us**: = "USD"

@@ -1,10 +1,15 @@
-[@bigcommerce/checkout-sdk](../README.md) > [KlarnaPaymentInitializeOptions](../interfaces/klarnapaymentinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [KlarnaPaymentInitializeOptions](klarnapaymentinitializeoptions.md)
 
-# KlarnaPaymentInitializeOptions
+# Interface: KlarnaPaymentInitializeOptions
+
+A set of options that are required to initialize the Klarna payment method.
+
+When Klarna is initialized, a widget will be inserted into the DOM. The
+widget has a list of payment options for the customer to choose from.
 
 ## Hierarchy
 
-**KlarnaPaymentInitializeOptions**
+* **KlarnaPaymentInitializeOptions**
 
 ## Index
 
@@ -14,35 +19,29 @@
 
 ### Methods
 
-* [onLoad](klarnapaymentinitializeoptions.md#onload)
-
----
+* [onLoad](klarnapaymentinitializeoptions.md#optional-onload)
 
 ## Properties
 
-<a id="container"></a>
-
 ###  container
 
-**● container**: *`string`*
+• **container**: *string*
 
-___
+The ID of a container which the payment widget should insert into.
 
 ## Methods
 
-<a id="onload"></a>
+### `Optional` onLoad
 
-### `<Optional>` onLoad
+▸ **onLoad**(`response`: [KlarnaLoadResponse](klarnaloadresponse.md)): *void*
 
-▸ **onLoad**(response: *[KlarnaLoadResponse](klarnaloadresponse.md)*): `void`
+A callback that gets called when the widget is loaded and ready to be
+interacted with.
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| response | [KlarnaLoadResponse](klarnaloadresponse.md) |  The result of the initialization. It indicates whether or not the widget is loaded successfully. |
+Name | Type | Description |
+------ | ------ | ------ |
+`response` | [KlarnaLoadResponse](klarnaloadresponse.md) | The result of the initialization. It indicates whether or not the widget is loaded successfully.  |
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

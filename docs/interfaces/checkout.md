@@ -1,17 +1,17 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Checkout](../interfaces/checkout.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Checkout](checkout.md)
 
-# Checkout
+# Interface: Checkout
 
 ## Hierarchy
 
-**Checkout**
+* **Checkout**
 
 ## Index
 
 ### Properties
 
 * [balanceDue](checkout.md#balancedue)
-* [billingAddress](checkout.md#billingaddress)
+* [billingAddress](checkout.md#optional-billingaddress)
 * [cart](checkout.md#cart)
 * [consignments](checkout.md#consignments)
 * [coupons](checkout.md#coupons)
@@ -24,10 +24,10 @@
 * [handlingCostTotal](checkout.md#handlingcosttotal)
 * [id](checkout.md#id)
 * [isStoreCreditApplied](checkout.md#isstorecreditapplied)
-* [orderId](checkout.md#orderid)
+* [orderId](checkout.md#optional-orderid)
 * [outstandingBalance](checkout.md#outstandingbalance)
-* [payments](checkout.md#payments)
-* [promotions](checkout.md#promotions)
+* [payments](checkout.md#optional-payments)
+* [promotions](checkout.md#optional-promotions)
 * [shippingCostBeforeDiscount](checkout.md#shippingcostbeforediscount)
 * [shippingCostTotal](checkout.md#shippingcosttotal)
 * [shouldExecuteSpamCheck](checkout.md#shouldexecutespamcheck)
@@ -36,184 +36,157 @@
 * [taxes](checkout.md#taxes)
 * [updatedTime](checkout.md#updatedtime)
 
----
-
 ## Properties
-
-<a id="balancedue"></a>
 
 ###  balanceDue
 
-**● balanceDue**: *`number`*
+• **balanceDue**: *number*
 
 ___
-<a id="billingaddress"></a>
 
-### `<Optional>` billingAddress
+### `Optional` billingAddress
 
-**● billingAddress**: *[BillingAddress](billingaddress.md)*
+• **billingAddress**? : *[BillingAddress](billingaddress.md)*
 
 ___
-<a id="cart"></a>
 
 ###  cart
 
-**● cart**: *[Cart](cart.md)*
+• **cart**: *[Cart](cart.md)*
 
 ___
-<a id="consignments"></a>
 
 ###  consignments
 
-**● consignments**: *[Consignment](consignment.md)[]*
+• **consignments**: *[Consignment](consignment.md)[]*
 
 ___
-<a id="coupons"></a>
 
 ###  coupons
 
-**● coupons**: *[Coupon](coupon.md)[]*
+• **coupons**: *[Coupon](coupon.md)[]*
 
 ___
-<a id="createdtime"></a>
 
 ###  createdTime
 
-**● createdTime**: *`string`*
+• **createdTime**: *string*
 
 ___
-<a id="customer"></a>
 
 ###  customer
 
-**● customer**: *[Customer](customer.md)*
+• **customer**: *[Customer](customer.md)*
 
 ___
-<a id="customermessage"></a>
 
 ###  customerMessage
 
-**● customerMessage**: *`string`*
+• **customerMessage**: *string*
 
 ___
-<a id="discounts"></a>
 
 ###  discounts
 
-**● discounts**: *[Discount](discount.md)[]*
+• **discounts**: *[Discount](discount.md)[]*
 
 ___
-<a id="giftcertificates"></a>
 
 ###  giftCertificates
 
-**● giftCertificates**: *[GiftCertificate](giftcertificate.md)[]*
+• **giftCertificates**: *[GiftCertificate](giftcertificate.md)[]*
 
 ___
-<a id="grandtotal"></a>
 
 ###  grandTotal
 
-**● grandTotal**: *`number`*
+• **grandTotal**: *number*
 
 ___
-<a id="handlingcosttotal"></a>
 
 ###  handlingCostTotal
 
-**● handlingCostTotal**: *`number`*
+• **handlingCostTotal**: *number*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
+• **id**: *string*
 
 ___
-<a id="isstorecreditapplied"></a>
 
 ###  isStoreCreditApplied
 
-**● isStoreCreditApplied**: *`boolean`*
+• **isStoreCreditApplied**: *boolean*
 
 ___
-<a id="orderid"></a>
 
-### `<Optional>` orderId
+### `Optional` orderId
 
-**● orderId**: * `undefined` &#124; `number`
-*
+• **orderId**? : *undefined | number*
 
 ___
-<a id="outstandingbalance"></a>
 
 ###  outstandingBalance
 
-**● outstandingBalance**: *`number`*
+• **outstandingBalance**: *number*
 
 ___
-<a id="payments"></a>
 
-### `<Optional>` payments
+### `Optional` payments
 
-**● payments**: *[CheckoutPayment](checkoutpayment.md)[]*
-
-___
-<a id="promotions"></a>
-
-### `<Optional>` promotions
-
-**● promotions**: *[Promotion](promotion.md)[]*
+• **payments**? : *[CheckoutPayment](checkoutpayment.md)[]*
 
 ___
-<a id="shippingcostbeforediscount"></a>
+
+### `Optional` promotions
+
+• **promotions**? : *[Promotion](promotion.md)[]*
+
+___
 
 ###  shippingCostBeforeDiscount
 
-**● shippingCostBeforeDiscount**: *`number`*
+• **shippingCostBeforeDiscount**: *number*
 
 ___
-<a id="shippingcosttotal"></a>
 
 ###  shippingCostTotal
 
-**● shippingCostTotal**: *`number`*
+• **shippingCostTotal**: *number*
 
 ___
-<a id="shouldexecutespamcheck"></a>
 
 ###  shouldExecuteSpamCheck
 
-**● shouldExecuteSpamCheck**: *`boolean`*
+• **shouldExecuteSpamCheck**: *boolean*
+
+Whether the current checkout must execute spam protection
+before placing the order.
+
+Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
 
 ___
-<a id="subtotal"></a>
 
 ###  subtotal
 
-**● subtotal**: *`number`*
+• **subtotal**: *number*
 
 ___
-<a id="taxtotal"></a>
 
 ###  taxTotal
 
-**● taxTotal**: *`number`*
+• **taxTotal**: *number*
 
 ___
-<a id="taxes"></a>
 
 ###  taxes
 
-**● taxes**: *[Tax](tax.md)[]*
+• **taxes**: *[Tax](tax.md)[]*
 
 ___
-<a id="updatedtime"></a>
 
 ###  updatedTime
 
-**● updatedTime**: *`string`*
-
-___
-
+• **updatedTime**: *string*

@@ -1,44 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [NonceInstrument](../interfaces/nonceinstrument.md)
+[@bigcommerce/checkout-sdk](../README.md) › [NonceInstrument](nonceinstrument.md)
 
-# NonceInstrument
+# Interface: NonceInstrument
 
 ## Hierarchy
 
-**NonceInstrument**
+* **NonceInstrument**
 
 ## Index
 
 ### Properties
 
-* [deviceSessionId](nonceinstrument.md#devicesessionid)
+* [deviceSessionId](nonceinstrument.md#optional-devicesessionid)
 * [nonce](nonceinstrument.md#nonce)
-* [shouldSaveInstrument](nonceinstrument.md#shouldsaveinstrument)
-
----
+* [shouldSaveInstrument](nonceinstrument.md#optional-shouldsaveinstrument)
 
 ## Properties
 
-<a id="devicesessionid"></a>
+### `Optional` deviceSessionId
 
-### `<Optional>` deviceSessionId
-
-**● deviceSessionId**: * `undefined` &#124; `string`
-*
+• **deviceSessionId**? : *undefined | string*
 
 ___
-<a id="nonce"></a>
 
 ###  nonce
 
-**● nonce**: *`string`*
-
-___
-<a id="shouldsaveinstrument"></a>
-
-### `<Optional>` shouldSaveInstrument
-
-**● shouldSaveInstrument**: * `undefined` &#124; `false` &#124; `true`
-*
+• **nonce**: *string*
 
 ___
 
+### `Optional` shouldSaveInstrument
+
+• **shouldSaveInstrument**? : *undefined | false | true*

@@ -1,45 +1,46 @@
-[@bigcommerce/checkout-sdk](../README.md) > [RequestOptions](../interfaces/requestoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [RequestOptions](requestoptions.md)
 
-# RequestOptions
+# Interface: RequestOptions ‹**TParams**›
+
+A set of options for configuring an asynchronous request.
 
 ## Type parameters
 
-#### TParams 
+▪ **TParams**
+
 ## Hierarchy
 
-**RequestOptions**
+* **RequestOptions**
 
-↳  [CheckoutButtonOptions](checkoutbuttonoptions.md)
+  ↳ [CheckoutButtonOptions](checkoutbuttonoptions.md)
 
-↳  [CustomerRequestOptions](customerrequestoptions.md)
+  ↳ [CustomerRequestOptions](customerrequestoptions.md)
 
-↳  [PaymentRequestOptions](paymentrequestoptions.md)
+  ↳ [PaymentRequestOptions](paymentrequestoptions.md)
 
-↳  [ShippingRequestOptions](shippingrequestoptions.md)
+  ↳ [ShippingRequestOptions](shippingrequestoptions.md)
 
 ## Index
 
 ### Properties
 
-* [params](requestoptions.md#params)
-* [timeout](requestoptions.md#timeout)
-
----
+* [params](requestoptions.md#optional-params)
+* [timeout](requestoptions.md#optional-timeout)
 
 ## Properties
 
-<a id="params"></a>
+### `Optional` params
 
-### `<Optional>` params
+• **params**? : *TParams*
 
-**● params**: *[TParams]()*
-
-___
-<a id="timeout"></a>
-
-### `<Optional>` timeout
-
-**● timeout**: *`Timeout`*
+The parameters of the request, if required.
 
 ___
 
+### `Optional` timeout
+
+• **timeout**? : *Timeout*
+
+Provide this option if you want to cancel or time out the request. If the
+timeout object completes before the request, the request will be
+cancelled.

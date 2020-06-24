@@ -1,164 +1,156 @@
-[@bigcommerce/checkout-sdk](../README.md) > [MsClearProperties](../interfaces/msclearproperties.md)
+[@bigcommerce/checkout-sdk](../README.md) › [MsClearProperties](msclearproperties.md)
 
-# MsClearProperties
+# Interface: MsClearProperties
 
 ## Hierarchy
 
- [Properties](properties.md)
+* [Properties](properties.md)
 
-**↳ MsClearProperties**
+  ↳ **MsClearProperties**
 
 ## Index
 
 ### Properties
 
-* [color](msclearproperties.md#color)
-* [display](msclearproperties.md#display)
-* [fontFamily](msclearproperties.md#fontfamily)
-* [fontSize](msclearproperties.md#fontsize)
-* [fontSmoothing](msclearproperties.md#fontsmoothing)
-* [fontStyle](msclearproperties.md#fontstyle)
-* [fontVariant](msclearproperties.md#fontvariant)
-* [fontWeight](msclearproperties.md#fontweight)
-* [iconColor](msclearproperties.md#iconcolor)
-* [letterSpacing](msclearproperties.md#letterspacing)
-* [lineHeight](msclearproperties.md#lineheight)
-* [padding](msclearproperties.md#padding)
-* [textAlign](msclearproperties.md#textalign)
-* [textDecoration](msclearproperties.md#textdecoration)
-* [textShadow](msclearproperties.md#textshadow)
-* [textTransform](msclearproperties.md#texttransform)
-
----
+* [color](msclearproperties.md#optional-color)
+* [display](msclearproperties.md#optional-display)
+* [fontFamily](msclearproperties.md#optional-fontfamily)
+* [fontSize](msclearproperties.md#optional-fontsize)
+* [fontSmoothing](msclearproperties.md#optional-fontsmoothing)
+* [fontStyle](msclearproperties.md#optional-fontstyle)
+* [fontVariant](msclearproperties.md#optional-fontvariant)
+* [fontWeight](msclearproperties.md#optional-fontweight)
+* [iconColor](msclearproperties.md#optional-iconcolor)
+* [letterSpacing](msclearproperties.md#optional-letterspacing)
+* [lineHeight](msclearproperties.md#optional-lineheight)
+* [padding](msclearproperties.md#optional-padding)
+* [textAlign](msclearproperties.md#optional-textalign)
+* [textDecoration](msclearproperties.md#optional-textdecoration)
+* [textShadow](msclearproperties.md#optional-textshadow)
+* [textTransform](msclearproperties.md#optional-texttransform)
 
 ## Properties
 
-<a id="color"></a>
+### `Optional` color
 
-### `<Optional>` color
+• **color**? : *undefined | string*
 
-**● color**: * `undefined` &#124; `string`
-*
-
-___
-<a id="display"></a>
-
-### `<Optional>` display
-
-**● display**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontfamily"></a>
-
-### `<Optional>` fontFamily
-
-**● fontFamily**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontsize"></a>
-
-### `<Optional>` fontSize
-
-**● fontSize**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontsmoothing"></a>
-
-### `<Optional>` fontSmoothing
-
-**● fontSmoothing**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontstyle"></a>
-
-### `<Optional>` fontStyle
-
-**● fontStyle**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontvariant"></a>
-
-### `<Optional>` fontVariant
-
-**● fontVariant**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontweight"></a>
-
-### `<Optional>` fontWeight
-
-**● fontWeight**: * `string` &#124; `number`
-*
-
-___
-<a id="iconcolor"></a>
-
-### `<Optional>` iconColor
-
-**● iconColor**: * `undefined` &#124; `string`
-*
-
-___
-<a id="letterspacing"></a>
-
-### `<Optional>` letterSpacing
-
-**● letterSpacing**: * `undefined` &#124; `string`
-*
-
-___
-<a id="lineheight"></a>
-
-### `<Optional>` lineHeight
-
-**● lineHeight**: * `string` &#124; `number`
-*
-
-___
-<a id="padding"></a>
-
-### `<Optional>` padding
-
-**● padding**: * `undefined` &#124; `string`
-*
-
-___
-<a id="textalign"></a>
-
-### `<Optional>` textAlign
-
-**● textAlign**: * `undefined` &#124; `string`
-*
-
-___
-<a id="textdecoration"></a>
-
-### `<Optional>` textDecoration
-
-**● textDecoration**: * `undefined` &#124; `string`
-*
-
-___
-<a id="textshadow"></a>
-
-### `<Optional>` textShadow
-
-**● textShadow**: * `undefined` &#124; `string`
-*
-
-___
-<a id="texttransform"></a>
-
-### `<Optional>` textTransform
-
-**● textTransform**: * `undefined` &#124; `string`
-*
+*Inherited from [BaseProps](baseprops.md).[color](baseprops.md#optional-color)*
 
 ___
 
+### `Optional` display
+
+• **display**? : *undefined | string*
+
+___
+
+### `Optional` fontFamily
+
+• **fontFamily**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[fontFamily](baseprops.md#optional-fontfamily)*
+
+___
+
+### `Optional` fontSize
+
+• **fontSize**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[fontSize](baseprops.md#optional-fontsize)*
+
+___
+
+### `Optional` fontSmoothing
+
+• **fontSmoothing**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[fontSmoothing](baseprops.md#optional-fontsmoothing)*
+
+___
+
+### `Optional` fontStyle
+
+• **fontStyle**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[fontStyle](baseprops.md#optional-fontstyle)*
+
+___
+
+### `Optional` fontVariant
+
+• **fontVariant**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[fontVariant](baseprops.md#optional-fontvariant)*
+
+___
+
+### `Optional` fontWeight
+
+• **fontWeight**? : *string | number*
+
+*Inherited from [BaseProps](baseprops.md).[fontWeight](baseprops.md#optional-fontweight)*
+
+___
+
+### `Optional` iconColor
+
+• **iconColor**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[iconColor](baseprops.md#optional-iconcolor)*
+
+___
+
+### `Optional` letterSpacing
+
+• **letterSpacing**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[letterSpacing](baseprops.md#optional-letterspacing)*
+
+___
+
+### `Optional` lineHeight
+
+• **lineHeight**? : *string | number*
+
+*Inherited from [BaseProps](baseprops.md).[lineHeight](baseprops.md#optional-lineheight)*
+
+___
+
+### `Optional` padding
+
+• **padding**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[padding](baseprops.md#optional-padding)*
+
+___
+
+### `Optional` textAlign
+
+• **textAlign**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[textAlign](baseprops.md#optional-textalign)*
+
+___
+
+### `Optional` textDecoration
+
+• **textDecoration**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[textDecoration](baseprops.md#optional-textdecoration)*
+
+___
+
+### `Optional` textShadow
+
+• **textShadow**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[textShadow](baseprops.md#optional-textshadow)*
+
+___
+
+### `Optional` textTransform
+
+• **textTransform**? : *undefined | string*
+
+*Inherited from [BaseProps](baseprops.md).[textTransform](baseprops.md#optional-texttransform)*

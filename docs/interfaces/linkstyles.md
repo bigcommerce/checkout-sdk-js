@@ -1,89 +1,80 @@
-[@bigcommerce/checkout-sdk](../README.md) > [LinkStyles](../interfaces/linkstyles.md)
+[@bigcommerce/checkout-sdk](../README.md) › [LinkStyles](linkstyles.md)
 
-# LinkStyles
+# Interface: LinkStyles
 
 ## Hierarchy
 
- [InlineElementStyles](inlineelementstyles.md)
+* [InlineElementStyles](inlineelementstyles.md)
 
-**↳ LinkStyles**
+  ↳ **LinkStyles**
 
 ## Index
 
 ### Properties
 
-* [active](linkstyles.md#active)
-* [color](linkstyles.md#color)
-* [focus](linkstyles.md#focus)
-* [fontFamily](linkstyles.md#fontfamily)
-* [fontWeight](linkstyles.md#fontweight)
-* [hover](linkstyles.md#hover)
-* [letterSpacing](linkstyles.md#letterspacing)
-* [lineHeight](linkstyles.md#lineheight)
-
----
+* [active](linkstyles.md#optional-active)
+* [color](linkstyles.md#optional-color)
+* [focus](linkstyles.md#optional-focus)
+* [fontFamily](linkstyles.md#optional-fontfamily)
+* [fontWeight](linkstyles.md#optional-fontweight)
+* [hover](linkstyles.md#optional-hover)
+* [letterSpacing](linkstyles.md#optional-letterspacing)
+* [lineHeight](linkstyles.md#optional-lineheight)
 
 ## Properties
 
-<a id="active"></a>
+### `Optional` active
 
-### `<Optional>` active
-
-**● active**: *[InlineElementStyles](inlineelementstyles.md)*
-
-___
-<a id="color"></a>
-
-### `<Optional>` color
-
-**● color**: * `undefined` &#124; `string`
-*
-
-___
-<a id="focus"></a>
-
-### `<Optional>` focus
-
-**● focus**: *[InlineElementStyles](inlineelementstyles.md)*
-
-___
-<a id="fontfamily"></a>
-
-### `<Optional>` fontFamily
-
-**● fontFamily**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontweight"></a>
-
-### `<Optional>` fontWeight
-
-**● fontWeight**: * `undefined` &#124; `string`
-*
-
-___
-<a id="hover"></a>
-
-### `<Optional>` hover
-
-**● hover**: *[InlineElementStyles](inlineelementstyles.md)*
-
-___
-<a id="letterspacing"></a>
-
-### `<Optional>` letterSpacing
-
-**● letterSpacing**: * `undefined` &#124; `string`
-*
-
-___
-<a id="lineheight"></a>
-
-### `<Optional>` lineHeight
-
-**● lineHeight**: * `undefined` &#124; `string`
-*
+• **active**? : *[InlineElementStyles](inlineelementstyles.md)*
 
 ___
 
+### `Optional` color
+
+• **color**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[color](blockelementstyles.md#optional-color)*
+
+___
+
+### `Optional` focus
+
+• **focus**? : *[InlineElementStyles](inlineelementstyles.md)*
+
+___
+
+### `Optional` fontFamily
+
+• **fontFamily**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[fontFamily](blockelementstyles.md#optional-fontfamily)*
+
+___
+
+### `Optional` fontWeight
+
+• **fontWeight**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[fontWeight](blockelementstyles.md#optional-fontweight)*
+
+___
+
+### `Optional` hover
+
+• **hover**? : *[InlineElementStyles](inlineelementstyles.md)*
+
+___
+
+### `Optional` letterSpacing
+
+• **letterSpacing**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[letterSpacing](blockelementstyles.md#optional-letterspacing)*
+
+___
+
+### `Optional` lineHeight
+
+• **lineHeight**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[lineHeight](blockelementstyles.md#optional-lineheight)*

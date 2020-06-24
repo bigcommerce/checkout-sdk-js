@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BillingAddressRequestBody](billingaddressrequestbody.md)
 
-# BillingAddressRequestBody
+# Interface: BillingAddressRequestBody
 
 ## Hierarchy
 
- [AddressRequestBody](addressrequestbody.md)
+* [AddressRequestBody](addressrequestbody.md)
 
-**↳ BillingAddressRequestBody**
+  ↳ **BillingAddressRequestBody**
 
 ## Index
 
@@ -18,7 +18,7 @@
 * [company](billingaddressrequestbody.md#company)
 * [countryCode](billingaddressrequestbody.md#countrycode)
 * [customFields](billingaddressrequestbody.md#customfields)
-* [email](billingaddressrequestbody.md#email)
+* [email](billingaddressrequestbody.md#optional-email)
 * [firstName](billingaddressrequestbody.md#firstname)
 * [lastName](billingaddressrequestbody.md#lastname)
 * [phone](billingaddressrequestbody.md#phone)
@@ -26,100 +26,104 @@
 * [stateOrProvince](billingaddressrequestbody.md#stateorprovince)
 * [stateOrProvinceCode](billingaddressrequestbody.md#stateorprovincecode)
 
----
-
 ## Properties
-
-<a id="address1"></a>
 
 ###  address1
 
-**● address1**: *`string`*
+• **address1**: *string*
+
+*Inherited from [Address](address.md).[address1](address.md#address1)*
 
 ___
-<a id="address2"></a>
 
 ###  address2
 
-**● address2**: *`string`*
+• **address2**: *string*
+
+*Inherited from [Address](address.md).[address2](address.md#address2)*
 
 ___
-<a id="city"></a>
 
 ###  city
 
-**● city**: *`string`*
+• **city**: *string*
+
+*Inherited from [Address](address.md).[city](address.md#city)*
 
 ___
-<a id="company"></a>
 
 ###  company
 
-**● company**: *`string`*
+• **company**: *string*
+
+*Inherited from [Address](address.md).[company](address.md#company)*
 
 ___
-<a id="countrycode"></a>
 
 ###  countryCode
 
-**● countryCode**: *`string`*
+• **countryCode**: *string*
+
+*Inherited from [Address](address.md).[countryCode](address.md#countrycode)*
 
 ___
-<a id="customfields"></a>
 
 ###  customFields
 
-**● customFields**: *`Array`<`object`>*
+• **customFields**: *Array‹object›*
+
+*Inherited from [Address](address.md).[customFields](address.md#customfields)*
 
 ___
-<a id="email"></a>
 
-### `<Optional>` email
+### `Optional` email
 
-**● email**: * `undefined` &#124; `string`
-*
+• **email**? : *undefined | string*
 
 ___
-<a id="firstname"></a>
 
 ###  firstName
 
-**● firstName**: *`string`*
+• **firstName**: *string*
+
+*Inherited from [Address](address.md).[firstName](address.md#firstname)*
 
 ___
-<a id="lastname"></a>
 
 ###  lastName
 
-**● lastName**: *`string`*
+• **lastName**: *string*
+
+*Inherited from [Address](address.md).[lastName](address.md#lastname)*
 
 ___
-<a id="phone"></a>
 
 ###  phone
 
-**● phone**: *`string`*
+• **phone**: *string*
+
+*Inherited from [Address](address.md).[phone](address.md#phone)*
 
 ___
-<a id="postalcode"></a>
 
 ###  postalCode
 
-**● postalCode**: *`string`*
+• **postalCode**: *string*
+
+*Inherited from [Address](address.md).[postalCode](address.md#postalcode)*
 
 ___
-<a id="stateorprovince"></a>
 
 ###  stateOrProvince
 
-**● stateOrProvince**: *`string`*
+• **stateOrProvince**: *string*
+
+*Inherited from [Address](address.md).[stateOrProvince](address.md#stateorprovince)*
 
 ___
-<a id="stateorprovincecode"></a>
 
 ###  stateOrProvinceCode
 
-**● stateOrProvinceCode**: *`string`*
+• **stateOrProvinceCode**: *string*
 
-___
-
+*Inherited from [Address](address.md).[stateOrProvinceCode](address.md#stateorprovincecode)*

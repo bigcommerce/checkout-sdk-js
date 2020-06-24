@@ -1,54 +1,52 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AdyenComponentEvents](../interfaces/adyencomponentevents.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AdyenComponentEvents](adyencomponentevents.md)
 
-# AdyenComponentEvents
+# Interface: AdyenComponentEvents
 
 ## Hierarchy
 
-**AdyenComponentEvents**
+* **AdyenComponentEvents**
 
-↳  [AdyenCreditCardComponentOptions](adyencreditcardcomponentoptions.md)
+  ↳ [AdyenCreditCardComponentOptions](adyencreditcardcomponentoptions.md)
 
 ## Index
 
 ### Methods
 
-* [onChange](adyencomponentevents.md#onchange)
-* [onError](adyencomponentevents.md#onerror)
-
----
+* [onChange](adyencomponentevents.md#optional-onchange)
+* [onError](adyencomponentevents.md#optional-onerror)
 
 ## Methods
 
-<a id="onchange"></a>
+### `Optional` onChange
 
-### `<Optional>` onChange
+▸ **onChange**(`state`: [AdyenComponentState](../README.md#adyencomponentstate), `component`: [AdyenComponent](adyencomponent.md)): *void*
 
-▸ **onChange**(state: *[AdyenComponentState](../#adyencomponentstate)*, component: *[AdyenComponent](adyencomponent.md)*): `void`
-
-**Parameters:**
-
-| Param | Type |
-| ------ | ------ |
-| state | [AdyenComponentState](../#adyencomponentstate) |
-| component | [AdyenComponent](adyencomponent.md) |
-
-**Returns:** `void`
-
-___
-<a id="onerror"></a>
-
-### `<Optional>` onError
-
-▸ **onError**(state: *[AdyenComponentState](../#adyencomponentstate)*, component: *[AdyenComponent](adyencomponent.md)*): `void`
+Called when the shopper enters data in the card input fields.
+Here you have the option to override your main Adyen Checkout configuration.
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| state | [AdyenComponentState](../#adyencomponentstate) |
-| component | [AdyenComponent](adyencomponent.md) |
+Name | Type |
+------ | ------ |
+`state` | [AdyenComponentState](../README.md#adyencomponentstate) |
+`component` | [AdyenComponent](adyencomponent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
 
+### `Optional` onError
+
+▸ **onError**(`state`: [AdyenComponentState](../README.md#adyencomponentstate), `component`: [AdyenComponent](adyencomponent.md)): *void*
+
+Called in case of an invalid card number, invalid expiry date, or
+ incomplete field. Called again when errors are cleared.
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`state` | [AdyenComponentState](../README.md#adyencomponentstate) |
+`component` | [AdyenComponent](adyencomponent.md) |
+
+**Returns:** *void*

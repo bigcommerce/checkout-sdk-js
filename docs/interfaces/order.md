@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Order](../interfaces/order.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Order](order.md)
 
-# Order
+# Interface: Order
 
 ## Hierarchy
 
-**Order**
+* **Order**
 
 ## Index
 
@@ -28,183 +28,153 @@
 * [orderAmount](order.md#orderamount)
 * [orderAmountAsInteger](order.md#orderamountasinteger)
 * [orderId](order.md#orderid)
-* [payments](order.md#payments)
+* [payments](order.md#optional-payments)
 * [shippingCostBeforeDiscount](order.md#shippingcostbeforediscount)
 * [shippingCostTotal](order.md#shippingcosttotal)
 * [status](order.md#status)
 * [taxTotal](order.md#taxtotal)
 * [taxes](order.md#taxes)
 
----
-
 ## Properties
-
-<a id="baseamount"></a>
 
 ###  baseAmount
 
-**● baseAmount**: *`number`*
+• **baseAmount**: *number*
 
 ___
-<a id="billingaddress"></a>
 
 ###  billingAddress
 
-**● billingAddress**: *[BillingAddress](billingaddress.md)*
+• **billingAddress**: *[BillingAddress](billingaddress.md)*
 
 ___
-<a id="cartid"></a>
 
 ###  cartId
 
-**● cartId**: *`string`*
+• **cartId**: *string*
 
 ___
-<a id="coupons"></a>
 
 ###  coupons
 
-**● coupons**: *[Coupon](coupon.md)[]*
+• **coupons**: *[Coupon](coupon.md)[]*
 
 ___
-<a id="currency"></a>
 
 ###  currency
 
-**● currency**: *[Currency](currency.md)*
+• **currency**: *[Currency](currency.md)*
 
 ___
-<a id="customercanbecreated"></a>
 
 ###  customerCanBeCreated
 
-**● customerCanBeCreated**: *`boolean`*
+• **customerCanBeCreated**: *boolean*
 
 ___
-<a id="customerid"></a>
 
 ###  customerId
 
-**● customerId**: *`number`*
+• **customerId**: *number*
 
 ___
-<a id="customermessage"></a>
 
 ###  customerMessage
 
-**● customerMessage**: *`string`*
+• **customerMessage**: *string*
 
 ___
-<a id="discountamount"></a>
 
 ###  discountAmount
 
-**● discountAmount**: *`number`*
+• **discountAmount**: *number*
 
 ___
-<a id="handlingcosttotal"></a>
 
 ###  handlingCostTotal
 
-**● handlingCostTotal**: *`number`*
+• **handlingCostTotal**: *number*
 
 ___
-<a id="hasdigitalitems"></a>
 
 ###  hasDigitalItems
 
-**● hasDigitalItems**: *`boolean`*
+• **hasDigitalItems**: *boolean*
 
 ___
-<a id="iscomplete"></a>
 
 ###  isComplete
 
-**● isComplete**: *`boolean`*
+• **isComplete**: *boolean*
 
 ___
-<a id="isdownloadable"></a>
 
 ###  isDownloadable
 
-**● isDownloadable**: *`boolean`*
+• **isDownloadable**: *boolean*
 
 ___
-<a id="istaxincluded"></a>
 
 ###  isTaxIncluded
 
-**● isTaxIncluded**: *`boolean`*
+• **isTaxIncluded**: *boolean*
 
 ___
-<a id="lineitems"></a>
 
 ###  lineItems
 
-**● lineItems**: *[LineItemMap](lineitemmap.md)*
+• **lineItems**: *[LineItemMap](lineitemmap.md)*
 
 ___
-<a id="orderamount"></a>
 
 ###  orderAmount
 
-**● orderAmount**: *`number`*
+• **orderAmount**: *number*
 
 ___
-<a id="orderamountasinteger"></a>
 
 ###  orderAmountAsInteger
 
-**● orderAmountAsInteger**: *`number`*
+• **orderAmountAsInteger**: *number*
 
 ___
-<a id="orderid"></a>
 
 ###  orderId
 
-**● orderId**: *`number`*
+• **orderId**: *number*
 
 ___
-<a id="payments"></a>
 
-### `<Optional>` payments
+### `Optional` payments
 
-**● payments**: *[OrderPayments](../#orderpayments)*
+• **payments**? : *[OrderPayments](../README.md#orderpayments)*
 
 ___
-<a id="shippingcostbeforediscount"></a>
 
 ###  shippingCostBeforeDiscount
 
-**● shippingCostBeforeDiscount**: *`number`*
+• **shippingCostBeforeDiscount**: *number*
 
 ___
-<a id="shippingcosttotal"></a>
 
 ###  shippingCostTotal
 
-**● shippingCostTotal**: *`number`*
+• **shippingCostTotal**: *number*
 
 ___
-<a id="status"></a>
 
 ###  status
 
-**● status**: *`string`*
+• **status**: *string*
 
 ___
-<a id="taxtotal"></a>
 
 ###  taxTotal
 
-**● taxTotal**: *`number`*
+• **taxTotal**: *number*
 
 ___
-<a id="taxes"></a>
 
 ###  taxes
 
-**● taxes**: *[Tax](tax.md)[]*
-
-___
-
+• **taxes**: *[Tax](tax.md)[]*

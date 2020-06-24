@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CustomerCredentials](../interfaces/customercredentials.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CustomerCredentials](customercredentials.md)
 
-# CustomerCredentials
+# Interface: CustomerCredentials
 
 ## Hierarchy
 
-**CustomerCredentials**
+* **CustomerCredentials**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [email](customercredentials.md#email)
 * [password](customercredentials.md#password)
 
----
-
 ## Properties
-
-<a id="email"></a>
 
 ###  email
 
-**● email**: *`string`*
+• **email**: *string*
 
 ___
-<a id="password"></a>
 
 ###  password
 
-**● password**: *`string`*
-
-___
-
+• **password**: *string*

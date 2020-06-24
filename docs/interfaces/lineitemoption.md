@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [LineItemOption](../interfaces/lineitemoption.md)
+[@bigcommerce/checkout-sdk](../README.md) › [LineItemOption](lineitemoption.md)
 
-# LineItemOption
+# Interface: LineItemOption
 
 ## Hierarchy
 
-**LineItemOption**
+* **LineItemOption**
 
 ## Index
 
@@ -15,37 +15,26 @@
 * [value](lineitemoption.md#value)
 * [valueId](lineitemoption.md#valueid)
 
----
-
 ## Properties
-
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
 
 ___
-<a id="nameid"></a>
 
 ###  nameId
 
-**● nameId**: *`number`*
+• **nameId**: *number*
 
 ___
-<a id="value"></a>
 
 ###  value
 
-**● value**: *`string`*
+• **value**: *string*
 
 ___
-<a id="valueid"></a>
 
 ###  valueId
 
-**● valueId**: * `number` &#124; `null`
-*
-
-___
-
+• **valueId**: *number | null*

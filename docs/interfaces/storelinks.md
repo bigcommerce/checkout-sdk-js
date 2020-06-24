@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [StoreLinks](../interfaces/storelinks.md)
+[@bigcommerce/checkout-sdk](../README.md) › [StoreLinks](storelinks.md)
 
-# StoreLinks
+# Interface: StoreLinks
 
 ## Hierarchy
 
-**StoreLinks**
+* **StoreLinks**
 
 ## Index
 
@@ -18,57 +18,44 @@
 * [orderConfirmationLink](storelinks.md#orderconfirmationlink)
 * [siteLink](storelinks.md#sitelink)
 
----
-
 ## Properties
-
-<a id="cartlink"></a>
 
 ###  cartLink
 
-**● cartLink**: *`string`*
+• **cartLink**: *string*
 
 ___
-<a id="checkoutlink"></a>
 
 ###  checkoutLink
 
-**● checkoutLink**: *`string`*
+• **checkoutLink**: *string*
 
 ___
-<a id="createaccountlink"></a>
 
 ###  createAccountLink
 
-**● createAccountLink**: *`string`*
+• **createAccountLink**: *string*
 
 ___
-<a id="forgotpasswordlink"></a>
 
 ###  forgotPasswordLink
 
-**● forgotPasswordLink**: *`string`*
+• **forgotPasswordLink**: *string*
 
 ___
-<a id="loginlink"></a>
 
 ###  loginLink
 
-**● loginLink**: *`string`*
+• **loginLink**: *string*
 
 ___
-<a id="orderconfirmationlink"></a>
 
 ###  orderConfirmationLink
 
-**● orderConfirmationLink**: *`string`*
+• **orderConfirmationLink**: *string*
 
 ___
-<a id="sitelink"></a>
 
 ###  siteLink
 
-**● siteLink**: *`string`*
-
-___
-
+• **siteLink**: *string*

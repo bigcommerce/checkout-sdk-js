@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutFrameErrorEvent](../interfaces/embeddedcheckoutframeerrorevent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutFrameErrorEvent](embeddedcheckoutframeerrorevent.md)
 
-# EmbeddedCheckoutFrameErrorEvent
+# Interface: EmbeddedCheckoutFrameErrorEvent
 
 ## Hierarchy
 
-**EmbeddedCheckoutFrameErrorEvent**
+* **EmbeddedCheckoutFrameErrorEvent**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [payload](embeddedcheckoutframeerrorevent.md#payload)
 * [type](embeddedcheckoutframeerrorevent.md#type)
 
----
-
 ## Properties
-
-<a id="payload"></a>
 
 ###  payload
 
-**● payload**: *[EmbeddedCheckoutError](embeddedcheckouterror.md)*
+• **payload**: *[EmbeddedCheckoutError](embeddedcheckouterror.md)*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[FrameError](../enums/embeddedcheckouteventtype.md#frameerror)*
-
-___
-
+• **type**: *[FrameError](../enums/embeddedcheckouteventtype.md#frameerror)*

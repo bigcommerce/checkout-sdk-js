@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Coupon](../interfaces/coupon.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Coupon](coupon.md)
 
-# Coupon
+# Interface: Coupon
 
 ## Hierarchy
 
-**Coupon**
+* **Coupon**
 
 ## Index
 
@@ -16,43 +16,32 @@
 * [displayName](coupon.md#displayname)
 * [id](coupon.md#id)
 
----
-
 ## Properties
-
-<a id="code"></a>
 
 ###  code
 
-**● code**: *`string`*
+• **code**: *string*
 
 ___
-<a id="coupontype"></a>
 
 ###  couponType
 
-**● couponType**: *`string`*
+• **couponType**: *string*
 
 ___
-<a id="discountedamount"></a>
 
 ###  discountedAmount
 
-**● discountedAmount**: *`number`*
+• **discountedAmount**: *number*
 
 ___
-<a id="displayname"></a>
 
 ###  displayName
 
-**● displayName**: *`string`*
+• **displayName**: *string*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
-
-___
-
+• **id**: *string*

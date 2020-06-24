@@ -1,27 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedContentOptions](../interfaces/embeddedcontentoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedContentOptions](embeddedcontentoptions.md)
 
-# EmbeddedContentOptions
+# Interface: EmbeddedContentOptions
 
 ## Hierarchy
 
-**EmbeddedContentOptions**
+* **EmbeddedContentOptions**
 
 ## Index
 
 ### Properties
 
-* [contentId](embeddedcontentoptions.md#contentid)
-
----
+* [contentId](embeddedcontentoptions.md#optional-contentid)
 
 ## Properties
 
-<a id="contentid"></a>
+### `Optional` contentId
 
-### `<Optional>` contentId
-
-**● contentId**: * `undefined` &#124; `string`
-*
-
-___
-
+• **contentId**? : *undefined | string*

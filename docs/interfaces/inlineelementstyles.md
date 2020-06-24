@@ -1,69 +1,53 @@
-[@bigcommerce/checkout-sdk](../README.md) > [InlineElementStyles](../interfaces/inlineelementstyles.md)
+[@bigcommerce/checkout-sdk](../README.md) › [InlineElementStyles](inlineelementstyles.md)
 
-# InlineElementStyles
+# Interface: InlineElementStyles
 
 ## Hierarchy
 
-**InlineElementStyles**
+* **InlineElementStyles**
 
-↳  [BlockElementStyles](blockelementstyles.md)
+  ↳ [BlockElementStyles](blockelementstyles.md)
 
-↳  [LabelStyles](labelstyles.md)
+  ↳ [LabelStyles](labelstyles.md)
 
-↳  [LinkStyles](linkstyles.md)
+  ↳ [LinkStyles](linkstyles.md)
 
 ## Index
 
 ### Properties
 
-* [color](inlineelementstyles.md#color)
-* [fontFamily](inlineelementstyles.md#fontfamily)
-* [fontWeight](inlineelementstyles.md#fontweight)
-* [letterSpacing](inlineelementstyles.md#letterspacing)
-* [lineHeight](inlineelementstyles.md#lineheight)
-
----
+* [color](inlineelementstyles.md#optional-color)
+* [fontFamily](inlineelementstyles.md#optional-fontfamily)
+* [fontWeight](inlineelementstyles.md#optional-fontweight)
+* [letterSpacing](inlineelementstyles.md#optional-letterspacing)
+* [lineHeight](inlineelementstyles.md#optional-lineheight)
 
 ## Properties
 
-<a id="color"></a>
+### `Optional` color
 
-### `<Optional>` color
-
-**● color**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontfamily"></a>
-
-### `<Optional>` fontFamily
-
-**● fontFamily**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontweight"></a>
-
-### `<Optional>` fontWeight
-
-**● fontWeight**: * `undefined` &#124; `string`
-*
-
-___
-<a id="letterspacing"></a>
-
-### `<Optional>` letterSpacing
-
-**● letterSpacing**: * `undefined` &#124; `string`
-*
-
-___
-<a id="lineheight"></a>
-
-### `<Optional>` lineHeight
-
-**● lineHeight**: * `undefined` &#124; `string`
-*
+• **color**? : *undefined | string*
 
 ___
 
+### `Optional` fontFamily
+
+• **fontFamily**? : *undefined | string*
+
+___
+
+### `Optional` fontWeight
+
+• **fontWeight**? : *undefined | string*
+
+___
+
+### `Optional` letterSpacing
+
+• **letterSpacing**? : *undefined | string*
+
+___
+
+### `Optional` lineHeight
+
+• **lineHeight**? : *undefined | string*

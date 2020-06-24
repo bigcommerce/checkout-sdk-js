@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Cart](../interfaces/cart.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Cart](cart.md)
 
-# Cart
+# Interface: Cart
 
 ## Hierarchy
 
-**Cart**
+* **Cart**
 
 ## Index
 
@@ -24,99 +24,80 @@
 * [lineItems](cart.md#lineitems)
 * [updatedTime](cart.md#updatedtime)
 
----
-
 ## Properties
-
-<a id="baseamount"></a>
 
 ###  baseAmount
 
-**● baseAmount**: *`number`*
+• **baseAmount**: *number*
 
 ___
-<a id="cartamount"></a>
 
 ###  cartAmount
 
-**● cartAmount**: *`number`*
+• **cartAmount**: *number*
 
 ___
-<a id="coupons"></a>
 
 ###  coupons
 
-**● coupons**: *[Coupon](coupon.md)[]*
+• **coupons**: *[Coupon](coupon.md)[]*
 
 ___
-<a id="createdtime"></a>
 
 ###  createdTime
 
-**● createdTime**: *`string`*
+• **createdTime**: *string*
 
 ___
-<a id="currency"></a>
 
 ###  currency
 
-**● currency**: *[Currency](currency.md)*
+• **currency**: *[Currency](currency.md)*
 
 ___
-<a id="customerid"></a>
 
 ###  customerId
 
-**● customerId**: *`number`*
+• **customerId**: *number*
 
 ___
-<a id="discountamount"></a>
 
 ###  discountAmount
 
-**● discountAmount**: *`number`*
+• **discountAmount**: *number*
 
 ___
-<a id="discounts"></a>
 
 ###  discounts
 
-**● discounts**: *[Discount](discount.md)[]*
+• **discounts**: *[Discount](discount.md)[]*
 
 ___
-<a id="email"></a>
 
 ###  email
 
-**● email**: *`string`*
+• **email**: *string*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
+• **id**: *string*
 
 ___
-<a id="istaxincluded"></a>
 
 ###  isTaxIncluded
 
-**● isTaxIncluded**: *`boolean`*
+• **isTaxIncluded**: *boolean*
 
 ___
-<a id="lineitems"></a>
 
 ###  lineItems
 
-**● lineItems**: *[LineItemMap](lineitemmap.md)*
+• **lineItems**: *[LineItemMap](lineitemmap.md)*
 
 ___
-<a id="updatedtime"></a>
 
 ###  updatedTime
 
-**● updatedTime**: *`string`*
-
-___
-
+• **updatedTime**: *string*

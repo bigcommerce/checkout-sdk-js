@@ -1,53 +1,50 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutEventType](../enums/embeddedcheckouteventtype.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutEventType](embeddedcheckouteventtype.md)
 
-# EmbeddedCheckoutEventType
+# Enumeration: EmbeddedCheckoutEventType
 
 ## Index
 
----
+### Enumeration members
+
+* [CheckoutComplete](embeddedcheckouteventtype.md#checkoutcomplete)
+* [CheckoutError](embeddedcheckouteventtype.md#checkouterror)
+* [CheckoutLoaded](embeddedcheckouteventtype.md#checkoutloaded)
+* [FrameError](embeddedcheckouteventtype.md#frameerror)
+* [FrameLoaded](embeddedcheckouteventtype.md#frameloaded)
+* [SignedOut](embeddedcheckouteventtype.md#signedout)
 
 ## Enumeration members
 
-<a id="checkoutcomplete"></a>
-
 ###  CheckoutComplete
 
-**CheckoutComplete**:  = "CHECKOUT_COMPLETE"
+• **CheckoutComplete**: = "CHECKOUT_COMPLETE"
 
 ___
-<a id="checkouterror"></a>
 
 ###  CheckoutError
 
-**CheckoutError**:  = "CHECKOUT_ERROR"
+• **CheckoutError**: = "CHECKOUT_ERROR"
 
 ___
-<a id="checkoutloaded"></a>
 
 ###  CheckoutLoaded
 
-**CheckoutLoaded**:  = "CHECKOUT_LOADED"
+• **CheckoutLoaded**: = "CHECKOUT_LOADED"
 
 ___
-<a id="frameerror"></a>
 
 ###  FrameError
 
-**FrameError**:  = "FRAME_ERROR"
+• **FrameError**: = "FRAME_ERROR"
 
 ___
-<a id="frameloaded"></a>
 
 ###  FrameLoaded
 
-**FrameLoaded**:  = "FRAME_LOADED"
+• **FrameLoaded**: = "FRAME_LOADED"
 
 ___
-<a id="signedout"></a>
 
 ###  SignedOut
 
-**SignedOut**:  = "SIGNED_OUT"
-
-___
-
+• **SignedOut**: = "SIGNED_OUT"

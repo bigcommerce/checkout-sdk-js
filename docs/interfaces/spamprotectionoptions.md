@@ -1,98 +1,97 @@
-[@bigcommerce/checkout-sdk](../README.md) > [SpamProtectionOptions](../interfaces/spamprotectionoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [SpamProtectionOptions](spamprotectionoptions.md)
 
-# SpamProtectionOptions
+# Interface: SpamProtectionOptions
+
+The set of options for configuring any requests related to spam protection.
 
 ## Hierarchy
 
- `RequestOptions`
+* RequestOptions
 
-**↳ SpamProtectionOptions**
+  ↳ **SpamProtectionOptions**
 
 ## Index
 
 ### Properties
 
-* [body](spamprotectionoptions.md#body)
-* [cache](spamprotectionoptions.md#cache)
+* [body](spamprotectionoptions.md#optional-body)
+* [cache](spamprotectionoptions.md#optional-cache)
 * [containerId](spamprotectionoptions.md#containerid)
-* [credentials](spamprotectionoptions.md#credentials)
-* [encodeParams](spamprotectionoptions.md#encodeparams)
-* [headers](spamprotectionoptions.md#headers)
-* [method](spamprotectionoptions.md#method)
-* [params](spamprotectionoptions.md#params)
-* [timeout](spamprotectionoptions.md#timeout)
-
----
+* [credentials](spamprotectionoptions.md#optional-credentials)
+* [encodeParams](spamprotectionoptions.md#optional-encodeparams)
+* [headers](spamprotectionoptions.md#optional-headers)
+* [method](spamprotectionoptions.md#optional-method)
+* [params](spamprotectionoptions.md#optional-params)
+* [timeout](spamprotectionoptions.md#optional-timeout)
 
 ## Properties
 
-<a id="body"></a>
+### `Optional` body
 
-### `<Optional>` body
+• **body**? : *any*
 
-**● body**: *`any`*
-
-___
-<a id="cache"></a>
-
-### `<Optional>` cache
-
-**● cache**: * `undefined` &#124; `false` &#124; `true`
-*
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[body](spamprotectionoptions.md#optional-body)*
 
 ___
-<a id="containerid"></a>
+
+### `Optional` cache
+
+• **cache**? : *undefined | false | true*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[cache](spamprotectionoptions.md#optional-cache)*
+
+___
 
 ###  containerId
 
-**● containerId**: *`string`*
+• **containerId**: *string*
 
-___
-<a id="credentials"></a>
-
-### `<Optional>` credentials
-
-**● credentials**: * `undefined` &#124; `false` &#124; `true`
-*
-
-___
-<a id="encodeparams"></a>
-
-### `<Optional>` encodeParams
-
-**● encodeParams**: * `undefined` &#124; `false` &#124; `true`
-*
-
-___
-<a id="headers"></a>
-
-### `<Optional>` headers
-
-**● headers**: *`Headers`*
-
-___
-<a id="method"></a>
-
-### `<Optional>` method
-
-**● method**: * `undefined` &#124; `string`
-*
-
-___
-<a id="params"></a>
-
-### `<Optional>` params
-
-**● params**: * `undefined` &#124; `object`
-*
-
-___
-<a id="timeout"></a>
-
-### `<Optional>` timeout
-
-**● timeout**: * `Timeout` &#124; `Promise`<`any`>
-*
+The container ID where the spam protection should be rendered.
 
 ___
 
+### `Optional` credentials
+
+• **credentials**? : *undefined | false | true*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[credentials](spamprotectionoptions.md#optional-credentials)*
+
+___
+
+### `Optional` encodeParams
+
+• **encodeParams**? : *undefined | false | true*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[encodeParams](spamprotectionoptions.md#optional-encodeparams)*
+
+___
+
+### `Optional` headers
+
+• **headers**? : *Headers*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[headers](spamprotectionoptions.md#optional-headers)*
+
+___
+
+### `Optional` method
+
+• **method**? : *undefined | string*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[method](spamprotectionoptions.md#optional-method)*
+
+___
+
+### `Optional` params
+
+• **params**? : *undefined | object*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[params](spamprotectionoptions.md#optional-params)*
+
+___
+
+### `Optional` timeout
+
+• **timeout**? : *Timeout | Promise‹any›*
+
+*Inherited from [SpamProtectionOptions](spamprotectionoptions.md).[timeout](spamprotectionoptions.md#optional-timeout)*

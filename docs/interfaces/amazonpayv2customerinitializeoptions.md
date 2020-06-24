@@ -1,10 +1,17 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayV2CustomerInitializeOptions](../interfaces/amazonpayv2customerinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayV2CustomerInitializeOptions](amazonpayv2customerinitializeoptions.md)
 
-# AmazonPayV2CustomerInitializeOptions
+# Interface: AmazonPayV2CustomerInitializeOptions
+
+A set of options that are required to initialize the customer step of
+checkout in order to support AmazonPayV2.
+
+When AmazonPayV2 is initialized, a sign-in button will be inserted into the
+DOM. When the customer clicks on it, they will be redirected to Amazon to
+sign in.
 
 ## Hierarchy
 
-**AmazonPayV2CustomerInitializeOptions**
+* **AmazonPayV2CustomerInitializeOptions**
 
 ## Index
 
@@ -12,15 +19,12 @@
 
 * [container](amazonpayv2customerinitializeoptions.md#container)
 
----
-
 ## Properties
-
-<a id="container"></a>
 
 ###  container
 
-**● container**: *`string`*
+• **container**: *string*
 
-___
+The ID of a container which the sign-in button should insert into.
 
+**`alpha`**

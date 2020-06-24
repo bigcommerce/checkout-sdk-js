@@ -1,44 +1,35 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayV2CheckoutSession](../interfaces/amazonpayv2checkoutsession.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayV2CheckoutSession](amazonpayv2checkoutsession.md)
 
-# AmazonPayV2CheckoutSession
+# Interface: AmazonPayV2CheckoutSession
+
+**`alpha`** 
 
 ## Hierarchy
 
-**AmazonPayV2CheckoutSession**
+* **AmazonPayV2CheckoutSession**
 
 ## Index
 
 ### Properties
 
-* [extractAmazonCheckoutSessionId](amazonpayv2checkoutsession.md#extractamazoncheckoutsessionid)
-* [method](amazonpayv2checkoutsession.md#method)
+* [extractAmazonCheckoutSessionId](amazonpayv2checkoutsession.md#optional-extractamazoncheckoutsessionid)
+* [method](amazonpayv2checkoutsession.md#optional-method)
 * [url](amazonpayv2checkoutsession.md#url)
-
----
 
 ## Properties
 
-<a id="extractamazoncheckoutsessionid"></a>
+### `Optional` extractAmazonCheckoutSessionId
 
-### `<Optional>` extractAmazonCheckoutSessionId
-
-**● extractAmazonCheckoutSessionId**: * `undefined` &#124; `string`
-*
+• **extractAmazonCheckoutSessionId**? : *undefined | string*
 
 ___
-<a id="method"></a>
 
-### `<Optional>` method
+### `Optional` method
 
-**● method**: * `undefined` &#124; `string`
-*
+• **method**? : *undefined | string*
 
 ___
-<a id="url"></a>
 
 ###  url
 
-**● url**: *`string`*
-
-___
-
+• **url**: *string*

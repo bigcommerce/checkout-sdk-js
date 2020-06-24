@@ -1,137 +1,110 @@
-[@bigcommerce/checkout-sdk](../README.md) > [FormField](../interfaces/formfield.md)
+[@bigcommerce/checkout-sdk](../README.md) › [FormField](formfield.md)
 
-# FormField
+# Interface: FormField
 
 ## Hierarchy
 
-**FormField**
+* **FormField**
 
 ## Index
 
 ### Properties
 
 * [custom](formfield.md#custom)
-* [default](formfield.md#default)
-* [fieldType](formfield.md#fieldtype)
+* [default](formfield.md#optional-default)
+* [fieldType](formfield.md#optional-fieldtype)
 * [id](formfield.md#id)
-* [itemtype](formfield.md#itemtype)
+* [itemtype](formfield.md#optional-itemtype)
 * [label](formfield.md#label)
-* [max](formfield.md#max)
-* [maxLength](formfield.md#maxlength)
-* [min](formfield.md#min)
+* [max](formfield.md#optional-max)
+* [maxLength](formfield.md#optional-maxlength)
+* [min](formfield.md#optional-min)
 * [name](formfield.md#name)
-* [options](formfield.md#options)
+* [options](formfield.md#optional-options)
 * [required](formfield.md#required)
-* [secret](formfield.md#secret)
-* [type](formfield.md#type)
-
----
+* [secret](formfield.md#optional-secret)
+* [type](formfield.md#optional-type)
 
 ## Properties
 
-<a id="custom"></a>
-
 ###  custom
 
-**● custom**: *`boolean`*
+• **custom**: *boolean*
 
 ___
-<a id="default"></a>
 
-### `<Optional>` default
+### `Optional` default
 
-**● default**: * `undefined` &#124; `string`
-*
+• **default**? : *undefined | string*
 
 ___
-<a id="fieldtype"></a>
 
-### `<Optional>` fieldType
+### `Optional` fieldType
 
-**● fieldType**: *[FormFieldFieldType](../#formfieldfieldtype)*
+• **fieldType**? : *[FormFieldFieldType](../README.md#formfieldfieldtype)*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
+• **id**: *string*
 
 ___
-<a id="itemtype"></a>
 
-### `<Optional>` itemtype
+### `Optional` itemtype
 
-**● itemtype**: * `undefined` &#124; `string`
-*
+• **itemtype**? : *undefined | string*
 
 ___
-<a id="label"></a>
 
 ###  label
 
-**● label**: *`string`*
+• **label**: *string*
 
 ___
-<a id="max"></a>
 
-### `<Optional>` max
+### `Optional` max
 
-**● max**: * `string` &#124; `number`
-*
+• **max**? : *string | number*
 
 ___
-<a id="maxlength"></a>
 
-### `<Optional>` maxLength
+### `Optional` maxLength
 
-**● maxLength**: * `undefined` &#124; `number`
-*
+• **maxLength**? : *undefined | number*
 
 ___
-<a id="min"></a>
 
-### `<Optional>` min
+### `Optional` min
 
-**● min**: * `string` &#124; `number`
-*
+• **min**? : *string | number*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: * `string` &#124; [AddressKey](../#addresskey)
-*
+• **name**: *string | [AddressKey](../README.md#addresskey)*
 
 ___
-<a id="options"></a>
 
-### `<Optional>` options
+### `Optional` options
 
-**● options**: *[FormFieldOptions](formfieldoptions.md)*
+• **options**? : *[FormFieldOptions](formfieldoptions.md)*
 
 ___
-<a id="required"></a>
 
 ###  required
 
-**● required**: *`boolean`*
-
-___
-<a id="secret"></a>
-
-### `<Optional>` secret
-
-**● secret**: * `undefined` &#124; `false` &#124; `true`
-*
-
-___
-<a id="type"></a>
-
-### `<Optional>` type
-
-**● type**: *[FormFieldType](../#formfieldtype)*
+• **required**: *boolean*
 
 ___
 
+### `Optional` secret
+
+• **secret**? : *undefined | false | true*
+
+___
+
+### `Optional` type
+
+• **type**? : *[FormFieldType](../README.md#formfieldtype)*

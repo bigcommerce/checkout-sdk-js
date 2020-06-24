@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [MasterpassCustomerInitializeOptions](../interfaces/masterpasscustomerinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [MasterpassCustomerInitializeOptions](masterpasscustomerinitializeoptions.md)
 
-# MasterpassCustomerInitializeOptions
+# Interface: MasterpassCustomerInitializeOptions
 
 ## Hierarchy
 
-**MasterpassCustomerInitializeOptions**
+* **MasterpassCustomerInitializeOptions**
 
 ## Index
 
@@ -12,15 +12,10 @@
 
 * [container](masterpasscustomerinitializeoptions.md#container)
 
----
-
 ## Properties
-
-<a id="container"></a>
 
 ###  container
 
-**● container**: *`string`*
+• **container**: *string*
 
-___
-
+The ID of a container which the checkout button should be inserted into.

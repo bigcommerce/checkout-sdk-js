@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Tax](../interfaces/tax.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Tax](tax.md)
 
-# Tax
+# Interface: Tax
 
 ## Hierarchy
 
-**Tax**
+* **Tax**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [amount](tax.md#amount)
 * [name](tax.md#name)
 
----
-
 ## Properties
-
-<a id="amount"></a>
 
 ###  amount
 
-**● amount**: *`number`*
+• **amount**: *number*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
-
-___
-
+• **name**: *string*

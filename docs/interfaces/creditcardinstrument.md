@@ -1,92 +1,74 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CreditCardInstrument](../interfaces/creditcardinstrument.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CreditCardInstrument](creditcardinstrument.md)
 
-# CreditCardInstrument
+# Interface: CreditCardInstrument
 
 ## Hierarchy
 
-**CreditCardInstrument**
+* **CreditCardInstrument**
 
 ## Index
 
 ### Properties
 
-* [ccCustomerCode](creditcardinstrument.md#cccustomercode)
-* [ccCvv](creditcardinstrument.md#cccvv)
+* [ccCustomerCode](creditcardinstrument.md#optional-cccustomercode)
+* [ccCvv](creditcardinstrument.md#optional-cccvv)
 * [ccExpiry](creditcardinstrument.md#ccexpiry)
 * [ccName](creditcardinstrument.md#ccname)
 * [ccNumber](creditcardinstrument.md#ccnumber)
-* [extraData](creditcardinstrument.md#extradata)
-* [shouldSaveInstrument](creditcardinstrument.md#shouldsaveinstrument)
-* [threeDSecure](creditcardinstrument.md#threedsecure)
-
----
+* [extraData](creditcardinstrument.md#optional-extradata)
+* [shouldSaveInstrument](creditcardinstrument.md#optional-shouldsaveinstrument)
+* [threeDSecure](creditcardinstrument.md#optional-threedsecure)
 
 ## Properties
 
-<a id="cccustomercode"></a>
+### `Optional` ccCustomerCode
 
-### `<Optional>` ccCustomerCode
-
-**● ccCustomerCode**: * `undefined` &#124; `string`
-*
+• **ccCustomerCode**? : *undefined | string*
 
 ___
-<a id="cccvv"></a>
 
-### `<Optional>` ccCvv
+### `Optional` ccCvv
 
-**● ccCvv**: * `undefined` &#124; `string`
-*
+• **ccCvv**? : *undefined | string*
 
 ___
-<a id="ccexpiry"></a>
 
 ###  ccExpiry
 
-**● ccExpiry**: *`object`*
+• **ccExpiry**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- month: `string`
+* **month**: *string*
 
- year: `string`
+* **year**: *string*
 
 ___
-<a id="ccname"></a>
 
 ###  ccName
 
-**● ccName**: *`string`*
+• **ccName**: *string*
 
 ___
-<a id="ccnumber"></a>
 
 ###  ccNumber
 
-**● ccNumber**: *`string`*
-
-___
-<a id="extradata"></a>
-
-### `<Optional>` extraData
-
-**● extraData**: *`any`*
-
-___
-<a id="shouldsaveinstrument"></a>
-
-### `<Optional>` shouldSaveInstrument
-
-**● shouldSaveInstrument**: * `undefined` &#124; `false` &#124; `true`
-*
-
-___
-<a id="threedsecure"></a>
-
-### `<Optional>` threeDSecure
-
-**● threeDSecure**: * [ThreeDSecure](threedsecure.md) &#124; [ThreeDSecureToken](threedsecuretoken.md)
-*
+• **ccNumber**: *string*
 
 ___
 
+### `Optional` extraData
+
+• **extraData**? : *any*
+
+___
+
+### `Optional` shouldSaveInstrument
+
+• **shouldSaveInstrument**? : *undefined | false | true*
+
+___
+
+### `Optional` threeDSecure
+
+• **threeDSecure**? : *[ThreeDSecure](threedsecure.md) | [ThreeDSecureToken](threedsecuretoken.md)*

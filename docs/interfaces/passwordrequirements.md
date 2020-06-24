@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [PasswordRequirements](../interfaces/passwordrequirements.md)
+[@bigcommerce/checkout-sdk](../README.md) › [PasswordRequirements](passwordrequirements.md)
 
-# PasswordRequirements
+# Interface: PasswordRequirements
 
 ## Hierarchy
 
-**PasswordRequirements**
+* **PasswordRequirements**
 
 ## Index
 
@@ -15,36 +15,26 @@
 * [minlength](passwordrequirements.md#minlength)
 * [numeric](passwordrequirements.md#numeric)
 
----
-
 ## Properties
-
-<a id="alpha"></a>
 
 ###  alpha
 
-**● alpha**: *`string`*
+• **alpha**: *string*
 
 ___
-<a id="error"></a>
 
 ###  error
 
-**● error**: *`string`*
+• **error**: *string*
 
 ___
-<a id="minlength"></a>
 
 ###  minlength
 
-**● minlength**: *`number`*
+• **minlength**: *number*
 
 ___
-<a id="numeric"></a>
 
 ###  numeric
 
-**● numeric**: *`string`*
-
-___
-
+• **numeric**: *string*

@@ -1,27 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [BodyStyles](../interfaces/bodystyles.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BodyStyles](bodystyles.md)
 
-# BodyStyles
+# Interface: BodyStyles
 
 ## Hierarchy
 
-**BodyStyles**
+* **BodyStyles**
 
 ## Index
 
 ### Properties
 
-* [backgroundColor](bodystyles.md#backgroundcolor)
-
----
+* [backgroundColor](bodystyles.md#optional-backgroundcolor)
 
 ## Properties
 
-<a id="backgroundcolor"></a>
+### `Optional` backgroundColor
 
-### `<Optional>` backgroundColor
-
-**● backgroundColor**: * `undefined` &#124; `string`
-*
-
-___
-
+• **backgroundColor**? : *undefined | string*

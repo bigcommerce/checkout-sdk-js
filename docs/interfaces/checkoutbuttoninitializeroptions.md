@@ -1,27 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutButtonInitializerOptions](../interfaces/checkoutbuttoninitializeroptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutButtonInitializerOptions](checkoutbuttoninitializeroptions.md)
 
-# CheckoutButtonInitializerOptions
+# Interface: CheckoutButtonInitializerOptions
 
 ## Hierarchy
 
-**CheckoutButtonInitializerOptions**
+* **CheckoutButtonInitializerOptions**
 
 ## Index
 
 ### Properties
 
-* [host](checkoutbuttoninitializeroptions.md#host)
-
----
+* [host](checkoutbuttoninitializeroptions.md#optional-host)
 
 ## Properties
 
-<a id="host"></a>
+### `Optional` host
 
-### `<Optional>` host
-
-**● host**: * `undefined` &#124; `string`
-*
-
-___
-
+• **host**? : *undefined | string*

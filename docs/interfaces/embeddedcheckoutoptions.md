@@ -1,144 +1,126 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutOptions](../interfaces/embeddedcheckoutoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutOptions](embeddedcheckoutoptions.md)
 
-# EmbeddedCheckoutOptions
+# Interface: EmbeddedCheckoutOptions
 
 ## Hierarchy
 
-**EmbeddedCheckoutOptions**
+* **EmbeddedCheckoutOptions**
 
 ## Index
 
 ### Properties
 
 * [containerId](embeddedcheckoutoptions.md#containerid)
-* [styles](embeddedcheckoutoptions.md#styles)
+* [styles](embeddedcheckoutoptions.md#optional-styles)
 * [url](embeddedcheckoutoptions.md#url)
 
 ### Methods
 
-* [onComplete](embeddedcheckoutoptions.md#oncomplete)
-* [onError](embeddedcheckoutoptions.md#onerror)
-* [onFrameError](embeddedcheckoutoptions.md#onframeerror)
-* [onFrameLoad](embeddedcheckoutoptions.md#onframeload)
-* [onLoad](embeddedcheckoutoptions.md#onload)
-* [onSignOut](embeddedcheckoutoptions.md#onsignout)
-
----
+* [onComplete](embeddedcheckoutoptions.md#optional-oncomplete)
+* [onError](embeddedcheckoutoptions.md#optional-onerror)
+* [onFrameError](embeddedcheckoutoptions.md#optional-onframeerror)
+* [onFrameLoad](embeddedcheckoutoptions.md#optional-onframeload)
+* [onLoad](embeddedcheckoutoptions.md#optional-onload)
+* [onSignOut](embeddedcheckoutoptions.md#optional-onsignout)
 
 ## Properties
 
-<a id="containerid"></a>
-
 ###  containerId
 
-**● containerId**: *`string`*
+• **containerId**: *string*
 
 ___
-<a id="styles"></a>
 
-### `<Optional>` styles
+### `Optional` styles
 
-**● styles**: *[EmbeddedCheckoutStyles](embeddedcheckoutstyles.md)*
+• **styles**? : *[EmbeddedCheckoutStyles](embeddedcheckoutstyles.md)*
 
 ___
-<a id="url"></a>
 
 ###  url
 
-**● url**: *`string`*
-
-___
+• **url**: *string*
 
 ## Methods
 
-<a id="oncomplete"></a>
+### `Optional` onComplete
 
-### `<Optional>` onComplete
-
-▸ **onComplete**(event: *[EmbeddedCheckoutCompleteEvent](embeddedcheckoutcompleteevent.md)*): `void`
+▸ **onComplete**(`event`: [EmbeddedCheckoutCompleteEvent](embeddedcheckoutcompleteevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutCompleteEvent](embeddedcheckoutcompleteevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutCompleteEvent](embeddedcheckoutcompleteevent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onerror"></a>
 
-### `<Optional>` onError
+### `Optional` onError
 
-▸ **onError**(event: *[EmbeddedCheckoutErrorEvent](embeddedcheckouterrorevent.md)*): `void`
+▸ **onError**(`event`: [EmbeddedCheckoutErrorEvent](embeddedcheckouterrorevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutErrorEvent](embeddedcheckouterrorevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutErrorEvent](embeddedcheckouterrorevent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onframeerror"></a>
 
-### `<Optional>` onFrameError
+### `Optional` onFrameError
 
-▸ **onFrameError**(event: *[EmbeddedCheckoutFrameErrorEvent](embeddedcheckoutframeerrorevent.md)*): `void`
+▸ **onFrameError**(`event`: [EmbeddedCheckoutFrameErrorEvent](embeddedcheckoutframeerrorevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutFrameErrorEvent](embeddedcheckoutframeerrorevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutFrameErrorEvent](embeddedcheckoutframeerrorevent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onframeload"></a>
 
-### `<Optional>` onFrameLoad
+### `Optional` onFrameLoad
 
-▸ **onFrameLoad**(event: *[EmbeddedCheckoutFrameLoadedEvent](embeddedcheckoutframeloadedevent.md)*): `void`
+▸ **onFrameLoad**(`event`: [EmbeddedCheckoutFrameLoadedEvent](embeddedcheckoutframeloadedevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutFrameLoadedEvent](embeddedcheckoutframeloadedevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutFrameLoadedEvent](embeddedcheckoutframeloadedevent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onload"></a>
 
-### `<Optional>` onLoad
+### `Optional` onLoad
 
-▸ **onLoad**(event: *[EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md)*): `void`
+▸ **onLoad**(`event`: [EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onsignout"></a>
 
-### `<Optional>` onSignOut
+### `Optional` onSignOut
 
-▸ **onSignOut**(event: *[EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md)*): `void`
+▸ **onSignOut**(`event`: [EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| event | [EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md) |
+Name | Type |
+------ | ------ |
+`event` | [EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md) |
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [NonceGenerationError](../interfaces/noncegenerationerror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [NonceGenerationError](noncegenerationerror.md)
 
-# NonceGenerationError
+# Interface: NonceGenerationError
 
 ## Hierarchy
 
-**NonceGenerationError**
+* **NonceGenerationError**
 
 ## Index
 
@@ -14,29 +14,20 @@
 * [message](noncegenerationerror.md#message)
 * [type](noncegenerationerror.md#type)
 
----
-
 ## Properties
-
-<a id="field"></a>
 
 ###  field
 
-**● field**: *`string`*
+• **field**: *string*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
-
-___
-
+• **type**: *string*

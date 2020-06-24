@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [StoreProfile](../interfaces/storeprofile.md)
+[@bigcommerce/checkout-sdk](../README.md) › [StoreProfile](storeprofile.md)
 
-# StoreProfile
+# Interface: StoreProfile
 
 ## Hierarchy
 
-**StoreProfile**
+* **StoreProfile**
 
 ## Index
 
@@ -19,64 +19,50 @@
 * [storeName](storeprofile.md#storename)
 * [storePhoneNumber](storeprofile.md#storephonenumber)
 
----
-
 ## Properties
-
-<a id="orderemail"></a>
 
 ###  orderEmail
 
-**● orderEmail**: *`string`*
+• **orderEmail**: *string*
 
 ___
-<a id="shoppath"></a>
 
 ###  shopPath
 
-**● shopPath**: *`string`*
+• **shopPath**: *string*
 
 ___
-<a id="storecountry"></a>
 
 ###  storeCountry
 
-**● storeCountry**: *`string`*
+• **storeCountry**: *string*
 
 ___
-<a id="storehash"></a>
 
 ###  storeHash
 
-**● storeHash**: *`string`*
+• **storeHash**: *string*
 
 ___
-<a id="storeid"></a>
 
 ###  storeId
 
-**● storeId**: *`string`*
+• **storeId**: *string*
 
 ___
-<a id="storelanguage"></a>
 
 ###  storeLanguage
 
-**● storeLanguage**: *`string`*
+• **storeLanguage**: *string*
 
 ___
-<a id="storename"></a>
 
 ###  storeName
 
-**● storeName**: *`string`*
+• **storeName**: *string*
 
 ___
-<a id="storephonenumber"></a>
 
 ###  storePhoneNumber
 
-**● storePhoneNumber**: *`string`*
-
-___
-
+• **storePhoneNumber**: *string*

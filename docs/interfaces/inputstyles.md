@@ -1,145 +1,134 @@
-[@bigcommerce/checkout-sdk](../README.md) > [InputStyles](../interfaces/inputstyles.md)
+[@bigcommerce/checkout-sdk](../README.md) › [InputStyles](inputstyles.md)
 
-# InputStyles
+# Interface: InputStyles
 
 ## Hierarchy
 
-↳  [BlockElementStyles](blockelementstyles.md)
+  ↳ [BlockElementStyles](blockelementstyles.md)
 
-**↳ InputStyles**
+  ↳ **InputStyles**
 
-↳  [CheckableInputStyles](checkableinputstyles.md)
+  ↳ [CheckableInputStyles](checkableinputstyles.md)
 
-↳  [TextInputStyles](textinputstyles.md)
+  ↳ [TextInputStyles](textinputstyles.md)
 
 ## Index
 
 ### Properties
 
-* [active](inputstyles.md#active)
-* [backgroundColor](inputstyles.md#backgroundcolor)
-* [borderColor](inputstyles.md#bordercolor)
-* [borderWidth](inputstyles.md#borderwidth)
-* [boxShadow](inputstyles.md#boxshadow)
-* [color](inputstyles.md#color)
-* [disabled](inputstyles.md#disabled)
-* [error](inputstyles.md#error)
-* [focus](inputstyles.md#focus)
-* [fontFamily](inputstyles.md#fontfamily)
-* [fontWeight](inputstyles.md#fontweight)
-* [hover](inputstyles.md#hover)
-* [letterSpacing](inputstyles.md#letterspacing)
-* [lineHeight](inputstyles.md#lineheight)
-
----
+* [active](inputstyles.md#optional-active)
+* [backgroundColor](inputstyles.md#optional-backgroundcolor)
+* [borderColor](inputstyles.md#optional-bordercolor)
+* [borderWidth](inputstyles.md#optional-borderwidth)
+* [boxShadow](inputstyles.md#optional-boxshadow)
+* [color](inputstyles.md#optional-color)
+* [disabled](inputstyles.md#optional-disabled)
+* [error](inputstyles.md#optional-error)
+* [focus](inputstyles.md#optional-focus)
+* [fontFamily](inputstyles.md#optional-fontfamily)
+* [fontWeight](inputstyles.md#optional-fontweight)
+* [hover](inputstyles.md#optional-hover)
+* [letterSpacing](inputstyles.md#optional-letterspacing)
+* [lineHeight](inputstyles.md#optional-lineheight)
 
 ## Properties
 
-<a id="active"></a>
+### `Optional` active
 
-### `<Optional>` active
-
-**● active**: *[BlockElementStyles](blockelementstyles.md)*
-
-___
-<a id="backgroundcolor"></a>
-
-### `<Optional>` backgroundColor
-
-**● backgroundColor**: * `undefined` &#124; `string`
-*
-
-___
-<a id="bordercolor"></a>
-
-### `<Optional>` borderColor
-
-**● borderColor**: * `undefined` &#124; `string`
-*
-
-___
-<a id="borderwidth"></a>
-
-### `<Optional>` borderWidth
-
-**● borderWidth**: * `undefined` &#124; `string`
-*
-
-___
-<a id="boxshadow"></a>
-
-### `<Optional>` boxShadow
-
-**● boxShadow**: * `undefined` &#124; `string`
-*
-
-___
-<a id="color"></a>
-
-### `<Optional>` color
-
-**● color**: * `undefined` &#124; `string`
-*
-
-___
-<a id="disabled"></a>
-
-### `<Optional>` disabled
-
-**● disabled**: *[BlockElementStyles](blockelementstyles.md)*
-
-___
-<a id="error"></a>
-
-### `<Optional>` error
-
-**● error**: *[InputStyles](inputstyles.md)*
-
-___
-<a id="focus"></a>
-
-### `<Optional>` focus
-
-**● focus**: *[BlockElementStyles](blockelementstyles.md)*
-
-___
-<a id="fontfamily"></a>
-
-### `<Optional>` fontFamily
-
-**● fontFamily**: * `undefined` &#124; `string`
-*
-
-___
-<a id="fontweight"></a>
-
-### `<Optional>` fontWeight
-
-**● fontWeight**: * `undefined` &#124; `string`
-*
-
-___
-<a id="hover"></a>
-
-### `<Optional>` hover
-
-**● hover**: *[BlockElementStyles](blockelementstyles.md)*
-
-___
-<a id="letterspacing"></a>
-
-### `<Optional>` letterSpacing
-
-**● letterSpacing**: * `undefined` &#124; `string`
-*
-
-___
-<a id="lineheight"></a>
-
-### `<Optional>` lineHeight
-
-**● lineHeight**: * `undefined` &#124; `string`
-*
+• **active**? : *[BlockElementStyles](blockelementstyles.md)*
 
 ___
 
+### `Optional` backgroundColor
+
+• **backgroundColor**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[backgroundColor](blockelementstyles.md#optional-backgroundcolor)*
+
+___
+
+### `Optional` borderColor
+
+• **borderColor**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[borderColor](blockelementstyles.md#optional-bordercolor)*
+
+___
+
+### `Optional` borderWidth
+
+• **borderWidth**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[borderWidth](blockelementstyles.md#optional-borderwidth)*
+
+___
+
+### `Optional` boxShadow
+
+• **boxShadow**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[boxShadow](blockelementstyles.md#optional-boxshadow)*
+
+___
+
+### `Optional` color
+
+• **color**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[color](blockelementstyles.md#optional-color)*
+
+___
+
+### `Optional` disabled
+
+• **disabled**? : *[BlockElementStyles](blockelementstyles.md)*
+
+___
+
+### `Optional` error
+
+• **error**? : *[InputStyles](inputstyles.md)*
+
+___
+
+### `Optional` focus
+
+• **focus**? : *[BlockElementStyles](blockelementstyles.md)*
+
+___
+
+### `Optional` fontFamily
+
+• **fontFamily**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[fontFamily](blockelementstyles.md#optional-fontfamily)*
+
+___
+
+### `Optional` fontWeight
+
+• **fontWeight**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[fontWeight](blockelementstyles.md#optional-fontweight)*
+
+___
+
+### `Optional` hover
+
+• **hover**? : *[BlockElementStyles](blockelementstyles.md)*
+
+___
+
+### `Optional` letterSpacing
+
+• **letterSpacing**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[letterSpacing](blockelementstyles.md#optional-letterspacing)*
+
+___
+
+### `Optional` lineHeight
+
+• **lineHeight**? : *undefined | string*
+
+*Inherited from [BlockElementStyles](blockelementstyles.md).[lineHeight](blockelementstyles.md#optional-lineheight)*

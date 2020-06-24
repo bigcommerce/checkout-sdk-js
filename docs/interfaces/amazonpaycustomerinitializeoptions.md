@@ -1,66 +1,67 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayCustomerInitializeOptions](../interfaces/amazonpaycustomerinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayCustomerInitializeOptions](amazonpaycustomerinitializeoptions.md)
 
-# AmazonPayCustomerInitializeOptions
+# Interface: AmazonPayCustomerInitializeOptions
+
+A set of options that are required to initialize the customer step of
+checkout to support Amazon Pay.
+
+When AmazonPay is initialized, a sign-in button will be inserted into the
+DOM. When the customer clicks on it, they will be redirected to Amazon to
+sign in.
 
 ## Hierarchy
 
-**AmazonPayCustomerInitializeOptions**
+* **AmazonPayCustomerInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [color](amazonpaycustomerinitializeoptions.md#color)
+* [color](amazonpaycustomerinitializeoptions.md#optional-color)
 * [container](amazonpaycustomerinitializeoptions.md#container)
-* [size](amazonpaycustomerinitializeoptions.md#size)
+* [size](amazonpaycustomerinitializeoptions.md#optional-size)
 
 ### Methods
 
-* [onError](amazonpaycustomerinitializeoptions.md#onerror)
-
----
+* [onError](amazonpaycustomerinitializeoptions.md#optional-onerror)
 
 ## Properties
 
-<a id="color"></a>
+### `Optional` color
 
-### `<Optional>` color
+• **color**? : *"Gold" | "LightGray" | "DarkGray"*
 
-**● color**: * "Gold" &#124; "LightGray" &#124; "DarkGray"
-*
+The colour of the sign-in button.
 
 ___
-<a id="container"></a>
 
 ###  container
 
-**● container**: *`string`*
+• **container**: *string*
+
+The ID of a container which the sign-in button should insert into.
 
 ___
-<a id="size"></a>
 
-### `<Optional>` size
+### `Optional` size
 
-**● size**: * "small" &#124; "medium" &#124; "large" &#124; "x-large"
-*
+• **size**? : *"small" | "medium" | "large" | "x-large"*
 
-___
+The size of the sign-in button.
 
 ## Methods
 
-<a id="onerror"></a>
+### `Optional` onError
 
-### `<Optional>` onError
+▸ **onError**(`error`: [AmazonPayWidgetError](amazonpaywidgeterror.md) | [StandardError](../classes/standarderror.md)): *void*
 
-▸ **onError**(error: * [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)*): `void`
+A callback that gets called if unable to initialize the widget or select
+one of the address options provided by the widget.
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| error |  [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)|  The error object describing the failure. |
+Name | Type | Description |
+------ | ------ | ------ |
+`error` | [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md) | The error object describing the failure.  |
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

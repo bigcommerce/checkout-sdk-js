@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutLoadedEvent](../interfaces/embeddedcheckoutloadedevent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md)
 
-# EmbeddedCheckoutLoadedEvent
+# Interface: EmbeddedCheckoutLoadedEvent
 
 ## Hierarchy
 
-**EmbeddedCheckoutLoadedEvent**
+* **EmbeddedCheckoutLoadedEvent**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [type](embeddedcheckoutloadedevent.md#type)
 
----
-
 ## Properties
-
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[CheckoutLoaded](../enums/embeddedcheckouteventtype.md#checkoutloaded)*
-
-___
-
+• **type**: *[CheckoutLoaded](../enums/embeddedcheckouteventtype.md#checkoutloaded)*

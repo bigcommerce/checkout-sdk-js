@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ConsignmentAssignmentRequestBody](consignmentassignmentrequestbody.md)
 
-# ConsignmentAssignmentRequestBody
+# Interface: ConsignmentAssignmentRequestBody
 
 ## Hierarchy
 
-**ConsignmentAssignmentRequestBody**
+* **ConsignmentAssignmentRequestBody**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [lineItems](consignmentassignmentrequestbody.md#lineitems)
 * [shippingAddress](consignmentassignmentrequestbody.md#shippingaddress)
 
----
-
 ## Properties
-
-<a id="lineitems"></a>
 
 ###  lineItems
 
-**● lineItems**: *[ConsignmentLineItem](consignmentlineitem.md)[]*
+• **lineItems**: *[ConsignmentLineItem](consignmentlineitem.md)[]*
 
 ___
-<a id="shippingaddress"></a>
 
 ###  shippingAddress
 
-**● shippingAddress**: *[AddressRequestBody](addressrequestbody.md)*
-
-___
-
+• **shippingAddress**: *[AddressRequestBody](addressrequestbody.md)*

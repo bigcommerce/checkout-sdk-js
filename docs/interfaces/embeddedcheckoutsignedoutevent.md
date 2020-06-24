@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutSignedOutEvent](../interfaces/embeddedcheckoutsignedoutevent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md)
 
-# EmbeddedCheckoutSignedOutEvent
+# Interface: EmbeddedCheckoutSignedOutEvent
 
 ## Hierarchy
 
-**EmbeddedCheckoutSignedOutEvent**
+* **EmbeddedCheckoutSignedOutEvent**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [type](embeddedcheckoutsignedoutevent.md#type)
 
----
-
 ## Properties
-
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[SignedOut](../enums/embeddedcheckouteventtype.md#signedout)*
-
-___
-
+• **type**: *[SignedOut](../enums/embeddedcheckouteventtype.md#signedout)*

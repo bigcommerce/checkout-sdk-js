@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [SignInEmail](../interfaces/signinemail.md)
+[@bigcommerce/checkout-sdk](../README.md) › [SignInEmail](signinemail.md)
 
-# SignInEmail
+# Interface: SignInEmail
 
 ## Hierarchy
 
-**SignInEmail**
+* **SignInEmail**
 
 ## Index
 
@@ -13,22 +13,14 @@
 * [expiry](signinemail.md#expiry)
 * [sent_email](signinemail.md#sent_email)
 
----
-
 ## Properties
-
-<a id="expiry"></a>
 
 ###  expiry
 
-**● expiry**: *`number`*
+• **expiry**: *number*
 
 ___
-<a id="sent_email"></a>
 
 ###  sent_email
 
-**● sent_email**: *`string`*
-
-___
-
+• **sent_email**: *string*

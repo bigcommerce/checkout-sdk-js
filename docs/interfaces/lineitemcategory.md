@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [LineItemCategory](../interfaces/lineitemcategory.md)
+[@bigcommerce/checkout-sdk](../README.md) › [LineItemCategory](lineitemcategory.md)
 
-# LineItemCategory
+# Interface: LineItemCategory
 
 ## Hierarchy
 
-**LineItemCategory**
+* **LineItemCategory**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [name](lineitemcategory.md#name)
 
----
-
 ## Properties
-
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
-
-___
-
+• **name**: *string*

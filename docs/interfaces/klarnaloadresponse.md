@@ -1,35 +1,26 @@
-[@bigcommerce/checkout-sdk](../README.md) > [KlarnaLoadResponse](../interfaces/klarnaloadresponse.md)
+[@bigcommerce/checkout-sdk](../README.md) › [KlarnaLoadResponse](klarnaloadresponse.md)
 
-# KlarnaLoadResponse
+# Interface: KlarnaLoadResponse
 
 ## Hierarchy
 
-**KlarnaLoadResponse**
+* **KlarnaLoadResponse**
 
 ## Index
 
 ### Properties
 
-* [error](klarnaloadresponse.md#error)
+* [error](klarnaloadresponse.md#optional-error)
 * [show_form](klarnaloadresponse.md#show_form)
-
----
 
 ## Properties
 
-<a id="error"></a>
+### `Optional` error
 
-### `<Optional>` error
-
-**● error**: * `undefined` &#124; `object`
-*
+• **error**? : *undefined | object*
 
 ___
-<a id="show_form"></a>
 
 ###  show_form
 
-**● show_form**: *`boolean`*
-
-___
-
+• **show_form**: *boolean*

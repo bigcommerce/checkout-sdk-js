@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [BraintreeVerifyPayload](../interfaces/braintreeverifypayload.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BraintreeVerifyPayload](braintreeverifypayload.md)
 
-# BraintreeVerifyPayload
+# Interface: BraintreeVerifyPayload
 
 ## Hierarchy
 
-**BraintreeVerifyPayload**
+* **BraintreeVerifyPayload**
 
 ## Index
 
@@ -16,51 +16,40 @@
 * [liabilityShifted](braintreeverifypayload.md#liabilityshifted)
 * [nonce](braintreeverifypayload.md#nonce)
 
----
-
 ## Properties
-
-<a id="description"></a>
 
 ###  description
 
-**● description**: *`string`*
+• **description**: *string*
 
 ___
-<a id="details"></a>
 
 ###  details
 
-**● details**: *`object`*
+• **details**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- cardType: `string`
+* **cardType**: *string*
 
- lastFour: `string`
+* **lastFour**: *string*
 
- lastTwo: `string`
+* **lastTwo**: *string*
 
 ___
-<a id="liabilityshiftpossible"></a>
 
 ###  liabilityShiftPossible
 
-**● liabilityShiftPossible**: *`boolean`*
+• **liabilityShiftPossible**: *boolean*
 
 ___
-<a id="liabilityshifted"></a>
 
 ###  liabilityShifted
 
-**● liabilityShifted**: *`boolean`*
+• **liabilityShifted**: *boolean*
 
 ___
-<a id="nonce"></a>
 
 ###  nonce
 
-**● nonce**: *`string`*
-
-___
-
+• **nonce**: *string*

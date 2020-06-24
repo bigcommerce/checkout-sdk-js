@@ -1,14 +1,14 @@
-[@bigcommerce/checkout-sdk](../README.md) > [LineItem](../interfaces/lineitem.md)
+[@bigcommerce/checkout-sdk](../README.md) › [LineItem](lineitem.md)
 
-# LineItem
+# Interface: LineItem
 
 ## Hierarchy
 
-**LineItem**
+* **LineItem**
 
-↳  [DigitalItem](digitalitem.md)
+  ↳ [DigitalItem](digitalitem.md)
 
-↳  [PhysicalItem](physicalitem.md)
+  ↳ [PhysicalItem](physicalitem.md)
 
 ## Index
 
@@ -16,8 +16,8 @@
 
 * [addedByPromotion](lineitem.md#addedbypromotion)
 * [brand](lineitem.md#brand)
-* [categories](lineitem.md#categories)
-* [categoryNames](lineitem.md#categorynames)
+* [categories](lineitem.md#optional-categories)
+* [categoryNames](lineitem.md#optional-categorynames)
 * [comparisonPrice](lineitem.md#comparisonprice)
 * [couponAmount](lineitem.md#couponamount)
 * [discountAmount](lineitem.md#discountamount)
@@ -30,195 +30,162 @@
 * [isTaxable](lineitem.md#istaxable)
 * [listPrice](lineitem.md#listprice)
 * [name](lineitem.md#name)
-* [options](lineitem.md#options)
-* [parentId](lineitem.md#parentid)
+* [options](lineitem.md#optional-options)
+* [parentId](lineitem.md#optional-parentid)
 * [productId](lineitem.md#productid)
 * [quantity](lineitem.md#quantity)
 * [salePrice](lineitem.md#saleprice)
 * [sku](lineitem.md#sku)
-* [socialMedia](lineitem.md#socialmedia)
+* [socialMedia](lineitem.md#optional-socialmedia)
 * [url](lineitem.md#url)
 * [variantId](lineitem.md#variantid)
 
----
-
 ## Properties
-
-<a id="addedbypromotion"></a>
 
 ###  addedByPromotion
 
-**● addedByPromotion**: *`boolean`*
+• **addedByPromotion**: *boolean*
 
 ___
-<a id="brand"></a>
 
 ###  brand
 
-**● brand**: *`string`*
+• **brand**: *string*
 
 ___
-<a id="categories"></a>
 
-### `<Optional>` categories
+### `Optional` categories
 
-**● categories**: *[LineItemCategory](lineitemcategory.md)[][]*
-
-___
-<a id="categorynames"></a>
-
-### `<Optional>` categoryNames
-
-**● categoryNames**: *`string`[]*
+• **categories**? : *[LineItemCategory](lineitemcategory.md)[][]*
 
 ___
-<a id="comparisonprice"></a>
+
+### `Optional` categoryNames
+
+• **categoryNames**? : *string[]*
+
+___
 
 ###  comparisonPrice
 
-**● comparisonPrice**: *`number`*
+• **comparisonPrice**: *number*
 
 ___
-<a id="couponamount"></a>
 
 ###  couponAmount
 
-**● couponAmount**: *`number`*
+• **couponAmount**: *number*
 
 ___
-<a id="discountamount"></a>
 
 ###  discountAmount
 
-**● discountAmount**: *`number`*
+• **discountAmount**: *number*
 
 ___
-<a id="discounts"></a>
 
 ###  discounts
 
-**● discounts**: *`Array`<`object`>*
+• **discounts**: *Array‹object›*
 
 ___
-<a id="extendedcomparisonprice"></a>
 
 ###  extendedComparisonPrice
 
-**● extendedComparisonPrice**: *`number`*
+• **extendedComparisonPrice**: *number*
 
 ___
-<a id="extendedlistprice"></a>
 
 ###  extendedListPrice
 
-**● extendedListPrice**: *`number`*
+• **extendedListPrice**: *number*
 
 ___
-<a id="extendedsaleprice"></a>
 
 ###  extendedSalePrice
 
-**● extendedSalePrice**: *`number`*
+• **extendedSalePrice**: *number*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: * `string` &#124; `number`
-*
+• **id**: *string | number*
 
 ___
-<a id="imageurl"></a>
 
 ###  imageUrl
 
-**● imageUrl**: *`string`*
+• **imageUrl**: *string*
 
 ___
-<a id="istaxable"></a>
 
 ###  isTaxable
 
-**● isTaxable**: *`boolean`*
+• **isTaxable**: *boolean*
 
 ___
-<a id="listprice"></a>
 
 ###  listPrice
 
-**● listPrice**: *`number`*
+• **listPrice**: *number*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
 
 ___
-<a id="options"></a>
 
-### `<Optional>` options
+### `Optional` options
 
-**● options**: *[LineItemOption](lineitemoption.md)[]*
-
-___
-<a id="parentid"></a>
-
-### `<Optional>` parentId
-
-**● parentId**: * `string` &#124; `null`
-*
+• **options**? : *[LineItemOption](lineitemoption.md)[]*
 
 ___
-<a id="productid"></a>
+
+### `Optional` parentId
+
+• **parentId**? : *string | null*
+
+___
 
 ###  productId
 
-**● productId**: *`number`*
+• **productId**: *number*
 
 ___
-<a id="quantity"></a>
 
 ###  quantity
 
-**● quantity**: *`number`*
+• **quantity**: *number*
 
 ___
-<a id="saleprice"></a>
 
 ###  salePrice
 
-**● salePrice**: *`number`*
+• **salePrice**: *number*
 
 ___
-<a id="sku"></a>
 
 ###  sku
 
-**● sku**: *`string`*
+• **sku**: *string*
 
 ___
-<a id="socialmedia"></a>
 
-### `<Optional>` socialMedia
+### `Optional` socialMedia
 
-**● socialMedia**: *[LineItemSocialData](lineitemsocialdata.md)[]*
+• **socialMedia**? : *[LineItemSocialData](lineitemsocialdata.md)[]*
 
 ___
-<a id="url"></a>
 
 ###  url
 
-**● url**: *`string`*
+• **url**: *string*
 
 ___
-<a id="variantid"></a>
 
 ###  variantId
 
-**● variantId**: *`number`*
-
-___
-
+• **variantId**: *number*

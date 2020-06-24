@@ -1,44 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CreditCardPlaceHolder](../interfaces/creditcardplaceholder.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CreditCardPlaceHolder](creditcardplaceholder.md)
 
-# CreditCardPlaceHolder
+# Interface: CreditCardPlaceHolder
 
 ## Hierarchy
 
-**CreditCardPlaceHolder**
+* **CreditCardPlaceHolder**
 
 ## Index
 
 ### Properties
 
-* [encryptedCardNumber](creditcardplaceholder.md#encryptedcardnumber)
-* [encryptedExpiryDate](creditcardplaceholder.md#encryptedexpirydate)
+* [encryptedCardNumber](creditcardplaceholder.md#optional-encryptedcardnumber)
+* [encryptedExpiryDate](creditcardplaceholder.md#optional-encryptedexpirydate)
 * [encryptedSecurityCode](creditcardplaceholder.md#encryptedsecuritycode)
-
----
 
 ## Properties
 
-<a id="encryptedcardnumber"></a>
+### `Optional` encryptedCardNumber
 
-### `<Optional>` encryptedCardNumber
-
-**● encryptedCardNumber**: * `undefined` &#124; `string`
-*
+• **encryptedCardNumber**? : *undefined | string*
 
 ___
-<a id="encryptedexpirydate"></a>
 
-### `<Optional>` encryptedExpiryDate
+### `Optional` encryptedExpiryDate
 
-**● encryptedExpiryDate**: * `undefined` &#124; `string`
-*
+• **encryptedExpiryDate**? : *undefined | string*
 
 ___
-<a id="encryptedsecuritycode"></a>
 
 ###  encryptedSecurityCode
 
-**● encryptedSecurityCode**: *`string`*
-
-___
-
+• **encryptedSecurityCode**: *string*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayV2ButtonInitializeOptions](../interfaces/amazonpayv2buttoninitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayV2ButtonInitializeOptions](amazonpayv2buttoninitializeoptions.md)
 
-# AmazonPayV2ButtonInitializeOptions
+# Interface: AmazonPayV2ButtonInitializeOptions
 
 ## Hierarchy
 
-**AmazonPayV2ButtonInitializeOptions**
+* **AmazonPayV2ButtonInitializeOptions**
 
 ## Index
 
@@ -13,22 +13,20 @@
 * [containerId](amazonpayv2buttoninitializeoptions.md#containerid)
 * [options](amazonpayv2buttoninitializeoptions.md#options)
 
----
-
 ## Properties
-
-<a id="containerid"></a>
 
 ###  containerId
 
-**● containerId**: *`string`*
+• **containerId**: *string*
+
+**`alpha`** 
 
 ___
-<a id="options"></a>
 
 ###  options
 
-**● options**: *[AmazonPayV2ButtonParams](amazonpayv2buttonparams.md)*
+• **options**: *[AmazonPayV2ButtonParams](amazonpayv2buttonparams.md)*
 
-___
+A set of options to render the AmazonPayV2 checkout button.
 
+**`alpha`**

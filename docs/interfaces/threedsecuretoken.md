@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ThreeDSecureToken](../interfaces/threedsecuretoken.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ThreeDSecureToken](threedsecuretoken.md)
 
-# ThreeDSecureToken
+# Interface: ThreeDSecureToken
 
 ## Hierarchy
 
-**ThreeDSecureToken**
+* **ThreeDSecureToken**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [token](threedsecuretoken.md#token)
 
----
-
 ## Properties
-
-<a id="token"></a>
 
 ###  token
 
-**● token**: *`string`*
-
-___
-
+• **token**: *string*

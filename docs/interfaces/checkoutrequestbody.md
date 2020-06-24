@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutRequestBody](../interfaces/checkoutrequestbody.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutRequestBody](checkoutrequestbody.md)
 
-# CheckoutRequestBody
+# Interface: CheckoutRequestBody
 
 ## Hierarchy
 
-**CheckoutRequestBody**
+* **CheckoutRequestBody**
 
 ## Index
 
@@ -12,15 +12,8 @@
 
 * [customerMessage](checkoutrequestbody.md#customermessage)
 
----
-
 ## Properties
-
-<a id="customermessage"></a>
 
 ###  customerMessage
 
-**● customerMessage**: *`string`*
-
-___
-
+• **customerMessage**: *string*

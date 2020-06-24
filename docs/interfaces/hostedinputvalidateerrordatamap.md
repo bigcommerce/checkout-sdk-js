@@ -1,26 +1,54 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedInputValidateErrorDataMap](../interfaces/hostedinputvalidateerrordatamap.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedInputValidateErrorDataMap](hostedinputvalidateerrordatamap.md)
 
-# HostedInputValidateErrorDataMap
+# Interface: HostedInputValidateErrorDataMap
 
 ## Hierarchy
 
-**HostedInputValidateErrorDataMap**
+* **HostedInputValidateErrorDataMap**
 
 ## Index
 
 ### Properties
 
-* [__computed](hostedinputvalidateerrordatamap.md#__computed)
-
----
+* [[HostedFieldType.CardCodeVerification]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardcodeverification])
+* [[HostedFieldType.CardCode]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardcode])
+* [[HostedFieldType.CardExpiry]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardexpiry])
+* [[HostedFieldType.CardName]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardname])
+* [[HostedFieldType.CardNumberVerification]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardnumberverification])
+* [[HostedFieldType.CardNumber]](hostedinputvalidateerrordatamap.md#optional-[hostedfieldtype.cardnumber])
 
 ## Properties
 
-<a id="__computed"></a>
+### `Optional` [HostedFieldType.CardCodeVerification]
 
-### `<Optional>` __computed
-
-**● __computed**: *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
+• **[HostedFieldType.CardCodeVerification]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
 
 ___
 
+### `Optional` [HostedFieldType.CardCode]
+
+• **[HostedFieldType.CardCode]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
+
+___
+
+### `Optional` [HostedFieldType.CardExpiry]
+
+• **[HostedFieldType.CardExpiry]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
+
+___
+
+### `Optional` [HostedFieldType.CardName]
+
+• **[HostedFieldType.CardName]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
+
+___
+
+### `Optional` [HostedFieldType.CardNumberVerification]
+
+• **[HostedFieldType.CardNumberVerification]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*
+
+___
+
+### `Optional` [HostedFieldType.CardNumber]
+
+• **[HostedFieldType.CardNumber]**? : *[HostedInputValidateErrorData](hostedinputvalidateerrordata.md)[]*

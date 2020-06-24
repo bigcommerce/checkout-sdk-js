@@ -1,15 +1,11 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Locales](../interfaces/locales.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Locales](locales.md)
 
-# Locales
+# Interface: Locales
 
 ## Hierarchy
 
-**Locales**
+* **Locales**
 
 ## Indexable
 
-\[key: `string`\]:&nbsp;`string`
-## Index
-
----
-
+* \[ **key**: *string*\]: string

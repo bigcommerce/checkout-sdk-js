@@ -1,17 +1,17 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Customer](../interfaces/customer.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Customer](customer.md)
 
-# Customer
+# Interface: Customer
 
 ## Hierarchy
 
-**Customer**
+* **Customer**
 
 ## Index
 
 ### Properties
 
 * [addresses](customer.md#addresses)
-* [customerGroup](customer.md#customergroup)
+* [customerGroup](customer.md#optional-customergroup)
 * [email](customer.md#email)
 * [firstName](customer.md#firstname)
 * [fullName](customer.md#fullname)
@@ -21,78 +21,68 @@
 * [shouldEncourageSignIn](customer.md#shouldencouragesignin)
 * [storeCredit](customer.md#storecredit)
 
----
-
 ## Properties
-
-<a id="addresses"></a>
 
 ###  addresses
 
-**● addresses**: *[CustomerAddress](customeraddress.md)[]*
+• **addresses**: *[CustomerAddress](customeraddress.md)[]*
 
 ___
-<a id="customergroup"></a>
 
-### `<Optional>` customerGroup
+### `Optional` customerGroup
 
-**● customerGroup**: *[CustomerGroup](customergroup.md)*
+• **customerGroup**? : *[CustomerGroup](customergroup.md)*
 
 ___
-<a id="email"></a>
 
 ###  email
 
-**● email**: *`string`*
+• **email**: *string*
+
+The email address of the signed in customer.
 
 ___
-<a id="firstname"></a>
 
 ###  firstName
 
-**● firstName**: *`string`*
+• **firstName**: *string*
 
 ___
-<a id="fullname"></a>
 
 ###  fullName
 
-**● fullName**: *`string`*
+• **fullName**: *string*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`number`*
+• **id**: *number*
 
 ___
-<a id="isguest"></a>
 
 ###  isGuest
 
-**● isGuest**: *`boolean`*
+• **isGuest**: *boolean*
 
 ___
-<a id="lastname"></a>
 
 ###  lastName
 
-**● lastName**: *`string`*
+• **lastName**: *string*
 
 ___
-<a id="shouldencouragesignin"></a>
 
 ###  shouldEncourageSignIn
 
-**● shouldEncourageSignIn**: *`boolean`*
+• **shouldEncourageSignIn**: *boolean*
+
+Indicates whether the customer should be prompted to sign-in.
+
+Note: You need to enable "Prompt existing accounts to sign in" in your Checkout Settings.
 
 ___
-<a id="storecredit"></a>
 
 ###  storeCredit
 
-**● storeCredit**: *`number`*
-
-___
-
+• **storeCredit**: *number*

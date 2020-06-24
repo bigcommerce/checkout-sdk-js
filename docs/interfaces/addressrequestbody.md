@@ -1,14 +1,14 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AddressRequestBody](../interfaces/addressrequestbody.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AddressRequestBody](addressrequestbody.md)
 
-# AddressRequestBody
+# Interface: AddressRequestBody
 
 ## Hierarchy
 
-**AddressRequestBody**
+* **AddressRequestBody**
 
-↳  [Address](address.md)
+  ↳ [Address](address.md)
 
-↳  [BillingAddressRequestBody](billingaddressrequestbody.md)
+  ↳ [BillingAddressRequestBody](billingaddressrequestbody.md)
 
 ## Index
 
@@ -27,92 +27,74 @@
 * [stateOrProvince](addressrequestbody.md#stateorprovince)
 * [stateOrProvinceCode](addressrequestbody.md#stateorprovincecode)
 
----
-
 ## Properties
-
-<a id="address1"></a>
 
 ###  address1
 
-**● address1**: *`string`*
+• **address1**: *string*
 
 ___
-<a id="address2"></a>
 
 ###  address2
 
-**● address2**: *`string`*
+• **address2**: *string*
 
 ___
-<a id="city"></a>
 
 ###  city
 
-**● city**: *`string`*
+• **city**: *string*
 
 ___
-<a id="company"></a>
 
 ###  company
 
-**● company**: *`string`*
+• **company**: *string*
 
 ___
-<a id="countrycode"></a>
 
 ###  countryCode
 
-**● countryCode**: *`string`*
+• **countryCode**: *string*
 
 ___
-<a id="customfields"></a>
 
 ###  customFields
 
-**● customFields**: *`Array`<`object`>*
+• **customFields**: *Array‹object›*
 
 ___
-<a id="firstname"></a>
 
 ###  firstName
 
-**● firstName**: *`string`*
+• **firstName**: *string*
 
 ___
-<a id="lastname"></a>
 
 ###  lastName
 
-**● lastName**: *`string`*
+• **lastName**: *string*
 
 ___
-<a id="phone"></a>
 
 ###  phone
 
-**● phone**: *`string`*
+• **phone**: *string*
 
 ___
-<a id="postalcode"></a>
 
 ###  postalCode
 
-**● postalCode**: *`string`*
+• **postalCode**: *string*
 
 ___
-<a id="stateorprovince"></a>
 
 ###  stateOrProvince
 
-**● stateOrProvince**: *`string`*
+• **stateOrProvince**: *string*
 
 ___
-<a id="stateorprovincecode"></a>
 
 ###  stateOrProvinceCode
 
-**● stateOrProvinceCode**: *`string`*
-
-___
-
+• **stateOrProvinceCode**: *string*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ShippingOption](../interfaces/shippingoption.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ShippingOption](shippingoption.md)
 
-# ShippingOption
+# Interface: ShippingOption
 
 ## Hierarchy
 
-**ShippingOption**
+* **ShippingOption**
 
 ## Index
 
@@ -19,64 +19,50 @@
 * [transitTime](shippingoption.md#transittime)
 * [type](shippingoption.md#type)
 
----
-
 ## Properties
-
-<a id="additionaldescription"></a>
 
 ###  additionalDescription
 
-**● additionalDescription**: *`string`*
+• **additionalDescription**: *string*
 
 ___
-<a id="cost"></a>
 
 ###  cost
 
-**● cost**: *`number`*
+• **cost**: *number*
 
 ___
-<a id="description"></a>
 
 ###  description
 
-**● description**: *`string`*
+• **description**: *string*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: *`string`*
+• **id**: *string*
 
 ___
-<a id="imageurl"></a>
 
 ###  imageUrl
 
-**● imageUrl**: *`string`*
+• **imageUrl**: *string*
 
 ___
-<a id="isrecommended"></a>
 
 ###  isRecommended
 
-**● isRecommended**: *`boolean`*
+• **isRecommended**: *boolean*
 
 ___
-<a id="transittime"></a>
 
 ###  transitTime
 
-**● transitTime**: *`string`*
+• **transitTime**: *string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
-
-___
-
+• **type**: *string*

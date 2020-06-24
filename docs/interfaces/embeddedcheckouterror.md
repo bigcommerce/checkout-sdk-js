@@ -1,44 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutError](../interfaces/embeddedcheckouterror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutError](embeddedcheckouterror.md)
 
-# EmbeddedCheckoutError
+# Interface: EmbeddedCheckoutError
 
 ## Hierarchy
 
-**EmbeddedCheckoutError**
+* **EmbeddedCheckoutError**
 
 ## Index
 
 ### Properties
 
 * [message](embeddedcheckouterror.md#message)
-* [subtype](embeddedcheckouterror.md#subtype)
-* [type](embeddedcheckouterror.md#type)
-
----
+* [subtype](embeddedcheckouterror.md#optional-subtype)
+* [type](embeddedcheckouterror.md#optional-type)
 
 ## Properties
 
-<a id="message"></a>
-
 ###  message
 
-**● message**: *`string`*
-
-___
-<a id="subtype"></a>
-
-### `<Optional>` subtype
-
-**● subtype**: * `undefined` &#124; `string`
-*
-
-___
-<a id="type"></a>
-
-### `<Optional>` type
-
-**● type**: * `undefined` &#124; `string`
-*
+• **message**: *string*
 
 ___
 
+### `Optional` subtype
+
+• **subtype**? : *undefined | string*
+
+___
+
+### `Optional` type
+
+• **type**? : *undefined | string*

@@ -1,44 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [VaultedInstrument](../interfaces/vaultedinstrument.md)
+[@bigcommerce/checkout-sdk](../README.md) › [VaultedInstrument](vaultedinstrument.md)
 
-# VaultedInstrument
+# Interface: VaultedInstrument
 
 ## Hierarchy
 
-**VaultedInstrument**
+* **VaultedInstrument**
 
 ## Index
 
 ### Properties
 
-* [ccCvv](vaultedinstrument.md#cccvv)
-* [ccNumber](vaultedinstrument.md#ccnumber)
+* [ccCvv](vaultedinstrument.md#optional-cccvv)
+* [ccNumber](vaultedinstrument.md#optional-ccnumber)
 * [instrumentId](vaultedinstrument.md#instrumentid)
-
----
 
 ## Properties
 
-<a id="cccvv"></a>
+### `Optional` ccCvv
 
-### `<Optional>` ccCvv
-
-**● ccCvv**: * `undefined` &#124; `string`
-*
+• **ccCvv**? : *undefined | string*
 
 ___
-<a id="ccnumber"></a>
 
-### `<Optional>` ccNumber
+### `Optional` ccNumber
 
-**● ccNumber**: * `undefined` &#124; `string`
-*
+• **ccNumber**? : *undefined | string*
 
 ___
-<a id="instrumentid"></a>
 
 ###  instrumentId
 
-**● instrumentId**: *`string`*
-
-___
-
+• **instrumentId**: *string*

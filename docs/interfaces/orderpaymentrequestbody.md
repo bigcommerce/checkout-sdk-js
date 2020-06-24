@@ -1,44 +1,43 @@
-[@bigcommerce/checkout-sdk](../README.md) > [OrderPaymentRequestBody](../interfaces/orderpaymentrequestbody.md)
+[@bigcommerce/checkout-sdk](../README.md) › [OrderPaymentRequestBody](orderpaymentrequestbody.md)
 
-# OrderPaymentRequestBody
+# Interface: OrderPaymentRequestBody
+
+An object that contains the payment information required for submitting an
+order.
 
 ## Hierarchy
 
-**OrderPaymentRequestBody**
+* **OrderPaymentRequestBody**
 
 ## Index
 
 ### Properties
 
-* [gatewayId](orderpaymentrequestbody.md#gatewayid)
+* [gatewayId](orderpaymentrequestbody.md#optional-gatewayid)
 * [methodId](orderpaymentrequestbody.md#methodid)
-* [paymentData](orderpaymentrequestbody.md#paymentdata)
-
----
+* [paymentData](orderpaymentrequestbody.md#optional-paymentdata)
 
 ## Properties
 
-<a id="gatewayid"></a>
+### `Optional` gatewayId
 
-### `<Optional>` gatewayId
+• **gatewayId**? : *undefined | string*
 
-**● gatewayId**: * `undefined` &#124; `string`
-*
+The identifier of the payment provider that is chosen for the order.
 
 ___
-<a id="methodid"></a>
 
 ###  methodId
 
-**● methodId**: *`string`*
+• **methodId**: *string*
 
-___
-<a id="paymentdata"></a>
-
-### `<Optional>` paymentData
-
-**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [HostedInstrument](hostedinstrument.md) &#124; [HostedCreditCardInstrument](../#hostedcreditcardinstrument) &#124; [HostedVaultedInstrument](../#hostedvaultedinstrument) &#124; [NonceInstrument](nonceinstrument.md) &#124; [VaultedInstrument](vaultedinstrument.md)
-*
+The identifier of the payment method that is chosen for the order.
 
 ___
 
+### `Optional` paymentData
+
+• **paymentData**? : *[CreditCardInstrument](creditcardinstrument.md) | [HostedInstrument](hostedinstrument.md) | [HostedCreditCardInstrument](../README.md#hostedcreditcardinstrument) | [HostedVaultedInstrument](../README.md#hostedvaultedinstrument) | [NonceInstrument](nonceinstrument.md) | [VaultedInstrument](vaultedinstrument.md)*
+
+An object that contains the details of a credit card, vaulted payment
+instrument or nonce instrument.

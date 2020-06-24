@@ -1,34 +1,26 @@
-[@bigcommerce/checkout-sdk](../README.md) > [EmbeddedCheckoutMessengerOptions](../interfaces/embeddedcheckoutmessengeroptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [EmbeddedCheckoutMessengerOptions](embeddedcheckoutmessengeroptions.md)
 
-# EmbeddedCheckoutMessengerOptions
+# Interface: EmbeddedCheckoutMessengerOptions
 
 ## Hierarchy
 
-**EmbeddedCheckoutMessengerOptions**
+* **EmbeddedCheckoutMessengerOptions**
 
 ## Index
 
 ### Properties
 
 * [parentOrigin](embeddedcheckoutmessengeroptions.md#parentorigin)
-* [parentWindow](embeddedcheckoutmessengeroptions.md#parentwindow)
-
----
+* [parentWindow](embeddedcheckoutmessengeroptions.md#optional-parentwindow)
 
 ## Properties
 
-<a id="parentorigin"></a>
-
 ###  parentOrigin
 
-**● parentOrigin**: *`string`*
-
-___
-<a id="parentwindow"></a>
-
-### `<Optional>` parentWindow
-
-**● parentWindow**: *`Window`*
+• **parentOrigin**: *string*
 
 ___
 
+### `Optional` parentWindow
+
+• **parentWindow**? : *Window*

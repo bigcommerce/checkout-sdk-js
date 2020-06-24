@@ -1,14 +1,14 @@
-[@bigcommerce/checkout-sdk](../README.md) > [OrderPayment](../interfaces/orderpayment.md)
+[@bigcommerce/checkout-sdk](../README.md) › [OrderPayment](orderpayment.md)
 
-# OrderPayment
+# Interface: OrderPayment
 
 ## Hierarchy
 
-**OrderPayment**
+* **OrderPayment**
 
-↳  [GatewayOrderPayment](gatewayorderpayment.md)
+  ↳ [GatewayOrderPayment](gatewayorderpayment.md)
 
-↳  [GiftCertificateOrderPayment](giftcertificateorderpayment.md)
+  ↳ [GiftCertificateOrderPayment](giftcertificateorderpayment.md)
 
 ## Index
 
@@ -16,40 +16,29 @@
 
 * [amount](orderpayment.md#amount)
 * [description](orderpayment.md#description)
-* [gatewayId](orderpayment.md#gatewayid)
+* [gatewayId](orderpayment.md#optional-gatewayid)
 * [providerId](orderpayment.md#providerid)
-
----
 
 ## Properties
 
-<a id="amount"></a>
-
 ###  amount
 
-**● amount**: *`number`*
+• **amount**: *number*
 
 ___
-<a id="description"></a>
 
 ###  description
 
-**● description**: *`string`*
+• **description**: *string*
 
 ___
-<a id="gatewayid"></a>
 
-### `<Optional>` gatewayId
+### `Optional` gatewayId
 
-**● gatewayId**: * `undefined` &#124; `string`
-*
+• **gatewayId**? : *undefined | string*
 
 ___
-<a id="providerid"></a>
 
 ###  providerId
 
-**● providerId**: *`string`*
-
-___
-
+• **providerId**: *string*

@@ -1,53 +1,50 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedFieldType](../enums/hostedfieldtype.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedFieldType](hostedfieldtype.md)
 
-# HostedFieldType
+# Enumeration: HostedFieldType
 
 ## Index
 
----
+### Enumeration members
+
+* [CardCode](hostedfieldtype.md#cardcode)
+* [CardCodeVerification](hostedfieldtype.md#cardcodeverification)
+* [CardExpiry](hostedfieldtype.md#cardexpiry)
+* [CardName](hostedfieldtype.md#cardname)
+* [CardNumber](hostedfieldtype.md#cardnumber)
+* [CardNumberVerification](hostedfieldtype.md#cardnumberverification)
 
 ## Enumeration members
 
-<a id="cardcode"></a>
-
 ###  CardCode
 
-**CardCode**:  = "cardCode"
+• **CardCode**: = "cardCode"
 
 ___
-<a id="cardcodeverification"></a>
 
 ###  CardCodeVerification
 
-**CardCodeVerification**:  = "cardCodeVerification"
+• **CardCodeVerification**: = "cardCodeVerification"
 
 ___
-<a id="cardexpiry"></a>
 
 ###  CardExpiry
 
-**CardExpiry**:  = "cardExpiry"
+• **CardExpiry**: = "cardExpiry"
 
 ___
-<a id="cardname"></a>
 
 ###  CardName
 
-**CardName**:  = "cardName"
+• **CardName**: = "cardName"
 
 ___
-<a id="cardnumber"></a>
 
 ###  CardNumber
 
-**CardNumber**:  = "cardNumber"
+• **CardNumber**: = "cardNumber"
 
 ___
-<a id="cardnumberverification"></a>
 
 ###  CardNumberVerification
 
-**CardNumberVerification**:  = "cardNumberVerification"
-
-___
-
+• **CardNumberVerification**: = "cardNumberVerification"

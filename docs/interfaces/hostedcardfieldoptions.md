@@ -1,46 +1,35 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedCardFieldOptions](../interfaces/hostedcardfieldoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedCardFieldOptions](hostedcardfieldoptions.md)
 
-# HostedCardFieldOptions
+# Interface: HostedCardFieldOptions
 
 ## Hierarchy
 
-**HostedCardFieldOptions**
+* **HostedCardFieldOptions**
 
-↳  [HostedStoredCardFieldOptions](hostedstoredcardfieldoptions.md)
+  ↳ [HostedStoredCardFieldOptions](hostedstoredcardfieldoptions.md)
 
 ## Index
 
 ### Properties
 
-* [accessibilityLabel](hostedcardfieldoptions.md#accessibilitylabel)
+* [accessibilityLabel](hostedcardfieldoptions.md#optional-accessibilitylabel)
 * [containerId](hostedcardfieldoptions.md#containerid)
-* [placeholder](hostedcardfieldoptions.md#placeholder)
-
----
+* [placeholder](hostedcardfieldoptions.md#optional-placeholder)
 
 ## Properties
 
-<a id="accessibilitylabel"></a>
+### `Optional` accessibilityLabel
 
-### `<Optional>` accessibilityLabel
-
-**● accessibilityLabel**: * `undefined` &#124; `string`
-*
+• **accessibilityLabel**? : *undefined | string*
 
 ___
-<a id="containerid"></a>
 
 ###  containerId
 
-**● containerId**: *`string`*
-
-___
-<a id="placeholder"></a>
-
-### `<Optional>` placeholder
-
-**● placeholder**: * `undefined` &#124; `string`
-*
+• **containerId**: *string*
 
 ___
 
+### `Optional` placeholder
+
+• **placeholder**? : *undefined | string*

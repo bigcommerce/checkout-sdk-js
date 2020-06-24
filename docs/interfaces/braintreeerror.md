@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [BraintreeError](../interfaces/braintreeerror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BraintreeError](braintreeerror.md)
 
-# BraintreeError
+# Interface: BraintreeError
 
 ## Hierarchy
 
- `Error`
+* [Error](amazonpaywidgeterror.md#error)
 
-**↳ BraintreeError**
+  ↳ **BraintreeError**
 
 ## Index
 
@@ -17,62 +17,55 @@
 * [details](braintreeerror.md#details)
 * [message](braintreeerror.md#message)
 * [name](braintreeerror.md#name)
-* [stack](braintreeerror.md#stack)
+* [stack](braintreeerror.md#optional-stack)
 * [type](braintreeerror.md#type)
-
----
 
 ## Properties
 
-<a id="error"></a>
-
 ###  Error
 
-**● Error**: *`ErrorConstructor`*
+• **Error**: *ErrorConstructor*
 
 ___
-<a id="code"></a>
 
 ###  code
 
-**● code**: *`string`*
+• **code**: *string*
 
 ___
-<a id="details"></a>
 
 ###  details
 
-**● details**: *`object`*
+• **details**: *object*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
+
+*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[message](amazonpaywidgeterror.md#message)*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
+
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[name](amazonpaywidgeterror.md#name)*
 
 ___
-<a id="stack"></a>
 
-### `<Optional>` stack
+### `Optional` stack
 
-**● stack**: * `undefined` &#124; `string`
-*
+• **stack**? : *undefined | string*
+
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
+
+*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: * "CUSTOMER" &#124; "MERCHANT" &#124; "NETWORK" &#124; "INTERNAL" &#124; "UNKNOWN"
-*
-
-___
-
+• **type**: *"CUSTOMER" | "MERCHANT" | "NETWORK" | "INTERNAL" | "UNKNOWN"*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedInputCardTypeChangeEvent](../interfaces/hostedinputcardtypechangeevent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedInputCardTypeChangeEvent](hostedinputcardtypechangeevent.md)
 
-# HostedInputCardTypeChangeEvent
+# Interface: HostedInputCardTypeChangeEvent
 
 ## Hierarchy
 
-**HostedInputCardTypeChangeEvent**
+* **HostedInputCardTypeChangeEvent**
 
 ## Index
 
@@ -13,26 +13,18 @@
 * [payload](hostedinputcardtypechangeevent.md#payload)
 * [type](hostedinputcardtypechangeevent.md#type)
 
----
-
 ## Properties
-
-<a id="payload"></a>
 
 ###  payload
 
-**● payload**: *`object`*
+• **payload**: *object*
 
-#### Type declaration
+#### Type declaration:
 
-`Optional`  cardType:  `undefined` &#124; `string`
+* **cardType**? : *undefined | string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[CardTypeChanged](../enums/hostedinputeventtype.md#cardtypechanged)*
-
-___
-
+• **type**: *[CardTypeChanged](../enums/hostedinputeventtype.md#cardtypechanged)*

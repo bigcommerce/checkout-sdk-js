@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CardInstrument](../interfaces/cardinstrument.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CardInstrument](cardinstrument.md)
 
-# CardInstrument
+# Interface: CardInstrument
 
 ## Hierarchy
 
- [BaseInstrument](baseinstrument.md)
+* [BaseInstrument](baseinstrument.md)
 
-**↳ CardInstrument**
+  ↳ **CardInstrument**
 
 ## Index
 
@@ -24,85 +24,80 @@
 * [trustedShippingAddress](cardinstrument.md#trustedshippingaddress)
 * [type](cardinstrument.md#type)
 
----
-
 ## Properties
-
-<a id="bigpaytoken"></a>
 
 ###  bigpayToken
 
-**● bigpayToken**: *`string`*
+• **bigpayToken**: *string*
+
+*Inherited from [AccountInstrument](accountinstrument.md).[bigpayToken](accountinstrument.md#bigpaytoken)*
 
 ___
-<a id="brand"></a>
 
 ###  brand
 
-**● brand**: *`string`*
+• **brand**: *string*
 
 ___
-<a id="defaultinstrument"></a>
 
 ###  defaultInstrument
 
-**● defaultInstrument**: *`boolean`*
+• **defaultInstrument**: *boolean*
+
+*Inherited from [AccountInstrument](accountinstrument.md).[defaultInstrument](accountinstrument.md#defaultinstrument)*
 
 ___
-<a id="expirymonth"></a>
 
 ###  expiryMonth
 
-**● expiryMonth**: *`string`*
+• **expiryMonth**: *string*
 
 ___
-<a id="expiryyear"></a>
 
 ###  expiryYear
 
-**● expiryYear**: *`string`*
+• **expiryYear**: *string*
 
 ___
-<a id="iin"></a>
 
 ###  iin
 
-**● iin**: *`string`*
+• **iin**: *string*
 
 ___
-<a id="last4"></a>
 
 ###  last4
 
-**● last4**: *`string`*
+• **last4**: *string*
 
 ___
-<a id="method"></a>
 
 ###  method
 
-**● method**: *`string`*
+• **method**: *string*
+
+*Inherited from [BaseInstrument](baseinstrument.md).[method](baseinstrument.md#method)*
 
 ___
-<a id="provider"></a>
 
 ###  provider
 
-**● provider**: *`string`*
+• **provider**: *string*
+
+*Inherited from [AccountInstrument](accountinstrument.md).[provider](accountinstrument.md#provider)*
 
 ___
-<a id="trustedshippingaddress"></a>
 
 ###  trustedShippingAddress
 
-**● trustedShippingAddress**: *`boolean`*
+• **trustedShippingAddress**: *boolean*
+
+*Inherited from [AccountInstrument](accountinstrument.md).[trustedShippingAddress](accountinstrument.md#trustedshippingaddress)*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *"card"*
+• **type**: *"card"*
 
-___
-
+*Overrides [BaseInstrument](baseinstrument.md).[type](baseinstrument.md#type)*

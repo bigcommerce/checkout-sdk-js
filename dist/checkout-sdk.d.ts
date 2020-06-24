@@ -726,6 +726,12 @@ declare interface Checkout {
     orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
+    /**
+     * Whether the current checkout must execute spam protection
+     * before placing the order.
+     *
+     * Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
+     */
     shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
     taxTotal: number;
@@ -1328,6 +1334,20 @@ declare class CheckoutService {
      */
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Sends a email that contains a single-use sign-in link. When a valid links is clicked,
+     * signs in the customer without requiring any password, redirecting them to the account page if no redirectUrl is provided.
+     *
+     *
+     * ```js
+     * checkoutService.sendSignInEmail({ email: 'foo@bar.com', redirectUrl: 'checkout' });
+     * ```
+     *
+     * @param signInEmailRequest - The sign-in email request values.
+     * @param options - Options for the send email request.
+     * @returns A promise that resolves to the current state.
+     */
+    sendSignInEmail(signInEmailRequest: SignInEmailRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Updates the subscriptions associated to an email.
      *
      * @param subscriptions - The email and associated subscriptions to update.
@@ -1338,9 +1358,12 @@ declare class CheckoutService {
     /**
      * Continues to check out as a guest.
      *
-     * The customer is required to provide their email address in order to
-     * continue. Once they provide their email address, it will be stored as a
-     * part of their billing address.
+     * If your Checkout Settings allow it, your customers could continue the checkout as guests (without signing in).
+     * If you have enabled the checkout setting "Prompt existing accounts to sign in", this information is
+     * exposed as part of the [Customer](docs/interfaces/customer.md) object.
+     *
+     * Once they provide their email address, it will be stored as
+     * part of their [billing address](docs/interfaces/billingaddress.md).
      *
      * @param credentials - The guest credentials to use, with optional subscriptions.
      * @param options - Options for continuing as a guest.
@@ -1781,7 +1804,11 @@ declare class CheckoutService {
      *
      * With spam protection enabled, the customer has to be verified as
      * a human. The order creation will fail if spam protection
-     * is enabled but verification fails.
+     * is enabled but verification fails. You should call this method before
+     * `submitOrder` method is called (i.e.: when the shopper
+     * first gets to the payment step).
+     *
+     * **Note**: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
      *
      * ```js
      * await service.executeSpamCheck();
@@ -1951,6 +1978,17 @@ declare interface CheckoutStoreErrorSelector {
     getSelectShippingOptionError(consignmentId?: string): Error | undefined;
     /**
      * Returns an error if unable to continue as guest.
+     *
+     * The call could fail in scenarios where guest checkout is not allowed, for example, when existing accounts are required to sign-in.
+     *
+     * In the background, this call tries to set the billing address email using the Storefront API. You could access the Storefront API response status code using `getContinueAsGuestError` error selector.
+     *
+     * ```js
+     * console.log(state.errors.getContinueAsGuestError());
+     * console.log(state.errors.getContinueAsGuestError().status);
+     * ```
+     *
+     * For more information about status codes, check [Checkout Storefront API - Add Checkout Billing Address](https://developer.bigcommerce.com/api-reference/cart-checkout/storefront-checkout-api/checkout-billing-address/checkoutsbillingaddressbycheckoutidpost).
      *
      * @returns The error object if unable to continue, otherwise undefined.
      */
@@ -2705,11 +2743,19 @@ declare interface Customer {
     id: number;
     addresses: CustomerAddress[];
     storeCredit: number;
+    /**
+     * The email address of the signed in customer.
+     */
     email: string;
     firstName: string;
     fullName: string;
     isGuest: boolean;
     lastName: string;
+    /**
+     * Indicates whether the customer should be prompted to sign-in.
+     *
+     * Note: You need to enable "Prompt existing accounts to sign in" in your Checkout Settings.
+     */
     shouldEncourageSignIn: boolean;
     customerGroup?: CustomerGroup;
 }
@@ -3929,6 +3975,11 @@ declare interface ShopperCurrency extends StoreCurrency {
 declare interface SignInEmail {
     sent_email: string;
     expiry: number;
+}
+
+declare interface SignInEmailRequestBody {
+    email: string;
+    redirectUrl?: string;
 }
 
 /**

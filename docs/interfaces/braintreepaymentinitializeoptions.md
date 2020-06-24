@@ -1,26 +1,23 @@
-[@bigcommerce/checkout-sdk](../README.md) > [BraintreePaymentInitializeOptions](../interfaces/braintreepaymentinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BraintreePaymentInitializeOptions](braintreepaymentinitializeoptions.md)
 
-# BraintreePaymentInitializeOptions
+# Interface: BraintreePaymentInitializeOptions
+
+A set of options that are required to initialize the Braintree payment
+method. You need to provide the options if you want to support 3D Secure
+authentication flow.
 
 ## Hierarchy
 
-**BraintreePaymentInitializeOptions**
+* **BraintreePaymentInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [threeDSecure](braintreepaymentinitializeoptions.md#threedsecure)
-
----
+* [threeDSecure](braintreepaymentinitializeoptions.md#optional-threedsecure)
 
 ## Properties
 
-<a id="threedsecure"></a>
+### `Optional` threeDSecure
 
-### `<Optional>` threeDSecure
-
-**● threeDSecure**: *[BraintreeThreeDSecureOptions](braintreethreedsecureoptions.md)*
-
-___
-
+• **threeDSecure**? : *[BraintreeThreeDSecureOptions](braintreethreedsecureoptions.md)*

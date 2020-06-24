@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [GiftCertificateItem](../interfaces/giftcertificateitem.md)
+[@bigcommerce/checkout-sdk](../README.md) › [GiftCertificateItem](giftcertificateitem.md)
 
-# GiftCertificateItem
+# Interface: GiftCertificateItem
 
 ## Hierarchy
 
-**GiftCertificateItem**
+* **GiftCertificateItem**
 
 ## Index
 
@@ -19,77 +19,62 @@
 * [taxable](giftcertificateitem.md#taxable)
 * [theme](giftcertificateitem.md#theme)
 
----
-
 ## Properties
-
-<a id="amount"></a>
 
 ###  amount
 
-**● amount**: *`number`*
+• **amount**: *number*
 
 ___
-<a id="id"></a>
 
 ###  id
 
-**● id**: * `string` &#124; `number`
-*
+• **id**: *string | number*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
 
 ___
-<a id="recipient"></a>
 
 ###  recipient
 
-**● recipient**: *`object`*
+• **recipient**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- email: `string`
+* **email**: *string*
 
- name: `string`
+* **name**: *string*
 
 ___
-<a id="sender"></a>
 
 ###  sender
 
-**● sender**: *`object`*
+• **sender**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- email: `string`
+* **email**: *string*
 
- name: `string`
+* **name**: *string*
 
 ___
-<a id="taxable"></a>
 
 ###  taxable
 
-**● taxable**: *`boolean`*
+• **taxable**: *boolean*
 
 ___
-<a id="theme"></a>
 
 ###  theme
 
-**● theme**: *`string`*
-
-___
-
+• **theme**: *string*

@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Country](../interfaces/country.md)
+[@bigcommerce/checkout-sdk](../README.md) › [Country](country.md)
 
-# Country
+# Interface: Country
 
 ## Hierarchy
 
-**Country**
+* **Country**
 
 ## Index
 
@@ -16,43 +16,32 @@
 * [requiresState](country.md#requiresstate)
 * [subdivisions](country.md#subdivisions)
 
----
-
 ## Properties
-
-<a id="code"></a>
 
 ###  code
 
-**● code**: *`string`*
+• **code**: *string*
 
 ___
-<a id="haspostalcodes"></a>
 
 ###  hasPostalCodes
 
-**● hasPostalCodes**: *`boolean`*
+• **hasPostalCodes**: *boolean*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
 
 ___
-<a id="requiresstate"></a>
 
 ###  requiresState
 
-**● requiresState**: *`boolean`*
+• **requiresState**: *boolean*
 
 ___
-<a id="subdivisions"></a>
 
 ###  subdivisions
 
-**● subdivisions**: *[Region](region.md)[]*
-
-___
-
+• **subdivisions**: *[Region](region.md)[]*

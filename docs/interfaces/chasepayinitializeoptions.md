@@ -1,62 +1,58 @@
-[@bigcommerce/checkout-sdk](../README.md) > [ChasePayInitializeOptions](../interfaces/chasepayinitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [ChasePayInitializeOptions](chasepayinitializeoptions.md)
 
-# ChasePayInitializeOptions
+# Interface: ChasePayInitializeOptions
 
 ## Hierarchy
 
-**ChasePayInitializeOptions**
+* **ChasePayInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [logoContainer](chasepayinitializeoptions.md#logocontainer)
-* [walletButton](chasepayinitializeoptions.md#walletbutton)
+* [logoContainer](chasepayinitializeoptions.md#optional-logocontainer)
+* [walletButton](chasepayinitializeoptions.md#optional-walletbutton)
 
 ### Methods
 
-* [onCancel](chasepayinitializeoptions.md#oncancel)
-* [onPaymentSelect](chasepayinitializeoptions.md#onpaymentselect)
-
----
+* [onCancel](chasepayinitializeoptions.md#optional-oncancel)
+* [onPaymentSelect](chasepayinitializeoptions.md#optional-onpaymentselect)
 
 ## Properties
 
-<a id="logocontainer"></a>
+### `Optional` logoContainer
 
-### `<Optional>` logoContainer
+• **logoContainer**? : *undefined | string*
 
-**● logoContainer**: * `undefined` &#124; `string`
-*
-
-___
-<a id="walletbutton"></a>
-
-### `<Optional>` walletButton
-
-**● walletButton**: * `undefined` &#124; `string`
-*
+This container is used to host the chasepay branding logo.
+It should be an HTML element.
 
 ___
+
+### `Optional` walletButton
+
+• **walletButton**? : *undefined | string*
+
+This walletButton is used to set an event listener, provide an element ID if you want
+users to be able to launch the ChasePay wallet modal by clicking on a button.
+It should be an HTML element.
 
 ## Methods
 
-<a id="oncancel"></a>
+### `Optional` onCancel
 
-### `<Optional>` onCancel
+▸ **onCancel**(): *void*
 
-▸ **onCancel**(): `void`
+A callback that gets called when the customer cancels their payment selection.
 
-**Returns:** `void`
-
-___
-<a id="onpaymentselect"></a>
-
-### `<Optional>` onPaymentSelect
-
-▸ **onPaymentSelect**(): `void`
-
-**Returns:** `void`
+**Returns:** *void*
 
 ___
 
+### `Optional` onPaymentSelect
+
+▸ **onPaymentSelect**(): *void*
+
+A callback that gets called when the customer selects a payment option.
+
+**Returns:** *void*

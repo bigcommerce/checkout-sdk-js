@@ -1,32 +1,29 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutIncludes](../enums/checkoutincludes.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CheckoutIncludes](checkoutincludes.md)
 
-# CheckoutIncludes
+# Enumeration: CheckoutIncludes
 
 ## Index
 
----
+### Enumeration members
+
+* [AvailableShippingOptions](checkoutincludes.md#availableshippingoptions)
+* [DigitalItemsCategoryNames](checkoutincludes.md#digitalitemscategorynames)
+* [PhysicalItemsCategoryNames](checkoutincludes.md#physicalitemscategorynames)
 
 ## Enumeration members
 
-<a id="availableshippingoptions"></a>
-
 ###  AvailableShippingOptions
 
-**AvailableShippingOptions**:  = "consignments.availableShippingOptions"
+• **AvailableShippingOptions**: = "consignments.availableShippingOptions"
 
 ___
-<a id="digitalitemscategorynames"></a>
 
 ###  DigitalItemsCategoryNames
 
-**DigitalItemsCategoryNames**:  = "cart.lineItems.digitalItems.categoryNames"
+• **DigitalItemsCategoryNames**: = "cart.lineItems.digitalItems.categoryNames"
 
 ___
-<a id="physicalitemscategorynames"></a>
 
 ###  PhysicalItemsCategoryNames
 
-**PhysicalItemsCategoryNames**:  = "cart.lineItems.physicalItems.categoryNames"
-
-___
-
+• **PhysicalItemsCategoryNames**: = "cart.lineItems.physicalItems.categoryNames"

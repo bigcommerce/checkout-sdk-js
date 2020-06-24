@@ -1,42 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedFieldStylesMap](../interfaces/hostedfieldstylesmap.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedFieldStylesMap](hostedfieldstylesmap.md)
 
-# HostedFieldStylesMap
+# Interface: HostedFieldStylesMap
 
 ## Hierarchy
 
-**HostedFieldStylesMap**
+* **HostedFieldStylesMap**
 
 ## Index
 
 ### Properties
 
-* [default](hostedfieldstylesmap.md#default)
-* [error](hostedfieldstylesmap.md#error)
-* [focus](hostedfieldstylesmap.md#focus)
-
----
+* [default](hostedfieldstylesmap.md#optional-default)
+* [error](hostedfieldstylesmap.md#optional-error)
+* [focus](hostedfieldstylesmap.md#optional-focus)
 
 ## Properties
 
-<a id="default"></a>
+### `Optional` default
 
-### `<Optional>` default
-
-**● default**: *[HostedFieldStyles](../#hostedfieldstyles)*
-
-___
-<a id="error"></a>
-
-### `<Optional>` error
-
-**● error**: *[HostedFieldStyles](../#hostedfieldstyles)*
-
-___
-<a id="focus"></a>
-
-### `<Optional>` focus
-
-**● focus**: *[HostedFieldStyles](../#hostedfieldstyles)*
+• **default**? : *[HostedFieldStyles](../README.md#hostedfieldstyles)*
 
 ___
 
+### `Optional` error
+
+• **error**? : *[HostedFieldStyles](../README.md#hostedfieldstyles)*
+
+___
+
+### `Optional` focus
+
+• **focus**? : *[HostedFieldStyles](../README.md#hostedfieldstyles)*

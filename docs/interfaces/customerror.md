@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CustomError](../interfaces/customerror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CustomError](customerror.md)
 
-# CustomError
+# Interface: CustomError
 
 ## Hierarchy
 
- `Error`
+* [Error](amazonpaywidgeterror.md#error)
 
-**↳ CustomError**
+  ↳ **CustomError**
 
 ## Implemented by
 
@@ -20,56 +20,50 @@
 * [Error](customerror.md#error)
 * [message](customerror.md#message)
 * [name](customerror.md#name)
-* [stack](customerror.md#stack)
-* [subtype](customerror.md#subtype)
+* [stack](customerror.md#optional-stack)
+* [subtype](customerror.md#optional-subtype)
 * [type](customerror.md#type)
-
----
 
 ## Properties
 
-<a id="error"></a>
-
 ###  Error
 
-**● Error**: *`ErrorConstructor`*
+• **Error**: *ErrorConstructor*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
+
+*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[message](amazonpaywidgeterror.md#message)*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
+
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[name](amazonpaywidgeterror.md#name)*
 
 ___
-<a id="stack"></a>
 
-### `<Optional>` stack
+### `Optional` stack
 
-**● stack**: * `undefined` &#124; `string`
-*
+• **stack**? : *undefined | string*
 
-___
-<a id="subtype"></a>
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
 
-### `<Optional>` subtype
-
-**● subtype**: * `undefined` &#124; `string`
-*
+*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
 
 ___
-<a id="type"></a>
+
+### `Optional` subtype
+
+• **subtype**? : *undefined | string*
+
+___
 
 ###  type
 
-**● type**: *`string`*
-
-___
-
+• **type**: *string*

@@ -1,44 +1,33 @@
-[@bigcommerce/checkout-sdk](../README.md) > [FormFieldOptions](../interfaces/formfieldoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [FormFieldOptions](formfieldoptions.md)
 
-# FormFieldOptions
+# Interface: FormFieldOptions
 
 ## Hierarchy
 
-**FormFieldOptions**
+* **FormFieldOptions**
 
 ## Index
 
 ### Properties
 
-* [helperLabel](formfieldoptions.md#helperlabel)
-* [items](formfieldoptions.md#items)
-* [rows](formfieldoptions.md#rows)
-
----
+* [helperLabel](formfieldoptions.md#optional-helperlabel)
+* [items](formfieldoptions.md#optional-items)
+* [rows](formfieldoptions.md#optional-rows)
 
 ## Properties
 
-<a id="helperlabel"></a>
+### `Optional` helperLabel
 
-### `<Optional>` helperLabel
-
-**● helperLabel**: * `undefined` &#124; `string`
-*
-
-___
-<a id="items"></a>
-
-### `<Optional>` items
-
-**● items**: *[FormFieldItem](formfielditem.md)[]*
-
-___
-<a id="rows"></a>
-
-### `<Optional>` rows
-
-**● rows**: * `undefined` &#124; `number`
-*
+• **helperLabel**? : *undefined | string*
 
 ___
 
+### `Optional` items
+
+• **items**? : *[FormFieldItem](formfielditem.md)[]*
+
+___
+
+### `Optional` rows
+
+• **rows**? : *undefined | number*

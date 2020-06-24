@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [GiftCertificateOrderPayment](../interfaces/giftcertificateorderpayment.md)
+[@bigcommerce/checkout-sdk](../README.md) › [GiftCertificateOrderPayment](giftcertificateorderpayment.md)
 
-# GiftCertificateOrderPayment
+# Interface: GiftCertificateOrderPayment
 
 ## Hierarchy
 
- [OrderPayment](orderpayment.md)
+* [OrderPayment](orderpayment.md)
 
-**↳ GiftCertificateOrderPayment**
+  ↳ **GiftCertificateOrderPayment**
 
 ## Index
 
@@ -15,53 +15,49 @@
 * [amount](giftcertificateorderpayment.md#amount)
 * [description](giftcertificateorderpayment.md#description)
 * [detail](giftcertificateorderpayment.md#detail)
-* [gatewayId](giftcertificateorderpayment.md#gatewayid)
+* [gatewayId](giftcertificateorderpayment.md#optional-gatewayid)
 * [providerId](giftcertificateorderpayment.md#providerid)
-
----
 
 ## Properties
 
-<a id="amount"></a>
-
 ###  amount
 
-**● amount**: *`number`*
+• **amount**: *number*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[amount](gatewayorderpayment.md#amount)*
 
 ___
-<a id="description"></a>
 
 ###  description
 
-**● description**: *`string`*
+• **description**: *string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[description](gatewayorderpayment.md#description)*
 
 ___
-<a id="detail"></a>
 
 ###  detail
 
-**● detail**: *`object`*
+• **detail**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- code: `string`
+* **code**: *string*
 
- remaining: `number`
-
-___
-<a id="gatewayid"></a>
-
-### `<Optional>` gatewayId
-
-**● gatewayId**: * `undefined` &#124; `string`
-*
+* **remaining**: *number*
 
 ___
-<a id="providerid"></a>
+
+### `Optional` gatewayId
+
+• **gatewayId**? : *undefined | string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[gatewayId](gatewayorderpayment.md#optional-gatewayid)*
+
+___
 
 ###  providerId
 
-**● providerId**: *`string`*
+• **providerId**: *string*
 
-___
-
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[providerId](gatewayorderpayment.md#providerid)*

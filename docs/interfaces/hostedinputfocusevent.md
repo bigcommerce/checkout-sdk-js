@@ -1,10 +1,10 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedInputFocusEvent](../interfaces/hostedinputfocusevent.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedInputFocusEvent](hostedinputfocusevent.md)
 
-# HostedInputFocusEvent
+# Interface: HostedInputFocusEvent
 
 ## Hierarchy
 
-**HostedInputFocusEvent**
+* **HostedInputFocusEvent**
 
 ## Index
 
@@ -13,26 +13,18 @@
 * [payload](hostedinputfocusevent.md#payload)
 * [type](hostedinputfocusevent.md#type)
 
----
-
 ## Properties
-
-<a id="payload"></a>
 
 ###  payload
 
-**● payload**: *`object`*
+• **payload**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- fieldType: [HostedFieldType](../enums/hostedfieldtype.md)
+* **fieldType**: *[HostedFieldType](../enums/hostedfieldtype.md)*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *[Focused](../enums/hostedinputeventtype.md#focused)*
-
-___
-
+• **type**: *[Focused](../enums/hostedinputeventtype.md#focused)*

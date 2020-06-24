@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CardPaymentMethodState](../interfaces/cardpaymentmethodstate.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CardPaymentMethodState](cardpaymentmethodstate.md)
 
-# CardPaymentMethodState
+# Interface: CardPaymentMethodState
 
 ## Hierarchy
 
- [AdyenPaymentMethodState](adyenpaymentmethodstate.md)
+* [AdyenPaymentMethodState](adyenpaymentmethodstate.md)
 
-**↳ CardPaymentMethodState**
+  ↳ **CardPaymentMethodState**
 
 ## Index
 
@@ -16,54 +16,43 @@
 * [encryptedExpiryMonth](cardpaymentmethodstate.md#encryptedexpirymonth)
 * [encryptedExpiryYear](cardpaymentmethodstate.md#encryptedexpiryyear)
 * [encryptedSecurityCode](cardpaymentmethodstate.md#encryptedsecuritycode)
-* [holderName](cardpaymentmethodstate.md#holdername)
+* [holderName](cardpaymentmethodstate.md#optional-holdername)
 * [type](cardpaymentmethodstate.md#type)
-
----
 
 ## Properties
 
-<a id="encryptedcardnumber"></a>
-
 ###  encryptedCardNumber
 
-**● encryptedCardNumber**: *`string`*
+• **encryptedCardNumber**: *string*
 
 ___
-<a id="encryptedexpirymonth"></a>
 
 ###  encryptedExpiryMonth
 
-**● encryptedExpiryMonth**: *`string`*
+• **encryptedExpiryMonth**: *string*
 
 ___
-<a id="encryptedexpiryyear"></a>
 
 ###  encryptedExpiryYear
 
-**● encryptedExpiryYear**: *`string`*
+• **encryptedExpiryYear**: *string*
 
 ___
-<a id="encryptedsecuritycode"></a>
 
 ###  encryptedSecurityCode
 
-**● encryptedSecurityCode**: *`string`*
+• **encryptedSecurityCode**: *string*
 
 ___
-<a id="holdername"></a>
 
-### `<Optional>` holderName
+### `Optional` holderName
 
-**● holderName**: * `undefined` &#124; `string`
-*
+• **holderName**? : *undefined | string*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
+• **type**: *string*
 
-___
-
+*Inherited from [AdyenPaymentMethodState](adyenpaymentmethodstate.md).[type](adyenpaymentmethodstate.md#type)*

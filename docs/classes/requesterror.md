@@ -1,21 +1,29 @@
-[@bigcommerce/checkout-sdk](../README.md) > [RequestError](../classes/requesterror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [RequestError](requesterror.md)
 
-# RequestError
+# Class: RequestError ‹**TBody**›
+
+Throw this error if we are unable to make a request to the server. It wraps
+any server response into a JS error object.
 
 ## Type parameters
 
-#### TBody 
+▪ **TBody**
+
 ## Hierarchy
 
-↳  [StandardError](standarderror.md)
+  ↳ [StandardError](standarderror.md)
 
-**↳ RequestError**
+  ↳ **RequestError**
 
 ## Implements
 
 * [CustomError](../interfaces/customerror.md)
 
 ## Index
+
+### Constructors
+
+* [constructor](requesterror.md#constructor)
 
 ### Properties
 
@@ -24,93 +32,97 @@
 * [headers](requesterror.md#headers)
 * [message](requesterror.md#message)
 * [name](requesterror.md#name)
-* [stack](requesterror.md#stack)
+* [stack](requesterror.md#optional-stack)
 * [status](requesterror.md#status)
 * [type](requesterror.md#type)
 
----
-
 ## Constructors
-
-<a id="constructor"></a>
 
 ###  constructor
 
-⊕ **new RequestError**(response?: *`Response`< `TBody` &#124; `__type`>*, __namedParameters?: *`object`*): [RequestError](requesterror.md)
+\+ **new RequestError**(`response?`: Response‹TBody | object›, `__namedParameters?`: object): *[RequestError](requesterror.md)*
+
+*Overrides [StandardError](standarderror.md).[constructor](standarderror.md#constructor)*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| `Optional` response | `Response`< `TBody` &#124; `__type`> |
-| `Optional` __namedParameters | `object` |
+▪`Optional`  **response**: *Response‹TBody | object›*
 
-**Returns:** [RequestError](requesterror.md)
+▪`Optional`  **__namedParameters**: *object*
 
-___
+Name | Type |
+------ | ------ |
+`errors` | undefined &#124; object[] |
+`message` | undefined &#124; string |
+
+**Returns:** *[RequestError](requesterror.md)*
 
 ## Properties
 
-<a id="body"></a>
-
 ###  body
 
-**● body**: * `TBody` &#124; `__type`
-*
+• **body**: *TBody | object*
 
 ___
-<a id="errors"></a>
 
 ###  errors
 
-**● errors**: *`Array`<`object`>*
+• **errors**: *Array‹object›*
 
 ___
-<a id="headers"></a>
 
 ###  headers
 
-**● headers**: *`object`*
+• **headers**: *object*
 
-#### Type declaration
+#### Type declaration:
 
-[key: `string`]: `any`
+* \[ **key**: *string*\]: any
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[message](../interfaces/customerror.md#message)*
+
+*Inherited from [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[message](../interfaces/amazonpaywidgeterror.md#message)*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[name](../interfaces/customerror.md#name)*
+
+*Inherited from [RequestError](requesterror.md).[name](requesterror.md#name)*
+
+*Overrides [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[name](../interfaces/amazonpaywidgeterror.md#name)*
 
 ___
-<a id="stack"></a>
 
-### `<Optional>` stack
+### `Optional` stack
 
-**● stack**: * `undefined` &#124; `string`
-*
+• **stack**? : *undefined | string*
+
+*Implementation of [CustomError](../interfaces/customerror.md).[stack](../interfaces/customerror.md#optional-stack)*
+
+*Inherited from [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[stack](../interfaces/amazonpaywidgeterror.md#optional-stack)*
 
 ___
-<a id="status"></a>
 
 ###  status
 
-**● status**: *`number`*
+• **status**: *number*
 
 ___
-<a id="type"></a>
 
 ###  type
 
-**● type**: *`string`*
+• **type**: *string*
 
-___
+*Implementation of [CustomError](../interfaces/customerror.md).[type](../interfaces/customerror.md#type)*
 
+*Inherited from [RequestError](requesterror.md).[type](requesterror.md#type)*

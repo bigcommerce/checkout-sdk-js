@@ -1,60 +1,59 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayV2CheckoutLanguage](../enums/amazonpayv2checkoutlanguage.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayV2CheckoutLanguage](amazonpayv2checkoutlanguage.md)
 
-# AmazonPayV2CheckoutLanguage
+# Enumeration: AmazonPayV2CheckoutLanguage
+
+**`alpha`** 
 
 ## Index
 
----
+### Enumeration members
+
+* [de_DE](amazonpayv2checkoutlanguage.md#de_de)
+* [en_GB](amazonpayv2checkoutlanguage.md#en_gb)
+* [en_US](amazonpayv2checkoutlanguage.md#en_us)
+* [es_ES](amazonpayv2checkoutlanguage.md#es_es)
+* [fr_FR](amazonpayv2checkoutlanguage.md#fr_fr)
+* [it_IT](amazonpayv2checkoutlanguage.md#it_it)
+* [ja_JP](amazonpayv2checkoutlanguage.md#ja_jp)
 
 ## Enumeration members
 
-<a id="de_de"></a>
-
 ###  de_DE
 
-**de_DE**:  = "de_DE"
+• **de_DE**: = "de_DE"
 
 ___
-<a id="en_gb"></a>
 
 ###  en_GB
 
-**en_GB**:  = "en_GB"
+• **en_GB**: = "en_GB"
 
 ___
-<a id="en_us"></a>
 
 ###  en_US
 
-**en_US**:  = "en_US"
+• **en_US**: = "en_US"
 
 ___
-<a id="es_es"></a>
 
 ###  es_ES
 
-**es_ES**:  = "es_ES"
+• **es_ES**: = "es_ES"
 
 ___
-<a id="fr_fr"></a>
 
 ###  fr_FR
 
-**fr_FR**:  = "fr_FR"
+• **fr_FR**: = "fr_FR"
 
 ___
-<a id="it_it"></a>
 
 ###  it_IT
 
-**it_IT**:  = "it_IT"
+• **it_IT**: = "it_IT"
 
 ___
-<a id="ja_jp"></a>
 
 ###  ja_JP
 
-**ja_JP**:  = "ja_JP"
-
-___
-
+• **ja_JP**: = "ja_JP"

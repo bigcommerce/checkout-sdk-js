@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [AmazonPayWidgetError](amazonpaywidgeterror.md)
 
-# AmazonPayWidgetError
+# Interface: AmazonPayWidgetError
 
 ## Hierarchy
 
- `Error`
+* [Error](amazonpaywidgeterror.md#error)
 
-**↳ AmazonPayWidgetError**
+  ↳ **AmazonPayWidgetError**
 
 ## Index
 
@@ -15,55 +15,48 @@
 * [Error](amazonpaywidgeterror.md#error)
 * [message](amazonpaywidgeterror.md#message)
 * [name](amazonpaywidgeterror.md#name)
-* [stack](amazonpaywidgeterror.md#stack)
+* [stack](amazonpaywidgeterror.md#optional-stack)
 
 ### Methods
 
 * [getErrorCode](amazonpaywidgeterror.md#geterrorcode)
 
----
-
 ## Properties
-
-<a id="error"></a>
 
 ###  Error
 
-**● Error**: *`ErrorConstructor`*
+• **Error**: *ErrorConstructor*
 
 ___
-<a id="message"></a>
 
 ###  message
 
-**● message**: *`string`*
+• **message**: *string*
+
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[message](amazonpaywidgeterror.md#message)*
 
 ___
-<a id="name"></a>
 
 ###  name
 
-**● name**: *`string`*
+• **name**: *string*
+
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[name](amazonpaywidgeterror.md#name)*
 
 ___
-<a id="stack"></a>
 
-### `<Optional>` stack
+### `Optional` stack
 
-**● stack**: * `undefined` &#124; `string`
-*
+• **stack**? : *undefined | string*
 
-___
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
+
+*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[stack](amazonpaywidgeterror.md#optional-stack)*
 
 ## Methods
 
-<a id="geterrorcode"></a>
-
 ###  getErrorCode
 
-▸ **getErrorCode**(): `string`
+▸ **getErrorCode**(): *string*
 
-**Returns:** `string`
-
-___
-
+**Returns:** *string*

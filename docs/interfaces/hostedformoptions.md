@@ -1,120 +1,104 @@
-[@bigcommerce/checkout-sdk](../README.md) > [HostedFormOptions](../interfaces/hostedformoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [HostedFormOptions](hostedformoptions.md)
 
-# HostedFormOptions
+# Interface: HostedFormOptions
 
 ## Hierarchy
 
-**HostedFormOptions**
+* **HostedFormOptions**
 
 ## Index
 
 ### Properties
 
 * [fields](hostedformoptions.md#fields)
-* [styles](hostedformoptions.md#styles)
+* [styles](hostedformoptions.md#optional-styles)
 
 ### Methods
 
-* [onBlur](hostedformoptions.md#onblur)
-* [onCardTypeChange](hostedformoptions.md#oncardtypechange)
-* [onEnter](hostedformoptions.md#onenter)
-* [onFocus](hostedformoptions.md#onfocus)
-* [onValidate](hostedformoptions.md#onvalidate)
-
----
+* [onBlur](hostedformoptions.md#optional-onblur)
+* [onCardTypeChange](hostedformoptions.md#optional-oncardtypechange)
+* [onEnter](hostedformoptions.md#optional-onenter)
+* [onFocus](hostedformoptions.md#optional-onfocus)
+* [onValidate](hostedformoptions.md#optional-onvalidate)
 
 ## Properties
 
-<a id="fields"></a>
-
 ###  fields
 
-**● fields**: *[HostedFieldOptionsMap](../#hostedfieldoptionsmap)*
+• **fields**: *[HostedFieldOptionsMap](../README.md#hostedfieldoptionsmap)*
 
 ___
-<a id="styles"></a>
 
-### `<Optional>` styles
+### `Optional` styles
 
-**● styles**: *[HostedFieldStylesMap](hostedfieldstylesmap.md)*
-
-___
+• **styles**? : *[HostedFieldStylesMap](hostedfieldstylesmap.md)*
 
 ## Methods
 
-<a id="onblur"></a>
+### `Optional` onBlur
 
-### `<Optional>` onBlur
-
-▸ **onBlur**(data: *[HostedFieldBlurEventData](../#hostedfieldblureventdata)*): `void`
+▸ **onBlur**(`data`: [HostedFieldBlurEventData](../README.md#hostedfieldblureventdata)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| data | [HostedFieldBlurEventData](../#hostedfieldblureventdata) |
+Name | Type |
+------ | ------ |
+`data` | [HostedFieldBlurEventData](../README.md#hostedfieldblureventdata) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="oncardtypechange"></a>
 
-### `<Optional>` onCardTypeChange
+### `Optional` onCardTypeChange
 
-▸ **onCardTypeChange**(data: *[HostedFieldCardTypeChangeEventData](../#hostedfieldcardtypechangeeventdata)*): `void`
+▸ **onCardTypeChange**(`data`: [HostedFieldCardTypeChangeEventData](../README.md#hostedfieldcardtypechangeeventdata)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| data | [HostedFieldCardTypeChangeEventData](../#hostedfieldcardtypechangeeventdata) |
+Name | Type |
+------ | ------ |
+`data` | [HostedFieldCardTypeChangeEventData](../README.md#hostedfieldcardtypechangeeventdata) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onenter"></a>
 
-### `<Optional>` onEnter
+### `Optional` onEnter
 
-▸ **onEnter**(data: *[HostedFieldEnterEventData](../#hostedfieldentereventdata)*): `void`
+▸ **onEnter**(`data`: [HostedFieldEnterEventData](../README.md#hostedfieldentereventdata)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| data | [HostedFieldEnterEventData](../#hostedfieldentereventdata) |
+Name | Type |
+------ | ------ |
+`data` | [HostedFieldEnterEventData](../README.md#hostedfieldentereventdata) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onfocus"></a>
 
-### `<Optional>` onFocus
+### `Optional` onFocus
 
-▸ **onFocus**(data: *[HostedFieldFocusEventData](../#hostedfieldfocuseventdata)*): `void`
+▸ **onFocus**(`data`: [HostedFieldFocusEventData](../README.md#hostedfieldfocuseventdata)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| data | [HostedFieldFocusEventData](../#hostedfieldfocuseventdata) |
+Name | Type |
+------ | ------ |
+`data` | [HostedFieldFocusEventData](../README.md#hostedfieldfocuseventdata) |
 
-**Returns:** `void`
+**Returns:** *void*
 
 ___
-<a id="onvalidate"></a>
 
-### `<Optional>` onValidate
+### `Optional` onValidate
 
-▸ **onValidate**(data: *[HostedFieldValidateEventData](../#hostedfieldvalidateeventdata)*): `void`
+▸ **onValidate**(`data`: [HostedFieldValidateEventData](../README.md#hostedfieldvalidateeventdata)): *void*
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| data | [HostedFieldValidateEventData](../#hostedfieldvalidateeventdata) |
+Name | Type |
+------ | ------ |
+`data` | [HostedFieldValidateEventData](../README.md#hostedfieldvalidateeventdata) |
 
-**Returns:** `void`
-
-___
-
+**Returns:** *void*

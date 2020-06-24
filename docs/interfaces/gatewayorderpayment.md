@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) > [GatewayOrderPayment](../interfaces/gatewayorderpayment.md)
+[@bigcommerce/checkout-sdk](../README.md) › [GatewayOrderPayment](gatewayorderpayment.md)
 
-# GatewayOrderPayment
+# Interface: GatewayOrderPayment
 
 ## Hierarchy
 
- [OrderPayment](orderpayment.md)
+* [OrderPayment](orderpayment.md)
 
-**↳ GatewayOrderPayment**
+  ↳ **GatewayOrderPayment**
 
 ## Index
 
@@ -15,53 +15,49 @@
 * [amount](gatewayorderpayment.md#amount)
 * [description](gatewayorderpayment.md#description)
 * [detail](gatewayorderpayment.md#detail)
-* [gatewayId](gatewayorderpayment.md#gatewayid)
+* [gatewayId](gatewayorderpayment.md#optional-gatewayid)
 * [providerId](gatewayorderpayment.md#providerid)
-
----
 
 ## Properties
 
-<a id="amount"></a>
-
 ###  amount
 
-**● amount**: *`number`*
+• **amount**: *number*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[amount](gatewayorderpayment.md#amount)*
 
 ___
-<a id="description"></a>
 
 ###  description
 
-**● description**: *`string`*
+• **description**: *string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[description](gatewayorderpayment.md#description)*
 
 ___
-<a id="detail"></a>
 
 ###  detail
 
-**● detail**: *`object`*
+• **detail**: *object*
 
-#### Type declaration
+#### Type declaration:
 
- instructions: `string`
+* **instructions**: *string*
 
- step: `string`
-
-___
-<a id="gatewayid"></a>
-
-### `<Optional>` gatewayId
-
-**● gatewayId**: * `undefined` &#124; `string`
-*
+* **step**: *string*
 
 ___
-<a id="providerid"></a>
+
+### `Optional` gatewayId
+
+• **gatewayId**? : *undefined | string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[gatewayId](gatewayorderpayment.md#optional-gatewayid)*
+
+___
 
 ###  providerId
 
-**● providerId**: *`string`*
+• **providerId**: *string*
 
-___
-
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[providerId](gatewayorderpayment.md#providerid)*
