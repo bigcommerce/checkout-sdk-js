@@ -42,7 +42,7 @@ export interface ChasePay {
         COMPLETE_CHECKOUT: ChasePayEventType.CompleteCheckout;
         CANCEL_CHECKOUT: ChasePayEventType.CancelCheckout;
     };
-    isChasePayUp(): boolean;
+    isChasePayUp: boolean;
     insertButtons(options: ChasePayInsertOptions): void;
     insertBrandings(options: ChasePayInsertOptions): void;
     startCheckout(digitalSessionId?: string): void;
