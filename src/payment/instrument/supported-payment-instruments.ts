@@ -45,6 +45,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'elavon',
         method: 'credit_card',
     },
+    checkoutcom: {
+        provider: 'checkoutcom',
+        method: 'credit_card',
+    },
     stripe: {
         provider: 'stripe',
         method: 'credit_card',

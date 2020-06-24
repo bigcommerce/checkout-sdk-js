@@ -31,8 +31,8 @@ describe('GooglePayStripeInitializer', () => {
     });
 
     describe('#parseResponse', () => {
-        it('parses a response from google pay payload received', () => {
-            const tokenizePayload = googlePayInitializer.parseResponse(getStripePaymentDataMock());
+        it('parses a response from google pay payload received', async () => {
+            const tokenizePayload = await googlePayInitializer.parseResponse(getStripePaymentDataMock());
 
             expect(tokenizePayload).toEqual(getStripeTokenizedPayload());
         });

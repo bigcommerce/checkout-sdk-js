@@ -147,6 +147,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     googlepaybraintree?: GooglePayPaymentInitializeOptions;
 
     /**
+     * The options that are required to initialize the GooglePay Checkout.com payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
+
+    /**
      * The options that are required to initialize the GooglePay Stripe payment method.
      * They can be omitted unless you need to support GooglePay.
      */

@@ -25,7 +25,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
         return Promise.resolve();
     }
 
-    parseResponse(paymentData: GooglePaymentData): TokenizePayload {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         const {
             paymentMethodData: {
                 type,
@@ -37,14 +37,14 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
             },
         } = paymentData;
 
-        return {
+        return Promise.resolve({
             type: type as TokenizeType,
             nonce: btoa(token),
             details: {
                 cardType,
                 lastFour,
             },
-        };
+        });
     }
 
     private _getGooglePaymentDataRequest(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean): GooglePayPaymentDataRequestV2 {

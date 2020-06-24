@@ -32,8 +32,9 @@ import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
 import { LaybuyPaymentStrategy } from './strategies/laybuy';
@@ -178,6 +179,16 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM, () =>
+        new CreditCardRedirectPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            formPoster
         )
     );
 
@@ -426,6 +437,21 @@ export default function createPaymentStrategyRegistry(
             createGooglePayPaymentProcessor(
                 store,
                 new GooglePayStripeInitializer()
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayCheckoutcomInitializer(requestSender)
             )
         )
     );

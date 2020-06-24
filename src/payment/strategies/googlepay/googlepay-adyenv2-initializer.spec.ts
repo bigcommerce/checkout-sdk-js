@@ -31,8 +31,8 @@ describe('GooglePayAdyenV2Initializer', () => {
     });
 
     describe('#parseResponse', () => {
-        it('parses a response from google pay payload received', () => {
-            const tokenizePayload = googlePayInitializer.parseResponse(getAdyenV2PaymentDataMock());
+        it('parses a response from google pay payload received', async () => {
+            const tokenizePayload = await googlePayInitializer.parseResponse(getAdyenV2PaymentDataMock());
 
             expect(tokenizePayload).toEqual(getAdyenV2TokenizedPayload());
         });
