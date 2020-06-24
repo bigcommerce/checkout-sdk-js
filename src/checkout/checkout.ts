@@ -21,6 +21,12 @@ export default interface Checkout {
     orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
+    /**
+     * Whether the current checkout must execute spam protection
+     * before placing the order.
+     *
+     * Note: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
+     */
     shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
     taxTotal: number;

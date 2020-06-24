@@ -19,6 +19,8 @@ The SDK has a convenient application interface for starting and completing a che
     - [Initialize instance](#initialize-instance)
         - [Load checkout](#load-checkout)
     - [Sign in customer](#sign-in-customer)
+        - [Passwordless Sign-in](#passwordless-sign-in)
+    - [Continue as guest](#continue-as-guest)
     - [Set shipping details](#set-shipping-details)
         - [Set shipping address](#set-shipping-address)
         - [Set shipping option](#set-shipping-option)
@@ -177,6 +179,24 @@ console.log(state.data.getCart().email);
 console.log(state.data.getBillingAddress().email);
 ```
 
+#### Passwordless Sign-in
+Customers could sign in using a single-use link sent to their email address. Once they click on the link, they will be redirected back to the store as a signed-in user.
+
+Learn more about it at [CheckoutService#sendSignInEmail](docs/classes/checkoutservice.md#sendSignInEmail)
+
+### Continue as guest
+
+If your checkout settings allow it, your customers could continue the checkout as guests (without signing in).
+
+```js
+const state = await service.continueAsGuest({ email: 'foo@bar.com' });
+
+console.log(state.data.getBillingAddress());
+console.log(state.data.getCustomer());
+```
+
+Learn more about it at [CheckoutService#continueAsGuest](docs/classes/checkoutservice.md#continueasguest)
+
 ### Set shipping details
 
 #### Set shipping address
@@ -262,11 +282,11 @@ await service.removeGiftCertificate('GIFT');
 
 You can also enable bot protection to prevent bots and other types of automated abuse from creating orders. Note that enabling this feature increases checkout friction, which may affect conversions. As such, we recommend leaving this feature out if your store is not encountering bots.
 
-You should call this method before `submitOrder` method is called (i.e.: when the shopper first gets to the payment step).
-
 ```js
 await service.executeSpamCheck();
 ```
+
+Learn more about it at [CheckoutService#executeSpamCheck](docs/classes/checkoutservice.md#executespamcheck).
 
 ### Submit payment and order
 
