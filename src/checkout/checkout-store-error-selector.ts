@@ -140,6 +140,17 @@ export default interface CheckoutStoreErrorSelector {
     /**
      * Returns an error if unable to continue as guest.
      *
+     * The call could fail in scenarios where guest checkout is not allowed, for example, when existing accounts are required to sign-in.
+     *
+     * In the background, this call tries to set the billing address email using the Storefront API. You could access the Storefront API response status code using `getContinueAsGuestError` error selector.
+     *
+     * ```js
+     * console.log(state.errors.getContinueAsGuestError());
+     * console.log(state.errors.getContinueAsGuestError().status);
+     * ```
+     *
+     * For more information about status codes, check [Checkout Storefront API - Add Checkout Billing Address](https://developer.bigcommerce.com/api-reference/cart-checkout/storefront-checkout-api/checkout-billing-address/checkoutsbillingaddressbycheckoutidpost).
+     *
      * @returns The error object if unable to continue, otherwise undefined.
      */
     getContinueAsGuestError(): Error | undefined;

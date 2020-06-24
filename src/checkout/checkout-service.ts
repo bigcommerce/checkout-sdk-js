@@ -523,10 +523,14 @@ export default class CheckoutService {
     }
 
     /**
-     * Sends a email that contains a single-use sign-in link. When clicked, this link
-     * signs in the customer without requiring any password.
+     * Sends a email that contains a single-use sign-in link. When a valid links is clicked,
+     * signs in the customer without requiring any password, redirecting them to the account page if no redirectUrl is provided.
      *
-     * @internal
+     *
+     * ```js
+     * checkoutService.sendSignInEmail({ email: 'foo@bar.com', redirectUrl: 'checkout' });
+     * ```
+     *
      * @param signInEmailRequest - The sign-in email request values.
      * @param options - Options for the send email request.
      * @returns A promise that resolves to the current state.
@@ -553,9 +557,12 @@ export default class CheckoutService {
     /**
      * Continues to check out as a guest.
      *
-     * The customer is required to provide their email address in order to
-     * continue. Once they provide their email address, it will be stored as a
-     * part of their billing address.
+     * If your Checkout Settings allow it, your customers could continue the checkout as guests (without signing in).
+     * If you have enabled the checkout setting "Prompt existing accounts to sign in", this information is
+     * exposed as part of the [Customer](docs/interfaces/customer.md) object.
+     *
+     * Once they provide their email address, it will be stored as
+     * part of their [billing address](docs/interfaces/billingaddress.md).
      *
      * @param credentials - The guest credentials to use, with optional subscriptions.
      * @param options - Options for continuing as a guest.
@@ -1142,7 +1149,11 @@ export default class CheckoutService {
      *
      * With spam protection enabled, the customer has to be verified as
      * a human. The order creation will fail if spam protection
-     * is enabled but verification fails.
+     * is enabled but verification fails. You should call this method before
+     * `submitOrder` method is called (i.e.: when the shopper
+     * first gets to the payment step).
+     *
+     * **Note**: You need to enable Google ReCAPTCHA bot protection in your Checkout Settings.
      *
      * ```js
      * await service.executeSpamCheck();
