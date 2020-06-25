@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.79.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.78.1...v1.79.0) (2020-06-25)
+
+
+### Features
+
+* **checkout:** INT-2274 Add vaulting support for Checkout.com ([89b4608](https://github.com/bigcommerce/checkout-sdk-js/commit/89b4608))
+* **payment:** INT-2279 Create a strategy for credit cards with redirect and add support to Checkout.com ([#809](https://github.com/bigcommerce/checkout-sdk-js/issues/809)) ([0f42b13](https://github.com/bigcommerce/checkout-sdk-js/commit/0f42b13))
+* **payment:** INT-2280 Added GooglePay for Checkout.com ([894d863](https://github.com/bigcommerce/checkout-sdk-js/commit/894d863))
+
 ### [1.78.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.78.0...v1.78.1) (2020-06-24)
 
 ## [1.78.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.77.3...v1.78.0) (2020-06-23)

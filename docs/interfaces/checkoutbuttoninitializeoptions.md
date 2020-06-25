@@ -22,6 +22,7 @@
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
 * [googlepayauthorizenet](checkoutbuttoninitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#optional-googlepaybraintree)
+* [googlepaycheckoutcom](checkoutbuttoninitializeoptions.md#optional-googlepaycheckoutcom)
 * [googlepaystripe](checkoutbuttoninitializeoptions.md#optional-googlepaystripe)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#optional-params)
@@ -82,6 +83,15 @@ ___
 
 The options that are required to facilitate Braintree GooglePay. They can be
 omitted unles you need to support Braintree GooglePay.
+
+___
+
+### `Optional` googlepaycheckoutcom
+
+• **googlepaycheckoutcom**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to facilitate Checkout.com GooglePay. They can be
+omitted unles you need to support Checkout.com GooglePay.
 
 ___
 

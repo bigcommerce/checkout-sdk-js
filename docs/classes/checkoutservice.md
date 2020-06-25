@@ -198,10 +198,10 @@ Continues to check out as a guest.
 
 If your Checkout Settings allow it, your customers could continue the checkout as guests (without signing in).
 If you have enabled the checkout setting "Prompt existing accounts to sign in", this information is
-exposed as part of the [Customer](docs/interfaces/customer.md) object.
+exposed as part of the [Customer](../interfaces/customer.md) object.
 
 Once they provide their email address, it will be stored as
-part of their [billing address](docs/interfaces/billingaddress.md).
+part of their [billing address](../interfaces/billingaddress.md).
 
 **Parameters:**
 

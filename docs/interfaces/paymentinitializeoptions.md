@@ -31,6 +31,7 @@ current checkout flow.
 * [googlepayadyenv2](paymentinitializeoptions.md#optional-googlepayadyenv2)
 * [googlepayauthorizenet](paymentinitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](paymentinitializeoptions.md#optional-googlepaybraintree)
+* [googlepaycheckoutcom](paymentinitializeoptions.md#optional-googlepaycheckoutcom)
 * [googlepaystripe](paymentinitializeoptions.md#optional-googlepaystripe)
 * [klarna](paymentinitializeoptions.md#optional-klarna)
 * [klarnav2](paymentinitializeoptions.md#optional-klarnav2)
@@ -156,6 +157,15 @@ ___
 • **googlepaybraintree**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
 
 The options that are required to initialize the GooglePay Braintree payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### `Optional` googlepaycheckoutcom
+
+• **googlepaycheckoutcom**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay Checkout.com payment method.
 They can be omitted unless you need to support GooglePay.
 
 ___

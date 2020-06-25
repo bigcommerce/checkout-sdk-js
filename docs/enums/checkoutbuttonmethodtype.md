@@ -12,6 +12,7 @@
 * [GOOGLEPAY_ADYENV2](checkoutbuttonmethodtype.md#googlepay_adyenv2)
 * [GOOGLEPAY_AUTHORIZENET](checkoutbuttonmethodtype.md#googlepay_authorizenet)
 * [GOOGLEPAY_BRAINTREE](checkoutbuttonmethodtype.md#googlepay_braintree)
+* [GOOGLEPAY_CHECKOUTCOM](checkoutbuttonmethodtype.md#googlepay_checkoutcom)
 * [GOOGLEPAY_STRIPE](checkoutbuttonmethodtype.md#googlepay_stripe)
 * [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
 * [PAYPALEXPRESS](checkoutbuttonmethodtype.md#paypalexpress)
@@ -53,6 +54,12 @@ ___
 ###  GOOGLEPAY_BRAINTREE
 
 • **GOOGLEPAY_BRAINTREE**: = "googlepaybraintree"
+
+___
+
+###  GOOGLEPAY_CHECKOUTCOM
+
+• **GOOGLEPAY_CHECKOUTCOM**: = "googlepaycheckoutcom"
 
 ___
 

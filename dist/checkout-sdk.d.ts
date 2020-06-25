@@ -784,6 +784,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepaybraintree?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Checkout.com GooglePay. They can be
+     * omitted unles you need to support Checkout.com GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
      * omitted unles you need to support Stripe GooglePay.
      */
@@ -894,6 +899,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
+    GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress"
@@ -1360,10 +1366,10 @@ declare class CheckoutService {
      *
      * If your Checkout Settings allow it, your customers could continue the checkout as guests (without signing in).
      * If you have enabled the checkout setting "Prompt existing accounts to sign in", this information is
-     * exposed as part of the [Customer](docs/interfaces/customer.md) object.
+     * exposed as part of the [Customer](../interfaces/customer.md) object.
      *
      * Once they provide their email address, it will be stored as
-     * part of their [billing address](docs/interfaces/billingaddress.md).
+     * part of their [billing address](../interfaces/billingaddress.md).
      *
      * @param credentials - The guest credentials to use, with optional subscriptions.
      * @param options - Options for continuing as a guest.
@@ -2830,6 +2836,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepaycheckoutcom?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
 }
 
@@ -3725,6 +3736,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaybraintree?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Checkout.com payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Stripe payment method.
      * They can be omitted unless you need to support GooglePay.
