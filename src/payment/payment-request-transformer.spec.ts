@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
 import { getCheckoutStoreStateWithOrder, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
@@ -128,11 +130,16 @@ describe('PaymentRequestTransformer', () => {
                 [HostedFieldType.CardName]: 'BigCommerce',
                 [HostedFieldType.CardExpiry]: '10 / 20',
             },
-            getHostedFormOrderData()
+            getHostedFormOrderData(),
+            'nonce'
         );
 
         expect(result)
-            .toEqual(getPaymentRequestBody());
+            .toEqual(merge({}, getPaymentRequestBody(), {
+                payment: {
+                    hostedFormNonce: 'nonce',
+                },
+            }));
     });
 
     it('transforms from hosted form data for paying with stored card', () => {
@@ -146,13 +153,15 @@ describe('PaymentRequestTransformer', () => {
                 payment: {
                     instrumentId: 'abcdefg',
                 },
-            }
+            },
+            'nonce'
         );
 
         expect(result.payment)
             .toEqual({
                 ccNumber: '4111111111111111',
                 ccCvv: '123',
+                hostedFormNonce: 'nonce',
                 instrumentId: 'abcdefg',
             });
     });

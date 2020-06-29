@@ -11,7 +11,7 @@ import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
 import isVaultedInstrument, { isFormattedVaultedInstrument } from './is-vaulted-instrument';
-import Payment, { CreditCardInstrument, HostedCreditCardInstrument, HostedVaultedInstrument, VaultedInstrument } from './payment';
+import Payment, { HostedCreditCardInstrument, HostedVaultedInstrument, PaymentInstrument } from './payment';
 import PaymentMethod from './payment-method';
 import PaymentRequestBody from './payment-request-body';
 
@@ -72,7 +72,7 @@ export default class PaymentRequestTransformer {
         };
     }
 
-    transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData): PaymentRequestBody {
+    transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): PaymentRequestBody {
         const { authToken, checkout, config, order, orderMeta, payment = {}, paymentMethod, paymentMethodMeta } = data;
         const consignment = checkout && checkout.consignments[0];
         const shippingAddress = consignment && consignment.shippingAddress;
@@ -88,7 +88,7 @@ export default class PaymentRequestTransformer {
             cart: checkout && mapToInternalCart(checkout),
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
-            payment: this._transformHostedInputValues(values, payment),
+            payment: this._transformHostedInputValues(values, payment, nonce),
             quoteMeta: {
                 request: {
                     ...paymentMethodMeta,
@@ -117,12 +117,17 @@ export default class PaymentRequestTransformer {
         return paymentMethod;
     }
 
-    private _transformHostedInputValues(values: HostedInputValues, payment: HostedCreditCardInstrument | HostedVaultedInstrument): CreditCardInstrument | VaultedInstrument {
+    private _transformHostedInputValues(
+        values: HostedInputValues,
+        payment: HostedCreditCardInstrument | HostedVaultedInstrument,
+        nonce: string
+    ): PaymentInstrument {
         return 'instrumentId' in payment ?
             {
                 ...payment,
                 ccCvv: values.cardCodeVerification,
                 ccNumber: values.cardNumberVerification && this._cardNumberFormatter.unformat(values.cardNumberVerification),
+                hostedFormNonce: nonce,
             } :
             {
                 ...payment,
@@ -130,6 +135,7 @@ export default class PaymentRequestTransformer {
                 ccExpiry: this._cardExpiryFormatter.toObject(values.cardExpiry || ''),
                 ccName: values.cardName || '',
                 ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
+                hostedFormNonce: nonce,
             };
     }
 }

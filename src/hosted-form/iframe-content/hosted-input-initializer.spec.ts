@@ -7,6 +7,7 @@ import HostedFieldType from '../hosted-field-type';
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';
 import HostedInputInitializer from './hosted-input-initializer';
+import HostedInputStorage from './hosted-input-storage';
 
 describe('HostedInputInitializer', () => {
     let container: HTMLElement;
@@ -14,14 +15,17 @@ describe('HostedInputInitializer', () => {
     let factory: Pick<HostedInputFactory, 'create'>;
     let initializer: HostedInputInitializer;
     let input: Pick<HostedInput, 'attach'>;
+    let storage: Pick<HostedInputStorage, 'setNonce'>;
 
     beforeEach(() => {
         factory = { create: jest.fn() };
+        storage = { setNonce: jest.fn() };
         eventListener = new IframeEventListener('https://store.foobar.com');
         input = { attach: jest.fn() };
 
         initializer = new HostedInputInitializer(
             factory as HostedInputFactory,
+            storage as HostedInputStorage,
             eventListener
         );
 
@@ -81,6 +85,20 @@ describe('HostedInputInitializer', () => {
 
         expect(input.attach)
             .toHaveBeenCalled();
+    });
+
+    it('stores nonce into storage', async () => {
+        process.nextTick(() => {
+            eventListener.trigger({
+                type: HostedFieldEventType.AttachRequested,
+                payload: { type: HostedFieldType.CardNumber },
+            });
+        });
+
+        await initializer.initialize('input-container', 'abc');
+
+        expect(storage.setNonce)
+            .toHaveBeenCalledWith('abc');
     });
 
     it('returns newly created input', async () => {

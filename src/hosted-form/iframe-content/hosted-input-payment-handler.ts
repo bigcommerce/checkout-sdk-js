@@ -9,12 +9,14 @@ import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
+import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidator from './hosted-input-validator';
 
 export default class HostedInputPaymentHandler {
     constructor(
         private _inputAggregator: HostedInputAggregator,
         private _inputValidator: HostedInputValidator,
+        private _inputStorage: HostedInputStorage,
         private _eventPoster: IframeEventPoster<HostedInputEvent>,
         private _paymentRequestSender: PaymentRequestSender,
         private _paymentRequestTransformer: PaymentRequestTransformer
@@ -41,7 +43,13 @@ export default class HostedInputPaymentHandler {
         }
 
         try {
-            await this._paymentRequestSender.submitPayment(this._paymentRequestTransformer.transformWithHostedFormData(values, data));
+            await this._paymentRequestSender.submitPayment(
+                this._paymentRequestTransformer.transformWithHostedFormData(
+                    values,
+                    data,
+                    this._inputStorage.getNonce() || ''
+                )
+            );
 
             this._eventPoster.post({ type: HostedInputEventType.SubmitSucceeded });
         } catch (error) {

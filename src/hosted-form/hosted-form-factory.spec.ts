@@ -14,7 +14,7 @@ describe('HostedFormFactory', () => {
     });
 
     it('creates hosted form', () => {
-        const result = factory.create('https://store.foobar.com', 'dc030783-6129-4ee3-8e06-6f4270df1527', {
+        const result = factory.create('https://store.foobar.com', {
             fields: {
                 [HostedFieldType.CardCode]: { containerId: 'card-code' },
                 [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },

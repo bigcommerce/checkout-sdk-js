@@ -7,6 +7,7 @@ import HostedFieldType from '../hosted-field-type';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';
+import getHostedInputStorage from './get-hosted-input-storage';
 import HostedAutocompleteFieldset from './hosted-autocomplete-fieldset';
 import HostedCardExpiryInput from './hosted-card-expiry-input';
 import HostedCardNumberInput from './hosted-card-number-input';
@@ -139,6 +140,7 @@ export default class HostedInputFactory {
         return new HostedInputPaymentHandler(
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
+            getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new PaymentRequestSender(createBigpayClient()),
             new PaymentRequestTransformer()
