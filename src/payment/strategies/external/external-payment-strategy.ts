@@ -9,7 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-export default class LaybuyPaymentStrategy implements PaymentStrategy {
+export default class ExternalPaymentStrategy implements PaymentStrategy {
 
     constructor(
         private _store: CheckoutStore,

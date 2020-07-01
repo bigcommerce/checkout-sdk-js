@@ -21,16 +21,16 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import LaybuyPaymentStrategy from './laybuy-payment-strategy';
+import ExternalPaymentStrategy from './external-payment-strategy';
 
-describe('LaybuyPaymentStrategy', () => {
+describe('ExternalPaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let store: CheckoutStore;
     let orderRequestSender: OrderRequestSender;
-    let strategy: LaybuyPaymentStrategy;
+    let strategy: ExternalPaymentStrategy;
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
 
@@ -69,7 +69,7 @@ describe('LaybuyPaymentStrategy', () => {
         jest.spyOn(paymentActionCreator, 'submitPayment')
             .mockReturnValue(submitPaymentAction);
 
-        strategy = new LaybuyPaymentStrategy(
+        strategy = new ExternalPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
