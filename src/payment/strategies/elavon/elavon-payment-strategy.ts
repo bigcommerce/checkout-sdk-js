@@ -2,6 +2,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
+import { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { CreditCardPaymentStrategy } from '../credit-card';
 
@@ -25,6 +26,7 @@ export default class ElavonPaymentStrategy extends CreditCardPaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = orderRequest;
         const paymentData = payment && payment.paymentData;
+        const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -42,10 +44,12 @@ export default class ElavonPaymentStrategy extends CreditCardPaymentStrategy {
         .then( () => {
             return this._store.dispatch(this._paymentActionCreator.submitPayment({
                     ...payment,
+                    methodId: payment.methodId,
                     paymentData: {
                         ...paymentData,
                         formattedPayload: {
                             ip_address: ip,
+                            vault_payment_instrument: shouldSaveInstrument,
                         },
                     },
                 }));
