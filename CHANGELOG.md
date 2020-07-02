@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.80.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.80.0...v1.80.1) (2020-07-02)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4973 Initialise hosted payment field within its iframe ([db5610e](https://github.com/bigcommerce/checkout-sdk-js/commit/db5610e))
+
 ## [1.80.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.79.0...v1.80.0) (2020-07-01)
 
 
