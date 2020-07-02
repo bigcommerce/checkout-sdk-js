@@ -1,7 +1,11 @@
+import { some } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
+import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -9,6 +13,7 @@ import PaymentStrategy from '../payment-strategy';
 import { PaypalCommercePaymentProcessor, PaypalCommerceRequestSender } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
+    private _approveUrl?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -33,7 +38,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const orderId = paymentMethod.initializationData.orderId || await this._getOrderId(options.methodId);
+        const orderId = paymentMethod.initializationData.orderId || await this._getOrderIdAndShowPopup(options.methodId);
 
         const paymentData =  {
             formattedPayload: {
@@ -47,7 +52,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
+        return this._processSubmitPayment({ ...payment, paymentData }, options.methodId);
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -60,16 +65,41 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private async _getOrderId(methodId: string): Promise<string> {
+    private async _getOrderIdAndShowPopup(methodId: string): Promise<string> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const provider = methodId === 'paypalcommercecredit' ? 'paypalcommercecreditcheckout' : 'paypalcommercecheckout';
         const { approveUrl, orderId } = await this._paypalCommerceRequestSender.setupPayment(provider, cart.id);
+        this._approveUrl = approveUrl;
 
-        if (approveUrl) {
-            await this._paypalCommercePaymentProcessor.paymentPayPal(approveUrl);
-        }
+        await this._showPopup();
 
         return orderId;
+    }
+
+    private async _showPopup(): Promise<any> {
+        if (this._approveUrl) {
+            await this._paypalCommercePaymentProcessor.paymentPayPal(this._approveUrl);
+        }
+    }
+
+    private async _processSubmitPayment(payment: Payment, methodId: string, attempts = 0): Promise<InternalCheckoutSelectors> {
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment }));
+        } catch (error) {
+            const isNotTransactionRejected = !(error instanceof RequestError) || !some(error.body.errors, {code: 'transaction_rejected'});
+
+            if (isNotTransactionRejected || attempts > 2) {
+                return Promise.reject(error);
+            }
+
+            if (!this._approveUrl) {
+                await this._getOrderIdAndShowPopup(methodId);
+            } else {
+                await this._showPopup();
+            }
+
+            return this._processSubmitPayment(payment, methodId, ++attempts);
+        }
     }
 }

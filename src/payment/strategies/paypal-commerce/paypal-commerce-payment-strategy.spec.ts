@@ -1,11 +1,12 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -15,6 +16,7 @@ import PaymentMethod from '../../payment-method';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 import PaymentStrategy from '../payment-strategy';
 
 import { PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender } from './index';
@@ -132,6 +134,23 @@ describe('PaypalCommercePaymentStrategy', () => {
 
             expect(paypalCommerceRequestSender.setupPayment).toHaveBeenCalled();
             expect(paypalCommercePaymentProcessor.paymentPayPal).toHaveBeenCalled();
+        });
+
+        it('return transaction_rejected in the submitPayment', async () => {
+            const error = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [ { code: 'transaction_rejected' } ],
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+
+            try {
+                await paypalCommercePaymentStrategy.initialize(options);
+                await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
+            } catch (e) {
+                expect(paypalCommercePaymentProcessor.paymentPayPal).toHaveBeenCalledTimes(3);
+            }
         });
 
         it('throw error without payment data', async () => {
