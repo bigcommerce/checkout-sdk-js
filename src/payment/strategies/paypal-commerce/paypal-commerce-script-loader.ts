@@ -1,5 +1,5 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
-import { kebabCase } from 'lodash';
+import { isNil, kebabCase } from 'lodash';
 
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
@@ -15,8 +15,8 @@ export default class PaypalCommerceScriptLoader {
         this._window = window;
     }
 
-    async loadPaypalCommerce(options: PaypalCommerceScriptOptions): Promise<PaypalCommerceSDK> {
-        if (!options || !options.clientId || !options.merchantId) {
+    async loadPaypalCommerce(options: PaypalCommerceScriptOptions, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
+        if (!options || !options.clientId || (!options.merchantId && !isProgressiveOnboardingAvailable)) {
             throw new InvalidArgumentError();
         }
 
@@ -26,6 +26,7 @@ export default class PaypalCommerceScriptLoader {
             : options;
 
         const params = (Object.keys(updatedOptions) as Array<keyof PaypalCommerceScriptOptions>)
+            .filter(key => !isNil(options[key]))
             .map(key => `${kebabCase(key)}=${options[key]}`)
             .join('&');
 
