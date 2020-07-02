@@ -86,17 +86,25 @@ describe('PaypalCommerceScriptLoader', () => {
         });
     });
 
+    it('do not add merchant Id if it is null', async () => {
+        const options: PaypalCommerceScriptOptions = { clientId: 'aaa', merchantId: undefined };
+
+        jest.spyOn(loader, 'loadScript')
+            .mockImplementation((url: string) => {
+                (window as PaypalCommerceHostWindow).paypal = paypal;
+
+                expect(url).toEqual(expect.stringContaining('client-id=aaa'));
+                expect(url).not.toEqual(expect.stringContaining('merchant-id=undefined'));
+
+                return Promise.resolve();
+            });
+
+        await paypalLoader.loadPaypalCommerce(options);
+    });
+
     it('throw error without client Id', async () => {
         try {
             await paypalLoader.loadPaypalCommerce({ clientId: '', merchantId: 'bbb', currency: 'USD' });
-        } catch (error) {
-            expect(error).toEqual( new InvalidArgumentError());
-        }
-    });
-
-    it('throw error without merchant Id', async () => {
-        try {
-            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: '', currency: 'USD' });
         } catch (error) {
             expect(error).toEqual( new InvalidArgumentError());
         }
