@@ -12,13 +12,14 @@ export default interface Payment {
 
 export type PaymentInstrument = (
     CreditCardInstrument |
+    CreditCardInstrument & WithHostedFormNonce |
     CryptogramInstrument |
     FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
-    HostedCreditCardInstrument |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
-    VaultedInstrument
+    VaultedInstrument |
+    VaultedInstrument & WithHostedFormNonce
 );
 
 export interface PaymentInstrumentMeta {
@@ -37,6 +38,10 @@ export interface CreditCardInstrument {
     shouldSaveInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+}
+
+export interface WithHostedFormNonce {
+    hostedFormNonce: string;
 }
 
 export type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;

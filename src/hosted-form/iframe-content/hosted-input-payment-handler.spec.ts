@@ -10,6 +10,7 @@ import { getHostedFormOrderData } from '../hosted-form-order-data.mock';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
@@ -21,6 +22,7 @@ describe('HostedInputPaymentHandler', () => {
     let handler: HostedInputPaymentHandler;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
+    let inputStorage: Pick<HostedInputStorage, 'getNonce'>;
     let requestSender: Pick<PaymentRequestSender, 'submitPayment'>;
     let requestTransformer: Pick<PaymentRequestTransformer, 'transformWithHostedFormData'>;
     let values: HostedInputValues;
@@ -29,6 +31,7 @@ describe('HostedInputPaymentHandler', () => {
     beforeEach(() => {
         inputAggregator = { getInputValues: jest.fn() };
         inputValidator = { validate: jest.fn(() => []) };
+        inputStorage = { getNonce: jest.fn() };
         eventPoster = { post: jest.fn() };
         requestSender = { submitPayment: jest.fn() };
         requestTransformer = { transformWithHostedFormData: jest.fn() };
@@ -36,6 +39,7 @@ describe('HostedInputPaymentHandler', () => {
         handler = new HostedInputPaymentHandler(
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
+            inputStorage as HostedInputStorage,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             requestSender as PaymentRequestSender,
             requestTransformer as PaymentRequestTransformer
@@ -121,13 +125,16 @@ describe('HostedInputPaymentHandler', () => {
         jest.spyOn(requestTransformer, 'transformWithHostedFormData')
             .mockReturnValue(getPaymentRequestBody());
 
+        jest.spyOn(inputStorage, 'getNonce')
+            .mockReturnValue('nonce');
+
         await handler.handle({
             type: HostedFieldEventType.SubmitRequested,
             payload: { data, fields },
         });
 
         expect(requestTransformer.transformWithHostedFormData)
-            .toHaveBeenCalled();
+            .toHaveBeenCalledWith(values, data, 'nonce');
         expect(requestSender.submitPayment)
             .toHaveBeenCalledWith(getPaymentRequestBody());
     });

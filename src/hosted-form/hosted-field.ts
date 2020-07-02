@@ -1,10 +1,9 @@
 import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
-import { catchError, switchMap, take } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 
 import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
-import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 import { CardInstrument } from '../payment/instrument';
 
@@ -13,7 +12,7 @@ import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import { HostedInputAttachErrorEvent, HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputValidateEvent } from './iframe-content';
+import { HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputValidateEvent } from './iframe-content';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -22,8 +21,6 @@ export default class HostedField {
     private _iframe: HTMLIFrameElement;
 
     constructor(
-        host: string,
-        formId: string,
         private _type: HostedFieldType,
         private _containerId: string,
         private _placeholder: string,
@@ -31,13 +28,11 @@ export default class HostedField {
         private _styles: HostedFieldStylesMap,
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
         private _eventListener: IframeEventListener<HostedInputEventMap>,
-        private _storage: BrowserStorage,
-        private _location: Location,
         private _cardInstrument?: CardInstrument
     ) {
         this._iframe = document.createElement('iframe');
 
-        this._iframe.src = `${host}/pay/hosted_forms/${formId}/field?version=${LIBRARY_VERSION}`;
+        this._iframe.src = `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
         this._iframe.style.border = 'none';
         this._iframe.style.height = '100%';
         this._iframe.style.overflow = 'hidden';
@@ -83,13 +78,6 @@ export default class HostedField {
                         successType: HostedInputEventType.AttachSucceeded,
                         errorType: HostedInputEventType.AttachFailed,
                     });
-                }),
-                catchError(error => {
-                    if (this._isAttachErrorEvent(error)) {
-                        return this._handleAttachErrorEvent(error);
-                    }
-
-                    throw error;
                 }),
                 take(1)
             ).toPromise();
@@ -145,22 +133,6 @@ export default class HostedField {
         }
     }
 
-    private async _handleAttachErrorEvent(event: HostedInputAttachErrorEvent): Promise<void> {
-        const lastRetry = Number(this._storage.getItem(LAST_RETRY_KEY));
-
-        // This is to prevent the possibility of getting into a retry loop, in
-        // case there is something unexpected that prevents the shopper from
-        // being able to recover from an invalid hosted payment form error.
-        if (!lastRetry || Date.now() - lastRetry > RETRY_INTERVAL) {
-            this._storage.setItem(LAST_RETRY_KEY, Date.now());
-            this._location.replace(event.payload.error.redirectUrl);
-
-            return new Promise(() => {});
-        }
-
-        throw new InvalidHostedFormError(event.payload.error.message);
-    }
-
     private _getFontUrls(): string[] {
         const hostname = 'fonts.googleapis.com';
         const links = document.querySelectorAll(`link[href*='${hostname}'][rel='stylesheet']`);
@@ -177,9 +149,5 @@ export default class HostedField {
 
     private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {
         return event.type === HostedInputEventType.SubmitFailed;
-    }
-
-    private _isAttachErrorEvent(event: any): event is HostedInputAttachErrorEvent {
-        return event.type === HostedInputEventType.AttachFailed;
     }
 }

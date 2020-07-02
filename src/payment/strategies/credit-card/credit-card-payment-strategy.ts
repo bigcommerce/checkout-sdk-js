@@ -41,13 +41,12 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
         const formOptions = options && options.creditCard && options.creditCard.form;
         const { config } = this._store.getState();
         const { paymentSettings: { bigpayBaseUrl: host = '' } = {} } = config.getStoreConfig() || {};
-        const { payment: { formId = '' } = {} } = config.getContextConfig() || {};
 
-        if (!formOptions || !formId) {
+        if (!formOptions) {
             throw new InvalidArgumentError();
         }
 
-        const form = this._hostedFormFactory.create(host, formId, formOptions);
+        const form = this._hostedFormFactory.create(host, formOptions);
 
         return form.attach()
             .then(() => {

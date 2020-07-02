@@ -7,6 +7,7 @@ import { HostedFieldAttachEvent, HostedFieldEventMap, HostedFieldEventType } fro
 
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';
+import HostedInputStorage from './hosted-input-storage';
 
 interface EventTargetLike<TEvent> {
     addListener(eventName: string, handler: (event: TEvent) => void): void;
@@ -16,10 +17,15 @@ interface EventTargetLike<TEvent> {
 export default class HostedInputInitializer {
     constructor(
         private _factory: HostedInputFactory,
+        private _storage: HostedInputStorage,
         private _eventListener: IframeEventListener<HostedFieldEventMap>
     ) {}
 
-    initialize(containerId: string): Promise<HostedInput> {
+    initialize(containerId: string, nonce?: string): Promise<HostedInput> {
+        if (nonce) {
+            this._storage.setNonce(nonce);
+        }
+
         const form = this._createFormContainer(containerId);
 
         this._resetPageStyles(containerId);

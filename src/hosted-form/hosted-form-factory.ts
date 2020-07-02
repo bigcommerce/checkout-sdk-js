@@ -4,7 +4,6 @@ import { pick } from 'lodash';
 import { ReadableCheckoutStore } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
-import { BrowserStorage } from '../common/storage';
 import { CardInstrument } from '../payment/instrument';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
@@ -14,14 +13,12 @@ import HostedForm from './hosted-form';
 import HostedFormOptions, { HostedCardFieldOptionsMap, HostedStoredCardFieldOptionsMap } from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 
-const STORAGE_NAMESPACE = 'BigCommerce.HostedField';
-
 export default class HostedFormFactory {
     constructor(
         private _store: ReadableCheckoutStore
     ) {}
 
-    create(host: string, formId: string, options: HostedFormOptions): HostedForm {
+    create(host: string, options: HostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
             const fields = options.fields as HostedStoredCardFieldOptionsMap & HostedCardFieldOptionsMap;
@@ -34,8 +31,6 @@ export default class HostedFormFactory {
             return [
                 ...result,
                 new HostedField(
-                    host,
-                    formId,
                     type,
                     fieldOptions.containerId,
                     fieldOptions.placeholder || '',
@@ -43,8 +38,6 @@ export default class HostedFormFactory {
                     options.styles || {},
                     new IframeEventPoster(host),
                     new IframeEventListener(host),
-                    new BrowserStorage(STORAGE_NAMESPACE),
-                    window.location,
                     'instrumentId' in fieldOptions ?
                         this._getCardInstrument(fieldOptions.instrumentId) :
                         undefined

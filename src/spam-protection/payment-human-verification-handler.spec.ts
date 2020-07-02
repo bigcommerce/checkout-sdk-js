@@ -84,5 +84,12 @@ describe('PaymentHumanVerificationHandler', () => {
             return expect(paymentHumanVerificationHandler.handle(errorResponse))
                 .rejects.toThrowError(new CardingProtectionFailedError());
         });
+
+        it('rethrows error if error is not human verification error', () => {
+            const error = new Error('foobar');
+
+            expect(paymentHumanVerificationHandler.handle(error))
+                .rejects.toThrowError(error);
+        });
     });
 });

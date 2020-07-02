@@ -145,7 +145,6 @@ describe('CreditCardPaymentStrategy', () => {
             expect(formFactory.create)
                 .toHaveBeenCalledWith(
                     'https://bigpay.integration.zone',
-                    'dc030783-6129-4ee3-8e06-6f4270df1527',
                     // tslint:disable-next-line:no-non-null-assertion
                     initializeOptions.creditCard!.form!
                 );
