@@ -166,6 +166,37 @@ describe('PaymentRequestTransformer', () => {
             });
     });
 
+    it('transforms from hosted form data with additional data', () => {
+        const additionalAction = {
+            type: 'recaptcha_v2_verification',
+            data: {
+                human_verification_token: 'googleRecaptchaToken',
+            },
+        };
+
+        const result = paymentRequestTransformer.transformWithHostedFormData(
+            {
+                [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
+                [HostedFieldType.CardCode]: '123',
+                [HostedFieldType.CardName]: 'BigCommerce',
+                [HostedFieldType.CardExpiry]: '10 / 20',
+            },
+            {
+                ...getHostedFormOrderData(),
+                additionalAction,
+            },
+            'nonce'
+        );
+
+        expect(result)
+            .toEqual(merge({}, getPaymentRequestBody(), {
+                additionalAction,
+                payment: {
+                    hostedFormNonce: 'nonce',
+                },
+            }));
+    });
+
     it('returns additinalAction within request if provided in payment parameter', () => {
         const additionalActionMock = {
             type: 'recaptcha_v2_verification',

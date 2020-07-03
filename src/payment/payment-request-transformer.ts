@@ -73,12 +73,13 @@ export default class PaymentRequestTransformer {
     }
 
     transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): PaymentRequestBody {
-        const { authToken, checkout, config, order, orderMeta, payment = {}, paymentMethod, paymentMethodMeta } = data;
+        const { additionalAction, authToken, checkout, config, order, orderMeta, payment = {}, paymentMethod, paymentMethodMeta } = data;
         const consignment = checkout && checkout.consignments[0];
         const shippingAddress = consignment && consignment.shippingAddress;
         const shippingOption = consignment && consignment.selectedShippingOption;
 
         return {
+            additionalAction,
             authToken,
             paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             customer: order && order.billingAddress && checkout && mapToInternalCustomer(checkout.customer, order.billingAddress),
