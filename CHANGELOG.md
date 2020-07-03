@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.81.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.80.2...v1.81.0) (2020-07-03)
+
+
+### Features
+
+* **payment:** PAYPAL-508 Mark up flow additional params ([a0cf703](https://github.com/bigcommerce/checkout-sdk-js/commit/a0cf703))
+
 ### [1.80.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.80.1...v1.80.2) (2020-07-03)
 
 
