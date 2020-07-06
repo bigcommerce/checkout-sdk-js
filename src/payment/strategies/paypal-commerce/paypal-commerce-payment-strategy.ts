@@ -87,9 +87,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment }));
         } catch (error) {
-            const isNotTransactionRejected = !(error instanceof RequestError) || !some(error.body.errors, {code: 'transaction_rejected'});
+            const isInsufficientFundsError = (error instanceof RequestError) && some(error.body.errors, {code: 'transaction_rejected'});
 
-            if (isNotTransactionRejected || attempts > 2) {
+            if (!isInsufficientFundsError || attempts > 2) {
                 return Promise.reject(error);
             }
 
