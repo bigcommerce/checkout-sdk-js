@@ -81,7 +81,7 @@ export interface PaypalCommerceHostWindow extends Window {
 
 export interface PaypalCommerceInitializationData {
     clientId: string;
-    merchantId: string;
+    merchantId?: string;
     intent?: 'capture' | 'authorize';
     isPayPalCreditAvailable?: boolean;
 }
@@ -90,7 +90,7 @@ export type DisableFundingType = Array<'credit' | 'card'>;
 
 export interface PaypalCommerceScriptOptions {
     clientId: string;
-    merchantId: string;
+    merchantId?: string;
     currency?: string;
     commit?: boolean;
     intent?: 'capture' | 'authorize';
