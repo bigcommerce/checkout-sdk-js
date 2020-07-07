@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.82.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.81.0...v1.82.0) (2020-07-07)
+
+
+### Features
+
+* **common:** BC-897 Upgrade typescript ([08cc2f8](https://github.com/bigcommerce/checkout-sdk-js/commit/08cc2f8))
+* **payment:** PAYPAL-539 MerchantId does not required for progressive onboarding ([816658d](https://github.com/bigcommerce/checkout-sdk-js/commit/816658d))
+
 ## [1.81.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.80.2...v1.81.0) (2020-07-03)
 
 
