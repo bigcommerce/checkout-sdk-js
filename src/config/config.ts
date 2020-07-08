@@ -10,6 +10,8 @@ export interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
     currency: StoreCurrency;
+    displayDateFormat: string;
+    inputDateFormat: string;
     formFields: FormFields;
     links: StoreLinks;
     paymentSettings: PaymentSettings;

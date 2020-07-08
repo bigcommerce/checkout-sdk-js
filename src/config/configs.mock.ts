@@ -55,10 +55,12 @@ export function getConfig(): Config {
                 symbol: '$',
                 thousandsSeparator: ',',
             },
+            displayDateFormat: 'dd/MM/yyyy',
             formFields: {
                 shippingAddressFields: getFormFields(),
                 billingAddressFields: getFormFields(),
             },
+            inputDateFormat: 'dd/MM/yyyy',
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
                 checkoutLink: 'https://store-k1drp8k8.bcapp.dev/checkout',
