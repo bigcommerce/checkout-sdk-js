@@ -11,6 +11,7 @@ import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender }
 import { getAmazonPayV2 } from '../../../payment/payment-methods.mock';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
+import { getShippingAddress, getShippingAddressWithCustomFields } from '../../shipping-addresses.mock';
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
 import AmazonPayV2ShippingStrategy from './amazon-pay-v2-shipping-strategy';
@@ -198,7 +199,26 @@ describe('AmazonPayV2ShippingStrategy', () => {
         expect(output).toEqual(store.getState());
     });
 
-    it('updates shipping address', () => expect(strategy.updateAddress()).resolves.toEqual(store.getState()));
+    it('updates address with provided custom fields and existing address', async () => {
+        const options = {};
+        const amazonShippingAddress = getShippingAddress();
+        const address = getShippingAddressWithCustomFields();
+        const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
+
+        jest.spyOn(consignmentActionCreator, 'updateAddress')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
+
+        const output = await strategy.updateAddress(address, options);
+
+        expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith({
+            ...amazonShippingAddress,
+            customFields: address.customFields,
+        }, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
+    });
 
     describe('#deinitialize()', () => {
         let initializeOptions: ShippingInitializeOptions;

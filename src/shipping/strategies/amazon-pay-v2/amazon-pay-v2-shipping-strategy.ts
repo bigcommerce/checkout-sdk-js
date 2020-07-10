@@ -1,6 +1,7 @@
 import { noop } from 'rxjs';
 
 import { ConsignmentActionCreator, ShippingStrategyActionCreator } from '../..';
+import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
@@ -19,8 +20,21 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {}
 
-    updateAddress(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+        const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
+
+        if (!shippingAddress) {
+            throw new MissingDataError(MissingDataErrorType.MissingShippingAddress);
+        }
+
+        const updateAddressRequestBody = {
+            ...shippingAddress,
+            customFields: address.customFields,
+        };
+
+        return this._store.dispatch(
+            this._consignmentActionCreator.updateAddress(updateAddressRequestBody, options)
+        );
     }
 
     selectOption(optionId: string, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
