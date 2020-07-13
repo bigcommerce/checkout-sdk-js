@@ -1,3 +1,4 @@
+import { DetachmentObserver } from '../common/dom';
 import { RequestError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
@@ -13,11 +14,13 @@ import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 describe('HostedField', () => {
     let container: HTMLDivElement;
     let field: HostedField;
+    let detachmentObserver: Pick<DetachmentObserver, 'ensurePresence'>;
     let eventPoster: Pick<IframeEventPoster<HostedFieldEvent>, 'post' | 'setTarget'>;
     let eventListener: Pick<IframeEventListener<HostedInputEventMap>, 'listen'>;
 
     beforeEach(() => {
         container = document.createElement('div');
+        detachmentObserver = { ensurePresence: jest.fn((_, promise) => promise) };
         eventPoster = { post: jest.fn(), setTarget: jest.fn() };
         eventListener = { listen: jest.fn() };
 
@@ -31,7 +34,8 @@ describe('HostedField', () => {
             'Card number',
             { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
             eventPoster as IframeEventPoster<HostedFieldEvent>,
-            eventListener as IframeEventListener<HostedInputEventMap>
+            eventListener as IframeEventListener<HostedInputEventMap>,
+            detachmentObserver as DetachmentObserver
         );
     });
 
@@ -65,6 +69,24 @@ describe('HostedField', () => {
 
         expect(eventPoster.setTarget)
             .toHaveBeenCalled();
+    });
+
+    it('ensures presence of iframe during attachment', async () => {
+        process.nextTick(() => {
+            // tslint:disable-next-line:no-non-null-assertion
+            document.querySelector('#field-container-id iframe')!
+                .dispatchEvent(new Event('load'));
+        });
+
+        const promise = field.attach();
+
+        await promise;
+
+        expect(detachmentObserver.ensurePresence)
+            .toHaveBeenCalledWith(
+                [document.querySelector('#field-container-id iframe')],
+                promise
+            );
     });
 
     it('notifies if able to attach', async () => {
@@ -151,6 +173,22 @@ describe('HostedField', () => {
                 successType: HostedInputEventType.SubmitSucceeded,
                 errorType: HostedInputEventType.SubmitFailed,
             });
+    });
+
+    it('ensures presence of iframe during submission', async () => {
+        field.attach();
+
+        const fields = [HostedFieldType.CardExpiry, HostedFieldType.CardNumber];
+        const data = getHostedFormOrderData();
+        const promise = field.submitForm(fields, data);
+
+        await promise;
+
+        expect(detachmentObserver.ensurePresence)
+            .toHaveBeenCalledWith(
+                [document.querySelector('#field-container-id iframe')],
+                promise
+            );
     });
 
     it('throws error if unable to submit payment', async () => {

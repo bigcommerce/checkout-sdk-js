@@ -2,6 +2,7 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
+import { DetachmentObserver } from '../common/dom';
 import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { parseUrl } from '../common/url';
@@ -28,6 +29,7 @@ export default class HostedField {
         private _styles: HostedFieldStylesMap,
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
         private _eventListener: IframeEventListener<HostedInputEventMap>,
+        private _detachmentObserver: DetachmentObserver,
         private _cardInstrument?: CardInstrument
     ) {
         this._iframe = document.createElement('iframe');
@@ -43,7 +45,7 @@ export default class HostedField {
         return this._type;
     }
 
-    attach(): Promise<void> {
+    async attach(): Promise<void> {
         const container = document.getElementById(this._containerId);
 
         if (!container) {
@@ -53,7 +55,7 @@ export default class HostedField {
         container.appendChild(this._iframe);
         this._eventListener.listen();
 
-        return fromEvent(this._iframe, 'load')
+        const promise = fromEvent(this._iframe, 'load')
             .pipe(
                 switchMap(async ({ target }) => {
                     const contentWindow = target && (target as HTMLIFrameElement).contentWindow;
@@ -81,6 +83,8 @@ export default class HostedField {
                 }),
                 take(1)
             ).toPromise();
+
+        await this._detachmentObserver.ensurePresence([this._iframe], promise);
     }
 
     detach(): void {
@@ -97,13 +101,15 @@ export default class HostedField {
         data: HostedFormOrderData
     ): Promise<void> {
         try {
-            await this._eventPoster.post({
+            const promise = this._eventPoster.post({
                 type: HostedFieldEventType.SubmitRequested,
                 payload: { fields, data },
             }, {
                 successType: HostedInputEventType.SubmitSucceeded,
                 errorType: HostedInputEventType.SubmitFailed,
             });
+
+            await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (event) {
             if (this._isSubmitErrorEvent(event)) {
                 if (event.payload.error.code === 'hosted_form_error') {
@@ -122,11 +128,13 @@ export default class HostedField {
     }
 
     async validateForm(): Promise<void> {
-        const { payload } = await this._eventPoster.post<HostedInputValidateEvent>({
+        const promise = this._eventPoster.post<HostedInputValidateEvent>({
             type: HostedFieldEventType.ValidateRequested,
         }, {
             successType: HostedInputEventType.Validated,
         });
+
+        const { payload } = await this._detachmentObserver.ensurePresence([this._iframe], promise);
 
         if (!payload.isValid) {
             throw new InvalidHostedFormValueError(payload.errors);
