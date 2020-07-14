@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { HostedFormFactory } from '../../../hosted-form';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -21,12 +22,14 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
+import { CreditCardPaymentStrategy } from '../credit-card';
 
 import ConvergePaymentStrategy from './converge-payment-strategy';
 
 describe('ConvergeaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
+    let hostedFormFactory: HostedFormFactory;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let store: CheckoutStore;
@@ -51,6 +54,7 @@ describe('ConvergeaymentStrategy', () => {
 
         formPoster = createFormPoster();
         store = createCheckoutStore(getCheckoutStoreState());
+        hostedFormFactory = {} as HostedFormFactory;
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
@@ -74,6 +78,7 @@ describe('ConvergeaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
+            hostedFormFactory,
             formPoster
         );
     });
@@ -203,5 +208,10 @@ describe('ConvergeaymentStrategy', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
+    });
+
+    it('is special type of credit card strategy', () => {
+        expect(strategy)
+            .toBeInstanceOf(CreditCardPaymentStrategy);
     });
 });
