@@ -104,9 +104,9 @@ describe('PaypalCommerceScriptLoader', () => {
 
     it('throw error without merchant Id and disable progressive onboarding ', async () => {
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: '', merchantId: '', currency: 'USD' }, false);
+            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: '', currency: 'USD' }, false);
         } catch (error) {
-            expect(error).toEqual(new InvalidArgumentError());
+            expect(error).toEqual(new InvalidArgumentError(`Unable to proceed because "merchantId" argument in PayPal script is not provided.`));
         }
     });
 
@@ -114,7 +114,7 @@ describe('PaypalCommerceScriptLoader', () => {
         try {
             await paypalLoader.loadPaypalCommerce({ clientId: '', merchantId: 'bbb', currency: 'USD' });
         } catch (error) {
-            expect(error).toEqual(new InvalidArgumentError());
+            expect(error).toEqual(new InvalidArgumentError(`Unable to proceed because "clientId" argument in PayPal script is not provided.`));
         }
     });
 

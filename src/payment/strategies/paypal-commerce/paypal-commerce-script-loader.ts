@@ -16,9 +16,7 @@ export default class PaypalCommerceScriptLoader {
     }
 
     async loadPaypalCommerce(options: PaypalCommerceScriptOptions, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
-        if (!options || !options.clientId || (!options.merchantId && !isProgressiveOnboardingAvailable)) {
-            throw new InvalidArgumentError();
-        }
+        this.validateParams(options, isProgressiveOnboardingAvailable);
 
         const { disableFunding } = options;
         const updatedOptions = disableFunding
@@ -39,5 +37,23 @@ export default class PaypalCommerceScriptLoader {
         }
 
         return this._window.paypal;
+    }
+
+    validateParams(options: PaypalCommerceScriptOptions, isProgressiveOnboardingAvailable?: boolean): void {
+        const CLIENT_ID = 'clientId';
+        const MERCHANT_ID = 'merchantId';
+        let param;
+
+        if (!options) {
+            param = 'options';
+        } else if (!options[CLIENT_ID]) {
+            param = CLIENT_ID;
+        } else if (!options[MERCHANT_ID] && !isProgressiveOnboardingAvailable) {
+            param = MERCHANT_ID;
+        }
+
+        if (param) {
+            throw new InvalidArgumentError(`Unable to proceed because "${param}" argument in PayPal script is not provided.`);
+        }
     }
 }
