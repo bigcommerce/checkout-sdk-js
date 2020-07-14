@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.82.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.1...v1.82.2) (2020-07-14)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5025 Fix Elavon Converge strategy so that it can utilise hosted payment form ([c2b21a9](https://github.com/bigcommerce/checkout-sdk-js/commit/c2b21a90d174c253d179412561ba2b96a67d0eb5))
+* **payment:** CHECKOUT-5029 Return error if hosted field iframe is removed during asynchronous call ([35f91df](https://github.com/bigcommerce/checkout-sdk-js/commit/35f91df566a47f081150bc9db2236da0c26c525e))
+* **shipping:** INT-2832 Handle custom fields for AmazonPayV2 ([a27d244](https://github.com/bigcommerce/checkout-sdk-js/commit/a27d24466ec69e1d9182028480c7dc39bf2953ac))
+
 ### [1.82.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.0...v1.82.1) (2020-07-10)
 
 ## [1.82.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.81.0...v1.82.0) (2020-07-07)
