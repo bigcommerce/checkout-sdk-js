@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.82.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.3...v1.82.4) (2020-07-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-5006 added displayDateFormat type ([75e190e](https://github.com/bigcommerce/checkout-sdk-js/commit/75e190e13de10d76165b7e20c3a916a2c34285e4))
+
 ### [1.82.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.2...v1.82.3) (2020-07-16)
 
 

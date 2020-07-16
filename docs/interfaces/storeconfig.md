@@ -13,8 +13,10 @@
 * [cdnPath](storeconfig.md#cdnpath)
 * [checkoutSettings](storeconfig.md#checkoutsettings)
 * [currency](storeconfig.md#currency)
+* [displayDateFormat](storeconfig.md#displaydateformat)
 * [formFields](storeconfig.md#formfields)
 * [imageDirectory](storeconfig.md#imagedirectory)
+* [inputDateFormat](storeconfig.md#inputdateformat)
 * [isAngularDebuggingEnabled](storeconfig.md#isangulardebuggingenabled)
 * [links](storeconfig.md#links)
 * [paymentSettings](storeconfig.md#paymentsettings)
@@ -42,6 +44,12 @@ ___
 
 ___
 
+###  displayDateFormat
+
+• **displayDateFormat**: *string*
+
+___
+
 ###  formFields
 
 • **formFields**: *[FormFields](formfields.md)*
@@ -51,6 +59,12 @@ ___
 ###  imageDirectory
 
 • **imageDirectory**: *string*
+
+___
+
+###  inputDateFormat
+
+• **inputDateFormat**: *string*
 
 ___
 
