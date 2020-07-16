@@ -6,7 +6,7 @@
 
 * **BaseInstrument**
 
-  ↳ [AccountInstrument](accountinstrument.md)
+  ↳ [BaseAccountInstrument](baseaccountinstrument.md)
 
   ↳ [CardInstrument](cardinstrument.md)
 

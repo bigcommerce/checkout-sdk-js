@@ -3,13 +3,7 @@ import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
-declare interface AccountInstrument extends BaseInstrument {
-    externalId: string;
-    method: string;
-    accountNumber?: string;
-    issuer?: string;
-    type: string;
-}
+declare type AccountInstrument = PayPalInstrument | BankInstrument;
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -422,9 +416,23 @@ declare interface AmazonPayWidgetError extends Error {
 
 declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
 
+declare interface BankInstrument extends BaseAccountInstrument {
+    accountNumber: string;
+    issuer: string;
+    iban: string;
+    method: string;
+    type: 'bank';
+}
+
 declare interface Banner {
     type: string;
     text: string;
+}
+
+declare interface BaseAccountInstrument extends BaseInstrument {
+    externalId: string;
+    method: string;
+    type: 'account' | 'bank';
 }
 
 declare interface BaseInstrument {
@@ -3645,6 +3653,10 @@ declare interface PasswordRequirements {
     numeric: string;
     minlength: number;
     error: string;
+}
+
+declare interface PayPalInstrument extends BaseAccountInstrument {
+    method: 'paypal';
 }
 
 /**

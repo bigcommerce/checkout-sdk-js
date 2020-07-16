@@ -30,7 +30,7 @@
 
 • **bigpayToken**: *string*
 
-*Inherited from [AccountInstrument](accountinstrument.md).[bigpayToken](accountinstrument.md#bigpaytoken)*
+*Inherited from [BankInstrument](bankinstrument.md).[bigpayToken](bankinstrument.md#bigpaytoken)*
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 • **defaultInstrument**: *boolean*
 
-*Inherited from [AccountInstrument](accountinstrument.md).[defaultInstrument](accountinstrument.md#defaultinstrument)*
+*Inherited from [BankInstrument](bankinstrument.md).[defaultInstrument](bankinstrument.md#defaultinstrument)*
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 • **provider**: *string*
 
-*Inherited from [AccountInstrument](accountinstrument.md).[provider](accountinstrument.md#provider)*
+*Inherited from [BankInstrument](bankinstrument.md).[provider](bankinstrument.md#provider)*
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 • **trustedShippingAddress**: *boolean*
 
-*Inherited from [AccountInstrument](accountinstrument.md).[trustedShippingAddress](accountinstrument.md#trustedshippingaddress)*
+*Inherited from [BankInstrument](bankinstrument.md).[trustedShippingAddress](bankinstrument.md#trustedshippingaddress)*
 
 ___
 

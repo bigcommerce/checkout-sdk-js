@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.82.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.2...v1.82.3) (2020-07-16)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5575 fix paypal and bank instrument clash ([#918](https://github.com/bigcommerce/checkout-sdk-js/issues/918)) ([3908ed1](https://github.com/bigcommerce/checkout-sdk-js/commit/3908ed145d6d62ea2a357e6d0a64bc53991c3cde))
+
 ### [1.82.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.1...v1.82.2) (2020-07-14)
 
 

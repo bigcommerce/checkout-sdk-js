@@ -31,7 +31,6 @@
 
 ### Interfaces
 
-* [AccountInstrument](interfaces/accountinstrument.md)
 * [Address](interfaces/address.md)
 * [AddressRequestBody](interfaces/addressrequestbody.md)
 * [AdyenAdditionalActionCallbacks](interfaces/adyenadditionalactioncallbacks.md)
@@ -55,7 +54,9 @@
 * [AmazonPayV2PaymentInitializeOptions](interfaces/amazonpayv2paymentinitializeoptions.md)
 * [AmazonPayV2ShippingInitializeOptions](interfaces/amazonpayv2shippinginitializeoptions.md)
 * [AmazonPayWidgetError](interfaces/amazonpaywidgeterror.md)
+* [BankInstrument](interfaces/bankinstrument.md)
 * [Banner](interfaces/banner.md)
+* [BaseAccountInstrument](interfaces/baseaccountinstrument.md)
 * [BaseInstrument](interfaces/baseinstrument.md)
 * [BaseProps](interfaces/baseprops.md)
 * [BillingAddress](interfaces/billingaddress.md)
@@ -185,6 +186,7 @@
 * [OrderPaymentRequestBody](interfaces/orderpaymentrequestbody.md)
 * [OrderRequestBody](interfaces/orderrequestbody.md)
 * [PasswordRequirements](interfaces/passwordrequirements.md)
+* [PayPalInstrument](interfaces/paypalinstrument.md)
 * [PaymentInitializeOptions](interfaces/paymentinitializeoptions.md)
 * [PaymentMethod](interfaces/paymentmethod.md)
 * [PaymentMethodConfig](interfaces/paymentmethodconfig.md)
@@ -233,6 +235,7 @@
 
 ### Type aliases
 
+* [AccountInstrument](README.md#accountinstrument)
 * [AddressKey](README.md#addresskey)
 * [AdyenComponentState](README.md#adyencomponentstate)
 * [AnalyticStepType](README.md#analyticsteptype)
@@ -268,6 +271,12 @@
 * [embedCheckout](README.md#embedcheckout)
 
 ## Type aliases
+
+###  AccountInstrument
+
+Ƭ **AccountInstrument**: *[PayPalInstrument](interfaces/paypalinstrument.md) | [BankInstrument](interfaces/bankinstrument.md)*
+
+___
 
 ###  AddressKey
 
@@ -405,7 +414,7 @@ ___
 
 ###  PaymentInstrument
 
-Ƭ **PaymentInstrument**: *[CardInstrument](interfaces/cardinstrument.md) | [AccountInstrument](interfaces/accountinstrument.md)*
+Ƭ **PaymentInstrument**: *[CardInstrument](interfaces/cardinstrument.md) | [AccountInstrument](README.md#accountinstrument)*
 
 ## Functions
 
