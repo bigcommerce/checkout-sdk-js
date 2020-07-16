@@ -3,9 +3,10 @@ import { Response } from '@bigcommerce/request-sender';
 import PaymentResponse from '../payment-response';
 
 import PaymentInstrument, { VaultAccessToken } from './instrument';
-import { AccountInternalInstrument, CardInternalInstrument, InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
-import { mapToAccountInstrument } from './map-to-account-instrument';
+import { BankInternalInstrument, InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody, PayPalInternalInstrument } from './instrument-response-body';
+import { mapToBankInstrument } from './map-to-bank-instrument';
 import { mapToCardInstrument } from './map-to-card-instrument';
+import { mapToPayPalInstrument } from './map-to-paypal-instrument';
 
 export default class InstrumentResponseTransformer {
     transformResponse(
@@ -41,11 +42,25 @@ export default class InstrumentResponseTransformer {
 
     private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): PaymentInstrument[] {
         return vaultedInstruments
-            .map(instrument => this._isAccountInstrument(instrument) ? mapToAccountInstrument(instrument) : mapToCardInstrument(instrument) );
+            .map(instrument => {
+                if (this._isPayPalInstrument(instrument)) {
+                    return mapToPayPalInstrument(instrument);
+                }
+
+                if (this._isBankInstrument(instrument)) {
+                    return mapToBankInstrument(instrument);
+                }
+
+                return mapToCardInstrument(instrument);
+            });
     }
 
-    private _isAccountInstrument(instrument: AccountInternalInstrument | CardInternalInstrument): instrument is AccountInternalInstrument {
-        return instrument.method_type === 'bank' || instrument.method_type === 'account';
+    private _isPayPalInstrument(instrument: InternalInstrument): instrument is PayPalInternalInstrument {
+        return instrument.method_type === 'paypal';
+    }
+
+    private _isBankInstrument(instrument: InternalInstrument): instrument is BankInternalInstrument {
+        return instrument.method_type === 'bank';
     }
 
     private _transformResponse<T>(response: PaymentResponse<T>): Response<T> {

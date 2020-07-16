@@ -1,13 +1,13 @@
-import { mapToAccountInstrument } from './map-to-account-instrument';
+import { mapToPayPalInstrument } from './map-to-paypal-instrument';
 
-describe('mapToAccountInstrument', () => {
-    it('returns a AccountInstrument from a AccountInternalInstrument', () => {
-        const result = mapToAccountInstrument({
+describe('mapToPayPalInstrument', () => {
+    it('returns a PayPalInstrument from a PayPalInternalInstrument', () => {
+        const result = mapToPayPalInstrument({
             bigpay_token: 'my-bigpay-token',
             trusted_shipping_address: true,
             provider: 'braintree',
-            method_type: 'account',
-            method: 'paypal',
+            method_type: 'paypal',
+            method: 'account',
             default_instrument: false,
             external_id: 'test@external-id.com',
         });

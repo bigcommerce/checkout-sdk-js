@@ -48,7 +48,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
 
             return instruments.find((instrument): instrument is CardInstrument =>
                 instrument.bigpayToken === instrumentId &&
-                instrument.method === 'credit_card' &&
+                instrument.type === 'card' &&
                 cards.some(card => isMatch(instrument, card))
             );
         }

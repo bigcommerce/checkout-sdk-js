@@ -12,7 +12,7 @@ export function mapToCardInstrument(instrument: CardInternalInstrument): CardIns
         expiryYear: instrument.expiry_year,
         brand: instrument.brand,
         trustedShippingAddress: instrument.trusted_shipping_address,
-        method:  instrument.method,
+        method: instrument.method,
         type: 'card',
     };
 }

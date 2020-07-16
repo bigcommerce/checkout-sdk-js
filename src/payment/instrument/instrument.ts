@@ -20,13 +20,25 @@ export interface CardInstrument extends BaseInstrument {
     type: 'card';
 }
 
-export interface AccountInstrument extends BaseInstrument {
+interface BaseAccountInstrument extends BaseInstrument {
     externalId: string;
     method: string;
-    accountNumber?: string;
-    issuer?: string;
-    type: string;
+    type: 'account' | 'bank';
 }
+
+export interface PayPalInstrument extends BaseAccountInstrument {
+    method: 'paypal';
+}
+
+export interface BankInstrument extends BaseAccountInstrument {
+    accountNumber: string;
+    issuer: string;
+    iban: string;
+    method: string;
+    type: 'bank';
+}
+
+export type AccountInstrument = PayPalInstrument | BankInstrument;
 
 export interface VaultAccessToken {
     vaultAccessToken: string;
