@@ -53,9 +53,9 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'stripe',
         method: 'credit_card',
     },
-    stripev3: {
+    'stripev3.card': {
         provider: 'stripev3',
-        method: 'credit_card',
+        method: 'card',
     },
     cybersource: {
         provider: 'cybersource',

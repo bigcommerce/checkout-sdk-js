@@ -1,4 +1,4 @@
-import { StripeStyleProps } from './stripev3';
+import { StripeElementOptions } from './stripev3';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -16,5 +16,5 @@ export default interface StripeV3PaymentInitializeOptions {
     /**
      * The set of CSS styles to apply to all form fields.
      */
-    style?: StripeStyleProps;
+    options?: StripeElementOptions;
 }
