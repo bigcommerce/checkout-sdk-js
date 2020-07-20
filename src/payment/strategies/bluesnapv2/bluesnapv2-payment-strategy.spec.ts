@@ -103,14 +103,13 @@ describe('BlueSnapV2PaymentStrategy', () => {
         await strategy.execute(payload, options);
 
         expect(paymentActionCreator.initializeOffsitePayment)
-            .toHaveBeenCalledWith(
-                options.methodId,
-                options.gatewayId,
-                undefined,
-                false,
-                'bluesnapv2_hosted_payment_page',
-                expect.any(Promise)
-            );
+            .toHaveBeenCalledWith({
+                methodId: options.methodId,
+                gatewayId: options.gatewayId,
+                shouldSaveInstrument: false,
+                target: 'bluesnapv2_hosted_payment_page',
+                promise: expect.any(Promise),
+            });
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 

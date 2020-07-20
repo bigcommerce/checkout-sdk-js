@@ -12,6 +12,19 @@ import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction 
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 
+interface InitializeOffsitePaymentSettings {
+    methodId: string;
+    gatewayId?: string;
+    instrumentId?: string;
+    target?: string;
+    promise?: Promise<undefined>;
+    shouldSaveInstrument?: boolean;
+    setAsDefaultInstrument?: boolean;
+}
+
+type InitializeOffsitePayment = (settings: InitializeOffsitePaymentSettings)
+    => ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors>;
+
 export default class PaymentActionCreator {
     constructor(
         private _paymentRequestSender: PaymentRequestSender,
@@ -47,15 +60,15 @@ export default class PaymentActionCreator {
         );
     }
 
-    initializeOffsitePayment(
-        methodId: string,
-        gatewayId?: string,
-        instrumentId?: string,
-        shouldSaveInstrument?: boolean,
-        target?: string,
-        promise?: Promise<undefined>,
-        setAsDefaultInstrument?: boolean
-    ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
+    initializeOffsitePayment: InitializeOffsitePayment = ({
+        methodId,
+        gatewayId,
+        instrumentId,
+        target,
+        promise,
+        shouldSaveInstrument,
+        setAsDefaultInstrument,
+    }) => {
         return store => {
             let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
 
@@ -80,5 +93,5 @@ export default class PaymentActionCreator {
                 catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))
             );
         };
-    }
+    };
 }

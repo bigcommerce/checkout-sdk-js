@@ -47,14 +47,13 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
 
         onLoad(frame, () => promise.cancel(new PaymentMethodCancelledError()));
 
-        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(
-            payment.methodId,
-            payment.gatewayId,
-            undefined,
-            false,
-            frame.name,
-            promise.promise
-        ));
+        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment({
+            methodId: payment.methodId,
+            gatewayId: payment.gatewayId,
+            shouldSaveInstrument: false,
+            target: frame.name,
+            promise: promise.promise,
+        }));
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
