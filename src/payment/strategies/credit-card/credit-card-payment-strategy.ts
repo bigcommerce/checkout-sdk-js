@@ -22,7 +22,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
     ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._isHostedPaymentFormEnabled() && this._shouldRenderHostedForm ?
+        return this._isHostedPaymentFormEnabled(payload.payment?.methodId, payload.payment?.gatewayId) && this._shouldRenderHostedForm ?
             this._executeWithHostedForm(payload, options) :
             this._executeWithoutHostedForm(payload, options);
     }
@@ -32,7 +32,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
     }
 
     initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isHostedPaymentFormEnabled() || !this._isHostedFieldAvailable(options)) {
+        if (!this._isHostedPaymentFormEnabled(options?.methodId, options?.gatewayId) || !this._isHostedFieldAvailable(options)) {
             this._shouldRenderHostedForm = false;
 
             return Promise.resolve(this._store.getState());
@@ -97,11 +97,15 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.dispatch(this._orderActionCreator.loadCurrentOrder()));
     }
 
-    protected _isHostedPaymentFormEnabled(): boolean {
-        const { config } = this._store.getState();
-        const { checkoutSettings: { isHostedPaymentFormEnabled = false } = {} } = config.getStoreConfig() || {};
+    protected _isHostedPaymentFormEnabled(methodId?: string, gatewayId?: string): boolean {
+        if (!methodId) {
+            return false;
+        }
 
-        return isHostedPaymentFormEnabled;
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+
+        return paymentMethod.config.isHostedFormEnabled === true;
     }
 
     private _isHostedFieldAvailable(options?: PaymentInitializeOptions): boolean {
