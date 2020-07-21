@@ -7,6 +7,14 @@ import { BraintreeVerifyPayload } from './braintree';
  */
 export interface BraintreePaymentInitializeOptions {
     threeDSecure?: BraintreeThreeDSecureOptions;
+
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    form?: BraintreeFormOptions;
 }
 
 /**
@@ -36,4 +44,88 @@ export interface BraintreeThreeDSecureOptions {
      * the current page.
      */
     removeFrame(): void;
+}
+
+export interface BraintreeFormOptions {
+    fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap;
+    styles?: BraintreeFormFieldStylesMap;
+    onBlur?(data: BraintreeFormFieldBlurEventData): void;
+    onCardTypeChange?(data: BraintreeFormFieldCardTypeChangeEventData): void;
+    onFocus?(data: BraintreeFormFieldFocusEventData): void;
+    onValidate?(data: BraintreeFormFieldValidateEventData): void;
+    onEnter?(data: BraintreeFormFieldEnterEventData): void;
+}
+
+export enum BraintreeFormFieldType {
+    CardCode = 'cardCode',
+    CardCodeVerification = 'cardCodeVerification',
+    CardExpiry = 'cardExpiry',
+    CardName = 'cardName',
+    CardNumber = 'cardNumber',
+    CardNumberVerification = 'cardNumberVerification',
+}
+
+export interface BraintreeFormFieldsMap {
+    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
+}
+
+export interface BraintreeStoredCardFieldsMap {
+    [BraintreeFormFieldType.CardCodeVerification]?: BraintreeStoredCardFieldOptions;
+    [BraintreeFormFieldType.CardNumberVerification]?: BraintreeStoredCardFieldOptions;
+}
+
+export interface BraintreeFormFieldOptions {
+    containerId: string;
+    placeholder?: string;
+}
+
+export interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
+    instrumentId: string;
+}
+
+export interface BraintreeFormFieldStylesMap {
+    default?: BraintreeFormFieldStyles;
+    error?: BraintreeFormFieldStyles;
+    focus?: BraintreeFormFieldStyles;
+}
+
+export type BraintreeFormFieldStyles = Partial<Pick<
+    CSSStyleDeclaration,
+    'color' |
+    'fontFamily' |
+    'fontSize' |
+    'fontWeight'
+>>;
+
+export interface BraintreeFormFieldKeyboardEventData {
+    fieldType: string;
+}
+
+export type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
+export type BraintreeFormFieldEnterEventData = BraintreeFormFieldKeyboardEventData;
+export type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventData;
+
+export interface BraintreeFormFieldCardTypeChangeEventData {
+    cardType?: string;
+}
+
+export interface BraintreeFormFieldValidateEventData {
+    errors: {
+        [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardExpiry]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardName]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumber]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardCodeVerification]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumberVerification]?: BraintreeFormFieldValidateErrorData[];
+    };
+    isValid: boolean;
+}
+
+export interface BraintreeFormFieldValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
 }
