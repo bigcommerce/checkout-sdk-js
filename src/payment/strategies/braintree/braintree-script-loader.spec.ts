@@ -2,9 +2,9 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostedFields, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
-import { getClientMock, getDataCollectorMock, getGooglePayMock, getModuleCreatorMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
+import { getClientMock, getDataCollectorMock, getGooglePayMock, getHostedFieldsMock, getModuleCreatorMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -156,6 +156,33 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
             }
+        });
+    });
+
+    describe('#loadHostedFields()', () => {
+        let hostedFields: BraintreeModuleCreator<BraintreeHostedFields>;
+
+        beforeEach(() => {
+            hostedFields = getModuleCreatorMock(getHostedFieldsMock());
+
+            scriptLoader.loadScript = jest.fn(() => {
+                // tslint:disable-next-line:no-non-null-assertion
+                mockWindow.braintree!.hostedFields = hostedFields;
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads hosted fields module', async () => {
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript)
+                .toHaveBeenCalledWith('//js.braintreegateway.com/web/3.59.0/js/hosted-fields.min.js');
+        });
+
+        it('returns hosted fields from window', async () => {
+            expect(await braintreeScriptLoader.loadHostedFields())
+                .toBe(hostedFields);
         });
     });
 });

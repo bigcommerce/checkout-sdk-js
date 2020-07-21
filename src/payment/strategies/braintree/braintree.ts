@@ -6,6 +6,7 @@ import { VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckou
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;
     dataCollector?: BraintreeDataCollectorCreator;
+    hostedFields?: BraintreeHostedFieldsCreator;
     paypal?: BraintreePaypalCreator;
     paypalCheckout?: BraintreePaypalCheckoutCreator;
     threeDSecure?: BraintreeThreeDSecureCreator;
@@ -13,19 +14,55 @@ export interface BraintreeSDK {
     googlePayment?: GooglePayCreator;
 }
 
-export interface BraintreeModuleCreator<T> {
-    create(config: BraintreeModuleCreatorConfig): Promise<T>;
+export interface BraintreeModuleCreator<TInstance, TOptions = BraintreeModuleCreatorConfig> {
+    create(config: TOptions): Promise<TInstance>;
 }
 
 export interface BraintreeModuleCreatorConfig {
     client?: BraintreeClient;
     authorization?: string;
+}
+
+export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCreatorConfig {
     kount?: boolean;
     paypal?: boolean;
 }
 
-export interface BraintreeClientCreator extends BraintreeModuleCreator<BraintreeClient> {}
-export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector> {}
+export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreatorConfig {
+    fields: {
+        number?: BraintreeHostedFieldOption;
+        expirationDate?: BraintreeHostedFieldOption;
+        expirationMonth?: BraintreeHostedFieldOption;
+        expirationYear?: BraintreeHostedFieldOption;
+        cvv?: BraintreeHostedFieldOption;
+        postalCode?: BraintreeHostedFieldOption;
+    };
+    styles?: {
+        input?: { [key: string]: string };
+        '.invalid'?: { [key: string]: string };
+        '.valid'?: { [key: string]: string };
+        ':focus'?: { [key: string]: string };
+    };
+}
+
+export interface BraintreeHostedFieldOption {
+    container: string | HTMLElement;
+    placeholder?: string;
+    type?: string;
+    formatInput?: boolean;
+    maskInput?: boolean | { character?: string; showLastFour?: string };
+    select?: boolean | { options?: string[] };
+    maxCardLength?: number;
+    maxlength?: number;
+    minlength?: number;
+    prefill?: string;
+    rejectUnsupportedCards?: boolean;
+    supportedCardBrands?: { [key: string]: boolean };
+}
+
+export interface BraintreeClientCreator extends BraintreeModuleCreator<BraintreeClient> { }
+export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector, BraintreeDataCollectorCreatorConfig> {}
+export interface BraintreeHostedFieldsCreator extends BraintreeModuleCreator<BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig> {}
 export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure> {}
 export interface BraintreePaypalCreator extends BraintreeModuleCreator<BraintreePaypal> {}
 export interface BraintreePaypalCheckoutCreator extends BraintreeModuleCreator<BraintreePaypalCheckout> {}
@@ -55,6 +92,92 @@ export interface BraintreeThreeDSecureOptions {
 
 export interface BraintreeDataCollector extends BraintreeModule {
     deviceData?: string;
+}
+
+export interface BraintreeHostedFields {
+    teardown(): Promise<void>;
+    tokenize(options?: BraintreeHostedFieldsTokenizeOptions): Promise<BraintreeHostedFieldsTokenizePayload>;
+    on(eventName: string, callback: (event: BraintreeHostedFieldsState) => void): void;
+}
+
+export interface BraintreeHostedFieldsState {
+    cards: BraintreeHostedFieldsCard[];
+    emittedBy: string;
+    fields: {
+        number?: BraintreeHostedFieldsFieldData;
+        expirationDate?: BraintreeHostedFieldsFieldData;
+        expirationMonth?: BraintreeHostedFieldsFieldData;
+        expirationYear?: BraintreeHostedFieldsFieldData;
+        cvv?: BraintreeHostedFieldsFieldData;
+        postalCode?: BraintreeHostedFieldsFieldData;
+    };
+}
+
+export interface BraintreeHostedFieldsCard {
+    type: string;
+    niceType: string;
+    code: { name: string; size: number };
+}
+
+export interface BraintreeHostedFieldsFieldData {
+    container: HTMLElement;
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
+export interface BraintreeHostedFieldsTokenizeOptions {
+    vault?: boolean;
+    authenticationInsight?: {
+        merchantAccountId: string;
+    };
+    fieldsToTokenize?: string[];
+    cardholderName?: string;
+    billingAddress?: BraintreeBillingAddressRequestData;
+}
+
+export interface BraintreeHostedFieldsTokenizePayload {
+    nonce: string;
+    authenticationInsight?: {
+        regulationEnvironment: string;
+    };
+    details: {
+        bin: string;
+        cardType: string;
+        expirationMonth: string;
+        expirationYear: string;
+        lastFour: string;
+        lastTwo: string;
+    };
+    description: string;
+    type: string;
+    binData: {
+        commercial: string;
+        countryOfIssuance: string;
+        debit: string;
+        durbinRegulated: string;
+        healthcare: string;
+        issuingBank: string;
+        payroll: string;
+        prepaid: string;
+        productId: string;
+    };
+}
+
+export interface BraintreeBillingAddressRequestData {
+    postalCode?: string;
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    streetAddress?: string;
+    extendedAddress?: string;
+    locality?: string;
+    region?: string;
+    countryCodeNumeric?: string;
+    countryCodeAlpha2?: string;
+    countryCodeAlpha3?: string;
+    countryName?: string;
 }
 
 export interface BraintreePaypal {
@@ -96,7 +219,7 @@ export interface BraintreeTokenizeResponse {
 export interface BraintreeRequestData {
     data: {
         creditCard: {
-            billingAddress: {
+            billingAddress?: {
                 countryName: string;
                 postalCode: string;
                 streetAddress: string;
