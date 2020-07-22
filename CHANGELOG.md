@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.83.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.4...v1.83.0) (2020-07-22)
+
+
+### Features
+
+* **payment:** PAYPAL-539 Add validate params in script loader ([1bac153](https://github.com/bigcommerce/checkout-sdk-js/commit/1bac1535e865feba3ec80dae0aa6d3f026a55ed9))
+* **payment:** PAYPAL-539 MerchantId does not required for progressive onboarding ([ec88cf7](https://github.com/bigcommerce/checkout-sdk-js/commit/ec88cf76e3cd0245fc062355297ec457e5e1d7c1))
+
 ### [1.82.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.3...v1.82.4) (2020-07-16)
 
 
