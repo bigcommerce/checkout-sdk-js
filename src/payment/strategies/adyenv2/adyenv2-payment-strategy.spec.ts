@@ -1,5 +1,3 @@
-// TODO: setAsDefaultInstrument tests
-
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
@@ -19,6 +17,7 @@ import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { getAdyenV2 } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { getCreditCardInstrument } from '../../payments.mock';
 
 import { AdyenAdditionalActionState, AdyenComponentState, AdyenError, AdyenPaymentMethodType, AdyenV2PaymentStrategy, AdyenV2ScriptLoader, ResultCode } from '.';
 import { AdyenComponent } from './adyenv2';
@@ -272,6 +271,82 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
             });
 
+            it('calls submitPayment, passing a set as default flag, when paying with a vaulted instrument that should be defaulted', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                await strategy.initialize(options);
+                await strategy.execute({
+                    useStoreCredit: false,
+                    payment: { methodId: 'scheme', paymentData: { instrumentId: '123', setAsDefaultInstrument: true } },
+                  });
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                set_as_default_stored_instrument: true,
+                            }),
+                        }),
+                    })
+                );
+            });
+
+            it('calls submitPayment, passing a vault flag, when paying with an instrument that should be vaulted', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                await strategy.initialize(options);
+                await strategy.execute({
+                    payment: {
+                        methodId: 'scheme',
+                        paymentData: {
+                            ...getCreditCardInstrument(),
+                            shouldSaveInstrument: true,
+                        },
+                    },
+                });
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                vault_payment_instrument: true,
+                                set_as_default_stored_instrument: null,
+                            }),
+                        }),
+                    })
+                );
+            });
+
+            it('calls submitPayment, passing both a vault and set as default flag, when paying with an instrument that should be vaulted and defaulted', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                await strategy.initialize(options);
+                await strategy.execute({
+                    payment: {
+                        methodId: 'scheme',
+                        paymentData: {
+                            ...getCreditCardInstrument(),
+                            shouldSaveInstrument: true,
+                            setAsDefaultInstrument: true,
+                        },
+                    },
+                });
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                vault_payment_instrument: true,
+                                set_as_default_stored_instrument: true,
+                            }),
+                        }),
+                    })
+                );
+            });
+
             it('additional action component fires back onError', async () => {
                 let additionalActionComponentWithError: AdyenComponent;
                 const adyenError = getAdyenError();
@@ -389,6 +464,30 @@ describe('AdyenV2PaymentStrategy', () => {
                     },
                 }));
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(0);
+            });
+
+            it('calls submitPayment, passing a set as default flag, when paying with vaulted account that should be defaulted', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
+
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                options = getInitializeOptions(true);
+
+                await strategy.initialize(options);
+                await strategy.execute({
+                    useStoreCredit: false,
+                    payment: { methodId: 'giropay', paymentData: { instrumentId: '123', setAsDefaultInstrument: true } },
+                });
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            set_as_default_stored_instrument: true,
+                        }),
+                    }),
+                }));
             });
 
             it('returns 3DS2 ChallengeShopper flow with no callbacks', async () => {

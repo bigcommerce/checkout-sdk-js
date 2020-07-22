@@ -120,7 +120,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                                 }),
                             },
                             browser_info: getBrowserInfo(),
-                            vault_payment_instrument: shouldSaveInstrument,
+                            vault_payment_instrument: shouldSaveInstrument || null,
                             set_as_default_stored_instrument: setAsDefaultInstrument || null,
                         },
                     },
