@@ -447,11 +447,11 @@ export function getZip(): PaymentMethod {
     };
 }
 
-export function getStripeV3(): PaymentMethod {
+export function getStripeV3(method: string = 'card'): PaymentMethod {
     return {
-        id: 'stripev3',
+        id: method,
         logoUrl: '',
-        method: 'stripev3',
+        method,
         supportedCards: [],
         config: {
             displayName: 'Stripe',
@@ -463,6 +463,7 @@ export function getStripeV3(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        returnUrl: 'http://www.example.com',
     };
 }
 

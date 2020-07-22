@@ -29,13 +29,19 @@ describe('StripeV3PayScriptLoader', () => {
         });
 
         it('loads the JS', async () => {
-            await stripeV3ScriptLoader.load('publishableKey', 'stripeAccount');
+            await stripeV3ScriptLoader.load(
+                'STRIPE_PUBLIC_KEY',
+                'STRIPE_CONNECTED_ACCOUNT'
+            );
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://js.stripe.com/v3/');
         });
 
         it('returns the JS from the window', async () => {
-            const stripeJs = await stripeV3ScriptLoader.load('publishableKey', 'stripeAccount');
+            const stripeJs = await stripeV3ScriptLoader.load(
+                'STRIPE_PUBLIC_KEY',
+                'STRIPE_CONNECTED_ACCOUNT'
+            );
 
             expect(stripeJs).toBe(stripeV3JsMock);
         });
@@ -48,7 +54,10 @@ describe('StripeV3PayScriptLoader', () => {
             });
 
             try {
-                await stripeV3ScriptLoader.load('publishableKey', 'stripeAccount');
+                await stripeV3ScriptLoader.load(
+                    'STRIPE_PUBLIC_KEY',
+                    'STRIPE_CONNECTED_ACCOUNT'
+                );
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
             }
