@@ -435,6 +435,19 @@ declare interface BaseAccountInstrument extends BaseInstrument {
     type: 'account' | 'bank';
 }
 
+declare interface BaseElementOptions {
+    style?: StripeElementStyle;
+    classes?: StripeElementClasses;
+    /**
+     * Hides the icon in the Element. Default is false.
+     */
+    hideIcon?: boolean;
+    /**
+     * Applies a disabled state to the Element such that user input is not accepted. Default is false.
+     */
+    disabled?: boolean;
+}
+
 declare interface BaseInstrument {
     bigpayToken: string;
     defaultInstrument: boolean;
@@ -442,16 +455,6 @@ declare interface BaseInstrument {
     trustedShippingAddress: boolean;
     method: string;
     type: string;
-}
-
-declare interface BaseProps extends Properties {
-    ':hover'?: Properties;
-    ':focus'?: Properties;
-    '::placeholder'?: Properties;
-    '::selection'?: Properties;
-    ':-webkit-autofill'?: Properties;
-    ':disabled'?: Properties;
-    '::ms-clear'?: MsClearProperties;
 }
 
 declare interface BillingAddress extends Address {
@@ -638,12 +641,22 @@ declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
 }
 
-declare interface CardElementProps extends BaseProps {
+declare interface CardElementOptions extends BaseElementOptions {
+    /**
+     * A pre-filled set of values to include in the input (e.g., {postalCode: '94110'}).
+     * Note that sensitive card information (card number, CVC, and expiration date)
+     * cannot be pre-filled
+     */
     value?: string;
+    /**
+     * Hide the postal code field. Default is false. If you are already collecting a
+     * full billing address or postal code elsewhere, set this to true.
+     */
     hidePostalCode?: boolean;
-    iconStyle?: string;
-    hideIcon?: boolean;
-    disabled?: boolean;
+    /**
+     * Appearance of the icon in the Element.
+     */
+    iconStyle?: IconStyle;
 }
 
 declare interface CardInstrument extends BaseInstrument {
@@ -3274,6 +3287,39 @@ declare interface HostedStoredCardFieldOptionsMap {
 
 declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
+declare interface IbanElementOptions extends BaseElementOptions {
+    /**
+     * Specify the list of countries or country-groups whose IBANs you want to allow.
+     * Must be ['SEPA'].
+     */
+    supportedCountries?: string[];
+    /**
+     * Customize the country and format of the placeholder IBAN. Default is DE.
+     */
+    placeholderCountry?: string;
+    /**
+     * Appearance of the icon in the Element.
+     */
+    iconStyle?: IconStyle;
+}
+
+declare enum IconStyle {
+    Solid = "solid",
+    Default = "default"
+}
+
+declare interface IdealElementOptions extends BaseElementOptions {
+    value?: string;
+    /**
+     * Hides the icon in the Element. Default is false.
+     */
+    hideIcon?: boolean;
+    /**
+     * Applies a disabled state to the Element such that user input is not accepted. Default is false.
+     */
+    disabled?: boolean;
+}
+
 declare interface InlineElementStyles {
     color?: string;
     fontFamily?: string;
@@ -3553,10 +3599,6 @@ declare interface MasterpassPaymentInitializeOptions {
      * It should be an HTML element.
      */
     walletButton?: string;
-}
-
-declare interface MsClearProperties extends Properties {
-    display?: string;
 }
 
 declare interface NonceGenerationError {
@@ -3874,24 +3916,6 @@ declare interface Promotion {
     banners: Banner[];
 }
 
-declare interface Properties {
-    color?: string;
-    fontFamily?: string;
-    fontSize?: string;
-    fontSmoothing?: string;
-    fontStyle?: string;
-    fontVariant?: string;
-    fontWeight?: string | number;
-    iconColor?: string;
-    lineHeight?: string | number;
-    letterSpacing?: string;
-    textAlign?: string;
-    padding?: string;
-    textDecoration?: string;
-    textShadow?: string;
-    textTransform?: string;
-}
-
 declare interface Region {
     code: string;
     name: string;
@@ -4153,38 +4177,158 @@ declare interface StoreProfile {
     storeLanguage: string;
 }
 
-declare interface StripeStyleProps {
+/**
+ * CSS properties supported by Stripe.js.
+ */
+declare interface StripeElementCSSProperties {
     /**
-     * The base class applied to the container.
-     * Defaults to StripeElement.
+     * The [background-color](https://developer.mozilla.org/en-US/docs/Web/CSS/background-color) CSS property.
+     *
+     * This property works best with the `::selection` pseudo-class.
+     * In other cases, consider setting the background color on the element's container instaed.
      */
-    base?: CardElementProps;
+    backgroundColor?: string;
     /**
-     * The class name to apply when the Element is complete.
-     * Defaults to StripeElement--complete.
+     * The [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) CSS property.
      */
-    complete?: CardElementProps;
+    color?: string;
     /**
-     * The class name to apply when the Element is empty.
-     * Defaults to StripeElement--empty.
+     * The [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) CSS property.
      */
-    empty?: CardElementProps;
+    fontFamily?: string;
     /**
-     * The class name to apply when the Element is focused.
-     * Defaults to StripeElement--focus.
+     * The [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) CSS property.
      */
-    focus?: CardElementProps;
+    fontSize?: string;
     /**
-     * The class name to apply when the Element is invalid.
-     * Defaults to StripeElement--invalid.
+     * The [font-smoothing](https://developer.mozilla.org/en-US/docs/Web/CSS/font-smoothing) CSS property.
      */
-    invalid?: CardElementProps;
+    fontSmoothing?: string;
     /**
-     * The class name to apply when the Element has its value
-     * autofilled by the browser (only on Chrome and Safari).
-     * Defaults to StripeElement--webkit-autofill.
+     * The [font-style](https://developer.mozilla.org/en-US/docs/Web/CSS/font-style) CSS property.
      */
-    webkitAutofill?: CardElementProps;
+    fontStyle?: string;
+    /**
+     * The [font-variant](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant) CSS property.
+     */
+    fontVariant?: string;
+    /**
+     * The [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) CSS property.
+     */
+    fontWeight?: string;
+    /**
+     * A custom property, used to set the color of the icons that are rendered in an element.
+     */
+    iconColor?: string;
+    /**
+     * The [line-height](https://developer.mozilla.org/en-US/docs/Web/CSS/line-height) CSS property.
+     *
+     * To avoid cursors being rendered inconsistently across browsers, consider using a padding on the element's container instead.
+     */
+    lineHeight?: string;
+    /**
+     * The [letter-spacing](https://developer.mozilla.org/en-US/docs/Web/CSS/letter-spacing) CSS property.
+     */
+    letterSpacing?: string;
+    /**
+     * The [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) CSS property.
+     *
+     * Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
+     */
+    textAlign?: string;
+    /**
+     * The [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) CSS property.
+     *
+     * Available for the `idealBank` element.
+     * Accepts integer `px` values.
+     */
+    padding?: string;
+    /**
+     * The [text-decoration](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) CSS property.
+     */
+    textDecoration?: string;
+    /**
+     * The [text-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow) CSS property.
+     */
+    textShadow?: string;
+    /**
+     * The [text-transform](https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform) CSS property.
+     */
+    textTransform?: string;
+}
+
+/**
+ * Set custom class names on the container DOM element when the Stripe element is in a particular state.
+ */
+declare interface StripeElementClasses {
+    /**
+     * The base class applied to the container. Defaults to StripeElement.
+     */
+    base?: string;
+    /**
+     * The class name to apply when the Element is complete. Defaults to StripeElement--complete.
+     */
+    complete?: string;
+    /**
+     * The class name to apply when the Element is empty. Defaults to StripeElement--empty.
+     */
+    empty?: string;
+    /**
+     * The class name to apply when the Element is focused. Defaults to StripeElement--focus.
+     */
+    focus?: string;
+    /**
+     * The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
+     */
+    invalid?: string;
+    /**
+     * The class name to apply when the Element has its value autofilled by the browser
+     * (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.
+     */
+    webkitAutoFill?: string;
+}
+
+declare type StripeElementOptions = CardElementOptions | IdealElementOptions | IbanElementOptions;
+
+/**
+ * Customize the appearance of an element using CSS properties passed in a `Style` object,
+ * which consists of CSS properties nested under objects for each variant.
+ */
+declare interface StripeElementStyle {
+    /**
+     * Base variant—all other variants inherit from these styles.
+     */
+    base?: StripeElementStyleVariant;
+    /**
+     * Applied when the element has valid input.
+     */
+    complete?: StripeElementStyleVariant;
+    /**
+     * Applied when the element has no customer input.
+     */
+    empty?: StripeElementStyleVariant;
+    /**
+     * Applied when the element has invalid input.
+     */
+    invalid?: StripeElementStyleVariant;
+}
+
+declare interface StripeElementStyleVariant extends StripeElementCSSProperties {
+    ':hover'?: StripeElementCSSProperties;
+    ':focus'?: StripeElementCSSProperties;
+    '::placeholder'?: StripeElementCSSProperties;
+    '::selection'?: StripeElementCSSProperties;
+    ':-webkit-autofill'?: StripeElementCSSProperties;
+    /**
+     * Available for all elements except the `paymentRequestButton` element
+     */
+    ':disabled'?: StripeElementCSSProperties;
+    /**
+     * Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
+     */
+    '::-ms-clear'?: StripeElementCSSProperties & {
+        display: string;
+    };
 }
 
 /**
@@ -4202,7 +4346,7 @@ declare interface StripeV3PaymentInitializeOptions {
     /**
      * The set of CSS styles to apply to all form fields.
      */
-    style?: StripeStyleProps;
+    options?: StripeElementOptions;
 }
 
 declare interface StyleOptions {

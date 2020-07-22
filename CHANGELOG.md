@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.84.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.83.0...v1.84.0) (2020-07-22)
+
+
+### Features
+
+* **payment:** INT-2532 Accept payments through StripeV3 using iDEAL & SEPA ([3fcb1cc](https://github.com/bigcommerce/checkout-sdk-js/commit/3fcb1cc61e78a7e298ee6c0014132b72a4b8581f))
+
 ## [1.83.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.82.4...v1.83.0) (2020-07-22)
 
 

@@ -17,7 +17,7 @@ options provide a location and styling for each of the form fields.
 ### Properties
 
 * [containerId](stripev3paymentinitializeoptions.md#containerid)
-* [style](stripev3paymentinitializeoptions.md#optional-style)
+* [options](stripev3paymentinitializeoptions.md#optional-options)
 
 ## Properties
 
@@ -29,8 +29,8 @@ The location to insert the credit card number form field.
 
 ___
 
-### `Optional` style
+### `Optional` options
 
-• **style**? : *[StripeStyleProps](stripestyleprops.md)*
+• **options**? : *[StripeElementOptions](../README.md#stripeelementoptions)*
 
 The set of CSS styles to apply to all form fields.

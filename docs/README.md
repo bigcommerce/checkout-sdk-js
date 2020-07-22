@@ -16,6 +16,7 @@
 * [EmbeddedCheckoutEventType](enums/embeddedcheckouteventtype.md)
 * [HostedFieldType](enums/hostedfieldtype.md)
 * [HostedInputEventType](enums/hostedinputeventtype.md)
+* [IconStyle](enums/iconstyle.md)
 
 ### Classes
 
@@ -57,8 +58,8 @@
 * [BankInstrument](interfaces/bankinstrument.md)
 * [Banner](interfaces/banner.md)
 * [BaseAccountInstrument](interfaces/baseaccountinstrument.md)
+* [BaseElementOptions](interfaces/baseelementoptions.md)
 * [BaseInstrument](interfaces/baseinstrument.md)
-* [BaseProps](interfaces/baseprops.md)
 * [BillingAddress](interfaces/billingaddress.md)
 * [BillingAddressRequestBody](interfaces/billingaddressrequestbody.md)
 * [BlockElementStyles](interfaces/blockelementstyles.md)
@@ -74,7 +75,7 @@
 * [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/braintreevisacheckoutpaymentinitializeoptions.md)
 * [ButtonStyles](interfaces/buttonstyles.md)
 * [CardDataPaymentMethodState](interfaces/carddatapaymentmethodstate.md)
-* [CardElementProps](interfaces/cardelementprops.md)
+* [CardElementOptions](interfaces/cardelementoptions.md)
 * [CardInstrument](interfaces/cardinstrument.md)
 * [CardPaymentMethodState](interfaces/cardpaymentmethodstate.md)
 * [CardState](interfaces/cardstate.md)
@@ -158,6 +159,8 @@
 * [HostedInstrument](interfaces/hostedinstrument.md)
 * [HostedStoredCardFieldOptions](interfaces/hostedstoredcardfieldoptions.md)
 * [HostedStoredCardFieldOptionsMap](interfaces/hostedstoredcardfieldoptionsmap.md)
+* [IbanElementOptions](interfaces/ibanelementoptions.md)
+* [IdealElementOptions](interfaces/idealelementoptions.md)
 * [InlineElementStyles](interfaces/inlineelementstyles.md)
 * [InputDetail](interfaces/inputdetail.md)
 * [InputStyles](interfaces/inputstyles.md)
@@ -178,7 +181,6 @@
 * [Locales](interfaces/locales.md)
 * [MasterpassCustomerInitializeOptions](interfaces/masterpasscustomerinitializeoptions.md)
 * [MasterpassPaymentInitializeOptions](interfaces/masterpasspaymentinitializeoptions.md)
-* [MsClearProperties](interfaces/msclearproperties.md)
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
 * [Order](interfaces/order.md)
@@ -197,7 +199,6 @@
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)
 * [Promotion](interfaces/promotion.md)
-* [Properties](interfaces/properties.md)
 * [Region](interfaces/region.md)
 * [RequestOptions](interfaces/requestoptions.md)
 * [SepaPlaceHolder](interfaces/sepaplaceholder.md)
@@ -218,7 +219,10 @@
 * [StoreCurrency](interfaces/storecurrency.md)
 * [StoreLinks](interfaces/storelinks.md)
 * [StoreProfile](interfaces/storeprofile.md)
-* [StripeStyleProps](interfaces/stripestyleprops.md)
+* [StripeElementCSSProperties](interfaces/stripeelementcssproperties.md)
+* [StripeElementClasses](interfaces/stripeelementclasses.md)
+* [StripeElementStyle](interfaces/stripeelementstyle.md)
+* [StripeElementStyleVariant](interfaces/stripeelementstylevariant.md)
 * [StripeV3PaymentInitializeOptions](interfaces/stripev3paymentinitializeoptions.md)
 * [StyleOptions](interfaces/styleoptions.md)
 * [SubInputDetail](interfaces/subinputdetail.md)
@@ -259,6 +263,7 @@
 * [Omit](README.md#omit)
 * [OrderPayments](README.md#orderpayments)
 * [PaymentInstrument](README.md#paymentinstrument)
+* [StripeElementOptions](README.md#stripeelementoptions)
 
 ### Functions
 
@@ -415,6 +420,12 @@ ___
 ###  PaymentInstrument
 
 Ƭ **PaymentInstrument**: *[CardInstrument](interfaces/cardinstrument.md) | [AccountInstrument](README.md#accountinstrument)*
+
+___
+
+###  StripeElementOptions
+
+Ƭ **StripeElementOptions**: *[CardElementOptions](interfaces/cardelementoptions.md) | [IdealElementOptions](interfaces/idealelementoptions.md) | [IbanElementOptions](interfaces/ibanelementoptions.md)*
 
 ## Functions
 
