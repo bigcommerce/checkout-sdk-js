@@ -330,6 +330,32 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
             });
 
+            it('calls submit payment with ACH component and a correct payload', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.ACH));
+
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.ACH));
+
+                expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
+                expect(adyenCheckout.create).toHaveBeenCalledWith('ach', {
+                    hasHolderName: expect.any(Boolean),
+                    styles: expect.any(Object),
+                    placeholders: expect.any(Object),
+                    onChange: expect.any(Function),
+                    data: {
+                        billingAddress: {
+                            street: '12345 Testing Way',
+                            houseNumberOrName: '',
+                            postalCode: '95555',
+                            city: 'Some City',
+                            stateOrProvince: 'CA',
+                            country: 'US',
+                        },
+                    },
+                });
+            });
+
             it('calls submitPayment when paying with vaulted account', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));

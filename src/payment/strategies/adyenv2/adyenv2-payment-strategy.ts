@@ -1,5 +1,6 @@
 import { some } from 'lodash';
 
+import { BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
@@ -13,7 +14,7 @@ import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import isCardState, { isAccountState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenError, AdyenPaymentMethodType } from './adyenv2';
+import { isAccountState, isCardState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenError, AdyenPaymentMethodType, AdyenPlaceholderData } from './adyenv2';
 import AdyenV2PaymentInitializeOptions from './adyenv2-initialize-options';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
@@ -210,6 +211,32 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         });
     }
 
+    private _mapAdyenPlaceholderData(billingAddress?: BillingAddress): AdyenPlaceholderData {
+        if (!billingAddress) {
+            return {};
+        }
+
+        const {
+            address1: street,
+            address2: houseNumberOrName,
+            postalCode,
+            city,
+            stateOrProvinceCode: stateOrProvince,
+            countryCode: country,
+        } = billingAddress;
+
+        return {
+            billingAddress: {
+                street,
+                houseNumberOrName,
+                postalCode,
+                city,
+                stateOrProvince,
+                country,
+            },
+        };
+    }
+
     private _mountCardVerificationComponent(): Promise<AdyenComponent> {
         const adyenv2 = this._getPaymentInitializeOptions();
         const adyenClient = this._getAdyenClient();
@@ -244,11 +271,13 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 case AdyenPaymentMethodType.CreditCard:
                 case AdyenPaymentMethodType.ACH:
                 case AdyenPaymentMethodType.Bancontact:
+                    const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+
                     paymentComponent = adyenClient.create(paymentMethod.method, {
-                            ...adyenv2.options,
-                            onChange: componentState => this._updateComponentState(componentState),
-                        }
-                    );
+                        ...adyenv2.options,
+                        onChange: componentState => this._updateComponentState(componentState),
+                        data: this._mapAdyenPlaceholderData(billingAddress),
+                    });
 
                     try {
                         paymentComponent.mount(`#${adyenv2.containerId}`);
@@ -262,10 +291,9 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 case AdyenPaymentMethodType.SEPA:
                     if (!adyenv2.hasVaultedInstruments) {
                         paymentComponent = adyenClient.create(paymentMethod.method, {
-                                ...adyenv2.options,
-                                onChange: componentState => this._updateComponentState(componentState),
-                            }
-                        );
+                            ...adyenv2.options,
+                            onChange: componentState => this._updateComponentState(componentState),
+                        });
 
                         try {
                             paymentComponent.mount(`#${adyenv2.containerId}`);
