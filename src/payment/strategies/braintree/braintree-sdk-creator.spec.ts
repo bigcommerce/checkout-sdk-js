@@ -4,7 +4,7 @@ import { getGooglePayBraintreeMock } from '../googlepay/googlepay.mock';
 import { BraintreeClient, BraintreeDataCollector, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
-import { getClientMock, getDataCollectorMock, getDeviceDataMock, getModuleCreatorMock, getModuleCreatorNewMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
+import { getClientMock, getDataCollectorMock, getDeviceDataMock, getHostedFieldsMock, getModuleCreatorMock, getModuleCreatorNewMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
 
 describe('Braintree SDK Creator', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -234,6 +234,43 @@ describe('Braintree SDK Creator', () => {
                 .mockImplementation(() => { throw new Error(errorMessage); });
 
             expect(() => braintreeSDKCreator.getGooglePaymentComponent()).toThrow(errorMessage);
+        });
+    });
+
+    describe('#createHostedFields()', () => {
+        let braintreeSDKCreator: BraintreeSDKCreator;
+
+        beforeEach(() => {
+            braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+        });
+
+        it('returns a promise that resolves to the hosted fields instance', async () => {
+            const hostedFieldsMock = getHostedFieldsMock();
+            const hostedFieldsCreatorMock = getModuleCreatorMock(hostedFieldsMock);
+
+            braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
+            braintreeScriptLoader.loadHostedFields = jest.fn(() => Promise.resolve(hostedFieldsCreatorMock));
+
+            braintreeSDKCreator.initialize('client_token');
+
+            expect(await braintreeSDKCreator.createHostedFields({ fields: {} }))
+                .toEqual(hostedFieldsMock);
+        });
+
+        it('throws if unable to create hosted fields instance', async () => {
+            const error = new Error();
+
+            braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
+            braintreeScriptLoader.loadHostedFields = jest.fn(() => Promise.reject(error));
+
+            braintreeSDKCreator.initialize('client_token');
+
+            try {
+                await braintreeSDKCreator.createHostedFields({ fields: {} });
+            } catch (thrown) {
+                expect(thrown)
+                    .toEqual(error);
+            }
         });
     });
 

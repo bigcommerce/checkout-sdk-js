@@ -1,7 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {
@@ -43,6 +43,14 @@ export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
         createPayment: jest.fn((() => Promise.resolve())),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
+    };
+}
+
+export function getHostedFieldsMock(): BraintreeHostedFields {
+    return {
+        teardown: jest.fn(() => Promise.resolve()),
+        tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
+        on: jest.fn(),
     };
 }
 
