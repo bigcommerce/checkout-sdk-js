@@ -18,6 +18,7 @@ export function getStripeV3JsMock(): StripeV3Client {
                 getElement: jest.fn().mockReturnValue(null),
             };
         }),
+        confirmAlipayPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         confirmIdealPayment: jest.fn(),
         confirmSepaDebitPayment: jest.fn(),
@@ -39,6 +40,7 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
                 getElement: jest.fn().mockReturnValue(null),
             };
         }),
+        confirmAlipayPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         confirmIdealPayment: jest.fn(),
         confirmSepaDebitPayment: jest.fn(),

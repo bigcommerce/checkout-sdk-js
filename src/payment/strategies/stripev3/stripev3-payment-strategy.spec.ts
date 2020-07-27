@@ -134,6 +134,17 @@ describe('StripeV3PaymentStrategy', () => {
             return expect(promise).rejects.toThrow(InvalidArgumentError);
         });
 
+        it('does not mount a stripe alipay element', async () => {
+            const { create, getElement } = stripeV3JsMock.elements();
+            stripeV3JsMock.elements = jest.fn().mockReturnValue({ create, getElement });
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(getStripeV3InitializeOptionsMock((StripeElementType.Alipay)));
+
+            expect(create).not.toHaveBeenCalledWith('alipay');
+        });
+
         it('mounts a stripe card element', async () => {
             const { create, getElement } = stripeV3JsMock.elements();
             stripeV3JsMock.elements = jest.fn().mockReturnValue({ create, getElement });
@@ -248,6 +259,33 @@ describe('StripeV3PaymentStrategy', () => {
                 expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
                 expect(error.message).toEqual(stripeError.error && stripeError.error.message);
             }
+        });
+
+        it('creates the order and submit payment with alipay', async () => {
+            paymentMethodMock = { ...getStripeV3(StripeElementType.Alipay), clientToken: 'myToken' };
+            loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+                .mockReturnValue(loadPaymentMethodAction);
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(getStripeV3(StripeElementType.Alipay));
+
+            options = getStripeV3InitializeOptionsMock(StripeElementType.Alipay);
+            stripeV3JsMock.confirmAlipayPayment = jest.fn(
+                () => Promise.resolve(getConfirmPaymentResponse())
+            );
+
+            jest.spyOn(stripeScriptLoader, 'load')
+                .mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(options);
+            const response = await strategy.execute(getStripeV3OrderRequestBodyMock(StripeElementType.Alipay));
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+            expect(stripeV3JsMock.confirmAlipayPayment).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+            expect(response).toBe(store.getState());
         });
 
         it('creates the order and submit payment with card', async () => {
