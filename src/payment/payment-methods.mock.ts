@@ -494,7 +494,7 @@ export function getBolt(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'Bolt',
-            testMode: false,
+            testMode: true,
         },
         type: 'PAYMENT_TYPE_API',
         initializationData: {
