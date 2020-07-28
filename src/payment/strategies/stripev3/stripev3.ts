@@ -208,7 +208,6 @@ export interface IbanElementOptions extends BaseElementOptions {
      * Appearance of the icon in the Element.
      */
     iconStyle?: IconStyle;
-
 }
 
 export interface IdealElementOptions extends BaseElementOptions {
@@ -375,6 +374,20 @@ export interface StripeShippingAddress {
 }
 
 /**
+ * Data to be sent with a `stripe.confirmAlipayPayment` request.
+ * Refer to the [Payment Intents API](https://stripe.com/docs/api/payment_intents/confirm) for a full list of parameters.
+ */
+export interface StripeConfirmAlipayPaymentData {
+    /**
+     * If you are [handling next actions yourself](https://stripe.com/docs/payments/payment-intents/verifying-status#next-actions), pass in a return_url. If the subsequent action
+     * is redirect_to_url, this URL will be used on the return path for the redirect.
+     *
+     * @recommended
+     */
+    return_url?: string;
+}
+
+/**
  * Data to be sent with a `stripe.confirmCardPayment` request.
  * Refer to the [Payment Intents API](https://stripe.com/docs/api/payment_intents/confirm) for a full list of parameters.
  */
@@ -448,7 +461,7 @@ export interface StripeConfirmSepaPaymentData {
     payment_method?: CreatePaymentMethodSepaData;
 }
 
-export type StripeConfirmPaymentData = StripeConfirmCardPaymentData | StripeConfirmIdealPaymentData | StripeConfirmSepaPaymentData | undefined;
+export type StripeConfirmPaymentData = StripeConfirmAlipayPaymentData | StripeConfirmCardPaymentData | StripeConfirmIdealPaymentData | StripeConfirmSepaPaymentData | undefined;
 
 export type StripeElementOptions = CardElementOptions | IdealElementOptions | IbanElementOptions;
 
@@ -473,7 +486,7 @@ export interface StripeElement {
 
 export interface StripeElements {
     /**
-     * Creates a `CardElement` | `IdealBankElement` | `IbanElement`.
+     * Creates a `AlipayElement` | `CardElement` | `IdealBankElement` | `IbanElement`.
      */
     create(
         elementType: StripeElementType,
@@ -568,6 +581,46 @@ export interface StripeV3Client {
     elements(options?: StripeElementsOptions): StripeElements;
 
     /**
+     * @docs https://stripe.com/docs/js/payment_intents/confirm_alipay_payment
+     *
+     * Use `stripe.confirmAlipayPayment` in the Alipay payment method creation flow when the customer submits your payment form.
+     * When called, it will confirm the [PaymentIntent](https://stripe.com/docs/api/payment_intents) with data you provide, and it will automatically
+     * redirect the customer to the authorize the transaction. Once authorization is complete, the customer will be redirected
+     * back to your specified `return_url`. When you confirm a `PaymentIntent`, it needs to have an attached [PaymentMethod](https://stripe.com/docs/api/payment_methods).
+     * In addition to confirming the `PaymentIntent`, this method can automatically create and attach a new `PaymentMethod` for you.
+     * If you have already attached a `PaymentMethod` you can call this method without needing to provide any additional data.
+     * These use cases are detailed in the sections that follow.
+     *
+     * @returns
+     * `stripe.confirmAlipayPayment` by default, will trigger a redirect when successful. If there is an error, or when handling
+     * `next_actions` manually by using the `handleActions: false` option, it will return a `Promise` which resolves with a `result` object.
+     * This object has either:
+     *
+     * - result.paymentIntent: the successful PaymentIntent.
+     * - result.error: an error. Refer to the API reference for all possible errors.
+     *
+     * Note that `stripe.confirmAlipayPayment` may take several seconds to complete. During that time, you should disable your
+     * form from being resubmitted and show a waiting indicator like a spinner. If you receive an error result, you should
+     * be sure to show that error to the customer, re-enable the form, and hide the waiting indicator.
+     */
+    confirmAlipayPayment(
+        /**
+         * The [client secret](https://stripe.com/docs/api/payment_intents/object#payment_intent_object-client_secret) of the PaymentIntent.
+         */
+        clientSecret: string,
+
+        /**
+         * Data to be sent with the request. Refer to the Payment Intents API for a full list of parameters.
+         */
+        data?: StripeConfirmAlipayPaymentData,
+
+        /**
+         * An options object to control the behavior of this method.
+         */
+        options?: StripeConfirmPaymentOptions
+    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+
+    /**
      * @docs https://stripe.com/docs/js/payment_intents/confirm_card_payment
      *
      * Use `stripe.confirmCardPayment` when the customer submits your payment form.
@@ -586,8 +639,8 @@ export interface StripeV3Client {
      * `stripe.confirmCardPayment` will return a Promise which resolves with a result object.
      * This object has either:
      *
-     * <li> result.paymentIntent: the successful PaymentIntent.</li>
-     * <li> result.error: an error. Refer to the API reference for all possible errors.</li>
+     * - result.paymentIntent: the successful PaymentIntent.
+     * - result.error: an error. Refer to the API reference for all possible errors.
      *
      * Note that stripe.confirmCardPayment may take several seconds to complete. During that time, you should disable
      * your form from being resubmitted and show a waiting indicator like a spinner. If you receive an error result,
@@ -634,8 +687,8 @@ export interface StripeV3Client {
      * next actions manually by using the `handleActions: false` option, it will return a `Promise` which resolves with a `result`
      * object. This object has either:
      *
-     * <li> result.paymentIntent: the successful PaymentIntent.</li>
-     * <li> result.error: an error. Refer to the API reference for all possible errors.</li>
+     * - result.paymentIntent: the successful PaymentIntent.
+     * - result.error: an error. Refer to the API reference for all possible errors.
      *
      * Note that `stripe.confirmIdealPayment` may take several seconds to complete. During that time, you should disable
      * your form from being resubmitted and show a waiting indicator like a spinner. If you receive an error result,
@@ -661,10 +714,15 @@ export interface StripeV3Client {
     /**
      *
      * Use `stripe.confirmSepaDebitPayment` in the [SEPA Direct Debit Payments](https://stripe.com/docs/payments/sepa-debit)
-     * with Payment Methods flow when the customer submits your payment form. When called, it will confirm the `PaymentIntent`
-     * with `data` you provide. Note that there are some additional requirements to this flow that are not covered in this reference.
-     * Refer to our integration guide for more details.
+     * with Payment Methods flow when the customer submits your payment form. When called, it will confirm the
+     * [PaymentIntent](https://stripe.com/docs/api/payment_intents) with `data` you provide. Note that there are some additional
+     * requirements to this flow that are not covered in this reference. Refer to our [integration guide](https://stripe.com/docs/payments/sepa-debit
+     * for more details.
      *
+     * When you confirm a PaymentIntent, it needs to have an attached PaymentMethod. In addition to confirming the PaymentIntent,
+     * this method can automatically create and attach a new PaymentMethod for you. If you have already attached a
+     * [PaymentMethod](https://stripe.com/docs/api/payment_methods) you can call this method without needing to provide any additional data.
+     * These use cases are detailed in the sections that follow.
      * @docs https://stripe.com/docs/js/payment_intents/confirm_sepa_debit_payment
      */
     confirmSepaDebitPayment(
@@ -674,7 +732,7 @@ export interface StripeV3Client {
         clientSecret: string,
 
         /**
-         * Data to be sent with the request. Refer to the Payment Intents API for a full list of parameters.
+         * Data to be sent with the request. Refer to the [Payment Intents API](https://stripe.com/docs/api/payment_intents/confirm) for a full list of parameters.
          */
         data?: StripeConfirmSepaPaymentData
     ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
@@ -688,12 +746,14 @@ export interface StripeHostWindow extends Window {
 }
 
 export enum StripeElementType {
+    Alipay = 'alipay',
     CreditCard = 'card',
     iDEAL = 'idealBank',
     Sepa = 'iban',
 }
 
 export enum StripePaymentMethodType {
+    Alipay = 'alipay',
     CreditCard = 'card',
     iDEAL = 'ideal',
     Sepa = 'sepa_debit',

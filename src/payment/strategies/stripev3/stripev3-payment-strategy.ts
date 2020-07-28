@@ -38,7 +38,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._initializeOptions = options;
         this._stripeV3Client = await this._loadStripeJs();
-        this._stripeElement = await this._mountElement(this._getStripeInitializeOptions());
+        this._stripeElement = await this._mountElement(this._getInitializeOptions().methodId);
 
         return Promise.resolve(this._store.getState());
     }
@@ -142,6 +142,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return new Promise(async (resolve, reject) => {
 
             switch (paymentMethod.method) {
+                case StripeElementType.Alipay:
+                    ({error, paymentIntent} = await this._getStripeJs().confirmAlipayPayment(
+                        clientSecret, { return_url: returnUrl }, { handleActions: false }));
+
+                    break;
+
                 case StripeElementType.CreditCard:
                     data = this._mapStripePaymentData(StripePaymentMethodType.CreditCard, shouldSaveInstrument);
                     ({error, paymentIntent} = await this._getStripeJs().confirmCardPayment(clientSecret, data));
@@ -231,8 +237,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _mountElement({ options, containerId }: StripeV3PaymentInitializeOptions): Promise<StripeElement> {
-        const stripeElementType = this._getInitializeOptions().methodId as StripeElementType;
+    private _mountElement(methodId: string): Promise<StripeElement> {
+        const stripeElementType = methodId as StripeElementType;
+        const { options, containerId } = this._getStripeInitializeOptions();
 
         let stripeElement: StripeElement;
 
@@ -241,12 +248,22 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 this._stripeElements = this._getStripeJs().elements();
             }
 
-            stripeElement = this._stripeElements.getElement(stripeElementType) || this._stripeElements.create(stripeElementType, options);
+            switch (stripeElementType) {
+                case StripeElementType.CreditCard:
+                case StripeElementType.iDEAL:
+                case StripeElementType.Sepa:
+                    stripeElement = this._stripeElements.getElement(stripeElementType) || this._stripeElements.create(stripeElementType, options);
 
-            try {
-                stripeElement.mount(`#${containerId}`);
-            } catch (error) {
-                reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
+                    try {
+                        stripeElement.mount(`#${containerId}`);
+                    } catch (error) {
+                        reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
+                    }
+
+                    break;
+
+                case StripeElementType.Alipay:
+                    break;
             }
 
             resolve(stripeElement);
