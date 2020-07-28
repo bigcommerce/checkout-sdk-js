@@ -10,7 +10,7 @@ export default class BoltScriptLoader {
         public _window: BoltHostWindow = window
     ) {}
 
-    load(publishableKey: string, testMode?: boolean): Promise<BoltCheckout> {
+    async load(publishableKey: string, testMode?: boolean): Promise<BoltCheckout> {
         const options: LoadScriptOptions = {
             async: true,
             attributes: {
@@ -19,14 +19,11 @@ export default class BoltScriptLoader {
             },
         };
 
-        return this._scriptLoader
-            .loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/connect-bigcommerce.js`, options)
-            .then(() => {
-                if (!this._window.BoltCheckout) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
+        await this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/connect-bigcommerce.js`, options);
+        if (!this._window.BoltCheckout) {
+            throw new PaymentMethodClientUnavailableError();
+        }
 
-                return this._window.BoltCheckout;
-            });
+        return this._window.BoltCheckout;
     }
 }
