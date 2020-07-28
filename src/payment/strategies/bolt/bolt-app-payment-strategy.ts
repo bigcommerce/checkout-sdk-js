@@ -59,7 +59,7 @@ export default class BoltAppPaymentStrategy implements PaymentStrategy {
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
         const paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
 
-        if (!paymentMethod  || !paymentMethod.clientToken) {
+        if (!paymentMethod || !paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 

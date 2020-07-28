@@ -181,11 +181,7 @@ describe('BoltAppPaymentStrategy', () => {
 
   describe('#finalize()', () => {
       it('throws error to inform that order finalization is not required', async () => {
-          try {
-              await strategy.finalize();
-          } catch (error) {
-              expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-          }
+        await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
       });
   });
 });
