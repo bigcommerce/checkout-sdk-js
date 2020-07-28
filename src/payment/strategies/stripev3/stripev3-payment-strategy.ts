@@ -53,7 +53,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         const { paymentData, gatewayId, methodId } = payment;
-        const { shouldSaveInstrument = false, setAsDefaultInstrument = false } = paymentData as HostedInstrument;
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } = paymentData as HostedInstrument;
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         if (isVaultedInstrument(paymentData)) {
@@ -89,7 +89,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                     ...paymentData,
                     nonce: paymentIntent.id,
                     shouldSaveInstrument,
-                    setAsDefaultInstrument,
+                    shouldSetAsDefaultInstrument,
                 },
             };
         }

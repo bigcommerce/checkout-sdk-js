@@ -21,7 +21,7 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
         const paymentData = payment && payment.paymentData;
         const instrumentId = paymentData && (paymentData as VaultedInstrument).instrumentId || undefined;
         const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument || undefined;
-        const setAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).setAsDefaultInstrument || undefined;
+        const shouldSetAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).shouldSetAsDefaultInstrument || undefined;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -36,7 +36,7 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
                     gatewayId,
                     instrumentId,
                     shouldSaveInstrument,
-                    setAsDefaultInstrument,
+                    shouldSetAsDefaultInstrument,
                 }))
             );
     }

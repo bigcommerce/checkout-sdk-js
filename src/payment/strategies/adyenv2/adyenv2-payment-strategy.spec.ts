@@ -278,7 +278,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute({
                     useStoreCredit: false,
-                    payment: { methodId: 'scheme', paymentData: { instrumentId: '123', setAsDefaultInstrument: true } },
+                    payment: { methodId: 'scheme', paymentData: { instrumentId: '123', shouldSetAsDefaultInstrument: true } },
                   });
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
@@ -330,7 +330,7 @@ describe('AdyenV2PaymentStrategy', () => {
                         paymentData: {
                             ...getCreditCardInstrument(),
                             shouldSaveInstrument: true,
-                            setAsDefaultInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
                         },
                     },
                 });
@@ -478,7 +478,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute({
                     useStoreCredit: false,
-                    payment: { methodId: 'giropay', paymentData: { instrumentId: '123', setAsDefaultInstrument: true } },
+                    payment: { methodId: 'giropay', paymentData: { instrumentId: '123', shouldSetAsDefaultInstrument: true } },
                 });
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({

@@ -279,7 +279,7 @@ describe('PaymentActionCreator', () => {
             const payment = getPayment();
             const { methodId, gatewayId } = payment;
 
-            paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId, shouldSaveInstrument: true, setAsDefaultInstrument: true })(store);
+            paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId, shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true })(store);
 
             expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(
                 expect.objectContaining({

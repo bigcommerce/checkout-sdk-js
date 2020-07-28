@@ -65,7 +65,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = payload;
         const paymentData = payment && payment.paymentData;
         const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument;
-        const setAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).setAsDefaultInstrument;
+        const shouldSetAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).shouldSetAsDefaultInstrument;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -102,7 +102,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                                         token: paymentData.instrumentId,
                                     },
                                     browser_info: getBrowserInfo(),
-                                    set_as_default_stored_instrument: setAsDefaultInstrument || null,
+                                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                                 },
                             },
                         }));
@@ -121,12 +121,12 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                             },
                             browser_info: getBrowserInfo(),
                             vault_payment_instrument: shouldSaveInstrument || null,
-                            set_as_default_stored_instrument: setAsDefaultInstrument || null,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                         },
                     },
                 }));
             })
-            .catch(error => this._processAdditionalAction(error, shouldSaveInstrument, setAsDefaultInstrument));
+            .catch(error => this._processAdditionalAction(error, shouldSaveInstrument, shouldSetAsDefaultInstrument));
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -333,7 +333,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private async _processAdditionalAction(error: unknown, shouldSaveInstrument?: boolean, setAsDefaultInstrument?: boolean): Promise<InternalCheckoutSelectors> {
+    private async _processAdditionalAction(error: unknown, shouldSaveInstrument?: boolean, shouldSetAsDefaultInstrument?: boolean): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
             return Promise.reject(error);
         }
@@ -346,11 +346,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 paymentData: {
                     ...payment.paymentData,
                     shouldSaveInstrument,
-                    setAsDefaultInstrument,
+                    shouldSetAsDefaultInstrument,
                 },
             }));
         } catch (error) {
-            return this._processAdditionalAction(error, shouldSaveInstrument, setAsDefaultInstrument);
+            return this._processAdditionalAction(error, shouldSaveInstrument, shouldSetAsDefaultInstrument);
         }
     }
 

@@ -459,7 +459,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                         methodId: 'braintreepaypal',
                         paymentData: {
                             shouldSaveInstrument: true,
-                            setAsDefaultInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
                         },
                     },
                 }, options);

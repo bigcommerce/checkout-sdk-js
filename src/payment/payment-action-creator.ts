@@ -19,7 +19,7 @@ interface InitializeOffsitePaymentSettings {
     target?: string;
     promise?: Promise<undefined>;
     shouldSaveInstrument?: boolean;
-    setAsDefaultInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
 }
 
 type InitializeOffsitePayment = (settings: InitializeOffsitePaymentSettings)
@@ -67,7 +67,7 @@ export default class PaymentActionCreator {
         target,
         promise,
         shouldSaveInstrument,
-        setAsDefaultInstrument,
+        shouldSetAsDefaultInstrument,
     }) => {
         return store => {
             let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
@@ -78,7 +78,7 @@ export default class PaymentActionCreator {
                 paymentData = {
                     formattedPayload: {
                         vault_payment_instrument: shouldSaveInstrument,
-                        set_as_default_stored_instrument: setAsDefaultInstrument || null,
+                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                     },
                 };
             }

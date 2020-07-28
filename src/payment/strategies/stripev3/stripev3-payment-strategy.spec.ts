@@ -267,7 +267,7 @@ describe('StripeV3PaymentStrategy', () => {
                     methodId: 'stripev3',
                     paymentData: {
                         instrumentId: 'token',
-                        setAsDefaultInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
                     },
                 },
             };
@@ -280,7 +280,7 @@ describe('StripeV3PaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
                     paymentData: expect.objectContaining({
-                        setAsDefaultInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
                     }),
                 })
             );
