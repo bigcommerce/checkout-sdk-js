@@ -36,6 +36,7 @@ export interface CreditCardInstrument {
     ccNumber: string;
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
@@ -53,6 +54,7 @@ export type AdyenV2Instrument = AdyenV2Token | AdyenV2Card;
 export interface NonceInstrument {
     nonce: string;
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
     deviceSessionId?: string;
 }
 
@@ -95,10 +97,12 @@ export interface ThreeDSecureToken {
 
 export interface HostedInstrument {
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
 }
 
 export interface PaypalInstrument {
     vault_payment_instrument: boolean | null;
+    set_as_default_stored_instrument: boolean | null;
     device_info: string | null;
     paypal_account: {
         token: string;
@@ -121,6 +125,7 @@ interface AdyenV2Card {
 
 export interface FormattedHostedInstrument {
     vault_payment_instrument: boolean | null;
+    set_as_default_stored_instrument: boolean | null;
 }
 
 export interface FormattedVaultedInstrument {

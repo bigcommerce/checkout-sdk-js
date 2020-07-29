@@ -100,6 +100,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 paymentData: {
                     formattedPayload: {
                         vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
                         device_info: null,
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,

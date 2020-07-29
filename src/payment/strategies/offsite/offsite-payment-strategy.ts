@@ -19,20 +19,25 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = payload;
         const orderPayload = this._shouldSubmitFullPayload(payment) ? payload : order;
         const paymentData = payment && payment.paymentData;
-        const instrumentId = paymentData && (paymentData as VaultedInstrument).instrumentId;
-        const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument;
+        const instrumentId = paymentData && (paymentData as VaultedInstrument).instrumentId || undefined;
+        const shouldSaveInstrument = paymentData && (paymentData as HostedInstrument).shouldSaveInstrument || undefined;
+        const shouldSetAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).shouldSetAsDefaultInstrument || undefined;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        const { methodId, gatewayId } = payment;
+
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(
-                    payment.methodId,
-                    payment.gatewayId,
+            this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment({
+                    methodId,
+                    gatewayId,
                     instrumentId,
-                    shouldSaveInstrument))
+                    shouldSaveInstrument,
+                    shouldSetAsDefaultInstrument,
+                }))
             );
     }
 

@@ -49,6 +49,8 @@ describe('PaymentActionCreator', () => {
         jest.spyOn(paymentRequestSender, 'submitPayment')
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
+        jest.spyOn(paymentRequestTransformer, 'transform');
+
         orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
 
@@ -177,7 +179,9 @@ describe('PaymentActionCreator', () => {
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
             const payment = getPayment();
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
+            const { methodId, gatewayId } = payment;
+
+            const actions = await from(paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId })(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -195,7 +199,9 @@ describe('PaymentActionCreator', () => {
 
             const errorHandler = jest.fn(action => of(action));
             const payment = getPayment();
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
+            const { methodId, gatewayId } = payment;
+
+            const actions = await from(paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId })(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -224,8 +230,9 @@ describe('PaymentActionCreator', () => {
             const cancelPayment = new CancellablePromise<undefined>(new Promise(noop));
             const errorHandler = jest.fn(action => of(action));
             const payment = getPayment();
+            const { methodId, gatewayId } = payment;
 
-            const actions = from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId, undefined, undefined, undefined, cancelPayment.promise)(store))
+            const actions = from(paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId, promise: cancelPayment.promise })(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -248,6 +255,42 @@ describe('PaymentActionCreator', () => {
                     error: true,
                 },
             ]);
+        });
+
+        it('passes "set_as_default_stored_instrument" flag as null to the paymentRequestTransformer when vaulting, but not as default', () => {
+            const payment = getPayment();
+            const { methodId, gatewayId } = payment;
+
+            paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId, shouldSaveInstrument: true })(store);
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            set_as_default_stored_instrument: null,
+                        }),
+                    }),
+                }),
+                expect.anything()
+            );
+        });
+
+        it('passes "set_as_default_stored_instrument" flag as true to the paymentRequestTransformer when vaulting and making default', () => {
+            const payment = getPayment();
+            const { methodId, gatewayId } = payment;
+
+            paymentActionCreator.initializeOffsitePayment({ methodId, gatewayId, shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true })(store);
+
+            expect(paymentRequestTransformer.transform).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        formattedPayload: expect.objectContaining({
+                            set_as_default_stored_instrument: true,
+                        }),
+                    }),
+                }),
+                expect.anything()
+            );
         });
     });
 });

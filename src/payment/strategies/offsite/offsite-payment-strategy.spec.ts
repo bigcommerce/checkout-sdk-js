@@ -105,7 +105,10 @@ describe('OffsitePaymentStrategy', () => {
     it('initializes offsite payment flow', async () => {
         await strategy.execute(payload, options);
 
-        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(options.methodId, options.gatewayId, null, null);
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith({
+            methodId: options.methodId,
+            gatewayId: options.gatewayId,
+        });
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 

@@ -143,14 +143,15 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             sessionId,
         ]) => ({
             ...payment,
-            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, paymentData.shouldSaveInstrument),
+            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, paymentData.shouldSaveInstrument, paymentData.shouldSetAsDefaultInstrument),
         }));
     }
 
-    private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean): FormattedPayload<PaypalInstrument> {
+    private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean, shouldSetAsDefaultInstrument?: boolean): FormattedPayload<PaypalInstrument> {
         return {
             formattedPayload: {
                 vault_payment_instrument: vaultPaymentInstrument || null,
+                set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                 device_info: sessionId || null,
                 paypal_account: {
                     token,
