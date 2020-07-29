@@ -25,163 +25,171 @@ import BoltAppPaymentStrategy from './bolt-app-payment-strategy';
 import BoltScriptLoader from './bolt-script-loader';
 
 describe('BoltAppPaymentStrategy', () => {
-  let boltClient: BoltCheckout;
-  let boltScriptLoader: BoltScriptLoader;
-  let options: PaymentRequestOptions;
-  let orderActionCreator: OrderActionCreator;
-  let requestSender: RequestSender;
-  let store: CheckoutStore;
-  let strategy: BoltAppPaymentStrategy;
-  let submitOrderAction: Observable<SubmitOrderAction>;
-  let submitPaymentAction: Observable<SubmitPaymentAction>;
-  let payload: OrderRequestBody;
-  let paymentActionCreator: PaymentActionCreator;
-  let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
-  let paymentMethodActionCreator: PaymentMethodActionCreator;
-  let paymentMethodMock: PaymentMethod;
-  let paymentMethodRequestSender: PaymentMethodRequestSender;
-  let paymentRequestSender: PaymentRequestSender;
-  let paymentRequestTransformer: PaymentRequestTransformer;
+    let boltClient: BoltCheckout;
+    let boltScriptLoader: BoltScriptLoader;
+    let options: PaymentRequestOptions;
+    let orderActionCreator: OrderActionCreator;
+    let requestSender: RequestSender;
+    let store: CheckoutStore;
+    let strategy: BoltAppPaymentStrategy;
+    let submitOrderAction: Observable<SubmitOrderAction>;
+    let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let payload: OrderRequestBody;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentMethodMock: PaymentMethod;
+    let paymentMethodRequestSender: PaymentMethodRequestSender;
+    let paymentRequestSender: PaymentRequestSender;
+    let paymentRequestTransformer: PaymentRequestTransformer;
 
-  beforeEach(() => {
-      store = createCheckoutStore(getCheckoutStoreState());
-      paymentMethodMock = getBolt();
-      const scriptLoader = createScriptLoader();
-      requestSender = createRequestSender();
-      orderActionCreator = new OrderActionCreator(
-          new OrderRequestSender(requestSender),
-          new CheckoutValidator(new CheckoutRequestSender(requestSender))
-      );
+    beforeEach(() => {
+        store = createCheckoutStore(getCheckoutStoreState());
+        paymentMethodMock = getBolt();
+        const scriptLoader = createScriptLoader();
+        requestSender = createRequestSender();
+        orderActionCreator = new OrderActionCreator(
+            new OrderRequestSender(requestSender),
+            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+        );
 
-      paymentRequestTransformer = new PaymentRequestTransformer();
-      paymentRequestSender = new PaymentRequestSender(createPaymentClient());
-      paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
-      paymentActionCreator = new PaymentActionCreator(
-          paymentRequestSender,
-          orderActionCreator,
-          paymentRequestTransformer,
-          paymentHumanVerificationHandler
-      );
-      submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-      submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-      paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
-      paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
-      boltClient = getBoltScriptMock(true);
-      boltScriptLoader = new BoltScriptLoader(scriptLoader);
+        paymentRequestTransformer = new PaymentRequestTransformer();
+        paymentRequestSender = new PaymentRequestSender(createPaymentClient());
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+        paymentActionCreator = new PaymentActionCreator(
+            paymentRequestSender,
+            orderActionCreator,
+            paymentRequestTransformer,
+            paymentHumanVerificationHandler
+        );
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        boltClient = getBoltScriptMock(true);
+        boltScriptLoader = new BoltScriptLoader(scriptLoader);
 
-      payload = {
-          payment: {
-              methodId: 'bolt',
-              paymentData: {
-                  nonce: 'fooNonce',
-              },
-          },
-      };
-      options = { methodId: 'bolt' };
+        payload = {
+            payment: {
+                methodId: 'bolt',
+                paymentData: {
+                    nonce: 'fooNonce',
+                },
+            },
+        };
+        options = { methodId: 'bolt' };
 
-      jest.spyOn(store, 'dispatch');
+        jest.spyOn(store, 'dispatch');
 
-      jest.spyOn(orderActionCreator, 'submitOrder')
-          .mockReturnValue(submitOrderAction);
-      jest.spyOn(paymentActionCreator, 'submitPayment')
-          .mockReturnValue(submitPaymentAction);
-      jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-          .mockResolvedValue(store.getState());
-      jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-          .mockReturnValue(paymentMethodMock);
-      jest.spyOn(boltScriptLoader, 'load')
-          .mockResolvedValue(boltClient);
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockResolvedValue(store.getState());
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(boltScriptLoader, 'load')
+            .mockResolvedValue(boltClient);
 
-      strategy = new BoltAppPaymentStrategy(
-        store,
-        orderActionCreator,
-        paymentActionCreator,
-        paymentMethodActionCreator,
-        boltScriptLoader
-      );
-  });
-
-  describe('#initialize', () => {
-    it('successfully initializes the bolt strategy and loads the bolt client', async () => {
-        await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
-        expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true);
+        strategy = new BoltAppPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            boltScriptLoader
+        );
     });
 
-    it('fails to initialize the bolt strategy if no publishableKey is not provided', async () => {
-      paymentMethodMock.initializationData.publishableKey = null;
-      await expect(strategy.initialize(options)).rejects.toThrow(MissingDataError);
-      expect(boltScriptLoader.load).not.toHaveBeenCalled();
-    });
-  });
+    describe('#initialize', () => {
+        it('successfully initializes the bolt strategy and loads the bolt client', async () => {
+            await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true);
+        });
 
-  describe('#execute', () => {
-    let options: PaymentInitializeOptions;
-    const expectedPayment = {
-      methodId: 'bolt',
-      paymentData: {
-          nonce: 'transactionReference',
-      },
-    };
-    options = {
-      methodId: 'bolt',
-    };
-
-    it('successfully executes the bolt strategy and submits payment', async () => {
-        await strategy.initialize(options);
-        await strategy.execute(payload);
-        expect(boltClient.configure).toHaveBeenCalledWith(expect.any(Object), {}, expect.any(Object));
-        expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        it('fails to initialize the bolt strategy if publishableKey is not provided', async () => {
+            paymentMethodMock.initializationData.publishableKey = null;
+            await expect(strategy.initialize(options)).rejects.toThrow(MissingDataError);
+            expect(boltScriptLoader.load).not.toHaveBeenCalled();
+        });
     });
 
-    it('fails to execute the bolt strategy if no payment is provided', async () => {
-      payload.payment = undefined;
-      await strategy.initialize(options);
-      await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
-      expect(boltClient.configure).not.toHaveBeenCalled();
-      expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+    describe('#execute', () => {
+        let options: PaymentInitializeOptions;
+        const expectedPayment = {
+            methodId: 'bolt',
+            paymentData: {
+                nonce: 'transactionReference',
+            },
+        };
+        options = {
+            methodId: 'bolt',
+        };
+
+        it('successfully executes the bolt strategy and submits payment', async () => {
+            const expectedCart = {
+              orderToken: 'clientToken',
+            };
+            const expectedCallbacks = {
+              success: expect.any(Function),
+              close: expect.any(Function),
+            };
+
+            await strategy.initialize(options);
+            await strategy.execute(payload);
+            expect(boltClient.configure).toHaveBeenCalledWith(expect.objectContaining(expectedCart), {}, expect.objectContaining(expectedCallbacks));
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
+        it('fails to execute the bolt strategy if no payment is provided', async () => {
+            payload.payment = undefined;
+            await strategy.initialize(options);
+            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
+            expect(boltClient.configure).not.toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
+
+        it('fails to execute the bolt strategy if no client token is provided', async () => {
+            paymentMethodMock.clientToken = undefined;
+            await strategy.initialize(options);
+            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
+            expect(boltClient.configure).not.toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
+
+        it('fails to execute the bolt strategy if the client script is not loaded', async () => {
+            jest.spyOn(boltScriptLoader, 'load')
+                .mockResolvedValue(undefined);
+            await strategy.initialize(options);
+            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
+            expect(boltClient.configure).not.toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
+
+        it('does not submit payment if the payment is cancelled', async () => {
+            boltClient = getBoltScriptMock(false);
+            jest.spyOn(boltScriptLoader, 'load')
+                .mockResolvedValue(boltClient);
+            await strategy.initialize(options);
+            await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
+            expect(boltClient.configure).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
     });
 
-    it('fails to execute the bolt strategy if no client token is provided', async () => {
-      paymentMethodMock.clientToken = undefined;
-      await strategy.initialize(options);
-      await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-      expect(boltClient.configure).not.toHaveBeenCalled();
-      expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+    describe('#deinitialize()', () => {
+        it('deinitializes strategy', async () => {
+            const zipOptions: PaymentInitializeOptions = { methodId: 'zip' };
+            await strategy.initialize(zipOptions);
+            await strategy.deinitialize();
+
+            expect(await strategy.deinitialize()).toEqual(store.getState());
+        });
     });
 
-    it('fails to execute the bolt strategy if the client script is not loaded', async () => {
-      jest.spyOn(boltScriptLoader, 'load')
-          .mockResolvedValue(undefined);
-      await strategy.initialize(options);
-      await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
-      expect(boltClient.configure).not.toHaveBeenCalled();
-      expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+        });
     });
-
-    it('does not submit payment if the payment is cancelled', async () => {
-      boltClient = getBoltScriptMock(false);
-      jest.spyOn(boltScriptLoader, 'load')
-          .mockResolvedValue(boltClient);
-      await strategy.initialize(options);
-      await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
-      expect(boltClient.configure).toHaveBeenCalled();
-      expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('#deinitialize()', () => {
-    it('deinitializes strategy', async () => {
-        const zipOptions: PaymentInitializeOptions = { methodId: 'zip' };
-        await strategy.initialize(zipOptions);
-        await strategy.deinitialize();
-
-        expect(await strategy.deinitialize()).toEqual(store.getState());
-    });
-  });
-
-  describe('#finalize()', () => {
-      it('throws error to inform that order finalization is not required', async () => {
-        await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
-      });
-  });
 });

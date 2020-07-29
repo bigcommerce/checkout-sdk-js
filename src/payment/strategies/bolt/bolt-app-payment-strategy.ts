@@ -9,7 +9,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { BoltCheckout, BoltTransacion } from './bolt';
+import { BoltCheckout, BoltTransaction } from './bolt';
 import BoltScriptLoader from './bolt-script-loader';
 
 export default class BoltAppPaymentStrategy implements PaymentStrategy {
@@ -34,7 +34,7 @@ export default class BoltAppPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const publishableKey = paymentMethod.initializationData.publishableKey;
+        const { publishableKey } = paymentMethod.initializationData;
 
         this._boltClient = await this._boltScriptLoader.load(publishableKey, paymentMethod.config.testMode);
 
@@ -65,8 +65,8 @@ export default class BoltAppPaymentStrategy implements PaymentStrategy {
 
         const orderToken = paymentMethod.clientToken;
 
-        const transaction: BoltTransacion = await new Promise((resolve, reject) => {
-            const onSuccess = (transaction: BoltTransacion,  callback: () => void) => {
+        const transaction: BoltTransaction = await new Promise((resolve, reject) => {
+            const onSuccess = (transaction: BoltTransaction,  callback: () => void) => {
                 resolve(transaction);
                 callback();
             };

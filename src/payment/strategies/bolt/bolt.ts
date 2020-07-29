@@ -19,11 +19,11 @@ export interface BoltCallbacks {
     check?(): boolean;
     onCheckoutStart?(): void;
     onPaymentSubmit?(): void;
-    success(transaction: any, callback: () => void): void;
+    success(transaction: BoltTransaction, callback: () => void): void;
     close?(): void;
 }
 
-export interface BoltTransacion {
+export interface BoltTransaction {
     id: string;
     type: string;
     processor: string;
