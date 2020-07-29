@@ -15,11 +15,11 @@
 ### Properties
 
 * [brands](adyencreditcardcomponentoptions.md#optional-brands)
+* [data](adyencreditcardcomponentoptions.md#optional-data)
 * [details](adyencreditcardcomponentoptions.md#optional-details)
 * [enableStoreDetails](adyencreditcardcomponentoptions.md#optional-enablestoredetails)
 * [groupTypes](adyencreditcardcomponentoptions.md#optional-grouptypes)
 * [hasHolderName](adyencreditcardcomponentoptions.md#optional-hasholdername)
-* [holderName](adyencreditcardcomponentoptions.md#optional-holdername)
 * [holderNameRequired](adyencreditcardcomponentoptions.md#optional-holdernamerequired)
 * [placeholders](adyencreditcardcomponentoptions.md#optional-placeholders)
 * [styles](adyencreditcardcomponentoptions.md#optional-styles)
@@ -38,6 +38,14 @@
 *Inherited from [AdyenBaseCardComponentOptions](adyenbasecardcomponentoptions.md).[brands](adyenbasecardcomponentoptions.md#optional-brands)*
 
 Array of card brands that will be recognized by the component.
+
+___
+
+### `Optional` data
+
+• **data**? : *[AdyenPlaceholderData](adyenplaceholderdata.md)*
+
+Information to prefill fields.
 
 ___
 
@@ -74,14 +82,6 @@ ___
 • **hasHolderName**? : *undefined | false | true*
 
 Set to true to request the name of the card holder.
-
-___
-
-### `Optional` holderName
-
-• **holderName**? : *undefined | string*
-
-Prefill the card holder name field. Supported from Card component
 
 ___
 

@@ -13,6 +13,7 @@
 * [deviceSessionId](nonceinstrument.md#optional-devicesessionid)
 * [nonce](nonceinstrument.md#nonce)
 * [shouldSaveInstrument](nonceinstrument.md#optional-shouldsaveinstrument)
+* [shouldSetAsDefaultInstrument](nonceinstrument.md#optional-shouldsetasdefaultinstrument)
 
 ## Properties
 
@@ -31,3 +32,9 @@ ___
 ### `Optional` shouldSaveInstrument
 
 • **shouldSaveInstrument**? : *undefined | false | true*
+
+___
+
+### `Optional` shouldSetAsDefaultInstrument
+
+• **shouldSetAsDefaultInstrument**? : *undefined | false | true*

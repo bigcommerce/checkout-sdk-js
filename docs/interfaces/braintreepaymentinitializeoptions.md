@@ -14,9 +14,21 @@ authentication flow.
 
 ### Properties
 
+* [form](braintreepaymentinitializeoptions.md#optional-form)
 * [threeDSecure](braintreepaymentinitializeoptions.md#optional-threedsecure)
 
 ## Properties
+
+### `Optional` form
+
+• **form**? : *[BraintreeFormOptions](braintreeformoptions.md)*
+
+**`alpha`** 
+Please note that this option is currently in an early stage of
+development. Therefore the API is unstable and not ready for public
+consumption.
+
+___
 
 ### `Optional` threeDSecure
 

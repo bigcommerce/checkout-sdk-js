@@ -11,9 +11,16 @@
 ### Properties
 
 * [shouldSaveInstrument](hostedinstrument.md#optional-shouldsaveinstrument)
+* [shouldSetAsDefaultInstrument](hostedinstrument.md#optional-shouldsetasdefaultinstrument)
 
 ## Properties
 
 ### `Optional` shouldSaveInstrument
 
 • **shouldSaveInstrument**? : *undefined | false | true*
+
+___
+
+### `Optional` shouldSetAsDefaultInstrument
+
+• **shouldSetAsDefaultInstrument**? : *undefined | false | true*

@@ -105,9 +105,9 @@ declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponent
      */
     holderNameRequired?: boolean;
     /**
-     * Prefill the card holder name field. Supported from Card component
+     * Information to prefill fields.
      */
-    holderName?: string;
+    data?: AdyenPlaceholderData;
     /**
      * Defaults to ['mc','visa','amex']. Configure supported card types to
      * facilitate brand recognition used in the Secured Fields onBrand callback.
@@ -130,6 +130,18 @@ declare interface AdyenIdealComponentOptions {
 
 declare interface AdyenPaymentMethodState {
     type: string;
+}
+
+declare interface AdyenPlaceholderData {
+    holderName?: string;
+    billingAddress?: {
+        street: string;
+        houseNumberOrName: string;
+        postalCode: string;
+        city: string;
+        stateOrProvince: string;
+        country: string;
+    };
 }
 
 declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
@@ -515,6 +527,77 @@ declare interface BraintreeError extends Error {
     message: string;
 }
 
+declare type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
+
+declare interface BraintreeFormFieldCardTypeChangeEventData {
+    cardType?: string;
+}
+
+declare type BraintreeFormFieldEnterEventData = BraintreeFormFieldKeyboardEventData;
+
+declare type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventData;
+
+declare interface BraintreeFormFieldKeyboardEventData {
+    fieldType: string;
+}
+
+declare interface BraintreeFormFieldOptions {
+    containerId: string;
+    placeholder?: string;
+}
+
+declare type BraintreeFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
+
+declare interface BraintreeFormFieldStylesMap {
+    default?: BraintreeFormFieldStyles;
+    error?: BraintreeFormFieldStyles;
+    focus?: BraintreeFormFieldStyles;
+}
+
+declare enum BraintreeFormFieldType {
+    CardCode = "cardCode",
+    CardCodeVerification = "cardCodeVerification",
+    CardExpiry = "cardExpiry",
+    CardName = "cardName",
+    CardNumber = "cardNumber",
+    CardNumberVerification = "cardNumberVerification"
+}
+
+declare interface BraintreeFormFieldValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
+}
+
+declare interface BraintreeFormFieldValidateEventData {
+    errors: {
+        [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardExpiry]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardName]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumber]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardCodeVerification]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumberVerification]?: BraintreeFormFieldValidateErrorData[];
+    };
+    isValid: boolean;
+}
+
+declare interface BraintreeFormFieldsMap {
+    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
+}
+
+declare interface BraintreeFormOptions {
+    fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap;
+    styles?: BraintreeFormFieldStylesMap;
+    onBlur?(data: BraintreeFormFieldBlurEventData): void;
+    onCardTypeChange?(data: BraintreeFormFieldCardTypeChangeEventData): void;
+    onFocus?(data: BraintreeFormFieldFocusEventData): void;
+    onValidate?(data: BraintreeFormFieldValidateEventData): void;
+    onEnter?(data: BraintreeFormFieldEnterEventData): void;
+}
+
 /**
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
@@ -522,6 +605,13 @@ declare interface BraintreeError extends Error {
  */
 declare interface BraintreePaymentInitializeOptions {
     threeDSecure?: BraintreeThreeDSecureOptions;
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    form?: BraintreeFormOptions;
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {
@@ -550,6 +640,15 @@ declare interface BraintreePaypalButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onPaymentError?(error: BraintreeError | StandardError): void;
+}
+
+declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
+    instrumentId: string;
+}
+
+declare interface BraintreeStoredCardFieldsMap {
+    [BraintreeFormFieldType.CardCodeVerification]?: BraintreeStoredCardFieldOptions;
+    [BraintreeFormFieldType.CardNumberVerification]?: BraintreeStoredCardFieldOptions;
 }
 
 /**
@@ -2687,6 +2786,7 @@ declare interface CreditCardInstrument {
     ccNumber: string;
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
@@ -3274,6 +3374,7 @@ declare interface HostedInputValidateResults {
 
 declare interface HostedInstrument {
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
 }
 
 declare interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
@@ -3610,6 +3711,7 @@ declare interface NonceGenerationError {
 declare interface NonceInstrument {
     nonce: string;
     shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
     deviceSessionId?: string;
 }
 

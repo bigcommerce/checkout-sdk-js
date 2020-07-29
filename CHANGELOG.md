@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.85.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.84.0...v1.85.0) (2020-07-29)
+
+
+### Features
+
+* **payment:** CHECKOUT-4947 Add Braintree hosted form service as abstraction layer for interacting with Braintree API ([a764cd0](https://github.com/bigcommerce/checkout-sdk-js/commit/a764cd09da18fb0d07809337238f13a35786c0f4))
+* **payment:** CHECKOUT-4947 Add methods for loading and initializing Braintree hosted fields module ([fc87ee9](https://github.com/bigcommerce/checkout-sdk-js/commit/fc87ee96621483d8395d2d2e59234d6b5340cb72))
+* **payment:** INT-2653 Accept payments through StripeV3 using Alipay ([997bd1d](https://github.com/bigcommerce/checkout-sdk-js/commit/997bd1d3838c6bb8c2a13e056aee2648ce6ec30b))
+* **payment:** INT-2801 Prepopulate ACH Billing Info ([84f1524](https://github.com/bigcommerce/checkout-sdk-js/commit/84f152494e779e47eea8f7f43122220b4571c824))
+* **payment:** PAYMENTS-5513 add setAsDefaultInstrument feature during vaulting or vaulted payments ([#893](https://github.com/bigcommerce/checkout-sdk-js/issues/893)) ([055b7ee](https://github.com/bigcommerce/checkout-sdk-js/commit/055b7eea7be09ff09220bdcb599aec4e94f86cf8))
+
 ## [1.84.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.83.0...v1.84.0) (2020-07-22)
 
 

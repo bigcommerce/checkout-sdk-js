@@ -17,6 +17,7 @@
 * [ccNumber](creditcardinstrument.md#ccnumber)
 * [extraData](creditcardinstrument.md#optional-extradata)
 * [shouldSaveInstrument](creditcardinstrument.md#optional-shouldsaveinstrument)
+* [shouldSetAsDefaultInstrument](creditcardinstrument.md#optional-shouldsetasdefaultinstrument)
 * [threeDSecure](creditcardinstrument.md#optional-threedsecure)
 
 ## Properties
@@ -66,6 +67,12 @@ ___
 ### `Optional` shouldSaveInstrument
 
 • **shouldSaveInstrument**? : *undefined | false | true*
+
+___
+
+### `Optional` shouldSetAsDefaultInstrument
+
+• **shouldSetAsDefaultInstrument**? : *undefined | false | true*
 
 ___
 
