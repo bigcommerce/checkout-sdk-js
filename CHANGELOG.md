@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.86.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.85.0...v1.86.0) (2020-07-30)
+
+
+### Features
+
+* **checkout:** INT-2919 Add Unit Test ([1de848f](https://github.com/bigcommerce/checkout-sdk-js/commit/1de848f14f98d0ff9bdb3b68e814e927f028c732))
+* **checkout:** INT-2919 Add Unit test to script loader ([dddd1d1](https://github.com/bigcommerce/checkout-sdk-js/commit/dddd1d119a45e7babf665299a7631fcafd0864ad))
+* **checkout:** INT-2919 Create an strategy in order to use Bolt in Bigcommerce checkout ([f25c662](https://github.com/bigcommerce/checkout-sdk-js/commit/f25c662ef860f084133fddb13ae24767f659e54c))
+* **checkout:** INT-2919 Minor corrections ([4e1160d](https://github.com/bigcommerce/checkout-sdk-js/commit/4e1160db27a588e9bcae3925d4a78717b3419f05))
+* **checkout:** INT-2919 move changes to another strategy ([d09c299](https://github.com/bigcommerce/checkout-sdk-js/commit/d09c299d822ecf309b1722bfd9e46e46747a3db4))
+* **checkout:** INT-2919 Several fixes to mocks and indentation ([2570226](https://github.com/bigcommerce/checkout-sdk-js/commit/2570226f30e756ddd01e862a77556c183a84dc5d))
+
 ## [1.85.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.84.0...v1.85.0) (2020-07-29)
 
 
