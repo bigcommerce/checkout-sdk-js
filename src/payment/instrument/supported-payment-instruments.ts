@@ -73,6 +73,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'paymetric',
         method: 'credit_card',
     },
+    bolt: {
+        provider: 'bolt',
+        method: 'credit_card',
+    },
     'barclaycard.credit_card': {
         provider: 'barclaycard',
         method: 'credit_card',
