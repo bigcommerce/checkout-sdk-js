@@ -7,7 +7,6 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { getConfig } from '../../../config/configs.mock';
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
 import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -16,6 +15,7 @@ import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
+import { getPaymentMethod } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
@@ -126,10 +126,10 @@ describe('CreditCardPaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.config, 'getStoreConfig')
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(merge(
-                    getConfig().storeConfig,
-                    { checkoutSettings: { isHostedPaymentFormEnabled: true } }
+                    getPaymentMethod(),
+                    { config: { isHostedFormEnabled: true } }
                 ));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')
@@ -222,10 +222,10 @@ describe('CreditCardPaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.config, 'getStoreConfig')
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(merge(
-                    getConfig().storeConfig,
-                    { checkoutSettings: { isHostedPaymentFormEnabled: true } }
+                    getPaymentMethod(),
+                    { config: { isHostedFormEnabled: true } }
                 ));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')

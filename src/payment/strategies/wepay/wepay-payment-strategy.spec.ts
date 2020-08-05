@@ -87,6 +87,9 @@ describe('WepayPaymentStrategy', () => {
         jest.spyOn(paymentActionCreator, 'submitPayment')
             .mockReturnValue(submitPaymentAction);
 
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+            .mockReturnValue(paymentMethod);
+
         jest.spyOn(store, 'dispatch');
     });
 
