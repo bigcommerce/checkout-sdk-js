@@ -65,6 +65,28 @@ describe('HostedInputAggregator', () => {
             .toEqual(frames.slice(0, -1).map(frame => frame.hostedInput));
     });
 
+    it('does not throw error if there are other iframes in parent window that belong to different origin than itself in IE 11', () => {
+        frames.push({
+            get hostedInput() {
+                throw new DOMException();
+            },
+        } as unknown as HostedInputWindow);
+
+        expect(aggregator.getInputs())
+            .toEqual(frames.slice(0, -1).map(frame => frame.hostedInput));
+    });
+
+    it('does not fail silently if unable to gather adjacent hosted inputs for other reasons', () => {
+        frames.push({
+            get hostedInput() {
+                throw new TypeError();
+            },
+        } as unknown as HostedInputWindow);
+
+        expect(() => aggregator.getInputs())
+            .toThrowError(TypeError);
+    });
+
     it('gathers all adjacent hosted inputs that satisfy filter', () => {
         expect(aggregator.getInputs(field => includes([HostedFieldType.CardCode, HostedFieldType.CardExpiry], field.getType())))
             .toEqual([frames[0].hostedInput, frames[1].hostedInput]);
