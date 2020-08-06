@@ -526,6 +526,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            storeCreditActionCreator,
             new BoltScriptLoader(scriptLoader)
         )
 );
