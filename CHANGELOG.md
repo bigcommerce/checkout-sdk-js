@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.87.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.86.0...v1.87.0) (2020-08-06)
+
+
+### Features
+
+* **payment:** CHECKOUT-4947 Inspect payment method object to determine whether hosted payment form is enabled for payment method ([5c49812](https://github.com/bigcommerce/checkout-sdk-js/commit/5c4981205f6469986c4e7f39b533d3c1ec8297a8))
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5089 Catch "permission denied" error when attempting to gather adjacent hosted inputs to support IE11 ([dc0f334](https://github.com/bigcommerce/checkout-sdk-js/commit/dc0f33484cad5193c3debab7cdb460736f41bfe1))
+
 ## [1.86.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.85.0...v1.86.0) (2020-07-30)
 
 

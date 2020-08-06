@@ -3932,6 +3932,7 @@ declare interface PaymentMethodConfig {
     hasDefaultStoredInstrument?: boolean;
     helpText?: string;
     is3dsEnabled?: boolean;
+    isHostedFormEnabled?: boolean;
     isVaultingCvvEnabled?: boolean;
     isVaultingEnabled?: boolean;
     isVisaCheckoutEnabled?: boolean;

@@ -16,6 +16,7 @@
 * [hasDefaultStoredInstrument](paymentmethodconfig.md#optional-hasdefaultstoredinstrument)
 * [helpText](paymentmethodconfig.md#optional-helptext)
 * [is3dsEnabled](paymentmethodconfig.md#optional-is3dsenabled)
+* [isHostedFormEnabled](paymentmethodconfig.md#optional-ishostedformenabled)
 * [isVaultingCvvEnabled](paymentmethodconfig.md#optional-isvaultingcvvenabled)
 * [isVaultingEnabled](paymentmethodconfig.md#optional-isvaultingenabled)
 * [isVisaCheckoutEnabled](paymentmethodconfig.md#optional-isvisacheckoutenabled)
@@ -60,6 +61,12 @@ ___
 ### `Optional` is3dsEnabled
 
 • **is3dsEnabled**? : *undefined | false | true*
+
+___
+
+### `Optional` isHostedFormEnabled
+
+• **isHostedFormEnabled**? : *undefined | false | true*
 
 ___
 
