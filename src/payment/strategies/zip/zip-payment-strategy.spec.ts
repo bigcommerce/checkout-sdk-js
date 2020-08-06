@@ -5,8 +5,8 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { NotInitializedError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -16,6 +16,7 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentRequestSender } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
@@ -33,11 +34,13 @@ import ZipScriptLoader from './zip-script-loader';
 describe('ZipPaymentStrategy', () => {
 
     let applyStoreCreditAction: Observable<Action>;
+    let checkoutMock: Checkout;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
     let storeCreditActionCreator: StoreCreditActionCreator;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let scriptLoader: ScriptLoader;
@@ -77,6 +80,8 @@ describe('ZipPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(requestSender));
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(createRequestSender())
         );
@@ -84,6 +89,8 @@ describe('ZipPaymentStrategy', () => {
         applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+
+        checkoutMock = getCheckout();
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
             .mockReturnValue(applyStoreCreditAction);
@@ -99,9 +106,13 @@ describe('ZipPaymentStrategy', () => {
             .mockResolvedValue(store.getState());
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
+            .mockReturnValue(checkoutMock);
         jest.spyOn(zipClient.Checkout, 'init');
         jest.spyOn(zipScriptLoader, 'load')
             .mockResolvedValue(zipClient);
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockResolvedValue(store.getState());
 
         strategy = new ZipPaymentStrategy(
             store,
@@ -109,6 +120,7 @@ describe('ZipPaymentStrategy', () => {
             paymentActionCreator,
             paymentMethodActionCreator,
             storeCreditActionCreator,
+            remoteCheckoutActionCreator,
             zipScriptLoader,
             requestSender
         );
@@ -159,11 +171,29 @@ describe('ZipPaymentStrategy', () => {
             await strategy.execute(orderRequestBody, zipOptions);
 
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, zipOptions);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             expect(zipClient.Checkout.init).toHaveBeenCalledWith(zipInitPayload);
+        });
+
+        it('executes the strategy successfully and applies the store credit', async () => {
+            const expectedPayment = {
+                methodId: 'zip',
+                paymentData: {
+                    nonce: 'checkoutId',
+                },
+            };
+
+            checkoutMock.isStoreCreditApplied = true;
+
+            await strategy.execute(orderRequestBody, zipOptions);
+
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: true });
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
         it('fails to execute the strategy if the zip client was not loaded', async () => {
