@@ -23,6 +23,11 @@ export default class HostedInputAggregator {
                         return result;
                     }
 
+                    // IE11 doesn't throw `DOMException`
+                    if (error instanceof Error && error.message === 'Permission denied') {
+                        return result;
+                    }
+
                     throw error;
                 }
             }, []);
