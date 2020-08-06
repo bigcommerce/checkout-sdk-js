@@ -1,11 +1,11 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction } from '@bigcommerce/data-store';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -13,6 +13,7 @@ import { PaymentInitializeOptions, PaymentMethod, PaymentMethodRequestSender, Pa
 import { getBolt } from '../../../payment/payment-methods.mock';
 import { getBoltScriptMock } from '../../../payment/strategies/bolt/bolt.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
+import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -25,8 +26,10 @@ import BoltAppPaymentStrategy from './bolt-app-payment-strategy';
 import BoltScriptLoader from './bolt-script-loader';
 
 describe('BoltAppPaymentStrategy', () => {
+    let applyStoreCreditAction: Observable<Action>;
     let boltClient: BoltCheckout;
     let boltScriptLoader: BoltScriptLoader;
+    let checkoutMock: Checkout;
     let options: PaymentRequestOptions;
     let orderActionCreator: OrderActionCreator;
     let requestSender: RequestSender;
@@ -42,6 +45,7 @@ describe('BoltAppPaymentStrategy', () => {
     let paymentMethodRequestSender: PaymentMethodRequestSender;
     let paymentRequestSender: PaymentRequestSender;
     let paymentRequestTransformer: PaymentRequestTransformer;
+    let storeCreditActionCreator: StoreCreditActionCreator;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -62,12 +66,17 @@ describe('BoltAppPaymentStrategy', () => {
             paymentRequestTransformer,
             paymentHumanVerificationHandler
         );
+        storeCreditActionCreator = new StoreCreditActionCreator(
+            new StoreCreditRequestSender(requestSender)
+        );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
         boltClient = getBoltScriptMock(true);
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
+        checkoutMock = getCheckout();
 
         payload = {
             payment: {
@@ -89,14 +98,19 @@ describe('BoltAppPaymentStrategy', () => {
             .mockResolvedValue(store.getState());
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
+            .mockReturnValue(checkoutMock);
         jest.spyOn(boltScriptLoader, 'load')
             .mockResolvedValue(boltClient);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
+            .mockReturnValue(applyStoreCreditAction);
 
         strategy = new BoltAppPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            storeCreditActionCreator,
             boltScriptLoader
         );
     });
@@ -137,6 +151,25 @@ describe('BoltAppPaymentStrategy', () => {
 
             await strategy.initialize(options);
             await strategy.execute(payload);
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
+            expect(boltClient.configure).toHaveBeenCalledWith(expect.objectContaining(expectedCart), {}, expect.objectContaining(expectedCallbacks));
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
+        it('succesfully executes the bolt straregy and applies store credit', async () => {
+            const expectedCart = {
+              orderToken: 'clientToken',
+            };
+            const expectedCallbacks = {
+              success: expect.any(Function),
+              close: expect.any(Function),
+            };
+
+            checkoutMock.isStoreCreditApplied = true;
+
+            await strategy.initialize(options);
+            await strategy.execute(payload);
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
             expect(boltClient.configure).toHaveBeenCalledWith(expect.objectContaining(expectedCart), {}, expect.objectContaining(expectedCallbacks));
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
