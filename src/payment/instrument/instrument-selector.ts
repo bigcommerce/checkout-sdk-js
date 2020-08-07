@@ -4,7 +4,7 @@ import { filter, flatMap, isMatch, values } from 'lodash';
 import { createSelector } from '../../common/selector';
 import PaymentMethod from '../payment-method';
 
-import PaymentInstrument, { AccountInstrument, CardInstrument } from './instrument';
+import PaymentInstrument, { CardInstrument } from './instrument';
 import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
 import supportedInstruments from './supported-payment-instruments';
 
@@ -15,7 +15,7 @@ export default interface InstrumentSelector {
     getInstrumentsMeta(): InstrumentMeta | undefined;
     getLoadError(): Error | undefined;
     getDeleteError(instrumentId?: string): Error | undefined;
-    isLoading(): boolean ;
+    isLoading(): boolean;
     isDeleting(instrumentId?: string): boolean;
 }
 
@@ -61,19 +61,13 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
                 return;
             }
 
-            const cardInstruments = flatMap(supportedInstruments, card =>
-                filter(instruments, (instrument: PaymentInstrument): instrument is CardInstrument => {
-                    return card.method === 'credit_card' && isMatch(instrument, card);
+            const allSupportedInstruments = flatMap(supportedInstruments, supportedProvider => 
+                filter(instruments, (instrument: PaymentInstrument): instrument is PaymentInstrument => {
+                    return isMatch(instrument, supportedProvider);
                 })
             );
 
-            const accountInstruments = flatMap(supportedInstruments, account =>
-                filter(instruments, (instrument: PaymentInstrument): instrument is AccountInstrument => {
-                    return isMatch(instrument, account);
-                })
-            );
-
-            return [...cardInstruments, ...accountInstruments];
+            return allSupportedInstruments;
         }
     );
 
