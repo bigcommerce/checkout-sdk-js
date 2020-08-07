@@ -26,6 +26,7 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
+import { BraintreePaymentInitializeOptions } from './braintree-payment-options';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
@@ -44,10 +45,15 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
     beforeEach(() => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
         braintreePaymentProcessorMock.initialize = jest.fn();
+        braintreePaymentProcessorMock.initializeHostedForm = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.tokenizeCard = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
+        braintreePaymentProcessorMock.tokenizeHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_with_hosted_form' }));
+        braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_verification_with_hosted_form' }));
         braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
+        braintreePaymentProcessorMock.verifyCardWithHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card_with_hosted_form' }));
         braintreePaymentProcessorMock.getSessionId = jest.fn(() => Promise.resolve('my_session_id'));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
+        braintreePaymentProcessorMock.deinitializeHostedForm = jest.fn(() => Promise.resolve());
 
         paymentMethodMock = { ...getBraintree(), clientToken: 'myToken' };
 
@@ -114,6 +120,60 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
+        });
+
+        it('initializes hosted form if feature is enabled and configuration is passed', async () => {
+            paymentMethodMock.config.isHostedFormEnabled = true;
+
+            const formOptions = {
+                fields: {
+                    cardName: { containerId: 'cardName' },
+                    cardNumber: { containerId: 'cardNumber' },
+                    cardExpiry: { containerId: 'cardExpiry' },
+                },
+            };
+
+            await braintreeCreditCardPaymentStrategy.initialize({
+                methodId: paymentMethodMock.id,
+                braintree: {
+                    form: formOptions,
+                },
+            });
+
+            expect(braintreePaymentProcessorMock.initializeHostedForm)
+                .toHaveBeenCalledWith(formOptions);
+        });
+
+        it('does not initialize hosted form if feature is not enabled', async () => {
+            paymentMethodMock.config.isHostedFormEnabled = false;
+
+            await braintreeCreditCardPaymentStrategy.initialize({
+                methodId: paymentMethodMock.id,
+                braintree: {
+                    form: {
+                        fields: {
+                            cardName: { containerId: 'cardName' },
+                            cardNumber: { containerId: 'cardNumber' },
+                            cardExpiry: { containerId: 'cardExpiry' },
+                        },
+                    },
+                },
+            });
+
+            expect(braintreePaymentProcessorMock.initializeHostedForm)
+                .not.toHaveBeenCalled();
+        });
+
+        it('does not initialize hosted form if configuration is not passed', async () => {
+            paymentMethodMock.config.isHostedFormEnabled = true;
+
+            await braintreeCreditCardPaymentStrategy.initialize({
+                methodId: paymentMethodMock.id,
+                braintree: {},
+            });
+
+            expect(braintreePaymentProcessorMock.initializeHostedForm)
+                .not.toHaveBeenCalled();
         });
     });
 
@@ -235,6 +295,130 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
+
+        describe('when hosted form is initialized', () => {
+            let initializeOptions: BraintreePaymentInitializeOptions;
+
+            beforeEach(() => {
+                initializeOptions = {
+                    form: {
+                        fields: {
+                            cardName: { containerId: 'cardName' },
+                            cardNumber: { containerId: 'cardNumber' },
+                            cardExpiry: { containerId: 'cardExpiry' },
+                        },
+                    },
+                };
+
+                paymentMethodMock.config.isHostedFormEnabled = true;
+            });
+
+            it('tokenizes payment data through hosted form and submits it', async () => {
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                    braintree: initializeOptions,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
+
+                expect(braintreePaymentProcessorMock.tokenizeHostedForm)
+                    .toHaveBeenCalledWith(getBillingAddress());
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith({
+                        ...orderRequestBody.payment,
+                        paymentData: {
+                            deviceSessionId: 'my_session_id',
+                            nonce: 'my_tokenized_card_with_hosted_form',
+                        },
+                    });
+            });
+
+            it('verifies payment data with 3DS through hosted form and submits it if 3DS is enabled', async () => {
+                paymentMethodMock.config.is3dsEnabled = true;
+
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                    braintree: initializeOptions,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
+
+                expect(braintreePaymentProcessorMock.verifyCardWithHostedForm)
+                    .toHaveBeenCalledWith(getBillingAddress(), 190);
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith({
+                        ...orderRequestBody.payment,
+                        paymentData: {
+                            deviceSessionId: 'my_session_id',
+                            nonce: 'my_verified_card_with_hosted_form',
+                        },
+                    });
+            });
+
+            it('tokenizes stored card verification data through hosted form and submits it if paying with stored card', async () => {
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                    braintree: initializeOptions,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute({
+                    ...orderRequestBody,
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        paymentData: {
+                            instrumentId: 'foobar_instrument',
+                        },
+                    },
+                });
+
+                expect(braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification)
+                    .toHaveBeenCalledWith();
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith({
+                        methodId: paymentMethodMock.id,
+                        paymentData: {
+                            deviceSessionId: 'my_session_id',
+                            instrumentId: 'foobar_instrument',
+                            nonce: 'my_tokenized_card_verification_with_hosted_form',
+                        },
+                    });
+            });
+
+            it('does not verify payment data with 3DS through hosted form and if paying with stored card', async () => {
+                paymentMethodMock.config.is3dsEnabled = true;
+
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                    braintree: initializeOptions,
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute({
+                    ...orderRequestBody,
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        paymentData: {
+                            instrumentId: 'foobar_instrument',
+                        },
+                    },
+                });
+
+                expect(braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification)
+                    .toHaveBeenCalledWith();
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith({
+                        methodId: paymentMethodMock.id,
+                        paymentData: {
+                            deviceSessionId: 'my_session_id',
+                            instrumentId: 'foobar_instrument',
+                            nonce: 'my_tokenized_card_verification_with_hosted_form',
+                        },
+                    });
+            });
+        });
     });
 
     describe('#deinitialize()', () => {
@@ -244,6 +428,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.deinitialize();
 
             expect(braintreePaymentProcessorMock.deinitialize).toHaveBeenCalled();
+            expect(braintreePaymentProcessorMock.deinitializeHostedForm).toHaveBeenCalled();
         });
     });
 
