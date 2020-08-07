@@ -61,7 +61,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
                 return;
             }
 
-            const allSupportedInstruments = flatMap(supportedInstruments, supportedProvider => 
+            const allSupportedInstruments = flatMap(supportedInstruments, supportedProvider =>
                 filter(instruments, (instrument: PaymentInstrument): instrument is PaymentInstrument => {
                     return isMatch(instrument, supportedProvider);
                 })
