@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.88.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.87.0...v1.88.0) (2020-08-07)
+
+
+### Features
+
+* **payment:** CHECKOUT-4947 Modify Braintree credit card strategy to use hosted form service when feature is enabled ([3847aeb](https://github.com/bigcommerce/checkout-sdk-js/commit/3847aebcd62ddab7334bf4bb4b7ef0efb8a1a7f3))
+
 ## [1.87.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.86.0...v1.87.0) (2020-08-06)
 
 
