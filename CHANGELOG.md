@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.89.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.88.0...v1.89.0) (2020-08-10)
+
+
+### Features
+
+* **payment:** INT-2907 Avoid returns duplicate vaulted instruments ([663194e](https://github.com/bigcommerce/checkout-sdk-js/commit/663194e0e427d07e43aaf226c57098b76d59f701))
+
+
+### Bug Fixes
+
+* **payment:** INT-2907 Fix linter in instrument selector ([2d455f0](https://github.com/bigcommerce/checkout-sdk-js/commit/2d455f07b8d1f7f6d92d5daa2a241d777bf51d6d))
+
 ## [1.88.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.87.0...v1.88.0) (2020-08-07)
 
 
