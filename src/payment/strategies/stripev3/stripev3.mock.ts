@@ -135,6 +135,23 @@ export function getStripeBillingAddress(): StripeBillingDetails {
     };
 }
 
+export function getStripeBillingAddressWithoutPhone(): StripeBillingDetails {
+    const billingAddress = getBillingAddress();
+
+    return {
+        address: {
+            city: billingAddress.city,
+            country: billingAddress.countryCode,
+            line1: billingAddress.address1,
+            line2: billingAddress.address2,
+            postal_code: billingAddress.postalCode,
+            state: billingAddress.stateOrProvinceCode,
+        },
+        name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+        email: billingAddress.email,
+    };
+}
+
 export function getStripeShippingAddressGuestUserWithoutAddress(): StripeConfirmCardPaymentData {
     return {
         shipping: {
