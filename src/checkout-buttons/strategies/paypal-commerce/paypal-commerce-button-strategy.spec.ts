@@ -11,13 +11,18 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '..
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
-import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
+import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceRequestSender, PaypalCommerceScriptAttribute, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
+
+interface DataPaypalCommerceScript {
+    options: PaypalCommerceScriptOptions;
+    attr?: PaypalCommerceScriptAttribute;
+}
 
 describe('PaypalCommerceButtonStrategy', () => {
     let store: CheckoutStore;
@@ -155,7 +160,7 @@ describe('PaypalCommerceButtonStrategy', () => {
 
     it('calls loadPaypalCommerce with expected arguments', async () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockImplementation((options: PaypalCommerceScriptOptions) => {
+            .mockImplementation(({ options }: DataPaypalCommerceScript) => {
                 (window as PaypalCommerceHostWindow).paypal = paypal;
 
                 const obj = {
