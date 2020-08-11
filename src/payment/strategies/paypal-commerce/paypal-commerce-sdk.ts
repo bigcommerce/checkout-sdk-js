@@ -54,7 +54,64 @@ export interface ButtonsOptions {
     onClick(data: ClickDataOptions): void;
 }
 
+export interface PaypalCommerceHostedFieldOption {
+    selector: string;
+    placeholder?: string;
+}
+
+export interface PaypalCommerceHostedFieldsRenderOptions {
+    fields?: {
+        number?: PaypalCommerceHostedFieldOption;
+        cvv?: PaypalCommerceHostedFieldOption;
+        expirationDate?: PaypalCommerceHostedFieldOption;
+    };
+    paymentsSDK?: boolean;
+    styles?: {
+        input?: { [key: string]: string };
+        '.invalid'?: { [key: string]: string };
+        '.valid'?: { [key: string]: string };
+        ':focus'?: { [key: string]: string };
+    };
+    createOrder(): Promise<string>;
+}
+
+export interface PaypalCommerceHostedFields {
+    submit(): { orderId: string };
+    on(eventName: string, callback: (event: PaypalCommerceHostedFieldsState) => void): void;
+}
+
+export interface PaypalCommerceHostedFieldsState {
+    cards: PaypalCommerceHostedFieldsCard[];
+    emittedBy: string;
+    fields: {
+        number?: PaypalCommerceHostedFieldsFieldData;
+        expirationDate?: PaypalCommerceHostedFieldsFieldData;
+        expirationMonth?: PaypalCommerceHostedFieldsFieldData;
+        expirationYear?: PaypalCommerceHostedFieldsFieldData;
+        cvv?: PaypalCommerceHostedFieldsFieldData;
+        postalCode?: PaypalCommerceHostedFieldsFieldData;
+    };
+}
+
+export interface PaypalCommerceHostedFieldsCard {
+    type: string;
+    niceType: string;
+    code: { name: string; size: number };
+}
+
+export interface PaypalCommerceHostedFieldsFieldData {
+    container: HTMLElement;
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
 export interface PaypalCommerceSDK {
+    HostedFields: {
+        isEligible(): boolean;
+        render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
+    };
     Buttons({createOrder, onApprove}: ButtonsOptions): {
         render(id: string): void;
     };
@@ -70,9 +127,12 @@ export interface PaypalCommerceInitializationData {
     intent?: 'capture' | 'authorize';
     isPayPalCreditAvailable?: boolean;
     isProgressiveOnboardingAvailable?: boolean;
+    clientToken?: string;
 }
 
 export type DisableFundingType = Array<'credit' | 'card'>;
+
+export type ComponentsScriptType = Array<'buttons' | 'hosted-fields'>;
 
 export interface PaypalCommerceScriptOptions {
     clientId: string;
@@ -81,4 +141,10 @@ export interface PaypalCommerceScriptOptions {
     commit?: boolean;
     intent?: 'capture' | 'authorize';
     disableFunding?: DisableFundingType;
+    components?: ComponentsScriptType;
+}
+
+export interface PaypalCommerceScriptAttribute {
+    clientToken?: string;
+    partnerAttributionId?: string;
 }

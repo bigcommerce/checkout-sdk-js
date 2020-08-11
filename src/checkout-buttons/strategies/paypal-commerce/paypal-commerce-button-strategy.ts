@@ -45,7 +45,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         }
 
         const paramsScript = this._getParamsScript(initializationData, cart);
-        const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, initializationData.isProgressiveOnboardingAvailable);
+        const paypal = await this._paypalScriptLoader.loadPaypalCommerce({ options: paramsScript }, initializationData.isProgressiveOnboardingAvailable);
 
         return paypal.Buttons(buttonParams).render(`#${options.containerId}`);
     }
