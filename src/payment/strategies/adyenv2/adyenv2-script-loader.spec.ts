@@ -22,8 +22,8 @@ describe('AdyenV2ScriptLoader', () => {
     describe('#load()', () => {
         const adyenClient = getAdyenClient();
         const configuration = getAdyenConfiguration();
-        const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.js';
-        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.8.1/adyen.css';
+        const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js';
+        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css';
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
