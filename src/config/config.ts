@@ -91,7 +91,6 @@ export interface CheckoutSettings {
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
-    isHostedPaymentFormEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
     isSpamProtectionEnabled: boolean;
