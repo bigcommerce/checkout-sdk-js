@@ -20,7 +20,6 @@
 * [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
-* [isHostedPaymentFormEnabled](checkoutsettings.md#ishostedpaymentformenabled)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
 * [isSpamProtectionEnabled](checkoutsettings.md#isspamprotectionenabled)
@@ -97,12 +96,6 @@ ___
 ###  isCouponCodeCollapsed
 
 • **isCouponCodeCollapsed**: *boolean*
-
-___
-
-###  isHostedPaymentFormEnabled
-
-• **isHostedPaymentFormEnabled**: *boolean*
 
 ___
 
