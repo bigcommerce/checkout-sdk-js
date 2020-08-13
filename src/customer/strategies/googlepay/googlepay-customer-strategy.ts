@@ -5,6 +5,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { getShippableItemsCount } from '../../../shipping';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
@@ -106,11 +107,13 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     @bind
     private async _handleWalletButtonClick(event: Event): Promise<void> {
         event.preventDefault();
+        const cart = this._store.getState().cart.getCartOrThrow();
+        const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
-            if (paymentData.shippingAddress) {
+            if (hasPhysicalItems && paymentData.shippingAddress) {
                 await this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
             }
             await this._onPaymentSelectComplete();
