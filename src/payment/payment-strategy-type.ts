@@ -24,13 +24,7 @@ enum PaymentStrategyType {
     PAYPAL = 'paypal',
     PAYPAL_EXPRESS = 'paypalexpress',
     PAYPAL_EXPRESS_CREDIT = 'paypalexpresscredit',
-    /**
-     * @internal
-     */
     PAYPAL_COMMERCE = 'paypalcommerce',
-    /**
-     * @internal
-     */
     PAYPAL_COMMERCE_CREDIT = 'paypalcommercecredit',
     SAGE_PAY = 'sagepay',
     SQUARE = 'squarev2',

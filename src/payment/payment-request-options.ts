@@ -110,7 +110,6 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
 
     /**
-     * @internal
      * The options that are required to initialize the PayPal Commerce payment method.
      * They can be omitted unless you need to support PayPal Commerce.
      */

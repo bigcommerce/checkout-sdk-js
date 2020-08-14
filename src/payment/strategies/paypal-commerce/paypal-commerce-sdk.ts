@@ -12,9 +12,6 @@ export interface OrderData {
     approveUrl: string;
 }
 
-/**
- * @internal
- */
 export enum StyleButtonLabel {
     paypal = 'paypal',
     checkout = 'checkout',
@@ -23,17 +20,11 @@ export enum StyleButtonLabel {
     installment = 'installment',
 }
 
-/**
- * @internal
- */
 export enum StyleButtonLayout {
     vertical = 'vertical',
     horizontal = 'horizontal',
 }
 
-/**
- * @internal
- */
 export enum StyleButtonColor {
     gold = 'gold',
     blue = 'blue',
@@ -42,17 +33,11 @@ export enum StyleButtonColor {
     white = 'white',
 }
 
-/**
- * @internal
- */
 export enum StyleButtonShape {
     pill = 'pill',
     rect = 'rect' ,
 }
 
-/**
- * @internal
- */
 export interface PaypalButtonStyleOptions {
     layout?: StyleButtonLayout;
     color?: StyleButtonColor;
