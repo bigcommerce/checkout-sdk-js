@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.90.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.90.1...v1.90.2) (2020-08-14)
+
+
+### Bug Fixes
+
+* **payment:** INT-3010 Fix Zip store credit implementation ([37ffccf](https://github.com/bigcommerce/checkout-sdk-js/commit/37ffccf9ec63f3a85338d7d4b10a5fcdc08199fd))
+
 ### [1.90.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.90.0...v1.90.1) (2020-08-13)
 
 
