@@ -8,6 +8,7 @@ import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getShippableItemsCount } from '../../../shipping';
+import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
@@ -33,6 +34,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _stripeScriptLoader: StripeV3ScriptLoader,
+        private _storeCreditActionCreator: StoreCreditActionCreator,
         private _locale: string
     ) {}
 
@@ -56,6 +58,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         const { paymentData, gatewayId, methodId } = payment;
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } = paymentData as HostedInstrument;
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+        const { isStoreCreditApplied : useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+
+        if (useStoreCredit) {
+            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+        }
 
         if (isVaultedInstrument(paymentData)) {
             try {
