@@ -8,7 +8,7 @@ export default class AffirmScriptLoader {
         public _window: AffirmHostWindow = window
     ) { }
 
-    load(apikey?: string, testMode?: boolean): Promise<Affirm> {
+    load(apikey: string = '', testMode?: boolean): Promise<Affirm> {
         const scriptURI = this._getScriptURI(testMode);
 
         loadAffirmJS(apikey, scriptURI);
