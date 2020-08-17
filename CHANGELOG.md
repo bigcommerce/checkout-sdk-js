@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.91.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.90.2...v1.91.0) (2020-08-17)
+
+
+### Features
+
+* **payment:** INT-3016 remove phone number parameter in request if field is empty in Stripev3 ([c0220de](https://github.com/bigcommerce/checkout-sdk-js/commit/c0220de393161fba75350531236d2aefab04040d))
+
 ### [1.90.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.90.1...v1.90.2) (2020-08-14)
 
 
