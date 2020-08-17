@@ -7,6 +7,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getShippableItemsCount } from '../../../shipping';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
@@ -301,13 +302,13 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const { email } = customer;
             const { phone } = customerAddress;
 
-            return { ...address, email, name, phone };
+            return phone ? { ...address, email, name, phone } : { ...address, email, name };
         }
 
         if (billingAddress) {
             const { email, phone } = billingAddress;
 
-            return {...address, email, name, phone};
+            return phone ? { ...address, email, name, phone } : { ...address, email, name };
         }
 
         return {...address, name};
@@ -330,8 +331,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         switch (element) {
             case StripePaymentMethodType.CreditCard:
-                const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
-                result = { ...result, shipping: this._mapStripeShippingAddress(shippingAddress, customer) };
+                const cart = this._store.getState().cart.getCart();
+
+                if (cart && getShippableItemsCount(cart) > 0) {
+                    const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
+                    result = { ...result, shipping: this._mapStripeShippingAddress(shippingAddress, customer) };
+                }
 
                 return arg2 ? { ...result, setup_future_usage: 'off_session' } : result;
 
