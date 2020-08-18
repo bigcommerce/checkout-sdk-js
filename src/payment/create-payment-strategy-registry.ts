@@ -504,6 +504,7 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             new StripeScriptLoader(scriptLoader),
+            storeCreditActionCreator,
             locale
         )
     );
