@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.91.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.91.0...v1.91.1) (2020-08-18)
+
+
+### Bug Fixes
+
+* **payment:** INT-2043 Apply store credit on StripeV3 ([ac41ff9](https://github.com/bigcommerce/checkout-sdk-js/commit/ac41ff9515e70306c574e93b788435eec7a45d6d))
+
 ## [1.91.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.90.2...v1.91.0) (2020-08-17)
 
 
