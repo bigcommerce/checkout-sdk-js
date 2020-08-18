@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.92.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.92.0...v1.92.1) (2020-08-18)
+
+
+### Code Refactoring
+
+* **payment:** INT-2995 Avoid setting up Affirm.js from string code ([b8b8f92](https://github.com/bigcommerce/checkout-sdk-js/commit/b8b8f92497379d646c8d6ce2a1d8147f3b2112d4))
+
 ## [1.92.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.91.1...v1.92.0) (2020-08-18)
 
 
