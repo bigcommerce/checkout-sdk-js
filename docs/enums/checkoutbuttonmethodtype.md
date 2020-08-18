@@ -15,6 +15,7 @@
 * [GOOGLEPAY_CHECKOUTCOM](checkoutbuttonmethodtype.md#googlepay_checkoutcom)
 * [GOOGLEPAY_STRIPE](checkoutbuttonmethodtype.md#googlepay_stripe)
 * [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
+* [PAYPALCOMMERCE](checkoutbuttonmethodtype.md#paypalcommerce)
 * [PAYPALEXPRESS](checkoutbuttonmethodtype.md#paypalexpress)
 
 ## Enumeration members
@@ -72,6 +73,12 @@ ___
 ###  MASTERPASS
 
 • **MASTERPASS**: = "masterpass"
+
+___
+
+###  PAYPALCOMMERCE
+
+• **PAYPALCOMMERCE**: = "paypalcommerce"
 
 ___
 

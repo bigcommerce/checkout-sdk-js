@@ -38,6 +38,7 @@ current checkout flow.
 * [masterpass](paymentinitializeoptions.md#optional-masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
 * [params](paymentinitializeoptions.md#optional-params)
+* [paypalcommerce](paymentinitializeoptions.md#optional-paypalcommerce)
 * [paypalexpress](paymentinitializeoptions.md#optional-paypalexpress)
 * [square](paymentinitializeoptions.md#optional-square)
 * [stripev3](paymentinitializeoptions.md#optional-stripev3)
@@ -223,6 +224,15 @@ ___
 *Inherited from [CheckoutButtonInitializeOptions](checkoutbuttoninitializeoptions.md).[params](checkoutbuttoninitializeoptions.md#optional-params)*
 
 The parameters of the request, if required.
+
+___
+
+### `Optional` paypalcommerce
+
+• **paypalcommerce**? : *[PaypalCommercePaymentInitializeOptions](paypalcommercepaymentinitializeoptions.md)*
+
+The options that are required to initialize the PayPal Commerce payment method.
+They can be omitted unless you need to support PayPal Commerce.
 
 ___
 

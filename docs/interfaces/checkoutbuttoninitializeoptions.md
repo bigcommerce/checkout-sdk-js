@@ -27,6 +27,7 @@
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#optional-params)
 * [paypal](checkoutbuttoninitializeoptions.md#optional-paypal)
+* [paypalCommerce](checkoutbuttoninitializeoptions.md#optional-paypalcommerce)
 * [timeout](checkoutbuttoninitializeoptions.md#optional-timeout)
 
 ## Properties
@@ -129,6 +130,15 @@ ___
 • **paypal**? : *[PaypalButtonInitializeOptions](paypalbuttoninitializeoptions.md)*
 
 The options that are required to facilitate PayPal. They can be omitted
+unless you need to support Paypal.
+
+___
+
+### `Optional` paypalCommerce
+
+• **paypalCommerce**? : *[PaypalCommerceButtonInitializeOptions](paypalcommercebuttoninitializeoptions.md)*
+
+The options that are required to facilitate PayPal Commerce. They can be omitted
 unless you need to support Paypal.
 
 ___

@@ -18,6 +18,10 @@
 * [HostedFieldType](enums/hostedfieldtype.md)
 * [HostedInputEventType](enums/hostedinputeventtype.md)
 * [IconStyle](enums/iconstyle.md)
+* [StyleButtonColor](enums/stylebuttoncolor.md)
+* [StyleButtonLabel](enums/stylebuttonlabel.md)
+* [StyleButtonLayout](enums/stylebuttonlayout.md)
+* [StyleButtonShape](enums/stylebuttonshape.md)
 
 ### Classes
 
@@ -208,6 +212,9 @@
 * [PaymentSettings](interfaces/paymentsettings.md)
 * [PaypalButtonInitializeOptions](interfaces/paypalbuttoninitializeoptions.md)
 * [PaypalButtonStyleOptions](interfaces/paypalbuttonstyleoptions.md)
+* [PaypalButtonStyleOptions_2](interfaces/paypalbuttonstyleoptions_2.md)
+* [PaypalCommerceButtonInitializeOptions](interfaces/paypalcommercebuttoninitializeoptions.md)
+* [PaypalCommercePaymentInitializeOptions](interfaces/paypalcommercepaymentinitializeoptions.md)
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)
 * [Promotion](interfaces/promotion.md)

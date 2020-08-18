@@ -167,6 +167,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     paypal?: PaypalButtonInitializeOptions;
     /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
+    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -294,7 +299,8 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
-    PAYPALEXPRESS = "paypalexpress"
+    PAYPALEXPRESS = "paypalexpress",
+    PAYPALCOMMERCE = "paypalcommerce"
 }
 
 /**
@@ -377,6 +383,22 @@ declare interface PaypalButtonStyleOptions {
     fundingicons?: boolean;
 }
 
+declare interface PaypalButtonStyleOptions_2 {
+    layout?: StyleButtonLayout;
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
+    height?: 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55;
+    label?: StyleButtonLabel;
+    tagline?: boolean;
+}
+
+declare interface PaypalCommerceButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
+}
+
 /**
  * A set of options for configuring an asynchronous request.
  */
@@ -401,6 +423,32 @@ declare abstract class StandardError extends Error implements CustomError {
     name: string;
     type: string;
     constructor(message?: string);
+}
+
+declare enum StyleButtonColor {
+    gold = "gold",
+    blue = "blue",
+    silver = "silver",
+    black = "black",
+    white = "white"
+}
+
+declare enum StyleButtonLabel {
+    paypal = "paypal",
+    checkout = "checkout",
+    buynow = "buynow",
+    pay = "pay",
+    installment = "installment"
+}
+
+declare enum StyleButtonLayout {
+    vertical = "vertical",
+    horizontal = "horizontal"
+}
+
+declare enum StyleButtonShape {
+    pill = "pill",
+    rect = "rect"
 }
 
 /**
