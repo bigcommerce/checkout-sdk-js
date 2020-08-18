@@ -134,6 +134,7 @@ describe('ChasePayPaymentStrategy', () => {
         walletButton = document.createElement('a');
         container.setAttribute('id', 'login');
         walletButton.setAttribute('id', 'mockButton');
+        walletButton.textContent = 'Sign in to  Chase Pay';
         document.body.appendChild(container);
         document.body.appendChild(walletButton);
 
@@ -162,6 +163,7 @@ describe('ChasePayPaymentStrategy', () => {
         beforeEach(() => {
             chasePayInitializeOptions = { logoContainer: 'login', walletButton: 'mockButton' };
             initializeOptions = { methodId: 'chasepay', chasepay: chasePayInitializeOptions };
+            jest.useFakeTimers();
         });
 
         it('loads chasepay in test mode if enabled', async () => {
@@ -251,7 +253,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('adds the event listener to the wallet button', async () => {
             await strategy.initialize(initializeOptions);
-
+            jest.runAllTimers();
             expect(walletButton.addEventListener).toHaveBeenCalled();
         });
 
@@ -291,17 +293,16 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('check if element exist in the DOM', async () => {
             await strategy.initialize(initializeOptions);
-
             expect(document.getElementById).toHaveBeenCalledWith(chasePayInitializeOptions.logoContainer);
         });
 
         it('dispatch widget interaction when wallet button is clicked', async () => {
             await strategy.initialize(initializeOptions);
+            jest.runAllTimers();
 
             const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
-
             if (chasepayButton) {
-                await chasepayButton.click();
+                chasepayButton.click();
             }
 
             expect(store.dispatch).toBeCalledWith(expect.any(Observable), { queueId: 'widgetInteraction' });
@@ -309,11 +310,11 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('triggers widget interaction when wallet button is clicked', async () => {
             await strategy.initialize(initializeOptions);
+            jest.runAllTimers();
 
             const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
-
             if (chasepayButton) {
-                await chasepayButton.click();
+                chasepayButton.click();
             }
 
             expect(paymentStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
@@ -433,8 +434,9 @@ describe('ChasePayPaymentStrategy', () => {
             initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
-
+            jest.useFakeTimers();
             await strategy.initialize(initializeOptions);
+            jest.runAllTimers();
         });
 
         it('deinitializes wallet button', async () => {

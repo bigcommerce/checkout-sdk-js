@@ -47,12 +47,19 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.chasepay" argument is not provided.');
         }
 
-        const walletButton = options.chasepay.walletButton && document.getElementById(options.chasepay.walletButton);
+        const linkIsLoaded = setInterval(() => {
+            const walletButton = options.chasepay?.walletButton && document.getElementById(options.chasepay.walletButton);
+            const isChase = (walletButton as HTMLInputElement)?.textContent?.indexOf('Chase');
+            if (!walletButton) {
+                clearInterval(linkIsLoaded);
+            }
 
-        if (walletButton) {
-            this._walletButton = walletButton;
-            this._walletButton.addEventListener('click', this._handleWalletButtonClick);
-        }
+            if (walletButton && isChase && isChase > -1 ) {
+                this._walletButton = walletButton;
+                this._walletButton?.addEventListener('click', this._handleWalletButtonClick);
+                clearInterval(linkIsLoaded);
+            }
+        }, 100);
 
         return this._configureWallet(options.chasepay)
             .then(() => this._store.getState());
