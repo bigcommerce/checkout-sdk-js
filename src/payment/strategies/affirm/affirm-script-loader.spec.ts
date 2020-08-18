@@ -3,9 +3,11 @@ import { StandardError } from '../../../common/error/errors';
 import { Affirm, AffirmHostWindow } from './affirm';
 import AffirmScriptLoader from './affirm-script-loader';
 import { getAffirmScriptMock } from './affirm.mock';
-import affirmJS from './affirmJs';
+import { default as affirmJS } from './affirmJs';
 
 jest.mock('./affirmJs');
+
+const affirmJsMock = affirmJS as jest.Mock<void>;
 
 describe('AffirmScriptLoader', () => {
     let affirmScriptLoader: AffirmScriptLoader;
@@ -21,7 +23,7 @@ describe('AffirmScriptLoader', () => {
 
         beforeEach(() => {
             affirmScript = getAffirmScriptMock();
-            affirmJS.mockImplementation(() => {
+            affirmJsMock.mockImplementation(() => {
                 affirmWindow.affirm = affirmScript;
             });
         });
@@ -42,7 +44,7 @@ describe('AffirmScriptLoader', () => {
         });
 
         it('throws error when window is not set', async () => {
-            affirmJS.mockImplementation(() => {
+            affirmJsMock.mockImplementation(() => {
                 affirmWindow.affirm = undefined;
             });
 
