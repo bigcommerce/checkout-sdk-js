@@ -44,7 +44,6 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     paypal?: PaypalButtonInitializeOptions;
 
     /**
-     * @internal
      * The options that are required to facilitate PayPal Commerce. They can be omitted
      * unless you need to support Paypal.
      */
