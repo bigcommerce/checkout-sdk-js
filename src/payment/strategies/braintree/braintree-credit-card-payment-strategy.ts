@@ -178,7 +178,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     private _mapToNonceInstrument(instrument: PaymentInstrument): NonceInstrument {
-        return pick(instrument as NonceInstrument, 'nonce', 'shouldSaveInstrument');
+        return pick(instrument as NonceInstrument, 'nonce', 'shouldSaveInstrument', 'shouldSetAsDefaultInstrument');
     }
 
     private _mapToVaultedInstrumentWithNonceVerification(instrument: PaymentInstrument): VaultedInstrumentWithNonceVerification {
