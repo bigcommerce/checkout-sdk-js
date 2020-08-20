@@ -40,7 +40,7 @@ export default function createShippingStrategyRegistry(
             store,
             consignmentActionCreator,
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
-            createAmazonPayV2PaymentProcessor(store),
+            createAmazonPayV2PaymentProcessor(),
             new ShippingStrategyActionCreator(registry)
         )
     );

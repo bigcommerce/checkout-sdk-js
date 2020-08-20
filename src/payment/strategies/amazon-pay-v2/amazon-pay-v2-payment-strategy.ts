@@ -4,6 +4,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getShippableItemsCount } from '../../../shipping';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -30,18 +31,14 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonpay } = options;
 
-        if (!amazonpay) {
+        if (!methodId || !amazonpay) {
             throw new InvalidArgumentError('Unable to proceed because "options.amazonpay" argument is not provided.');
         }
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        if (!paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        await this._amazonPayV2PaymentProcessor.initialize(methodId);
+        await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
         const { paymentToken } = paymentMethod.initializationData;
         const buttonId = amazonpay.editButtonId;
@@ -65,11 +62,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { methodId } = payment;
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-
-        if (!paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         const { paymentToken } = paymentMethod.initializationData;
 
@@ -180,7 +173,6 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 checkoutLanguage,
                 ledgerCurrency,
                 checkoutSessionMethod,
-                region,
                 extractAmazonCheckoutSessionId,
             },
         } = paymentMethod;
@@ -194,8 +186,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             sandbox: !!testMode,
             checkoutLanguage,
             ledgerCurrency,
-            region,
-            productType: cart && cart.lineItems.physicalItems.length === 0 ?
+            productType: cart && getShippableItemsCount(cart) === 0 ?
                 AmazonPayV2PayOptions.PayOnly :
                 AmazonPayV2PayOptions.PayAndShip,
             createCheckoutSession: {

@@ -239,7 +239,7 @@ export function getAffirm(): PaymentMethod {
     };
 }
 
-export function getAmazonPayV2(): PaymentMethod {
+export function getAmazonPayV2(region = 'us'): PaymentMethod {
     return {
         config: {
             displayName: 'AMAZON PAY',
@@ -251,9 +251,12 @@ export function getAmazonPayV2(): PaymentMethod {
         },
         id: 'amazonpay',
         initializationData: {
+            buttonColor: 'Gold',
             checkoutLanguage: 'en_US',
+            checkoutSessionMethod: 'GET',
+            extractAmazonCheckoutSessionId: 'token',
             ledgerCurrency: 'USD',
-            region: 'us',
+            region,
         },
         logoUrl: '',
         method: 'credit-card',
@@ -534,6 +537,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getAffirm(),
         getAfterpay(),
         getAmazonPay(),
+        getAmazonPayV2(),
         getAuthorizenet(),
         getBlueSnapV2(),
         getBraintree(),
