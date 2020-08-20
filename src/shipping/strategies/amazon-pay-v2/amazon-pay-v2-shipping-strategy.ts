@@ -4,14 +4,12 @@ import { ConsignmentActionCreator, ShippingStrategyActionCreator } from '../..';
 import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
 export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
-    private _paymentMethod?: PaymentMethod;
-
     constructor(
         private _store: CheckoutStore,
         private _consignmentActionCreator: ConsignmentActionCreator,
@@ -51,15 +49,11 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         }
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        if (!this._paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+        await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        await this._amazonPayV2PaymentProcessor.initialize(methodId);
-
-        const { paymentToken } = this._paymentMethod.initializationData;
+        const { paymentToken } = paymentMethod.initializationData;
         const buttonId = amazonpay.editAddressButtonId;
 
         if (paymentToken && buttonId) {

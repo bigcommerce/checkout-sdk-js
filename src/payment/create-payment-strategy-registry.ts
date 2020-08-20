@@ -161,7 +161,7 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             orderActionCreator,
             paymentActionCreator,
-            createAmazonPayV2PaymentProcessor(store)
+            createAmazonPayV2PaymentProcessor()
         )
     );
 

@@ -68,8 +68,9 @@ export default function createCustomerStrategyRegistry(
     registry.register('amazonpay', () =>
         new AmazonPayV2CustomerStrategy(
             store,
+            paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            createAmazonPayV2PaymentProcessor(store)
+            createAmazonPayV2PaymentProcessor()
         )
     );
 

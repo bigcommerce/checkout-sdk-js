@@ -6,6 +6,8 @@ export enum Mode {
     Full,
     UndefinedContainer,
     InvalidContainer,
+    UndefinedMethodId,
+    UndefinedAmazonPay,
 }
 
 export function getAmazonPayV2CheckoutButtonOptions(mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
@@ -13,7 +15,7 @@ export function getAmazonPayV2CheckoutButtonOptions(mode: Mode = Mode.Full): Che
     const containerId = 'amazonpayCheckoutButton';
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
-    const amazonPayV2Options = { containerId, getAmazonPayV2ButtonParamsMock };
+    const amazonPayV2Options = { containerId, amazonpay: getAmazonPayV2ButtonParamsMock() };
 
     switch (mode) {
         case Mode.UndefinedContainer:
@@ -22,6 +24,10 @@ export function getAmazonPayV2CheckoutButtonOptions(mode: Mode = Mode.Full): Che
             return { ...methodId, ...invalidContainerId };
         case Mode.Full:
             return { ...methodId, ...amazonPayV2Options };
+        case Mode.UndefinedMethodId:
+            return { ...amazonPayV2Options } as CheckoutButtonInitializeOptions;
+        case Mode.UndefinedAmazonPay:
+            return { ...getAmazonPayV2CheckoutButtonOptions(Mode.Full), amazonpay: undefined };
         default:
             return { ...methodId, containerId };
     }

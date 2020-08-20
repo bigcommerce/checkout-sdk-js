@@ -1,10 +1,11 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
+import { getAmazonPayV2 as getPaymentMethodMock } from '../../payment-methods.mock';
 
 import { AmazonPayV2HostWindow, AmazonPayV2SDK } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
-import { getAmazonPayV2SDKMock, getPaymentMethodMock } from './amazon-pay-v2.mock';
+import { getAmazonPayV2SDKMock } from './amazon-pay-v2.mock';
 
 describe('AmazonPayV2ScriptLoader', () => {
     let amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader;

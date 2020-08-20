@@ -1,6 +1,8 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 
 import Config, { ContextConfig, FlashMessage, FlashMessageType, StoreConfig } from './config';
 import ConfigState, { DEFAULT_STATE } from './config-state';
@@ -9,6 +11,7 @@ export default interface ConfigSelector {
     getConfig(): Config | undefined;
     getFlashMessages(type?: FlashMessageType): FlashMessage[] | undefined;
     getStoreConfig(): StoreConfig | undefined;
+    getStoreConfigOrThrow(): StoreConfig;
     getContextConfig(): ContextConfig | undefined;
     getExternalSource(): string | undefined;
     getVariantIdentificationToken(): string | undefined;
@@ -49,6 +52,13 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
         data => () => data
     );
 
+    const getStoreConfigOrThrow = createSelector(
+        getStoreConfig,
+        getStoreConfig => () => {
+          return guard(getStoreConfig(), () => new MissingDataError(MissingDataErrorType.MissingCheckoutConfig));
+        }
+    );
+
     const getContextConfig = createSelector(
         (state: ConfigState) => state.data && state.data.context,
         data => () => data
@@ -81,6 +91,7 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
             getConfig: getConfig(state),
             getFlashMessages: getFlashMessages(state),
             getStoreConfig: getStoreConfig(state),
+            getStoreConfigOrThrow: getStoreConfigOrThrow(state),
             getContextConfig: getContextConfig(state),
             getExternalSource: getExternalSource(state),
             getVariantIdentificationToken: getVariantIdentificationToken(state),
