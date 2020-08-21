@@ -54,6 +54,7 @@ describe('HostedCardNumberInput', () => {
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         input = new HostedCardNumberInput(
+            HostedFieldType.CardNumber,
             container,
             'Full name',
             'Cardholder name',
