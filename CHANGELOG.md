@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.93.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.0...v1.93.1) (2020-08-21)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5115 CHECKOUT-5116 CHECKOUT-5117 Set correct type for card number verification field ([cb708cd](https://github.com/bigcommerce/checkout-sdk-js/commit/cb708cdd8c19f3aea333540150cee19362931594))
+
 ## [1.93.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.92.1...v1.93.0) (2020-08-21)
 
 
