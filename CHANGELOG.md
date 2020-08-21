@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.93.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.92.1...v1.93.0) (2020-08-21)
+
+
+### Features
+
+* **checkout:** INT-2992 Make store credit usable with bolt ([07d5cdd](https://github.com/bigcommerce/checkout-sdk-js/commit/07d5cdd5aedc8f4f9c652734d57cb62fc203a258))
+
+
+### Bug Fixes
+
+* **checkout:** INT-3041 Fix GooglePay updating shipping address when not needed ([28736af](https://github.com/bigcommerce/checkout-sdk-js/commit/28736afd978ee65a38db04e44953de4b94f9d412))
+
 ### [1.92.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.92.0...v1.92.1) (2020-08-18)
 
 
