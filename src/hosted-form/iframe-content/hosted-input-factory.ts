@@ -36,11 +36,11 @@ export default class HostedInputFactory {
         const autocomplete = mapToAutocompleteType(type);
 
         if (type === HostedFieldType.CardNumber) {
-            return this._createNumberInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+            return this._createNumberInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
         }
 
         if (type === HostedFieldType.CardNumberVerification) {
-            return this._createNumberInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createNumberInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
         }
 
         if (type === HostedFieldType.CardExpiry) {
@@ -79,6 +79,7 @@ export default class HostedInputFactory {
     }
 
     private _createNumberInput(
+        type: HostedFieldType,
         form: HTMLFormElement,
         styles: HostedInputStylesMap,
         fontUrls: string[],
@@ -88,6 +89,7 @@ export default class HostedInputFactory {
         cardInstrument?: CardInstrument
     ): HostedCardNumberInput {
         return new HostedCardNumberInput(
+            type,
             form,
             placeholder,
             accessibilityLabel,

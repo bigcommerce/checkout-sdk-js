@@ -19,6 +19,7 @@ export default class HostedCardNumberInput extends HostedInput {
      * @internal
      */
     constructor(
+        type: HostedFieldType,
         form: HTMLFormElement,
         placeholder: string,
         accessibilityLabel: string,
@@ -34,7 +35,7 @@ export default class HostedCardNumberInput extends HostedInput {
         private _formatter: CardNumberFormatter
     ) {
         super(
-            HostedFieldType.CardNumber,
+            type,
             form,
             placeholder,
             accessibilityLabel,
