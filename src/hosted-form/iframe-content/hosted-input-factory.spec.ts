@@ -17,6 +17,15 @@ describe('HostedInputFactory', () => {
             .toBeInstanceOf(HostedCardNumberInput);
     });
 
+    it('creates card number verification field', () => {
+        const input = factory.create(document.createElement('form'), HostedFieldType.CardNumberVerification);
+
+        expect(input)
+            .toBeInstanceOf(HostedCardNumberInput);
+        expect(input.getType())
+            .toEqual(HostedFieldType.CardNumberVerification);
+    });
+
     it('creates card expiry field', () => {
         expect(factory.create(document.createElement('form'), HostedFieldType.CardExpiry))
             .toBeInstanceOf(HostedCardExpiryInput);
