@@ -269,6 +269,38 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
     };
 }
 
+export function getConverge(is3dsV2Enabled = false, clientToken = ''): PaymentMethod {
+    return {
+        config: {
+            displayName: 'Pay Now',
+            helpText: '',
+            isVaultingEnabled: false,
+            merchantId: 'checkout_converge',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        id: 'converge',
+        initializationData: {
+            is3dsV2Enabled,
+            currencyCode: '826',
+            orderId: '100',
+            token: 'token',
+        },
+        method: 'credit-card',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+            'DISCOVER',
+            'DINERS',
+            'MAESTRO',
+            'JCB',
+        ],
+        type: 'PAYMENT_TYPE_API',
+        clientToken,
+    };
+}
+
 export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
@@ -545,6 +577,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
         getCheckoutcom(),
+        getConverge(),
         getGooglePay(),
         getKlarna(),
         getPaypalExpress(),

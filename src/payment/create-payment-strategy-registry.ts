@@ -30,7 +30,7 @@ import { BoltAppPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { ConvergePaymentStrategy } from './strategies/converge';
+import { ConvergePaymentStrategy, ConvergeScriptLoader } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
@@ -475,7 +475,9 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory,
-            formPoster
+            formPoster,
+            new ConvergeScriptLoader(scriptLoader),
+            paymentMethodActionCreator
         )
     );
 

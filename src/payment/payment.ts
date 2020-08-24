@@ -14,7 +14,7 @@ export type PaymentInstrument = (
     CreditCardInstrument |
     CreditCardInstrument & WithHostedFormNonce |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
+    FormattedPayload<AdyenV2Instrument | ConvergeInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -25,6 +25,20 @@ export type PaymentInstrument = (
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
+}
+
+export interface ConvergeInstrument {
+    threeDSServerTransID: string;
+    dsTransID: string;
+    transStatus: string;
+    authenticated: boolean;
+    credit_card: {
+        account_name: string;
+        month: string;
+        number: string;
+        verification_value?: string;
+        year: string;
+    };
 }
 
 export interface CreditCardInstrument {
