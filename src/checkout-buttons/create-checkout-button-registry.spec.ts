@@ -6,6 +6,7 @@ import { Registry } from '../common/registry';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
+import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 
@@ -38,5 +39,9 @@ describe('createCheckoutButtonRegistry', () => {
 
     it('returns registry with GooglePay on Stripe Credit registered', () => {
         expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with AmazonPayV2 registered', () => {
+        expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
     });
 });

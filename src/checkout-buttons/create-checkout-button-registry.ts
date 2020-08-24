@@ -149,7 +149,7 @@ export default function createCheckoutButtonRegistry(
         new AmazonPayV2ButtonStrategy(
             store,
             checkoutActionCreator,
-            createAmazonPayV2PaymentProcessor(store)
+            createAmazonPayV2PaymentProcessor()
         )
     );
 
