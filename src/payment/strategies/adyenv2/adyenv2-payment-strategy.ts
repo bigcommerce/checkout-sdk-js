@@ -220,6 +220,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         }
 
         const {
+            firstName,
+            lastName,
             address1: street,
             address2: houseNumberOrName,
             postalCode,
@@ -229,6 +231,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         } = billingAddress;
 
         return {
+            holderName: `${firstName} ${lastName}`,
             billingAddress: {
                 street,
                 houseNumberOrName,

@@ -421,6 +421,7 @@ describe('AdyenV2PaymentStrategy', () => {
                     placeholders: expect.any(Object),
                     onChange: expect.any(Function),
                     data: {
+                        holderName: 'Test Tester',
                         billingAddress: {
                             street: '12345 Testing Way',
                             houseNumberOrName: '',
