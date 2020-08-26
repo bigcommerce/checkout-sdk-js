@@ -47,7 +47,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         this._adyenClient = await this._scriptLoader.load({
             environment:  paymentMethod.initializationData.environment,
             locale: this._locale,
-            originKey: paymentMethod.initializationData.originKey,
+            clientKey: paymentMethod.initializationData.clientKey,
             paymentMethodsResponse: paymentMethod.initializationData.paymentMethodsResponse,
         });
 
