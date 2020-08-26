@@ -34,7 +34,7 @@
 
 ### `Optional` amazonpay
 
-• **amazonpay**? : *[AmazonPayV2ButtonInitializeOptions](amazonpayv2buttoninitializeoptions.md)*
+• **amazonpay**? : *[AmazonPayV2ButtonInitializeOptions](../README.md#amazonpayv2buttoninitializeoptions)*
 
 The options that are required to facilitate AmazonPayV2. They can be
 omitted unless you need to support AmazonPayV2.

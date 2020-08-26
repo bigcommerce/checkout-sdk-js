@@ -302,17 +302,10 @@ declare interface AmazonPayShippingInitializeOptions {
     onReady?(reference: AmazonPayOrderReference): void;
 }
 
-declare interface AmazonPayV2ButtonInitializeOptions {
-    /**
-     * @alpha
-     */
-    containerId: string;
-    /**
-     * A set of options to render the AmazonPayV2 checkout button.
-     * @alpha
-     */
-    options: AmazonPayV2ButtonParams;
-}
+/**
+ * The required config to render the AmazonPayV2 buttton.
+ */
+declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParams;
 
 /**
  * @alpha
@@ -4028,11 +4021,98 @@ declare interface PaypalCommerceButtonInitializeOptions {
     style?: PaypalButtonStyleOptions_2;
 }
 
+declare type PaypalCommerceFormFieldBlurEventData = PaypalCommerceFormFieldKeyboardEventData;
+
+declare interface PaypalCommerceFormFieldCardTypeChangeEventData {
+    cardType?: string;
+}
+
+declare type PaypalCommerceFormFieldEnterEventData = PaypalCommerceFormFieldKeyboardEventData;
+
+declare type PaypalCommerceFormFieldFocusEventData = PaypalCommerceFormFieldKeyboardEventData;
+
+declare interface PaypalCommerceFormFieldKeyboardEventData {
+    fieldType: string;
+}
+
+declare interface PaypalCommerceFormFieldOptions {
+    containerId: string;
+    placeholder?: string;
+}
+
+declare type PaypalCommerceFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
+
+declare interface PaypalCommerceFormFieldStylesMap {
+    default?: PaypalCommerceFormFieldStyles;
+    error?: PaypalCommerceFormFieldStyles;
+    focus?: PaypalCommerceFormFieldStyles;
+}
+
+declare enum PaypalCommerceFormFieldType {
+    CardCode = "cardCode",
+    CardCodeVerification = "cardCodeVerification",
+    CardExpiry = "cardExpiry",
+    CardName = "cardName",
+    CardNumber = "cardNumber",
+    CardNumberVerification = "cardNumberVerification"
+}
+
+declare interface PaypalCommerceFormFieldValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
+}
+
+declare interface PaypalCommerceFormFieldValidateEventData {
+    errors: {
+        [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldValidateErrorData[];
+        [PaypalCommerceFormFieldType.CardExpiry]?: PaypalCommerceFormFieldValidateErrorData[];
+        [PaypalCommerceFormFieldType.CardName]?: PaypalCommerceFormFieldValidateErrorData[];
+        [PaypalCommerceFormFieldType.CardNumber]?: PaypalCommerceFormFieldValidateErrorData[];
+        [PaypalCommerceFormFieldType.CardCodeVerification]?: PaypalCommerceFormFieldValidateErrorData[];
+        [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceFormFieldValidateErrorData[];
+    };
+    isValid: boolean;
+}
+
+declare interface PaypalCommerceFormFieldsMap {
+    [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardExpiry]: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardName]: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardNumber]: PaypalCommerceFormFieldOptions;
+}
+
+declare interface PaypalCommerceFormOptions {
+    fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap;
+    styles?: PaypalCommerceFormFieldStylesMap;
+    onBlur?(data: PaypalCommerceFormFieldBlurEventData): void;
+    onCardTypeChange?(data: PaypalCommerceFormFieldCardTypeChangeEventData): void;
+    onFocus?(data: PaypalCommerceFormFieldFocusEventData): void;
+    onValidate?(data: PaypalCommerceFormFieldValidateEventData): void;
+    onEnter?(data: PaypalCommerceFormFieldEnterEventData): void;
+}
+
 declare interface PaypalCommercePaymentInitializeOptions {
     overlay?: {
         helpText?: string;
         continueText?: string;
     };
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    form?: PaypalCommerceFormOptions;
+}
+
+declare interface PaypalCommerceStoredCardFieldOptions extends PaypalCommerceFormFieldOptions {
+    instrumentId: string;
+}
+
+declare interface PaypalCommerceStoredCardFieldsMap {
+    [PaypalCommerceFormFieldType.CardCodeVerification]?: PaypalCommerceStoredCardFieldOptions;
+    [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceStoredCardFieldOptions;
 }
 
 declare interface PaypalExpressPaymentInitializeOptions {
