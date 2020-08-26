@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.93.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.1...v1.93.2) (2020-08-26)
+
+
+### Performance Improvements
+
+* **payment:** INT-2926 Avoid unnecessary calls to payments/amazonpay and checkout-settings ([6e90e80](https://github.com/bigcommerce/checkout-sdk-js/commit/6e90e80120224e434c8c332faf64a5f90517564e))
+
 ### [1.93.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.0...v1.93.1) (2020-08-21)
 
 

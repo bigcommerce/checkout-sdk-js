@@ -54,7 +54,6 @@
 * [AmazonPayOrderReference](interfaces/amazonpayorderreference.md)
 * [AmazonPayPaymentInitializeOptions](interfaces/amazonpaypaymentinitializeoptions.md)
 * [AmazonPayShippingInitializeOptions](interfaces/amazonpayshippinginitializeoptions.md)
-* [AmazonPayV2ButtonInitializeOptions](interfaces/amazonpayv2buttoninitializeoptions.md)
 * [AmazonPayV2ButtonParams](interfaces/amazonpayv2buttonparams.md)
 * [AmazonPayV2CheckoutSession](interfaces/amazonpayv2checkoutsession.md)
 * [AmazonPayV2CustomerInitializeOptions](interfaces/amazonpayv2customerinitializeoptions.md)
@@ -261,6 +260,7 @@
 * [AccountInstrument](README.md#accountinstrument)
 * [AddressKey](README.md#addresskey)
 * [AdyenComponentState](README.md#adyencomponentstate)
+* [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
 * [AnalyticStepType](README.md#analyticsteptype)
 * [BraintreeFormFieldBlurEventData](README.md#braintreeformfieldblureventdata)
 * [BraintreeFormFieldEnterEventData](README.md#braintreeformfieldentereventdata)
@@ -315,6 +315,14 @@ ___
 ###  AdyenComponentState
 
 Ƭ **AdyenComponentState**: *[CardState](interfaces/cardstate.md) | [WechatState](interfaces/wechatstate.md)*
+
+___
+
+###  AmazonPayV2ButtonInitializeOptions
+
+Ƭ **AmazonPayV2ButtonInitializeOptions**: *[AmazonPayV2ButtonParams](interfaces/amazonpayv2buttonparams.md)*
+
+The required config to render the AmazonPayV2 buttton.
 
 ___
 
