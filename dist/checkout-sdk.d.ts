@@ -4104,6 +4104,7 @@ declare interface PaypalCommercePaymentInitializeOptions {
      * consumption.
      */
     form?: PaypalCommerceFormOptions;
+    container?: string | undefined;
 }
 
 declare interface PaypalCommerceStoredCardFieldOptions extends PaypalCommerceFormFieldOptions {
