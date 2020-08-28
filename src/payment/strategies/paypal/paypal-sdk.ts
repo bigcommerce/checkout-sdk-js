@@ -18,6 +18,7 @@ export interface PaypalButtonOptions {
     commit?: boolean;
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
+    fundingSource?: string;
     client?: PaypalClientToken;
     payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
     onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;

@@ -49,12 +49,16 @@ export interface PaypalButtonStyleOptions {
 
 export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
+    fundingSource?: string;
     createOrder(): Promise<string>;
     onApprove(data: ApproveDataOptions): void;
     onClick(data: ClickDataOptions): void;
 }
 
 export interface PaypalCommerceSDK {
+    FUNDING: {
+        PAYPAL: string;
+    };
     Buttons({createOrder, onApprove}: ButtonsOptions): {
         render(id: string): void;
     };
@@ -70,9 +74,12 @@ export interface PaypalCommerceInitializationData {
     intent?: 'capture' | 'authorize';
     isPayPalCreditAvailable?: boolean;
     isProgressiveOnboardingAvailable?: boolean;
+    clientToken?: string;
 }
 
 export type DisableFundingType = Array<'credit' | 'card'>;
+
+export type ComponentsScriptType = Array<'buttons' | 'hosted-fields'>;
 
 export interface PaypalCommerceScriptOptions {
     clientId: string;
@@ -81,4 +88,11 @@ export interface PaypalCommerceScriptOptions {
     commit?: boolean;
     intent?: 'capture' | 'authorize';
     disableFunding?: DisableFundingType;
+    components?: ComponentsScriptType;
+
+}
+
+export interface PaypalCommerceScriptAttribute {
+    clientToken?: string;
+    partnerAttributionId?: string;
 }
