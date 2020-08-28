@@ -11,6 +11,7 @@ export interface PaypalCommercePaymentInitializeOptions {
      * consumption.
      */
     form?: PaypalCommerceFormOptions;
+    container?: string | undefined;
 }
 
 export interface PaypalCommerceFormOptions {

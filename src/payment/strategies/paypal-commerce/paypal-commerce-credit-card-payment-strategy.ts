@@ -22,12 +22,12 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
-        const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const { clientToken: token, initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
         const cart = state.cart.getCartOrThrow();
         const paramsScript = {
             options: this._getOptionsScript(initializationData, cart),
-            attr: { clientToken: initializationData.clientToken },
+            attr: { clientToken: token },
         };
 
         const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, true);
