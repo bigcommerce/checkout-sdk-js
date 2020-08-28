@@ -26,7 +26,7 @@ import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afte
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
-import { BoltAppPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
+import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
@@ -510,7 +510,7 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(PaymentStrategyType.BOLT, () =>
-        new BoltAppPaymentStrategy(
+        new BoltPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
