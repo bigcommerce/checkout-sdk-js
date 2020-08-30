@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.94.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.2...v1.94.0) (2020-08-30)
+
+
+### Features
+
+* **payment:** INT-3084 Autopopulate card holder name ([3df5395](https://github.com/bigcommerce/checkout-sdk-js/commit/3df539532a0eef13c6622a6b224de883611f8574))
+
 ### [1.93.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.1...v1.93.2) (2020-08-26)
 
 
