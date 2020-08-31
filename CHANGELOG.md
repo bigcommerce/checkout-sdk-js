@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.95.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.94.0...v1.95.0) (2020-08-31)
+
+
+### Features
+
+* **payment:** PAYMENTS-5513 add setAsDefaultInstrument to the nonce mapping white list ([#964](https://github.com/bigcommerce/checkout-sdk-js/issues/964)) ([2eaab8f](https://github.com/bigcommerce/checkout-sdk-js/commit/2eaab8f89226daa8864a824da763f8cbd492bef5))
+
 ## [1.94.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.93.2...v1.94.0) (2020-08-30)
 
 
