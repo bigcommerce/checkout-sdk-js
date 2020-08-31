@@ -210,6 +210,24 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 .toHaveBeenCalledWith(payload.payment);
         });
 
+        it('passes on optional flags to save and to make default', async () => {
+            const payload = merge({}, orderRequestBody, {
+                payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } },
+            });
+
+            await braintreeCreditCardPaymentStrategy.execute(payload, options);
+
+            expect(paymentActionCreator.submitPayment)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            shouldSaveInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    })
+                );
+        });
+
         it('does nothing to VaultedInstruments', async () => {
             const payload = {
                 ...orderRequestBody,
@@ -332,6 +350,29 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                             nonce: 'my_tokenized_card_with_hosted_form',
                         },
                     });
+            });
+
+            it('passes on optional flags to save and to make default', async () => {
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                    braintree: initializeOptions,
+                });
+
+                const payload = merge({}, orderRequestBody, {
+                    payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } },
+                });
+
+                await braintreeCreditCardPaymentStrategy.execute(payload, options);
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                shouldSaveInstrument: true,
+                                shouldSetAsDefaultInstrument: true,
+                            }),
+                        })
+                    );
             });
 
             it('verifies payment data with 3DS through hosted form and submits it if 3DS is enabled', async () => {
