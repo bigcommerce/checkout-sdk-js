@@ -36,7 +36,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paypal);
         }
 
-        return Promise.resolve(this._store.getState());
+        return this._store.getState();
     }
 
     async execute(payload: OrderRequestBody, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

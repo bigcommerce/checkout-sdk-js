@@ -51,7 +51,8 @@ export default class PaypalCommerceHostedForm {
             this._hostedFields.on('cardTypeChange', this._handleCardTypeChange);
             this._hostedFields.on('validityChange', this._handleValidityChange);
             this._hostedFields.on('inputSubmitRequest', this._handleInputSubmitRequest);
-
+        } else {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
     }
 
