@@ -36,7 +36,6 @@ export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOption
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using AmazonPayV2.
-     * @alpha
      */
     amazonpay?: AmazonPayV2ShippingInitializeOptions;
 }

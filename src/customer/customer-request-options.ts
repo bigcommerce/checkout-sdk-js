@@ -38,7 +38,6 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
     /**
      * The options that are required to initialize the customer step of checkout
      * when using AmazonPayV2.
-     * @alpha
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
 

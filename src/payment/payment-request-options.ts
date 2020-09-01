@@ -62,7 +62,6 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     /**
      * The options that are required to initialize the AmazonPayV2 payment
      * method. They can be omitted unless you need to support AmazonPayV2.
-     * @alpha
      */
     amazonpay?: AmazonPayV2PaymentInitializeOptions;
 

@@ -1,7 +1,7 @@
 import PaymentMethod from '../../payment-method';
 import { getAmazonPayV2 } from '../../payment-methods.mock';
 
-import { AmazonPayV2ButtonParams, AmazonPayV2CheckoutLanguage, AmazonPayV2LedgerCurrency, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
+import { AmazonPayV2ButtonParams, AmazonPayV2CheckoutLanguage, AmazonPayV2LedgerCurrency, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
 
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
@@ -28,7 +28,7 @@ export function getAmazonPayV2ButtonParamsMock(): AmazonPayV2ButtonParams {
         ledgerCurrency: 'USD' as AmazonPayV2LedgerCurrency,
         merchantId: 'checkout_amazonpay',
         placement: 'Checkout' as AmazonPayV2Placement,
-        productType: 'PayAndShip',
+        productType: 'PayAndShip' as AmazonPayV2PayOptions,
         sandbox: true,
     };
 }
