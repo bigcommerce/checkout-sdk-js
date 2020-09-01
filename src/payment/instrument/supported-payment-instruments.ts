@@ -69,6 +69,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'bluesnapv2',
         method: 'credit_card',
     },
+    orbital: {
+        provider: 'orbital',
+        method: 'credit_card',
+    },
     paymetric: {
         provider: 'paymetric',
         method: 'credit_card',
