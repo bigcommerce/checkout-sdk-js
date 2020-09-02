@@ -1,5 +1,6 @@
 import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -21,6 +22,10 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (!options.paypalcommerce?.form) {
+            throw new InvalidArgumentError('Unable to proceed because "options.paypalcommerce.form" argument is not provided.');
+        }
+
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
         const { clientToken, initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
@@ -32,9 +37,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
 
         const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, true);
 
-        if (options.paypalcommerce?.form) {
-            await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paypal);
-        }
+        await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paypal);
 
         return this._store.getState();
     }

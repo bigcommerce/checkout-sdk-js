@@ -1,6 +1,7 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRegularField, PaypalCommerceRequestSender, PaypalCommerceSDK } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
@@ -22,7 +23,7 @@ export default class PaypalCommerceHostedForm {
 
     async initialize(options: PaypalCommerceFormOptions, cartId: string, paypal: PaypalCommerceSDK) {
         if (!paypal.HostedFields) {
-            return false;
+            throw new PaymentMethodClientUnavailableError();
         }
 
         this._formOptions = options;
