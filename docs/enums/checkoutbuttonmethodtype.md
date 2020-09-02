@@ -24,8 +24,6 @@
 
 • **AMAZON_PAY_V2**: = "amazonpay"
 
-**`alpha`** 
-
 ___
 
 ###  BRAINTREE_PAYPAL

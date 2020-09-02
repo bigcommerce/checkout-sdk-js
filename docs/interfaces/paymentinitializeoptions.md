@@ -71,8 +71,6 @@ ___
 The options that are required to initialize the AmazonPayV2 payment
 method. They can be omitted unless you need to support AmazonPayV2.
 
-**`alpha`** 
-
 ___
 
 ### `Optional` bluesnapv2

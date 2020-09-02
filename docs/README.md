@@ -8,6 +8,7 @@
 
 * [AmazonPayV2CheckoutLanguage](enums/amazonpayv2checkoutlanguage.md)
 * [AmazonPayV2LedgerCurrency](enums/amazonpayv2ledgercurrency.md)
+* [AmazonPayV2PayOptions](enums/amazonpayv2payoptions.md)
 * [AmazonPayV2Placement](enums/amazonpayv2placement.md)
 * [BraintreeFormFieldType](enums/braintreeformfieldtype.md)
 * [ButtonColor](enums/buttoncolor.md)

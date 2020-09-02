@@ -2,37 +2,35 @@
 
 # Enumeration: AmazonPayV2LedgerCurrency
 
-**`alpha`** 
-
 ## Index
 
 ### Enumeration members
 
-* [eu](amazonpayv2ledgercurrency.md#eu)
-* [jp](amazonpayv2ledgercurrency.md#jp)
-* [uk](amazonpayv2ledgercurrency.md#uk)
-* [us](amazonpayv2ledgercurrency.md#us)
+* [EUR](amazonpayv2ledgercurrency.md#eur)
+* [GBP](amazonpayv2ledgercurrency.md#gbp)
+* [JPY](amazonpayv2ledgercurrency.md#jpy)
+* [USD](amazonpayv2ledgercurrency.md#usd)
 
 ## Enumeration members
 
-###  eu
+###  EUR
 
-• **eu**: = "EUR"
-
-___
-
-###  jp
-
-• **jp**: = "JPY"
+• **EUR**: = "EUR"
 
 ___
 
-###  uk
+###  GBP
 
-• **uk**: = "GBP"
+• **GBP**: = "GBP"
 
 ___
 
-###  us
+###  JPY
 
-• **us**: = "USD"
+• **JPY**: = "JPY"
+
+___
+
+###  USD
+
+• **USD**: = "USD"

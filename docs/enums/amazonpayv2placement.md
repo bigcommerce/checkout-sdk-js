@@ -2,8 +2,6 @@
 
 # Enumeration: AmazonPayV2Placement
 
-**`alpha`** 
-
 ## Index
 
 ### Enumeration members
@@ -20,11 +18,15 @@
 
 • **Cart**: = "Cart"
 
+Cart review page before buyer starts checkout.
+
 ___
 
 ###  Checkout
 
 • **Checkout**: = "Checkout"
+
+Any page after buyer starts checkout.
 
 ___
 
@@ -32,14 +34,20 @@ ___
 
 • **Home**: = "Home"
 
+Initial or main page.
+
 ___
 
 ###  Other
 
 • **Other**: = "Other"
 
+Any page that doesn't fit the previous descriptions.
+
 ___
 
 ###  Product
 
 • **Product**: = "Product"
+
+Product details page.

@@ -2,8 +2,6 @@
 
 # Enumeration: AmazonPayV2CheckoutLanguage
 
-**`alpha`** 
-
 ## Index
 
 ### Enumeration members

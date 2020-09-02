@@ -29,59 +29,86 @@ declare interface AddressRequestBody {
  */
 declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParams;
 
-/**
- * @alpha
- */
 declare interface AmazonPayV2ButtonParams {
+    /**
+     * Amazon Pay merchant account identifier.
+     */
     merchantId: string;
+    /**
+     * Configuration for calling the endpoint to Create Checkout Session.
+     */
     createCheckoutSession: AmazonPayV2CheckoutSession;
+    /**
+     * Placement of the Amazon Pay button on your website.
+     */
     placement: AmazonPayV2Placement;
+    /**
+     * Ledger currency provided during registration for the given merchant identifier.
+     */
     ledgerCurrency: AmazonPayV2LedgerCurrency;
-    productType?: string;
+    /**
+     * Product type selected for checkout. Default is 'PayAndShip'.
+     */
+    productType?: AmazonPayV2PayOptions;
+    /**
+     * Language used to render the button and text on Amazon Pay hosted pages.
+     */
     checkoutLanguage?: AmazonPayV2CheckoutLanguage;
+    /**
+     * Sets button to Sandbox environment. Default is false.
+     */
     sandbox?: boolean;
 }
 
-/**
- * @alpha
- */
 declare enum AmazonPayV2CheckoutLanguage {
-    es_ES = "es_ES",
-    en_GB = "en_GB",
     en_US = "en_US",
+    en_GB = "en_GB",
     de_DE = "de_DE",
     fr_FR = "fr_FR",
     it_IT = "it_IT",
+    es_ES = "es_ES",
     ja_JP = "ja_JP"
 }
 
-/**
- * @alpha
- */
 declare interface AmazonPayV2CheckoutSession {
+    /**
+     * Endpoint URL to Create Checkout Session.
+     */
     url: string;
-    method?: string;
+    /**
+     * HTTP request method. Default is 'POST'.
+     */
+    method?: 'GET' | 'POST';
+    /**
+     * Checkout Session ID parameter in the response. Default is 'checkoutSessionId'.
+     */
     extractAmazonCheckoutSessionId?: string;
 }
 
-/**
- * @alpha
- */
 declare enum AmazonPayV2LedgerCurrency {
-    eu = "EUR",
-    jp = "JPY",
-    uk = "GBP",
-    us = "USD"
+    USD = "USD",
+    EUR = "EUR",
+    GBP = "GBP",
+    JPY = "JPY"
 }
 
-/**
- * @alpha
- */
+declare enum AmazonPayV2PayOptions {
+    /** Select this product type if you need the buyer's shipping details. */
+    PayAndShip = "PayAndShip",
+    /** Select this product type if you do not need the buyer's shipping details. */
+    PayOnly = "PayOnly"
+}
+
 declare enum AmazonPayV2Placement {
+    /** Initial or main page. */
     Home = "Home",
+    /** Product details page. */
     Product = "Product",
+    /** Cart review page before buyer starts checkout. */
     Cart = "Cart",
+    /** Any page after buyer starts checkout. */
     Checkout = "Checkout",
+    /** Any page that doesn't fit the previous descriptions. */
     Other = "Other"
 }
 
@@ -141,7 +168,6 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
-     * @alpha
      */
     amazonpay?: AmazonPayV2ButtonInitializeOptions;
     /**
@@ -280,9 +306,6 @@ declare interface CheckoutButtonInitializerOptions {
 }
 
 declare enum CheckoutButtonMethodType {
-    /**
-     * @alpha
-     */
     AMAZON_PAY_V2 = "amazonpay",
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",

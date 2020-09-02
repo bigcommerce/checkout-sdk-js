@@ -49,8 +49,6 @@ ___
 The options that are required to initialize the shipping step of checkout
 when using AmazonPayV2.
 
-**`alpha`** 
-
 ___
 
 ### `Optional` methodId

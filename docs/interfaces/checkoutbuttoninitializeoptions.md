@@ -39,8 +39,6 @@
 The options that are required to facilitate AmazonPayV2. They can be
 omitted unless you need to support AmazonPayV2.
 
-**`alpha`** 
-
 ___
 
 ### `Optional` braintreepaypal

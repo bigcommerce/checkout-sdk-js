@@ -26,5 +26,3 @@ sign in.
 • **container**: *string*
 
 The ID of a container which the sign-in button should insert into.
-
-**`alpha`**

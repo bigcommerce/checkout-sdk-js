@@ -2,8 +2,6 @@
 
 # Interface: AmazonPayV2CheckoutSession
 
-**`alpha`** 
-
 ## Hierarchy
 
 * **AmazonPayV2CheckoutSession**
@@ -22,14 +20,20 @@
 
 • **extractAmazonCheckoutSessionId**? : *undefined | string*
 
+Checkout Session ID parameter in the response. Default is 'checkoutSessionId'.
+
 ___
 
 ### `Optional` method
 
-• **method**? : *undefined | string*
+• **method**? : *"GET" | "POST"*
+
+HTTP request method. Default is 'POST'.
 
 ___
 
 ###  url
 
 • **url**: *string*
+
+Endpoint URL to Create Checkout Session.

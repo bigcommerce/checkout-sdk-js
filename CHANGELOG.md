@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.96.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.95.0...v1.96.0) (2020-09-02)
+
+
+### Features
+
+* **payment:** INT-3032 Add ES/EUR support to Klarna ([0b942ed](https://github.com/bigcommerce/checkout-sdk-js/commit/0b942ed983974c705eeeb4a638dfe5c3ed1c6674))
+
 ## [1.95.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.94.0...v1.95.0) (2020-08-31)
 
 

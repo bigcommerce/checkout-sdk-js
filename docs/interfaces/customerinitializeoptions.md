@@ -56,8 +56,6 @@ ___
 The options that are required to initialize the customer step of checkout
 when using AmazonPayV2.
 
-**`alpha`** 
-
 ___
 
 ### `Optional` braintreevisacheckout
