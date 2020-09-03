@@ -482,7 +482,7 @@ export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
             testMode: true,
         },
         initializationData: {
-            originKey: 'YOUR_ORIGIN_KEY',
+            clientKey: 'YOUR_CLIENT_KEY',
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
