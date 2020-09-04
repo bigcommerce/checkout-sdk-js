@@ -19,6 +19,7 @@
 * [HostedFieldType](enums/hostedfieldtype.md)
 * [HostedInputEventType](enums/hostedinputeventtype.md)
 * [IconStyle](enums/iconstyle.md)
+* [PaypalCommerceFormFieldType](enums/paypalcommerceformfieldtype.md)
 * [StyleButtonColor](enums/stylebuttoncolor.md)
 * [StyleButtonLabel](enums/stylebuttonlabel.md)
 * [StyleButtonLayout](enums/stylebuttonlayout.md)
@@ -214,7 +215,17 @@
 * [PaypalButtonStyleOptions](interfaces/paypalbuttonstyleoptions.md)
 * [PaypalButtonStyleOptions_2](interfaces/paypalbuttonstyleoptions_2.md)
 * [PaypalCommerceButtonInitializeOptions](interfaces/paypalcommercebuttoninitializeoptions.md)
+* [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/paypalcommerceformfieldcardtypechangeeventdata.md)
+* [PaypalCommerceFormFieldKeyboardEventData](interfaces/paypalcommerceformfieldkeyboardeventdata.md)
+* [PaypalCommerceFormFieldOptions](interfaces/paypalcommerceformfieldoptions.md)
+* [PaypalCommerceFormFieldStylesMap](interfaces/paypalcommerceformfieldstylesmap.md)
+* [PaypalCommerceFormFieldValidateErrorData](interfaces/paypalcommerceformfieldvalidateerrordata.md)
+* [PaypalCommerceFormFieldValidateEventData](interfaces/paypalcommerceformfieldvalidateeventdata.md)
+* [PaypalCommerceFormFieldsMap](interfaces/paypalcommerceformfieldsmap.md)
+* [PaypalCommerceFormOptions](interfaces/paypalcommerceformoptions.md)
 * [PaypalCommercePaymentInitializeOptions](interfaces/paypalcommercepaymentinitializeoptions.md)
+* [PaypalCommerceStoredCardFieldOptions](interfaces/paypalcommercestoredcardfieldoptions.md)
+* [PaypalCommerceStoredCardFieldsMap](interfaces/paypalcommercestoredcardfieldsmap.md)
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)
 * [Promotion](interfaces/promotion.md)
@@ -287,6 +298,10 @@
 * [Omit](README.md#omit)
 * [OrderPayments](README.md#orderpayments)
 * [PaymentInstrument](README.md#paymentinstrument)
+* [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
+* [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
+* [PaypalCommerceFormFieldFocusEventData](README.md#paypalcommerceformfieldfocuseventdata)
+* [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
 * [StripeElementOptions](README.md#stripeelementoptions)
 
 ### Functions
@@ -476,6 +491,30 @@ ___
 ###  PaymentInstrument
 
 Ƭ **PaymentInstrument**: *[CardInstrument](interfaces/cardinstrument.md) | [AccountInstrument](README.md#accountinstrument)*
+
+___
+
+###  PaypalCommerceFormFieldBlurEventData
+
+Ƭ **PaypalCommerceFormFieldBlurEventData**: *[PaypalCommerceFormFieldKeyboardEventData](interfaces/paypalcommerceformfieldkeyboardeventdata.md)*
+
+___
+
+###  PaypalCommerceFormFieldEnterEventData
+
+Ƭ **PaypalCommerceFormFieldEnterEventData**: *[PaypalCommerceFormFieldKeyboardEventData](interfaces/paypalcommerceformfieldkeyboardeventdata.md)*
+
+___
+
+###  PaypalCommerceFormFieldFocusEventData
+
+Ƭ **PaypalCommerceFormFieldFocusEventData**: *[PaypalCommerceFormFieldKeyboardEventData](interfaces/paypalcommerceformfieldkeyboardeventdata.md)*
+
+___
+
+###  PaypalCommerceFormFieldStyles
+
+Ƭ **PaypalCommerceFormFieldStyles**: *Partial‹Pick‹CSSStyleDeclaration, "color" | "fontFamily" | "fontSize" | "fontWeight"››*
 
 ___
 

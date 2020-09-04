@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.97.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.96.0...v1.97.0) (2020-09-04)
+
+
+### Features
+
+* **payment:** INT-3027 Implementing client key ([77e6807](https://github.com/bigcommerce/checkout-sdk-js/commit/77e68077537207b1fe62d1913707c82c530896fa))
+* **payment:** PAYPAL-202 Add tests ([c92dfe7](https://github.com/bigcommerce/checkout-sdk-js/commit/c92dfe790e62ddb38ead68e53eafe05a707584a9))
+* **payment:** PAYPAL-202 Changes for PR ([144b0bb](https://github.com/bigcommerce/checkout-sdk-js/commit/144b0bb143f4ed95694a244408d390b89ef93d11))
+* **payment:** PAYPAL-202 Hosted Credit Card ([04c740f](https://github.com/bigcommerce/checkout-sdk-js/commit/04c740fa12b55e89a7ee54f0775928a3f5ec5779))
+* **payment:** PAYPAL-202 take clientToken from appropriate params ([4d8a5ed](https://github.com/bigcommerce/checkout-sdk-js/commit/4d8a5ed1f1b4d0b2c94f4bcf368b6bf1326a1565))
+
 ## [1.96.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.95.0...v1.96.0) (2020-09-02)
 
 
