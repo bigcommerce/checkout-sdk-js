@@ -27,12 +27,14 @@ describe('PaypalCommerceScriptLoader', () => {
     });
 
     describe('loads PayPalCommerce script with client Id, currency EUR, intent, disableFunding, commit', () => {
-        const options: PaypalCommerceScriptOptions = {
-            clientId: 'aaa',
-            merchantId: 'bbb',
-            currency: 'EUR',
-            disableFunding: ['credit', 'card'],
-            intent: 'capture',
+        const params: { options: PaypalCommerceScriptOptions } = {
+            options: {
+                clientId: 'aaa',
+                merchantId: 'bbb',
+                currency: 'EUR',
+                disableFunding: ['credit', 'card'],
+                intent: 'capture',
+            },
         };
 
         it('check params in script', async () => {
@@ -47,21 +49,23 @@ describe('PaypalCommerceScriptLoader', () => {
                     return Promise.resolve();
                 });
 
-            await paypalLoader.loadPaypalCommerce(options);
+            await paypalLoader.loadPaypalCommerce(params);
         });
 
         it('check paypal in window', async () => {
-            const output = await paypalLoader.loadPaypalCommerce(options);
+            const output = await paypalLoader.loadPaypalCommerce(params);
 
             expect(output).toEqual(paypal);
         });
     });
 
     describe('loads PayPalCommerce script with client Id and currency USD',  () => {
-        const options: PaypalCommerceScriptOptions = {
-            clientId: 'aaa',
-            merchantId: 'bbb',
-            currency: 'USD',
+        const params: { options: PaypalCommerceScriptOptions } = {
+            options: {
+                clientId: 'aaa',
+                merchantId: 'bbb',
+                currency: 'USD',
+            },
         };
 
         it('check params in script', async () => {
@@ -76,18 +80,18 @@ describe('PaypalCommerceScriptLoader', () => {
                     return Promise.resolve();
                 });
 
-            await paypalLoader.loadPaypalCommerce(options);
+            await paypalLoader.loadPaypalCommerce(params);
         });
 
         it('check paypal in window', async () => {
-            const output = await paypalLoader.loadPaypalCommerce(options);
+            const output = await paypalLoader.loadPaypalCommerce(params);
 
             expect(output).toEqual(paypal);
         });
     });
 
     it('do not add merchant Id if it is null and enable progressive onboarding', async () => {
-        const options: PaypalCommerceScriptOptions = { clientId: 'aaa', merchantId: undefined };
+        const params: { options: PaypalCommerceScriptOptions } = { options: { clientId: 'aaa', merchantId: undefined } };
 
         jest.spyOn(loader, 'loadScript')
             .mockImplementation((url: string) => {
@@ -99,12 +103,12 @@ describe('PaypalCommerceScriptLoader', () => {
                 return Promise.resolve();
             });
 
-        await paypalLoader.loadPaypalCommerce(options, true);
+        await paypalLoader.loadPaypalCommerce(params, true);
     });
 
     it('throw error without merchant Id and disable progressive onboarding ', async () => {
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: '', currency: 'USD' }, false);
+            await paypalLoader.loadPaypalCommerce({ options: { clientId: 'aaa', merchantId: '', currency: 'USD' } }, false);
         } catch (error) {
             expect(error).toEqual(new InvalidArgumentError(`Unable to proceed because "merchantId" argument in PayPal script is not provided.`));
         }
@@ -112,7 +116,7 @@ describe('PaypalCommerceScriptLoader', () => {
 
     it('throw error without client Id', async () => {
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: '', merchantId: 'bbb', currency: 'USD' });
+            await paypalLoader.loadPaypalCommerce({ options: { clientId: '', merchantId: 'bbb', currency: 'USD' } });
         } catch (error) {
             expect(error).toEqual(new InvalidArgumentError(`Unable to proceed because "clientId" argument in PayPal script is not provided.`));
         }
@@ -127,7 +131,7 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce({ clientId: 'aaa', merchantId: 'bbb', currency: 'USD' });
+            await paypalLoader.loadPaypalCommerce({ options: { clientId: 'aaa', merchantId: 'bbb', currency: 'USD' } });
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
@@ -142,7 +146,7 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce({clientId: 'aaa', merchantId: 'bbb', currency: 'EUR'});
+            await paypalLoader.loadPaypalCommerce({ options: { clientId: 'aaa', merchantId: 'bbb', currency: 'EUR'} });
         } catch (error) {
             expect(error).toEqual(new PaymentMethodClientUnavailableError());
         }
