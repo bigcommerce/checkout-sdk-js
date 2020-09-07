@@ -2,6 +2,8 @@ export * from './paypal-commerce-sdk';
 
 export * from './paypal-commerce-payment-initialize-options';
 
+export * from './paypal-commerce-utils';
+
 export { default as PaypalCommerceScriptLoader } from './paypal-commerce-script-loader';
 export { default as PaypalCommerceCreditCardPaymentStrategy } from './paypal-commerce-credit-card-payment-strategy';
 export { default as PaypalCommercePaymentStrategy } from './paypal-commerce-payment-strategy';

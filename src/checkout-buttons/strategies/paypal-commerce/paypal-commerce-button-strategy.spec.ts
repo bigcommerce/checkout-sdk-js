@@ -76,7 +76,9 @@ describe('PaypalCommerceButtonStrategy', () => {
         render = jest.spyOn(paypal, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
                 eventEmitter.on('onClick', () => {
-                    options.onClick({ fundingSource });
+                    if (options.onClick) {
+                        options.onClick({fundingSource});
+                    }
                 });
 
                 eventEmitter.on('createOrder', () => {
@@ -216,12 +218,14 @@ describe('PaypalCommerceButtonStrategy', () => {
     it('create order (post request to server) when PayPalCommerce payment details are setup payment', async () => {
         await strategy.initialize(options);
 
+        eventEmitter.emit('onClick');
+
         eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(paypalCommerceRequestSender.setupPayment)
-            .toHaveBeenCalledWith('paypalcommerce', 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', { isCredit: false });
     });
 
     it('create order with credit (post request to server) when PayPalCommerce payment details are setup payment', async () => {
@@ -236,7 +240,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(paypalCommerceRequestSender.setupPayment)
-            .toHaveBeenCalledWith('paypalcommercecredit', 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', { isCredit: true });
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {

@@ -44,7 +44,7 @@ import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
-import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './strategies/paypal-commerce';
+import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceHostedForm, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './strategies/paypal-commerce';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -297,7 +297,9 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             new PaypalCommerceRequestSender(requestSender),
-            new PaypalCommercePaymentProcessor()
+            new PaypalCommerceScriptLoader(scriptLoader),
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
         )
     );
 
@@ -307,7 +309,10 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             new PaypalCommerceRequestSender(requestSender),
-            new PaypalCommercePaymentProcessor()
+            new PaypalCommerceScriptLoader(scriptLoader),
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            true
         )
     );
 

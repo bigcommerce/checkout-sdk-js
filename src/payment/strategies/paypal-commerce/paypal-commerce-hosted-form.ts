@@ -110,7 +110,7 @@ export default class PaypalCommerceHostedForm {
     }
 
     private async _setupPayment(cartId: string): Promise<string> {
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment('paypalcommercecreditcardscheckout', cartId);
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, { isCreditCard: true });
 
         return orderId;
     }

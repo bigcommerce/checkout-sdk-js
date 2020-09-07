@@ -3,12 +3,13 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalButtonStyleOptions, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
+import PaymentStrategyType from '../../../payment/payment-strategy-type';
+import { validateStyleParams, ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
-    providerId?: string;
+    private _isCredit?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -20,11 +21,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         let state = this._store.getState();
-        const {
-            id: providerId,
-            initializationData,
-        } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
-        this.providerId = providerId;
+        const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
@@ -35,13 +32,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const paypalOptions = options.paypalCommerce;
 
         const buttonParams: ButtonsOptions = {
-            onClick: data => this._handleClickButtonProvider(providerId, data),
+            onClick: data => this._handleClickButtonProvider(data),
             createOrder: () => this._setupPayment(cart.id),
             onApprove: data => this._tokenizePayment(data),
         };
 
         if (paypalOptions && paypalOptions.style) {
-            buttonParams.style = this._validateStyleParams(paypalOptions.style);
+            buttonParams.style = validateStyleParams(paypalOptions.style);
         }
 
         const paramsScript = this._getParamsScript(initializationData, cart);
@@ -51,21 +48,17 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     deinitialize(): Promise<void> {
-        this.providerId = undefined;
+        this._isCredit = undefined;
 
         return Promise.resolve();
     }
 
-    private _handleClickButtonProvider(providerId: string, { fundingSource }: ClickDataOptions): void {
-        this.providerId = fundingSource === 'credit' ? 'paypalcommercecredit' : providerId;
+    private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
+        this._isCredit = fundingSource === 'credit';
     }
 
     private async _setupPayment(cartId: string): Promise<string> {
-        if (!this.providerId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(this.providerId, cartId);
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, { isCredit: this._isCredit });
 
         return orderId;
     }
@@ -78,44 +71,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: this.providerId,
+            provider: this._isCredit ? PaymentStrategyType.PAYPAL_COMMERCE_CREDIT : PaymentStrategyType.PAYPAL_COMMERCE,
             order_id: orderID,
         });
-    }
-
-    private _validateStyleParams(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
-        const updatedStyle: PaypalButtonStyleOptions = { ...style };
-        const { label, color, layout, shape, height, tagline } = style;
-
-        if (label && !StyleButtonLabel[label]) {
-            delete updatedStyle.label;
-        }
-
-        if (layout && !StyleButtonLayout[layout]) {
-            delete updatedStyle.layout;
-        }
-
-        if (color && !StyleButtonColor[color]) {
-            delete updatedStyle.color;
-        }
-
-        if (shape && !StyleButtonShape[shape]) {
-            delete updatedStyle.shape;
-        }
-
-        if (typeof height === 'number') {
-            updatedStyle.height = height < 25
-                ? 25
-                : (height > 55 ? 55 : height);
-        } else {
-            delete updatedStyle.height;
-        }
-
-        if (typeof tagline !== 'boolean' || (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])) {
-            delete updatedStyle.tagline;
-        }
-
-        return updatedStyle;
     }
 
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {

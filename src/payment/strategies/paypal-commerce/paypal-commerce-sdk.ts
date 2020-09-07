@@ -49,9 +49,10 @@ export interface PaypalButtonStyleOptions {
 
 export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
+    fundingSource?: string;
     createOrder(): Promise<string>;
     onApprove(data: ApproveDataOptions): void;
-    onClick(data: ClickDataOptions): void;
+    onClick?(data: ClickDataOptions): void;
 }
 
 export interface PaypalCommerceHostedFieldOption {
@@ -107,14 +108,22 @@ export interface PaypalCommerceHostedFieldsFieldData {
     isValid: boolean;
 }
 
+export interface PaypalCommerceButtons {
+    render(id: string): void;
+    close(): void;
+    isEligible(): boolean;
+}
+
 export interface PaypalCommerceSDK {
+    FUNDING: {
+        PAYPAL: string;
+        CREDIT: string;
+    };
     HostedFields: {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons({createOrder, onApprove}: ButtonsOptions): {
-        render(id: string): void;
-    };
+    Buttons({createOrder, onApprove}: ButtonsOptions): PaypalCommerceButtons;
 }
 
 export interface PaypalCommerceHostWindow extends Window {

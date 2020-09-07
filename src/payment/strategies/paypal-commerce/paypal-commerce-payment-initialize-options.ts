@@ -1,8 +1,7 @@
+import { PaypalButtonStyleOptions } from './paypal-commerce-sdk';
+
 export interface PaypalCommercePaymentInitializeOptions {
-    overlay?: {
-        helpText?: string;
-        continueText?: string;
-    };
+    container?: string;
 
     /**
      * @alpha
@@ -11,6 +10,8 @@ export interface PaypalCommercePaymentInitializeOptions {
      * consumption.
      */
     form?: PaypalCommerceFormOptions;
+    style?: PaypalButtonStyleOptions;
+    submitForm?(): void;
 }
 
 export interface PaypalCommerceFormOptions {

@@ -247,6 +247,17 @@ export default interface CheckoutStoreSelector {
      * otherwise undefined.
      */
     getShippingAddressFields(countryCode: string): FormField[];
+
+    /**
+     * Checks whether a specific or any payment method is initializing.
+     *
+     * The method returns true if no ID is provided and at least one payment
+     * method is initializing.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the payment method is initializing, otherwise false.
+     */
+    isShowEmbeddedSubmitButton(methodId?: string): boolean;
 }
 
 export type CheckoutStoreSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreSelector;
@@ -470,6 +481,13 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getFlashMessages => clone(getFlashMessages)
     );
 
+    const isShowEmbeddedSubmitButton = createSelector(
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isShowEmbeddedSubmitButton,
+        isShowEmbeddedSubmitButton => (methodId?: string) => {
+            return isShowEmbeddedSubmitButton(methodId);
+        }
+    );
+
     return memoizeOne((
         state: InternalCheckoutSelectors
     ): CheckoutStoreSelector => {
@@ -498,6 +516,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getInstruments: getInstruments(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
+            isShowEmbeddedSubmitButton: isShowEmbeddedSubmitButton(state),
         };
     });
 }

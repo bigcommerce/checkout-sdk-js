@@ -1,4 +1,4 @@
-import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -147,6 +147,14 @@ export default class PaymentStrategyActionCreator {
         ).pipe(
             catchError(error => throwErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta))
         );
+    }
+
+    enableEmbeddedSubmitButton(methodId: string): Action {
+        return createAction(PaymentStrategyActionType.EmbeddedSubmitButtonStarted, undefined, { methodId });
+    }
+
+    disableEmbeddedSubmitButton(methodId?: string): Action {
+        return createAction(PaymentStrategyActionType.EmbeddedSubmitButtonFinished, undefined, { methodId });
     }
 
     private _loadOrderPaymentsIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {

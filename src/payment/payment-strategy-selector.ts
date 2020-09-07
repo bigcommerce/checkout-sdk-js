@@ -14,6 +14,7 @@ export default interface PaymentStrategySelector {
     isExecuting(methodId?: string): boolean;
     isFinalizing(methodId?: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
+    isShowEmbeddedSubmitButton(methodId?: string): boolean;
 }
 
 export type PaymentStrategySelectorFactory = (state: PaymentStrategyState) => PaymentStrategySelector;
@@ -125,6 +126,18 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
         }
     );
 
+    const isShowEmbeddedSubmitButton = createSelector(
+        (state: PaymentStrategyState) => state.statuses.embeddedSubmitButtonMethodId,
+        (state: PaymentStrategyState) => state.statuses.isEmbeddedSubmitButton,
+        (embeddedSubmitButtonMethodId, isEmbeddedSubmitButton) => (methodId?: string) => {
+            if (methodId && embeddedSubmitButtonMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isEmbeddedSubmitButton;
+        }
+    );
+
     return memoizeOne((
         state: PaymentStrategyState = DEFAULT_STATE
     ): PaymentStrategySelector => {
@@ -138,6 +151,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             isExecuting: isExecuting(state),
             isFinalizing: isFinalizing(state),
             isWidgetInteracting: isWidgetInteracting(state),
+            isShowEmbeddedSubmitButton: isShowEmbeddedSubmitButton(state),
         };
     });
 }

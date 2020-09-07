@@ -34,6 +34,8 @@ export interface PaymentStrategyStatusesState {
     isInitializing?: boolean;
     isWidgetInteracting?: boolean;
     widgetInteractionMethodId?: string;
+    isEmbeddedSubmitButton?: boolean;
+    embeddedSubmitButtonMethodId?: string;
 }
 
 export const DEFAULT_STATE: PaymentStrategyState = {
