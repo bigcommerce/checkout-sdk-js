@@ -4,6 +4,7 @@ import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
+import { BoltPaymentInitializeOptions } from './strategies/bolt';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
@@ -70,6 +71,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support BlueSnapV2.
      */
     bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
+
+    /**
+     * The options that allow Bolt to load the client script and handle the checkout.
+     * They can be omitted if Bolt's full checkout take over is intended.
+     */
+    bolt?: BoltPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Braintree payment method.
