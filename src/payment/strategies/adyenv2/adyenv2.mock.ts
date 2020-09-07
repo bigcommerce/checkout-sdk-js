@@ -73,7 +73,7 @@ export function getAdyenClient(): AdyenClient {
 export function getAdyenConfiguration(): AdyenConfiguration {
     return {
         environment: 'test',
-        clientKey: 'YOUR_CLIENT_KEY',
+        originKey: 'YOUR_ORIGIN_KEY',
     };
 }
 
