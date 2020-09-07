@@ -193,9 +193,9 @@ export interface AdyenConfiguration {
     locale?: string;
 
     /*
-     * The Client Key of your Adyen account.
+     * The Origin Key of your website.
      */
-    clientKey: string;
+    originKey: string;
 
     /*
      * Supported from Components version 3.0.0 and later. The full paymentMethods response,
