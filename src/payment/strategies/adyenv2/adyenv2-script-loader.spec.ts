@@ -22,6 +22,7 @@ describe('AdyenV2ScriptLoader', () => {
     describe('#load()', () => {
         const adyenClient = getAdyenClient();
         const configuration = getAdyenConfiguration();
+        const configurationWithClientKey = getAdyenConfiguration(false);
         const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js';
         const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css';
 
@@ -48,8 +49,14 @@ describe('AdyenV2ScriptLoader', () => {
             expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
         });
 
-        it('returns the JS from the window', async () => {
+        it('returns the JS from the window using originKey', async () => {
             const adyenJs = await adyenV2ScriptLoader.load(configuration);
+
+            expect(adyenJs).toBe(adyenClient);
+        });
+
+        it('returns the JS from the window using clientKey', async () => {
+            const adyenJs = await adyenV2ScriptLoader.load(configurationWithClientKey);
 
             expect(adyenJs).toBe(adyenClient);
         });

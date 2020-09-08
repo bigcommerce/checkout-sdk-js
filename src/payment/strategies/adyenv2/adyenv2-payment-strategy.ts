@@ -43,11 +43,23 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         this._paymentInitializeOptions = adyenv2;
 
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const clientSideAuthentication = {
+            key: '',
+            value: '',
+        };
+
+        if (paymentMethod.initializationData.originKey) {
+            clientSideAuthentication.key = 'originKey';
+            clientSideAuthentication.value = paymentMethod.initializationData.originKey;
+        } else {
+            clientSideAuthentication.key = 'clientKey';
+            clientSideAuthentication.value = paymentMethod.initializationData.clientKey;
+        }
 
         this._adyenClient = await this._scriptLoader.load({
             environment:  paymentMethod.initializationData.environment,
             locale: this._locale,
-            originKey: paymentMethod.initializationData.originKey,
+            [clientSideAuthentication.key]: clientSideAuthentication.value,
             paymentMethodsResponse: paymentMethod.initializationData.paymentMethodsResponse,
         });
 

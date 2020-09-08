@@ -70,10 +70,13 @@ export function getAdyenClient(): AdyenClient {
     };
 }
 
-export function getAdyenConfiguration(): AdyenConfiguration {
-    return {
+export function getAdyenConfiguration(useOriginKey: boolean = true): AdyenConfiguration {
+    return useOriginKey ? {
         environment: 'test',
         originKey: 'YOUR_ORIGIN_KEY',
+    } : {
+        environment: 'test',
+        clientKey: 'YOUR_CLIENT_KEY',
     };
 }
 
