@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.98.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.97.1...v1.98.0) (2020-09-08)
+
+
+### Features
+
+* **checkout:** INT-3112 Merge Bolt strategies ([25e0c7d](https://github.com/bigcommerce/checkout-sdk-js/commit/25e0c7db01ef4f97766177046838c232057a4ddf))
+* **payment:** INT-3027 Implementing client key ([e95bf66](https://github.com/bigcommerce/checkout-sdk-js/commit/e95bf66fe6ac5e42a85030268dd5b8a5094ecd9f))
+
 ### [1.97.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.97.0...v1.97.1) (2020-09-07)
 
 ## [1.97.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.96.0...v1.97.0) (2020-09-04)

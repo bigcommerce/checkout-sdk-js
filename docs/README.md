@@ -73,6 +73,7 @@
 * [BlueSnapV2PaymentInitializeOptions](interfaces/bluesnapv2paymentinitializeoptions.md)
 * [BlueSnapV2StyleProps](interfaces/bluesnapv2styleprops.md)
 * [BodyStyles](interfaces/bodystyles.md)
+* [BoltPaymentInitializeOptions](interfaces/boltpaymentinitializeoptions.md)
 * [BraintreeError](interfaces/braintreeerror.md)
 * [BraintreeFormFieldCardTypeChangeEventData](interfaces/braintreeformfieldcardtypechangeeventdata.md)
 * [BraintreeFormFieldKeyboardEventData](interfaces/braintreeformfieldkeyboardeventdata.md)
