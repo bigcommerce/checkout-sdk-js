@@ -44,6 +44,14 @@ export default class BraintreeRegularField {
         this._input.parentNode?.removeChild(this._input);
     }
 
+    on(event: string, callback: () => void): void {
+        this._input.addEventListener(event, callback);
+    }
+
+    off(event: string, callback: () => void): void {
+        this._input.removeEventListener(event, callback);
+    }
+
     private _applyStyles(styles?: BraintreeFormFieldStyles): void {
         if (!styles) {
             return;
