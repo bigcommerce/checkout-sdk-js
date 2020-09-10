@@ -3,8 +3,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import PaymentStrategyType from '../../../payment/payment-strategy-type';
-import { validateStyleParams, ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -14,9 +13,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _formPoster: FormPoster,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -29,22 +27,18 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCartOrThrow();
-        const paypalOptions = options.paypalCommerce;
-
         const buttonParams: ButtonsOptions = {
-            onClick: data => this._handleClickButtonProvider(data),
-            createOrder: () => this._setupPayment(cart.id),
             onApprove: data => this._tokenizePayment(data),
+            onClick: data => this._handleClickButtonProvider(data),
         };
 
-        if (paypalOptions && paypalOptions.style) {
-            buttonParams.style = validateStyleParams(paypalOptions.style);
+        if (options.paypalCommerce && options.paypalCommerce.style) {
+            buttonParams.style = options.paypalCommerce.style;
         }
 
-        const paramsScript = this._getParamsScript(initializationData, cart);
-        const paypal = await this._paypalScriptLoader.loadPaypalCommerce({ options: paramsScript }, initializationData.isProgressiveOnboardingAvailable);
+        await this._paypalCommercePaymentProcessor.initialize({ options: this._getParamsScript(initializationData, cart) });
 
-        return paypal.Buttons(buttonParams).render(`#${options.containerId}`);
+        return this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
     }
 
     deinitialize(): Promise<void> {
@@ -57,12 +51,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         this._isCredit = fundingSource === 'credit';
     }
 
-    private async _setupPayment(cartId: string): Promise<string> {
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, { isCredit: this._isCredit });
-
-        return orderId;
-    }
-
     private _tokenizePayment({ orderID }: ApproveDataOptions) {
         if (!orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
@@ -71,7 +59,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: this._isCredit ? PaymentStrategyType.PAYPAL_COMMERCE_CREDIT : PaymentStrategyType.PAYPAL_COMMERCE,
+            provider: this._isCredit ? 'paypalcommercecredit' : 'paypalcommerce',
             order_id: orderID,
         });
     }

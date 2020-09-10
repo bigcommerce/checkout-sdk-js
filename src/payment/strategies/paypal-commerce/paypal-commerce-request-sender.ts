@@ -4,7 +4,7 @@ import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 
 import { OrderData } from './paypal-commerce-sdk';
 
-interface ParamsForProvider {
+export interface ParamsForProvider {
     isCredit?: boolean;
     isCheckout?: boolean;
     isCreditCard?: boolean;

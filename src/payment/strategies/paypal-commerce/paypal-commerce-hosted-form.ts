@@ -1,9 +1,6 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { PaymentMethodClientUnavailableError } from '../../errors';
-
-import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRegularField, PaypalCommerceRequestSender, PaypalCommerceSDK } from './index';
+import { DataPaypalCommerceScript, PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -14,55 +11,44 @@ enum PaypalCommerceHostedFormType {
 export default class PaypalCommerceHostedForm {
     private _formOptions?: PaypalCommerceFormOptions;
     private _cardNameField?: PaypalCommerceRegularField;
-    private _hostedFields?: PaypalCommerceHostedFields;
     private _type?: PaypalCommerceHostedFormType;
 
     constructor(
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
     ) {}
 
-    async initialize(options: PaypalCommerceFormOptions, cartId: string, paypal: PaypalCommerceSDK) {
-        if (!paypal.HostedFields) {
-            throw new PaymentMethodClientUnavailableError();
-        }
+    async initialize(options: PaypalCommerceFormOptions, cartId: string, paramsScript: DataPaypalCommerceScript) {
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 
         this._formOptions = options;
         this._type = this._isPaypalCommerceFormFieldsMap(options.fields) ?
             PaypalCommerceHostedFormType.CreditCard :
             PaypalCommerceHostedFormType.StoredCardVerification;
+        const params = {
+            fields: this._mapFieldOptions(options.fields),
+            styles: options.styles && this._mapStyleOptions(options.styles),
+        };
+        const events = {
+            blur: this._handleBlur,
+            focus: this._handleFocus,
+            cardTypeChange: this._handleCardTypeChange,
+            validityChange: this._handleValidityChange,
+            inputSubmitRequest: this._handleInputSubmitRequest,
+        };
 
-        if (paypal.HostedFields.isEligible()) {
-            if (this._isPaypalCommerceFormFieldsMap(options.fields)) {
-                this._cardNameField = new PaypalCommerceRegularField(
-                    options.fields.cardName,
-                    options.styles
-                );
-                this._cardNameField.attach();
-            }
+        await this._paypalCommercePaymentProcessor.renderHostedFields(cartId, params, events);
 
-            this._hostedFields = await paypal.HostedFields.render({
-                paymentsSDK: true,
-                fields: this._mapFieldOptions(options.fields),
-                styles: options.styles && this._mapStyleOptions(options.styles),
-                createOrder: () => this._setupPayment(cartId),
-            });
-
-            this._hostedFields.on('blur', this._handleBlur);
-            this._hostedFields.on('focus', this._handleFocus);
-            this._hostedFields.on('cardTypeChange', this._handleCardTypeChange);
-            this._hostedFields.on('validityChange', this._handleValidityChange);
-            this._hostedFields.on('inputSubmitRequest', this._handleInputSubmitRequest);
-        } else {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        if (this._isPaypalCommerceFormFieldsMap(options.fields)) {
+            this._cardNameField = new PaypalCommerceRegularField(
+                options.fields.cardName,
+                options.styles
+            );
+            this._cardNameField.attach();
         }
     }
 
     async submit(): Promise<{orderId: string}> {
-        if (!this._hostedFields) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        return this._hostedFields.submit();
+        return this._paypalCommercePaymentProcessor.submitHostedFields();
     }
 
     private _mapFieldOptions(fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap): PaypalCommerceHostedFieldsRenderOptions['fields'] {
@@ -107,12 +93,6 @@ export default class PaypalCommerceHostedForm {
             '.invalid': mapStyles(options.error),
             ':focus': mapStyles(options.focus),
         };
-    }
-
-    private async _setupPayment(cartId: string): Promise<string> {
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, { isCreditCard: true });
-
-        return orderId;
     }
 
     private _isPaypalCommerceFormFieldsMap(fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap): fields is PaypalCommerceFormFieldsMap {

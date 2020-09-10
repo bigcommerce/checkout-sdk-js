@@ -1,111 +1,167 @@
-import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { Overlay } from '../../../common/overlay';
+import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
-const modalWidth = 450;
-const modalHeight = 600;
+import { ButtonsOptions, ClickDataOptions, DataPaypalCommerceScript, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
-export interface ProcessorOptions {
-    overlay?: {
-        helpText?: string;
-        continueText?: string;
-    };
+export interface OptionalParamsRenderButtons {
+    paramsForProvider?: ParamsForProvider;
+    fundingKey?: keyof PaypalCommerceSDKFunding;
+}
+
+interface ParamsRenderHostedFields {
+    fields: PaypalCommerceHostedFieldsRenderOptions['fields'];
+    styles?: PaypalCommerceHostedFieldsRenderOptions['styles'];
+}
+
+interface EventsHostedFields {
+    blur?(event: PaypalCommerceHostedFieldsState): void;
+    focus?(event: PaypalCommerceHostedFieldsState): void;
+    cardTypeChange?(event: PaypalCommerceHostedFieldsState): void;
+    validityChange?(event: PaypalCommerceHostedFieldsState): void;
+    inputSubmitRequest?(event: PaypalCommerceHostedFieldsState): void;
 }
 
 export default class PaypalCommercePaymentProcessor {
-    private _window = window;
-    private _popup?: WindowProxy | null;
-    private _overlay?: Overlay;
+    private _paypal?: PaypalCommerceSDK;
+    private _paypalButtons?: PaypalCommerceButtons;
+    private _hostedFields?: PaypalCommerceHostedFields;
+    private _fundingSource?: string;
 
-    constructor() {}
+    constructor(
+        private _paypalScriptLoader: PaypalCommerceScriptLoader,
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+    ) {}
 
-    initialize({ overlay }: ProcessorOptions) {
-        this._overlay = new Overlay({ hasCloseButton: true, innerHtml: this._getOverlayElements(overlay) });
+    async initialize(paramsScript: DataPaypalCommerceScript, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
+        this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, isProgressiveOnboardingAvailable);
+
+        return this._paypal;
     }
 
-    paymentPayPal(approveUrl: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            const paramsWindow =  this._getParamsWindow();
+    renderButtons(cartId: string, container: string, params: ButtonsOptions, optionalParams: OptionalParamsRenderButtons = {}): void {
+        if (!this._paypal || !this._paypal.Buttons) {
+            throw new PaymentMethodClientUnavailableError();
+        }
 
-            const closeWindow = (isResolve: boolean, isRemoveOverlay: boolean = true) => {
-                this._window.removeEventListener('message', messageHandler);
+        const  { paramsForProvider, fundingKey } = optionalParams;
 
-                if (this._popup) {
-                    this._popup.close();
-                    this._popup = undefined;
+        const buttonParams: ButtonsOptions = {
+            ...params,
+            createOrder: () => this._setupPayment(cartId, paramsForProvider),
+            onClick: data => {
+                this._handleClickButtonProvider(data);
+
+                if (params.onClick) {
+                    params.onClick(data);
                 }
+            },
+        };
 
-                if (isRemoveOverlay && this._overlay) {
-                    this._overlay.remove();
-                }
+        if (params.style) {
+            buttonParams.style = this._validateStyleParams(params.style);
+        }
 
-                isResolve
-                    ? resolve(true)
-                    : reject(new MissingDataError(MissingDataErrorType.MissingPayment));
-            };
+        if (fundingKey) {
+            buttonParams.fundingSource = this._paypal.FUNDING[fundingKey];
+        }
 
-            const messageHandler = (event: MessageEvent) => {
-                if (event.origin !== 'https://www.sandbox.paypal.com' && event.origin !== 'https://www.paypal.com') {
-                    return;
-                }
+        this._paypalButtons = this._paypal.Buttons(buttonParams);
 
-                const data = JSON.parse(event.data);
+        if (!this._paypalButtons.isEligible()) {
+            throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
+        }
 
-                if (data.operation === 'return_to_merchant' && data.updateParent) {
-                    this._window.removeEventListener('message', messageHandler);
-                    closeWindow(true);
-                }
-            };
+        this._paypalButtons.render(container);
+    }
 
-            this._window.addEventListener('message', messageHandler);
-            this._popup = this._window.open(approveUrl, 'PPFrame', paramsWindow);
+    async renderHostedFields(cartId: string, params: ParamsRenderHostedFields, events?: EventsHostedFields): Promise<void> {
+        if (!this._paypal || !this._paypal.HostedFields) {
+            throw new PaymentMethodClientUnavailableError();
+        }
 
-            const popupTick = setInterval(() => {
-                if (!this._popup || this._popup.closed) {
-                    clearInterval(popupTick);
+        const { fields, styles } = params;
 
-                    closeWindow(false);
-                }
-            }, 500);
+        if (this._paypal.HostedFields.isEligible()) {
+            this._hostedFields = await this._paypal.HostedFields.render({
+                fields,
+                styles,
+                paymentsSDK: true,
+                createOrder: () => this._setupPayment(cartId, { isCreditCard: true }),
+            });
 
-            if (this._overlay) {
-                this._overlay.show({
-                    onClick: () => this._popup ? this._popup.focus() : closeWindow(false),
-                    onClickClose: () => closeWindow(false, false),
+            if (events) {
+                (Object.keys(events) as Array<keyof EventsHostedFields>).forEach(key => {
+                    (this._hostedFields as PaypalCommerceHostedFields).on(key, events[key] as (event: PaypalCommerceHostedFieldsState) => void);
                 });
             }
-        });
+        } else {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
     }
 
-    deinitialize(): void {
-        this._overlay = undefined;
+    async submitHostedFields(): Promise<{orderId: string}> {
+        if (!this._hostedFields) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._hostedFields.submit();
     }
 
-    private _getOverlayElements(options: ProcessorOptions['overlay'] = {}): DocumentFragment {
-        const fragment = document.createDocumentFragment();
-        const helpText = document.createElement('div');
-        const continueText = document.createElement('strong');
+    deinitialize() {
+        if (this._paypalButtons) {
+            this._paypalButtons.close();
+        }
 
-        helpText.className = 'paypal-commerce-overlay_text';
-        helpText.innerText = options.helpText || 'Don\'t see the secure PayPal browser? We\'ll help you re-launch the window to complete your flow. You might need to enable pop-ups in your browser in order to continue.';
-
-        continueText.className = 'paypal-commerce-overlay_link';
-        continueText.innerText = options.continueText || 'Click to continue';
-        continueText.style.marginTop = '15px';
-        continueText.style.display = 'block';
-        continueText.style.color = 'white';
-        continueText.style.textDecoration = 'underline';
-
-        fragment.appendChild(helpText);
-        fragment.appendChild(continueText);
-
-        return fragment;
+        this._paypal = undefined;
+        this._paypalButtons = undefined;
+        this._fundingSource = undefined;
+        this._hostedFields = undefined;
     }
 
-    private _getParamsWindow(): string {
-        return `
-            left=${Math.round((window.screen.height - modalWidth) / 2)},
-            top=${Math.round((window.screen.width - modalHeight) / 2)},
-            height=${modalHeight},width=${modalWidth},status=yes,toolbar=no,menubar=no,resizable=yes,scrollbars=no
-        `;
+    private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
+        this._fundingSource = fundingSource;
     }
+
+    private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
+        const paramsForProvider = { ...params, isCreditCard: this._fundingSource === 'credit' };
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, paramsForProvider);
+
+        return orderId;
+    }
+
+    private _validateStyleParams = (style: PaypalButtonStyleOptions): PaypalButtonStyleOptions  => {
+        const updatedStyle: PaypalButtonStyleOptions = { ...style };
+        const { label, color, layout, shape, height, tagline } = style;
+
+        if (label && !StyleButtonLabel[label]) {
+            delete updatedStyle.label;
+        }
+
+        if (layout && !StyleButtonLayout[layout]) {
+            delete updatedStyle.layout;
+        }
+
+        if (color && !StyleButtonColor[color]) {
+            delete updatedStyle.color;
+        }
+
+        if (shape && !StyleButtonShape[shape]) {
+            delete updatedStyle.shape;
+        }
+
+        if (typeof height === 'number') {
+            updatedStyle.height = height < 25
+                ? 25
+                : (height > 55 ? 55 : height);
+        } else {
+            delete updatedStyle.height;
+        }
+
+        if (typeof tagline !== 'boolean' || (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])) {
+            delete updatedStyle.tagline;
+        }
+
+        return updatedStyle;
+    };
+
 }

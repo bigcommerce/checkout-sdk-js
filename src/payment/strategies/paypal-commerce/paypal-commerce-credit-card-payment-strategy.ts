@@ -9,13 +9,12 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { DisableFundingType, PaypalCommerceHostedForm, PaypalCommerceInitializationData, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from './index';
+import { DisableFundingType, PaypalCommerceHostedForm, PaypalCommerceInitializationData, PaypalCommerceScriptOptions } from './index';
 
 export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentStrategy {
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _paypalCommerceHostedForm: PaypalCommerceHostedForm,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
@@ -35,9 +34,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             attr: { clientToken },
         };
 
-        const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, true);
-
-        await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paypal);
+        await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paramsScript);
 
         return this._store.getState();
     }

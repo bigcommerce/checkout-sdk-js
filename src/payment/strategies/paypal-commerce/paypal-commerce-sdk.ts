@@ -50,8 +50,8 @@ export interface PaypalButtonStyleOptions {
 export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
-    createOrder(): Promise<string>;
-    onApprove(data: ApproveDataOptions): void;
+    createOrder?(): Promise<string>;
+    onApprove?(data: ApproveDataOptions): void;
     onClick?(data: ClickDataOptions): void;
 }
 
@@ -114,16 +114,18 @@ export interface PaypalCommerceButtons {
     isEligible(): boolean;
 }
 
+export interface PaypalCommerceSDKFunding {
+    PAYPAL: string;
+    CREDIT: string;
+}
+
 export interface PaypalCommerceSDK {
-    FUNDING: {
-        PAYPAL: string;
-        CREDIT: string;
-    };
+    FUNDING: PaypalCommerceSDKFunding;
     HostedFields: {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons({createOrder, onApprove}: ButtonsOptions): PaypalCommerceButtons;
+    Buttons(params: ButtonsOptions): PaypalCommerceButtons;
 }
 
 export interface PaypalCommerceHostWindow extends Window {

@@ -128,4 +128,3 @@ export interface EmbeddedSubmitButtonStartedAction extends Action {
 export interface EmbeddedSubmitButtonFinishedAction extends Action {
     type: PaymentStrategyActionType.EmbeddedSubmitButtonFinished;
 }
-
