@@ -3767,6 +3767,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    mandate?: string;
 }
 
 declare interface OrderPayment {
