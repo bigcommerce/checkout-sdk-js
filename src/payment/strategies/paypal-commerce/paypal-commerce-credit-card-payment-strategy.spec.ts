@@ -19,7 +19,7 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
+import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
 describe('PaypalCommercePaymentStrategy', () => {
@@ -35,15 +35,19 @@ describe('PaypalCommercePaymentStrategy', () => {
     let paypal: PaypalCommerceSDK;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paypalCommerceHostedForm: PaypalCommerceHostedForm;
+    let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let orderId: string;
 
     beforeEach(() => {
+        const requestSender = createRequestSender();
+
         paymentMethod = {...getPaypalCommerce()};
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
-        paypalCommerceHostedForm = new PaypalCommerceHostedForm(new PaypalCommerceRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(paypalScriptLoader, new PaypalCommerceRequestSender(requestSender));
+        paypalCommerceHostedForm = new PaypalCommerceHostedForm(paypalCommercePaymentProcessor);
 
         orderId = 'orderId';
 
@@ -75,7 +79,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         paymentStrategy = new PaypalCommerceCreditCardPaymentStrategy(
             store,
             paymentMethodActionCreator,
-            paypalScriptLoader,
             paypalCommerceHostedForm,
             orderActionCreator,
             paymentActionCreator
@@ -87,12 +90,6 @@ describe('PaypalCommercePaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        it('load paypal script', async () => {
-            await paymentStrategy.initialize(options);
-
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalled();
-        });
-
         it('initialize hosted form', async () => {
             await paymentStrategy.initialize(options);
 

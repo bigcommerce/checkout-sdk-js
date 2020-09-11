@@ -8,7 +8,7 @@ export interface OptionalParamsRenderButtons {
     fundingKey?: keyof PaypalCommerceSDKFunding;
 }
 
-interface ParamsRenderHostedFields {
+export interface ParamsRenderHostedFields {
     fields: PaypalCommerceHostedFieldsRenderOptions['fields'];
     styles?: PaypalCommerceHostedFieldsRenderOptions['styles'];
 }
@@ -38,7 +38,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypal;
     }
 
-    renderButtons(cartId: string, container: string, params: ButtonsOptions, optionalParams: OptionalParamsRenderButtons = {}): void {
+    renderButtons(cartId: string, container: string, params: ButtonsOptions = {}, optionalParams: OptionalParamsRenderButtons = {}): PaypalCommerceButtons {
         if (!this._paypal || !this._paypal.Buttons) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -62,7 +62,8 @@ export default class PaypalCommercePaymentProcessor {
         }
 
         if (fundingKey) {
-            buttonParams.fundingSource = this._paypal.FUNDING[fundingKey];
+            this._fundingSource = this._paypal.FUNDING[fundingKey];
+            buttonParams.fundingSource = this._fundingSource;
         }
 
         this._paypalButtons = this._paypal.Buttons(buttonParams);
@@ -72,6 +73,8 @@ export default class PaypalCommercePaymentProcessor {
         }
 
         this._paypalButtons.render(container);
+
+        return this._paypalButtons;
     }
 
     async renderHostedFields(cartId: string, params: ParamsRenderHostedFields, events?: EventsHostedFields): Promise<void> {
@@ -123,7 +126,7 @@ export default class PaypalCommercePaymentProcessor {
     }
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
-        const paramsForProvider = { ...params, isCreditCard: this._fundingSource === 'credit' };
+        const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' };
         const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, paramsForProvider);
 
         return orderId;

@@ -206,4 +206,34 @@ describe('PaymentStrategySelector', () => {
             expect(selector.isWidgetInteracting()).toEqual(false);
         });
     });
+
+    describe('#isShowEmbeddedSubmitButton()', () => {
+        it('return true if need to show embedded submit button', () => {
+            selector = createPaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { embeddedSubmitButtonMethodId: 'foobar', isEmbeddedSubmitButton: true },
+            });
+
+            expect(selector.isShowEmbeddedSubmitButton()).toEqual(true);
+        });
+
+        it('return true if need to show embedded submit button for a specific method', () => {
+            selector = createPaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { embeddedSubmitButtonMethodId: 'foobar', isEmbeddedSubmitButton: true },
+            });
+
+            expect(selector.isShowEmbeddedSubmitButton('foobar')).toEqual(true);
+            expect(selector.isShowEmbeddedSubmitButton('bar')).toEqual(false);
+        });
+
+        it('return true if don not need to show embedded submit button for a specific method', () => {
+            selector = createPaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { embeddedSubmitButtonMethodId: undefined, isEmbeddedSubmitButton: false },
+            });
+
+            expect(selector.isShowEmbeddedSubmitButton()).toEqual(false);
+        });
+    });
 });

@@ -38,7 +38,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         await this._paypalCommercePaymentProcessor.initialize({ options: this._getParamsScript(initializationData, cart) });
 
-        return this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
+        this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
+
+        return Promise.resolve();
     }
 
     deinitialize(): Promise<void> {

@@ -249,13 +249,10 @@ export default interface CheckoutStoreSelector {
     getShippingAddressFields(countryCode: string): FormField[];
 
     /**
-     * Checks whether a specific or any payment method is initializing.
-     *
-     * The method returns true if no ID is provided and at least one payment
-     * method is initializing.
+     * Checks render a embedded submit button instead standard
      *
      * @param methodId - The identifier of the payment method to check.
-     * @returns True if the payment method is initializing, otherwise false.
+     * @returns True if should hide submitting form button and render embedded button.
      */
     isShowEmbeddedSubmitButton(methodId?: string): boolean;
 }

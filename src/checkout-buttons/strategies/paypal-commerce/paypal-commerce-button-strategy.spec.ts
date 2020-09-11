@@ -5,54 +5,49 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { from, of } from 'rxjs';
 
+import { Cart } from '../../../cart';
+import { getCart } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
-import { ButtonsOptions, PaypalCommerceHostWindow, PaypalCommerceRequestSender, PaypalCommerceScriptAttribute, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, PaypalCommerceSDK, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
-import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
+import { PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
-interface DataPaypalCommerceScript {
-    options: PaypalCommerceScriptOptions;
-    attr?: PaypalCommerceScriptAttribute;
-}
-
 describe('PaypalCommerceButtonStrategy', () => {
     let store: CheckoutStore;
     let checkoutActionCreator: CheckoutActionCreator;
     let formPoster: FormPoster;
-    let paypal: PaypalCommerceSDK;
-    let paypalScriptLoader: PaypalCommerceScriptLoader;
     let paypalOptions: PaypalCommerceButtonInitializeOptions;
     let options: CheckoutButtonInitializeOptions;
     let eventEmitter: EventEmitter;
     let strategy: PaypalCommerceButtonStrategy;
-    let paypalCommerceRequestSender: PaypalCommerceRequestSender;
     let requestSender: RequestSender;
     let paymentMethod: PaymentMethod;
-    let render: () => void;
     let orderID: string;
+    let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
+    let cart: Cart;
     let fundingSource: string;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
-        paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
         paymentMethod = { ...getPaypalCommerce() };
+        cart = { ...getCart() };
+        formPoster = createFormPoster();
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
         );
-        formPoster = createFormPoster();
-        paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
+        eventEmitter = new EventEmitter();
 
         paypalOptions = {
             style: {
@@ -63,36 +58,13 @@ describe('PaypalCommerceButtonStrategy', () => {
         };
 
         options = {
-            containerId: 'paypalcommerce-container1',
+            containerId: 'paypalcommerce-container',
             methodId: CheckoutButtonMethodType.PAYPALCOMMERCE,
             paypalCommerce: paypalOptions,
         };
 
         orderID = 'ORDER_ID';
         fundingSource = 'paypal';
-        eventEmitter = new EventEmitter();
-        paypal = getPaypalCommerceMock();
-
-        render = jest.spyOn(paypal, 'Buttons')
-            .mockImplementation((options: ButtonsOptions) => {
-                eventEmitter.on('onClick', () => {
-                    if (options.onClick) {
-                        options.onClick({fundingSource});
-                    }
-                });
-
-                eventEmitter.on('createOrder', () => {
-                    options.createOrder();
-                });
-
-                eventEmitter.on('approve', () => {
-                    options.onApprove( { orderID });
-                });
-
-                return {
-                    render: () => {},
-                };
-            });
 
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
             .mockReturnValue(() => {
@@ -102,24 +74,34 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ]);
             });
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockReturnValue(Promise.resolve(paypal));
+        jest.spyOn(paypalCommercePaymentProcessor, 'initialize')
+            .mockReturnValue(Promise.resolve());
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockReturnValue(Promise.resolve(paypal));
+        jest.spyOn(paypalCommercePaymentProcessor, 'renderButtons')
+            .mockImplementation((...arg) => {
+                const [, , options] = arg;
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick({ fundingSource });
+                    }
+                });
+
+                eventEmitter.on('onApprove', () => {
+                    if (options.onApprove) {
+                        options.onApprove({ orderID });
+                    }
+                });
+            });
 
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
-        jest.spyOn(paypalCommerceRequestSender, 'setupPayment')
-            .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({body: '123'})));
-
         strategy = new PaypalCommerceButtonStrategy(
             store,
             checkoutActionCreator,
-            paypalScriptLoader,
             formPoster,
-            paypalCommerceRequestSender
+            paypalCommercePaymentProcessor
         );
 
     });
@@ -127,133 +109,40 @@ describe('PaypalCommerceButtonStrategy', () => {
     it('initializes PaypalCommerce and PayPal JS clients', async () => {
         await strategy.initialize(options);
 
-        expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalled();
+        const obj = { options : {
+            clientId: 'abc',
+            commit: false,
+            currency: 'USD',
+            intent: 'capture',
+            disableFunding: ['card', 'credit'],
+        }};
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
-    it('throws error if unable to initialize PaypalCommerce or PayPal JS client', async () => {
-        const expectedError = new Error('Unable to load JS client');
-
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockReturnValue(Promise.reject(expectedError));
-
-        try {
-            await strategy.initialize(options);
-        } catch (error) {
-            expect(error).toEqual(expectedError);
-        }
-    });
-
-    it('setting PaypalCommerce checkout button', async () => {
+    it('render PayPal buttons', async () => {
         await strategy.initialize(options);
 
-        expect(paypal.Buttons).toHaveBeenCalledWith({
-            onClick: expect.any(Function),
-            createOrder: expect.any(Function),
+        const buttonOption = {
             onApprove: expect.any(Function),
+            onClick: expect.any(Function),
             style: paypalOptions.style,
-        });
-    });
+        };
 
-    it('render PayPalCommerce checkout button', async () => {
-        await strategy.initialize(options);
-
-        expect(render).toHaveBeenCalled();
-    });
-
-    it('calls loadPaypalCommerce with expected arguments', async () => {
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockImplementation(({ options }: DataPaypalCommerceScript) => {
-                (window as PaypalCommerceHostWindow).paypal = paypal;
-
-                const obj = {
-                    clientId: 'abc',
-                    commit: false,
-                    currency: 'USD',
-                    intent: 'capture',
-                    disableFunding: ['card', 'credit'],
-                };
-
-                expect(options).toMatchObject(obj);
-
-                return Promise.resolve(paypal);
-            });
-
-        await strategy.initialize(options);
-    });
-
-    it('calls loadPaypalCommerce without disableFunding when isPayPalCreditAvailable = true', async () => {
-        paymentMethod.initializationData.isPayPalCreditAvailable = true;
-
-        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-            .mockImplementation((options: PaypalCommerceScriptOptions) => {
-                (window as PaypalCommerceHostWindow).paypal = paypal;
-
-                const obj = { disableFunding: ['credit'] };
-
-                expect(options).not.toMatchObject(obj);
-
-                return Promise.resolve(paypal);
-            });
-
-        await strategy.initialize(options);
-    });
-
-    it('throws error if unable to setting PayPalCommerce button', async () => {
-        const expectedError = new Error('Unable to setting PayPal button');
-
-        jest.spyOn(paypal, 'Buttons')
-            .mockImplementation(() => {
-                throw expectedError;
-            });
-
-        try {
-            await strategy.initialize(options);
-        } catch (error) {
-            expect(error).toEqual(expectedError);
-        }
-    });
-
-    it('create order (post request to server) when PayPalCommerce payment details are setup payment', async () => {
-        await strategy.initialize(options);
-
-        eventEmitter.emit('onClick');
-
-        eventEmitter.emit('createOrder');
-
-        await new Promise(resolve => process.nextTick(resolve));
-
-        expect(paypalCommerceRequestSender.setupPayment)
-            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', { isCredit: false });
-    });
-
-    it('create order with credit (post request to server) when PayPalCommerce payment details are setup payment', async () => {
-        fundingSource = 'credit';
-
-        await strategy.initialize(options);
-
-        eventEmitter.emit('onClick');
-
-        eventEmitter.emit('createOrder');
-
-        await new Promise(resolve => process.nextTick(resolve));
-
-        expect(paypalCommerceRequestSender.setupPayment)
-            .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', { isCredit: true });
+        expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
         await strategy.initialize(options);
 
-        eventEmitter.emit('approve');
+        eventEmitter.emit('onApprove');
 
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: CheckoutButtonMethodType.PAYPALCOMMERCE,
+            provider: 'paypalcommerce',
             order_id: orderID,
         }));
     });
@@ -264,96 +153,16 @@ describe('PaypalCommerceButtonStrategy', () => {
         await strategy.initialize(options);
 
         eventEmitter.emit('onClick');
-
-        eventEmitter.emit('approve');
+        eventEmitter.emit('onApprove');
 
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: CheckoutButtonMethodType.PAYPALCOMMERCE + 'credit',
+            provider: 'paypalcommercecredit',
             order_id: orderID,
         }));
-    });
-
-    it('throws error in tokenize payment without order id', async () => {
-        orderID = '';
-        await strategy.initialize(options);
-
-        try {
-            eventEmitter.emit('approve');
-
-            await new Promise(resolve => process.nextTick(resolve));
-        } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
-        }
-    });
-
-    it('throws error in setup payment', async () => {
-        const expectedError = new Error('Error in creating order');
-
-        await strategy.initialize(options);
-
-        try {
-            eventEmitter.emit('createOrder');
-
-            await new Promise((_, reject) => process.nextTick(() => reject(expectedError)));
-        } catch (error) {
-            expect(error).toEqual(expectedError);
-        }
-    });
-
-    describe('validate style for PaypalCommerce checkout button', () => {
-        it('invalid all data', async () => {
-            const style: any = {
-                layout: 'aaa',
-                color: 'aaa',
-                shape: 'aaa',
-                height: 5,
-                label: 'aaa',
-                tagline: true,
-            };
-
-            await strategy.initialize({ ...options, paypalCommerce: { style } });
-
-            expect(paypal.Buttons).toHaveBeenCalledWith({
-                onClick: expect.any(Function),
-                createOrder: expect.any(Function),
-                onApprove: expect.any(Function),
-                style: { height: 25 },
-            });
-        });
-
-        it('invalid height and valid other', async () => {
-            const style: any = {
-                height: 100,
-                tagline: true,
-                layout: 'horizontal',
-            };
-
-            await strategy.initialize({ ...options, paypalCommerce: { style } });
-
-            expect(paypal.Buttons).toHaveBeenCalledWith({
-                onClick: expect.any(Function),
-                createOrder: expect.any(Function),
-                onApprove: expect.any(Function),
-                style: { tagline: true, layout: 'horizontal', height: 55 },
-            });
-        });
-
-        it('invalid height - not number', async () => {
-            const style: any = { height: '' };
-
-            await strategy.initialize({ ...options, paypalCommerce: { style } });
-
-            expect(paypal.Buttons).toHaveBeenCalledWith({
-                onClick: expect.any(Function),
-                createOrder: expect.any(Function),
-                onApprove: expect.any(Function),
-                style: {},
-            });
-        });
     });
 
     describe('throws error during initialize', () => {
@@ -365,9 +174,8 @@ describe('PaypalCommerceButtonStrategy', () => {
             strategy = new PaypalCommerceButtonStrategy(
                 store,
                 checkoutActionCreator,
-                paypalScriptLoader,
                 formPoster,
-                paypalCommerceRequestSender
+                paypalCommercePaymentProcessor
             );
 
             try {
@@ -383,9 +191,8 @@ describe('PaypalCommerceButtonStrategy', () => {
                 strategy = new PaypalCommerceButtonStrategy(
                     store,
                     checkoutActionCreator,
-                    paypalScriptLoader,
                     formPoster,
-                    paypalCommerceRequestSender
+                    paypalCommercePaymentProcessor
                 );
 
                 options = {
@@ -408,9 +215,8 @@ describe('PaypalCommerceButtonStrategy', () => {
             strategy = new PaypalCommerceButtonStrategy(
                 store,
                 checkoutActionCreator,
-                paypalScriptLoader,
                 formPoster,
-                paypalCommerceRequestSender
+                paypalCommercePaymentProcessor
             );
             const checkout = getCheckout();
             delete checkout.cart;

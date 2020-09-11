@@ -249,4 +249,8 @@ describe('CheckoutStoreSelector', () => {
         // tslint:disable-next-line:no-non-null-assertion
         expect(privateCheckout!.customer.email).not.toEqual('should@notchange.com');
     });
+
+    it('returns flag indicating if should show embedded submit button', () => {
+        expect(selector.isShowEmbeddedSubmitButton('paypalcommerce')).toEqual(false);
+    });
 });

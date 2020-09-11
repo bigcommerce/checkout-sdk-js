@@ -520,4 +520,20 @@ describe('PaymentStrategyActionCreator', () => {
             ]);
         });
     });
+
+    describe('#embeddedSubmitButton', () => {
+        it('returns action to enable embedded button', () => {
+            expect(actionCreator.enableEmbeddedSubmitButton('paypalcommerce')).toEqual({
+                type: PaymentStrategyActionType.EmbeddedSubmitButtonStarted,
+                meta: { methodId: 'paypalcommerce' },
+            });
+        });
+
+        it('returns action to desable embedded button', () => {
+            expect(actionCreator.disableEmbeddedSubmitButton('paypalcommerce')).toEqual({
+                type: PaymentStrategyActionType.EmbeddedSubmitButtonFinished,
+                meta: { methodId: 'paypalcommerce' },
+            });
+        });
+    });
 });
