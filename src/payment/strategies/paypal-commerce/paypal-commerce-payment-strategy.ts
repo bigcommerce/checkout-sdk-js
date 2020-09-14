@@ -3,7 +3,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -74,6 +74,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        if (!this._orderId) {
+            throw new PaymentMethodInvalidError();
         }
 
         const paymentData =  {

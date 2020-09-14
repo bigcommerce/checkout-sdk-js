@@ -15,7 +15,7 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import createPaymentClient from '../../create-payment-client';
 import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -279,6 +279,16 @@ describe('PaypalCommercePaymentStrategy', () => {
                 await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
             } catch (error) {
                 expect(error).toEqual(new PaymentArgumentInvalidError(['payment']));
+            }
+        });
+
+        it('throw error without orderId', async () => {
+            orderID = '';
+
+            try {
+                await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(error).toEqual(new PaymentMethodInvalidError());
             }
         });
     });
