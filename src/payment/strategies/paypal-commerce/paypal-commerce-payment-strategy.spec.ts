@@ -40,7 +40,6 @@ describe('PaypalCommercePaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
-    let hidePaymentButton: () => void;
     let submitForm: () => void;
 
     beforeEach(() => {
@@ -54,7 +53,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         eventEmitter = new EventEmitter();
 
         store = createCheckoutStore(getCheckoutStoreState());
-        hidePaymentButton = jest.fn();
         submitForm = jest.fn();
         options = {
             methodId: paymentMethod.id,
@@ -62,7 +60,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 container: '#container',
                 style: {},
                 submitForm,
-                hidePaymentButton,
+                hidePaymentButton: jest.fn(),
             },
         };
 
@@ -138,7 +136,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 style: options?.paypalcommerce?.style,
             };
 
-            const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true } };
+            const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true }, cbIfEligible: expect.any(Function) };
 
             expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${options?.paypalcommerce?.container}`, buttonOption, optionalParams);
         });
@@ -161,17 +159,9 @@ describe('PaypalCommercePaymentStrategy', () => {
                 style: options?.paypalcommerce?.style,
             };
 
-            const optionalParams = { fundingKey: 'CREDIT', paramsForProvider: { isCheckout: true } };
+            const optionalParams = { fundingKey: 'CREDIT', paramsForProvider: { isCheckout: true }, cbIfEligible: expect.any(Function) };
 
             expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${options?.paypalcommerce?.container}`, buttonOption, optionalParams);
-        });
-
-        it('hide Payment button if orderId is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
-
-            await paypalCommercePaymentStrategy.initialize(options);
-
-            expect(hidePaymentButton).toHaveBeenCalled();
         });
 
         it('call submitForm after approve', async () => {

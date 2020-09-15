@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
@@ -40,7 +42,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument is not provided.');
         }
 
-        const { container, hidePaymentButton, submitForm, style } = paypalcommerce;
+        const { container, hidePaymentButton, submitForm, style, onError = noop } = paypalcommerce;
 
         if (!container) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.container" argument is not provided.');
@@ -57,12 +59,17 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 
-        hidePaymentButton();
+        try {
+            this._paypalCommercePaymentProcessor.renderButtons(cart.id, container, buttonParams, {
+                fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
+                paramsForProvider: {isCheckout: true},
+                cbIfEligible: hidePaymentButton,
+            });
+        } catch (error) {
+            onError();
 
-        this._paypalCommercePaymentProcessor.renderButtons(cart.id, container, buttonParams, {
-            fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
-            paramsForProvider: { isCheckout: true },
-        });
+            throw error;
+        }
 
         return this._store.getState();
     }

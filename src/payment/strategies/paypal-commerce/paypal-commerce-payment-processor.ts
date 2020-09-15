@@ -6,6 +6,7 @@ import { ButtonsOptions, ClickDataOptions, DataPaypalCommerceScript, ParamsForPr
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
     fundingKey?: keyof PaypalCommerceSDKFunding;
+    cbIfEligible?(): void;
 }
 
 export interface ParamsRenderHostedFields {
@@ -43,7 +44,7 @@ export default class PaypalCommercePaymentProcessor {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        const  { paramsForProvider, fundingKey } = optionalParams;
+        const  { paramsForProvider, fundingKey, cbIfEligible } = optionalParams;
 
         const buttonParams: ButtonsOptions = {
             ...params,
@@ -70,6 +71,10 @@ export default class PaypalCommercePaymentProcessor {
 
         if (!this._paypalButtons.isEligible()) {
             throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
+        }
+
+        if (cbIfEligible) {
+            cbIfEligible();
         }
 
         this._paypalButtons.render(container);
