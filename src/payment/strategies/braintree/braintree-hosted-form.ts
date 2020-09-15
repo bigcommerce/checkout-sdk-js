@@ -2,10 +2,11 @@ import { isNil, omitBy, Dictionary } from 'lodash';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState } from './braintree';
-import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap, BraintreeFormFieldType, BraintreeFormFieldValidateEventData, BraintreeFormOptions, BraintreeStoredCardFieldsMap } from './braintree-payment-options';
+import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
+import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap, BraintreeFormFieldType, BraintreeFormFieldValidateErrorData, BraintreeFormFieldValidateEventData, BraintreeFormOptions, BraintreeStoredCardFieldsMap } from './braintree-payment-options';
 import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { isBraintreeFormFieldsMap } from './is-braintree-form-fields-map';
@@ -48,6 +49,8 @@ export default class BraintreeHostedForm {
                 options.fields.cardName,
                 options.styles
             );
+            this._cardNameField.on('blur', this._handleNameBlur);
+            this._cardNameField.on('focus', this._handleNameFocus);
             this._cardNameField.attach();
         }
     }
@@ -62,12 +65,32 @@ export default class BraintreeHostedForm {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { nonce } = await this._cardFields.tokenize(omitBy({
-            billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
-            cardholderName: this._cardNameField?.getValue(),
-        }, isNil));
+        try {
+            const { nonce } = await this._cardFields.tokenize(omitBy({
+                billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
+                cardholderName: this._cardNameField?.getValue(),
+            }, isNil));
 
-        return { nonce };
+            this._formOptions?.onValidate?.({
+                isValid: true,
+                errors: {},
+            });
+
+            return { nonce };
+        } catch (error) {
+            const errors = this._mapTokenizeError(error);
+
+            if (errors) {
+                this._formOptions?.onValidate?.({
+                    isValid: false,
+                    errors,
+                });
+
+                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+            }
+
+            throw error;
+        }
     }
 
     async tokenizeForStoredCardVerification(): Promise<NonceInstrument> {
@@ -75,11 +98,31 @@ export default class BraintreeHostedForm {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { nonce } = await this._cardFields.tokenize(omitBy({
-            cardholderName: this._cardNameField?.getValue(),
-        }, isNil));
+        try {
+            const { nonce } = await this._cardFields.tokenize(omitBy({
+                cardholderName: this._cardNameField?.getValue(),
+            }, isNil));
 
-        return { nonce };
+            this._formOptions?.onValidate?.({
+                isValid: true,
+                errors: {},
+            });
+
+            return { nonce };
+        } catch (error) {
+            const errors = this._mapTokenizeError(error);
+
+            if (errors) {
+                this._formOptions?.onValidate?.({
+                    isValid: false,
+                    errors,
+                });
+
+                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+            }
+
+            throw error;
+        }
     }
 
     private _mapBillingAddress(billingAddress: Address): BraintreeBillingAddressRequestData {
@@ -161,90 +204,171 @@ export default class BraintreeHostedForm {
         }
     }
 
-    private _mapStoredCardVerificationErrors(
+    private _mapValidationErrors(
         fields: BraintreeHostedFieldsState['fields']
     ): BraintreeFormFieldValidateEventData['errors'] {
-        return this._type === BraintreeHostedFormType.StoredCardVerification ?
-            {
-                [BraintreeFormFieldType.CardCodeVerification]: !fields.cvv || fields.cvv.isValid ? undefined : [{
-                    fieldType: 'cardCodeVerification',
-                    message: 'Invalid card code',
-                    type: 'invalid_card_code',
-                }],
-                [BraintreeFormFieldType.CardNumberVerification]: !fields.number || fields.number.isValid ? undefined : [{
-                    fieldType: 'cardNumberVerification',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-            } :
-            {
-                [BraintreeFormFieldType.CardCode]: !fields.cvv || fields.cvv.isValid ? undefined : [{
-                    fieldType: 'cardCode',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-                [BraintreeFormFieldType.CardExpiry]: !fields.expirationDate || fields.expirationDate.isValid ? undefined : [{
-                    fieldType: 'cardExpiry',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-                [BraintreeFormFieldType.CardNumber]: !fields.number || fields.number.isValid ? undefined : [{
-                    fieldType: 'cardNumber',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
+        return (Object.keys(fields) as Array<keyof BraintreeHostedFieldsState['fields']>)
+            .reduce((result, fieldKey) => ({
+                ...result,
+                [this._mapFieldType(fieldKey)]: fields[fieldKey]?.isValid ? undefined : [
+                    this._createInvalidError(this._mapFieldType(fieldKey)),
+                ],
+            }), {});
+    }
+
+    private _mapTokenizeError(
+        error: BraintreeHostedFormError
+    ): BraintreeFormFieldValidateEventData['errors'] | undefined {
+        if (error.code === 'HOSTED_FIELDS_FIELDS_EMPTY') {
+            return {
+                [this._mapFieldType('cvv')]: [
+                    this._createRequiredError(this._mapFieldType('cvv')),
+                ],
+                [this._mapFieldType('expirationDate')]: [
+                    this._createRequiredError(this._mapFieldType('expirationDate')),
+                ],
+                [this._mapFieldType('number')]: [
+                    this._createRequiredError(this._mapFieldType('number')),
+                ],
             };
+        }
+
+        return error?.details?.invalidFieldKeys?.reduce((result, fieldKey) => ({
+            ...result,
+            [this._mapFieldType(fieldKey)]: [
+                this._createInvalidError(this._mapFieldType(fieldKey)),
+            ],
+        }), {});
+    }
+
+    private _createRequiredError(fieldType: BraintreeFormFieldType): BraintreeFormFieldValidateErrorData {
+        switch (fieldType) {
+        case BraintreeFormFieldType.CardCodeVerification:
+        case BraintreeFormFieldType.CardCode:
+            return {
+                fieldType,
+                message: 'CVV is required',
+                type: 'required',
+            };
+
+        case BraintreeFormFieldType.CardNumberVerification:
+        case BraintreeFormFieldType.CardNumber:
+            return {
+                fieldType,
+                message: 'Credit card number is required',
+                type: 'required',
+            };
+
+        case BraintreeFormFieldType.CardExpiry:
+            return {
+                fieldType,
+                message: 'Expiration date is required',
+                type: 'required',
+            };
+
+        case BraintreeFormFieldType.CardName:
+            return {
+                fieldType,
+                message: 'Full name is required',
+                type: 'required',
+            };
+
+        default:
+            return {
+                fieldType,
+                message: 'Field is required',
+                type: 'required',
+            };
+        }
+    }
+
+    private _createInvalidError(fieldType: BraintreeFormFieldType): BraintreeFormFieldValidateErrorData {
+        switch (fieldType) {
+        case BraintreeFormFieldType.CardCodeVerification:
+            return {
+                fieldType,
+                message: 'Invalid card code',
+                type: 'invalid_card_code',
+            };
+
+        case BraintreeFormFieldType.CardNumberVerification:
+            return {
+                fieldType,
+                message: 'Invalid card number',
+                type: 'invalid_card_number',
+            };
+
+        case BraintreeFormFieldType.CardCode:
+            return {
+                fieldType,
+                message: 'Invalid card code',
+                type: 'invalid_card_code',
+            };
+
+        case BraintreeFormFieldType.CardExpiry:
+            return {
+                fieldType,
+                message: 'Invalid card expiry',
+                type: 'invalid_card_expiry',
+            };
+
+        case BraintreeFormFieldType.CardNumber:
+            return {
+                fieldType,
+                message: 'Invalid card number',
+                type: 'invalid_card_number',
+            };
+
+        default:
+            return {
+                fieldType,
+                message: 'Invalid field',
+                type: 'invalid',
+            };
+        }
     }
 
     private _handleBlur: (event: BraintreeHostedFieldsState) => void = event => {
-        if (!this._formOptions?.onBlur) {
-            return;
-        }
-
-        this._formOptions.onBlur({
+        this._formOptions?.onBlur?.({
             fieldType: this._mapFieldType(event.emittedBy),
+        });
+    };
+
+    private _handleNameBlur: () => void = () => {
+        this._formOptions?.onBlur?.({
+            fieldType: BraintreeFormFieldType.CardName,
         });
     };
 
     private _handleFocus: (event: BraintreeHostedFieldsState) => void = event => {
-        if (!this._formOptions?.onFocus) {
-            return;
-        }
-
-        this._formOptions.onFocus({
+        this._formOptions?.onFocus?.({
             fieldType: this._mapFieldType(event.emittedBy),
         });
     };
 
-    private _handleCardTypeChange: (event: BraintreeHostedFieldsState) => void = event => {
-        if (!this._formOptions?.onCardTypeChange) {
-            return;
-        }
+    private _handleNameFocus: () => void = () => {
+        this._formOptions?.onFocus?.({
+            fieldType: BraintreeFormFieldType.CardName,
+        });
+    };
 
-        this._formOptions.onCardTypeChange({
+    private _handleCardTypeChange: (event: BraintreeHostedFieldsState) => void = event => {
+        this._formOptions?.onCardTypeChange?.({
             cardType: event.cards[0]?.type,
         });
     };
 
     private _handleInputSubmitRequest: (event: BraintreeHostedFieldsState) => void = event => {
-        if (!this._formOptions?.onEnter) {
-            return;
-        }
-
-        this._formOptions.onEnter({
+        this._formOptions?.onEnter?.({
             fieldType: this._mapFieldType(event.emittedBy),
         });
     };
 
     private _handleValidityChange: (event: BraintreeHostedFieldsState) => void = event => {
-        if (!this._formOptions?.onValidate) {
-            return;
-        }
-
-        this._formOptions.onValidate({
+        this._formOptions?.onValidate?.({
             isValid: (Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>)
                 .every(key => event.fields[key]?.isValid),
-            errors: this._mapStoredCardVerificationErrors(event.fields),
+            errors: this._mapValidationErrors(event.fields),
         });
     };
 }

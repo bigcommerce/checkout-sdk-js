@@ -323,6 +323,11 @@ export interface BraintreeVerifyPayload {
 export interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
-    details: object;
     message: string;
+}
+
+export interface BraintreeHostedFormError extends BraintreeError {
+    details?: {
+        invalidFieldKeys?: string[];
+    };
 }

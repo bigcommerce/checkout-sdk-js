@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
+import { PaymentInvalidFormError } from '../../errors';
 
 import { BraintreeHostedFields } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
@@ -244,8 +245,8 @@ describe('BraintreeHostedForm', () => {
                 errors: {
                     cardCode: [{
                         fieldType: 'cardCode',
-                        message: 'Invalid card number',
-                        type: 'invalid_card_number',
+                        message: 'Invalid card code',
+                        type: 'invalid_card_code',
                     }],
                     cardNumber: [{
                         fieldType: 'cardNumber',
@@ -254,12 +255,50 @@ describe('BraintreeHostedForm', () => {
                     }],
                     cardExpiry: [{
                         fieldType: 'cardExpiry',
-                        message: 'Invalid card number',
-                        type: 'invalid_card_number',
+                        message: 'Invalid card expiry',
+                        type: 'invalid_card_expiry',
                     }],
                 },
                 isValid: false,
             });
+    });
+
+    it('notifies when tokenizing with invalid form data', async () => {
+        const handleValidate = jest.fn();
+
+        await subject.initialize({
+            ...formOptions,
+            onValidate: handleValidate,
+        });
+
+        jest.spyOn(cardFields, 'tokenize')
+            .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+
+        try {
+            await subject.tokenize(getBillingAddress());
+        } catch (error) {
+            expect(handleValidate)
+                .toHaveBeenCalledWith({
+                    errors: {
+                        cardCode: [{
+                            fieldType: 'cardCode',
+                            message: 'CVV is required',
+                            type: 'required',
+                        }],
+                        cardNumber: [{
+                            fieldType: 'cardNumber',
+                            message: 'Credit card number is required',
+                            type: 'required',
+                        }],
+                        cardExpiry: [{
+                            fieldType: 'cardExpiry',
+                            message: 'Expiration date is required',
+                            type: 'required',
+                        }],
+                    },
+                    isValid: false,
+                });
+        }
     });
 
     it('notifies when there are no more validation errors', async () => {
@@ -277,6 +316,27 @@ describe('BraintreeHostedForm', () => {
                 expirationDate: { isValid: true },
             },
         });
+
+        expect(handleValidate)
+            .toHaveBeenCalledWith({
+                errors: {
+                    cardCode: undefined,
+                    cardNumber: undefined,
+                    cardExpiry: undefined,
+                },
+                isValid: true,
+            });
+    });
+
+    it('notifies when tokenizing with valid form data', async () => {
+        const handleValidate = jest.fn();
+
+        await subject.initialize({
+            ...formOptions,
+            onValidate: handleValidate,
+        });
+
+        await subject.tokenize(getBillingAddress());
 
         expect(handleValidate)
             .toHaveBeenCalledWith({
@@ -308,6 +368,19 @@ describe('BraintreeHostedForm', () => {
                 },
                 cardholderName: 'Foobar',
             });
+    });
+
+    it('returns invalid form error when tokenizing with invalid form data', async () => {
+        await subject.initialize(formOptions);
+
+        jest.spyOn(cardFields, 'tokenize')
+            .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+
+        try {
+            await subject.tokenize(getBillingAddress());
+        } catch (error) {
+            expect(error).toBeInstanceOf(PaymentInvalidFormError);
+        }
     });
 
     it('tokenizes data through hosted fields for stored card verification', async () => {
