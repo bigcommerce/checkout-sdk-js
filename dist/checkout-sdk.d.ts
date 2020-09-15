@@ -548,7 +548,6 @@ declare interface BoltPaymentInitializeOptions {
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
-    details: object;
     message: string;
 }
 

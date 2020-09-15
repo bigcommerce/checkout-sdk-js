@@ -14,7 +14,6 @@
 
 * [Error](braintreeerror.md#error)
 * [code](braintreeerror.md#code)
-* [details](braintreeerror.md#details)
 * [message](braintreeerror.md#message)
 * [name](braintreeerror.md#name)
 * [stack](braintreeerror.md#optional-stack)
@@ -31,12 +30,6 @@ ___
 ###  code
 
 • **code**: *string*
-
-___
-
-###  details
-
-• **details**: *object*
 
 ___
 

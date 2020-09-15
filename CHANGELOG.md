@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.1...v1.99.2) (2020-09-15)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5135 Fix onValidate callback not getting called with correct error type and not getting called when tokenize returns validation error ([307c44d](https://github.com/bigcommerce/checkout-sdk-js/commit/307c44daaf32e437988ce4569ed58377bccb7860))
+
 ### [1.99.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.0...v1.99.1) (2020-09-15)
 
 ## [1.99.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.98.0...v1.99.0) (2020-09-10)
