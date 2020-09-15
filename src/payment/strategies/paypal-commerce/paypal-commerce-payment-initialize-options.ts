@@ -12,6 +12,7 @@ export interface PaypalCommercePaymentInitializeOptions {
     form?: PaypalCommerceFormOptions;
     style?: PaypalButtonStyleOptions;
     submitForm?(): void;
+    hidePaymentButton?(): void;
 }
 
 export interface PaypalCommerceFormOptions {

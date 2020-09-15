@@ -297,7 +297,6 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            paymentStrategyActionCreator,
             paypalCommercePaymentProcessor
         )
     );
@@ -308,7 +307,6 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            paymentStrategyActionCreator,
             paypalCommercePaymentProcessor,
             true
         )

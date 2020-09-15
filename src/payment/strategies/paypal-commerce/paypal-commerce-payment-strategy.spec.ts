@@ -1,6 +1,6 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
@@ -12,9 +12,6 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
-import createPaymentClient from '../../create-payment-client';
-import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -24,7 +21,6 @@ import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
-import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
 import { PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
@@ -40,11 +36,12 @@ describe('PaypalCommercePaymentStrategy', () => {
     let options: PaymentInitializeOptions;
     let requestSender: RequestSender;
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
-    let paymentStrategyActionCreator: PaymentStrategyActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
+    let hidePaymentButton: () => void;
+    let submitForm: () => void;
 
     beforeEach(() => {
         paymentMethod = { ...getPaypalCommerce() };
@@ -57,12 +54,15 @@ describe('PaypalCommercePaymentStrategy', () => {
         eventEmitter = new EventEmitter();
 
         store = createCheckoutStore(getCheckoutStoreState());
+        hidePaymentButton = jest.fn();
+        submitForm = jest.fn();
         options = {
             methodId: paymentMethod.id,
             paypalcommerce: {
                 container: '#container',
-                submitForm: () => jest.fn(),
                 style: {},
+                submitForm,
+                hidePaymentButton,
             },
         };
 
@@ -93,20 +93,11 @@ describe('PaypalCommercePaymentStrategy', () => {
                 });
             });
 
-        const spamProtection = createSpamProtection(createScriptLoader());
-
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, createPaymentClient(store), requestSender, spamProtection, 'en_US'),
-            orderActionCreator,
-            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
-        );
-
         paypalCommercePaymentStrategy = new PaypalCommercePaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            paymentStrategyActionCreator,
             paypalCommercePaymentProcessor
         );
     });
@@ -158,7 +149,6 @@ describe('PaypalCommercePaymentStrategy', () => {
                 orderActionCreator,
                 paymentActionCreator,
                 paymentMethodActionCreator,
-                paymentStrategyActionCreator,
                 paypalCommercePaymentProcessor,
                 true
             );
@@ -176,14 +166,24 @@ describe('PaypalCommercePaymentStrategy', () => {
             expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${options?.paypalcommerce?.container}`, buttonOption, optionalParams);
         });
 
-        it('enable Embedded Submit Button if orderId is undefined', async () => {
-            jest.spyOn(paymentStrategyActionCreator, 'enableEmbeddedSubmitButton').mockImplementation(() => jest.fn());
-
+        it('hide Payment button if orderId is undefined', async () => {
             paymentMethod.initializationData.orderId = undefined;
 
             await paypalCommercePaymentStrategy.initialize(options);
 
-            expect(paymentStrategyActionCreator.enableEmbeddedSubmitButton).toHaveBeenCalledWith(paymentMethod.id);
+            expect(hidePaymentButton).toHaveBeenCalled();
+        });
+
+        it('call submitForm after approve', async () => {
+            paymentMethod.initializationData.orderId = undefined;
+
+            await paypalCommercePaymentStrategy.initialize(options);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(submitForm).toHaveBeenCalled();
         });
 
         it('throw error if paypalcommerce is undefined', async () => {
