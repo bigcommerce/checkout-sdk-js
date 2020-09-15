@@ -187,18 +187,6 @@ function statusesReducer(
             widgetInteractionMethodId: undefined,
         });
 
-    case PaymentStrategyActionType.EmbeddedSubmitButtonStarted:
-        return objectMerge(statuses, {
-            isEmbeddedSubmitButton: true,
-            embeddedSubmitButtonMethodId: action.meta.methodId,
-        });
-
-    case PaymentStrategyActionType.EmbeddedSubmitButtonFinished:
-        return objectMerge(statuses, {
-            isEmbeddedSubmitButton: false,
-            embeddedSubmitButtonMethodId: undefined,
-        });
-
     default:
         return statuses;
     }

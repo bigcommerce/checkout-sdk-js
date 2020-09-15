@@ -18,8 +18,6 @@ export enum PaymentStrategyActionType {
     WidgetInteractionStarted = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_STARTED',
     WidgetInteractionFinished = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_FINISHED',
     WidgetInteractionFailed = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_FAILED',
-    EmbeddedSubmitButtonStarted = 'PAYMENT_STRATEGY_EMBEDDED_SUBMIT_STARTED',
-    EmbeddedSubmitButtonFinished = 'PAYMENT_STRATEGY_EMBEDDED_SUBMIT_FINISHED',
 }
 
 export type PaymentStrategyAction =
@@ -27,8 +25,7 @@ export type PaymentStrategyAction =
     PaymentStrategyFinalizeAction |
     PaymentStrategyInitializeAction |
     PaymentStrategyDeinitializeAction |
-    PaymentStrategyWidgetAction |
-    PaymentStrategyEmbeddedSubmitButton;
+    PaymentStrategyWidgetAction;
 
 export type PaymentStrategyExecuteAction =
     ExecuteRequestedAction |
@@ -56,10 +53,6 @@ export type PaymentStrategyWidgetAction =
     WidgetInteractionStartedAction |
     WidgetInteractionFinishedAction |
     WidgetInteractionFailedAction;
-
-export type PaymentStrategyEmbeddedSubmitButton =
-    EmbeddedSubmitButtonStartedAction |
-    EmbeddedSubmitButtonFinishedAction;
 
 export interface ExecuteRequestedAction extends Action {
     type: PaymentStrategyActionType.ExecuteRequested;
@@ -119,12 +112,4 @@ export interface WidgetInteractionFinishedAction extends Action {
 
 export interface WidgetInteractionFailedAction extends Action<Error> {
     type: PaymentStrategyActionType.WidgetInteractionFailed;
-}
-
-export interface EmbeddedSubmitButtonStartedAction extends Action {
-    type: PaymentStrategyActionType.EmbeddedSubmitButtonStarted;
-}
-
-export interface EmbeddedSubmitButtonFinishedAction extends Action {
-    type: PaymentStrategyActionType.EmbeddedSubmitButtonFinished;
 }
