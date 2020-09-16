@@ -1,12 +1,12 @@
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { ButtonsOptions, ClickDataOptions, DataPaypalCommerceScript, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, DataPaypalCommerceScript, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
     fundingKey?: keyof PaypalCommerceSDKFunding;
-    cbIfEligible?(): void;
+    onRenderButton?(): void;
 }
 
 export interface ParamsRenderHostedFields {
@@ -44,17 +44,15 @@ export default class PaypalCommercePaymentProcessor {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        const  { paramsForProvider, fundingKey, cbIfEligible } = optionalParams;
+        const { paramsForProvider, fundingKey, onRenderButton } = optionalParams;
 
         const buttonParams: ButtonsOptions = {
             ...params,
             createOrder: () => this._setupPayment(cartId, paramsForProvider),
             onClick: data => {
-                this._handleClickButtonProvider(data);
+                this._fundingSource = data.fundingSource;
 
-                if (params.onClick) {
-                    params.onClick(data);
-                }
+                params.onClick?.(data);
             },
         };
 
@@ -73,9 +71,7 @@ export default class PaypalCommercePaymentProcessor {
             throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
         }
 
-        if (cbIfEligible) {
-            cbIfEligible();
-        }
+        onRenderButton?.();
 
         this._paypalButtons.render(container);
 
@@ -89,21 +85,21 @@ export default class PaypalCommercePaymentProcessor {
 
         const { fields, styles } = params;
 
-        if (this._paypal.HostedFields.isEligible()) {
-            this._hostedFields = await this._paypal.HostedFields.render({
-                fields,
-                styles,
-                paymentsSDK: true,
-                createOrder: () => this._setupPayment(cartId, { isCreditCard: true }),
-            });
-
-            if (events) {
-                (Object.keys(events) as Array<keyof EventsHostedFields>).forEach(key => {
-                    (this._hostedFields as PaypalCommerceHostedFields).on(key, events[key] as (event: PaypalCommerceHostedFieldsState) => void);
-                });
-            }
-        } else {
+        if (!this._paypal.HostedFields.isEligible()) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        this._hostedFields = await this._paypal.HostedFields.render({
+            fields,
+            styles,
+            paymentsSDK: true,
+            createOrder: () => this._setupPayment(cartId, { isCreditCard: true }),
+        });
+
+        if (events) {
+            (Object.keys(events) as Array<keyof EventsHostedFields>).forEach(key => {
+                (this._hostedFields as PaypalCommerceHostedFields).on(key, events[key] as (event: PaypalCommerceHostedFieldsState) => void);
+            });
         }
     }
 
@@ -116,18 +112,12 @@ export default class PaypalCommercePaymentProcessor {
     }
 
     deinitialize() {
-        if (this._paypalButtons) {
-            this._paypalButtons.close();
-        }
+        this._paypalButtons?.close();
 
         this._paypal = undefined;
         this._paypalButtons = undefined;
         this._fundingSource = undefined;
         this._hostedFields = undefined;
-    }
-
-    private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
-        this._fundingSource = fundingSource;
     }
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {

@@ -23,7 +23,7 @@ import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 
 describe('PaypalCommercePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -37,6 +37,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     let requestSender: RequestSender;
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paypalcommerceOptions: PaypalCommercePaymentInitializeOptions;
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
@@ -54,14 +55,17 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         store = createCheckoutStore(getCheckoutStoreState());
         submitForm = jest.fn();
+
+        paypalcommerceOptions = {
+            container: '#container',
+            style: {},
+            submitForm,
+            hidePaymentButton: jest.fn(),
+        };
+
         options = {
             methodId: paymentMethod.id,
-            paypalcommerce: {
-                container: '#container',
-                style: {},
-                submitForm,
-                hidePaymentButton: jest.fn(),
-            },
+            paypalcommerce: paypalcommerceOptions,
         };
 
         orderID = 'ORDER_ID';
@@ -133,12 +137,12 @@ describe('PaypalCommercePaymentStrategy', () => {
 
             const buttonOption = {
                 onApprove: expect.any(Function),
-                style: options?.paypalcommerce?.style,
+                style: paypalcommerceOptions.style,
             };
 
-            const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true }, cbIfEligible: expect.any(Function) };
+            const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
-            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${options?.paypalcommerce?.container}`, buttonOption, optionalParams);
+            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
         });
 
         it('render Credit PayPal button if orderId is undefined', async () => {
@@ -156,12 +160,12 @@ describe('PaypalCommercePaymentStrategy', () => {
 
             const buttonOption = {
                 onApprove: expect.any(Function),
-                style: options?.paypalcommerce?.style,
+                style: paypalcommerceOptions.style,
             };
 
-            const optionalParams = { fundingKey: 'CREDIT', paramsForProvider: { isCheckout: true }, cbIfEligible: expect.any(Function) };
+            const optionalParams = { fundingKey: 'CREDIT', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
-            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${options?.paypalcommerce?.container}`, buttonOption, optionalParams);
+            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
         });
 
         it('call submitForm after approve', async () => {
@@ -186,29 +190,6 @@ describe('PaypalCommercePaymentStrategy', () => {
                 expect(error).toEqual(expectedError);
             }
         });
-
-        it('throw error if paypalcommerce.container is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
-            const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.container" argument is not provided.');
-
-            try {
-                await paypalCommercePaymentStrategy.initialize({ ...options, paypalcommerce: { ...options.paypalcommerce, container: undefined } });
-            } catch (error) {
-                expect(error).toEqual(expectedError);
-            }
-        });
-
-        it('throw error if paypalcommerce.submitForm is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
-            const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.submitForm" argument is not provided.');
-
-            try {
-                await paypalCommercePaymentStrategy.initialize({ ...options, paypalcommerce: { ...options.paypalcommerce, submitForm: undefined } });
-            } catch (error) {
-                expect(error).toEqual(expectedError);
-            }
-        });
-
     });
 
     describe('#execute()', () => {

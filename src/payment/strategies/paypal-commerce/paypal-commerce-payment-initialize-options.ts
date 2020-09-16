@@ -1,20 +1,23 @@
 import { PaypalButtonStyleOptions } from './paypal-commerce-sdk';
 
 export interface PaypalCommercePaymentInitializeOptions {
-    container?: string;
-
-    /**
-     * @alpha
-     * Please note that this option is currently in an early stage of
-     * development. Therefore the API is unstable and not ready for public
-     * consumption.
-     */
-    form?: PaypalCommerceFormOptions;
+    container: string;
     style?: PaypalButtonStyleOptions;
-    submitForm?(): void;
+    submitForm(): void;
     hidePaymentButton?(): void;
-    onError?(): void;
 }
+
+/**
+ * @alpha
+ * Please note that this option is currently in an early stage of
+ * development. Therefore the API is unstable and not ready for public
+ * consumption.
+ */
+export interface PaypalCommerceCreditCardPaymentInitializeOptions {
+    form: PaypalCommerceFormOptions;
+}
+
+export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
 
 export interface PaypalCommerceFormOptions {
     fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap;

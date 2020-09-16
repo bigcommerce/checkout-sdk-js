@@ -1,5 +1,3 @@
-import { noop } from 'lodash';
-
 import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
@@ -7,16 +5,14 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from './index';
+import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
-    private _paymentMethod?: PaymentMethod;
 
     constructor(
         private _store: CheckoutStore,
@@ -28,9 +24,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     ) {}
 
     async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData } = this._paymentMethod;
+        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const { initializationData } = getPaymentMethodOrThrow(methodId);
 
         if (initializationData.orderId) {
             this._orderId = initializationData.orderId;
@@ -42,34 +37,23 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument is not provided.');
         }
 
-        const { container, hidePaymentButton, submitForm, style, onError = noop } = paypalcommerce;
-
-        if (!container) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.container" argument is not provided.');
-        } else if (!submitForm) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.submitForm" argument is not provided.');
-        } else if (!hidePaymentButton) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce.hidePaymentButton" argument is not provided.');
+        if (!this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "hidePaymentButton", "submitForm".');
         }
 
-        const cart = state.cart.getCartOrThrow();
+        const { container, hidePaymentButton, submitForm, style } = paypalcommerce;
+        const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
 
-        const paramsScript = { options: this._getOptionsScript(initializationData, cart) };
+        const paramsScript = { options: this._getOptionsScript(initializationData, currencyCode) };
         const buttonParams: ButtonsOptions = { style, onApprove: data => this._tokenizePayment(data, submitForm) };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 
-        try {
-            this._paypalCommercePaymentProcessor.renderButtons(cart.id, container, buttonParams, {
-                fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
-                paramsForProvider: {isCheckout: true},
-                cbIfEligible: hidePaymentButton,
-            });
-        } catch (error) {
-            onError();
-
-            throw error;
-        }
+        this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
+            fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
+            paramsForProvider: {isCheckout: true},
+            onRenderButton: hidePaymentButton,
+        });
 
         return this._store.getState();
     }
@@ -106,10 +90,13 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._paymentMethod = undefined;
         this._orderId = undefined;
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommercePaymentInitializeOptions {
+        return !!(options as PaypalCommercePaymentInitializeOptions).container;
     }
 
     private _tokenizePayment({ orderID }: ApproveDataOptions, submitForm: () => void) {
@@ -117,14 +104,14 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         submitForm();
     }
 
-    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {
+    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptOptions {
         const { clientId, intent, merchantId } = initializationData;
 
         return {
             clientId,
             merchantId,
             commit: true,
-            currency: cart.currency.code,
+            currency: currencyCode,
             intent,
         };
     }
