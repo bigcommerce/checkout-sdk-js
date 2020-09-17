@@ -471,6 +471,32 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(braintreePaymentProcessorMock.deinitialize).toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.deinitializeHostedForm).toHaveBeenCalled();
         });
+
+        it('it resets hosted form initialization state', async () => {
+            braintreePaymentProcessorMock.deinitialize = jest.fn(() => Promise.resolve());
+            paymentMethodMock.config.isHostedFormEnabled = true;
+
+            await braintreeCreditCardPaymentStrategy.initialize({
+                methodId: paymentMethodMock.id,
+                braintree: {
+                    form: {
+                        fields: {
+                            cardName: { containerId: 'cardName' },
+                            cardNumber: { containerId: 'cardNumber' },
+                            cardExpiry: { containerId: 'cardExpiry' },
+                        },
+                    },
+                },
+            });
+
+            await braintreeCreditCardPaymentStrategy.deinitialize();
+            await braintreeCreditCardPaymentStrategy.execute(getOrderRequestBody());
+
+            expect(braintreePaymentProcessorMock.tokenizeHostedForm)
+                .not.toHaveBeenCalled();
+            expect(braintreePaymentProcessorMock.tokenizeCard)
+                .toHaveBeenCalled();
+        });
     });
 
     describe('#finalize()', () => {

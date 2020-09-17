@@ -100,6 +100,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._isHostedFormInitialized = false;
+
         await Promise.all([
             this._braintreePaymentProcessor.deinitialize(),
             this._braintreePaymentProcessor.deinitializeHostedForm(),
