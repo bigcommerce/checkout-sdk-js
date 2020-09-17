@@ -38,10 +38,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         }
 
         if (!this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "hidePaymentButton", "submitForm".');
+            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".');
         }
 
-        const { container, hidePaymentButton, submitForm, style } = paypalcommerce;
+        const { container, onRenderButton, submitForm, style } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
 
         const paramsScript = { options: this._getOptionsScript(initializationData, currencyCode) };
@@ -50,9 +50,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
+            onRenderButton,
             fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
             paramsForProvider: {isCheckout: true},
-            onRenderButton: hidePaymentButton,
         });
 
         return this._store.getState();

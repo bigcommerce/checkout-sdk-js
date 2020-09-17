@@ -4,7 +4,7 @@ export interface PaypalCommercePaymentInitializeOptions {
     container: string;
     style?: PaypalButtonStyleOptions;
     submitForm(): void;
-    hidePaymentButton?(): void;
+    onRenderButton?(): void;
 }
 
 /**

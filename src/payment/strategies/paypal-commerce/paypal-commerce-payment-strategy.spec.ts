@@ -60,7 +60,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             container: '#container',
             style: {},
             submitForm,
-            hidePaymentButton: jest.fn(),
+            onRenderButton: jest.fn(),
         };
 
         options = {
