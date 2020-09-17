@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.99.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.2...v1.99.3) (2020-09-17)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5135 Reset Braintree hosted form initialisation state ([fe606c0](https://github.com/bigcommerce/checkout-sdk-js/commit/fe606c05cf0a1f67030efc4911eb474914f45f6e))
+
 ### [1.99.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.1...v1.99.2) (2020-09-15)
 
 
