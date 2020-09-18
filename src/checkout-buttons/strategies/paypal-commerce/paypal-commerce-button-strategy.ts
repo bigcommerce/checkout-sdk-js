@@ -9,6 +9,7 @@ import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _isCredit?: boolean;
+    private _messagingContainer = 'paypal-commerce-cart-messaging-banner';
 
     constructor(
         private _store: CheckoutStore,
@@ -39,6 +40,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         await this._paypalCommercePaymentProcessor.initialize({ options: this._getParamsScript(initializationData, cart) });
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
+        this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${this._messagingContainer}`);
 
         return Promise.resolve();
     }
@@ -79,6 +81,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             merchantId,
             commit: false,
             currency: cart.currency.code,
+            components: ['buttons', 'messages'],
             disableFunding,
             intent,
         };

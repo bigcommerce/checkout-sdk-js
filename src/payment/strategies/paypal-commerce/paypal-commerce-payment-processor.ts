@@ -1,7 +1,7 @@
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { ButtonsOptions, DataPaypalCommerceScript, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, DataPaypalCommerceScript, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -25,6 +25,7 @@ interface EventsHostedFields {
 export default class PaypalCommercePaymentProcessor {
     private _paypal?: PaypalCommerceSDK;
     private _paypalButtons?: PaypalCommerceButtons;
+    private _paypalMessages?: PaypalCommerceMessages;
     private _hostedFields?: PaypalCommerceHostedFields;
     private _fundingSource?: string;
 
@@ -76,6 +77,22 @@ export default class PaypalCommercePaymentProcessor {
         this._paypalButtons.render(container);
 
         return this._paypalButtons;
+    }
+
+    renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
+        if (!this._paypal || !this._paypal.Messages) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+        this._paypalMessages = this._paypal.Messages({
+            amount: cartTotal,
+            placement: 'cart',
+            style: {
+                layout: 'text',
+            },
+        });
+        this._paypalMessages.render(container);
+
+        return this._paypalMessages;
     }
 
     async renderHostedFields(cartId: string, params: ParamsRenderHostedFields, events?: EventsHostedFields): Promise<void> {

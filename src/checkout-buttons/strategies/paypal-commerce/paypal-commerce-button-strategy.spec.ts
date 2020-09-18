@@ -94,6 +94,9 @@ describe('PaypalCommerceButtonStrategy', () => {
                 });
             });
 
+        jest.spyOn(paypalCommercePaymentProcessor, 'renderMessages')
+            .mockImplementation(() => {} );
+
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
@@ -114,6 +117,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             commit: false,
             currency: 'USD',
             intent: 'capture',
+            components: ['buttons', 'messages'],
             disableFunding: ['card', 'credit'],
         }};
 
@@ -130,6 +134,12 @@ describe('PaypalCommerceButtonStrategy', () => {
         };
 
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
+    });
+
+    it('render PayPal messaging', async () => {
+        await strategy.initialize(options);
+
+        expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledWith(cart.cartAmount, `#paypal-commerce-cart-messaging-banner`);
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {

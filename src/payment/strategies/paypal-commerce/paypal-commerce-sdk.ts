@@ -55,6 +55,17 @@ export interface ButtonsOptions {
     onClick?(data: ClickDataOptions): void;
 }
 
+export interface MessagesOptions {
+    amount: number;
+    placement: string;
+    style?: MessagesStyleOptions;
+    fundingSource?: string;
+}
+
+export interface MessagesStyleOptions {
+    layout?: string;
+}
+
 export interface PaypalCommerceHostedFieldOption {
     selector: string;
     placeholder?: string;
@@ -114,6 +125,10 @@ export interface PaypalCommerceButtons {
     isEligible(): boolean;
 }
 
+export interface PaypalCommerceMessages {
+    render(id: string): void;
+}
+
 export interface PaypalCommerceSDKFunding {
     PAYPAL: string;
     CREDIT: string;
@@ -126,6 +141,7 @@ export interface PaypalCommerceSDK {
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
     Buttons(params: ButtonsOptions): PaypalCommerceButtons;
+    Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
 
 export interface PaypalCommerceHostWindow extends Window {
@@ -143,7 +159,7 @@ export interface PaypalCommerceInitializationData {
 
 export type DisableFundingType = Array<'credit' | 'card'>;
 
-export type ComponentsScriptType = Array<'buttons' | 'hosted-fields'>;
+export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields'>;
 
 export interface PaypalCommerceScriptOptions {
     clientId: string;
