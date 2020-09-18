@@ -216,6 +216,7 @@
 * [PaypalButtonStyleOptions](interfaces/paypalbuttonstyleoptions.md)
 * [PaypalButtonStyleOptions_2](interfaces/paypalbuttonstyleoptions_2.md)
 * [PaypalCommerceButtonInitializeOptions](interfaces/paypalcommercebuttoninitializeoptions.md)
+* [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/paypalcommercecreditcardpaymentinitializeoptions.md)
 * [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/paypalcommerceformfieldcardtypechangeeventdata.md)
 * [PaypalCommerceFormFieldKeyboardEventData](interfaces/paypalcommerceformfieldkeyboardeventdata.md)
 * [PaypalCommerceFormFieldOptions](interfaces/paypalcommerceformfieldoptions.md)
@@ -303,6 +304,7 @@
 * [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
 * [PaypalCommerceFormFieldFocusEventData](README.md#paypalcommerceformfieldfocuseventdata)
 * [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
+* [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 * [StripeElementOptions](README.md#stripeelementoptions)
 
 ### Functions
@@ -516,6 +518,12 @@ ___
 ###  PaypalCommerceFormFieldStyles
 
 Ƭ **PaypalCommerceFormFieldStyles**: *Partial‹Pick‹CSSStyleDeclaration, "color" | "fontFamily" | "fontSize" | "fontWeight"››*
+
+___
+
+###  PaypalCommerceInitializeOptions
+
+Ƭ **PaypalCommerceInitializeOptions**: *[PaypalCommercePaymentInitializeOptions](interfaces/paypalcommercepaymentinitializeoptions.md) | [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/paypalcommercecreditcardpaymentinitializeoptions.md)*
 
 ___
 

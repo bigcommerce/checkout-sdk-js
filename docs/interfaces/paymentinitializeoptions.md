@@ -237,7 +237,7 @@ ___
 
 ### `Optional` paypalcommerce
 
-• **paypalcommerce**? : *[PaypalCommercePaymentInitializeOptions](paypalcommercepaymentinitializeoptions.md)*
+• **paypalcommerce**? : *[PaypalCommerceInitializeOptions](../README.md#paypalcommerceinitializeoptions)*
 
 The options that are required to initialize the PayPal Commerce payment method.
 They can be omitted unless you need to support PayPal Commerce.

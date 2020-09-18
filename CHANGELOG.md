@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.100.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.3...v1.100.0) (2020-09-18)
+
+
+### Features
+
+* **checkout:** INT-2779 Add vaulting support for Orbital ([a58c700](https://github.com/bigcommerce/checkout-sdk-js/commit/a58c700fc79abaf1da821e0cb58fb977f728e4ea))
+* **payment:** PAYPAL-654 Add callback and disable submit button ([1f2fc79](https://github.com/bigcommerce/checkout-sdk-js/commit/1f2fc7999f75f143b39c2c4abf316bb3d45ca150))
+* **payment:** PAYPAL-654 Add hidePaymentButton instead EmbeddedSubmitButton ([b57cd2b](https://github.com/bigcommerce/checkout-sdk-js/commit/b57cd2b2ed28169f4c642c96d0688202597e8a17))
+* **payment:** PAYPAL-654 Changes for PR ([aad6632](https://github.com/bigcommerce/checkout-sdk-js/commit/aad6632c9ad5717be136aa8801526c45f380db19))
+* **payment:** PAYPAL-654 Changes for PR ([c31a459](https://github.com/bigcommerce/checkout-sdk-js/commit/c31a459c7f789e4bf2f8d8dbae7028cfe2bf523f))
+* **payment:** PAYPAL-654 Remove EmbeddedSubmitButton ([71f9937](https://github.com/bigcommerce/checkout-sdk-js/commit/71f99374dfcdbe1c665ec86fab133eabfaf77929))
+* **payment:** PAYPAL-654 Rename hidePaymentButton to onRenderButton ([71d34d2](https://github.com/bigcommerce/checkout-sdk-js/commit/71d34d2a5ad1ab5b15770d907487904ff4918112))
+* **payment:** PAYPAL-654 Spb checkout ([8f7b9a7](https://github.com/bigcommerce/checkout-sdk-js/commit/8f7b9a74ee923ae69d1debbc7b0bcdafe29dda9a))
+* **payment:** PAYPAL-654 Take out paypal script to processor ([87a0902](https://github.com/bigcommerce/checkout-sdk-js/commit/87a09026518ab3f2a88fdef25e980beff5bfbf97))
+* **payment:** PAYPAL-654 Tests ([f348dfc](https://github.com/bigcommerce/checkout-sdk-js/commit/f348dfc07e50d05ccadac2b1659fdbb578e3a187))
+
 ### [1.99.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.2...v1.99.3) (2020-09-17)
 
 

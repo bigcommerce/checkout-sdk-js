@@ -10,22 +10,38 @@
 
 ### Properties
 
-* [form](paypalcommercepaymentinitializeoptions.md#optional-form)
-* [overlay](paypalcommercepaymentinitializeoptions.md#optional-overlay)
+* [container](paypalcommercepaymentinitializeoptions.md#container)
+* [style](paypalcommercepaymentinitializeoptions.md#optional-style)
+
+### Methods
+
+* [onRenderButton](paypalcommercepaymentinitializeoptions.md#optional-onrenderbutton)
+* [submitForm](paypalcommercepaymentinitializeoptions.md#submitform)
 
 ## Properties
 
-### `Optional` form
+###  container
 
-• **form**? : *[PaypalCommerceFormOptions](paypalcommerceformoptions.md)*
-
-**`alpha`** 
-Please note that this option is currently in an early stage of
-development. Therefore the API is unstable and not ready for public
-consumption.
+• **container**: *string*
 
 ___
 
-### `Optional` overlay
+### `Optional` style
 
-• **overlay**? : *undefined | object*
+• **style**? : *[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md)*
+
+## Methods
+
+### `Optional` onRenderButton
+
+▸ **onRenderButton**(): *void*
+
+**Returns:** *void*
+
+___
+
+###  submitForm
+
+▸ **submitForm**(): *void*
+
+**Returns:** *void*

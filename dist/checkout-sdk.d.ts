@@ -642,7 +642,7 @@ declare interface BraintreePaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    style?: Pick<PaypalButtonStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
     /**
      * Whether or not to show a credit button.
      */
@@ -3900,7 +3900,7 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the PayPal Commerce payment method.
      * They can be omitted unless you need to support PayPal Commerce.
      */
-    paypalcommerce?: PaypalCommercePaymentInitializeOptions;
+    paypalcommerce?: PaypalCommerceInitializeOptions;
     /**
      * The options that are required to initialize the Square payment method.
      * They can be omitted unless you need to support Square.
@@ -4011,7 +4011,7 @@ declare interface PaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    style?: Pick<PaypalButtonStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
@@ -4027,6 +4027,15 @@ declare interface PaypalButtonInitializeOptions {
 }
 
 declare interface PaypalButtonStyleOptions {
+    layout?: StyleButtonLayout;
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
+    height?: 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55;
+    label?: StyleButtonLabel;
+    tagline?: boolean;
+}
+
+declare interface PaypalButtonStyleOptions_2 {
     layout?: 'horizontal' | 'vertical';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     color?: 'gold' | 'blue' | 'silver' | 'black';
@@ -4036,20 +4045,21 @@ declare interface PaypalButtonStyleOptions {
     fundingicons?: boolean;
 }
 
-declare interface PaypalButtonStyleOptions_2 {
-    layout?: StyleButtonLayout;
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
-    height?: 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55;
-    label?: StyleButtonLabel;
-    tagline?: boolean;
-}
-
 declare interface PaypalCommerceButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions_2;
+    style?: PaypalButtonStyleOptions;
+}
+
+/**
+ * @alpha
+ * Please note that this option is currently in an early stage of
+ * development. Therefore the API is unstable and not ready for public
+ * consumption.
+ */
+declare interface PaypalCommerceCreditCardPaymentInitializeOptions {
+    form: PaypalCommerceFormOptions;
 }
 
 declare type PaypalCommerceFormFieldBlurEventData = PaypalCommerceFormFieldKeyboardEventData;
@@ -4123,18 +4133,13 @@ declare interface PaypalCommerceFormOptions {
     onEnter?(data: PaypalCommerceFormFieldEnterEventData): void;
 }
 
+declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
+
 declare interface PaypalCommercePaymentInitializeOptions {
-    overlay?: {
-        helpText?: string;
-        continueText?: string;
-    };
-    /**
-     * @alpha
-     * Please note that this option is currently in an early stage of
-     * development. Therefore the API is unstable and not ready for public
-     * consumption.
-     */
-    form?: PaypalCommerceFormOptions;
+    container: string;
+    style?: PaypalButtonStyleOptions;
+    submitForm(): void;
+    onRenderButton?(): void;
 }
 
 declare interface PaypalCommerceStoredCardFieldOptions extends PaypalCommerceFormFieldOptions {
