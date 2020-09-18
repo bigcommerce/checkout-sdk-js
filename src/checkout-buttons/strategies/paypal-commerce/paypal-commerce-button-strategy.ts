@@ -3,28 +3,23 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalButtonStyleOptions, PaypalCommerceInitializationData, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape  } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
-    providerId?: string;
+    private _isCredit?: boolean;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _formPoster: FormPoster,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         let state = this._store.getState();
-        const {
-            id: providerId,
-            initializationData,
-        } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
-        this.providerId = providerId;
+        const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
@@ -32,42 +27,30 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCartOrThrow();
-        const paypalOptions = options.paypalCommerce;
-
         const buttonParams: ButtonsOptions = {
-            onClick: data => this._handleClickButtonProvider(providerId, data),
-            createOrder: () => this._setupPayment(cart.id),
             onApprove: data => this._tokenizePayment(data),
+            onClick: data => this._handleClickButtonProvider(data),
         };
 
-        if (paypalOptions && paypalOptions.style) {
-            buttonParams.style = this._validateStyleParams(paypalOptions.style);
+        if (options.paypalCommerce && options.paypalCommerce.style) {
+            buttonParams.style = options.paypalCommerce.style;
         }
 
-        const paramsScript = this._getParamsScript(initializationData, cart);
-        const paypal = await this._paypalScriptLoader.loadPaypalCommerce({ options: paramsScript }, initializationData.isProgressiveOnboardingAvailable);
+        await this._paypalCommercePaymentProcessor.initialize({ options: this._getParamsScript(initializationData, cart) });
 
-        return paypal.Buttons(buttonParams).render(`#${options.containerId}`);
-    }
-
-    deinitialize(): Promise<void> {
-        this.providerId = undefined;
+        this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 
         return Promise.resolve();
     }
 
-    private _handleClickButtonProvider(providerId: string, { fundingSource }: ClickDataOptions): void {
-        this.providerId = fundingSource === 'credit' ? 'paypalcommercecredit' : providerId;
+    deinitialize(): Promise<void> {
+        this._isCredit = undefined;
+
+        return Promise.resolve();
     }
 
-    private async _setupPayment(cartId: string): Promise<string> {
-        if (!this.providerId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(this.providerId, cartId);
-
-        return orderId;
+    private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
+        this._isCredit = fundingSource === 'credit';
     }
 
     private _tokenizePayment({ orderID }: ApproveDataOptions) {
@@ -78,44 +61,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: this.providerId,
+            provider: this._isCredit ? 'paypalcommercecredit' : 'paypalcommerce',
             order_id: orderID,
         });
-    }
-
-    private _validateStyleParams(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
-        const updatedStyle: PaypalButtonStyleOptions = { ...style };
-        const { label, color, layout, shape, height, tagline } = style;
-
-        if (label && !StyleButtonLabel[label]) {
-            delete updatedStyle.label;
-        }
-
-        if (layout && !StyleButtonLayout[layout]) {
-            delete updatedStyle.layout;
-        }
-
-        if (color && !StyleButtonColor[color]) {
-            delete updatedStyle.color;
-        }
-
-        if (shape && !StyleButtonShape[shape]) {
-            delete updatedStyle.shape;
-        }
-
-        if (typeof height === 'number') {
-            updatedStyle.height = height < 25
-                ? 25
-                : (height > 55 ? 55 : height);
-        } else {
-            delete updatedStyle.height;
-        }
-
-        if (typeof tagline !== 'boolean' || (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])) {
-            delete updatedStyle.tagline;
-        }
-
-        return updatedStyle;
     }
 
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {

@@ -1,39 +1,73 @@
+import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommercePaymentProcessor, PaypalCommerceRequestSender } from './index';
+import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
+    private _orderId?: string;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
+        private _credit: boolean = false
     ) {}
 
-    initialize({ paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        this._paypalCommercePaymentProcessor.initialize({ overlay: paypalcommerce && paypalcommerce.overlay });
+    async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const { initializationData } = getPaymentMethodOrThrow(methodId);
 
-        return Promise.resolve(this._store.getState());
+        if (initializationData.orderId) {
+            this._orderId = initializationData.orderId;
+
+            return this._store.getState();
+        }
+
+        if (!paypalcommerce) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument is not provided.');
+        }
+
+        if (!this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".');
+        }
+
+        const { container, onRenderButton, submitForm, style } = paypalcommerce;
+        const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
+
+        const paramsScript = { options: this._getOptionsScript(initializationData, currencyCode) };
+        const buttonParams: ButtonsOptions = { style, onApprove: data => this._tokenizePayment(data, submitForm) };
+
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript);
+
+        this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
+            onRenderButton,
+            fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
+            paramsForProvider: {isCheckout: true},
+        });
+
+        return this._store.getState();
     }
 
     async execute(payload: OrderRequestBody, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
-        const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const orderId = paymentMethod.initializationData.orderId || await this._getOrderId(options.methodId);
+        if (!this._orderId) {
+            throw new PaymentMethodInvalidError();
+        }
 
         const paymentData =  {
             formattedPayload: {
@@ -41,7 +75,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 set_as_default_stored_instrument: null,
                 device_info: null,
                 paypal_account: {
-                    order_id: orderId,
+                    order_id: this._orderId,
                 },
             },
         };
@@ -55,22 +89,30 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._paypalCommercePaymentProcessor.deinitialize();
+    async deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._orderId = undefined;
 
         return Promise.resolve(this._store.getState());
     }
 
-    private async _getOrderId(methodId: string): Promise<string> {
-        const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
-        const provider = methodId === 'paypalcommercecredit' ? 'paypalcommercecreditcheckout' : 'paypalcommercecheckout';
-        const { approveUrl, orderId } = await this._paypalCommerceRequestSender.setupPayment(provider, cart.id);
+    private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommercePaymentInitializeOptions {
+        return !!(options as PaypalCommercePaymentInitializeOptions).container;
+    }
 
-        if (approveUrl) {
-            await this._paypalCommercePaymentProcessor.paymentPayPal(approveUrl);
-        }
+    private _tokenizePayment({ orderID }: ApproveDataOptions, submitForm: () => void) {
+        this._orderId = orderID;
+        submitForm();
+    }
 
-        return orderId;
+    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptOptions {
+        const { clientId, intent, merchantId } = initializationData;
+
+        return {
+            clientId,
+            merchantId,
+            commit: true,
+            currency: currencyCode,
+            intent,
+        };
     }
 }

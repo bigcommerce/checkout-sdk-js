@@ -9,35 +9,32 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { DisableFundingType, PaypalCommerceHostedForm, PaypalCommerceInitializationData, PaypalCommerceScriptLoader, PaypalCommerceScriptOptions } from './index';
+import { DisableFundingType, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceHostedForm, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommerceScriptOptions } from './index';
 
 export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentStrategy {
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _paypalCommerceHostedForm: PaypalCommerceHostedForm,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
     ) {}
 
-    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (!options.paypalcommerce?.form) {
+    async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (!paypalcommerce || !this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
             throw new InvalidArgumentError('Unable to proceed because "options.paypalcommerce.form" argument is not provided.');
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
-        const { clientToken, initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const { clientToken, initializationData } = getPaymentMethodOrThrow(methodId);
 
-        const cart = state.cart.getCartOrThrow();
+        const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
         const paramsScript = {
-            options: this._getOptionsScript(initializationData, cart),
+            options: this._getOptionsScript(initializationData, currencyCode),
             attr: { clientToken },
         };
 
-        const paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, true);
-
-        await this._paypalCommerceHostedForm.initialize(options.paypalcommerce.form, cart.id, paypal);
+        await this._paypalCommerceHostedForm.initialize(paypalcommerce.form, cartId, paramsScript);
 
         return this._store.getState();
     }
@@ -75,7 +72,11 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         return Promise.resolve(this._store.getState());
     }
 
-    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {
+    private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommerceCreditCardPaymentInitializeOptions {
+        return !!(options as PaypalCommerceCreditCardPaymentInitializeOptions).form;
+    }
+
+    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptOptions {
         const { clientId, intent, isPayPalCreditAvailable, merchantId } = initializationData;
         const disableFunding: DisableFundingType = [ 'card' ];
 
@@ -87,7 +88,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             clientId,
             components: ['hosted-fields'],
             merchantId,
-            currency: cart.currency.code,
+            currency: currencyCode,
             intent,
         };
     }

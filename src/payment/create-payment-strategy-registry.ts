@@ -44,7 +44,7 @@ import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
-import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './strategies/paypal-commerce';
+import { createPaypalCommercePaymentProcessor, PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceHostedForm, PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -81,6 +81,7 @@ export default function createPaymentStrategyRegistry(
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
+    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -284,8 +285,7 @@ export default function createPaymentStrategyRegistry(
         new PaypalCommerceCreditCardPaymentStrategy(
             store,
             paymentMethodActionCreator,
-            new PaypalCommerceScriptLoader(scriptLoader),
-            new PaypalCommerceHostedForm(new PaypalCommerceRequestSender(requestSender)),
+            new PaypalCommerceHostedForm(paypalCommercePaymentProcessor),
             orderActionCreator,
             paymentActionCreator
         )
@@ -296,8 +296,8 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            new PaypalCommerceRequestSender(requestSender),
-            new PaypalCommercePaymentProcessor()
+            paymentMethodActionCreator,
+            paypalCommercePaymentProcessor
         )
     );
 
@@ -306,8 +306,9 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            new PaypalCommerceRequestSender(requestSender),
-            new PaypalCommercePaymentProcessor()
+            paymentMethodActionCreator,
+            paypalCommercePaymentProcessor,
+            true
         )
     );
 

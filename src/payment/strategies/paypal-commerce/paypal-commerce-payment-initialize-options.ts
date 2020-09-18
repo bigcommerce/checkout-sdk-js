@@ -1,17 +1,23 @@
-export interface PaypalCommercePaymentInitializeOptions {
-    overlay?: {
-        helpText?: string;
-        continueText?: string;
-    };
+import { PaypalButtonStyleOptions } from './paypal-commerce-sdk';
 
-    /**
-     * @alpha
-     * Please note that this option is currently in an early stage of
-     * development. Therefore the API is unstable and not ready for public
-     * consumption.
-     */
-    form?: PaypalCommerceFormOptions;
+export interface PaypalCommercePaymentInitializeOptions {
+    container: string;
+    style?: PaypalButtonStyleOptions;
+    submitForm(): void;
+    onRenderButton?(): void;
 }
+
+/**
+ * @alpha
+ * Please note that this option is currently in an early stage of
+ * development. Therefore the API is unstable and not ready for public
+ * consumption.
+ */
+export interface PaypalCommerceCreditCardPaymentInitializeOptions {
+    form: PaypalCommerceFormOptions;
+}
+
+export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
 
 export interface PaypalCommerceFormOptions {
     fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap;

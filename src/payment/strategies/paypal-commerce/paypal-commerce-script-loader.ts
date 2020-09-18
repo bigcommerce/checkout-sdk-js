@@ -6,7 +6,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { PaypalCommerceHostWindow, PaypalCommerceScriptAttribute, PaypalCommerceScriptOptions, PaypalCommerceSDK } from './paypal-commerce-sdk';
 
-interface DataPaypalCommerceScript {
+export interface DataPaypalCommerceScript {
     options: PaypalCommerceScriptOptions;
     attr?: PaypalCommerceScriptAttribute;
 }
