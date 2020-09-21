@@ -55,6 +55,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 label: StyleButtonLabel.buynow,
                 height: 45,
             },
+            messagingContainer: 'paypal-commerce-cart-messaging-banner',
         };
 
         options = {
@@ -109,7 +110,7 @@ describe('PaypalCommerceButtonStrategy', () => {
 
     });
 
-    it('initializes PaypalCommerce and PayPal JS clients', async () => {
+    it('initializes PaypalCommerce and PayPal JS clients PayPal credit disabled', async () => {
         await strategy.initialize(options);
 
         const obj = { options : {
@@ -117,9 +118,27 @@ describe('PaypalCommerceButtonStrategy', () => {
             commit: false,
             currency: 'USD',
             intent: 'capture',
-            components: ['buttons', 'messages'],
+            components: ['buttons'],
             disableFunding: ['card', 'credit'],
         }};
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('initializes PaypalCommerce and PayPal JS clients PayPal credit enabled', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+
+        const obj = { options : {
+                clientId: 'abc',
+                commit: false,
+                currency: 'USD',
+                intent: 'capture',
+                components: ['buttons', 'messages'],
+                disableFunding: ['card'],
+            }};
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
@@ -136,10 +155,20 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
     });
 
-    it('render PayPal messaging', async () => {
+    it('render PayPal messaging with credit enabled', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
         await strategy.initialize(options);
 
-        expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledWith(cart.cartAmount, `#paypal-commerce-cart-messaging-banner`);
+        expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledWith(cart.cartAmount, `#${paypalOptions.messagingContainer}`);
+    });
+
+    it('render PayPal messaging with credit disabled', async () => {
+        await strategy.initialize(options);
+
+        expect(paypalCommercePaymentProcessor.renderMessages).not.toHaveBeenCalled();
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
