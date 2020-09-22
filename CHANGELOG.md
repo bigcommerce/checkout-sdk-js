@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.101.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.100.0...v1.101.0) (2020-09-22)
+
+
+### Features
+
+* **payment:** PAYPAL-705 add messaging for PayPal banners ([d35ea9b](https://github.com/bigcommerce/checkout-sdk-js/commit/d35ea9be7a8eb7517811f266ae57825e84c81310))
+* **payment:** PAYPAL-705 enable banners along with credit + tests ([8f110af](https://github.com/bigcommerce/checkout-sdk-js/commit/8f110af6a1624778741bdf4e317be7d20c6a5376))
+
 ## [1.100.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.99.3...v1.100.0) (2020-09-18)
 
 

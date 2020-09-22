@@ -10,9 +10,18 @@
 
 ### Properties
 
+* [messagingContainer](paypalcommercebuttoninitializeoptions.md#optional-messagingcontainer)
 * [style](paypalcommercebuttoninitializeoptions.md#optional-style)
 
 ## Properties
+
+### `Optional` messagingContainer
+
+• **messagingContainer**? : *undefined | string*
+
+Container id for messaging banner container
+
+___
 
 ### `Optional` style
 

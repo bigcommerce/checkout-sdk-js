@@ -412,6 +412,10 @@ declare interface PaypalCommerceButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: PaypalButtonStyleOptions_2;
+    /**
+     * Container id for messaging banner container
+     */
+    messagingContainer?: string;
 }
 
 /**
