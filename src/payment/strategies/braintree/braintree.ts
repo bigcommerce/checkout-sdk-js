@@ -28,6 +28,10 @@ export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCrea
     paypal?: boolean;
 }
 
+export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreatorConfig {
+    version?: number;
+}
+
 export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreatorConfig {
     fields: {
         number?: BraintreeHostedFieldOption;
@@ -63,7 +67,7 @@ export interface BraintreeHostedFieldOption {
 export interface BraintreeClientCreator extends BraintreeModuleCreator<BraintreeClient> { }
 export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector, BraintreeDataCollectorCreatorConfig> {}
 export interface BraintreeHostedFieldsCreator extends BraintreeModuleCreator<BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig> {}
-export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure> {}
+export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure, BraintreeThreeDSecureCreatorConfig> {}
 export interface BraintreePaypalCreator extends BraintreeModuleCreator<BraintreePaypal> {}
 export interface BraintreePaypalCheckoutCreator extends BraintreeModuleCreator<BraintreePaypalCheckout> {}
 export interface BraintreeVisaCheckoutCreator extends BraintreeModuleCreator<BraintreeVisaCheckout> {}
@@ -88,6 +92,7 @@ export interface BraintreeThreeDSecureOptions {
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
+    onLookupComplete(data: any, next: any): void;
 }
 
 export interface BraintreeDataCollector extends BraintreeModule {
