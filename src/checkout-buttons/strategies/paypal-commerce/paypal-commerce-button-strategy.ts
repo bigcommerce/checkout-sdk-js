@@ -3,7 +3,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, ComponentsScriptType, DisableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -39,6 +39,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         await this._paypalCommercePaymentProcessor.initialize({ options: this._getParamsScript(initializationData, cart) });
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
+        if (initializationData.isPayPalCreditAvailable && options.paypalCommerce?.messagingContainer) {
+            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${options.paypalCommerce?.messagingContainer}`);
+        }
 
         return Promise.resolve();
     }
@@ -69,9 +72,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptOptions {
         const { clientId, intent, isPayPalCreditAvailable, merchantId } = initializationData;
         const disableFunding: DisableFundingType = [ 'card' ];
+        const components: ComponentsScriptType = ['buttons'];
 
         if (!isPayPalCreditAvailable) {
             disableFunding.push('credit');
+        } else {
+            components.push('messages');
         }
 
         return {
@@ -79,6 +85,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             merchantId,
             commit: false,
             currency: cart.currency.code,
+            components,
             disableFunding,
             intent,
         };
