@@ -92,7 +92,7 @@ export interface BraintreeThreeDSecureOptions {
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
-    onLookupComplete(data: any, next: any): void;
+    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
 
 export interface BraintreeDataCollector extends BraintreeModule {
@@ -334,5 +334,17 @@ export interface BraintreeError extends Error {
 export interface BraintreeHostedFormError extends BraintreeError {
     details?: {
         invalidFieldKeys?: string[];
+    };
+}
+
+interface BraintreeThreeDSecureVerificationData {
+    lookup: {
+        threeDSecureVersion: string;
+    };
+    paymentMethod: BraintreeVerifyPayload;
+    requiresUserAuthentication: boolean;
+    threeDSecureInfo: {
+        liabilityShiftPossible: boolean;
+        liabilityShifted: boolean;
     };
 }
