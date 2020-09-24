@@ -62,9 +62,15 @@ Using this library in conjunction with your favorite UI framework, it is possibl
 
 ## Getting started
 
-The Checkout JS SDK is the easiest way to build a bespoke checkout into your store’s theme. We have created the following tutorials to help you get started.
+The Checkout JS SDK is the easiest way to build a bespoke checkout into your store’s theme. The installation steps are below:
+
+1. Build checkout file.
+2. Upload the file to WebDAV.
+3. Paste the WebDAV URL in the control panel checkout settings. See [Installing a Custom Checkout](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/installing-custom-checkouts) for details.
+
+We have created the following tutorial to help you get started.
+
 * [Checkout SDK Quickstart](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/checkout-sdk-quickstart) - This tutorial will walk through the first steps for building a custom checkout by installing the Checkout JS SDK and initial theme setup.
-* [Checkout SDK Tutorial](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/checkout-sdk-example) - This tutorial will take you through the steps to integrate the custom checkout provided by our reference implementation into the Cornerstone theme.
 
 
 ## Installation
