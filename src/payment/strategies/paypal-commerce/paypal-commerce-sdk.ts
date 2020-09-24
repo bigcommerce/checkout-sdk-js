@@ -87,8 +87,17 @@ export interface PaypalCommerceHostedFieldsRenderOptions {
     createOrder(): Promise<string>;
 }
 
+export interface PaypalCommerceHostedFieldsSubmitOptions {
+    contingencies?: Array<'3D_SECURE'>;
+}
+
+export interface PaypalCommerceHostedFieldsApprove {
+    orderId: string;
+    liabilityShift: 'Possible' | 'No' | 'Unknown';
+}
+
 export interface PaypalCommerceHostedFields {
-    submit(): { orderId: string };
+    submit(options?: PaypalCommerceHostedFieldsSubmitOptions): PaypalCommerceHostedFieldsApprove;
     on(eventName: string, callback: (event: PaypalCommerceHostedFieldsState) => void): void;
 }
 

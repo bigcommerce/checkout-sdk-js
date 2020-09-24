@@ -12,6 +12,8 @@ import PaymentStrategy from '../payment-strategy';
 import { DisableFundingType, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceHostedForm, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommerceScriptOptions } from './index';
 
 export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentStrategy {
+    private _is3dsEnabled?: boolean;
+
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -26,13 +28,15 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         }
 
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const { clientToken, initializationData } = getPaymentMethodOrThrow(methodId);
+        const { clientToken, initializationData, config: { is3dsEnabled } } = getPaymentMethodOrThrow(methodId);
 
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
         const paramsScript = {
             options: this._getOptionsScript(initializationData, currencyCode),
             attr: { clientToken },
         };
+
+        this._is3dsEnabled = is3dsEnabled;
 
         await this._paypalCommerceHostedForm.initialize(paypalcommerce.form, cartId, paramsScript);
 
@@ -48,7 +52,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        const { orderId } = await this._paypalCommerceHostedForm.submit();
+        const { orderId } = await this._paypalCommerceHostedForm.submit(this._is3dsEnabled);
 
         const paymentData =  {
             formattedPayload: {
@@ -69,6 +73,8 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._is3dsEnabled = undefined;
+
         return Promise.resolve(this._store.getState());
     }
 
