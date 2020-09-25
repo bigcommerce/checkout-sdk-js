@@ -93,7 +93,7 @@ export interface PaypalCommerceHostedFieldsSubmitOptions {
 
 export interface PaypalCommerceHostedFieldsApprove {
     orderId: string;
-    liabilityShift: 'Possible' | 'No' | 'Unknown';
+    liabilityShift: 'POSSIBLE' | 'NO' | 'UNKNOWN';
 }
 
 export interface PaypalCommerceHostedFields {

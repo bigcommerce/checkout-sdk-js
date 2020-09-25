@@ -47,7 +47,7 @@ describe('PaypalCommercePaymentProcessor', () => {
         fundingSource = 'paypal';
         initOptions = { options: { clientId: 'clientId' } };
         cart = { ...getCart() };
-        submit = jest.fn(() => ({ orderId: orderID, liabilityShift: 'Possible' }));
+        submit = jest.fn(() => ({ orderId: orderID, liabilityShift: 'POSSIBLE' }));
 
         cardFields = {
             submit,
