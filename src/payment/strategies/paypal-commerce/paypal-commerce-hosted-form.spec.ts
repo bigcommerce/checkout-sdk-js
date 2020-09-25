@@ -144,6 +144,9 @@ describe('PaypalCommerceHostedForm', () => {
     });
 
     it('throw error if 3ds is enabled and failed', async () => {
+        jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
+            .mockReturnValue(Promise.resolve({ orderId, liabilityShift: 'NO' }));
+
         await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
 
         await expect(hostedForm.submit(true)).rejects.toThrow(PaymentMethodFailedError);

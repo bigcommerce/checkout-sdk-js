@@ -52,7 +52,7 @@ export default class PaypalCommerceHostedForm {
     async submit(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
         const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
 
-        if (is3dsEnabled && result.liabilityShift !== 'POSSIBLE') {
+        if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
             throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
         }
 
