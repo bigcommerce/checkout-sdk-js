@@ -1,12 +1,14 @@
 interface BaseElementOptions {
+    /**
+     * Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
+     * which consists of CSS properties nested under objects for each variant.
+     */
     style?: StripeElementStyle;
 
-    classes?: StripeElementClasses;
-
     /**
-     * Hides the icon in the Element. Default is false.
+     * Set custom class names on the container DOM element when the Stripe element is in a particular state.
      */
-    hideIcon?: boolean;
+    classes?: StripeElementClasses;
 
     /**
      * Applies a disabled state to the Element such that user input is not accepted. Default is false.
@@ -190,6 +192,43 @@ export interface CardElementOptions extends BaseElementOptions {
      * Appearance of the icon in the Element.
      */
     iconStyle?: IconStyle;
+
+    /*
+     * Hides the icon in the Element, Default is false
+     */
+    hideIcon?: boolean;
+
+}
+
+interface BaseIndividualElementOptions extends BaseElementOptions  {
+    containerId: string;
+}
+
+export interface CardNumberElementOptions extends BaseIndividualElementOptions {
+    /*
+     * Placeholder
+     */
+    placeholder?: string;
+
+    showIcon?: boolean;
+    /**
+     * Appearance of the icon in the Element. Either `solid` or `default`
+     */
+    iconStyle?: IconStyle;
+}
+
+export interface CardExpiryElementOptions extends BaseIndividualElementOptions {
+    /*
+     * Placeholder
+     */
+    placeholder?: string;
+}
+
+export interface CardCvcElementOptions extends BaseIndividualElementOptions {
+    /*
+     * Placeholder
+     */
+    placeholder?: string;
 }
 
 export interface IbanElementOptions extends BaseElementOptions {
@@ -217,11 +256,10 @@ export interface IdealElementOptions extends BaseElementOptions {
      * Hides the icon in the Element. Default is false.
      */
     hideIcon?: boolean;
+}
 
-    /**
-     * Applies a disabled state to the Element such that user input is not accepted. Default is false.
-     */
-    disabled?: boolean;
+export interface ZipCodeElementOptions {
+    containerId: string;
 }
 
 export enum IconStyle {
@@ -229,10 +267,6 @@ export enum IconStyle {
     Default = 'default',
 }
 
-/**
- * Customize the appearance of an element using CSS properties passed in a `Style` object,
- * which consists of CSS properties nested under objects for each variant.
- */
 export interface StripeElementStyle {
     /**
      * Base variant—all other variants inherit from these styles.
@@ -255,9 +289,6 @@ export interface StripeElementStyle {
     invalid?: StripeElementStyleVariant;
 }
 
-/**
- * Set custom class names on the container DOM element when the Stripe element is in a particular state.
- */
 export interface StripeElementClasses {
     /**
      * The base class applied to the container. Defaults to StripeElement.
@@ -463,7 +494,7 @@ export interface StripeConfirmSepaPaymentData {
 
 export type StripeConfirmPaymentData = StripeConfirmAlipayPaymentData | StripeConfirmCardPaymentData | StripeConfirmIdealPaymentData | StripeConfirmSepaPaymentData | undefined;
 
-export type StripeElementOptions = CardElementOptions | IdealElementOptions | IbanElementOptions;
+export type StripeElementOptions = CardElementOptions | CardExpiryElementOptions | CardNumberElementOptions | CardCvcElementOptions | IdealElementOptions | IbanElementOptions | ZipCodeElementOptions;
 
 export interface StripeElement {
     /**
@@ -486,7 +517,7 @@ export interface StripeElement {
 
 export interface StripeElements {
     /**
-     * Creates a `AlipayElement` | `CardElement` | `IdealBankElement` | `IbanElement`.
+     * Creates a `AlipayElement` | `CardElement` | `CardCvcElement` |`CardExpiryElement` | `CardExpiryElement` | `CardNumberElement` | `IdealBankElement` | `IbanElement`.
      */
     create(
         elementType: StripeElementType,
@@ -747,6 +778,9 @@ export interface StripeHostWindow extends Window {
 
 export enum StripeElementType {
     Alipay = 'alipay',
+    CardCvc = 'cardCvc',
+    CardExpiry = 'cardExpiry',
+    CardNumber = 'cardNumber',
     CreditCard = 'card',
     iDEAL = 'idealBank',
     Sepa = 'iban',
@@ -797,4 +831,21 @@ export interface StripeAdditionalActionError {
         errors?: Array<{ code: string; message?: string }>;
         additional_action_required: StripeAdditionalAction;
     };
+}
+
+export interface StripeCardElements {
+    [index: number]: StripeElement;
+}
+
+export interface IndividualCardElementOptions {
+    cardCvcElementOptions: CardCvcElementOptions;
+    cardExpiryElementOptions: CardExpiryElementOptions;
+    cardNumberElementOptions: CardNumberElementOptions;
+    zipCodeElementOptions?: ZipCodeElementOptions;
+}
+
+export default function isIndividualCardElementOptions(individualCardElementOptions: unknown): individualCardElementOptions is IndividualCardElementOptions {
+    return Boolean((individualCardElementOptions as IndividualCardElementOptions).cardNumberElementOptions) &&
+        Boolean((individualCardElementOptions as IndividualCardElementOptions).cardCvcElementOptions) &&
+        Boolean((individualCardElementOptions as IndividualCardElementOptions).cardExpiryElementOptions);
 }

@@ -450,7 +450,7 @@ export function getZip(): PaymentMethod {
     };
 }
 
-export function getStripeV3(method: string = 'card'): PaymentMethod {
+export function getStripeV3(method: string = 'card', shouldUseIndividualCardFields: boolean = false): PaymentMethod {
     return {
         id: method,
         logoUrl: '',
@@ -463,6 +463,7 @@ export function getStripeV3(method: string = 'card'): PaymentMethod {
         },
         initializationData: {
             stripePublishableKey: 'key',
+            useIndividualCardFields: shouldUseIndividualCardFields,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
