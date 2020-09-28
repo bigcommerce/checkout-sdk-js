@@ -615,12 +615,12 @@ describe('StripeV3PaymentStrategy', () => {
                             jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(getBillingAddress());
                         });
 
-                        it('with valid input field', async () => {
-                            let container: HTMLDivElement;
-                            container = document.createElement('input');
-                            container.setAttribute('id', 'stripe-postal-code-component-field');
-                            container.setAttribute('value', '90210');
-                            document.body.appendChild(container);
+                        it('with valid container id', async () => {
+                            let inputElement: HTMLInputElement;
+                            inputElement = document.createElement('input');
+                            inputElement.setAttribute('id', 'stripe-postal-code-component-field');
+                            inputElement.setAttribute('value', '90210');
+                            document.body.appendChild(inputElement);
 
                             await strategy.initialize(options);
                             const promise = await strategy.execute(getStripeV3OrderRequestBodyMock());
@@ -630,7 +630,7 @@ describe('StripeV3PaymentStrategy', () => {
                             expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
                             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
                             expect(promise).toBe(store.getState());
-                            document.body.removeChild(container);
+                            document.body.removeChild(inputElement);
                         });
 
                         it('with invalid container', async () => {

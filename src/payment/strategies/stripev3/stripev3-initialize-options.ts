@@ -1,4 +1,4 @@
-import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
+import { ElementOrSelector, IndividualCardElementOptions, StripeElementOptions } from './stripev3';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -12,7 +12,7 @@ export default interface StripeV3PaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */
-    containerId: string;
+    containerId: ElementOrSelector;
 
     options?: StripeElementOptions | IndividualCardElementOptions;
 }

@@ -73,21 +73,21 @@ export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: b
 
     const individualCardElementOptions: IndividualCardElementOptions = {
         cardCvcElementOptions: {
-            containerId: 'stripe-cvc-component-field',
+            elementOrSelector: 'stripe-cvc-component-field',
             classes: {
                 base: 'form-input optimizedCheckout-form-input',
             },
             placeholder: 'CVV',
         },
         cardExpiryElementOptions: {
-            containerId: 'stripe-expiry-component-field',
+            elementOrSelector: 'stripe-expiry-component-field',
             classes: {
                 base: 'form-input optimizedCheckout-form-input',
             },
             placeholder: 'MM / YY',
         },
         cardNumberElementOptions: {
-            containerId: 'stripe-number-component-field',
+            elementOrSelector: 'stripe-number-component-field',
             classes: {
                 base: 'form-input optimizedCheckout-form-input',
             },
@@ -103,7 +103,7 @@ export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: b
                 ...stripeV3PaymentInitializeOptions,
                 options: {
                     ...individualCardElementOptions,
-                    zipCodeElementOptions: { containerId: 'stripe-postal-code-component-field' },
+                    zipCodeElementOptions: { elementOrSelector: 'stripe-postal-code-component-field' },
                 },
             },
         };

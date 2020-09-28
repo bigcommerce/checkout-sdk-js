@@ -278,9 +278,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                         stripeElement = this._stripeCardElements[0];
 
                         try {
-                            cardNumberElement.mount(`#${cardNumberElementOptions.containerId}`);
-                            cardExpiryElement.mount(`#${cardExpiryElementOptions.containerId}`);
-                            cardCvcElement.mount(`#${cardCvcElementOptions.containerId}`);
+                            cardNumberElement.mount(`#${cardNumberElementOptions.elementOrSelector}`);
+                            cardExpiryElement.mount(`#${cardExpiryElementOptions.elementOrSelector}`);
+                            cardCvcElement.mount(`#${cardCvcElementOptions.elementOrSelector}`);
                         } catch (error) {
                             reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                         }
@@ -341,7 +341,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const { zipCodeElementOptions } = options;
 
             if (zipCodeElementOptions) {
-                const postalCode = document.getElementById(zipCodeElementOptions.containerId) ? (document.getElementById(zipCodeElementOptions.containerId) as HTMLInputElement).value : '';
+                const postalCode = document.getElementById(zipCodeElementOptions.elementOrSelector) ? (document.getElementById(zipCodeElementOptions.elementOrSelector) as HTMLInputElement).value : '';
 
                 if (postalCode && billingAddress) {
                     billingAddress = { ...billingAddress, postalCode };
@@ -389,7 +389,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             case StripePaymentMethodType.CreditCard:
                 const cart = this._store.getState().cart.getCart();
 
-                if (cart && getShippableItemsCount(cart) > 0) {
+                if (cart && getShippableItemsCount(cart)) {
                     const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
                     result = { ...result, shipping: this._mapStripeShippingAddress(shippingAddress, customer) };
                 }

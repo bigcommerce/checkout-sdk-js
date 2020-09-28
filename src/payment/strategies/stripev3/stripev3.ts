@@ -197,11 +197,12 @@ export interface CardElementOptions extends BaseElementOptions {
      * Hides the icon in the Element, Default is false
      */
     hideIcon?: boolean;
-
 }
 
+export type ElementOrSelector = string;
+
 interface BaseIndividualElementOptions extends BaseElementOptions  {
-    containerId: string;
+    elementOrSelector: ElementOrSelector;
 }
 
 export interface CardNumberElementOptions extends BaseIndividualElementOptions {
@@ -259,7 +260,7 @@ export interface IdealElementOptions extends BaseElementOptions {
 }
 
 export interface ZipCodeElementOptions {
-    containerId: string;
+    elementOrSelector: string;
 }
 
 export enum IconStyle {
