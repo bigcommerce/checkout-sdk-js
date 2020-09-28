@@ -18,7 +18,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaymentIntent, StripeAdditionalAction, StripeAdditionalActionError, StripeAddress, StripeBillingDetails, StripeConfirmCardPaymentData, StripeConfirmIdealPaymentData, StripeConfirmPaymentData, StripeConfirmSepaPaymentData, StripeElement, StripeElements, StripeElementType, StripeError, StripePaymentMethodType, StripeShippingAddress, StripeV3Client } from './stripev3';
+import isIndividualCardElementOptions, { PaymentIntent, StripeAdditionalAction, StripeAdditionalActionError, StripeAddress, StripeBillingDetails, StripeCardElements, StripeConfirmCardPaymentData, StripeConfirmIdealPaymentData, StripeConfirmPaymentData, StripeConfirmSepaPaymentData, StripeElement, StripeElements, StripeElementOptions, StripeElementType, StripeError, StripePaymentMethodType, StripeShippingAddress, StripeV3Client } from './stripev3';
 import StripeV3PaymentInitializeOptions from './stripev3-initialize-options';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 
@@ -27,6 +27,8 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _stripeV3Client?: StripeV3Client;
     private _stripeElements?: StripeElements;
     private _stripeElement?: StripeElement;
+    private _stripeCardElements?: StripeCardElements;
+    private _useIndividualCardFields?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -40,7 +42,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._initializeOptions = options;
-        this._stripeV3Client = await this._loadStripeJs();
+
+        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(this._getInitializeOptions().methodId);
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
+
+        this._useIndividualCardFields = useIndividualCardFields;
+        this._stripeV3Client = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
         this._stripeElement = await this._mountElement(this._getInitializeOptions().methodId);
 
         return Promise.resolve(this._store.getState());
@@ -125,6 +132,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         if (isAdditionalActionError) {
             const action: StripeAdditionalAction = error.body.additional_action_required;
+
             if (action && action.type === 'redirect_to_url') {
                 return new Promise(() => {
                     window.location.replace(action.data.redirect_url);
@@ -135,10 +143,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return Promise.reject(error);
     }
 
-    private async _confirmStripePayment(
-        paymentMethod: PaymentMethod,
-        shouldSaveInstrument: boolean
-    ): Promise<PaymentIntent> {
+    private async _confirmStripePayment(paymentMethod: PaymentMethod, shouldSaveInstrument: boolean): Promise<PaymentIntent> {
         const { clientToken: clientSecret, returnUrl } = paymentMethod;
 
         if (!clientSecret) {
@@ -150,7 +155,6 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         let paymentIntent: PaymentIntent | undefined;
 
         return new Promise(async (resolve, reject) => {
-
             switch (paymentMethod.method) {
                 case StripeElementType.Alipay:
                     ({error, paymentIntent} = await this._getStripeJs().confirmAlipayPayment(
@@ -186,11 +190,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private async _confirmVaultedPayment(
-        clientSecret: string
-    ): Promise<PaymentIntent> {
+    private async _confirmVaultedPayment(clientSecret: string): Promise<PaymentIntent> {
         return new Promise(async (resolve, reject) => {
-            const {error, paymentIntent} = await this._getStripeJs().confirmCardPayment(clientSecret);
+            const { error, paymentIntent } = await this._getStripeJs().confirmCardPayment(clientSecret);
 
             if (error) {
                 reject(error);
@@ -226,6 +228,14 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this._stripeElement;
     }
 
+    private _getStripeCardElements(): StripeCardElements {
+        if (!this._stripeCardElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._stripeCardElements;
+    }
+
     private _getStripeJs(): StripeV3Client {
         if (!this._stripeV3Client) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -234,11 +244,8 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this._stripeV3Client;
     }
 
-    private async _loadStripeJs(): Promise<StripeV3Client> {
+    private async _loadStripeJs(stripePublishableKey: string, stripeConnectedAccount: string): Promise<StripeV3Client> {
         if (this._stripeV3Client) { return Promise.resolve(this._stripeV3Client); }
-
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(this._getInitializeOptions().methodId);
-        const { initializationData: { stripePublishableKey, stripeConnectedAccount } } = paymentMethod;
 
         return await this._stripeScriptLoader.load(
             stripePublishableKey,
@@ -260,9 +267,37 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             switch (stripeElementType) {
                 case StripeElementType.CreditCard:
+                    if (this._useIndividualCardFields && isIndividualCardElementOptions(options)) {
+                        const { cardNumberElementOptions, cardExpiryElementOptions, cardCvcElementOptions } = options;
+
+                        const cardNumberElement = this._stripeElements.getElement(StripeElementType.CardNumber) || this._stripeElements.create(StripeElementType.CardNumber, cardNumberElementOptions);
+                        const cardExpiryElement = this._stripeElements.getElement(StripeElementType.CardExpiry) || this._stripeElements.create(StripeElementType.CardExpiry, cardExpiryElementOptions);
+                        const cardCvcElement = this._stripeElements.getElement(StripeElementType.CardCvc) || this._stripeElements.create(StripeElementType.CardCvc, cardCvcElementOptions);
+
+                        this._stripeCardElements = [cardNumberElement, cardExpiryElement, cardCvcElement];
+                        stripeElement = this._stripeCardElements[0];
+
+                        try {
+                            cardNumberElement.mount(`#${cardNumberElementOptions.containerId}`);
+                            cardExpiryElement.mount(`#${cardExpiryElementOptions.containerId}`);
+                            cardCvcElement.mount(`#${cardCvcElementOptions.containerId}`);
+                        } catch (error) {
+                            reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
+                        }
+                    } else {
+                        stripeElement = this._stripeElements.getElement(stripeElementType) || this._stripeElements.create(stripeElementType, options as StripeElementOptions);
+
+                        try {
+                            stripeElement.mount(`#${containerId}`);
+                        } catch (error) {
+                            reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
+                        }
+                    }
+
+                    break;
                 case StripeElementType.iDEAL:
                 case StripeElementType.Sepa:
-                    stripeElement = this._stripeElements.getElement(stripeElementType) || this._stripeElements.create(stripeElementType, options);
+                    stripeElement = this._stripeElements.getElement(stripeElementType) || this._stripeElements.create(stripeElementType, options as StripeElementOptions);
 
                     try {
                         stripeElement.mount(`#${containerId}`);
@@ -300,6 +335,19 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _mapStripeBillingDetails(billingAddress?: BillingAddress, customer?: Customer): StripeBillingDetails {
         const { firstName, lastName } = billingAddress || customer || { firstName: 'Guest', lastName: '' };
         const name = `${firstName} ${lastName}`.trim();
+        const { options } = this._getStripeInitializeOptions();
+
+        if (this._useIndividualCardFields && isIndividualCardElementOptions(options)) {
+            const { zipCodeElementOptions } = options;
+
+            if (zipCodeElementOptions) {
+                const postalCode = document.getElementById(zipCodeElementOptions.containerId) ? (document.getElementById(zipCodeElementOptions.containerId) as HTMLInputElement).value : '';
+
+                if (postalCode && billingAddress) {
+                    billingAddress = { ...billingAddress, postalCode };
+                }
+            }
+        }
 
         const address = {
             address:  this._mapStripeAddress(billingAddress),
@@ -319,7 +367,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             return phone ? { ...address, email, name, phone } : { ...address, email, name };
         }
 
-        return {...address, name};
+        return { ...address, name };
     }
 
     private _mapStripePaymentData(element: StripePaymentMethodType.CreditCard, shouldSaveInstrument: boolean): StripeConfirmCardPaymentData;
@@ -332,7 +380,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         result = {
             payment_method: {
-                [element]: this._getStripeElement(),
+                [element]: element === StripePaymentMethodType.CreditCard && this._useIndividualCardFields ? this._getStripeCardElements()[0] : this._getStripeElement(),
                 billing_details: this._mapStripeBillingDetails(billingAddress, customer),
             },
         };
