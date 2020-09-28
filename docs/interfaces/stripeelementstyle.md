@@ -2,9 +2,6 @@
 
 # Interface: StripeElementStyle
 
-Customize the appearance of an element using CSS properties passed in a `Style` object,
-which consists of CSS properties nested under objects for each variant.
-
 ## Hierarchy
 
 * **StripeElementStyle**

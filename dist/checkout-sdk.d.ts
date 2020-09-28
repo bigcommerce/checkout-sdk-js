@@ -465,16 +465,23 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 }
 
 declare interface BaseElementOptions {
-    style?: StripeElementStyle;
-    classes?: StripeElementClasses;
     /**
-     * Hides the icon in the Element. Default is false.
+     * Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
+     * which consists of CSS properties nested under objects for each variant.
      */
-    hideIcon?: boolean;
+    style?: StripeElementStyle;
+    /**
+     * Set custom class names on the container DOM element when the Stripe element is in a particular state.
+     */
+    classes?: StripeElementClasses;
     /**
      * Applies a disabled state to the Element such that user input is not accepted. Default is false.
      */
     disabled?: boolean;
+}
+
+declare interface BaseIndividualElementOptions extends BaseElementOptions {
+    containerId: string;
 }
 
 declare interface BaseInstrument {
@@ -760,6 +767,10 @@ declare enum ButtonType {
     Short = "short"
 }
 
+declare interface CardCvcElementOptions extends BaseIndividualElementOptions {
+    placeholder?: string;
+}
+
 declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
 }
@@ -780,6 +791,11 @@ declare interface CardElementOptions extends BaseElementOptions {
      * Appearance of the icon in the Element.
      */
     iconStyle?: IconStyle;
+    hideIcon?: boolean;
+}
+
+declare interface CardExpiryElementOptions extends BaseIndividualElementOptions {
+    placeholder?: string;
 }
 
 declare interface CardInstrument extends BaseInstrument {
@@ -789,6 +805,15 @@ declare interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+}
+
+declare interface CardNumberElementOptions extends BaseIndividualElementOptions {
+    placeholder?: string;
+    showIcon?: boolean;
+    /**
+     * Appearance of the icon in the Element. Either `solid` or `default`
+     */
+    iconStyle?: IconStyle;
 }
 
 declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
@@ -3439,10 +3464,13 @@ declare interface IdealElementOptions extends BaseElementOptions {
      * Hides the icon in the Element. Default is false.
      */
     hideIcon?: boolean;
-    /**
-     * Applies a disabled state to the Element such that user input is not accepted. Default is false.
-     */
-    disabled?: boolean;
+}
+
+declare interface IndividualCardElementOptions {
+    cardCvcElementOptions: CardCvcElementOptions;
+    cardExpiryElementOptions: CardExpiryElementOptions;
+    cardNumberElementOptions: CardNumberElementOptions;
+    zipCodeElementOptions?: ZipCodeElementOptions;
 }
 
 declare interface InlineElementStyles {
@@ -4512,9 +4540,6 @@ declare interface StripeElementCSSProperties {
     textTransform?: string;
 }
 
-/**
- * Set custom class names on the container DOM element when the Stripe element is in a particular state.
- */
 declare interface StripeElementClasses {
     /**
      * The base class applied to the container. Defaults to StripeElement.
@@ -4543,12 +4568,8 @@ declare interface StripeElementClasses {
     webkitAutoFill?: string;
 }
 
-declare type StripeElementOptions = CardElementOptions | IdealElementOptions | IbanElementOptions;
+declare type StripeElementOptions = CardElementOptions | CardExpiryElementOptions | CardNumberElementOptions | CardCvcElementOptions | IdealElementOptions | IbanElementOptions | ZipCodeElementOptions;
 
-/**
- * Customize the appearance of an element using CSS properties passed in a `Style` object,
- * which consists of CSS properties nested under objects for each variant.
- */
 declare interface StripeElementStyle {
     /**
      * Base variant—all other variants inherit from these styles.
@@ -4598,10 +4619,7 @@ declare interface StripeV3PaymentInitializeOptions {
      * The location to insert the credit card number form field.
      */
     containerId: string;
-    /**
-     * The set of CSS styles to apply to all form fields.
-     */
-    options?: StripeElementOptions;
+    options?: StripeElementOptions | IndividualCardElementOptions;
 }
 
 declare enum StyleButtonColor {
@@ -4724,6 +4742,10 @@ declare interface WechatDataPaymentMethodState {
 
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+declare interface ZipCodeElementOptions {
+    containerId: string;
 }
 
 /**

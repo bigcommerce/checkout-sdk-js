@@ -28,6 +28,8 @@
 
 *Inherited from [BaseElementOptions](baseelementoptions.md).[classes](baseelementoptions.md#optional-classes)*
 
+Set custom class names on the container DOM element when the Stripe element is in a particular state.
+
 ___
 
 ### `Optional` disabled
@@ -43,10 +45,6 @@ ___
 ### `Optional` hideIcon
 
 • **hideIcon**? : *undefined | false | true*
-
-*Inherited from [BaseElementOptions](baseelementoptions.md).[hideIcon](baseelementoptions.md#optional-hideicon)*
-
-Hides the icon in the Element. Default is false.
 
 ___
 
@@ -72,6 +70,9 @@ ___
 • **style**? : *[StripeElementStyle](stripeelementstyle.md)*
 
 *Inherited from [BaseElementOptions](baseelementoptions.md).[style](baseelementoptions.md#optional-style)*
+
+Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
+which consists of CSS properties nested under objects for each variant.
 
 ___
 

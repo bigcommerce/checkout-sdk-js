@@ -2,8 +2,6 @@
 
 # Interface: StripeElementClasses
 
-Set custom class names on the container DOM element when the Stripe element is in a particular state.
-
 ## Hierarchy
 
 * **StripeElementClasses**

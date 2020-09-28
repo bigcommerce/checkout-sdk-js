@@ -31,6 +31,4 @@ ___
 
 ### `Optional` options
 
-• **options**? : *[StripeElementOptions](../README.md#stripeelementoptions)*
-
-The set of CSS styles to apply to all form fields.
+• **options**? : *[StripeElementOptions](../README.md#stripeelementoptions) | [IndividualCardElementOptions](individualcardelementoptions.md)*

@@ -66,6 +66,7 @@
 * [Banner](interfaces/banner.md)
 * [BaseAccountInstrument](interfaces/baseaccountinstrument.md)
 * [BaseElementOptions](interfaces/baseelementoptions.md)
+* [BaseIndividualElementOptions](interfaces/baseindividualelementoptions.md)
 * [BaseInstrument](interfaces/baseinstrument.md)
 * [BillingAddress](interfaces/billingaddress.md)
 * [BillingAddressRequestBody](interfaces/billingaddressrequestbody.md)
@@ -92,9 +93,12 @@
 * [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/braintreevisacheckoutcustomerinitializeoptions.md)
 * [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/braintreevisacheckoutpaymentinitializeoptions.md)
 * [ButtonStyles](interfaces/buttonstyles.md)
+* [CardCvcElementOptions](interfaces/cardcvcelementoptions.md)
 * [CardDataPaymentMethodState](interfaces/carddatapaymentmethodstate.md)
 * [CardElementOptions](interfaces/cardelementoptions.md)
+* [CardExpiryElementOptions](interfaces/cardexpiryelementoptions.md)
 * [CardInstrument](interfaces/cardinstrument.md)
+* [CardNumberElementOptions](interfaces/cardnumberelementoptions.md)
 * [CardPaymentMethodState](interfaces/cardpaymentmethodstate.md)
 * [CardState](interfaces/cardstate.md)
 * [Cart](interfaces/cart.md)
@@ -179,6 +183,7 @@
 * [HostedStoredCardFieldOptionsMap](interfaces/hostedstoredcardfieldoptionsmap.md)
 * [IbanElementOptions](interfaces/ibanelementoptions.md)
 * [IdealElementOptions](interfaces/idealelementoptions.md)
+* [IndividualCardElementOptions](interfaces/individualcardelementoptions.md)
 * [InlineElementStyles](interfaces/inlineelementstyles.md)
 * [InputDetail](interfaces/inputdetail.md)
 * [InputStyles](interfaces/inputstyles.md)
@@ -268,6 +273,7 @@
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
 * [WechatState](interfaces/wechatstate.md)
+* [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)
 
 ### Type aliases
 
@@ -529,7 +535,7 @@ ___
 
 ###  StripeElementOptions
 
-Ƭ **StripeElementOptions**: *[CardElementOptions](interfaces/cardelementoptions.md) | [IdealElementOptions](interfaces/idealelementoptions.md) | [IbanElementOptions](interfaces/ibanelementoptions.md)*
+Ƭ **StripeElementOptions**: *[CardElementOptions](interfaces/cardelementoptions.md) | [CardExpiryElementOptions](interfaces/cardexpiryelementoptions.md) | [CardNumberElementOptions](interfaces/cardnumberelementoptions.md) | [CardCvcElementOptions](interfaces/cardcvcelementoptions.md) | [IdealElementOptions](interfaces/idealelementoptions.md) | [IbanElementOptions](interfaces/ibanelementoptions.md) | [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)*
 
 ## Functions
 

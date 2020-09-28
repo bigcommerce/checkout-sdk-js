@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.102.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.101.0...v1.102.0) (2020-09-28)
+
+
+### Features
+
+* **payment:** INT-3086 Support mounting individual card fields on StripeV3 ([2fc46a8](https://github.com/bigcommerce/checkout-sdk-js/commit/2fc46a8e9196b4f1f096f5b35672454662b05a97))
+
 ## [1.101.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.100.0...v1.101.0) (2020-09-22)
 
 
