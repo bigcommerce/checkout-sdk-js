@@ -6,6 +6,73 @@ import { NonceGenerationError, SquareFormElement } from './square-form';
  * Once Square payment is initialized, credit card form fields, provided by the
  * payment provider as iframes, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'squarev2',
+ *     square: {
+ *         cardNumber: {
+ *             elementId: 'card-number',
+ *         },
+ *         cvv: {
+ *             elementId: 'card-code',
+ *         },
+ *         expirationDate: {
+ *             elementId: 'card-expiry',
+ *         },
+ *         postalCode: {
+ *             elementId: 'card-code',
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to enable Masterpass (if configured for
+ * the account) and customize the fields.
+ *
+ * ```html
+ * <!-- This container is where Masterpass button will be inserted -->
+ * <div id="masterpass"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'squarev2',
+ *     square: {
+ *         cardNumber: {
+ *             elementId: 'card-number',
+ *         },
+ *         cvv: {
+ *             elementId: 'card-code',
+ *         },
+ *         expirationDate: {
+ *             elementId: 'card-expiry',
+ *         },
+ *         postalCode: {
+ *             elementId: 'card-code',
+ *         },
+ *         inputClass: 'form-input',
+ *         inputStyles: [
+ *             {
+ *                 color: '#333',
+ *                 fontSize: '13px',
+ *                 lineHeight: '20px',
+ *             },
+ *         ],
+ *         masterpass: {
+ *             elementId: 'masterpass',
+ *         },
+ *     },
+ * });
+ * ```
  */
 export default interface SquarePaymentInitializeOptions {
     /**

@@ -5,6 +5,28 @@
  * If the customer chooses to pay with Visa Checkout, they will be asked to
  * enter their payment details via a modal. You can hook into events emitted by
  * the modal by providing the callbacks listed below.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreevisacheckout',
+ * });
+ * ```
+ *
+ * Additional event callbacks can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreevisacheckout',
+ *     braintreevisacheckout: {
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *     },
+ * });
+ * ```
  */
 export default interface BraintreeVisaCheckoutPaymentInitializeOptions {
     /**

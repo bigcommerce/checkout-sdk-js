@@ -9,6 +9,20 @@ import AmazonPayWidgetError from './amazon-pay-widget-error';
  *
  * When AmazonPay is initialized, a widget will be inserted into the DOM. The
  * widget has a list of payment options for the customer to choose from.
+ *
+ * ```html
+ * <!-- This is where the widget will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'amazon',
+ *     amazon: {
+ *         container: 'container',
+ *     },
+ * });
+ * ```
  */
 export default interface AmazonPayPaymentInitializeOptions {
     /**

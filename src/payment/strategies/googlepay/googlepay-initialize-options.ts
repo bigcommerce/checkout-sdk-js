@@ -4,6 +4,38 @@
  * If the customer chooses to pay with GooglePay, they will be asked to
  * enter their payment details via a modal. You can hook into events emitted by
  * the modal by providing the callbacks listed below.
+ *
+ * ```html
+ * <!-- This is where the GooglePay button will be inserted -->
+ * <div id="wallet-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     // Using GooglePay provided by Braintree as an example
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button'
+ *     },
+ * });
+ * ```
+ *
+ * Additional event callbacks can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button',
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *     },
+ * });
+ * ```
  */
 export default interface GooglePayPaymentInitializeOptions {
     /**
