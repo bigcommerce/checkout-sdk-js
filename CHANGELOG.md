@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.104.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.103.0...v1.104.0) (2020-09-30)
+
+
+### Features
+
+* **payment:** PAYPAL-675 Upgrade to 3DS v2 Braintree ([f1417cf](https://github.com/bigcommerce/checkout-sdk-js/commit/f1417cfaf0af27c7a32cac13bdfa725cbfa1fbf7))
+* **payment:** PAYPAL-675 Upgrade to 3DS v2 Braintree ([58b187d](https://github.com/bigcommerce/checkout-sdk-js/commit/58b187d9ae393c63b9408986c850dbe12eabb9d5))
+
 ## [1.103.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.102.0...v1.103.0) (2020-09-30)
 
 
