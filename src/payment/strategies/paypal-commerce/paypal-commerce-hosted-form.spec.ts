@@ -1,6 +1,8 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { PaymentMethodFailedError } from '../../errors';
+
 import { PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 
 describe('PaypalCommerceHostedForm', () => {
@@ -139,5 +141,14 @@ describe('PaypalCommerceHostedForm', () => {
         await hostedForm.submit();
 
         expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalled();
+    });
+
+    it('throw error if 3ds is enabled and failed', async () => {
+        jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
+            .mockReturnValue(Promise.resolve({ orderId, liabilityShift: 'NO' }));
+
+        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+
+        await expect(hostedForm.submit(true)).rejects.toThrow(PaymentMethodFailedError);
     });
 });

@@ -1,6 +1,8 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
-import { DataPaypalCommerceScript, PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField } from './index';
+import { PaymentMethodFailedError } from '../../errors';
+
+import { DataPaypalCommerceScript, PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -47,8 +49,14 @@ export default class PaypalCommerceHostedForm {
         }
     }
 
-    async submit(): Promise<{orderId: string}> {
-        return this._paypalCommercePaymentProcessor.submitHostedFields();
+    async submit(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
+        const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
+
+        if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
+            throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
+        }
+
+        return result;
     }
 
     private _mapFieldOptions(fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap): PaypalCommerceHostedFieldsRenderOptions['fields'] {

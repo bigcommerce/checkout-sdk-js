@@ -48,7 +48,8 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        const { orderId } = await this._paypalCommerceHostedForm.submit();
+        const { paymentMethods: { getPaymentMethodOrThrow } } = await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        const { orderId } = await this._paypalCommerceHostedForm.submit(getPaymentMethodOrThrow(payment.methodId).config.is3dsEnabled);
 
         const paymentData =  {
             formattedPayload: {
