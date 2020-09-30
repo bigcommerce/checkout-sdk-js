@@ -67,7 +67,7 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.load3DS(),
             ])
-            .then(([client, threeDSecure]) => threeDSecure.create({ client }));
+            .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
         }
 
         return this._3ds;

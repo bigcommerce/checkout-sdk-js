@@ -118,6 +118,7 @@ describe('BraintreePaymentProcessor', () => {
                     removeFrame: expect.any(Function),
                     amount: 122,
                     nonce: 'my_nonce',
+                    onLookupComplete: expect.any(Function),
                 });
         });
 

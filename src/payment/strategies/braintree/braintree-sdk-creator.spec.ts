@@ -77,7 +77,7 @@ describe('Braintree SDK Creator', () => {
         it('returns a promise that resolves to the 3ds client', async () => {
             const threeDSecure = await braintreeSDKCreator.get3DS();
 
-            expect(threeDSecureCreatorMock.create).toHaveBeenCalledWith({ client: clientMock });
+            expect(threeDSecureCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, version: 2 });
             expect(threeDSecure).toBe(threeDSecureMock);
         });
 

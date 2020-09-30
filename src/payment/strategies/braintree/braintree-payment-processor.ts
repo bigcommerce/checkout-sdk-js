@@ -150,6 +150,9 @@ export default class BraintreePaymentProcessor {
                 amount,
                 nonce,
                 removeFrame,
+                onLookupComplete: (_data, next) => {
+                    next();
+                },
             })
         );
 
