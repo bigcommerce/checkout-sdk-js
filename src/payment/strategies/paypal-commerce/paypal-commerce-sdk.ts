@@ -155,6 +155,7 @@ export interface PaypalCommerceSDK {
 
 export interface PaypalCommerceHostWindow extends Window {
     paypal?: PaypalCommerceSDK;
+    paypalLoadScript?(options: PaypalCommerceScriptParams): Promise<{ paypal: PaypalCommerceSDK }>;
 }
 
 export interface PaypalCommerceInitializationData {
@@ -170,17 +171,14 @@ export type DisableFundingType = Array<'credit' | 'card'>;
 
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields'>;
 
-export interface PaypalCommerceScriptOptions {
-    clientId: string;
-    merchantId?: string;
+export interface PaypalCommerceScriptParams  {
+    'client-id': string;
+    'merchant-id'?: string;
+    'disable-funding'?: DisableFundingType;
+    'data-client-token'?: string;
+    'partner-attribution-id'?: string;
     currency?: string;
     commit?: boolean;
     intent?: 'capture' | 'authorize';
-    disableFunding?: DisableFundingType;
     components?: ComponentsScriptType;
-}
-
-export interface PaypalCommerceScriptAttribute {
-    clientToken?: string;
-    partnerAttributionId?: string;
 }

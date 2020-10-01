@@ -2,7 +2,7 @@ export * from './paypal-commerce-sdk';
 
 export * from './paypal-commerce-payment-initialize-options';
 
-export { default as PaypalCommerceScriptLoader, DataPaypalCommerceScript } from './paypal-commerce-script-loader';
+export { default as PaypalCommerceScriptLoader } from './paypal-commerce-script-loader';
 export { default as PaypalCommerceCreditCardPaymentStrategy } from './paypal-commerce-credit-card-payment-strategy';
 export { default as PaypalCommercePaymentStrategy } from './paypal-commerce-payment-strategy';
 export { default as PaypalCommerceRequestSender, ParamsForProvider } from './paypal-commerce-request-sender';

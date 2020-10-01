@@ -9,7 +9,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptOptions } from './index';
+import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -44,7 +44,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const { container, onRenderButton, submitForm, style } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
 
-        const paramsScript = { options: this._getOptionsScript(initializationData, currencyCode) };
+        const paramsScript = this._getOptionsScript(initializationData, currencyCode);
         const buttonParams: ButtonsOptions = { style, onApprove: data => this._tokenizePayment(data, submitForm) };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -91,6 +91,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
         this._orderId = undefined;
+        this._paypalCommercePaymentProcessor.deinitialize();
 
         return Promise.resolve(this._store.getState());
     }
@@ -104,12 +105,12 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         submitForm();
     }
 
-    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptOptions {
+    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptParams {
         const { clientId, intent, merchantId } = initializationData;
 
         return {
-            clientId,
-            merchantId,
+            'client-id': clientId,
+            'merchant-id': merchantId,
             commit: true,
             currency: currencyCode,
             intent,

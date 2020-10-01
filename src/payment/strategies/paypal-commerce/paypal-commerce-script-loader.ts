@@ -1,15 +1,9 @@
-import { LoadScriptOptions, ScriptLoader } from '@bigcommerce/script-loader';
-import { isNil, kebabCase } from 'lodash';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { PaypalCommerceHostWindow, PaypalCommerceScriptAttribute, PaypalCommerceScriptOptions, PaypalCommerceSDK } from './paypal-commerce-sdk';
-
-export interface DataPaypalCommerceScript {
-    options: PaypalCommerceScriptOptions;
-    attr?: PaypalCommerceScriptAttribute;
-}
+import { PaypalCommerceHostWindow, PaypalCommerceScriptParams, PaypalCommerceSDK } from './paypal-commerce-sdk';
 
 export default class PaypalCommerceScriptLoader {
     private _window: PaypalCommerceHostWindow;
@@ -20,30 +14,18 @@ export default class PaypalCommerceScriptLoader {
         this._window = window;
     }
 
-    async loadPaypalCommerce({options, attr}: DataPaypalCommerceScript, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
-        this._validateParams(options, isProgressiveOnboardingAvailable);
+    async loadPaypalCommerce(params: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
+        this._validateParams(params, isProgressiveOnboardingAvailable);
 
-        let attributes: LoadScriptOptions['attributes'] = {};
-        const { disableFunding } = options;
-        const updatedOptions = disableFunding
-            ? { ...options, disableFunding: disableFunding.join(',') }
-            : options;
+        const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@1.0.2/dist/paypal.browser.min.js';
 
-        const params = (Object.keys(updatedOptions) as Array<keyof PaypalCommerceScriptOptions>)
-            .filter(key => !isNil(options[key]))
-            .map(key => `${kebabCase(key)}=${options[key]}`)
-            .join('&');
+        await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
 
-        if (attr) {
-            attributes = (Object.keys(attr) as Array<keyof PaypalCommerceScriptAttribute>)
-                .reduce((attributes, key) =>
-                    attr[key] ? { ...attributes, [`data-${kebabCase(key)}`]: attr[key] } : attributes
-                , {});
+        if (!this._window.paypalLoadScript) {
+            throw new PaymentMethodClientUnavailableError();
         }
 
-        const scriptSrc = `https://www.paypal.com/sdk/js?${params}`;
-
-        await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+        await this._window.paypalLoadScript(params);
 
         if (!this._window.paypal) {
             throw new PaymentMethodClientUnavailableError();
@@ -52,9 +34,9 @@ export default class PaypalCommerceScriptLoader {
         return this._window.paypal;
     }
 
-    _validateParams(options: PaypalCommerceScriptOptions, isProgressiveOnboardingAvailable?: boolean): void {
-        const CLIENT_ID = 'clientId';
-        const MERCHANT_ID = 'merchantId';
+    _validateParams(options: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): void {
+        const CLIENT_ID = 'client-id';
+        const MERCHANT_ID = 'merchant-id';
         let param;
 
         if (!options) {

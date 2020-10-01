@@ -81,7 +81,6 @@ export default function createPaymentStrategyRegistry(
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
-    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -285,7 +284,7 @@ export default function createPaymentStrategyRegistry(
         new PaypalCommerceCreditCardPaymentStrategy(
             store,
             paymentMethodActionCreator,
-            new PaypalCommerceHostedForm(paypalCommercePaymentProcessor),
+            new PaypalCommerceHostedForm(createPaypalCommercePaymentProcessor(scriptLoader, requestSender)),
             orderActionCreator,
             paymentActionCreator
         )
@@ -297,7 +296,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            paypalCommercePaymentProcessor
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender)
         )
     );
 
@@ -307,7 +306,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            paypalCommercePaymentProcessor,
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
             true
         )
     );
