@@ -121,12 +121,12 @@ describe('PaypalCommercePaymentStrategy', () => {
             paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
-            const obj = { options : {
-                    clientId: 'abc',
+            const obj = {
+                    'client-id': 'abc',
                     commit: true,
                     currency: 'USD',
                     intent: 'capture',
-                }};
+                };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
         });

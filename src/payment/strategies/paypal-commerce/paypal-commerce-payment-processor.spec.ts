@@ -6,7 +6,7 @@ import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { NotImplementedError } from '../../../common/error/errors';
 
-import { ButtonsOptions, DataPaypalCommerceScript, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostWindow, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
+import { ButtonsOptions, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
 describe('PaypalCommercePaymentProcessor', () => {
@@ -17,7 +17,7 @@ describe('PaypalCommercePaymentProcessor', () => {
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let eventEmitter: EventEmitter;
     let cardFieldsEventEmitter: EventEmitter;
-    let initOptions: DataPaypalCommerceScript;
+    let initOptions: PaypalCommerceScriptParams;
     let hostedFormOptions: ParamsRenderHostedFields;
     let cardFields: PaypalCommerceHostedFields;
     let cart: Cart;
@@ -45,7 +45,7 @@ describe('PaypalCommercePaymentProcessor', () => {
 
         orderID = 'ORDER_ID';
         fundingSource = 'paypal';
-        initOptions = { options: { clientId: 'clientId' } };
+        initOptions = { 'client-id': 'clientId' };
         cart = { ...getCart() };
         submit = jest.fn(() => ({ orderId: orderID, liabilityShift: 'POSSIBLE' }));
 
@@ -170,20 +170,6 @@ describe('PaypalCommercePaymentProcessor', () => {
             await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container');
 
             expect(render).toHaveBeenCalled();
-        });
-
-        it('calls loadPaypalCommerce with expected arguments', async () => {
-            jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
-                .mockImplementation(({ options }: DataPaypalCommerceScript) => {
-                    (window as PaypalCommerceHostWindow).paypal = paypal;
-
-                    expect(options).toMatchObject(initOptions.options);
-
-                    return Promise.resolve(paypal);
-                });
-
-            await paypalCommercePaymentProcessor.initialize(initOptions);
-            await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container');
         });
 
         it('throws error if unable to setting PayPalCommerce button', async () => {

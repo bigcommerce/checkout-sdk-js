@@ -2,7 +2,7 @@ import { isNil, kebabCase, omitBy } from 'lodash';
 
 import { PaymentMethodFailedError } from '../../errors';
 
-import { DataPaypalCommerceScript, PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField } from './index';
+import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -19,7 +19,7 @@ export default class PaypalCommerceHostedForm {
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
     ) {}
 
-    async initialize(options: PaypalCommerceFormOptions, cartId: string, paramsScript: DataPaypalCommerceScript) {
+    async initialize(options: PaypalCommerceFormOptions, cartId: string, paramsScript: PaypalCommerceScriptParams) {
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 
         this._formOptions = options;
@@ -57,6 +57,10 @@ export default class PaypalCommerceHostedForm {
         }
 
         return result;
+    }
+
+    deinitialize(): void {
+        this._paypalCommercePaymentProcessor.deinitialize();
     }
 
     private _mapFieldOptions(fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap): PaypalCommerceHostedFieldsRenderOptions['fields'] {

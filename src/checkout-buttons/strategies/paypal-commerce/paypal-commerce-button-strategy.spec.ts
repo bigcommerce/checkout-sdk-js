@@ -113,14 +113,14 @@ describe('PaypalCommerceButtonStrategy', () => {
     it('initializes PaypalCommerce and PayPal JS clients PayPal credit disabled', async () => {
         await strategy.initialize(options);
 
-        const obj = { options : {
-            clientId: 'abc',
+        const obj = {
+            'client-id': 'abc',
             commit: false,
             currency: 'USD',
             intent: 'capture',
             components: ['buttons'],
-            disableFunding: ['card', 'credit'],
-        }};
+            'disable-funding': ['card', 'credit'],
+        };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
@@ -131,14 +131,14 @@ describe('PaypalCommerceButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        const obj = { options : {
-                clientId: 'abc',
+        const obj = {
+                'client-id': 'abc',
                 commit: false,
                 currency: 'USD',
                 intent: 'capture',
                 components: ['buttons', 'messages'],
-                disableFunding: ['card'],
-            }};
+                'disable-funding': ['card'],
+        };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });

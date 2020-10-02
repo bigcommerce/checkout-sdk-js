@@ -41,7 +41,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     beforeEach(() => {
         const requestSender = createRequestSender();
 
-        paymentMethod = {...getPaypalCommerce()};
+        paymentMethod = { ...getPaypalCommerce(), clientToken: 'clientToken'};
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());

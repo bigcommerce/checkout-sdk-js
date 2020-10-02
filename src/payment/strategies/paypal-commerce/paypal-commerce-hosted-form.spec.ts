@@ -75,13 +75,13 @@ describe('PaypalCommerceHostedForm', () => {
     });
 
     it('initialize paypalCommercePaymentProcessor', async () => {
-        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith({ options: { clientId: '' } });
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith({ 'client-id': '' });
     });
 
     it('render hosted fields with form fields', async () => {
-        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
 
         expect(paypalCommercePaymentProcessor.renderHostedFields)
             .toHaveBeenCalledWith('123', {
@@ -113,7 +113,7 @@ describe('PaypalCommerceHostedForm', () => {
                     instrumentId: 'foobar_instrument_id',
                 },
             },
-        }, '123', { options: { clientId: '' } });
+        }, '123', { 'client-id': '' });
 
         expect(paypalCommercePaymentProcessor.renderHostedFields)
             .toHaveBeenCalledWith('123', {
@@ -130,14 +130,14 @@ describe('PaypalCommerceHostedForm', () => {
     });
 
     it('submit hosted form should return orderId', async () => {
-        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
         const result = await hostedForm.submit();
 
         expect(result.orderId).toEqual(orderId);
     });
 
     it('submit hosted form should call submitHostedFields of paypalCommercePaymentProcessor', async () => {
-        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
         await hostedForm.submit();
 
         expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('PaypalCommerceHostedForm', () => {
         jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
             .mockReturnValue(Promise.resolve({ orderId, liabilityShift: 'NO' }));
 
-        await hostedForm.initialize(formOptions, '123', { options: { clientId: '' } });
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
 
         await expect(hostedForm.submit(true)).rejects.toThrow(PaymentMethodFailedError);
     });
