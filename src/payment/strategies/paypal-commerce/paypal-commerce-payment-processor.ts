@@ -69,7 +69,7 @@ export default class PaypalCommercePaymentProcessor {
         this._paypalButtons = this._paypal.Buttons(buttonParams);
 
         if (!this._paypalButtons.isEligible()) {
-            throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
+            this._processNotEligible(buttonParams, fundingKey);
         }
 
         onRenderButton?.();
@@ -144,7 +144,7 @@ export default class PaypalCommercePaymentProcessor {
     }
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
-        const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' };
+        const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' || this._fundingSource === 'paylater' };
         const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, paramsForProvider);
 
         return orderId;
@@ -184,5 +184,19 @@ export default class PaypalCommercePaymentProcessor {
 
         return updatedStyle;
     };
+
+    private _processNotEligible(buttonParams: ButtonsOptions, fundingKey?: keyof PaypalCommerceSDKFunding): void {
+        if (fundingKey === 'PAYLATER') {
+            buttonParams.fundingSource = this._paypal?.FUNDING.CREDIT;
+
+            this._paypalButtons = this._paypal?.Buttons(buttonParams);
+
+            if (this._paypalButtons?.isEligible()) {
+                return;
+            }
+        }
+
+        throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
+    }
 
 }
