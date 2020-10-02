@@ -35,6 +35,7 @@ The SDK has a convenient application interface for starting and completing a che
     - [Load order](#load-order)
     - [Subscribe to changes](#subscribe-to-changes)
     - [Cancel requests](#cancel-requests)
+- [FAQs](FAQS.md)
 - [API reference](#api-reference)
 - [See also](#see-also)
 - [Notes](#notes)
@@ -57,7 +58,7 @@ The library also provides integrations with all the payment methods supported by
 * Klarna
 * AfterPay
 
-Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) of a custom checkout written in React to get you started. **Please note that this reference implementation is not production ready.** 
+Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) of a custom checkout written in React to get you started. **Please note that this reference implementation is not production ready.**
 
 
 ## Getting started
