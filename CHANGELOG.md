@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.104.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.104.0...v1.104.1) (2020-10-02)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-726 Switch payment methods ([4305cfd](https://github.com/bigcommerce/checkout-sdk-js/commit/4305cfd14a30abc381d2617a10fe47c78a89932e))
+
 ## [1.104.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.103.0...v1.104.0) (2020-09-30)
 
 
