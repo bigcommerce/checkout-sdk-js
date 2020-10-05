@@ -98,6 +98,7 @@ export interface PaypalCommerceHostedFieldsApprove {
 
 export interface PaypalCommerceHostedFields {
     submit(options?: PaypalCommerceHostedFieldsSubmitOptions): PaypalCommerceHostedFieldsApprove;
+    getState(): PaypalCommerceHostedFieldsState;
     on(eventName: string, callback: (event: PaypalCommerceHostedFieldsState) => void): void;
 }
 

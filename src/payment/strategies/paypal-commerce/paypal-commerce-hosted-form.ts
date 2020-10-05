@@ -1,8 +1,8 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
-import { PaymentMethodFailedError } from '../../errors';
+import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodFailedError } from '../../errors';
 
-import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
+import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -17,7 +17,8 @@ export default class PaypalCommerceHostedForm {
 
     constructor(
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
-    ) {}
+    ) {
+    }
 
     async initialize(options: PaypalCommerceFormOptions, cartId: string, paramsScript: PaypalCommerceScriptParams) {
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -50,13 +51,28 @@ export default class PaypalCommerceHostedForm {
     }
 
     async submit(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
-        const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
+        try {
+            const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
 
-        if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
-            throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
+            if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
+                throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
+            }
+
+            return result;
+        } catch (error) {
+            if (error.type !== 'invalid_fields_before_submit') {
+                throw error;
+            }
+
+            const errors = this._mapValidationErrors(error.fields);
+
+            this._formOptions?.onValidate?.({
+                errors,
+                isValid: false,
+            });
+
+            throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
         }
-
-        return result;
     }
 
     deinitialize(): void {
@@ -131,90 +147,93 @@ export default class PaypalCommerceHostedForm {
         }
     }
 
-    private _mapStoredCardVerificationErrors(
+    private _mapValidationErrors(
         fields: PaypalCommerceHostedFieldsState['fields']
     ): PaypalCommerceFormFieldValidateEventData['errors'] {
-        return this._type === PaypalCommerceHostedFormType.StoredCardVerification ?
-            {
-                [PaypalCommerceFormFieldType.CardCodeVerification]: !fields.cvv || fields.cvv.isValid ? undefined : [{
-                    fieldType: 'cardCodeVerification',
-                    message: 'Invalid card code',
-                    type: 'invalid_card_code',
-                }],
-                [PaypalCommerceFormFieldType.CardNumberVerification]: !fields.number || fields.number.isValid ? undefined : [{
-                    fieldType: 'cardNumberVerification',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-            } :
-            {
-                [PaypalCommerceFormFieldType.CardCode]: !fields.cvv || fields.cvv.isValid ? undefined : [{
-                    fieldType: 'cardCode',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-                [PaypalCommerceFormFieldType.CardExpiry]: !fields.expirationDate || fields.expirationDate.isValid ? undefined : [{
-                    fieldType: 'cardExpiry',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-                [PaypalCommerceFormFieldType.CardNumber]: !fields.number || fields.number.isValid ? undefined : [{
-                    fieldType: 'cardNumber',
-                    message: 'Invalid card number',
-                    type: 'invalid_card_number',
-                }],
-            };
+        return (Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
+            .reduce((result, fieldKey) => ({
+                ...result,
+                [this._mapFieldType(fieldKey)]: fields[fieldKey]?.isValid ? undefined : [
+                    this._createInvalidError(this._mapFieldType(fieldKey)),
+                ],
+            }), {});
     }
 
-    private _handleBlur: (event: PaypalCommerceHostedFieldsState)  => void = event => {
-        if (!this._formOptions?.onBlur) {
-            return;
-        }
+    private _createInvalidError(fieldType: PaypalCommerceFormFieldType): PaypalCommerceFormFieldValidateErrorData {
+        switch (fieldType) {
+            case PaypalCommerceFormFieldType.CardCodeVerification:
+                return {
+                    fieldType,
+                    message: 'Invalid card code',
+                    type: 'invalid_card_code',
+                };
 
-        this._formOptions.onBlur({
+            case PaypalCommerceFormFieldType.CardNumberVerification:
+                return {
+                    fieldType,
+                    message: 'Invalid card number',
+                    type: 'invalid_card_number',
+                };
+
+            case PaypalCommerceFormFieldType.CardCode:
+                return {
+                    fieldType,
+                    message: 'Invalid card code',
+                    type: 'invalid_card_code',
+                };
+
+            case PaypalCommerceFormFieldType.CardExpiry:
+                return {
+                    fieldType,
+                    message: 'Invalid card expiry',
+                    type: 'invalid_card_expiry',
+                };
+
+            case PaypalCommerceFormFieldType.CardNumber:
+                return {
+                    fieldType,
+                    message: 'Invalid card number',
+                    type: 'invalid_card_number',
+                };
+
+            default:
+                return {
+                    fieldType,
+                    message: 'Invalid field',
+                    type: 'invalid',
+                };
+        }
+    }
+
+    private _handleBlur: (event: PaypalCommerceHostedFieldsState) => void = event => {
+        this._formOptions?.onBlur?.({
             fieldType: this._mapFieldType(event.emittedBy),
         });
     };
 
-    private _handleFocus: (event: PaypalCommerceHostedFieldsState)  => void = event => {
-        if (!this._formOptions?.onFocus) {
-            return;
-        }
-
-        this._formOptions.onFocus({
+    private _handleFocus: (event: PaypalCommerceHostedFieldsState) => void = event => {
+        this._formOptions?.onFocus?.({
             fieldType: this._mapFieldType(event.emittedBy),
         });
     };
 
-    private _handleCardTypeChange: (event: PaypalCommerceHostedFieldsState)  => void = event => {
-        if (!this._formOptions?.onCardTypeChange) {
-            return;
-        }
-
-        this._formOptions.onCardTypeChange({
+    private _handleCardTypeChange: (event: PaypalCommerceHostedFieldsState) => void = event => {
+        this._formOptions?.onCardTypeChange?.({
             cardType: event.cards[0]?.type,
         });
     };
 
-    private _handleInputSubmitRequest: (event: PaypalCommerceHostedFieldsState)  => void = event => {
-        if (!this._formOptions?.onEnter) {
-            return;
-        }
-
-        this._formOptions.onEnter({
+    private _handleInputSubmitRequest: (event: PaypalCommerceHostedFieldsState) => void = event => {
+        this._formOptions?.onEnter?.({
             fieldType: this._mapFieldType(event.emittedBy),
         });
     };
 
-    private _handleValidityChange: (event: PaypalCommerceHostedFieldsState)  => void = event => {
-        if (!this._formOptions?.onValidate) {
-            return;
-        }
-
-        this._formOptions.onValidate({
+    private _handleValidityChange: (event: PaypalCommerceHostedFieldsState) => void = event => {
+        this._formOptions?.onValidate?.({
             isValid: (Object.keys(event.fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
                 .every(key => event.fields[key]?.isValid),
-            errors: this._mapStoredCardVerificationErrors(event.fields),
+            errors: this._mapValidationErrors(event.fields),
         });
     };
 
