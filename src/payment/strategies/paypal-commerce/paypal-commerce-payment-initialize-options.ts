@@ -3,6 +3,7 @@ import { PaypalButtonStyleOptions } from './paypal-commerce-sdk';
 export interface PaypalCommercePaymentInitializeOptions {
     container: string;
     style?: PaypalButtonStyleOptions;
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
     submitForm(): void;
     onRenderButton?(): void;
 }

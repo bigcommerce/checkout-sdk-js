@@ -7,6 +7,11 @@ export interface ClickDataOptions {
     fundingSource: string;
 }
 
+export interface ClickActions {
+    reject(): Promise<void>;
+    resolve(): Promise<void>;
+}
+
 export interface OrderData {
     orderId: string;
     approveUrl: string;
@@ -52,7 +57,7 @@ export interface ButtonsOptions {
     fundingSource?: string;
     createOrder?(): Promise<string>;
     onApprove?(data: ApproveDataOptions): void;
-    onClick?(data: ClickDataOptions): void;
+    onClick?(data: ClickDataOptions, actions: ClickActions): void;
 }
 
 export interface MessagesOptions {

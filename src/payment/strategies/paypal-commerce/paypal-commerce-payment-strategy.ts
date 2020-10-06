@@ -41,11 +41,15 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".');
         }
 
-        const { container, onRenderButton, submitForm, style } = paypalcommerce;
+        const { container, onRenderButton, submitForm, style, onValidate } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode);
-        const buttonParams: ButtonsOptions = { style, onApprove: data => this._tokenizePayment(data, submitForm) };
+        const buttonParams: ButtonsOptions = {
+            style,
+            onApprove: data => this._tokenizePayment(data, submitForm),
+            onClick: async (_, actions) => onValidate(actions.resolve, actions.reject),
+        };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
 

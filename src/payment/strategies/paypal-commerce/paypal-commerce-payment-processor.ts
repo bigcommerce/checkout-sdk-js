@@ -50,10 +50,10 @@ export default class PaypalCommercePaymentProcessor {
         const buttonParams: ButtonsOptions = {
             ...params,
             createOrder: () => this._setupPayment(cartId, paramsForProvider),
-            onClick: data => {
+            onClick: async (data, actions) => {
                 this._fundingSource = data.fundingSource;
 
-                params.onClick?.(data);
+                return params.onClick?.(data, actions);
             },
         };
 

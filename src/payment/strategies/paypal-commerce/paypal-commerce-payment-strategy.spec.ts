@@ -61,6 +61,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             style: {},
             submitForm,
             onRenderButton: jest.fn(),
+            onValidate: jest.fn(),
         };
 
         options = {
@@ -137,6 +138,7 @@ describe('PaypalCommercePaymentStrategy', () => {
 
             const buttonOption = {
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: paypalcommerceOptions.style,
             };
 
@@ -160,6 +162,7 @@ describe('PaypalCommercePaymentStrategy', () => {
 
             const buttonOption = {
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: paypalcommerceOptions.style,
             };
 
