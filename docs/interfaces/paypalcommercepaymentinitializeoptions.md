@@ -2,6 +2,28 @@
 
 # Interface: PaypalCommercePaymentInitializeOptions
 
+A set of options that are required to initialize the PayPal Commerce payment
+method for presenting its PayPal button.
+
+```html
+<!-- This is where the PayPal button will be inserted -->
+<div id="container"></div>
+```
+
+```js
+service.initializePayment({
+    methodId: 'paypalcommerce',
+    paypalcommerce: {
+        container: 'container',
+        submitForm: () => {
+            service.submitOrder({
+                methodId: 'paypalcommerce',
+            });
+        },
+    },
+});
+```
+
 ## Hierarchy
 
 * **PaypalCommercePaymentInitializeOptions**

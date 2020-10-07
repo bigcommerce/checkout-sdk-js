@@ -2,6 +2,22 @@
 
 # Interface: MasterpassPaymentInitializeOptions
 
+A set of options that are required to initialize the Masterpass payment method.
+
+```html
+<!-- This is where the Masterpass button will be inserted -->
+<div id="wallet-button"></div>
+```
+
+```js
+service.initializePayment({
+    methodId: 'masterpass',
+    masterpass: {
+        walletButton: 'wallet-button'
+    },
+});
+```
+
 ## Hierarchy
 
 * **MasterpassPaymentInitializeOptions**

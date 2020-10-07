@@ -164,6 +164,61 @@ declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
  * Once AdyenV2 payment is initialized, credit card form fields, provided by the
  * payment provider as IFrames, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- This is where the credit card component will be inserted -->
+ * <div id="container"></div>
+ *
+ * <!-- This is where the secondary components (i.e.: 3DS) will be inserted -->
+ * <div id="additional-action-container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'adyenv2',
+ *     adyenv2: {
+ *         containerId: 'container',
+ *         additionalActionOptions: {
+ *             containerId: 'additional-action-container',
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the components and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'adyenv2',
+ *     adyenv2: {
+ *         containerId: 'container',
+ *         additionalActionOptions: {
+ *             containerId: 'additional-action-container',
+ *             onBeforeLoad(shopperInteraction) {
+ *                 console.log(shopperInteraction);
+ *             },
+ *             onLoad(cancel) {
+ *                 console.log(cancel);
+ *             },
+ *             onComplete() {
+ *                 console.log('Completed');
+ *             },
+ *         },
+ *         options: {
+ *             scheme: {
+ *                 hasHolderName: true,
+ *             },
+ *             bcmc: {
+ *                 hasHolderName: true,
+ *             },
+ *             ideal: {
+ *                 showImage: true,
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface AdyenV2PaymentInitializeOptions {
     /**
@@ -239,6 +294,20 @@ declare interface AmazonPayOrderReference {
  *
  * When AmazonPay is initialized, a widget will be inserted into the DOM. The
  * widget has a list of payment options for the customer to choose from.
+ *
+ * ```html
+ * <!-- This is where the widget will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'amazon',
+ *     amazon: {
+ *         container: 'container',
+ *     },
+ * });
+ * ```
  */
 declare interface AmazonPayPaymentInitializeOptions {
     /**
@@ -399,6 +468,19 @@ declare enum AmazonPayV2PayOptions {
  * When AmazonPayV2 is initialized, a change payment button will be bound.
  * When the customer clicks on it, they will be redirected to Amazon to
  * select a different payment method.
+ *
+ * ```html
+ * <!-- This is where the Amazon button will be inserted -->
+ * <div id="edit-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'amazonpay',
+ *     amazonpay: {
+ *         editButtonId: 'edit-button',
+ *     },
+ * });
  */
 declare interface AmazonPayV2PaymentInitializeOptions {
     /**
@@ -515,6 +597,30 @@ declare interface BlockElementStyles extends InlineElementStyles {
  *
  * The payment step is done through a web page via an iframe provided by the
  * strategy.
+ *
+ * ```html
+ * <!-- This is where the BlueSnap iframe will be inserted. It can be an in-page container or a modal -->
+ * <div id="container"></div>
+ *
+ * <!-- This is a cancellation button -->
+ * <button type="button" id="cancel-button"></button>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bluesnapv2',
+ *     bluesnapv2: {
+ *         onLoad: (iframe) => {
+ *             document.getElementById('container')
+ *                 .appendChild(iframe);
+ *
+ *             document.getElementById('cancel-button')
+ *                 .addEventListener('click', () => {
+ *                     document.getElementById('container').innerHTML = '';
+ *                 });
+ *         },
+ *     },
+ * });
  */
 declare interface BlueSnapV2PaymentInitializeOptions {
     /**
@@ -548,6 +654,12 @@ declare interface BoltPaymentInitializeOptions {
     /**
      * When true, BigCommerce's checkout will be used
      * otherwise Bolt's full checkout take over will be assumed
+     *
+     * ```js
+     * service.initializePayment({
+     *     methodId: 'bolt',
+     * });
+     * ```
      */
     useBigCommerceCheckout?: boolean;
 }
@@ -633,6 +745,76 @@ declare interface BraintreeFormOptions {
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
  * authentication flow.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintree',
+ *     braintree: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintree',
+ *     creditCard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *             styles: {
+ *                 default: {
+ *                     color: '#000',
+ *                 },
+ *                 error: {
+ *                     color: '#f00',
+ *                 },
+ *                 focus: {
+ *                     color: '#0f0',
+ *                 },
+ *             },
+ *             onBlur({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onFocus({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onEnter({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onCardTypeChange({ cardType }) {
+ *                 console.log(cardType);
+ *             },
+ *             onValidate({ errors, isValid }) {
+ *                 console.log(errors);
+ *                 console.log(isValid);
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface BraintreePaymentInitializeOptions {
     threeDSecure?: BraintreeThreeDSecureOptions;
@@ -734,6 +916,28 @@ declare interface BraintreeVisaCheckoutCustomerInitializeOptions {
  * If the customer chooses to pay with Visa Checkout, they will be asked to
  * enter their payment details via a modal. You can hook into events emitted by
  * the modal by providing the callbacks listed below.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreevisacheckout',
+ * });
+ * ```
+ *
+ * Additional event callbacks can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreevisacheckout',
+ *     braintreevisacheckout: {
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     /**
@@ -849,6 +1053,47 @@ declare interface ChasePayCustomerInitializeOptions {
     container: string;
 }
 
+/**
+ * A set of options that are required to initialize the Chase Pay payment method.
+ *
+ * ```html
+ * <!-- This is where the Chase Pay button will be inserted -->
+ * <div id="wallet-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'chasepay',
+ *     chasepay: {
+ *         walletButton: 'wallet-button',
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```html
+ * <!-- This is where the Chase Pay logo will be inserted -->
+ * <div id="logo"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'chasepay',
+ *     chasepay: {
+ *         walletButton: 'wallet-button',
+ *         logoContainer: 'logo',
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *         onCancel() {
+ *             console.log('Cancelled');
+ *         },
+ *     },
+ * });
+ * ```
+ */
 declare interface ChasePayInitializeOptions {
     /**
      * This container is used to host the chasepay branding logo.
@@ -2841,6 +3086,83 @@ declare interface CreditCardInstrument {
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
 
+/**
+ * A set of options to initialize credit card payment methods, unless those
+ * methods require provider-specific configuration. If the initialization is
+ * successful, hosted (iframed) credit card fields will be inserted into the the
+ * containers specified in the options.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'authorizenet',
+ *     creditCard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'authorizenet',
+ *     creditCard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *             styles: {
+ *                 default: {
+ *                     color: '#000',
+ *                     fontFamily: 'Arial',
+ *                 },
+ *                 error: {
+ *                     color: '#f00',
+ *                 },
+ *                 focus: {
+ *                     color: '#0f0',
+ *                 },
+ *             },
+ *             onBlur({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onFocus({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onEnter({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onCardTypeChange({ cardType }) {
+ *                 console.log(cardType);
+ *             },
+ *             onValidate({ errors, isValid }) {
+ *                 console.log(errors);
+ *                 console.log(isValid);
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ */
 declare interface CreditCardPaymentInitializeOptions {
     form: HostedFormOptions;
 }
@@ -3272,6 +3594,38 @@ declare interface GooglePayCustomerInitializeOptions {
  * If the customer chooses to pay with GooglePay, they will be asked to
  * enter their payment details via a modal. You can hook into events emitted by
  * the modal by providing the callbacks listed below.
+ *
+ * ```html
+ * <!-- This is where the GooglePay button will be inserted -->
+ * <div id="wallet-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     // Using GooglePay provided by Braintree as an example
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button'
+ *     },
+ * });
+ * ```
+ *
+ * Additional event callbacks can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button',
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface GooglePayPaymentInitializeOptions {
     /**
@@ -3556,6 +3910,34 @@ declare interface KlarnaLoadResponse_2 {
  *
  * When Klarna is initialized, a widget will be inserted into the DOM. The
  * widget has a list of payment options for the customer to choose from.
+ *
+ * ```html
+ * <!-- This is where the widget will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarna',
+ *     klarna: {
+ *         container: 'container'
+ *     },
+ * });
+ * ```
+ *
+ * An additional event callback can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarnav2',
+ *     klarnav2: {
+ *         container: 'container',
+ *         onLoad(response) {
+ *             console.log(response);
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface KlarnaPaymentInitializeOptions {
     /**
@@ -3577,6 +3959,34 @@ declare interface KlarnaPaymentInitializeOptions {
  *
  * When KlarnaV2 is initialized, a list of payment options will be displayed for the customer to choose from.
  * Each one with its own widget.
+ *
+ * ```html
+ * <!-- This is where the widget will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarnav2',
+ *     klarnav2: {
+ *         container: 'container'
+ *     },
+ * });
+ * ```
+ *
+ * An additional event callback can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarnav2',
+ *     klarnav2: {
+ *         container: 'container',
+ *         onLoad(response) {
+ *             console.log(response);
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface KlarnaV2PaymentInitializeOptions {
     /**
@@ -3745,6 +4155,23 @@ declare interface MasterpassCustomerInitializeOptions {
     container: string;
 }
 
+/**
+ * A set of options that are required to initialize the Masterpass payment method.
+ *
+ * ```html
+ * <!-- This is where the Masterpass button will be inserted -->
+ * <div id="wallet-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'masterpass',
+ *     masterpass: {
+ *         walletButton: 'wallet-button'
+ *     },
+ * });
+ * ```
+ */
 declare interface MasterpassPaymentInitializeOptions {
     /**
      * This walletButton is used to set an event listener, provide an element ID if you want
@@ -4085,6 +4512,79 @@ declare interface PaypalCommerceButtonInitializeOptions {
 }
 
 /**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its credit card form.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommerce',
+ *     paypalcommerce: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommerce',
+ *     creditCard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *             styles: {
+ *                 default: {
+ *                     color: '#000',
+ *                 },
+ *                 error: {
+ *                     color: '#f00',
+ *                 },
+ *                 focus: {
+ *                     color: '#0f0',
+ *                 },
+ *             },
+ *             onBlur({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onFocus({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onEnter({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onCardTypeChange({ cardType }) {
+ *                 console.log(cardType);
+ *             },
+ *             onValidate({ errors, isValid }) {
+ *                 console.log(errors);
+ *                 console.log(isValid);
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ *
  * @alpha
  * Please note that this option is currently in an early stage of
  * development. Therefore the API is unstable and not ready for public
@@ -4167,6 +4667,29 @@ declare interface PaypalCommerceFormOptions {
 
 declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
 
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its PayPal button.
+ *
+ * ```html
+ * <!-- This is where the PayPal button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommerce',
+ *     paypalcommerce: {
+ *         container: 'container',
+ *         submitForm: () => {
+ *             service.submitOrder({
+ *                 methodId: 'paypalcommerce',
+ *             });
+ *         },
+ *     },
+ * });
+ * ```
+ */
 declare interface PaypalCommercePaymentInitializeOptions {
     container: string;
     style?: PaypalButtonStyleOptions;
@@ -4183,6 +4706,28 @@ declare interface PaypalCommerceStoredCardFieldsMap {
     [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceStoredCardFieldOptions;
 }
 
+/**
+ * A set of options that are required to initialize the PayPal Express payment
+ * method.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ * });
+ * ```
+ *
+ * An additional flag can be passed in to always start the payment flow through
+ * a redirect rather than a popup.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalexpress',
+ *     paypalexpress: {
+ *         useRedirectFlow: true,
+ *     },
+ * });
+ * ```
+ */
 declare interface PaypalExpressPaymentInitializeOptions {
     useRedirectFlow?: boolean;
 }
@@ -4347,6 +4892,73 @@ declare interface SquareFormElement {
  * Once Square payment is initialized, credit card form fields, provided by the
  * payment provider as iframes, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'squarev2',
+ *     square: {
+ *         cardNumber: {
+ *             elementId: 'card-number',
+ *         },
+ *         cvv: {
+ *             elementId: 'card-code',
+ *         },
+ *         expirationDate: {
+ *             elementId: 'card-expiry',
+ *         },
+ *         postalCode: {
+ *             elementId: 'card-code',
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to enable Masterpass (if configured for
+ * the account) and customize the fields.
+ *
+ * ```html
+ * <!-- This container is where Masterpass button will be inserted -->
+ * <div id="masterpass"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'squarev2',
+ *     square: {
+ *         cardNumber: {
+ *             elementId: 'card-number',
+ *         },
+ *         cvv: {
+ *             elementId: 'card-code',
+ *         },
+ *         expirationDate: {
+ *             elementId: 'card-expiry',
+ *         },
+ *         postalCode: {
+ *             elementId: 'card-code',
+ *         },
+ *         inputClass: 'form-input',
+ *         inputStyles: [
+ *             {
+ *                 color: '#333',
+ *                 fontSize: '13px',
+ *                 lineHeight: '20px',
+ *             },
+ *         ],
+ *         masterpass: {
+ *             elementId: 'masterpass',
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface SquarePaymentInitializeOptions {
     /**
@@ -4613,6 +5225,43 @@ declare interface StripeElementStyleVariant extends StripeElementCSSProperties {
  * Once Stripe payment is initialized, credit card form fields, provided by the
  * payment provider as iframes, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- This is where the credit card component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'stripev3',
+ *     stripev3: {
+ *         containerId: 'container',
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'stripev3',
+ *     stripev3: {
+ *         containerId: 'container',
+ *         options: {
+ *             card: {
+ *                 classes: { base: 'form-input' },
+ *             },
+ *             iban: {
+ *                 classes: { base: 'form-input' },
+ *                 supportedCountries: ['SEPA],
+ *             },
+ *             idealBank: {
+ *                 classes: { base: 'form-input' },
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
  */
 declare interface StripeV3PaymentInitializeOptions {
     /**
