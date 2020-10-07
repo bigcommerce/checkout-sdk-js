@@ -6,6 +6,30 @@ import { BlueSnapV2StyleProps } from './bluesnapv2';
  *
  * The payment step is done through a web page via an iframe provided by the
  * strategy.
+ *
+ * ```html
+ * <!-- This is where the BlueSnap iframe will be inserted. It can be an in-page container or a modal -->
+ * <div id="container"></div>
+ *
+ * <!-- This is a cancellation button -->
+ * <button type="button" id="cancel-button"></button>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bluesnapv2',
+ *     bluesnapv2: {
+ *         onLoad: (iframe) => {
+ *             document.getElementById('container')
+ *                 .appendChild(iframe);
+ *
+ *             document.getElementById('cancel-button')
+ *                 .addEventListener('click', () => {
+ *                     document.getElementById('container').innerHTML = '';
+ *                 });
+ *         },
+ *     },
+ * });
  */
 export interface BlueSnapV2PaymentInitializeOptions {
     /**

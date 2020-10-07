@@ -5,6 +5,34 @@ import { KlarnaLoadResponse } from './klarna-credit';
  *
  * When Klarna is initialized, a widget will be inserted into the DOM. The
  * widget has a list of payment options for the customer to choose from.
+ *
+ * ```html
+ * <!-- This is where the widget will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarna',
+ *     klarna: {
+ *         container: 'container'
+ *     },
+ * });
+ * ```
+ *
+ * An additional event callback can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'klarnav2',
+ *     klarnav2: {
+ *         container: 'container',
+ *         onLoad(response) {
+ *             console.log(response);
+ *         },
+ *     },
+ * });
+ * ```
  */
 export default interface KlarnaPaymentInitializeOptions {
     /**

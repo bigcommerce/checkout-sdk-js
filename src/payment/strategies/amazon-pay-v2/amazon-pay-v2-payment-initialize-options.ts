@@ -5,6 +5,19 @@
  * When AmazonPayV2 is initialized, a change payment button will be bound.
  * When the customer clicks on it, they will be redirected to Amazon to
  * select a different payment method.
+ *
+ * ```html
+ * <!-- This is where the Amazon button will be inserted -->
+ * <div id="edit-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'amazonpay',
+ *     amazonpay: {
+ *         editButtonId: 'edit-button',
+ *     },
+ * });
  */
 export default interface AmazonPayV2PaymentInitializeOptions {
     /**
