@@ -128,7 +128,10 @@ export default class AnalyticsStepTracker implements StepTracker {
             return;
         }
 
-        this.analytics.track('Order Completed', this.getTrackingPayload({
+        const isEcommerceGAEnabled = this.checkoutService.getState().data
+            .getConfig()?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
+
+        const payload = this.getTrackingPayload({
             orderId,
             revenue: orderAmount,
             shipping: shippingCostTotal,
@@ -137,7 +140,34 @@ export default class AnalyticsStepTracker implements StepTracker {
             coupons,
             extraItemsData,
             lineItems,
-        }));
+        });
+
+        if (isEcommerceGAEnabled && this.analytics.hasPayloadLimit(payload)) {
+            this.analytics.hit('transaction', {
+                '&ti': payload.orderId,
+                '&ta': payload.affiliation,
+                '&tr': payload.revenue,
+                '&ts': payload.shipping,
+                '&tt': payload.tax,
+                '&tcc': payload.coupon,
+                '&cu': payload.currency,
+            });
+
+            payload.products.map(product => {
+                this.analytics.hit('item', {
+                    '&ti': payload.orderId,
+                    '&in': product.name,
+                    '&ic': product.sku,
+                    '&iv': `${product.category}`,
+                    '&ip': product.price,
+                    '&iq': product.quantity,
+                });
+            });
+
+            return this.clearExtraItemData(cartId);
+        }
+
+        this.analytics.track('Order Completed', payload);
 
         this.clearExtraItemData(cartId);
     }
