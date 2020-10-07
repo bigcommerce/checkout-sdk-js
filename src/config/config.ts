@@ -114,6 +114,7 @@ export type FlashMessageType = 'error' | 'info' | 'warning' | 'success';
 export interface FlashMessage {
     type: FlashMessageType;
     message: string;
+    title?: string;
 }
 
 export interface ContextConfig {

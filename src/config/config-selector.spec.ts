@@ -40,10 +40,10 @@ describe('ConfigSelector', () => {
 
     describe('#getFlashMessages', () => {
         const flashMessages: FlashMessage[] = [
-            { type: 'info', message: 'm_info' },
-            { type: 'error', message: 'm_error' },
-            { type: 'warning', message: 'm_warning' },
-            { type: 'success', message: 'm_success' },
+            { type: 'info', message: 'm_info', title: '' },
+            { type: 'error', message: 'm_error', title: '' },
+            { type: 'warning', message: 'm_warning', title: '' },
+            { type: 'success', message: 'm_success', title: '' },
         ];
 
         beforeEach(() => {
