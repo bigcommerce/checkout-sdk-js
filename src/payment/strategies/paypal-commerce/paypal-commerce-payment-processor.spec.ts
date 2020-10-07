@@ -54,6 +54,11 @@ describe('PaypalCommercePaymentProcessor', () => {
             on: jest.fn((eventName, callback) => {
                 cardFieldsEventEmitter.on(eventName, callback);
             }),
+            getState: jest.fn(() => ({
+                cards: [],
+                emittedBy: '',
+                fields: {},
+            })),
         };
 
         paypal = {

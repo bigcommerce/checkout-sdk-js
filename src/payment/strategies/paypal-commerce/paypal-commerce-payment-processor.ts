@@ -125,6 +125,15 @@ export default class PaypalCommercePaymentProcessor {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        const { fields } = this._hostedFields.getState();
+
+        const formValid = (Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
+            .every(key => fields[key]?.isValid);
+
+        if (!formValid) {
+            throw { type: 'invalid_fields_before_submit', fields };
+        }
+
         const options: PaypalCommerceHostedFieldsSubmitOptions = {};
 
         if (is3dsEnabled) {
