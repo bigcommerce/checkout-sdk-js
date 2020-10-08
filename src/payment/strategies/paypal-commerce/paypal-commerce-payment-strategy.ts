@@ -51,7 +51,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,
-            fundingKey: this._credit ? 'CREDIT' : 'PAYPAL',
+            fundingKey: this._credit ? 'PAYLATER' : 'PAYPAL',
             paramsForProvider: {isCheckout: true},
         });
 

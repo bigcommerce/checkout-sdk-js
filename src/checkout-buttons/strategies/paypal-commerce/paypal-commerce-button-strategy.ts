@@ -53,7 +53,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
-        this._isCredit = fundingSource === 'credit';
+        this._isCredit = fundingSource === 'credit' || fundingSource === 'paylater';
     }
 
     private _tokenizePayment({ orderID }: ApproveDataOptions) {

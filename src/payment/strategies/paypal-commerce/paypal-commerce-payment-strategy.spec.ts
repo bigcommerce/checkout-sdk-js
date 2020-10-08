@@ -163,7 +163,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 style: paypalcommerceOptions.style,
             };
 
-            const optionalParams = { fundingKey: 'CREDIT', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
+            const optionalParams = { fundingKey: 'PAYLATER', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
             expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
         });

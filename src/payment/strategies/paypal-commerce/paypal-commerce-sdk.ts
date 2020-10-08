@@ -142,6 +142,7 @@ export interface PaypalCommerceMessages {
 export interface PaypalCommerceSDKFunding {
     PAYPAL: string;
     CREDIT: string;
+    PAYLATER: string;
 }
 
 export interface PaypalCommerceSDK {
