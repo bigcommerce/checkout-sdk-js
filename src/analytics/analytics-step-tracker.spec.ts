@@ -30,7 +30,12 @@ describe('AnalyticsStepTracker', () => {
     };
 
     beforeEach(() => {
-        analytics = { track: jest.fn() };
+        analytics = {
+            track: jest.fn(),
+            hit: jest.fn(),
+            hasPayloadLimit: jest.fn(),
+        };
+
         sessionStorage = {
             getItem: jest.fn(() => JSON.stringify(storedData)),
             setItem: jest.fn(),
@@ -311,6 +316,84 @@ describe('AnalyticsStepTracker', () => {
             it('removes the category and brand data to the storage', () => {
                 expect(sessionStorage.removeItem)
                     .toHaveBeenCalledWith('ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+            });
+        });
+
+        describe('[Experiment flow] When order reach Google Analytics payload limit', () => {
+            const analytics = {
+                track: jest.fn(),
+                hit: jest.fn(),
+                hasPayloadLimit: jest.fn(),
+            };
+
+            beforeEach(() => {
+                jest.spyOn(checkoutService.getState().data, 'getOrder')
+                    .mockReturnValue(getOrder());
+                analytics.hasPayloadLimit.mockReturnValueOnce(true);
+
+                jest.spyOn(checkoutService.getState().data, 'getConfig')
+                    .mockReturnValue({
+                        ...getConfig().storeConfig,
+                        checkoutSettings: {
+                            ...getConfig().storeConfig.checkoutSettings,
+                            features: {
+                                'DATA-6891.missing_orders_within_GA': true,
+                            },
+                        },
+                    });
+
+                analyticsStepTracker = new AnalyticsStepTracker(
+                    checkoutService,
+                    sessionStorage,
+                    analytics
+                );
+
+                analyticsStepTracker.trackOrderComplete();
+            });
+
+            it('Payload reach limit, and we will go through all products separately', () => {
+                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
+                expect(analytics.hit).toHaveBeenCalledTimes(3);
+                expect(analytics.track).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('[Experiment flow] when order does not reach Google Analytics payload limit', () => {
+            const analytics = {
+                track: jest.fn(),
+                hit: jest.fn(),
+                hasPayloadLimit: jest.fn(),
+            };
+
+            beforeEach(() => {
+                jest.spyOn(checkoutService.getState().data, 'getOrder')
+                    .mockReturnValue(getOrder());
+                analytics.hasPayloadLimit.mockReturnValueOnce(false);
+
+                jest.spyOn(checkoutService.getState().data, 'getConfig')
+                    .mockReturnValue({
+                        ...getConfig().storeConfig,
+                        checkoutSettings: {
+                            ...getConfig().storeConfig.checkoutSettings,
+                            features: {
+                                'DATA-6891.missing_orders_within_GA': true,
+                            },
+                        },
+                    });
+
+                analyticsStepTracker = new AnalyticsStepTracker(
+                    checkoutService,
+                    sessionStorage,
+                    analytics
+                );
+
+                analyticsStepTracker.trackOrderComplete();
+            });
+
+            it('Analytics\' function hit and hasPayloadLimit should not execute ', () => {
+                expect(analytics.track).toHaveBeenCalledTimes(1);
+                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
+                expect(analytics.hit).not.toHaveBeenCalled();
             });
         });
     });
