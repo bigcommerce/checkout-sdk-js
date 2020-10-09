@@ -38,6 +38,7 @@ service.initializePayment({
 ### Methods
 
 * [onRenderButton](paypalcommercepaymentinitializeoptions.md#optional-onrenderbutton)
+* [onValidate](paypalcommercepaymentinitializeoptions.md#onvalidate)
 * [submitForm](paypalcommercepaymentinitializeoptions.md#submitform)
 
 ## Properties
@@ -59,6 +60,24 @@ ___
 ▸ **onRenderButton**(): *void*
 
 **Returns:** *void*
+
+___
+
+###  onValidate
+
+▸ **onValidate**(`resolve`: function, `reject`: function): *Promise‹void›*
+
+**Parameters:**
+
+▪ **resolve**: *function*
+
+▸ (): *void*
+
+▪ **reject**: *function*
+
+▸ (): *void*
+
+**Returns:** *Promise‹void›*
 
 ___
 

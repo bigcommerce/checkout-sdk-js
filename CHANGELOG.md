@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.106.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.105.0...v1.106.0) (2020-10-09)
+
+
+### Features
+
+* **payment:** PAYPAL-706 Add validate before using spb ([3c02031](https://github.com/bigcommerce/checkout-sdk-js/commit/3c020315d5148b9048626d444fcbe9031fd4a42c))
+
 ## [1.105.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.104.2...v1.105.0) (2020-10-08)
 
 
