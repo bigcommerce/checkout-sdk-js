@@ -76,7 +76,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             .mockImplementation((options: ButtonsOptions) => {
                 eventEmitter.on('onClick', () => {
                     if (options.onClick) {
-                        options.onClick({fundingSource});
+                        options.onClick({ fundingSource }, { reject: jest.fn(), resolve: jest.fn() });
                     }
                 });
 
