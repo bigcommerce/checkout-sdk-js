@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.106.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.106.0...v1.106.1) (2020-10-12)
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-4639 Send discounted price when tracking analytics ([cea959f](https://github.com/bigcommerce/checkout-sdk-js/commit/cea959f8d15fa5afc2a327f0dee1441adff80234))
+
 ## [1.106.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.105.0...v1.106.0) (2020-10-09)
 
 
