@@ -205,7 +205,7 @@ describe('AffirmPaymentStrategy', () => {
                         item_url: '/canvas-laundry-cart/',
                         qty: 1,
                         sku: 'CLC',
-                        unit_price: 20000,
+                        unit_price: 19000,
                     },
                     {
                         display_name: '$100 Gift Certificate',
