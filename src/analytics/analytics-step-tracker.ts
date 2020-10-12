@@ -451,7 +451,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             return {
                 product_id: item.productId,
                 sku: item.sku,
-                price: item.listPrice,
+                price: item.salePrice,
                 image_url: item.imageUrl,
                 name: item.name,
                 quantity: item.quantity,
