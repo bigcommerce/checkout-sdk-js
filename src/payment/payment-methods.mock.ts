@@ -93,6 +93,11 @@ export function getPaypalCommerce(): PaymentMethod {
             merchantId: 'JTS4DY7XFSQZE',
         },
         initializationData: {
+            buttonStyle: {
+                height: 55,
+                color: 'black',
+                label: 'pay',
+            },
             clientId: 'abc',
             orderId: '3U4171152W1482642',
             intent: 'capture',

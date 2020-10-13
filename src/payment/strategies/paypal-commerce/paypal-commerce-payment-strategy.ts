@@ -26,9 +26,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         const { initializationData } = getPaymentMethodOrThrow(methodId);
+        const { orderId, buttonStyle } = initializationData;
 
-        if (initializationData.orderId) {
-            this._orderId = initializationData.orderId;
+        if (orderId) {
+            this._orderId = orderId;
 
             return this._store.getState();
         }
@@ -41,12 +42,12 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".');
         }
 
-        const { container, onRenderButton, submitForm, style, onValidate } = paypalcommerce;
+        const { container, onRenderButton, submitForm, onValidate } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode);
         const buttonParams: ButtonsOptions = {
-            style,
+            style: buttonStyle,
             onApprove: data => this._tokenizePayment(data, submitForm),
             onClick: async (_, actions) => onValidate(actions.resolve, actions.reject),
         };
