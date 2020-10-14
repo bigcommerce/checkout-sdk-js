@@ -31,7 +31,7 @@ export default interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandate?: string;
+    mandateUrl?: string;
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
