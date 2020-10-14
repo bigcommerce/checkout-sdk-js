@@ -25,7 +25,7 @@
 * [isDownloadable](order.md#isdownloadable)
 * [isTaxIncluded](order.md#istaxincluded)
 * [lineItems](order.md#lineitems)
-* [mandate](order.md#optional-mandate)
+* [mandateUrl](order.md#optional-mandateurl)
 * [orderAmount](order.md#orderamount)
 * [orderAmountAsInteger](order.md#orderamountasinteger)
 * [orderId](order.md#orderid)
@@ -128,9 +128,9 @@ ___
 
 ___
 
-### `Optional` mandate
+### `Optional` mandateUrl
 
-• **mandate**? : *undefined | string*
+• **mandateUrl**? : *undefined | string*
 
 ___
 

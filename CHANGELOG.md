@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.107.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.106.1...v1.107.0) (2020-10-14)
+
+
+### Features
+
+* **payment:** INT-3061 renamed mandate field to mandateUrl on order interface ([1e4099c](https://github.com/bigcommerce/checkout-sdk-js/commit/1e4099c9df3751ee5009a7cd121bac4e17bc9401))
+
 ### [1.106.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.106.0...v1.106.1) (2020-10-12)
 
 

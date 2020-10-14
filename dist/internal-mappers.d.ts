@@ -580,7 +580,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandate?: string;
+    mandateUrl?: string;
 }
 
 declare interface OrderMetaState extends InternalOrderMeta {
