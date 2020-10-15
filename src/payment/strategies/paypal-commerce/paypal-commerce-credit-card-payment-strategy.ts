@@ -47,7 +47,7 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        this._paypalCommerceHostedForm.validate();
 
         const { paymentMethods: { getPaymentMethodOrThrow } } = await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
         const { orderId } = await this._paypalCommerceHostedForm.submit(getPaymentMethodOrThrow(payment.methodId).config.is3dsEnabled);

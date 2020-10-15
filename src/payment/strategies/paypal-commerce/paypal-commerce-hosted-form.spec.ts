@@ -1,7 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodFailedError } from '../../errors';
+import { PaymentInvalidFormError, PaymentMethodFailedError } from '../../errors';
 
 import { PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 
@@ -47,6 +47,7 @@ describe('PaypalCommerceHostedForm', () => {
                 error: { color: '#f00', fontWeight: 'bold' },
                 focus: { color: '#00f' },
             },
+            onValidate: jest.fn(),
         };
 
         jest.spyOn(paypalCommercePaymentProcessor, 'initialize')
@@ -57,6 +58,9 @@ describe('PaypalCommerceHostedForm', () => {
 
         jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
             .mockReturnValue(Promise.resolve({ orderId }));
+
+        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+            .mockReturnValue({ isValid: true });
 
         hostedForm = new PaypalCommerceHostedForm(paypalCommercePaymentProcessor);
 
@@ -143,12 +147,54 @@ describe('PaypalCommerceHostedForm', () => {
         expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalled();
     });
 
-    it('throw error if 3ds is enabled and failed', async () => {
+    it('submit hosted form should call submitHostedFields with 3ds of paypalCommercePaymentProcessor', async () => {
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
+        await hostedForm.submit(true);
+
+        expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalledWith(true);
+    });
+
+    it('throw error if 3ds is enabled and failed during sending', async () => {
         jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
             .mockReturnValue(Promise.resolve({ orderId, liabilityShift: 'NO' }));
 
         await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
 
         await expect(hostedForm.submit(true)).rejects.toThrow(PaymentMethodFailedError);
+    });
+
+    it('throw error if validate is failed during sending', async () => {
+        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+            .mockReturnValue({ isValid: false, fields: {} });
+
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
+
+        await expect(hostedForm.submit()).rejects.toThrow(PaymentInvalidFormError);
+    });
+
+    it('call onValidate if validate is failed during sending', async () => {
+        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+            .mockReturnValue({
+                isValid: false,
+                fields: {
+                    cvv: { isValid: false },
+                    expirationDate: { isValid: false },
+                    number: { isValid: false },
+                },
+            });
+
+        const errors = {
+            cardCode: [{ fieldType: 'cardCode', message: 'Invalid card code', type: 'invalid_card_code' }],
+            cardExpiry: [{ fieldType: 'cardExpiry', message: 'Invalid card expiry', type: 'invalid_card_expiry' }],
+            cardNumber: [{ fieldType: 'cardNumber', message: 'Invalid card number', type: 'invalid_card_number' }],
+        };
+
+        await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
+
+        try {
+            await hostedForm.submit();
+        } catch (e) {
+            expect(formOptions.onValidate).toHaveBeenCalledWith({ isValid: false, errors });
+        }
     });
 });

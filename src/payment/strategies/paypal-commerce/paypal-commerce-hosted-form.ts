@@ -51,28 +51,32 @@ export default class PaypalCommerceHostedForm {
     }
 
     async submit(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
-        try {
-            const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
+        this.validate();
 
-            if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
-                throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
-            }
+        const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
 
-            return result;
-        } catch (error) {
-            if (error.type !== 'invalid_fields_before_submit') {
-                throw error;
-            }
-
-            const errors = this._mapValidationErrors(error.fields);
-
-            this._formOptions?.onValidate?.({
-                errors,
-                isValid: false,
-            });
-
-            throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+        if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
+            throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
         }
+
+        return result;
+    }
+
+    validate(): void {
+        const { isValid, fields } = this._paypalCommercePaymentProcessor.validateHostedForm();
+
+        if (isValid) {
+            return;
+        }
+
+        const errors = this._mapValidationErrors(fields);
+
+        this._formOptions?.onValidate?.({
+            errors,
+            isValid: false,
+        });
+
+        throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
     }
 
     deinitialize(): void {

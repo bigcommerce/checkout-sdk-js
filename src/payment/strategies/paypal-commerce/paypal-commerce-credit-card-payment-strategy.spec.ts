@@ -22,7 +22,7 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
-describe('PaypalCommercePaymentStrategy', () => {
+describe('PaypalCommerceCreditCardPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentStrategy: PaypalCommerceCreditCardPaymentStrategy;
@@ -75,6 +75,7 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         paypalCommerceHostedForm.initialize = jest.fn();
         paypalCommerceHostedForm.submit = jest.fn(() => ({ orderId }));
+        paypalCommerceHostedForm.validate = jest.fn();
 
         paymentStrategy = new PaypalCommerceCreditCardPaymentStrategy(
             store,

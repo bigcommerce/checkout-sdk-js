@@ -393,6 +393,30 @@ describe('PaypalCommercePaymentProcessor', () => {
 
             expect(result.orderId).toEqual(orderID);
         });
+
+        it('validateHostedForm should return isValid = false and fields', async () => {
+            const fields = {
+                cvv: { isValid: false },
+                expirationDate: { isValid: false },
+                number: { isValid: false },
+            };
+            cardFields.getState = jest.fn(() => ({
+                cards: [],
+                emittedBy: '',
+                fields,
+            }));
+            await paypalCommercePaymentProcessor.initialize(initOptions);
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
+
+            expect(await paypalCommercePaymentProcessor.validateHostedForm()).toEqual({ isValid: false, fields });
+        });
+
+        it('validateHostedForm should return isValid = true and fields', async () => {
+            await paypalCommercePaymentProcessor.initialize(initOptions);
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
+
+            expect(await paypalCommercePaymentProcessor.validateHostedForm()).toEqual({ isValid: true, fields: {} });
+        });
     });
 
 });
