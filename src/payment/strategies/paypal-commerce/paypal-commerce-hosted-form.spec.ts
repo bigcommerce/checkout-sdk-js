@@ -59,7 +59,7 @@ describe('PaypalCommerceHostedForm', () => {
         jest.spyOn(paypalCommercePaymentProcessor, 'submitHostedFields')
             .mockReturnValue(Promise.resolve({ orderId }));
 
-        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+        jest.spyOn(paypalCommercePaymentProcessor, 'getValidationStateHostedFields')
             .mockReturnValue({ isValid: true });
 
         hostedForm = new PaypalCommerceHostedForm(paypalCommercePaymentProcessor);
@@ -164,7 +164,7 @@ describe('PaypalCommerceHostedForm', () => {
     });
 
     it('throw error if validate is failed during sending', async () => {
-        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+        jest.spyOn(paypalCommercePaymentProcessor, 'getValidationStateHostedFields')
             .mockReturnValue({ isValid: false, fields: {} });
 
         await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
@@ -173,7 +173,7 @@ describe('PaypalCommerceHostedForm', () => {
     });
 
     it('call onValidate if validate is failed during sending', async () => {
-        jest.spyOn(paypalCommercePaymentProcessor, 'validateHostedForm')
+        jest.spyOn(paypalCommercePaymentProcessor, 'getValidationStateHostedFields')
             .mockReturnValue({
                 isValid: false,
                 fields: {

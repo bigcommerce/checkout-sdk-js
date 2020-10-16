@@ -63,7 +63,7 @@ export default class PaypalCommerceHostedForm {
     }
 
     validate(): void {
-        const { isValid, fields } = this._paypalCommercePaymentProcessor.validateHostedForm();
+        const { isValid, fields } = this._paypalCommercePaymentProcessor.getValidationStateHostedFields();
 
         if (isValid) {
             return;

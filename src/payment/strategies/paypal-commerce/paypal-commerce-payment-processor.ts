@@ -133,7 +133,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._hostedFields.submit(options);
     }
 
-    validateHostedForm(): { isValid: boolean; fields: PaypalCommerceHostedFieldsState['fields'] } {
+    getValidationStateHostedFields(): { isValid: boolean; fields: PaypalCommerceHostedFieldsState['fields'] } {
         if (!this._hostedFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
