@@ -394,7 +394,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             expect(result.orderId).toEqual(orderID);
         });
 
-        it('getValidationStateHostedFields should return isValid = false and fields', async () => {
+        it('getHostedFieldsValidationState should return isValid = false and fields', async () => {
             const fields = {
                 cvv: { isValid: false },
                 expirationDate: { isValid: false },
@@ -408,14 +408,14 @@ describe('PaypalCommercePaymentProcessor', () => {
             await paypalCommercePaymentProcessor.initialize(initOptions);
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
 
-            expect(await paypalCommercePaymentProcessor.getValidationStateHostedFields()).toEqual({ isValid: false, fields });
+            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({ isValid: false, fields });
         });
 
-        it('getValidationStateHostedFields should return isValid = true and fields', async () => {
+        it('getHostedFieldsValidationState should return isValid = true and fields', async () => {
             await paypalCommercePaymentProcessor.initialize(initOptions);
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
 
-            expect(await paypalCommercePaymentProcessor.getValidationStateHostedFields()).toEqual({ isValid: true, fields: {} });
+            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({ isValid: true, fields: {} });
         });
     });
 
