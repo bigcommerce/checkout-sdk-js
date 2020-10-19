@@ -124,16 +124,6 @@ export default class PaypalCommercePaymentProcessor {
         if (!this._hostedFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
-
-        const { fields } = this._hostedFields.getState();
-
-        const formValid = (Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
-            .every(key => fields[key]?.isValid);
-
-        if (!formValid) {
-            throw { type: 'invalid_fields_before_submit', fields };
-        }
-
         const options: PaypalCommerceHostedFieldsSubmitOptions = {};
 
         if (is3dsEnabled) {
@@ -141,6 +131,19 @@ export default class PaypalCommercePaymentProcessor {
         }
 
         return this._hostedFields.submit(options);
+    }
+
+    getHostedFieldsValidationState(): { isValid: boolean; fields: PaypalCommerceHostedFieldsState['fields'] } {
+        if (!this._hostedFields) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { fields } = this._hostedFields.getState();
+
+        const isValid = (Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
+            .every(key => fields[key]?.isValid);
+
+        return { isValid, fields };
     }
 
     deinitialize() {
