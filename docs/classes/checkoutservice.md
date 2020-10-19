@@ -1073,6 +1073,19 @@ const state = await service.signOutCustomer();
 console.log(state.data.getCustomer());
 ```
 
+When a store has "Allow customers to access their cart across multiple devices" enabled, signing out
+will remove the cart/checkout data from the current session. An error with type="checkout_not_available" will be thrown.
+
+```js
+try {
+  await service.signOutCustomer();
+} catch (error) {
+  if (error.type === 'checkout_not_available') {
+    window.top.location.assign('/');
+  }
+}
+```
+
 **Parameters:**
 
 Name | Type | Description |
