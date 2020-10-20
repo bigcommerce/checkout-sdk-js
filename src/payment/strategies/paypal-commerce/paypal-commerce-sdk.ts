@@ -148,6 +148,16 @@ export interface PaypalCommerceSDKFunding {
     PAYPAL: string;
     CREDIT: string;
     PAYLATER: string;
+    BANCONTACT: string;
+    GIROPAY: string;
+    P24: string;
+    EPS: string;
+    IDEAL: string;
+    MYBANK: string;
+    SOFORT: string;
+    BLIK: string;
+    TRUSTLY: string;
+    VERKKOPANKKI: string;
 }
 
 export interface PaypalCommerceSDK {
@@ -188,4 +198,10 @@ export interface PaypalCommerceScriptParams  {
     commit?: boolean;
     intent?: 'capture' | 'authorize';
     components?: ComponentsScriptType;
+}
+
+export enum PaymentStrategyTypes {
+    credit = 'credit',
+    alternative = 'alternative',
+    paypal = 'paypal',
 }

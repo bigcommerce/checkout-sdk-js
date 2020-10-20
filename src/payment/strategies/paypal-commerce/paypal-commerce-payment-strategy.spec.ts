@@ -16,14 +16,12 @@ import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../er
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentMethodActionType } from '../../payment-method-actions';
-import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { ButtonsOptions, PaymentStrategyTypes, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { OptionalParamsRenderButtons } from './paypal-commerce-payment-processor';
 
 describe('PaypalCommercePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -36,7 +34,6 @@ describe('PaypalCommercePaymentStrategy', () => {
     let options: PaymentInitializeOptions;
     let requestSender: RequestSender;
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paypalcommerceOptions: PaypalCommercePaymentInitializeOptions;
     let eventEmitter: EventEmitter;
     let cart: Cart;
@@ -49,7 +46,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         requestSender = createRequestSender();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
         paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
         eventEmitter = new EventEmitter();
 
@@ -78,9 +74,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         paymentActionCreator = {} as PaymentActionCreator;
         paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id })));
-
         jest.spyOn(paypalCommercePaymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
 
@@ -99,12 +92,16 @@ describe('PaypalCommercePaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
-            paymentMethodActionCreator,
             paypalCommercePaymentProcessor
         );
     });
 
     describe('#initialize()', () => {
+        beforeEach(() => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined } });
+        });
+
         it('returns checkout state', async () => {
             const output = await paypalCommercePaymentStrategy.initialize(options);
 
@@ -112,13 +109,15 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('not initialize paypalCommercePaymentProcessor if orderId is not undefined', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce() });
+
             await paypalCommercePaymentStrategy.initialize(options);
 
             expect(paypalCommercePaymentProcessor.initialize).not.toHaveBeenCalled();
         });
 
         it('initialize paypalCommercePaymentProcessor if orderId is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
             const obj = {
@@ -132,7 +131,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('render PayPal button if orderId is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
             const buttonOption = {
@@ -155,12 +153,10 @@ describe('PaypalCommercePaymentStrategy', () => {
                 store,
                 orderActionCreator,
                 paymentActionCreator,
-                paymentMethodActionCreator,
                 paypalCommercePaymentProcessor,
-                true
+                PaymentStrategyTypes.credit
             );
 
-            paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
             const buttonOption = {
@@ -179,8 +175,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('call submitForm after approve', async () => {
-            paymentMethod.initializationData.orderId = undefined;
-
             await paypalCommercePaymentStrategy.initialize(options);
 
             eventEmitter.emit('onApprove');
@@ -191,7 +185,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('throw error if paypalcommerce is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument is not provided.');
 
             try {
@@ -199,6 +192,85 @@ describe('PaypalCommercePaymentStrategy', () => {
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
+        });
+
+        describe('render Alternative Payment Button', () => {
+            const gatewayId = 'paypalcommercealternativemethods';
+            let optionalParams: OptionalParamsRenderButtons;
+            let buttonOption: ButtonsOptions;
+
+            beforeEach(() => {
+                buttonOption = {
+                    onApprove: expect.any(Function),
+                    onClick: expect.any(Function),
+                    style: paypalcommerceOptions.style,
+                };
+                optionalParams = { paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
+
+                paypalCommercePaymentStrategy = new PaypalCommercePaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    paymentActionCreator,
+                    paypalCommercePaymentProcessor,
+                    PaymentStrategyTypes.alternative
+                );
+            });
+
+            it('Przelewy24', async () => {
+                optionalParams.fundingKey = 'P24';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'przelewy24' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('Bancontact', async () => {
+                optionalParams.fundingKey = 'BANCONTACT';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'bancontact' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('giropay', async () => {
+                optionalParams.fundingKey = 'GIROPAY';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'giropay' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('eps', async () => {
+                optionalParams.fundingKey = 'EPS';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'eps' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('IDEAL', async () => {
+                optionalParams.fundingKey = 'IDEAL';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'ideal' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('MyBank', async () => {
+                optionalParams.fundingKey = 'MYBANK';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'mybank' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
+
+            it('Sofort', async () => {
+                optionalParams.fundingKey = 'SOFORT';
+
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId, methodId: 'sofort' });
+
+                expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            });
         });
     });
 

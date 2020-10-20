@@ -5,11 +5,10 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions, ButtonsOptions, PaymentStrategyTypes, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams, PaypalCommerceSDKFunding } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -18,14 +17,17 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
-        private _credit: boolean = false
+        private _typePayment: PaymentStrategyTypes = PaymentStrategyTypes.paypal
     ) {}
 
-    async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const { initializationData } = getPaymentMethodOrThrow(methodId);
+    async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (this._typePayment === PaymentStrategyTypes.alternative && !gatewayId) {
+            throw new InvalidArgumentError('Unable to proceed because "options.gatewayId" argument is not provided.');
+        }
+
+        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
+        const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle } = initializationData;
 
         if (orderId) {
@@ -56,7 +58,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,
-            fundingKey: this._credit ? 'PAYLATER' : 'PAYPAL',
+            fundingKey: this._getFindingKey(methodId),
             paramsForProvider: {isCheckout: true},
         });
 
@@ -120,5 +122,30 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             currency: currencyCode,
             intent,
         };
+    }
+
+    private _getFindingKey(methodId: string): keyof PaypalCommerceSDKFunding {
+        if (this._typePayment === PaymentStrategyTypes.credit) {
+            return 'PAYLATER';
+        } else if (this._typePayment === PaymentStrategyTypes.alternative) {
+            switch (methodId) {
+                case 'bancontact':
+                    return 'BANCONTACT';
+                case 'giropay':
+                    return 'GIROPAY';
+                case 'przelewy24':
+                    return 'P24';
+                case 'eps':
+                    return 'EPS';
+                case 'ideal':
+                    return 'IDEAL';
+                case 'mybank':
+                    return 'MYBANK';
+                case 'sofort':
+                    return 'SOFORT';
+            }
+        }
+
+        return 'PAYPAL';
     }
 }
