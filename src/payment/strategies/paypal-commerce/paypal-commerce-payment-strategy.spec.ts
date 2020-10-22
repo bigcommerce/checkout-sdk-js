@@ -58,7 +58,6 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         paypalcommerceOptions = {
             container: '#container',
-            style: {},
             submitForm,
             onRenderButton: jest.fn(),
             onValidate: jest.fn(),
@@ -139,12 +138,16 @@ describe('PaypalCommercePaymentStrategy', () => {
             const buttonOption = {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
-                style: paypalcommerceOptions.style,
             };
 
             const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
-            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(
+                cart.id,
+                `${paypalcommerceOptions.container}`,
+                { ...buttonOption, style: paymentMethod.initializationData.buttonStyle },
+                optionalParams
+            );
         });
 
         it('render Credit PayPal button if orderId is undefined', async () => {
@@ -163,12 +166,16 @@ describe('PaypalCommercePaymentStrategy', () => {
             const buttonOption = {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
-                style: paypalcommerceOptions.style,
             };
 
             const optionalParams = { fundingKey: 'PAYLATER', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
-            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`, buttonOption, optionalParams);
+            expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(
+                cart.id,
+                `${paypalcommerceOptions.container}`,
+                { ...buttonOption, style: paymentMethod.initializationData.buttonStyle },
+                optionalParams
+            );
         });
 
         it('call submitForm after approve', async () => {
