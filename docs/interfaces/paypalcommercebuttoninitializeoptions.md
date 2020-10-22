@@ -25,6 +25,6 @@ ___
 
 ### `Optional` style
 
-• **style**? : *[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md)*
+• **style**? : *[PaypalButtonStyleOptions_2](paypalbuttonstyleoptions_2.md)*
 
 A set of styling options for the checkout button.

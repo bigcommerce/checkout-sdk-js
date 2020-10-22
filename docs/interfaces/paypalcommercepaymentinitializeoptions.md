@@ -33,7 +33,6 @@ service.initializePayment({
 ### Properties
 
 * [container](paypalcommercepaymentinitializeoptions.md#container)
-* [style](paypalcommercepaymentinitializeoptions.md#optional-style)
 
 ### Methods
 
@@ -46,12 +45,6 @@ service.initializePayment({
 ###  container
 
 • **container**: *string*
-
-___
-
-### `Optional` style
-
-• **style**? : *[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md)*
 
 ## Methods
 
