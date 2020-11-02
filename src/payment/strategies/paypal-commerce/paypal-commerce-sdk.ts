@@ -199,9 +199,3 @@ export interface PaypalCommerceScriptParams  {
     intent?: 'capture' | 'authorize';
     components?: ComponentsScriptType;
 }
-
-export enum PaymentStrategyTypes {
-    credit = 'credit',
-    alternative = 'alternative',
-    paypal = 'paypal',
-}

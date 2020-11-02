@@ -10,3 +10,4 @@ export { default as PaypalCommercePaymentProcessor, ParamsRenderHostedFields } f
 export { default as PaypalCommerceHostedForm } from './paypal-commerce-hosted-form';
 export { default as PaypalCommerceRegularField } from './paypal-commerce-regular-field';
 export { default as createPaypalCommercePaymentProcessor } from './create-paypal-commerce-payment-processor';
+export { default as paypalCommerceFundingKeyResolver } from './paypal-commerce-funding-key-resolver';

@@ -18,9 +18,10 @@ import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
 
-import { ButtonsOptions, PaymentStrategyTypes, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { ButtonsOptions, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 import { OptionalParamsRenderButtons } from './paypal-commerce-payment-processor';
 
 describe('PaypalCommercePaymentStrategy', () => {
@@ -153,9 +154,9 @@ describe('PaypalCommercePaymentStrategy', () => {
                 store,
                 orderActionCreator,
                 paymentActionCreator,
-                paypalCommercePaymentProcessor,
-                PaymentStrategyTypes.credit
+                paypalCommercePaymentProcessor
             );
+            options.methodId = PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
 
             await paypalCommercePaymentStrategy.initialize(options);
 
@@ -203,7 +204,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 buttonOption = {
                     onApprove: expect.any(Function),
                     onClick: expect.any(Function),
-                    style: paypalcommerceOptions.style,
+                    style: paymentMethod.initializationData.buttonStyle,
                 };
                 optionalParams = { paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
 
@@ -211,8 +212,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                     store,
                     orderActionCreator,
                     paymentActionCreator,
-                    paypalCommercePaymentProcessor,
-                    PaymentStrategyTypes.alternative
+                    paypalCommercePaymentProcessor
                 );
             });
 
