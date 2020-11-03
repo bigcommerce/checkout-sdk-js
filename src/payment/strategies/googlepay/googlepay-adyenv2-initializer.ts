@@ -59,6 +59,7 @@ export default class GooglePayAdyenV2Initializer implements GooglePayInitializer
         const {
             initializationData: {
                 gatewayMerchantId,
+                storeCountry: countryCode,
                 googleMerchantName: merchantName,
                 googleMerchantId: merchantId,
                 platformToken: authJwt,
@@ -94,6 +95,7 @@ export default class GooglePayAdyenV2Initializer implements GooglePayInitializer
                 },
             }],
             transactionInfo: {
+                countryCode,
                 currencyCode,
                 totalPriceStatus: 'FINAL',
                 totalPrice: round(outstandingBalance, 2).toFixed(2),

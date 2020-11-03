@@ -456,6 +456,33 @@ export function getGooglePay(): PaymentMethod {
     };
 }
 
+export function getGooglePayAdyenV2(): PaymentMethod {
+    return {
+        id: 'googlepayadyenv2',
+        logoUrl: '',
+        method: 'googlepay',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+        ],
+        config: {
+            displayName: 'Google Pay',
+            merchantId: '',
+            testMode: true,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        initializationData: {
+            nonce: 'nonce',
+            card_information: {
+                type: 'MasterCard',
+                number: '4111',
+            },
+        },
+    };
+}
+
 export function getZip(): PaymentMethod {
     return {
         id: 'zip',
@@ -569,6 +596,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getBraintreeVisaCheckout(),
         getCheckoutcom(),
         getGooglePay(),
+        getGooglePayAdyenV2(),
         getKlarna(),
         getPaypalExpress(),
         getPaypalCommerce(),

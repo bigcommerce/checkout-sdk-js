@@ -1,5 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -14,9 +14,11 @@ import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreato
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { AdyenV2ScriptLoader } from '../adyenv2';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
+import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayPaymentStrategy from './googlepay-payment-strategy';
@@ -34,6 +36,7 @@ describe('GooglePayPaymentStrategy', () => {
     let container: HTMLDivElement;
     let walletButton: HTMLAnchorElement;
     let paymentMethodMock: PaymentMethod;
+    let googlePayAdyenV2PaymentProcessor: GooglePayAdyenV2PaymentProcessor;
 
     beforeEach(() => {
         store = createCheckoutStore({
@@ -83,6 +86,8 @@ describe('GooglePayPaymentStrategy', () => {
             )
         );
 
+        googlePayAdyenV2PaymentProcessor = new GooglePayAdyenV2PaymentProcessor(store, paymentActionCreator, new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()));
+
         strategy = new GooglePayPaymentStrategy(
             store,
             checkoutActionCreator,
@@ -90,7 +95,8 @@ describe('GooglePayPaymentStrategy', () => {
             paymentStrategyActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            googlePayPaymentProcessor
+            googlePayPaymentProcessor,
+            googlePayAdyenV2PaymentProcessor
         );
 
         container = document.createElement('div');
@@ -105,6 +111,8 @@ describe('GooglePayPaymentStrategy', () => {
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(Promise.resolve());
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(googlePayPaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
+        jest.spyOn(googlePayAdyenV2PaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
+        jest.spyOn(googlePayAdyenV2PaymentProcessor, 'processAdditionalAction').mockReturnValue(Promise.resolve());
 
         paymentMethodMock = { ...getGooglePay() };
     });
@@ -374,7 +382,7 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: 'googlepayadyenv2',
                 paymentData: {
-                    nonce: '{"type":"paywithgoogle","googlePayToken":"token"}',
+                    nonce: '{"type":"paywithgoogle","googlePayToken":"token","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"0"}}',
                     method: 'googlepayadyenv2',
                     cardInformation: 'ci',
                 },
