@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.110.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.109.0...v1.110.0) (2020-11-03)
+
+
+### Features
+
+* **checkout:** INT-3174 Added title as attribute of flashMessage ([73cbe48](https://github.com/bigcommerce/checkout-sdk-js/commit/73cbe487e86645348df49b265e4487c430d82053))
+
 ## [1.109.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.108.0...v1.109.0) (2020-10-22)
 
 

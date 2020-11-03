@@ -11,6 +11,7 @@
 ### Properties
 
 * [message](flashmessage.md#message)
+* [title](flashmessage.md#optional-title)
 * [type](flashmessage.md#type)
 
 ## Properties
@@ -18,6 +19,12 @@
 ###  message
 
 • **message**: *string*
+
+___
+
+### `Optional` title
+
+• **title**? : *undefined | string*
 
 ___
 

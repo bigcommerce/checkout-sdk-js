@@ -3496,6 +3496,7 @@ declare interface EmbeddedContentOptions {
 declare interface FlashMessage {
     type: FlashMessageType;
     message: string;
+    title?: string;
 }
 
 declare type FlashMessageType = 'error' | 'info' | 'warning' | 'success';
