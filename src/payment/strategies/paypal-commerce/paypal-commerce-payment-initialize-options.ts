@@ -1,6 +1,6 @@
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
- * method can be to present PayPal button or Credit Card Form.
+ * method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
  */
 export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
 
@@ -39,12 +39,12 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  */
 export interface PaypalCommercePaymentInitializeOptions {
     /**
-     * The ID of a container which the payment widget should insert into.
+     * The ID of a container where the payment widget should be inserted into.
      */
     container: string;
 
     /**
-     * A callback that gets called when buyer click to Smart Payment Button
+     * A callback that gets called when a buyer click on Smart Payment Button
      * and should validate payment form.
      *
      * @param resolve - A function, that gets called if form is valid.
@@ -62,7 +62,7 @@ export interface PaypalCommercePaymentInitializeOptions {
 
     /**
      * A callback right before render Smart Payment Button that gets called when
-     * spb is eligible. This callback can be used to hide standard submit button.
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
      */
     onRenderButton?(): void;
 }
