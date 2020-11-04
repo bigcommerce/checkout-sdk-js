@@ -25,10 +25,11 @@ import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
+import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
-import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
+import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow, CardinalThreeDSecureFlowV2 } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
@@ -162,6 +163,20 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             createAmazonPayV2PaymentProcessor()
+        )
+    );
+
+    registry.register(PaymentStrategyType.BARCLAYS, () =>
+        new BarclaysPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            new CardinalThreeDSecureFlowV2(
+                store,
+                paymentActionCreator,
+                new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            )
         )
     );
 

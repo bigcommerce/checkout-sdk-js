@@ -6,6 +6,7 @@ enum PaymentStrategyType {
     AMAZON = 'amazon',
     AUTHORIZENET_GOOGLE_PAY = 'googlepayauthorizenet',
     AMAZONPAYV2 = 'amazonpay',
+    BARCLAYS = 'barclays',
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',
     CHECKOUTCOM = 'checkoutcom',
