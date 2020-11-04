@@ -8,7 +8,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { paypalCommerceFundingKeyResolver, ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -17,7 +17,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
+        private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver
     ) {}
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -53,7 +54,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,
-            fundingKey: paypalCommerceFundingKeyResolver(methodId, gatewayId),
+            fundingKey: this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId),
             paramsForProvider: {isCheckout: true},
         });
 
@@ -78,6 +79,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 device_info: null,
                 paypal_account: {
                     order_id: this._orderId,
+                    method_id: payment.methodId,
                 },
             },
         };
