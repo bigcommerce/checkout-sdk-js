@@ -20,6 +20,16 @@ service.initializePayment({
                 methodId: 'paypalcommerce',
             });
         },
+        onValidate: (resolve, reject) => {
+            const isValid = service.validatePaymentForm();
+            if (isValid) {
+                return resolve();
+            }
+            return reject();
+        },
+        onRenderButton: () => {
+            service.hidePaymentSubmitButton();
+        }
     },
 });
 ```
@@ -46,11 +56,16 @@ service.initializePayment({
 
 • **container**: *string*
 
+The ID of a container where the payment widget should be inserted into.
+
 ## Methods
 
 ### `Optional` onRenderButton
 
 ▸ **onRenderButton**(): *void*
+
+A callback right before render Smart Payment Button that gets called when
+Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
 
 **Returns:** *void*
 
@@ -60,22 +75,34 @@ ___
 
 ▸ **onValidate**(`resolve`: function, `reject`: function): *Promise‹void›*
 
+A callback that gets called when a buyer click on Smart Payment Button
+and should validate payment form.
+
 **Parameters:**
 
 ▪ **resolve**: *function*
+
+A function, that gets called if form is valid.
 
 ▸ (): *void*
 
 ▪ **reject**: *function*
 
+A function, that gets called if form is not valid.
+
 ▸ (): *void*
 
 **Returns:** *Promise‹void›*
+
+reject() or resolve()
 
 ___
 
 ###  submitForm
 
 ▸ **submitForm**(): *void*
+
+A callback for submitting payment form that gets called
+when buyer approved PayPal account.
 
 **Returns:** *void*

@@ -4562,10 +4562,10 @@ declare interface PaypalCommerceButtonInitializeOptions {
  *     creditCard: {
  *         form: {
  *             fields: {
- *                 cardNumber: { containerId: 'card-number' },
- *                 cardName: { containerId: 'card-name' },
- *                 cardExpiry: { containerId: 'card-expiry' },
- *                 cardCode: { containerId: 'card-code' },
+ *                 cardNumber: { containerId: 'card-number', placeholder: 'Number of card' },
+ *                 cardName: { containerId: 'card-name', placeholder: 'Name of card' },
+ *                 cardExpiry: { containerId: 'card-expiry', placeholder: 'Expiry of card' },
+ *                 cardCode: { containerId: 'card-code', placeholder: 'Code of card' },
  *             },
  *             styles: {
  *                 default: {
@@ -4598,13 +4598,11 @@ declare interface PaypalCommerceButtonInitializeOptions {
  *     },
  * });
  * ```
- *
- * @alpha
- * Please note that this option is currently in an early stage of
- * development. Therefore the API is unstable and not ready for public
- * consumption.
  */
 declare interface PaypalCommerceCreditCardPaymentInitializeOptions {
+    /**
+     * The form is data for Credit Card Form
+     */
     form: PaypalCommerceFormOptions;
 }
 
@@ -4670,15 +4668,64 @@ declare interface PaypalCommerceFormFieldsMap {
 }
 
 declare interface PaypalCommerceFormOptions {
+    /**
+     * Containers for fields can be to present in one set of values
+     *
+     * ```js
+     * { cardNumber: { containerId: 'card-number' },
+     *   cardName: { containerId: 'card-name' },
+     *   cardExpiry: { containerId: 'card-expiry' },
+     *   cardCode: { containerId: 'card-code' }, }
+     * ```
+     *
+     *   Or in another set of values.
+     *
+     * ```js
+     * { cardCodeVerification: { containerId: 'card-number' },
+     *   cardNumberVerification: { containerId: 'card-name' }, }
+     * ```
+     */
     fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap;
+    /**
+     * Styles for inputs. Change the width, height and other styling.
+     *
+     * ```js
+     *  default: { color: '#000' },
+     *  error: { color: '#f00' },
+     *  focus: { color: '#0f0' }
+     * ```
+     */
     styles?: PaypalCommerceFormFieldStylesMap;
+    /**
+     * A callback that gets called when a field loses focus.
+     */
     onBlur?(data: PaypalCommerceFormFieldBlurEventData): void;
+    /**
+     * A callback that gets called when activity within
+     * the number field has changed such that the possible
+     * card type has changed.
+     */
     onCardTypeChange?(data: PaypalCommerceFormFieldCardTypeChangeEventData): void;
+    /**
+     * A callback that gets called when a field gains focus.
+     */
     onFocus?(data: PaypalCommerceFormFieldFocusEventData): void;
+    /**
+     * A callback that gets called when the validity of a field has changed.
+     */
     onValidate?(data: PaypalCommerceFormFieldValidateEventData): void;
+    /**
+     * A callback that gets called when the user requests submission
+     * of an input field, by pressing the Enter or Return key
+     * on their keyboard, or mobile equivalent.
+     */
     onEnter?(data: PaypalCommerceFormFieldEnterEventData): void;
 }
 
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
+ */
 declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
 
 /**
@@ -4700,14 +4747,44 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  *                 methodId: 'paypalcommerce',
  *             });
  *         },
+ *         onValidate: (resolve, reject) => {
+ *             const isValid = service.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ *         onRenderButton: () => {
+ *             service.hidePaymentSubmitButton();
+ *         }
  *     },
  * });
  * ```
  */
 declare interface PaypalCommercePaymentInitializeOptions {
+    /**
+     * The ID of a container where the payment widget should be inserted into.
+     */
     container: string;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
     onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
     submitForm(): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
     onRenderButton?(): void;
 }
 

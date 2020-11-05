@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.111.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.110.1...v1.111.0) (2020-11-05)
+
+
+### Features
+
+* **payment:** PAYPAL-759 Add docs for initialize PPCP ([#1008](https://github.com/bigcommerce/checkout-sdk-js/issues/1008)) ([492858d](https://github.com/bigcommerce/checkout-sdk-js/commit/492858d7e7a9ea108860127834493bd742caa4f5))
+
 ### [1.110.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.110.0...v1.110.1) (2020-11-05)
 
 

@@ -27,17 +27,43 @@
 
 • **fields**: *[PaypalCommerceFormFieldsMap](paypalcommerceformfieldsmap.md) | [PaypalCommerceStoredCardFieldsMap](paypalcommercestoredcardfieldsmap.md)*
 
+Containers for fields can be to present in one set of values
+
+```js
+{ cardNumber: { containerId: 'card-number' },
+  cardName: { containerId: 'card-name' },
+  cardExpiry: { containerId: 'card-expiry' },
+  cardCode: { containerId: 'card-code' }, }
+```
+
+  Or in another set of values.
+
+```js
+{ cardCodeVerification: { containerId: 'card-number' },
+  cardNumberVerification: { containerId: 'card-name' }, }
+```
+
 ___
 
 ### `Optional` styles
 
 • **styles**? : *[PaypalCommerceFormFieldStylesMap](paypalcommerceformfieldstylesmap.md)*
 
+Styles for inputs. Change the width, height and other styling.
+
+```js
+ default: { color: '#000' },
+ error: { color: '#f00' },
+ focus: { color: '#0f0' }
+```
+
 ## Methods
 
 ### `Optional` onBlur
 
 ▸ **onBlur**(`data`: [PaypalCommerceFormFieldBlurEventData](../README.md#paypalcommerceformfieldblureventdata)): *void*
+
+A callback that gets called when a field loses focus.
 
 **Parameters:**
 
@@ -53,6 +79,10 @@ ___
 
 ▸ **onCardTypeChange**(`data`: [PaypalCommerceFormFieldCardTypeChangeEventData](paypalcommerceformfieldcardtypechangeeventdata.md)): *void*
 
+A callback that gets called when activity within
+the number field has changed such that the possible
+card type has changed.
+
 **Parameters:**
 
 Name | Type |
@@ -66,6 +96,10 @@ ___
 ### `Optional` onEnter
 
 ▸ **onEnter**(`data`: [PaypalCommerceFormFieldEnterEventData](../README.md#paypalcommerceformfieldentereventdata)): *void*
+
+A callback that gets called when the user requests submission
+of an input field, by pressing the Enter or Return key
+on their keyboard, or mobile equivalent.
 
 **Parameters:**
 
@@ -81,6 +115,8 @@ ___
 
 ▸ **onFocus**(`data`: [PaypalCommerceFormFieldFocusEventData](../README.md#paypalcommerceformfieldfocuseventdata)): *void*
 
+A callback that gets called when a field gains focus.
+
 **Parameters:**
 
 Name | Type |
@@ -94,6 +130,8 @@ ___
 ### `Optional` onValidate
 
 ▸ **onValidate**(`data`: [PaypalCommerceFormFieldValidateEventData](paypalcommerceformfieldvalidateeventdata.md)): *void*
+
+A callback that gets called when the validity of a field has changed.
 
 **Parameters:**
 

@@ -38,10 +38,10 @@ service.initializePayment({
     creditCard: {
         form: {
             fields: {
-                cardNumber: { containerId: 'card-number' },
-                cardName: { containerId: 'card-name' },
-                cardExpiry: { containerId: 'card-expiry' },
-                cardCode: { containerId: 'card-code' },
+                cardNumber: { containerId: 'card-number', placeholder: 'Number of card' },
+                cardName: { containerId: 'card-name', placeholder: 'Name of card' },
+                cardExpiry: { containerId: 'card-expiry', placeholder: 'Expiry of card' },
+                cardCode: { containerId: 'card-code', placeholder: 'Code of card' },
             },
             styles: {
                 default: {
@@ -75,11 +75,6 @@ service.initializePayment({
 });
 ```
 
-**`alpha`** 
-Please note that this option is currently in an early stage of
-development. Therefore the API is unstable and not ready for public
-consumption.
-
 ## Hierarchy
 
 * **PaypalCommerceCreditCardPaymentInitializeOptions**
@@ -95,3 +90,5 @@ consumption.
 ###  form
 
 • **form**: *[PaypalCommerceFormOptions](paypalcommerceformoptions.md)*
+
+The form is data for Credit Card Form

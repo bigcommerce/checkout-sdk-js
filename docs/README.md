@@ -531,6 +531,9 @@ ___
 
 Ƭ **PaypalCommerceInitializeOptions**: *[PaypalCommercePaymentInitializeOptions](interfaces/paypalcommercepaymentinitializeoptions.md) | [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/paypalcommercecreditcardpaymentinitializeoptions.md)*
 
+A set of options that are required to initialize the PayPal Commerce payment
+method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
+
 ___
 
 ###  StripeElementOptions
