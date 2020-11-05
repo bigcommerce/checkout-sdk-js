@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.110.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.110.0...v1.110.1) (2020-11-05)
+
+
+### Bug Fixes
+
+* **payment:** INT-3311 klarna can checkout with coupons ([375a2c3](https://github.com/bigcommerce/checkout-sdk-js/commit/375a2c3946aae0d415812913785eb663a75a256d))
+
 ## [1.110.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.109.0...v1.110.0) (2020-11-03)
 
 
