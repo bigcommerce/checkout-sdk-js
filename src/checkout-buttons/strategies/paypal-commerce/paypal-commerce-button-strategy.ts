@@ -39,8 +39,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart));
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
-        if (initializationData.isPayPalCreditAvailable && options.paypalCommerce?.messagingContainer) {
-            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${options.paypalCommerce?.messagingContainer}`);
+
+        const containerId = options.paypalCommerce?.messagingContainer;
+        if (containerId && document.getElementById(containerId)) {
+            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${containerId}`);
         }
 
         return Promise.resolve();

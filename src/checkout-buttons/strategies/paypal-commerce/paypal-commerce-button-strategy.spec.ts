@@ -155,20 +155,28 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
     });
 
-    it('render PayPal messaging with credit enabled', async () => {
-        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+    it('do not render PayPal messaging without banner element', async () => {
+        const containerId = 'paypal-commerce-cart-messaging-banner';
+        expect(document.getElementById(containerId)).toBeNull();
+
+        await strategy.initialize(options);
+
+        expect(paypalCommercePaymentProcessor.renderMessages).not.toHaveBeenCalled();
+    });
+
+    it('render PayPal messaging with banner element', async () => {
+        const containerId = 'paypal-commerce-cart-messaging-banner';
+        let container: HTMLDivElement;
+        container = document.createElement('div');
+        container.setAttribute('id', containerId);
+        document.body.appendChild(container);
+        expect(document.getElementById(containerId)).not.toBeNull();
 
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
         await strategy.initialize(options);
 
         expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledWith(cart.cartAmount, `#${paypalOptions.messagingContainer}`);
-    });
-
-    it('render PayPal messaging with credit disabled', async () => {
-        await strategy.initialize(options);
-
-        expect(paypalCommercePaymentProcessor.renderMessages).not.toHaveBeenCalled();
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
