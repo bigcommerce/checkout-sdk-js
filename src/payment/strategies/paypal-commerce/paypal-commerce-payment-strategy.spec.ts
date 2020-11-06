@@ -180,7 +180,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
                 .mockReturnValue('P24');
 
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: 'paypalcommercealternativemethods', methodId: 'przelewy24' });
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
 
             expect(paypalCommercePaymentProcessor.renderButtons)
                 .toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`,
@@ -218,7 +218,10 @@ describe('PaypalCommercePaymentStrategy', () => {
         let orderRequestBody: OrderRequestBody;
 
         beforeEach(() => {
-            orderRequestBody = { payment: { methodId: 'paypalcommerce' }};
+            orderRequestBody = { payment: { methodId: PaymentStrategyType.PAYPAL_COMMERCE }};
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce() });
         });
 
         it('pass the options to submitOrder', async () => {
@@ -235,7 +238,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
-        it('submitPayment with the right information', async () => {
+        it('submitPayment with orderId and method_id if method is paypalcommerce', async () => {
             const expected = {
                 ...orderRequestBody.payment,
                 paymentData: {
@@ -245,7 +248,39 @@ describe('PaypalCommercePaymentStrategy', () => {
                         device_info: null,
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,
-                            method_id: 'paypalcommerce',
+                            method_id: 'paypal',
+                        },
+                    },
+                },
+            };
+
+            await paypalCommercePaymentStrategy.initialize(options);
+            await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+        });
+
+        it('submitPayment with orderId and method_id if method is alternative', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce(), id: 'przelewy24', gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS });
+
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
+
+            const alternativeOptions = { gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' };
+            options = { ...options, ...alternativeOptions };
+            orderRequestBody = { payment: alternativeOptions};
+
+            const expected = {
+                ...orderRequestBody.payment,
+                paymentData: {
+                    formattedPayload: {
+                        vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
+                        device_info: null,
+                        paypal_account: {
+                            order_id: paymentMethod.initializationData.orderId,
+                            method_id: 'przelewy24',
                         },
                     },
                 },

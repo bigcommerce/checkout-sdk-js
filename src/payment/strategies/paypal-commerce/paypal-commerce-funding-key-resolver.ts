@@ -1,14 +1,18 @@
+import PaymentStrategyType from '../../payment-strategy-type';
+
+import { PaypalCommerceSDKFunding } from './paypal-commerce-sdk';
+
 export default class PaypalCommerceFundingKeyResolver {
-    resolve(methodId: string, gatewayId?: string) {
-        if (methodId === 'paypalcommerce') {
+    resolve(methodId: string, gatewayId?: string): keyof PaypalCommerceSDKFunding {
+        if (methodId === PaymentStrategyType.PAYPAL_COMMERCE) {
             return 'PAYPAL';
         }
 
-        if (methodId === 'paypalcommercecredit') {
+        if (methodId === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT) {
             return 'PAYLATER';
         }
 
-        if (gatewayId === 'paypalcommercealternativemethods') {
+        if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
             switch (methodId) {
                 case 'bancontact':
                     return 'BANCONTACT';

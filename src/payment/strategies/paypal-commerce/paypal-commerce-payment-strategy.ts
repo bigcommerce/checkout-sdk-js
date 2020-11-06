@@ -6,12 +6,14 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
 
 import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
+    private _method?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -23,8 +25,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
-        const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
+        const { initializationData, method } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle } = initializationData;
+        this._method = method;
 
         if (orderId) {
             this._orderId = orderId;
@@ -72,6 +75,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentMethodInvalidError();
         }
 
+        const methodId = payment.gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS
+            ? payment.methodId
+            : this._method;
+
         const paymentData =  {
             formattedPayload: {
                 vault_payment_instrument: null,
@@ -79,7 +86,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 device_info: null,
                 paypal_account: {
                     order_id: this._orderId,
-                    method_id: payment.methodId,
+                    method_id: methodId,
                 },
             },
         };
