@@ -34,6 +34,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let cart: Cart;
     let fundingSource: string;
+    let messageContainer: HTMLDivElement;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -108,9 +109,20 @@ describe('PaypalCommerceButtonStrategy', () => {
             paypalCommercePaymentProcessor
         );
 
+        if (paypalOptions.messagingContainer != null) {
+            messageContainer = document.createElement('div');
+            messageContainer.setAttribute('id', paypalOptions.messagingContainer);
+            document.body.appendChild(messageContainer);
+        }
     });
 
-    it('initializes PaypalCommerce and PayPal JS clients PayPal credit disabled', async () => {
+    afterEach(() => {
+        if (paypalOptions.messagingContainer != null && document.getElementById(paypalOptions.messagingContainer)) {
+                document.body.removeChild(messageContainer);
+        }
+    });
+
+    it('initializes PaypalCommerce and PayPal credit disabled & messaging enabled', async () => {
         await strategy.initialize(options);
 
         const obj = {
@@ -118,14 +130,14 @@ describe('PaypalCommerceButtonStrategy', () => {
             commit: false,
             currency: 'USD',
             intent: 'capture',
-            components: ['buttons'],
+            components: ['buttons', 'messages'],
             'disable-funding': ['card', 'credit'],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
-    it('initializes PaypalCommerce and PayPal JS clients PayPal credit enabled', async () => {
+    it('initializes PaypalCommerce and PayPal credit enabled & messaging enabled', async () => {
         paymentMethod.initializationData.isPayPalCreditAvailable = true;
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
@@ -138,6 +150,25 @@ describe('PaypalCommerceButtonStrategy', () => {
                 intent: 'capture',
                 components: ['buttons', 'messages'],
                 'disable-funding': ['card'],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('initializes PaypalCommerce and PayPal credit enabled & messaging disabled', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+        document.body.removeChild(messageContainer);
+
+        await strategy.initialize(options);
+
+        const obj = {
+            'client-id': 'abc',
+            commit: false,
+            currency: 'USD',
+            intent: 'capture',
+            components: ['buttons'],
+            'disable-funding': ['card'],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
@@ -156,8 +187,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     });
 
     it('do not render PayPal messaging without banner element', async () => {
-        const containerId = 'paypal-commerce-cart-messaging-banner';
-        expect(document.getElementById(containerId)).toBeNull();
+        document.body.removeChild(messageContainer);
 
         await strategy.initialize(options);
 
@@ -165,13 +195,6 @@ describe('PaypalCommerceButtonStrategy', () => {
     });
 
     it('render PayPal messaging with banner element', async () => {
-        const containerId = 'paypal-commerce-cart-messaging-banner';
-        let container: HTMLDivElement;
-        container = document.createElement('div');
-        container.setAttribute('id', containerId);
-        document.body.appendChild(container);
-        expect(document.getElementById(containerId)).not.toBeNull();
-
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
         await strategy.initialize(options);
