@@ -11,19 +11,16 @@ import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentMethodActionType } from '../../payment-method-actions';
-import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 
 describe('PaypalCommercePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -36,8 +33,8 @@ describe('PaypalCommercePaymentStrategy', () => {
     let options: PaymentInitializeOptions;
     let requestSender: RequestSender;
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paypalcommerceOptions: PaypalCommercePaymentInitializeOptions;
+    let paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver;
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
@@ -49,9 +46,9 @@ describe('PaypalCommercePaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         requestSender = createRequestSender();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
         paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
         eventEmitter = new EventEmitter();
+        paypalCommerceFundingKeyResolver = new PaypalCommerceFundingKeyResolver();
 
         store = createCheckoutStore(getCheckoutStoreState());
         submitForm = jest.fn();
@@ -78,9 +75,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         paymentActionCreator = {} as PaymentActionCreator;
         paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id })));
-
         jest.spyOn(paypalCommercePaymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
 
@@ -95,16 +89,24 @@ describe('PaypalCommercePaymentStrategy', () => {
                 });
             });
 
+        jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+            .mockReturnValue('PAYPAL');
+
         paypalCommercePaymentStrategy = new PaypalCommercePaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
-            paymentMethodActionCreator,
-            paypalCommercePaymentProcessor
+            paypalCommercePaymentProcessor,
+            paypalCommerceFundingKeyResolver
         );
     });
 
     describe('#initialize()', () => {
+        beforeEach(() => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined } });
+        });
+
         it('returns checkout state', async () => {
             const output = await paypalCommercePaymentStrategy.initialize(options);
 
@@ -112,13 +114,15 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('not initialize paypalCommercePaymentProcessor if orderId is not undefined', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce() });
+
             await paypalCommercePaymentStrategy.initialize(options);
 
             expect(paypalCommercePaymentProcessor.initialize).not.toHaveBeenCalled();
         });
 
         it('initialize paypalCommercePaymentProcessor if orderId is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
             const obj = {
@@ -132,7 +136,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('render PayPal button if orderId is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             await paypalCommercePaymentStrategy.initialize(options);
 
             const buttonOption = {
@@ -151,16 +154,11 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('render Credit PayPal button if orderId is undefined', async () => {
-            paypalCommercePaymentStrategy = new PaypalCommercePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                paypalCommercePaymentProcessor,
-                true
-            );
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('PAYLATER');
 
-            paymentMethod.initializationData.orderId = undefined;
+            options.methodId = PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
+
             await paypalCommercePaymentStrategy.initialize(options);
 
             const buttonOption = {
@@ -178,9 +176,24 @@ describe('PaypalCommercePaymentStrategy', () => {
             );
         });
 
-        it('call submitForm after approve', async () => {
-            paymentMethod.initializationData.orderId = undefined;
+        it('render Przelewy24 button if orderIdis undefined and methodId is przelewy24', async () => {
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
 
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+
+            expect(paypalCommercePaymentProcessor.renderButtons)
+                .toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`,
+                    {   onApprove: expect.any(Function),
+                        onClick: expect.any(Function),
+                        style: paymentMethod.initializationData.buttonStyle },
+                    {   paramsForProvider: { isCheckout: true },
+                        onRenderButton: expect.any(Function),
+                        fundingKey: 'P24' }
+                );
+        });
+
+        it('call submitForm after approve', async () => {
             await paypalCommercePaymentStrategy.initialize(options);
 
             eventEmitter.emit('onApprove');
@@ -191,7 +204,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('throw error if paypalcommerce is undefined', async () => {
-            paymentMethod.initializationData.orderId = undefined;
             const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument is not provided.');
 
             try {
@@ -206,7 +218,10 @@ describe('PaypalCommercePaymentStrategy', () => {
         let orderRequestBody: OrderRequestBody;
 
         beforeEach(() => {
-            orderRequestBody = getOrderRequestBody();
+            orderRequestBody = { payment: { methodId: PaymentStrategyType.PAYPAL_COMMERCE }};
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce() });
         });
 
         it('pass the options to submitOrder', async () => {
@@ -223,7 +238,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
-        it('submitPayment with the right information', async () => {
+        it('submitPayment with orderId and method_id if method is paypalcommerce', async () => {
             const expected = {
                 ...orderRequestBody.payment,
                 paymentData: {
@@ -233,6 +248,39 @@ describe('PaypalCommercePaymentStrategy', () => {
                         device_info: null,
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,
+                            method_id: 'paypal',
+                        },
+                    },
+                },
+            };
+
+            await paypalCommercePaymentStrategy.initialize(options);
+            await paypalCommercePaymentStrategy.execute(orderRequestBody, options);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+        });
+
+        it('submitPayment with orderId and method_id if method is alternative', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce(), id: 'przelewy24', gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS });
+
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
+
+            const alternativeOptions = { gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' };
+            options = { ...options, ...alternativeOptions };
+            orderRequestBody = { payment: alternativeOptions};
+
+            const expected = {
+                ...orderRequestBody.payment,
+                paymentData: {
+                    formattedPayload: {
+                        vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
+                        device_info: null,
+                        paypal_account: {
+                            order_id: paymentMethod.initializationData.orderId,
+                            method_id: 'przelewy24',
                         },
                     },
                 },
