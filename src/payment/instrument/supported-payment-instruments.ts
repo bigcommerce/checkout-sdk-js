@@ -29,6 +29,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'adyenv2',
         method: 'giropay',
     },
+    barclays: {
+        provider: 'barclays',
+        method: 'credit_card',
+    },
     braintree: {
         provider: 'braintree',
         method: 'credit_card',

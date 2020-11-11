@@ -1,6 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { MissingDataError, NotInitializedError, StandardError } from '../../../common/error/errors';
+import { PaymentMethodCancelledError } from '../../errors';
 
 import { getCardinalBinProcessResponse, getCardinalOrderData, getCardinalSDK, getCardinalThreeDSResult, getCardinalValidatedData } from './cardinal.mock';
 import { CardinalClient, CardinalEventType, CardinalInitializationType, CardinalPaymentType, CardinalScriptLoader, CardinalSignatureVerification, CardinalSDK, CardinalTriggerEvents, CardinalValidatedAction, CardinalValidatedData } from './index';
@@ -250,6 +251,29 @@ describe('CardinalClient', () => {
 
             expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
             expect(promise).toEqual({ token: 'token' });
+        });
+
+        it('throws an error if consumer cancels the challenge', async () => {
+            jest.spyOn(sdk, 'continue').mockImplementation(() => {
+                const data = {
+                    ErrorDescription: 'Success',
+                    ErrorNumber: 0,
+                    Payment: {
+                        ExtendedData: {
+                            ChallengeCancel: '01',
+                        },
+                        ProcessorTransactionId: 'qwerty123',
+                        Type: CardinalPaymentType.CCA,
+                    },
+                };
+                validatedCall(data, 'token');
+            });
+
+            const promise = client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
+
+            await expect(promise).rejects.toThrow(PaymentMethodCancelledError);
+
+            expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
         });
 
         it('returns an error without an action code', async () => {

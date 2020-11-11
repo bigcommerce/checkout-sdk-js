@@ -1,3 +1,5 @@
+import { ThreeDSecure, ThreeDSecureToken } from '../../payment';
+
 export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
 
 export interface CardinalSDK {
@@ -69,7 +71,7 @@ export interface CardinalValidatedData {
     ActionCode?: CardinalValidatedAction;
     ErrorDescription: string;
     ErrorNumber: number;
-    Validated: boolean;
+    Validated?: boolean;
     Payment?: CardinalPayment;
 }
 
@@ -141,6 +143,7 @@ export type CardinalCCAExtendedData = Partial<{
     SignatureVerification: string;
     XID: string;
     UCAFIndicator: string;
+    ChallengeCancel: string;
 }>;
 
 export enum CardinalEventType {
@@ -176,3 +179,5 @@ export enum CardinalSignatureVerification {
     Yes = 'Y',
     No = 'N',
 }
+
+export type CardinalThreeDSecureToken = Pick<ThreeDSecure, 'xid'> | ThreeDSecureToken;

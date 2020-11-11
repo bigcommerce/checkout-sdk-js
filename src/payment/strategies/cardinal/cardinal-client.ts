@@ -3,7 +3,7 @@ import { includes } from 'lodash';
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { PaymentMethodFailedError } from '../../errors';
+import { PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
@@ -94,6 +94,10 @@ export default class CardinalClient {
                         }
 
                         if (!data.ActionCode) {
+                            if (data.Payment?.ExtendedData?.ChallengeCancel) {
+                                reject(new PaymentMethodCancelledError());
+                            }
+
                             return resolve({ token: jwt });
                         }
 
