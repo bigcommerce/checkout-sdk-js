@@ -36,11 +36,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             buttonParams.style = options.paypalCommerce.style;
         }
 
-        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart));
+        const messagingContainer = options.paypalCommerce?.messagingContainer;
+        const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
+
+        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart, isMessagesAvailable));
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
-        if (initializationData.isPayPalCreditAvailable && options.paypalCommerce?.messagingContainer) {
-            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${options.paypalCommerce?.messagingContainer}`);
+
+        if (isMessagesAvailable) {
+            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${messagingContainer}`);
         }
 
         return Promise.resolve();
@@ -69,14 +73,16 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         });
     }
 
-    private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptParams {
+    private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart, isMessagesAvailable: boolean): PaypalCommerceScriptParams {
         const { clientId, intent, isPayPalCreditAvailable, merchantId } = initializationData;
         const disableFunding: DisableFundingType = [ 'card' ];
         const components: ComponentsScriptType = ['buttons'];
 
         if (!isPayPalCreditAvailable) {
             disableFunding.push('credit');
-        } else {
+        }
+
+        if (isMessagesAvailable) {
             components.push('messages');
         }
 

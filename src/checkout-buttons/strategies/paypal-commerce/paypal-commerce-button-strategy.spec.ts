@@ -34,6 +34,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let cart: Cart;
     let fundingSource: string;
+    let messageContainer: HTMLDivElement;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -108,9 +109,20 @@ describe('PaypalCommerceButtonStrategy', () => {
             paypalCommercePaymentProcessor
         );
 
+        if (paypalOptions.messagingContainer != null) {
+            messageContainer = document.createElement('div');
+            messageContainer.setAttribute('id', paypalOptions.messagingContainer);
+            document.body.appendChild(messageContainer);
+        }
     });
 
-    it('initializes PaypalCommerce and PayPal JS clients PayPal credit disabled', async () => {
+    afterEach(() => {
+        if (paypalOptions.messagingContainer != null && document.getElementById(paypalOptions.messagingContainer)) {
+                document.body.removeChild(messageContainer);
+        }
+    });
+
+    it('initializes PaypalCommerce and PayPal credit disabled & messaging enabled', async () => {
         await strategy.initialize(options);
 
         const obj = {
@@ -118,14 +130,14 @@ describe('PaypalCommerceButtonStrategy', () => {
             commit: false,
             currency: 'USD',
             intent: 'capture',
-            components: ['buttons'],
+            components: ['buttons', 'messages'],
             'disable-funding': ['card', 'credit'],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
-    it('initializes PaypalCommerce and PayPal JS clients PayPal credit enabled', async () => {
+    it('initializes PaypalCommerce and PayPal credit enabled & messaging enabled', async () => {
         paymentMethod.initializationData.isPayPalCreditAvailable = true;
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
@@ -143,6 +155,25 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
+    it('initializes PaypalCommerce and PayPal credit enabled & messaging disabled', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+        document.body.removeChild(messageContainer);
+
+        await strategy.initialize(options);
+
+        const obj = {
+            'client-id': 'abc',
+            commit: false,
+            currency: 'USD',
+            intent: 'capture',
+            components: ['buttons'],
+            'disable-funding': ['card'],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
     it('render PayPal buttons', async () => {
         await strategy.initialize(options);
 
@@ -155,20 +186,20 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
     });
 
-    it('render PayPal messaging with credit enabled', async () => {
-        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+    it('do not render PayPal messaging without banner element', async () => {
+        document.body.removeChild(messageContainer);
 
+        await strategy.initialize(options);
+
+        expect(paypalCommercePaymentProcessor.renderMessages).not.toHaveBeenCalled();
+    });
+
+    it('render PayPal messaging with banner element', async () => {
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
         await strategy.initialize(options);
 
         expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledWith(cart.cartAmount, `#${paypalOptions.messagingContainer}`);
-    });
-
-    it('render PayPal messaging with credit disabled', async () => {
-        await strategy.initialize(options);
-
-        expect(paypalCommercePaymentProcessor.renderMessages).not.toHaveBeenCalled();
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
