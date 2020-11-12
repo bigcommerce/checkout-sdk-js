@@ -1,3 +1,5 @@
+import { isNil, omitBy } from 'lodash';
+
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
@@ -120,17 +122,12 @@ export default class PaypalCommercePaymentProcessor {
         }
     }
 
-    async submitHostedFields(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
+    async submitHostedFields(options?: PaypalCommerceHostedFieldsSubmitOptions): Promise<PaypalCommerceHostedFieldsApprove> {
         if (!this._hostedFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
-        const options: PaypalCommerceHostedFieldsSubmitOptions = {};
 
-        if (is3dsEnabled) {
-            options.contingencies = ['3D_SECURE'];
-        }
-
-        return this._hostedFields.submit(options);
+        return this._hostedFields.submit(omitBy(options, isNil));
     }
 
     getHostedFieldsValidationState(): { isValid: boolean; fields: PaypalCommerceHostedFieldsState['fields'] } {

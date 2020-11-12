@@ -94,6 +94,7 @@ export interface PaypalCommerceHostedFieldsRenderOptions {
 
 export interface PaypalCommerceHostedFieldsSubmitOptions {
     contingencies?: Array<'3D_SECURE'>;
+    cardholderName?: string;
 }
 
 export interface PaypalCommerceHostedFieldsApprove {

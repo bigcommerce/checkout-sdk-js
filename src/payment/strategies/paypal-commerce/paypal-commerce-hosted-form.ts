@@ -2,7 +2,7 @@ import { isNil, kebabCase, omitBy } from 'lodash';
 
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodFailedError } from '../../errors';
 
-import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
+import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -52,8 +52,12 @@ export default class PaypalCommerceHostedForm {
 
     async submit(is3dsEnabled?: boolean): Promise<PaypalCommerceHostedFieldsApprove> {
         this.validate();
+        const options: PaypalCommerceHostedFieldsSubmitOptions = {
+            cardholderName: this._cardNameField?.getValue(),
+            contingencies: is3dsEnabled ? ['3D_SECURE'] : undefined,
+        };
 
-        const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
+        const result = await this._paypalCommercePaymentProcessor.submitHostedFields(options);
 
         if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
             throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
