@@ -1,6 +1,6 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
-import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodFailedError } from '../../errors';
+import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 
 import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
@@ -54,10 +54,6 @@ export default class PaypalCommerceHostedForm {
         this.validate();
 
         const result = await this._paypalCommercePaymentProcessor.submitHostedFields(is3dsEnabled);
-
-        if (is3dsEnabled && (result.liabilityShift === 'NO' || result.liabilityShift === 'UNKNOWN')) {
-            throw new PaymentMethodFailedError('Failed authentication. Please try to authorize again.');
-        }
 
         return result;
     }
