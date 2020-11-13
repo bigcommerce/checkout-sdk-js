@@ -381,9 +381,12 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('submit Hosted Fields when call submitHostedFields', async () => {
             await paypalCommercePaymentProcessor.initialize(initOptions);
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-            await paypalCommercePaymentProcessor.submitHostedFields();
+            await paypalCommercePaymentProcessor.submitHostedFields({
+                cardholderName: 'cardholderName',
+                contingencies: undefined,
+            });
 
-            expect(submit).toHaveBeenCalled();
+            expect(submit).toHaveBeenCalledWith({ cardholderName: 'cardholderName' });
         });
 
         it('submitHostedFields should return orderId', async () => {

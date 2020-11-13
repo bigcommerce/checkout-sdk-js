@@ -151,7 +151,10 @@ describe('PaypalCommerceHostedForm', () => {
         await hostedForm.initialize(formOptions, '123', { 'client-id': '' });
         await hostedForm.submit(true);
 
-        expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalledWith(true);
+        expect(paypalCommercePaymentProcessor.submitHostedFields).toHaveBeenCalledWith({
+            cardholderName: '',
+            contingencies: ['3D_SECURE'],
+        });
     });
 
     it('throw error if 3ds is enabled and failed during sending', async () => {
