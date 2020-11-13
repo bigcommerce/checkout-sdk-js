@@ -246,9 +246,9 @@ describe('PaypalCommercePaymentStrategy', () => {
                         vault_payment_instrument: null,
                         set_as_default_stored_instrument: null,
                         device_info: null,
+                        method_id: 'paypalcommerce',
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,
-                            method_id: 'paypal',
                         },
                     },
                 },
@@ -278,9 +278,9 @@ describe('PaypalCommercePaymentStrategy', () => {
                         vault_payment_instrument: null,
                         set_as_default_stored_instrument: null,
                         device_info: null,
+                        method_id: 'przelewy24',
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,
-                            method_id: 'przelewy24',
                         },
                     },
                 },
