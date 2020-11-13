@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.114.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.113.0...v1.114.0) (2020-11-13)
+
+
+### Features
+
+* **payment:** PAYPAL-837 Submit cardholder name to PayPal ([b0d0a61](https://github.com/bigcommerce/checkout-sdk-js/commit/b0d0a6133e1986fdcfca4d9cc5b77f3412d8360e))
+
 ## [1.113.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.112.0...v1.113.0) (2020-11-12)
 
 
