@@ -32,6 +32,10 @@ describe('PaypalCommerceScriptLoader', () => {
         paypalLoader = new PaypalCommerceScriptLoader(loader);
     });
 
+    afterEach(() => {
+        (window as PaypalCommerceHostWindow).paypalLoadScript = undefined;
+    });
+
     describe('loads PayPalCommerce script with client Id, currency EUR, intent, disableFunding, commit', () => {
         const params: PaypalCommerceScriptParams = {
             'client-id': 'aaa',

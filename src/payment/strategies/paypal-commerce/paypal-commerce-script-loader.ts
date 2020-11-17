@@ -17,12 +17,14 @@ export default class PaypalCommerceScriptLoader {
     async loadPaypalCommerce(params: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
         this._validateParams(params, isProgressiveOnboardingAvailable);
 
-        const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@1.0.2/dist/paypal.browser.min.js';
-
-        await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
-
         if (!this._window.paypalLoadScript) {
-            throw new PaymentMethodClientUnavailableError();
+            const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@1.0.2/dist/paypal.browser.min.js';
+
+            await this._scriptLoader.loadScript(scriptSrc, {async: true, attributes: {}});
+
+            if (!this._window.paypalLoadScript) {
+                throw new PaymentMethodClientUnavailableError();
+            }
         }
 
         await this._window.paypalLoadScript(params);
