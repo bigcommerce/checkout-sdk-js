@@ -13,8 +13,9 @@ export default interface Payment {
 export type PaymentInstrument = (
     CreditCardInstrument |
     CreditCardInstrument & WithHostedFormNonce |
+    CreditCardInstrument & WithDocumentInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
+    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -40,6 +41,10 @@ export interface CreditCardInstrument {
     shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+}
+
+export interface WithDocumentInstrument {
+    ccDocument: string;
 }
 
 export interface WithHostedFormNonce {

@@ -32,6 +32,7 @@ import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow, CardinalThreeDSecureFlowV2 } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
+import { CheckoutcomAPMPaymentStrategy } from './strategies/checkoutcom-apm';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
@@ -570,6 +571,15 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             storeCreditActionCreator,
             new BoltScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_APM, () =>
+        new CheckoutcomAPMPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
         )
     );
 

@@ -6,6 +6,7 @@ export default interface PaymentResponseBody {
     three_ds_result: ThreeDsResult | {};
     fraud_review: boolean;
     transaction_type: string;
+    additional_action_required?: AdditionalActionRequired;
     errors?: Array<{
         code: string;
         message: string;
@@ -29,4 +30,17 @@ export interface ThreeDsResult {
     payer_auth_request: string;
     merchant_data: string;
     callback_url: string;
+}
+
+export interface AdditionalActionRequired {
+    type: AdditionalActionType;
+    data: AdditionalRedirectData;
+}
+
+export interface AdditionalRedirectData {
+    redirect_url: string;
+}
+
+export enum AdditionalActionType {
+    OffsiteRedirect = 'offsite_redirect',
 }
