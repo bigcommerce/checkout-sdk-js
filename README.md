@@ -320,6 +320,35 @@ await service.initializePayment({
 });
 ```
 
+Also, [PayPal](https://support.bigcommerce.com/s/article/Connecting-with-PayPal) (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+
+```html
+<!-- This is where the PayPal button will be inserted -->
+<div id="container"></div>
+```
+
+```js
+service.initializePayment({
+    methodId: 'paypalcommerce',
+    paypalcommerce: {
+        container: '#container',
+        submitForm: () => {
+            service.submitOrder({ methodId: 'paypalcommerce', });
+        },
+        onValidate: (resolve, reject) => {
+            const isValid = service.validatePaymentForm();
+            if (isValid) {
+                return resolve();
+            }
+            return reject();
+        },
+        onRenderButton: () => {
+            service.hidePaymentSubmitButton();
+        }
+    },
+});
+```
+
 #### Submit order
 
 And then, you can ask the customer to provide payment details required by their chosen payment method. If the method is executed successfully, you will create an order and thereby complete the checkout process.

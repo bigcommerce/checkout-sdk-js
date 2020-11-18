@@ -17,7 +17,7 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * service.initializePayment({
  *     methodId: 'paypalcommerce',
  *     paypalcommerce: {
- *         container: 'container',
+ *         container: '#container',
  *         submitForm: () => {
  *             service.submitOrder({
  *                 methodId: 'paypalcommerce',
