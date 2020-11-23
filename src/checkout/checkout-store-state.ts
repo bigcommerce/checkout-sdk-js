@@ -4,6 +4,7 @@ import { CheckoutButtonState } from '../checkout-buttons';
 import { ConfigState } from '../config';
 import { CouponState, GiftCertificateState } from '../coupon';
 import { CustomerState, CustomerStrategyState } from '../customer';
+import { FormFieldsState } from '../form';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
@@ -27,6 +28,7 @@ export default interface CheckoutStoreState {
     consignments: ConsignmentState;
     customer: CustomerState;
     customerStrategies: CustomerStrategyState;
+    formFields: FormFieldsState;
     giftCertificates: GiftCertificateState;
     instruments: InstrumentState;
     order: OrderState;

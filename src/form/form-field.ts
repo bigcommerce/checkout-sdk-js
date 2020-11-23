@@ -5,6 +5,7 @@ export type FormFieldFieldType =
     'date' |
     'text' |
     'dropdown' |
+    'password' |
     'radio' |
     'multiline';
 
@@ -13,6 +14,13 @@ export type FormFieldType =
     'date' |
     'integer' |
     'string';
+
+export interface CustomerPasswordRequirements {
+    alpha: string;
+    numeric: string;
+    minlength: number;
+    description: string;
+}
 
 export default interface FormField {
     name: string | AddressKey;
@@ -29,6 +37,13 @@ export default interface FormField {
     min?: string | number;
     max?: string | number;
     options?: FormFieldOptions;
+    requirements?: CustomerPasswordRequirements;
+}
+
+export interface FormFields {
+    customerAccount: FormField[];
+    shippingAddress: FormField[];
+    billingAddress: FormField[];
 }
 
 export interface FormFieldOptions {

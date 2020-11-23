@@ -56,12 +56,11 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
         const checkoutButton = createCheckoutButtonSelector(state.checkoutButton);
-        const config = createConfigSelector(state.config);
         const countries = createCountrySelector(state.countries);
         const coupons = createCouponSelector(state.coupons);
         const customer = createCustomerSelector(state.customer);
         const customerStrategies = createCustomerStrategySelector(state.customerStrategies);
-        const form = createFormSelector(state.config);
+        const form = createFormSelector(state.formFields);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = createInstrumentSelector(state.instruments);
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
@@ -79,6 +78,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const checkout = createCheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
         const order = createOrderSelector(state.order, billingAddress, coupons);
         const payment = createPaymentSelector(checkout, order);
+        const config = createConfigSelector(state.config, state.formFields);
 
         const selectors = {
             billingAddress,

@@ -229,6 +229,14 @@ export default interface CheckoutStoreSelector {
     getInstruments(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
 
     /**
+     * Gets a set of form fields that should be presented in order to create a customer.
+     *
+     * @returns The set of customer account form fields if it is loaded,
+     * otherwise undefined.
+     */
+    getCustomerAccountFields(): FormField[];
+
+    /**
      * Gets a set of form fields that should be presented to customers in order
      * to capture their billing address for a specific country.
      *
@@ -449,6 +457,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         }
     );
 
+    const getCustomerAccountFields = createSelector(
+        ({ form }: InternalCheckoutSelectors) => form.getCustomerAccountFields,
+        getCustomerAccountFields => clone(getCustomerAccountFields)
+    );
+
     const getBillingAddressFields = createSelector(
         ({ form }: InternalCheckoutSelectors) => form.getBillingAddressFields,
         ({ countries }: InternalCheckoutSelectors) => countries.getCountries,
@@ -496,6 +509,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             isPaymentDataSubmitted: isPaymentDataSubmitted(state),
             getSignInEmail: getSignInEmail(state),
             getInstruments: getInstruments(state),
+            getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
         };

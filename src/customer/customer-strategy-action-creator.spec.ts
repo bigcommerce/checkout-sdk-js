@@ -7,6 +7,7 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, Chec
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import CustomerActionCreator from './customer-action-creator';
@@ -26,9 +27,8 @@ describe('CustomerStrategyActionCreator', () => {
         const requestSender = createRequestSender();
         const checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
-            new ConfigActionCreator(
-                new ConfigRequestSender(requestSender)
-            )
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
         state = getCheckoutStoreState();

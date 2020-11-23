@@ -2,37 +2,55 @@ import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { createSelector } from '../common/selector';
-import { ConfigState, DEFAULT_STATE } from '../config';
 import { Country } from '../geography';
 
 import FormField from './form-field';
+import FormFieldsState, { DEFAULT_STATE } from './form-fields-state';
 
 export default interface FormSelector {
     getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
     getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
+    getCustomerAccountFields(): FormField[];
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
 }
 
-export type FormSelectorFactory = (state: ConfigState) => FormSelector;
+export type FormSelectorFactory = (state: FormFieldsState) => FormSelector;
 
 export function createFormSelectorFactory(): FormSelectorFactory {
     const getShippingAddressFields = createSelector(
-        (state: ConfigState) => state.data,
-        config => (countries: Country[] = [], countryCode: string) => {
+        (state: FormFieldsState) => state.data,
+        formFields => (countries: Country[] = [], countryCode: string) => {
             const selectedCountry = find(countries, { code: countryCode });
-            const fields = config ? config.storeConfig.formFields.shippingAddressFields : [];
+            const fields = formFields ? formFields.shippingAddress : [];
 
             return fields.map((field: any) => processField(field, countries, selectedCountry));
         }
     );
 
     const getBillingAddressFields = createSelector(
-        (state: ConfigState) => state.data,
-        config => (countries: Country[] = [], countryCode: string) => {
+        (state: FormFieldsState) => state.data,
+        formFields => (countries: Country[] = [], countryCode: string) => {
             const selectedCountry = find(countries, { code: countryCode });
-            const fields = config ? config.storeConfig.formFields.billingAddressFields : [];
+            const fields = formFields ? formFields.billingAddress : [];
 
             return fields.map((field: any) => processField(field, countries, selectedCountry));
         }
+    );
+
+    const getCustomerAccountFields = createSelector(
+        (state: FormFieldsState) => state.data,
+        formFields => () => formFields ? formFields.customerAccount : []
+    );
+
+    const getLoadError = createSelector(
+        (state: FormFieldsState) => state.errors.loadError,
+        error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: FormFieldsState) => !!state.statuses.isLoading,
+        status => () => status
     );
 
     function processField(field: FormField, countries: Country[], selectedCountry?: Country): FormField {
@@ -109,11 +127,14 @@ export function createFormSelectorFactory(): FormSelectorFactory {
     }
 
     return memoizeOne((
-        state: ConfigState = DEFAULT_STATE
+        state: FormFieldsState = DEFAULT_STATE
     ): FormSelector => {
         return {
             getShippingAddressFields: getShippingAddressFields(state),
             getBillingAddressFields: getBillingAddressFields(state),
+            getCustomerAccountFields: getCustomerAccountFields(state),
+            getLoadError: getLoadError(state),
+            isLoading: isLoading(state),
         };
     });
 }

@@ -2,6 +2,7 @@ import { createClient } from '@bigcommerce/bigpay-client';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
+import { getFormFieldsState } from '../form/form.mock';
 
 import createPaymentClient from './create-payment-client';
 
@@ -12,6 +13,7 @@ describe('createPaymentClient()', () => {
     beforeEach(() => {
         store = createCheckoutStore({
             config: getConfigState(),
+            formFields: getFormFieldsState(),
         });
 
         jest.spyOn(store, 'subscribe');

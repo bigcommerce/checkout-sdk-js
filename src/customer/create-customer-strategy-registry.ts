@@ -5,6 +5,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
@@ -36,7 +37,8 @@ export default function createCustomerStrategyRegistry(
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutActionCreator = new CheckoutActionCreator(
         checkoutRequestSender,
-        new ConfigActionCreator(new ConfigRequestSender(requestSender))
+        new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+        new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const formPoster = createFormPoster();
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));

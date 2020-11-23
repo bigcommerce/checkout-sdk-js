@@ -11,6 +11,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -62,6 +63,7 @@ describe('AffirmPaymentStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
             consignments: getConsignmentsState(),
             billingAddress: getBillingAddressState(),
+            formFields: getFormFieldsState(),
             order: getOrderState(),
         });
         checkoutRequestSender = new CheckoutRequestSender(requestSender);

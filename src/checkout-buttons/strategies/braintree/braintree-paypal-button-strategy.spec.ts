@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, Checkou
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
 import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
@@ -40,7 +41,8 @@ describe('BraintreePaypalButtonStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
+            new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
         );
         braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(getScriptLoader()));
         formPoster = createFormPoster();

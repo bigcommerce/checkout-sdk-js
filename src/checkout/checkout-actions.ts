@@ -1,6 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
 import { LoadConfigAction } from '../config';
+import { LoadFormFieldsAction } from '../form';
 
 import Checkout from './checkout';
 
@@ -20,6 +21,7 @@ export type LoadCheckoutAction =
     LoadCheckoutRequestedAction |
     LoadCheckoutSucceededAction |
     LoadCheckoutFailedAction |
+    LoadFormFieldsAction |
     LoadConfigAction;
 
 export type UpdateCheckoutAction =

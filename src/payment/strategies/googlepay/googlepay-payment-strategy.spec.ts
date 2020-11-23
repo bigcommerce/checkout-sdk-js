@@ -8,6 +8,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '..
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
@@ -45,16 +46,17 @@ describe('GooglePayPaymentStrategy', () => {
         });
 
         const requestSender = createRequestSender();
-        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-        const configRequestSender = new ConfigRequestSender(requestSender);
-        const configActionCreator = new ConfigActionCreator(configRequestSender);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const scriptLoader = createScriptLoader();
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(scriptLoader);
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,

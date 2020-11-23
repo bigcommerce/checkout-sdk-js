@@ -7,7 +7,7 @@ import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
 import FormSelector, { createFormSelectorFactory, FormSelectorFactory } from './form-selector';
-import { getFormFields } from './form.mock';
+import { getAddressFormFields, getFormFields } from './form.mock';
 
 // tslint:disable:no-non-null-assertion
 
@@ -25,12 +25,12 @@ describe('FormSelector', () => {
         let countries: Country[];
 
         beforeEach(() => {
-            formSelector = createFormSelector(state.config);
+            formSelector = createFormSelector(state.formFields);
             countries = getShippingCountries();
         });
 
         it('returns the shipping address form fields', () => {
-            const expected = getFormFields();
+            const expected = getAddressFormFields();
             const result = formSelector.getShippingAddressFields([], '');
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
@@ -103,12 +103,12 @@ describe('FormSelector', () => {
         let countries: Country[];
 
         beforeEach(() => {
-            formSelector = createFormSelector(state.config);
+            formSelector = createFormSelector(state.formFields);
             countries = getCountries();
         });
 
         it('returns the billing address form fields', () => {
-            const expected = getFormFields();
+            const expected = getAddressFormFields();
             const result = formSelector.getBillingAddressFields([], '');
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
@@ -176,6 +176,20 @@ describe('FormSelector', () => {
             const postCode = find(forms, { name: 'postalCode' });
 
             expect(postCode!.required).toBe(false);
+        });
+    });
+
+    describe('#getCustomerAccountFields()', () => {
+        let formSelector: FormSelector;
+
+        beforeEach(() => {
+            formSelector = createFormSelector(state.formFields);
+        });
+
+        it('returns the customer account fields', () => {
+            const { customerAccount } = getFormFields();
+
+            expect(formSelector.getCustomerAccountFields()).toEqual(customerAccount);
         });
     });
 });

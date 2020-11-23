@@ -9,6 +9,8 @@ import { getCheckoutState, getCheckoutStoreState } from '../../../checkout/check
 import { InvalidArgumentError, MissingDataError, NotInitializedError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
+import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
@@ -67,6 +69,7 @@ describe('SquarePaymentStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
             checkout: getCheckoutState(),
             config: getConfigState(),
+            formFields: getFormFieldsState(),
             billingAddress: getCheckoutStoreState().billingAddress,
         });
         orderRequestSender = new OrderRequestSender(createRequestSender());
@@ -76,9 +79,6 @@ describe('SquarePaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
-        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-        const configRequestSender = new ConfigRequestSender(requestSender);
-        const configActionCreator = new ConfigActionCreator(configRequestSender);
 
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
@@ -99,7 +99,11 @@ describe('SquarePaymentStrategy', () => {
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );
         scriptLoader = new SquareScriptLoader(createScriptLoader());
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         strategy = new SquarePaymentStrategy(
             store,
             checkoutActionCreator,

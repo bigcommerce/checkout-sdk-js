@@ -8,6 +8,7 @@ import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getBraintreeVisaCheckout } from '../../../payment/payment-methods.mock';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../../payment/strategies/braintree';
@@ -60,11 +61,13 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         visaCheckoutScriptLoader.load = jest.fn(() => Promise.resolve(visaCheckoutSDK));
 
         const registry = createCustomerStrategyRegistry(store, createRequestSender());
-        const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        const configRequestSender = new ConfigRequestSender(createRequestSender());
-        const configActionCreator = new ConfigActionCreator(configRequestSender);
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 

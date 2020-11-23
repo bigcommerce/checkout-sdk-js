@@ -10,6 +10,8 @@ import { InvalidArgumentError, MissingDataError } from '../../../common/error/er
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
+import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -57,6 +59,7 @@ describe('ChasePayPaymentStrategy', () => {
             checkout: getCheckoutState(),
             customer: getCustomerState(),
             config: getConfigState(),
+            formFields: getFormFieldsState(),
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
         });
@@ -88,9 +91,6 @@ describe('ChasePayPaymentStrategy', () => {
         requestSender = createRequestSender();
 
         const paymentClient = createPaymentClient(store);
-        const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        const configRequestSender = new ConfigRequestSender(createRequestSender());
-        const configActionCreator = new ConfigActionCreator(configRequestSender);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         const _requestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
@@ -106,7 +106,11 @@ describe('ChasePayPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             orderActionCreator,

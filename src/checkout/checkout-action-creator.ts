@@ -6,6 +6,7 @@ import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
+import { FormFieldsActionCreator } from '../form';
 
 import { CheckoutRequestBody } from './checkout';
 import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
@@ -15,7 +16,8 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutActionCreator {
     constructor(
         private _checkoutRequestSender: CheckoutRequestSender,
-        private _configActionCreator: ConfigActionCreator
+        private _configActionCreator: ConfigActionCreator,
+        private _formFieldsActionCreator: FormFieldsActionCreator
     ) {}
 
     loadCheckout(id: string, options?: RequestOptions): Observable<LoadCheckoutAction> {
@@ -23,6 +25,7 @@ export default class CheckoutActionCreator {
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
             merge(
                 this._configActionCreator.loadConfig({ ...options, useCache: true }),
+                this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
                 defer(() => this._checkoutRequestSender.loadCheckout(id, options)
                     .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body)))
             )
@@ -34,7 +37,10 @@ export default class CheckoutActionCreator {
     loadDefaultCheckout(options?: RequestOptions): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
-            this._configActionCreator.loadConfig(),
+            merge(
+                this._configActionCreator.loadConfig(),
+                this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true })
+            ),
             defer(async () => {
                 const state = store.getState();
                 const context = state.config.getContextConfig();
