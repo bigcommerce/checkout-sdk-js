@@ -5,6 +5,7 @@
 A set of options that are required to initialize the PayPal Commerce payment
 method for presenting its PayPal button.
 
+Please note that the minimum version of checkout-sdk is 1.100
 ```html
 <!-- This is where the PayPal button will be inserted -->
 <div id="container"></div>
@@ -16,9 +17,11 @@ service.initializePayment({
     paypalcommerce: {
         container: 'container',
         submitForm: () => {
-            service.submitOrder({
-                methodId: 'paypalcommerce',
-            });
+            service.submitOrder(
+                {
+                    payment: { methodId: 'paypalcommerce', }
+                }            
+            );
         },
         onValidate: (resolve, reject) => {
             const isValid = service.validatePaymentForm();
