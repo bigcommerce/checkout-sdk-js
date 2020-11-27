@@ -329,7 +329,6 @@ service.initializePayment({
     methodId: 'paypalcommerce',
     paypalcommerce: {
         container: '#container',
-// Callback for submitting payment form that gets called when a buyer approves PayPal payment
         submitForm: () => {
             service.submitOrder(
                 {
@@ -337,7 +336,6 @@ service.initializePayment({
                 }
             );
         },
-// Callback is used to define the state of the payment form, validate if it is applicable for submit.
         onValidate: (resolve, reject) => {
             const isValid = service.validatePaymentForm();
             if (isValid) {
@@ -345,7 +343,6 @@ service.initializePayment({
             }
             return reject();
         },
-// Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
         onRenderButton: () => {
             service.hidePaymentSubmitButton();
         }
