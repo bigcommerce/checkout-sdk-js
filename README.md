@@ -318,8 +318,6 @@ await service.initializePayment({
         container: 'walletWidget',
     },
 });
-
-```
 ```
 
 #### Submit order
