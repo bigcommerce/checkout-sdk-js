@@ -16,7 +16,9 @@ service.initializePayment({
     paypalcommerce: {
         container: 'container',
         submitForm: () => {
-            service.submitOrder({ methodId: 'paypalcommerce', });
+            service.submitOrder({
+                methodId: 'paypalcommerce',
+            });
         },
         onValidate: (resolve, reject) => {
             const isValid = service.validatePaymentForm();
