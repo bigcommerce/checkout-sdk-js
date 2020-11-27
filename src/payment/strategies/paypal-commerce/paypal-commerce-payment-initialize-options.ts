@@ -9,6 +9,8 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * method for presenting its PayPal button.
  *
  * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
  * ```html
  * <!-- This is where the PayPal button will be inserted -->
  * <div id="container"></div>

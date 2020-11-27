@@ -320,34 +320,6 @@ await service.initializePayment({
 });
 
 ```
-Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
-
-````
-<!-- This is where the PayPal button will be inserted -->
-<div id="container"></div>
-service.initializePayment({
-    methodId: 'paypalcommerce',
-    paypalcommerce: {
-        container: '#container',
-        submitForm: () => {
-            service.submitOrder(
-                {
-                    payment: { methodId: 'paypalcommerce', }
-                }
-            );
-        },
-        onValidate: (resolve, reject) => {
-            const isValid = service.validatePaymentForm();
-            if (isValid) {
-                return resolve();
-            }
-            return reject();
-        },
-        onRenderButton: () => {
-            service.hidePaymentSubmitButton();
-        }
-    },
-});
 ```
 
 #### Submit order
