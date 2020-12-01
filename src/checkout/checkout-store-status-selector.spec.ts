@@ -52,6 +52,26 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isCreatingCustomerAccount()', () => {
+        it('returns true if updating checkout', () => {
+            jest.spyOn(selectors.customer, 'isCreatingCustomerAccount').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isCreatingCustomerAccount()).toEqual(true);
+            expect(selectors.customer.isCreatingCustomerAccount).toHaveBeenCalled();
+        });
+
+        it('returns false if not updating checkout', () => {
+            jest.spyOn(selectors.customer, 'isCreatingCustomerAccount').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isCreatingCustomerAccount()).toEqual(false);
+            expect(selectors.customer.isCreatingCustomerAccount).toHaveBeenCalled();
+        });
+    });
+
     describe('#isExecutingSpamCheck()', () => {
         it('returns true if executing spam check', () => {
             jest.spyOn(selectors.checkout, 'isExecutingSpamCheck').mockReturnValue(true);

@@ -6,7 +6,8 @@ import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 
-import { CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
+import CustomerAccountRequestBody from './customer-account';
+import { CreateCustomerAction, CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
 
@@ -15,6 +16,24 @@ export default class CustomerActionCreator {
         private _customerRequestSender: CustomerRequestSender,
         private _checkoutActionCreator: CheckoutActionCreator
     ) {}
+
+    createAccount(
+        customerAccount: CustomerAccountRequestBody,
+        options?: RequestOptions
+    ): ThunkAction<CreateCustomerAction, InternalCheckoutSelectors> {
+        return store => concat(
+            of(createAction(CustomerActionType.CreateCustomerRequested)),
+            from(this._customerRequestSender.createAccount(customerAccount, options))
+                .pipe(
+                    switchMap(() => concat(
+                        this._checkoutActionCreator.loadCurrentCheckout(options)(store),
+                        of(createAction(CustomerActionType.CreateCustomerSucceeded))
+                    ))
+                )
+        ).pipe(
+            catchError(error => throwErrorAction(CustomerActionType.CreateCustomerFailed, error))
+        );
+    }
 
     signInCustomer(
         credentials: CustomerCredentials,
