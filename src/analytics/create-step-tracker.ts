@@ -20,11 +20,6 @@ import StepTracker from './step-tracker';
  * stepTracker.trackCheckoutStarted();
  * ```
  *
- * @alpha
- * Please note that `StepTracker` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
  * @param CheckoutService - An instance of CheckoutService
  * @param StepTrackerConfig - A step tracker config object
  * @returns an instance of `StepTracker`.
