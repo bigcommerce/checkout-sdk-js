@@ -3,7 +3,7 @@ import { includes } from 'lodash';
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
+import { PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
@@ -22,14 +22,19 @@ export interface CardinalOrderData {
 }
 
 export default class CardinalClient {
+    private _provider: string = '';
+    private _testMode: boolean = false;
     private _sdk?: Promise<CardinalSDK>;
-    private _isConfigured: boolean = false;
+    private _configurationToken: string = '';
 
     constructor(
         private _scriptLoader: CardinalScriptLoader
     ) {}
 
-    load(provider: string, testMode?: boolean): Promise<void> {
+    load(provider: string, testMode = false): Promise<void> {
+        this._provider = provider;
+        this._testMode = testMode;
+
         if (!this._sdk) {
             this._sdk = this._scriptLoader.load(provider, testMode);
         }
@@ -38,8 +43,12 @@ export default class CardinalClient {
     }
 
     configure(clientToken: string): Promise<void> {
-        if (this._isConfigured) {
-            return Promise.resolve();
+        if (!!this._configurationToken) {
+            if (this._configurationToken === clientToken) {
+                return Promise.resolve();
+            } else {
+                this._sdk = this._scriptLoader.load(`${this._provider}.${Date.now()}`, this._testMode);
+            }
         }
 
         return this._getClientSDK()
@@ -48,7 +57,7 @@ export default class CardinalClient {
                     client.off(CardinalEventType.SetupCompleted);
                     client.off(CardinalEventType.Validated);
 
-                    this._isConfigured = true;
+                    this._configurationToken = clientToken;
 
                     resolve();
                 });
@@ -94,10 +103,6 @@ export default class CardinalClient {
                         }
 
                         if (!data.ActionCode) {
-                            if (data.Payment?.ExtendedData?.ChallengeCancel) {
-                                reject(new PaymentMethodCancelledError());
-                            }
-
                             return resolve({ token: jwt });
                         }
 
