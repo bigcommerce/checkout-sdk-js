@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.116.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.115.0...v1.116.0) (2020-12-01)
+
+
+### Features
+
+* **payment:** INT-3237 Allows reinitialize the cardinal script ([38a2d23](https://github.com/bigcommerce/checkout-sdk-js/commit/38a2d2372aca4ff1cf3071a309af74c597390f55))
+
 ## [1.115.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.114.0...v1.115.0) (2020-11-13)
 
 
