@@ -107,6 +107,30 @@ export function getPaypalCommerce(): PaymentMethod {
     };
 }
 
+export function getPaypalCommerceTestModeOn(): PaymentMethod {
+    return {
+      ...getPaypalCommerce(),
+        initializationData: {
+          ...getPaypalCommerce().initializationData,
+            isDeveloperModeApplicable: true,
+            buyerCountry: 'IT',
+
+        },
+    };
+}
+
+export function getPaypalCommerceTestModeOff(): PaymentMethod {
+    return {
+        ...getPaypalCommerce(),
+        initializationData: {
+            ...getPaypalCommerce().initializationData,
+            isDeveloperModeApplicable: false,
+            buyerCountry: 'IT',
+
+        },
+    };
+}
+
 export function getPaypal(): PaymentMethod {
     return {
         id: 'paypal',
