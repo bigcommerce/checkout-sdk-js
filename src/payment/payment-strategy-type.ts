@@ -13,6 +13,7 @@ enum PaymentStrategyType {
     CHECKOUTCOM_APM = 'checkoutcomapm',
     CREDIT_CARD = 'creditcard',
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
+    CONVERGE = 'converge',
     CYBERSOURCE = 'cybersource',
     CYBERSOURCEV2 = 'cybersourcev2',
     CYBERSOURCEV2_GOOGLE_PAY = 'googlepaycybersourcev2',
@@ -20,6 +21,8 @@ enum PaymentStrategyType {
     KLARNAV2 = 'klarnav2',
     LAYBUY = 'laybuy',
     LEGACY = 'legacy',
+    MOLLIE = 'mollie',
+    NO_PAYMENT_DATA_REQUIRED = 'nopaymentdatarequired',
     OFFLINE = 'offline',
     OFFSITE = 'offsite',
     PAYPAL = 'paypal',
@@ -32,7 +35,6 @@ enum PaymentStrategyType {
     SAGE_PAY = 'sagepay',
     SQUARE = 'squarev2',
     STRIPEV3 = 'stripev3',
-    NO_PAYMENT_DATA_REQUIRED = 'nopaymentdatarequired',
     BRAINTREE = 'braintree',
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
@@ -44,7 +46,6 @@ enum PaymentStrategyType {
     STRIPE_GOOGLE_PAY = 'googlepaystripe',
     SEZZLE = 'sezzle',
     ZIP = 'zip',
-    CONVERGE = 'converge',
 }
 
 export default PaymentStrategyType;

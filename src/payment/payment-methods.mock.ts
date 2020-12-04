@@ -635,6 +635,36 @@ export function getCheckoutcom(): PaymentMethod {
     };
 }
 
+export function getMollie(): PaymentMethod {
+    return {
+        id: 'mollie',
+        gateway: '',
+        logoUrl: 'https://charlsieremade-cloud-dev-vm.store.bcdev/rHEAD/modules/checkout/mollie/images/mollie.png',
+        method: 'multi-options',
+        supportedCards: [
+            'VISA',
+            'AMEX',
+            'MC',
+            'MAESTRO',
+        ],
+        config: {
+            displayName: 'Mollie',
+            hasDefaultStoredInstrument: false,
+            helpText: '',
+            is3dsEnabled: false,
+            isHostedFormEnabled: true,
+            isVaultingCvvEnabled: false,
+            isVaultingEnabled: false,
+            isVisaCheckoutEnabled: false,
+            merchantId: 'test_T0k3n',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        initializationData: null,
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
@@ -654,6 +684,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePayAdyenV2(),
         getGooglePayCybersourceV2(),
         getKlarna(),
+        getMollie(),
         getPaypalExpress(),
         getPaypalCommerce(),
         getSquare(),
