@@ -5,6 +5,7 @@ import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
+import { getFormFieldsState } from '../../../form/form.mock';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
@@ -35,6 +36,7 @@ describe('AmazonPayV2CustomerStrategy', () => {
             customer: getCustomerState(),
             config: getConfigState(),
             cart: getCartState(),
+            formFields: getFormFieldsState(),
             paymentMethods: getPaymentMethodsState(),
         });
 

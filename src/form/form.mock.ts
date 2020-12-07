@@ -1,6 +1,41 @@
-import FormField from './form-field';
+import FormField, { FormFields } from './form-field';
+import FormFieldsState from './form-fields-state';
 
-export function getFormFields(): FormField[] {
+export function getFormFieldsState(): FormFieldsState {
+    return {
+        data: getFormFields(),
+        errors: {},
+        statuses: {},
+    };
+}
+
+export function getFormFields(): FormFields {
+    return {
+        customerAccount: getAccountFormFields(),
+        billingAddress: getAddressFormFields(),
+        shippingAddress: getAddressFormFields(),
+    };
+}
+
+export function getAccountFormFields(): FormField[] {
+    return [{
+        id: 'field_4',
+        name: 'firstName',
+        custom: false,
+        label: 'First Name',
+        required: true,
+        default: '',
+    }, {
+        id: 'field_5',
+        name: 'lastName',
+        custom: false,
+        label: 'Last Name',
+        required: true,
+        default: '',
+    }];
+}
+
+export function getAddressFormFields(): FormField[] {
     return [{
         id: 'field_4',
         name: 'firstName',

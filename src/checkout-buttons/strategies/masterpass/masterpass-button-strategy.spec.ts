@@ -7,6 +7,7 @@ import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSe
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
@@ -65,7 +66,8 @@ describe('MasterpassCustomerStrategy', () => {
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
-            new ConfigActionCreator(new ConfigRequestSender(requestSender))
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
         strategy = new MasterpassButtonStrategy(

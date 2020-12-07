@@ -9,6 +9,7 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { createGooglePayPaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
@@ -48,7 +49,8 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
         checkoutActionCreator = checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
-            new ConfigActionCreator(new ConfigRequestSender(requestSender))
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
         paymentProcessor = createGooglePayPaymentProcessor(

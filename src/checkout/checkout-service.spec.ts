@@ -12,7 +12,8 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
-import { getFormFields } from '../form/form.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -54,6 +55,8 @@ describe('CheckoutService', () => {
     let checkoutValidator: CheckoutValidator;
     let configActionCreator: ConfigActionCreator;
     let configRequestSender: ConfigRequestSender;
+    let formFieldsActionCreator: FormFieldsActionCreator;
+    let formFieldsRequestSender: FormFieldsRequestSender;
     let couponRequestSender: CouponRequestSender;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
     let errorActionCreator: ErrorActionCreator;
@@ -199,9 +202,16 @@ describe('CheckoutService', () => {
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
 
+        formFieldsRequestSender = new FormFieldsRequestSender(requestSender);
+
+        jest.spyOn(formFieldsRequestSender, 'loadFields').mockResolvedValue(getResponse(getFormFields()));
+
+        formFieldsActionCreator = new FormFieldsActionCreator(formFieldsRequestSender);
+
         checkoutActionCreator = new CheckoutActionCreator(
             checkoutRequestSender,
-            configActionCreator
+            configActionCreator,
+            formFieldsActionCreator
         );
 
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
@@ -438,7 +448,7 @@ describe('CheckoutService', () => {
         it('loads config data', async () => {
             const state = await checkoutService.loadShippingAddressFields();
             const result = state.data.getShippingAddressFields('');
-            const expected = getFormFields();
+            const expected = getAddressFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });
@@ -454,7 +464,7 @@ describe('CheckoutService', () => {
         it('loads config data', async () => {
             const state = await checkoutService.loadBillingAddressFields();
             const result = state.data.getBillingAddressFields('');
-            const expected = getFormFields();
+            const expected = getAddressFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });

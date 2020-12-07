@@ -8,6 +8,7 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, Chec
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -72,11 +73,13 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        const configRequestSender = new ConfigRequestSender(createRequestSender());
-        const configActionCreator = new ConfigActionCreator(configRequestSender);
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
             checkoutValidator

@@ -28,6 +28,7 @@ export function getConfig(): Config {
                 googleRecaptchaSitekey: 'sitekey',
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
+                isSignInEmailEnabled: false,
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
                 isCouponCodeCollapsed: true,
@@ -55,11 +56,8 @@ export function getConfig(): Config {
                 thousandsSeparator: ',',
             },
             displayDateFormat: 'dd/MM/yyyy',
-            formFields: {
-                shippingAddressFields: getFormFields(),
-                billingAddressFields: getFormFields(),
-            },
             inputDateFormat: 'dd/MM/yyyy',
+            formFields: getFormFields(),
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
                 checkoutLink: 'https://store-k1drp8k8.bcapp.dev/checkout',

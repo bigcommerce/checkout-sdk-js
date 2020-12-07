@@ -9,6 +9,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentRequestSender } from '../../../payment';
@@ -47,6 +48,7 @@ describe('MasterpassPaymentStrategy', () => {
             config: getConfigState(),
             customer: getCustomerState(),
             cart: getCartState(),
+            formFields: getFormFieldsState(),
             paymentMethods: getPaymentMethodsState(),
         });
 

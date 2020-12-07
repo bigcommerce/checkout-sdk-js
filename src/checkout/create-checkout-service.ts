@@ -8,6 +8,7 @@ import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
@@ -73,6 +74,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CheckoutValidator(checkoutRequestSender)
     );
     const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
+    const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
 
     return new CheckoutService(
         store,
@@ -80,7 +82,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator
         ),
-        new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
+        new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator),
         configActionCreator,
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),

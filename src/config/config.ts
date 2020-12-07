@@ -1,4 +1,4 @@
-import { FormField } from '../form';
+import { FormFields } from '../form';
 
 export default interface Config {
     context: ContextConfig;
@@ -12,7 +12,19 @@ export interface StoreConfig {
     currency: StoreCurrency;
     displayDateFormat: string;
     inputDateFormat: string;
+
+    /**
+     * @deprecated Please use instead the data selectors
+     * @remarks
+     * ```js
+     * const data = CheckoutService.getState().data;
+     * const shippingAddressFields = data.getShippingAddressFields('US');
+     * const billingAddressFields = data.getBillingAddressFields('US');
+     * const customerAccountFields = data.getCustomerAccountFields();
+     * ```
+     */
     formFields: FormFields;
+
     links: StoreLinks;
     paymentSettings: PaymentSettings;
     shopperConfig: ShopperConfig;
@@ -66,11 +78,6 @@ export interface StoreLinks {
     orderConfirmationLink: string;
 }
 
-export interface FormFields {
-    shippingAddressFields: FormField[];
-    billingAddressFields: FormField[];
-}
-
 export interface StoreCurrency {
     code: string;
     decimalPlaces: string;
@@ -91,6 +98,7 @@ export interface CheckoutSettings {
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
+    isSignInEmailEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
     isSpamProtectionEnabled: boolean;

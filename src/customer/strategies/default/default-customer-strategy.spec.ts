@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getQuote } from '../../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
@@ -18,15 +19,13 @@ describe('DefaultCustomerStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         const requestSender = createRequestSender();
-        const configActionCreator = new ConfigActionCreator(
-            new ConfigRequestSender(requestSender)
-        );
 
         customerActionCreator = new CustomerActionCreator(
             new CustomerRequestSender(requestSender),
             new CheckoutActionCreator(
                 new CheckoutRequestSender(requestSender),
-                configActionCreator
+                new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
             )
         );
     });

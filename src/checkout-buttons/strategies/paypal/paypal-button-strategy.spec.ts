@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, Checkou
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaypalExpress } from '../../../payment/payment-methods.mock';
 import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
@@ -35,7 +36,8 @@ describe('PaypalButtonStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
+            new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
         );
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());

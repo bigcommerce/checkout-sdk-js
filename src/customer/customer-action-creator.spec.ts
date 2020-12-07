@@ -8,6 +8,7 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 
 import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
@@ -35,7 +36,8 @@ describe('CustomerActionCreator', () => {
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
+            new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
         );
 
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')

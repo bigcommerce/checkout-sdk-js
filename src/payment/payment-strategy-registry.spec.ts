@@ -1,5 +1,6 @@
 import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
+import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import { getAdyenAmex, getAmazonPay, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
@@ -51,6 +52,7 @@ describe('PaymentStrategyRegistry', () => {
     beforeEach(() => {
         store = createCheckoutStore({
             config: getConfigState(),
+            formFields: getFormFieldsState(),
         });
 
         registry = new PaymentStrategyRegistry(store);
