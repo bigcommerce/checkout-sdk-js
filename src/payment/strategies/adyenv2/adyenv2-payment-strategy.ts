@@ -29,8 +29,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _scriptLoader: AdyenV2ScriptLoader,
-        private _locale: string
+        private _scriptLoader: AdyenV2ScriptLoader
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -58,7 +57,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
         this._adyenClient = await this._scriptLoader.load({
             environment:  paymentMethod.initializationData.environment,
-            locale: this._locale,
+            locale: navigator.language,
             [clientSideAuthentication.key]: clientSideAuthentication.value,
             paymentMethodsResponse: paymentMethod.initializationData.paymentMethodsResponse,
         });

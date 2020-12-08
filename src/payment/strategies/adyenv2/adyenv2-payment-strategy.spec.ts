@@ -73,8 +73,7 @@ describe('AdyenV2PaymentStrategy', () => {
             store,
             paymentActionCreator,
             orderActionCreator,
-            adyenV2ScriptLoader,
-            'en_US'
+            adyenV2ScriptLoader
         );
     });
 
