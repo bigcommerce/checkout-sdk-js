@@ -4,6 +4,7 @@ export * from './googlepay-braintree';
 export { default as GooglePayScriptLoader } from './googlepay-script-loader';
 export { default as GooglePayPaymentStrategy } from './googlepay-payment-strategy';
 export { default as GooglePayAdyenV2Initializer } from './googlepay-adyenv2-initializer';
+export { default as GooglePayAdyenV2PaymentProcessor } from './googlepay-adyenv2-payment-processor';
 export { default as GooglePayBraintreeInitializer } from './googlepay-braintree-initializer';
 export { default as GooglePayCheckoutcomInitializer } from './googlepay-checkoutcom-initializer';
 export { default as GooglePayStripeInitializer } from './googlepay-stripe-initializer';
