@@ -474,6 +474,8 @@ export function getGooglePayAdyenV2(): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         initializationData: {
+            originKey: 'YOUR_ORIGIN_KEY',
+            clientKey: 'YOUR_CLIENT_KEY',
             nonce: 'nonce',
             card_information: {
                 type: 'MasterCard',
