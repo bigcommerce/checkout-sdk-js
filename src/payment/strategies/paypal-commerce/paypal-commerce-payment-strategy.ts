@@ -24,7 +24,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { orderId, buttonStyle } = initializationData;
+        const { orderId, buttonStyle } = initializationData ?? {};
 
         if (orderId) {
             this._orderId = orderId;
