@@ -6,14 +6,14 @@ import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator } from '../../../order';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { getGooglePayAdyenV2, getPaymentMethodsState } from '../../payment-methods.mock';
 import { AdyenV2ScriptLoader } from '../adyenv2';
 
-import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
+import { GooglePayAdyenV2PaymentProcessor } from './index';
 
 describe('GooglePayAdyenV2PaymentProcessor', () => {
     let processor: GooglePayAdyenV2PaymentProcessor;
@@ -54,6 +54,7 @@ describe('GooglePayAdyenV2PaymentProcessor', () => {
 
         jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue({createFromAction});
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(getGooglePayAdyenV2());
+        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(getConfig().storeConfig);
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
     });
 
