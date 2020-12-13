@@ -22,6 +22,7 @@
 * [name](formfield.md#name)
 * [options](formfield.md#optional-options)
 * [required](formfield.md#required)
+* [requirements](formfield.md#optional-requirements)
 * [secret](formfield.md#optional-secret)
 * [type](formfield.md#optional-type)
 
@@ -96,6 +97,12 @@ ___
 ###  required
 
 • **required**: *boolean*
+
+___
+
+### `Optional` requirements
+
+• **requirements**? : *[CustomerPasswordRequirements](customerpasswordrequirements.md)*
 
 ___
 

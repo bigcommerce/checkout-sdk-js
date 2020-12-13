@@ -10,17 +10,24 @@
 
 ### Properties
 
-* [billingAddressFields](formfields.md#billingaddressfields)
-* [shippingAddressFields](formfields.md#shippingaddressfields)
+* [billingAddress](formfields.md#billingaddress)
+* [customerAccount](formfields.md#customeraccount)
+* [shippingAddress](formfields.md#shippingaddress)
 
 ## Properties
 
-###  billingAddressFields
+###  billingAddress
 
-• **billingAddressFields**: *[FormField](formfield.md)[]*
+• **billingAddress**: *[FormField](formfield.md)[]*
 
 ___
 
-###  shippingAddressFields
+###  customerAccount
 
-• **shippingAddressFields**: *[FormField](formfield.md)[]*
+• **customerAccount**: *[FormField](formfield.md)[]*
+
+___
+
+###  shippingAddress
+
+• **shippingAddress**: *[FormField](formfield.md)[]*

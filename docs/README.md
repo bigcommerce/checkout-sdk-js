@@ -139,6 +139,7 @@
 * [CustomerCredentials](interfaces/customercredentials.md)
 * [CustomerGroup](interfaces/customergroup.md)
 * [CustomerInitializeOptions](interfaces/customerinitializeoptions.md)
+* [CustomerPasswordRequirements](interfaces/customerpasswordrequirements.md)
 * [CustomerRequestOptions](interfaces/customerrequestoptions.md)
 * [DigitalItem](interfaces/digitalitem.md)
 * [Discount](interfaces/discount.md)
@@ -403,7 +404,7 @@ ___
 
 ###  FormFieldFieldType
 
-Ƭ **FormFieldFieldType**: *"checkbox" | "date" | "text" | "dropdown" | "radio" | "multiline"*
+Ƭ **FormFieldFieldType**: *"checkbox" | "date" | "text" | "dropdown" | "password" | "radio" | "multiline"*
 
 ___
 
@@ -623,11 +624,6 @@ currencyService.toStoreCurrency(checkout.grandTotal);
 currencyService.toCustomerCurrency(checkout.grandTotal);
 ```
 
-**`alpha`** 
-Please note that `CurrencyService` is currently in an early stage
-of development. Therefore the API is unstable and not ready for public
-consumption.
-
 **Parameters:**
 
 Name | Type | Description |
@@ -717,11 +713,6 @@ const stepTracker = createStepTracker(checkoutService);
 
 stepTracker.trackCheckoutStarted();
 ```
-
-**`alpha`** 
-Please note that `StepTracker` is currently in an early stage
-of development. Therefore the API is unstable and not ready for public
-consumption.
 
 **Parameters:**
 

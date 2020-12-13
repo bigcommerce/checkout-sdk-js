@@ -24,6 +24,7 @@ checkout information, such as shipping and billing details.
 * [getConsignments](checkoutstoreselector.md#getconsignments)
 * [getCoupons](checkoutstoreselector.md#getcoupons)
 * [getCustomer](checkoutstoreselector.md#getcustomer)
+* [getCustomerAccountFields](checkoutstoreselector.md#getcustomeraccountfields)
 * [getFlashMessages](checkoutstoreselector.md#getflashmessages)
 * [getGiftCertificates](checkoutstoreselector.md#getgiftcertificates)
 * [getInstruments](checkoutstoreselector.md#getinstruments)
@@ -159,6 +160,19 @@ Gets the current customer.
 
 The current customer object if it is loaded, otherwise
 undefined.
+
+___
+
+###  getCustomerAccountFields
+
+▸ **getCustomerAccountFields**(): *[FormField](formfield.md)[]*
+
+Gets a set of form fields that should be presented in order to create a customer.
+
+**Returns:** *[FormField](formfield.md)[]*
+
+The set of customer account form fields if it is loaded,
+otherwise undefined.
 
 ___
 

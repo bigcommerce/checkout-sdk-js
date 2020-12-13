@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.117.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.116.0...v1.117.0) (2020-12-13)
+
+
+### Features
+
+* **forms:** CHECKOUT-4941 Expose customer account fields ([d9ce3db](https://github.com/bigcommerce/checkout-sdk-js/commit/d9ce3db953144b77afa5d0a59ecdc521d6b27f9f))
+* **payment:** INT-2816 Added 3DS to googlepay adyenv2 ([519d036](https://github.com/bigcommerce/checkout-sdk-js/commit/519d036377435e7059be04166a4c4769bdbf86aa))
+* **payment:** INT-3538 Replaced borwser language instead locale variable on Adyenv2 ([b11b877](https://github.com/bigcommerce/checkout-sdk-js/commit/b11b877c42ec4241d5024de543fb480415c519bd))
+* **payment:** PAYPAL-868 fixed ([d83e9ff](https://github.com/bigcommerce/checkout-sdk-js/commit/d83e9ff891707ff340be9aa295f88577542bba0b))
+* **payment:** PAYPAL-868 fixed ([28a8b53](https://github.com/bigcommerce/checkout-sdk-js/commit/28a8b53e1b9ae44b0983e098babdcc2b185e5ac6))
+* **payment:** PAYPAL-868 fixed ([ccabf10](https://github.com/bigcommerce/checkout-sdk-js/commit/ccabf10d0a91da58699977bce509a9c28b5e7a13))
+* **payment:** PAYPAL-868 fixed ([862cfc9](https://github.com/bigcommerce/checkout-sdk-js/commit/862cfc958dd8f59d48636a19d6932f70e5ed64c7))
+* **payment:** PAYPAL-868 fixed ([0533c8c](https://github.com/bigcommerce/checkout-sdk-js/commit/0533c8ce8d651b6fbadf0cdb37fe10c0e4615c76))
+* **payment:** PAYPAL-868 fixed ([0110b94](https://github.com/bigcommerce/checkout-sdk-js/commit/0110b94c95d792403d4c2423298b4e20ecf8083b))
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4571 Remove alpha tags from stable functionality ([b8c1667](https://github.com/bigcommerce/checkout-sdk-js/commit/b8c16672075596af00519ca3901482a922cedbc3))
+* **payment:** INT-2816 fix unit test for googlepay-adyenv2-payment-processor ([46da807](https://github.com/bigcommerce/checkout-sdk-js/commit/46da8074b29b295dcf9516b151e004e4b0579f9d))
+
 ## [1.116.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.115.0...v1.116.0) (2020-12-01)
 
 

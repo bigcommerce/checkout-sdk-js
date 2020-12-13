@@ -54,6 +54,16 @@ ___
 
 • **formFields**: *[FormFields](formfields.md)*
 
+**`deprecated`** Please use instead the data selectors
+
+**`remarks`** 
+```js
+const data = CheckoutService.getState().data;
+const shippingAddressFields = data.getShippingAddressFields('US');
+const billingAddressFields = data.getBillingAddressFields('US');
+const customerAccountFields = data.getCustomerAccountFields();
+```
+
 ___
 
 ###  imageDirectory

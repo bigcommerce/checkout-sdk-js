@@ -22,6 +22,7 @@
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
+* [isSignInEmailEnabled](checkoutsettings.md#issigninemailenabled)
 * [isSpamProtectionEnabled](checkoutsettings.md#isspamprotectionenabled)
 * [isTrustedShippingAddressEnabled](checkoutsettings.md#istrustedshippingaddressenabled)
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
@@ -108,6 +109,12 @@ ___
 ###  isPaymentRequestEnabled
 
 • **isPaymentRequestEnabled**: *boolean*
+
+___
+
+###  isSignInEmailEnabled
+
+• **isSignInEmailEnabled**: *boolean*
 
 ___
 
