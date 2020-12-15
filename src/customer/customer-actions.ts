@@ -12,22 +12,11 @@ export enum CustomerActionType {
     SignOutCustomerRequested = 'SIGN_OUT_CUSTOMER_REQUESTED',
     SignOutCustomerSucceeded = 'SIGN_OUT_CUSTOMER_SUCCEEDED',
     SignOutCustomerFailed = 'SIGN_OUT_CUSTOMER_FAILED',
-
-    CreateCustomerRequested = 'CREATE_CUSTOMER_REQUESTED',
-    CreateCustomerSucceeded = 'CREATE_CUSTOMER_SUCCEEDED',
-    CreateCustomerFailed = 'CREATE_CUSTOMER_FAILED',
 }
 
 export type CustomerAction =
     SignInCustomerAction |
-    SignOutCustomerAction |
-    CreateCustomerAction;
-
-export type CreateCustomerAction =
-    CreateCustomerRequestedAction |
-    CreateCustomerSucceededAction |
-    CreateCustomerFailedAction |
-    LoadCheckoutAction;
+    SignOutCustomerAction;
 
 export type SignInCustomerAction =
     SignInCustomerRequestedAction |
@@ -63,16 +52,4 @@ export interface SignOutCustomerSucceededAction extends Action<InternalCustomerR
 
 export interface SignOutCustomerFailedAction extends Action<Error> {
     type: CustomerActionType.SignOutCustomerFailed;
-}
-
-export interface CreateCustomerRequestedAction extends Action {
-    type: CustomerActionType.CreateCustomerRequested;
-}
-
-export interface CreateCustomerSucceededAction extends Action {
-    type: CustomerActionType.CreateCustomerSucceeded;
-}
-
-export interface CreateCustomerFailedAction extends Action<Error> {
-    type: CustomerActionType.CreateCustomerFailed;
 }

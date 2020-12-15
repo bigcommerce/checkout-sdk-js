@@ -1,46 +1,37 @@
-import { createErrorAction } from '@bigcommerce/data-store';
+import { BillingAddressActionType, ContinueAsGuestAction } from '../billing';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { getCheckout } from '../checkout/checkouts.mock';
 
-import { CreateCustomerAction, CustomerActionType } from './customer-actions';
 import customerReducer from './customer-reducer';
-import CustomerState, { DEFAULT_STATE } from './customer-state';
+import CustomerState from './customer-state';
+import { getCustomer } from './customers.mock';
 
 describe('customerReducer()', () => {
     let initialState: CustomerState;
 
     beforeEach(() => {
-        initialState = DEFAULT_STATE;
-    });
-
-    it('return is creating status', () => {
-        const action: CreateCustomerAction = {
-            type: CustomerActionType.CreateCustomerRequested,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreating: true,
-            },
-        }));
+        initialState = {};
     });
 
     it('returns new state with customer data when checkout is loaded successfully', () => {
-        const action: CreateCustomerAction = {
-            type: CustomerActionType.CreateCustomerSucceeded,
+        const action: CheckoutAction = {
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckout(),
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreating: false,
-            },
+            data: getCustomer(),
         }));
     });
 
     it('returns new state with customer data when continue as guest is successful', () => {
-        const action = createErrorAction(CustomerActionType.CreateCustomerFailed, new Error());
+        const action: ContinueAsGuestAction = {
+            type: BillingAddressActionType.ContinueAsGuestSucceeded,
+            payload: getCheckout(),
+        };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isCreating: false },
-            errors: { createError: action.payload },
+            data: getCustomer(),
         }));
     });
 });

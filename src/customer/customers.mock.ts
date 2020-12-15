@@ -1,7 +1,6 @@
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import Customer from './customer';
-import CustomerState from './customer-state';
 
 export function getGuestCustomer(): Customer {
     return {
@@ -45,10 +44,8 @@ export function getCustomer(): Customer {
     };
 }
 
-export function getCustomerState(): CustomerState {
+export function getCustomerState() {
     return {
         data: getCustomer(),
-        errors: {},
-        statuses: {},
     };
 }
