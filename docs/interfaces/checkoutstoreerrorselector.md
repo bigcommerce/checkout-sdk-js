@@ -22,6 +22,7 @@ you can use this object to retrieve the reason for the failure.
 * [getApplyStoreCreditError](checkoutstoreerrorselector.md#getapplystorecrediterror)
 * [getContinueAsGuestError](checkoutstoreerrorselector.md#getcontinueasguesterror)
 * [getCreateConsignmentsError](checkoutstoreerrorselector.md#getcreateconsignmentserror)
+* [getCreateCustomerAccountError](checkoutstoreerrorselector.md#getcreatecustomeraccounterror)
 * [getDeleteConsignmentError](checkoutstoreerrorselector.md#getdeleteconsignmenterror)
 * [getDeleteInstrumentError](checkoutstoreerrorselector.md#getdeleteinstrumenterror)
 * [getError](checkoutstoreerrorselector.md#geterror)
@@ -122,6 +123,18 @@ Returns an error if unable to create consignments.
 **Returns:** *[Error](amazonpaywidgeterror.md#error) | undefined*
 
 The error object if unable to create, otherwise undefined.
+
+___
+
+###  getCreateCustomerAccountError
+
+▸ **getCreateCustomerAccountError**(): *[Error](amazonpaywidgeterror.md#error) | undefined*
+
+Returns an error if unable to create customer account.
+
+**Returns:** *[Error](amazonpaywidgeterror.md#error) | undefined*
+
+The error object if unable to create account, otherwise undefined.
 
 ___
 

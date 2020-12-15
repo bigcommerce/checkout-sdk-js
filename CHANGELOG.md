@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.118.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.117.0...v1.118.0) (2020-12-15)
+
+
+### Features
+
+* **payment:** PAYPAL-848 Add messages to script ([5c75f24](https://github.com/bigcommerce/checkout-sdk-js/commit/5c75f24d892c1234852780151cd8a7c492cab0c0))
+* **shopper:** CHECKOUT-4941 Add Customer Creation functionality ([6a3c5e8](https://github.com/bigcommerce/checkout-sdk-js/commit/6a3c5e864a54b1e637826ad300af2a427ea4bab0))
+
 ## [1.117.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.116.0...v1.117.0) (2020-12-13)
 
 

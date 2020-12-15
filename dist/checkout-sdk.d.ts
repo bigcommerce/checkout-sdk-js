@@ -1387,6 +1387,7 @@ declare class CheckoutService {
     private _billingAddressActionCreator;
     private _checkoutActionCreator;
     private _configActionCreator;
+    private _customerActionCreator;
     private _consignmentActionCreator;
     private _countryActionCreator;
     private _couponActionCreator;
@@ -2535,6 +2536,12 @@ declare interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to send email, otherwise undefined.
      */
     getSignInEmailError(): Error | undefined;
+    /**
+     * Returns an error if unable to create customer account.
+     *
+     * @returns The error object if unable to create account, otherwise undefined.
+     */
+    getCreateCustomerAccountError(): Error | undefined;
 }
 
 /**
@@ -3041,6 +3048,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if updating subscriptions, otherwise false.
      */
     isUpdatingSubscriptions(): boolean;
+    /**
+     * Checks whether a customer account is being created
+     *
+     * @returns True if creating, otherwise false.
+     */
+    isCreatingCustomerAccount(): boolean;
 }
 
 declare interface Consignment {

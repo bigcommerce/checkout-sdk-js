@@ -22,6 +22,7 @@ order and waiting for the request to complete.
 * [isApplyingStoreCredit](checkoutstorestatusselector.md#isapplyingstorecredit)
 * [isContinuingAsGuest](checkoutstorestatusselector.md#iscontinuingasguest)
 * [isCreatingConsignments](checkoutstorestatusselector.md#iscreatingconsignments)
+* [isCreatingCustomerAccount](checkoutstorestatusselector.md#iscreatingcustomeraccount)
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
 * [isDeletingConsignment](checkoutstorestatusselector.md#isdeletingconsignment)
 * [isDeletingInstrument](checkoutstorestatusselector.md#isdeletinginstrument)
@@ -118,6 +119,18 @@ otherwise it will check for any consignment.
 **Returns:** *boolean*
 
 True if creating consignments, otherwise false.
+
+___
+
+###  isCreatingCustomerAccount
+
+▸ **isCreatingCustomerAccount**(): *boolean*
+
+Checks whether a customer account is being created
+
+**Returns:** *boolean*
+
+True if creating, otherwise false.
 
 ___
 
