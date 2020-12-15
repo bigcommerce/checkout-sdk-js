@@ -269,7 +269,8 @@ describe('CheckoutService', () => {
             signInEmailActionCreator,
             spamProtectionActionCreator,
             new StoreCreditActionCreator(storeCreditRequestSender),
-            subscriptionsActionCreator
+            subscriptionsActionCreator,
+            formFieldsActionCreator
         );
     });
 
@@ -508,6 +509,7 @@ describe('CheckoutService', () => {
         beforeEach(() => {
             jest.spyOn(orderActionCreator, 'loadOrder');
             jest.spyOn(configActionCreator, 'loadConfig');
+            jest.spyOn(formFieldsActionCreator, 'loadFormFields');
         });
 
         it('loads order data', async () => {
@@ -522,6 +524,13 @@ describe('CheckoutService', () => {
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(state.data.getConfig()).toEqual(getConfig().storeConfig);
+        });
+
+        it('loads form fields data', async () => {
+            const state = await checkoutService.loadOrder(295);
+
+            expect(formFieldsActionCreator.loadFormFields).toHaveBeenCalled();
+            expect(state.data.getCustomerAccountFields()).toEqual(getFormFields().customerAccount);
         });
     });
 

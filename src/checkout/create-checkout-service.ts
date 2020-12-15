@@ -105,7 +105,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new SignInEmailActionCreator(new SignInEmailRequestSender(requestSender)),
         spamProtectionActionCreator,
         new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),
-        subscriptionsActionCreator
+        subscriptionsActionCreator,
+        formFieldsActionCreator
     );
 }
 
