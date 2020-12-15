@@ -157,25 +157,6 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
-    it('initializes PaypalCommerce and PayPal credit enabled & messaging disabled', async () => {
-        paymentMethod.initializationData.isPayPalCreditAvailable = true;
-        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-        document.body.removeChild(messageContainer);
-
-        await strategy.initialize(options);
-
-        const obj = {
-            'client-id': 'abc',
-            commit: false,
-            currency: 'USD',
-            intent: 'capture',
-            components: ['buttons'],
-            'disable-funding': ['card'],
-        };
-
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
-    });
-
     it('render PayPal buttons', async () => {
         await strategy.initialize(options);
 
