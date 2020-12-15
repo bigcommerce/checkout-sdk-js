@@ -10,6 +10,7 @@ import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerAccountRequestBody, CustomerActionCreator, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
@@ -65,7 +66,8 @@ export default class CheckoutService {
         private _signInEmailActionCreator: SignInEmailActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _subscriptionsActionCreator: SubscriptionsActionCreator
+        private _subscriptionsActionCreator: SubscriptionsActionCreator,
+        private _formFieldsActionCreator: FormFieldsActionCreator
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -203,11 +205,13 @@ export default class CheckoutService {
      */
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
         const loadCheckoutAction = this._orderActionCreator.loadOrder(orderId, options);
+        const formFieldsAction = this._formFieldsActionCreator.loadFormFields(options);
         const loadConfigAction = this._configActionCreator.loadConfig(options);
 
         return Promise.all([
             this._dispatch(loadCheckoutAction),
             this._dispatch(loadConfigAction, { queueId: 'config' }),
+            this._dispatch(formFieldsAction, { queueId: 'formFields' }),
         ])
             .then(() => this.getState());
     }
