@@ -2,6 +2,7 @@ import { createRequestSender, createTimeout, RequestSender, Response } from '@bi
 
 import { getResponse } from '../common/http-request/responses.mock';
 
+import CustomerAccountRequestBody from './customer-account';
 import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
@@ -18,6 +19,44 @@ describe('CustomerRequestSender', () => {
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
         customerRequestSender = new CustomerRequestSender(requestSender);
+    });
+
+    describe('#createAccount()', () => {
+        let customerAccount: CustomerAccountRequestBody;
+        let response: Response<InternalCustomerResponseBody>;
+
+        beforeEach(() => {
+            customerAccount = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            response = getResponse(getCustomerResponseBody());
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
+        });
+
+        it('posts customer credentials', async () => {
+            const output = await customerRequestSender.createAccount(customerAccount);
+
+            expect(output).toEqual(response);
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer', {
+                body: customerAccount,
+            });
+        });
+
+        it('posts customer credentials with timeout', async () => {
+            const options = { timeout: createTimeout() };
+            const output = await customerRequestSender.createAccount(customerAccount, options);
+
+            expect(output).toEqual(response);
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer', {
+                ...options,
+                body: customerAccount,
+            });
+        });
     });
 
     describe('#signInCustomer()', () => {

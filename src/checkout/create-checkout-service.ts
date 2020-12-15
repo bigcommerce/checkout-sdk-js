@@ -7,7 +7,7 @@ import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -75,6 +75,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     );
     const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
+    const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
 
     return new CheckoutService(
         store,
@@ -82,8 +83,9 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator
         ),
-        new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator),
+        checkoutActionCreator,
         configActionCreator,
+        new CustomerActionCreator(new CustomerRequestSender(requestSender), checkoutActionCreator),
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),

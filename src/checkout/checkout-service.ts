@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import { CustomerAccountRequestBody, CustomerActionCreator, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
@@ -49,6 +49,7 @@ export default class CheckoutService {
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
+        private _customerActionCreator: CustomerActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
@@ -539,6 +540,35 @@ export default class CheckoutService {
         const action = this._signInEmailActionCreator.sendSignInEmail(signInEmailRequest, options);
 
         return this._dispatch(action, { queueId: 'signInEmail' });
+    }
+
+    /**
+     * Creates a customer account.
+     *
+     * @remarks
+     * ```js
+     * checkoutService.createCustomerAccount({
+     *   email: 'foo@bar.com',
+     *   firstName: 'Foo',
+     *   lastName: 'Bar',
+     *   password: 'password',
+     *   acceptsMarketingEmails: true,
+     *   customFields: [],
+     * });
+     * ```
+     * Please note that `createCustomerAccount` is currently in an early stage
+     * of development. Therefore the API is unstable and not ready for public
+     * consumption.
+     *
+     * @internal
+     * @param customerAccount - The customer account data.
+     * @param options - Options for creating customer account.
+     * @returns A promise that resolves to the current state.
+     */
+    createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerActionCreator.createAccount(customerAccount, options);
+
+        return this._dispatch(action);
     }
 
     /**

@@ -11,7 +11,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -49,6 +49,7 @@ describe('CheckoutService', () => {
     let instrumentRequestSender: InstrumentRequestSender;
     let countryRequestSender: CountryRequestSender;
     let consignmentRequestSender: ConsignmentRequestSender;
+    let customerRequestSender: CustomerRequestSender;
     let consignmentActionCreator: ConsignmentActionCreator;
     let checkoutRequestSender: CheckoutRequestSender;
     let checkoutService: CheckoutService;
@@ -182,6 +183,10 @@ describe('CheckoutService', () => {
 
         jest.spyOn(configRequestSender, 'loadConfig').mockResolvedValue(getResponse(getConfig()));
 
+        customerRequestSender = new CustomerRequestSender(requestSender);
+
+        jest.spyOn(customerRequestSender, 'createAccount').mockResolvedValue(getResponse({}));
+
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
 
         jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
@@ -248,6 +253,7 @@ describe('CheckoutService', () => {
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
+            new CustomerActionCreator(customerRequestSender, checkoutActionCreator),
             consignmentActionCreator,
             new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
@@ -403,6 +409,28 @@ describe('CheckoutService', () => {
             expect(signInEmailRequestSender.sendSignInEmail)
                 .toHaveBeenCalledWith({
                     email: 'foo@bar.com',
+                }, undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#createCustomerAccount()', () => {
+        it('creates customer account', async () => {
+            const state = await checkoutService.createCustomerAccount({
+                email: 'foo@bar.com',
+                firstName: 'first',
+                lastName: 'last',
+                password: 'password',
+            });
+
+            expect(customerRequestSender.createAccount)
+                .toHaveBeenCalledWith({
+                    email: 'foo@bar.com',
+                    firstName: 'first',
+                    lastName: 'last',
+                    password: 'password',
                 }, undefined);
 
             expect(state.data.getCheckout())

@@ -31,6 +31,7 @@ describe('CustomerActionCreator', () => {
 
         customerRequestSender = new CustomerRequestSender(createRequestSender());
 
+        jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.resolve({}));
         jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.resolve(response));
         jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.resolve(response));
 
@@ -50,6 +51,63 @@ describe('CustomerActionCreator', () => {
             customerRequestSender,
             checkoutActionCreator
         );
+    });
+
+    describe('#createAccount()', () => {
+        it('emits actions if able to create customer', async () => {
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            const actions = await from(customerActionCreator.createAccount(customer)(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerRequested },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CustomerActionType.CreateCustomerSucceeded },
+            ]);
+        });
+
+        it('emits error actions if unable to create customer', async () => {
+            jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.reject(errorResponse));
+
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(customerActionCreator.createAccount(customer)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerRequested },
+                { type: CustomerActionType.CreateCustomerFailed, payload: errorResponse, error: true },
+            ]);
+        });
+
+        it('emits actions to reload current checkout', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+
+            await from(customerActionCreator.signInCustomer(credentials)(store))
+                .toPromise();
+
+            expect(checkoutActionCreator.loadCurrentCheckout)
+                .toHaveBeenCalled();
+        });
     });
 
     describe('#signInCustomer()', () => {
