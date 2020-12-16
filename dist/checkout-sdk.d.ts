@@ -1404,6 +1404,7 @@ declare class CheckoutService {
     private _spamProtectionActionCreator;
     private _storeCreditActionCreator;
     private _subscriptionsActionCreator;
+    private _formFieldsActionCreator;
     private _storeProjection;
     private _errorTransformer;
     private _selectorsFactory;

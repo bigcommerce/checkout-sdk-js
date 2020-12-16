@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.118.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.0...v1.118.1) (2020-12-16)
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-4941 Load form fields when loading order ([6639da0](https://github.com/bigcommerce/checkout-sdk-js/commit/6639da0b8d38a2738597a2b20057ba81ed67367f))
+
 ## [1.118.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.117.0...v1.118.0) (2020-12-15)
 
 
