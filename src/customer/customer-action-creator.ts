@@ -5,6 +5,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
+import { isSpamProtectionExecuteSucceededAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import CustomerAccountRequestBody from './customer-account';
 import { CreateCustomerAction, CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
@@ -14,25 +15,43 @@ import CustomerRequestSender from './customer-request-sender';
 export default class CustomerActionCreator {
     constructor(
         private _customerRequestSender: CustomerRequestSender,
-        private _checkoutActionCreator: CheckoutActionCreator
+        private _checkoutActionCreator: CheckoutActionCreator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
 
-    createAccount(
+    createCustomer(
         customerAccount: CustomerAccountRequestBody,
         options?: RequestOptions
     ): ThunkAction<CreateCustomerAction, InternalCheckoutSelectors> {
-        return store => concat(
-            of(createAction(CustomerActionType.CreateCustomerRequested)),
-            from(this._customerRequestSender.createAccount(customerAccount, options))
-                .pipe(
-                    switchMap(() => concat(
+        return store => {
+            const state = store.getState();
+            const config = state.config.getStoreConfigOrThrow();
+            const { isStorefrontSpamProtectionEnabled } = config.checkoutSettings;
+
+            const createCustomer = (token?: string) =>
+                from(this._customerRequestSender.createAccount({ ...customerAccount, token }, options))
+                    .pipe(switchMap(() => concat(
                         this._checkoutActionCreator.loadCurrentCheckout(options)(store),
                         of(createAction(CustomerActionType.CreateCustomerSucceeded))
-                    ))
+                    )));
+
+            return concat(
+                of(createAction(CustomerActionType.CreateCustomerRequested)),
+                (isStorefrontSpamProtectionEnabled ?
+                    from(this._spamProtectionActionCreator.execute()(store))
+                        .pipe(switchMap(action => isSpamProtectionExecuteSucceededAction(action) ?
+                                concat(
+                                    of(action),
+                                    createCustomer(action.payload?.token)
+                                ) :
+                                of(action)
+                        )) :
+                    createCustomer()
                 )
-        ).pipe(
-            catchError(error => throwErrorAction(CustomerActionType.CreateCustomerFailed, error))
-        );
+            ).pipe(
+                catchError(error => throwErrorAction(CustomerActionType.CreateCustomerFailed, error))
+            );
+        };
     }
 
     signInCustomer(

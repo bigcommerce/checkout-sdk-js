@@ -1,5 +1,5 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, empty, of } from 'rxjs';
+import { concat, defer, from, of } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -8,6 +8,7 @@ import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
 import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
+import isSpamProtectionExecuteSucceededAction from './is-spam-protection-succeeded-action';
 import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection-actions';
 import { SpamProtectionOptions } from './spam-protection-options';
 import SpamProtectionRequestSender from './spam-protection-request-sender';
@@ -31,12 +32,7 @@ export default class SpamProtectionActionCreator {
                 }
 
                 const state = store.getState();
-                const storeConfig = state.config.getStoreConfig();
-
-                if (!storeConfig) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-                }
-
+                const storeConfig = state.config.getStoreConfigOrThrow();
                 const recaptchaSitekey = storeConfig.checkoutSettings.googleRecaptchaSitekey;
 
                 await this._googleRecaptcha.load(spamProtectionElementId, recaptchaSitekey);
@@ -48,17 +44,41 @@ export default class SpamProtectionActionCreator {
         );
     }
 
-    execute(): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
+    verifyCheckoutSpamProtection(): ThunkAction<SpamProtectionAction> {
         return store => defer(() => {
-            const { checkout } = store.getState();
-            const { id: checkoutId, shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
 
-            if (!shouldExecuteSpamCheck) {
-                return empty();
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             return concat(
-                of(createAction(SpamProtectionActionType.ExecuteRequested, undefined)),
+                of(createAction(SpamProtectionActionType.VerifyCheckoutRequested)),
+                from(this.execute()(store))
+                    .pipe(switchMap(action => {
+                        if (!isSpamProtectionExecuteSucceededAction(action) || !action.payload) {
+                            return of(action);
+                        }
+
+                        return from(this._requestSender.validate(checkout.id, action.payload.token))
+                            .pipe(
+                                switchMap(({ body }) => concat(
+                                    of(action),
+                                    of(createAction(SpamProtectionActionType.VerifyCheckoutSucceeded, body))
+                                ))
+                            );
+                        })
+                    )
+            ).pipe(
+                catchError(error => throwErrorAction(SpamProtectionActionType.VerifyCheckoutFailed, error))
+            );
+        });
+    }
+
+    execute(): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
+        return store => concat(
+                of(createAction(SpamProtectionActionType.ExecuteRequested)),
                 this.initialize()(store),
                 this._googleRecaptcha.execute()
                     .pipe(take(1))
@@ -71,13 +91,10 @@ export default class SpamProtectionActionCreator {
                             throw new SpamProtectionFailedError();
                         }
 
-                        const { body } = await this._requestSender.validate(checkoutId, token);
-
-                        return createAction(SpamProtectionActionType.ExecuteSucceeded, body);
+                        return createAction(SpamProtectionActionType.ExecuteSucceeded, { token });
                     }))
             ).pipe(
                 catchError(error => throwErrorAction(SpamProtectionActionType.ExecuteFailed, error))
             );
-        });
     }
 }

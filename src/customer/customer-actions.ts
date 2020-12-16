@@ -1,6 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
 import { LoadCheckoutAction } from '../checkout';
+import { SpamProtectionAction } from '../spam-protection';
 
 import { InternalCustomerResponseData } from './internal-customer-responses';
 
@@ -27,6 +28,7 @@ export type CreateCustomerAction =
     CreateCustomerRequestedAction |
     CreateCustomerSucceededAction |
     CreateCustomerFailedAction |
+    SpamProtectionAction |
     LoadCheckoutAction;
 
 export type SignInCustomerAction =

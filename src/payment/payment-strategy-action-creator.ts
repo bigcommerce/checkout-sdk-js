@@ -27,33 +27,38 @@ export default class PaymentStrategyActionCreator {
         const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
         const meta = { methodId: payment.methodId };
 
-        return store => concat(
-            this._spamProtectionActionCreator.execute()(store),
-            of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
-            defer(() => {
-                const state = store.getState();
+        return store => {
+            const { checkout } = store.getState();
+            const { shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
 
-                let strategy: PaymentStrategy;
+            return concat(
+                shouldExecuteSpamCheck ? this._spamProtectionActionCreator.verifyCheckoutSpamProtection()(store) : empty(),
+                of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
+                defer(() => {
+                    const state = store.getState();
 
-                if (state.payment.isPaymentDataRequired(useStoreCredit)) {
-                    const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
+                    let strategy: PaymentStrategy;
 
-                    if (!method) {
-                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    if (state.payment.isPaymentDataRequired(useStoreCredit)) {
+                        const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
+
+                        if (!method) {
+                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                        }
+
+                        strategy = this._strategyRegistry.getByMethod(method);
+                    } else {
+                        strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                     }
 
-                    strategy = this._strategyRegistry.getByMethod(method);
-                } else {
-                    strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
-                }
-
-                return strategy
-                    .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                    .then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
-            })
-        ).pipe(
-            catchError(error => throwErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta))
-        );
+                    return strategy
+                        .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
+                        .then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
+                })
+            ).pipe(
+                catchError(error => throwErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta))
+            );
+        };
     }
 
     finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {

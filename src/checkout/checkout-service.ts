@@ -560,13 +560,12 @@ export default class CheckoutService {
      * of development. Therefore the API is unstable and not ready for public
      * consumption.
      *
-     * @internal
      * @param customerAccount - The customer account data.
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
     createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._customerActionCreator.createAccount(customerAccount, options);
+        const action = this._customerActionCreator.createCustomer(customerAccount, options);
 
         return this._dispatch(action);
     }
@@ -1205,7 +1204,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     executeSpamCheck(): Promise<CheckoutSelectors> {
-        const action = this._spamProtectionActionCreator.execute();
+        const action = this._spamProtectionActionCreator.verifyCheckoutSpamProtection();
 
         return this._dispatch(action, { queueId: 'spamProtection' });
     }

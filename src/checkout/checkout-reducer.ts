@@ -45,7 +45,7 @@ function dataReducer(
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-    case SpamProtectionActionType.ExecuteSucceeded:
+    case SpamProtectionActionType.VerifyCheckoutSucceeded:
         return objectMerge(data, omit(action.payload, [
             'billingAddress',
             'cart',

@@ -2,7 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions } from '../common/http-request';
 
-import CustomerAccountRequestBody from './customer-account';
+import { CustomerAccountInternalRequestBody } from './customer-account';
 import CustomerCredentials from './customer-credentials';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 
@@ -11,7 +11,7 @@ export default class CustomerRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    createAccount(customerAccount: CustomerAccountRequestBody, { timeout }: RequestOptions = {}): Promise<Response<{}>> {
+    createAccount(customerAccount: CustomerAccountInternalRequestBody, { timeout }: RequestOptions = {}): Promise<Response<{}>> {
         const url = '/api/storefront/customer';
 
         return this._requestSender.post(url, { timeout, body: customerAccount });

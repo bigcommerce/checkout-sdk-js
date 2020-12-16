@@ -28,6 +28,7 @@ export function getConfig(): Config {
                 googleRecaptchaSitekey: 'sitekey',
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
+                isStorefrontSpamProtectionEnabled: false,
                 isSignInEmailEnabled: false,
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
