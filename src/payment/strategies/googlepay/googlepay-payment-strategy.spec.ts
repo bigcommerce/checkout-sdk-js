@@ -384,7 +384,7 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: 'googlepayadyenv2',
                 paymentData: {
-                    nonce: '{"type":"paywithgoogle","googlePayToken":"token","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"0"}}',
+                    nonce: '{"type":"paywithgoogle","googlePayToken":"token","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"' + new Date().getTimezoneOffset().toString() + '"}}',
                     method: 'googlepayadyenv2',
                     cardInformation: 'ci',
                 },
