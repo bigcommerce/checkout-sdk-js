@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.118.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.1...v1.118.2) (2020-12-18)
+
+
+### Bug Fixes
+
+* **checkout:** PAYPAL-767 Core review - remove excessive Promise.resolve ([f850faa](https://github.com/bigcommerce/checkout-sdk-js/commit/f850faa9f3b8a9fe72931ecad0291e004db4832a))
+* **checkout:** PAYPAL-767 Fix device data collection for Braintree stored credit cards ([8aca92d](https://github.com/bigcommerce/checkout-sdk-js/commit/8aca92d045122f5605370f26207f80acfa50c0b6))
+* **payment:** INT-2816 fix unit test for googlepay-adyenv2-payment ([2bc4ef7](https://github.com/bigcommerce/checkout-sdk-js/commit/2bc4ef707edc755b920273ec10891f2df15982d7))
+
 ### [1.118.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.0...v1.118.1) (2020-12-16)
 
 
