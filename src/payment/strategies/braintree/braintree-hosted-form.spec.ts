@@ -168,6 +168,15 @@ describe('BraintreeHostedForm', () => {
             });
     });
 
+    it('returns true', async () => {
+        expect(await subject.initialize(formOptions)).toBe(true);
+    });
+
+    it('returns false when no fields specified in form options', async () => {
+        const options = { ...formOptions, fields: {} };
+        expect(await subject.initialize(options)).toBe(false);
+    });
+
     it('notifies when field receives focus', async () => {
         const handleFocus = jest.fn();
 

@@ -40,9 +40,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
 
             if (this._isHostedPaymentFormEnabled(options.methodId, options.gatewayId) && options.braintree?.form) {
-                await this._braintreePaymentProcessor.initializeHostedForm(options.braintree.form);
-
-                this._isHostedFormInitialized = true;
+                this._isHostedFormInitialized = await this._braintreePaymentProcessor.initializeHostedForm(options.braintree.form);
             }
 
             this._is3dsEnabled = paymentMethod.config.is3dsEnabled;

@@ -1,4 +1,4 @@
-import { isNil, omitBy, Dictionary } from 'lodash';
+import { isEmpty, isNil, omitBy, Dictionary } from 'lodash';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
@@ -26,15 +26,21 @@ export default class BraintreeHostedForm {
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    async initialize(options: BraintreeFormOptions): Promise<void> {
+    async initialize(options: BraintreeFormOptions): Promise<boolean> {
         this._formOptions = options;
 
         this._type = isBraintreeFormFieldsMap(options.fields) ?
             BraintreeHostedFormType.CreditCard :
             BraintreeHostedFormType.StoredCardVerification;
 
+        const fields = this._mapFieldOptions(options.fields);
+
+        if (isEmpty(fields)) {
+            return false;
+        }
+
         this._cardFields = await this._braintreeSDKCreator.createHostedFields({
-            fields: this._mapFieldOptions(options.fields),
+            fields,
             styles: options.styles && this._mapStyleOptions(options.styles),
         });
 
@@ -53,6 +59,8 @@ export default class BraintreeHostedForm {
             this._cardNameField.on('focus', this._handleNameFocus);
             this._cardNameField.attach();
         }
+
+        return true;
     }
 
     async deinitialize(): Promise<void> {

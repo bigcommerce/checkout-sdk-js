@@ -99,8 +99,8 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.teardown();
     }
 
-    async initializeHostedForm(options: BraintreeFormOptions): Promise<void> {
-        await this._braintreeHostedForm.initialize(options);
+    async initializeHostedForm(options: BraintreeFormOptions): Promise<boolean> {
+        return await this._braintreeHostedForm.initialize(options);
     }
 
     async deinitializeHostedForm(): Promise<void> {
