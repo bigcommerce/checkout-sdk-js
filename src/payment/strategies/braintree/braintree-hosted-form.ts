@@ -36,7 +36,7 @@ export default class BraintreeHostedForm {
         const fields = this._mapFieldOptions(options.fields);
 
         if (isEmpty(fields)) {
-            return Promise.resolve(false);
+            return false;
         }
 
         this._cardFields = await this._braintreeSDKCreator.createHostedFields({
@@ -60,7 +60,7 @@ export default class BraintreeHostedForm {
             this._cardNameField.attach();
         }
 
-        return Promise.resolve(true);
+        return true;
     }
 
     async deinitialize(): Promise<void> {
