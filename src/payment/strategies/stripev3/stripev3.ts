@@ -43,6 +43,22 @@ export interface PaymentIntent {
     status: 'succeeded' | string;
 }
 
+/**
+ * The PaymentMethod object
+ */
+export interface PaymentMethod {
+    /**
+     * Unique identifier for the object.
+     */
+    id: string;
+
+    /**
+     * The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value.
+     * It contains additional information specific to the PaymentMethod type.
+     */
+    type: string;
+}
+
 export interface PaymentMethodCreateParams {
     /**
      * Billing information associated with the PaymentMethod that may be used or required by particular types of payment methods.
@@ -767,6 +783,37 @@ export interface StripeV3Client {
          */
         data?: StripeConfirmSepaPaymentData
     ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+
+    /**
+     * Use stripe.createPaymentMethod to convert payment information collected by elements into a PaymentMethod
+     * object that you safely pass to your server to use in an API call.
+     * @docs https://stripe.com/docs/js/payment_methods/create_payment_method
+     *
+     * @param type: String, The type of the PaymentMethod to create. Refer to the PaymentMethod API for all possible values.
+     * @param card: StripeElement, A card or cardNumber Element.
+     * @param billing_details: StripeBillingDetails, Billing information associated with the PaymentMethod that
+     * may be used or required by particular types of payment methods.
+     */
+    createPaymentMethod(
+        params: CreatePaymentMethodParams
+    ): Promise<{paymentMethod?: PaymentMethod; error?: StripeError}>;
+
+    /**
+     * Use stripe.handleCardAction in the Payment Intents API manual confirmation flow to handle a PaymentIntent
+     * with the requires_action status. It will throw an error if the PaymentIntent has a different status.
+     * @docs https://stripe.com/docs/js/payment_intents/handle_card_action
+     *
+     * @param paymentIntentClientSecret: String, The client secret of the PaymentIntent to handle.
+     */
+    handleCardAction(
+        paymentIntentClientSecret: string
+    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+}
+
+export interface CreatePaymentMethodParams {
+    type: StripePaymentMethodType;
+    card: StripeElement;
+    billing_details?: StripeBillingDetails;
 }
 
 export interface StripeHostWindow extends Window {
@@ -818,7 +865,8 @@ export interface StripeConfigurationOptions {
 }
 
 export interface StripeAdditionalActionData {
-    redirect_url: string;
+    redirect_url?: string;
+    intent?: string;
 }
 
 export interface StripeAdditionalAction {
@@ -830,6 +878,7 @@ export interface StripeAdditionalActionError {
     body: {
         errors?: Array<{ code: string; message?: string }>;
         additional_action_required: StripeAdditionalAction;
+        three_ds_result: { token: string };
     };
 }
 
