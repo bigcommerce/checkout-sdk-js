@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.119.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.2...v1.119.0) (2020-12-22)
+
+
+### Features
+
+* **shopper:** CHECKOUT-5418 Add support for recaptcha for customer account creation ([a92f310](https://github.com/bigcommerce/checkout-sdk-js/commit/a92f310b815fac76349cd9ba942544794482665a))
+
 ### [1.118.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.1...v1.118.2) (2020-12-18)
 
 

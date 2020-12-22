@@ -1772,6 +1772,29 @@ declare class CheckoutService {
      */
     sendSignInEmail(signInEmailRequest: SignInEmailRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Creates a customer account.
+     *
+     * @remarks
+     * ```js
+     * checkoutService.createCustomerAccount({
+     *   email: 'foo@bar.com',
+     *   firstName: 'Foo',
+     *   lastName: 'Bar',
+     *   password: 'password',
+     *   acceptsMarketingEmails: true,
+     *   customFields: [],
+     * });
+     * ```
+     * Please note that `createCustomerAccount` is currently in an early stage
+     * of development. Therefore the API is unstable and not ready for public
+     * consumption.
+     *
+     * @param customerAccount - The customer account data.
+     * @param options - Options for creating customer account.
+     * @returns A promise that resolves to the current state.
+     */
+    createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Updates the subscriptions associated to an email.
      *
      * @param subscriptions - The email and associated subscriptions to update.
@@ -2279,6 +2302,7 @@ declare interface CheckoutSettings {
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
     googleRecaptchaSitekey: string;
+    isStorefrontSpamProtectionEnabled: boolean;
     guestCheckoutEnabled: boolean;
     hasMultiShippingEnabled: boolean;
     isAnalyticsEnabled: boolean;
@@ -3292,6 +3316,18 @@ declare interface Customer {
      */
     shouldEncourageSignIn: boolean;
     customerGroup?: CustomerGroup;
+}
+
+declare interface CustomerAccountRequestBody {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    acceptsMarketingEmails?: boolean;
+    customFields?: Array<{
+        fieldId: string;
+        fieldValue: string | number | string[];
+    }>;
 }
 
 declare interface CustomerAddress extends Address {

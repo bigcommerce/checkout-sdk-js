@@ -23,6 +23,7 @@ retrieve the current checkout state and subscribe to its changes.
 * [clearError](checkoutservice.md#clearerror)
 * [continueAsGuest](checkoutservice.md#continueasguest)
 * [createConsignments](checkoutservice.md#createconsignments)
+* [createCustomerAccount](checkoutservice.md#createcustomeraccount)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
 * [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
@@ -250,6 +251,40 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `consignments` | [ConsignmentsRequestBody](../README.md#consignmentsrequestbody) | The list of consignments to be created. |
 `options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for updating the shipping address. |
+
+**Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+A promise that resolves to the current state.
+
+___
+
+###  createCustomerAccount
+
+▸ **createCustomerAccount**(`customerAccount`: [CustomerAccountRequestBody](../interfaces/customeraccountrequestbody.md), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+Creates a customer account.
+
+**`remarks`** 
+```js
+checkoutService.createCustomerAccount({
+  email: 'foo@bar.com',
+  firstName: 'Foo',
+  lastName: 'Bar',
+  password: 'password',
+  acceptsMarketingEmails: true,
+  customFields: [],
+});
+```
+Please note that `createCustomerAccount` is currently in an early stage
+of development. Therefore the API is unstable and not ready for public
+consumption.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`customerAccount` | [CustomerAccountRequestBody](../interfaces/customeraccountrequestbody.md) | The customer account data. |
+`options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for creating customer account. |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
 

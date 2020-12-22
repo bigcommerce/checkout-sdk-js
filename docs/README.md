@@ -135,6 +135,7 @@
 * [CustomError](interfaces/customerror.md)
 * [CustomItem](interfaces/customitem.md)
 * [Customer](interfaces/customer.md)
+* [CustomerAccountRequestBody](interfaces/customeraccountrequestbody.md)
 * [CustomerAddress](interfaces/customeraddress.md)
 * [CustomerCredentials](interfaces/customercredentials.md)
 * [CustomerGroup](interfaces/customergroup.md)

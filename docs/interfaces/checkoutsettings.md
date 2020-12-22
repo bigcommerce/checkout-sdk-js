@@ -24,6 +24,7 @@
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
 * [isSignInEmailEnabled](checkoutsettings.md#issigninemailenabled)
 * [isSpamProtectionEnabled](checkoutsettings.md#isspamprotectionenabled)
+* [isStorefrontSpamProtectionEnabled](checkoutsettings.md#isstorefrontspamprotectionenabled)
 * [isTrustedShippingAddressEnabled](checkoutsettings.md#istrustedshippingaddressenabled)
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
 * [orderTermsAndConditionsLink](checkoutsettings.md#ordertermsandconditionslink)
@@ -121,6 +122,12 @@ ___
 ###  isSpamProtectionEnabled
 
 • **isSpamProtectionEnabled**: *boolean*
+
+___
+
+###  isStorefrontSpamProtectionEnabled
+
+• **isStorefrontSpamProtectionEnabled**: *boolean*
 
 ___
 
