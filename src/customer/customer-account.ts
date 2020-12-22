@@ -9,3 +9,7 @@ export default interface CustomerAccountRequestBody {
         fieldValue: string | number | string[];
     }>;
 }
+
+export interface CustomerAccountInternalRequestBody extends CustomerAccountRequestBody {
+    token?: string;
+}

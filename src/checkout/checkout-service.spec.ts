@@ -253,7 +253,14 @@ describe('CheckoutService', () => {
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
-            new CustomerActionCreator(customerRequestSender, checkoutActionCreator),
+            new CustomerActionCreator(
+                customerRequestSender,
+                checkoutActionCreator,
+                new SpamProtectionActionCreator(
+                    createSpamProtection(createScriptLoader()),
+                    new SpamProtectionRequestSender(requestSender)
+                )
+            ),
             consignmentActionCreator,
             new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
@@ -1157,17 +1164,19 @@ describe('CheckoutService', () => {
             jest.spyOn(spamProtectionActionCreator, 'initialize')
                 .mockReturnValue(of(createAction(SpamProtectionActionType.InitializeSucceeded)));
 
-            jest.spyOn(spamProtectionActionCreator, 'execute')
+            jest.spyOn(spamProtectionActionCreator, 'verifyCheckoutSpamProtection')
                 .mockReturnValue(() => from([
+                    createAction(SpamProtectionActionType.VerifyCheckoutRequested),
                     createAction(SpamProtectionActionType.ExecuteRequested),
                     createAction(SpamProtectionActionType.ExecuteSucceeded),
+                    createAction(SpamProtectionActionType.VerifyCheckoutSucceeded),
                 ]));
         });
 
         it('executes spam check', async () => {
             await checkoutService.executeSpamCheck();
 
-            expect(spamProtectionActionCreator.execute)
+            expect(spamProtectionActionCreator.verifyCheckoutSpamProtection)
                 .toHaveBeenCalled();
         });
     });

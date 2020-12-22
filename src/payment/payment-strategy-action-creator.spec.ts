@@ -7,7 +7,7 @@ import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
-import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/customers.mock';
 import { HostedFormFactory } from '../hosted-form';
@@ -15,7 +15,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../orde
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
-import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
+import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
@@ -247,12 +247,6 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
-            jest.spyOn(spamProtectionActionCreator, 'execute')
-                .mockReturnValue(() => from([
-                    createAction(SpamProtectionActionType.ExecuteRequested),
-                    createAction(SpamProtectionActionType.ExecuteSucceeded),
-                ]));
-
             jest.spyOn(strategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
@@ -284,6 +278,25 @@ describe('PaymentStrategyActionCreator', () => {
             );
         });
 
+        it('executes spam check when required', async () => {
+            const payload = getOrderRequestBody();
+
+            jest.spyOn(spamProtectionActionCreator, 'verifyCheckoutSpamProtection')
+                .mockReturnValue(() => from([]));
+
+            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
+                .mockReturnValue({
+                    ...getCheckout(),
+                    shouldExecuteSpamCheck: true,
+                });
+
+            await from(actionCreator.execute(payload)(store))
+                .toPromise();
+
+            expect(spamProtectionActionCreator.verifyCheckoutSpamProtection)
+                .toHaveBeenCalled();
+        });
+
         it('emits action to load order and notify execution progress', async () => {
             const payload = getOrderRequestBody();
             const methodId = payload.payment && payload.payment.methodId;
@@ -292,8 +305,6 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.ExecuteSucceeded },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
@@ -317,8 +328,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.ExecuteSucceeded },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);

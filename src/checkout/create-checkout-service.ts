@@ -85,7 +85,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         ),
         checkoutActionCreator,
         configActionCreator,
-        new CustomerActionCreator(new CustomerRequestSender(requestSender), checkoutActionCreator),
+        new CustomerActionCreator(
+            new CustomerRequestSender(requestSender),
+            checkoutActionCreator,
+            spamProtectionActionCreator
+        ),
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),

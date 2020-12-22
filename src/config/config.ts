@@ -93,6 +93,7 @@ export interface CheckoutSettings {
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
     googleRecaptchaSitekey: string;
+    isStorefrontSpamProtectionEnabled: boolean;
     guestCheckoutEnabled: boolean;
     hasMultiShippingEnabled: boolean;
     isAnalyticsEnabled: boolean;

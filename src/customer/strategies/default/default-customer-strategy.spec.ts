@@ -1,11 +1,14 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { MutationObserverFactory } from '../../../common/dom';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getQuote } from '../../../quote/internal-quotes.mock';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerRequestSender from '../../customer-request-sender';
@@ -19,6 +22,11 @@ describe('DefaultCustomerStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         const requestSender = createRequestSender();
+        const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        const scriptLoader = new ScriptLoader();
+        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
+        const mutationObserverFactory = new MutationObserverFactory();
+        const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
 
         customerActionCreator = new CustomerActionCreator(
             new CustomerRequestSender(requestSender),
@@ -26,6 +34,10 @@ describe('DefaultCustomerStrategy', () => {
                 new CheckoutRequestSender(requestSender),
                 new ConfigActionCreator(new ConfigRequestSender(requestSender)),
                 new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(requestSender)
             )
         );
     });

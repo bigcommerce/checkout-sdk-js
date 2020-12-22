@@ -1,14 +1,19 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
+import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../checkout';
-import { getCheckout } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../common/dom';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { getConfig } from '../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
 
 import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
@@ -20,25 +25,33 @@ describe('CustomerActionCreator', () => {
     let customerRequestSender: CustomerRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
     let customerActionCreator: CustomerActionCreator;
+    let spamProtectionActionCreator: SpamProtectionActionCreator;
     let errorResponse: Response<ErrorResponseBody>;
     let response: Response<InternalCustomerResponseBody>;
     let store: CheckoutStore;
 
     beforeEach(() => {
+        const requestSender = createRequestSender();
+        const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        const scriptLoader = new ScriptLoader();
+        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
+        const mutationObserverFactory = new MutationObserverFactory();
+        const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
+
         response = getResponse(getCustomerResponseBody());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore();
+        store = createCheckoutStore(getCheckoutStoreState());
 
-        customerRequestSender = new CustomerRequestSender(createRequestSender());
+        customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.resolve({}));
         jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.resolve(response));
         jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.resolve(response));
 
         checkoutActionCreator = new CheckoutActionCreator(
-            new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
@@ -47,13 +60,25 @@ describe('CustomerActionCreator', () => {
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
             ]));
 
+        spamProtectionActionCreator = new SpamProtectionActionCreator(
+            googleRecaptcha,
+            new SpamProtectionRequestSender(requestSender)
+        );
+
+        jest.spyOn(spamProtectionActionCreator, 'execute')
+            .mockReturnValue(() => from([
+                createAction(SpamProtectionActionType.ExecuteRequested),
+                createAction(SpamProtectionActionType.ExecuteSucceeded, { token: 'token' }),
+            ]));
+
         customerActionCreator = new CustomerActionCreator(
             customerRequestSender,
-            checkoutActionCreator
+            checkoutActionCreator,
+            spamProtectionActionCreator
         );
     });
 
-    describe('#createAccount()', () => {
+    describe('#createCustomer()', () => {
         it('emits actions if able to create customer', async () => {
             const customer = {
                 email: 'foo@bar.com',
@@ -62,7 +87,7 @@ describe('CustomerActionCreator', () => {
                 lastName: 'last',
             };
 
-            const actions = await from(customerActionCreator.createAccount(customer)(store))
+            const actions = await from(customerActionCreator.createCustomer(customer)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -85,7 +110,7 @@ describe('CustomerActionCreator', () => {
             };
 
             const errorHandler = jest.fn(action => of(action));
-            const actions = await from(customerActionCreator.createAccount(customer)(store))
+            const actions = await from(customerActionCreator.createCustomer(customer)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -99,10 +124,77 @@ describe('CustomerActionCreator', () => {
             ]);
         });
 
-        it('emits actions to reload current checkout', async () => {
-            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+        it('does not execute spam protection if disabled', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                merge(getConfig().storeConfig, {
+                    checkoutSettings: { isStorefrontSpamProtectionEnabled: false },
+                })
+            );
 
-            await from(customerActionCreator.signInCustomer(credentials)(store))
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            await from(customerActionCreator.createCustomer(customer)(store))
+                .toPromise();
+
+            expect(spamProtectionActionCreator.execute)
+                .not.toHaveBeenCalled();
+
+            expect(customerRequestSender.createAccount).toHaveBeenCalledWith({
+                ...customer,
+                token: undefined,
+            }, undefined);
+        });
+
+        it('executes spam protection if enabled', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                merge(getConfig().storeConfig, {
+                    checkoutSettings: { isStorefrontSpamProtectionEnabled: true },
+                })
+            );
+
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            const actions = await from(customerActionCreator.createCustomer(customer)(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(spamProtectionActionCreator.execute)
+                .toHaveBeenCalled();
+
+            expect(customerRequestSender.createAccount).toHaveBeenCalledWith({
+                ...customer,
+                token: 'token',
+            }, undefined);
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerRequested },
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.ExecuteSucceeded, payload: { token: 'token' } },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CustomerActionType.CreateCustomerSucceeded },
+            ]);
+        });
+
+        it('emits actions to reload current checkout', async () => {
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            await from(customerActionCreator.createCustomer(customer)(store))
                 .toPromise();
 
             expect(checkoutActionCreator.loadCurrentCheckout)

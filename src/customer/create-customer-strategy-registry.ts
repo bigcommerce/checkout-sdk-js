@@ -14,6 +14,7 @@ import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 
 import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
@@ -172,7 +173,11 @@ export default function createCustomerStrategyRegistry(
             store,
             new CustomerActionCreator(
                 new CustomerRequestSender(requestSender),
-                checkoutActionCreator
+                checkoutActionCreator,
+                new SpamProtectionActionCreator(
+                    createSpamProtection(scriptLoader),
+                    new SpamProtectionRequestSender(requestSender)
+                )
             )
         )
     );
