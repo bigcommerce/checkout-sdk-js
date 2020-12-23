@@ -332,6 +332,9 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 case AdyenPaymentMethodType.AliPay:
                 case AdyenPaymentMethodType.GiroPay:
                 case AdyenPaymentMethodType.Sofort:
+                case AdyenPaymentMethodType.Klarna:
+                case AdyenPaymentMethodType.KlarnaPayNow:
+                case AdyenPaymentMethodType.KlarnaAccount:
                 case AdyenPaymentMethodType.Vipps:
                 case AdyenPaymentMethodType.WeChatPayQR:
                     this._updateComponentState({

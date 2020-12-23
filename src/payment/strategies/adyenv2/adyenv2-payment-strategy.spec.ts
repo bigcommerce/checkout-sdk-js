@@ -174,6 +174,33 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(adyenCheckout.create).not.toBeCalled();
             });
 
+            it('does not call adyenCheckout.create when initializing Klarna', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.Klarna));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).not.toBeCalled();
+            });
+
+            it('does not call adyenCheckout.create when initializing KlarnaAccount', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.KlarnaAccount));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).not.toBeCalled();
+            });
+
+            it('does not call adyenCheckout.create when initializing KlarnaPayNow', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.KlarnaPayNow));
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).not.toBeCalled();
+            });
+
             it('does not call adyenCheckout.create when initializing GiroPay', async () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getAdyenV2(AdyenPaymentMethodType.GiroPay));
