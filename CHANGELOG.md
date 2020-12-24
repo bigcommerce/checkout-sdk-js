@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.120.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.119.0...v1.120.0) (2020-12-24)
+
+
+### Features
+
+* **payments:** PAYPAL-830 Add mechanism for testing of the APMs for different countries ([73d5f71](https://github.com/bigcommerce/checkout-sdk-js/commit/73d5f71f5748c487a28bc9035a0c119026489b7a))
+
 ## [1.119.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.118.2...v1.119.0) (2020-12-22)
 
 
