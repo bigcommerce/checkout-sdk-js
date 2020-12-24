@@ -1,6 +1,6 @@
 
 export interface ApproveDataOptions {
-    orderID: string;
+    orderID: string | undefined;
 }
 
 export interface ClickDataOptions {
@@ -15,6 +15,10 @@ export interface ClickActions {
 export interface OrderData {
     orderId: string;
     approveUrl: string;
+}
+
+export interface OrderStatus {
+    status: string;
 }
 
 export enum StyleButtonLabel {
@@ -58,6 +62,7 @@ export interface ButtonsOptions {
     createOrder?(): Promise<string>;
     onApprove?(data: ApproveDataOptions): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
+    onCancel?(): void;
 }
 
 export interface MessagesOptions {

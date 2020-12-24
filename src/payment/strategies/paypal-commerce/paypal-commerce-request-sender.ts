@@ -2,7 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 
 import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 
-import { OrderData } from './paypal-commerce-sdk';
+import { OrderData, OrderStatus } from './paypal-commerce-sdk';
 
 export interface ParamsForProvider {
     isCredit?: boolean;
@@ -37,5 +37,17 @@ export default class PaypalCommerceRequestSender {
         const res = await this._requestSender.post(url, { headers, body });
 
         return res.body as OrderData;
+    }
+
+    async getOrderStatus(): Promise<OrderStatus> {
+        const url = `/api/storefront/initialization/paypalcommerce`;
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+        };
+
+        const res = await this._requestSender.get(url, {headers});
+
+        return res.body as OrderStatus;
     }
 }

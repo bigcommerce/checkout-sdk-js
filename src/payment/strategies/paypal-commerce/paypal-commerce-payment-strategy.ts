@@ -4,11 +4,22 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentStrategyType } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions,
+    ButtonsOptions,
+    PaypalCommerceCreditCardPaymentInitializeOptions,
+    PaypalCommerceFundingKeyResolver,
+    PaypalCommerceInitializationData,
+    PaypalCommercePaymentInitializeOptions,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptParams } from './index';
+
+const APPROVED = 'approved';
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -18,7 +29,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
-        private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver
+        private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver,
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private _pollingInterval?: any
     ) {}
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -47,7 +60,12 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
             onApprove: data => this._tokenizePayment(data, submitForm),
-            onClick: async (_, actions) => onValidate(actions.resolve, actions.reject),
+            onClick: async (_, actions) => {
+                this.setPollingMechanism(gatewayId, submitForm);
+
+                return  onValidate(actions.resolve, actions.reject);
+            },
+            onCancel: () => clearInterval(this._pollingInterval),
         };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -93,10 +111,27 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
+        clearInterval(this._pollingInterval);
         this._orderId = undefined;
         this._paypalCommercePaymentProcessor.deinitialize();
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private setPollingMechanism(gatewayId: string | undefined, submitForm: any) {
+        this._pollingInterval = setInterval(async () =>  {
+            try {
+                if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+                    const res = await this._paypalCommerceRequestSender.getOrderStatus();
+                    if (res.status.toLowerCase() === APPROVED) {
+                        clearInterval(this._pollingInterval);
+                        this._tokenizePayment({orderID: this._paypalCommercePaymentProcessor.getOrderId()}, submitForm);
+                    }
+                }
+            } catch (e) {
+                clearInterval(this._pollingInterval);
+            }
+        }, 3000);
     }
 
     private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommercePaymentInitializeOptions {

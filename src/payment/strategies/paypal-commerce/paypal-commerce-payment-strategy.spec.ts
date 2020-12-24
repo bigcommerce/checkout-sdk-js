@@ -99,7 +99,8 @@ describe('PaypalCommercePaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             paypalCommercePaymentProcessor,
-            paypalCommerceFundingKeyResolver
+            paypalCommerceFundingKeyResolver,
+            new PaypalCommerceRequestSender(requestSender)
         );
     });
 
@@ -169,11 +170,11 @@ describe('PaypalCommercePaymentStrategy', () => {
             await paypalCommercePaymentStrategy.initialize(options);
 
             const obj = {
-                    'client-id': 'abc',
-                    commit: true,
-                    currency: 'USD',
-                    intent: 'capture',
-                };
+                'client-id': 'abc',
+                commit: true,
+                currency: 'USD',
+                intent: 'capture',
+            };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
         });
@@ -184,6 +185,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             const buttonOption = {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
+                onCancel: expect.any(Function),
             };
 
             const optionalParams = { fundingKey: 'PAYPAL', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
@@ -207,6 +209,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             const buttonOption = {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
+                onCancel: expect.any(Function),
             };
 
             const optionalParams = { fundingKey: 'PAYLATER', paramsForProvider: { isCheckout: true }, onRenderButton: expect.any(Function) };
@@ -229,6 +232,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 .toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`,
                     {   onApprove: expect.any(Function),
                         onClick: expect.any(Function),
+                        onCancel: expect.any(Function),
                         style: paymentMethod.initializationData.buttonStyle },
                     {   paramsForProvider: { isCheckout: true },
                         onRenderButton: expect.any(Function),
