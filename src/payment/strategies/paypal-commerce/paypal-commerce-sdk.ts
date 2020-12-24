@@ -179,6 +179,8 @@ export interface PaypalCommerceHostWindow extends Window {
 export interface PaypalCommerceInitializationData {
     clientId: string;
     merchantId?: string;
+    buyerCountry?: string;
+    isDeveloperModeApplicable?: boolean;
     intent?: 'capture' | 'authorize';
     isPayPalCreditAvailable?: boolean;
     isProgressiveOnboardingAvailable?: boolean;
@@ -192,6 +194,7 @@ export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields
 export interface PaypalCommerceScriptParams  {
     'client-id': string;
     'merchant-id'?: string;
+    'buyer-country'?: string;
     'disable-funding'?: DisableFundingType;
     'data-client-token'?: string;
     'partner-attribution-id'?: string;

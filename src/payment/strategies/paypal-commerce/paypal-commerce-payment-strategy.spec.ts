@@ -15,7 +15,9 @@ import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../er
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
-import { getPaypalCommerce } from '../../payment-methods.mock';
+import { getPaypalCommerce,
+    getPaypalCommerceTestModeOff,
+    getPaypalCommerceTestModeOn } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
@@ -99,6 +101,47 @@ describe('PaypalCommercePaymentStrategy', () => {
             paypalCommercePaymentProcessor,
             paypalCommerceFundingKeyResolver
         );
+    });
+
+    describe('Country test mode on', () => {
+        beforeEach(() => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerceTestModeOn(), initializationData: { ...getPaypalCommerceTestModeOn().initializationData, orderId: undefined } });
+        });
+
+        it('returns country if test mode on', async () => {
+            await paypalCommercePaymentStrategy.initialize(options);
+
+            const obj = {
+                'client-id': 'abc',
+                commit: true,
+                currency: 'USD',
+                intent: 'capture',
+                'buyer-country': 'IT',
+            };
+
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        });
+    });
+
+    describe('Country test mode off', () => {
+        beforeEach(() => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerceTestModeOff(), initializationData: { ...getPaypalCommerceTestModeOff().initializationData, orderId: undefined } });
+        });
+
+        it('returns country if test mode off', async () => {
+            await paypalCommercePaymentStrategy.initialize(options);
+
+            const obj = {
+                'client-id': 'abc',
+                commit: true,
+                currency: 'USD',
+                intent: 'capture',
+            };
+
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        });
     });
 
     describe('#initialize()', () => {
