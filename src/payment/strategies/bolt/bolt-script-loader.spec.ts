@@ -34,12 +34,14 @@ describe('BoltScriptLoader', () => {
             await boltScriptLoader.load(publishableKey);
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.bolt.com/connect-bigcommerce.js', expect.any(Object));
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.bolt.com/track.js');
         });
 
         it('loads the bolt script in test mode', async () => {
           await boltScriptLoader.load(publishableKey, true);
 
           expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
+          expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
       });
 
         it('returns the Bolt Client from the window', async () => {
