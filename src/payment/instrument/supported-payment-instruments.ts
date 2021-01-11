@@ -5,9 +5,9 @@ interface SupportedInstruments {
 }
 
 const supportedInstruments: SupportedInstruments = {
-    'mollie.creditcard': {
+    'mollie.credit_card': {
         provider: 'mollie',
-        method: 'creditcard',
+        method: 'credit_card',
     },
     'adyenv2.scheme': {
         provider: 'adyenv2',
