@@ -1,6 +1,6 @@
 
 export interface ApproveDataOptions {
-    orderID: string | undefined;
+    orderID?: string;
 }
 
 export interface ClickDataOptions {

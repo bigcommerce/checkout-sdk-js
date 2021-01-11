@@ -40,14 +40,14 @@ export default class PaypalCommerceRequestSender {
     }
 
     async getOrderStatus(): Promise<OrderStatus> {
-        const url = `/api/storefront/initialization/paypalcommerce`;
+        const url = '/api/storefront/initialization/paypalcommerce';
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
             'Content-Type': ContentType.Json,
         };
 
-        const res = await this._requestSender.get(url, {headers});
+        const res = await this._requestSender.get<OrderStatus>(url, {headers});
 
-        return res.body as OrderStatus;
+        return res.body;
     }
 }

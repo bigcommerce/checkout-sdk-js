@@ -19,7 +19,8 @@ import { ApproveDataOptions,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptParams } from './index';
 
-const APPROVED = 'approved';
+const ORDER_STATUS_APPROVED = 'approved';
+const POLLING_INTERVAL = 3000;
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -61,11 +62,11 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             style: buttonStyle,
             onApprove: data => this._tokenizePayment(data, submitForm),
             onClick: async (_, actions) => {
-                this.setPollingMechanism(gatewayId, submitForm);
+                this._initializePollingMechanism(submitForm, gatewayId);
 
-                return  onValidate(actions.resolve, actions.reject);
+                return onValidate(actions.resolve, actions.reject);
             },
-            onCancel: () => clearInterval(this._pollingInterval),
+            onCancel: () => this._deinitializePollingMechanism(),
         };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -111,27 +112,34 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
-        clearInterval(this._pollingInterval);
+        this._deinitializePollingMechanism();
         this._orderId = undefined;
         this._paypalCommercePaymentProcessor.deinitialize();
 
         return Promise.resolve(this._store.getState());
     }
 
-    private setPollingMechanism(gatewayId: string | undefined, submitForm: any) {
+    private _initializePollingMechanism(submitForm: () => void, gatewayId?: string) {
         this._pollingInterval = setInterval(async () =>  {
             try {
                 if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
                     const res = await this._paypalCommerceRequestSender.getOrderStatus();
-                    if (res.status.toLowerCase() === APPROVED) {
-                        clearInterval(this._pollingInterval);
+                    if (res.status.toLowerCase() === ORDER_STATUS_APPROVED) {
+                        this._deinitializePollingMechanism();
                         this._tokenizePayment({orderID: this._paypalCommercePaymentProcessor.getOrderId()}, submitForm);
                     }
                 }
             } catch (e) {
-                clearInterval(this._pollingInterval);
+                this._deinitializePollingMechanism();
             }
-        }, 3000);
+        }, POLLING_INTERVAL);
+    }
+
+    private _deinitializePollingMechanism() {
+        if (this._pollingInterval) {
+            clearInterval(this._pollingInterval);
+            this._pollingInterval = null;
+        }
     }
 
     private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommercePaymentInitializeOptions {
