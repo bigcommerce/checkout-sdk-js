@@ -149,6 +149,14 @@ export function getConfirmPaymentResponse(): unknown {
     };
 }
 
+export function getWrongPaymentResponse(): unknown {
+    return {
+        paymentIntent: {
+            otherKey: 'other_value',
+        },
+    };
+}
+
 export function getStripePaymentMethodOptionsWithGuestUserWithoutAddress(): PaymentMethodCreateParams {
     return {
         billing_details: {
