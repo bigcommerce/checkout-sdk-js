@@ -1,4 +1,4 @@
-import { some } from 'lodash';
+import { each, some } from 'lodash';
 
 import { PaymentActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -6,12 +6,18 @@ import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
+import isVaultedInstrument from '../../is-vaulted-instrument';
+import { HostedInstrument } from '../../payment';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import { MollieClient, MollieElement } from './mollie';
 import MolliePaymentInitializeOptions from './mollie-initialize-options';
 import MollieScriptLoader from './mollie-script-loader';
+
+export enum MolliePaymentMethodType {
+    creditcard = 'credit_card',
+}
 
 export default class MolliePaymentStrategy implements PaymentStrategy {
     private _initializeOptions?: MolliePaymentInitializeOptions;
@@ -51,7 +57,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "merchantId" argument is not provided.');
         }
 
-        if (methodId === 'creditcard') {
+        if (methodId === MolliePaymentMethodType.creditcard) {
             this._mollieClient = await this._loadMollieJs(merchantId, storeConfig.storeProfile.storeLanguage, testMode);
             this._mountElements();
         }
@@ -61,14 +67,21 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment , ...order} = payload;
+        const paymentData = payment?.paymentData;
+        const shouldSaveInstrument = (paymentData as HostedInstrument)?.shouldSaveInstrument;
+        const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)?.shouldSetAsDefaultInstrument;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError([ 'payment' ]);
         }
 
         try {
-            if (payment.methodId === 'creditcard') {
+            if (payment.methodId === MolliePaymentMethodType.creditcard) {
                 await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+                if (paymentData && isVaultedInstrument(paymentData)) {
+                    return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+                }
 
                 const { token, error } = await this._getMollieClient().createToken();
 
@@ -83,6 +96,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                             credit_card_token: {
                                 token,
                             },
+                            vault_payment_instrument: shouldSaveInstrument,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                             browser_info: getBrowserInfo(),
                         },
                     },
@@ -90,9 +105,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             } else {
                 await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment({
-                    ...payment,
-                }));
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             }
         } catch (error) {
 
@@ -105,19 +118,27 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._cardNumberElement?.unmount();
-        this._expiryDateElement?.unmount();
-        this._verificationCodeElement?.unmount();
-        this._cardHolderElement?.unmount();
+        this._mollieClient = undefined;
+
+        this.removeMollieComponents();
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private removeMollieComponents(): void {
+        const mollieComponents = document.querySelectorAll('.mollie-component');
+
+        each(mollieComponents, component => component.remove());
+
+        const controllers = document.querySelectorAll('.mollie-components-controller');
+
+        each(controllers, controller => controller.remove());
     }
 
     private _processAdditionalAction(error: any): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
             return Promise.reject(error);
         }
-
         const { additional_action_required: { data : { redirect_url } } } = error.body;
 
         return new Promise(() => window.location.replace(redirect_url));
@@ -131,12 +152,12 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return this._initializeOptions;
     }
 
-    private async _loadMollieJs(merchantId: string, locale: string, testmode: boolean = false) {
+    private _loadMollieJs(merchantId: string, locale: string, testmode: boolean = false): Promise<MollieClient> {
         if (this._mollieClient) {
             return Promise.resolve(this._mollieClient);
         }
 
-        return await this._mollieScriptLoader
+        return this._mollieScriptLoader
             .load(merchantId, locale, testmode);
     }
 
@@ -148,18 +169,35 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return this._mollieClient;
     }
 
+    /**
+     * ContainerId is use in Mollie for determined either its showing or not the
+     * container, because when Mollie has Vaulted Instruments it gets hide,
+     * and shows an error because can't mount Provider Components
+     *
+     * We had to add a settimeout because Mollie sets de tab index after mounting
+     * each component, but without a setTimeOut Mollie is not able to find the
+     * components as they are hidden so we need to wait until they are shown
+     */
     private _mountElements() {
-        const mollieClient = this._getMollieClient();
-        const { cardNumberId, cardCvcId, cardExpiryId, cardHolderId, styles } = this._getInitializeOptions();
+        const { containerId, cardNumberId, cardCvcId, cardExpiryId, cardHolderId, styles } = this._getInitializeOptions();
+        const container = document.getElementById(containerId);
 
-        this._cardHolderElement = mollieClient.createComponent('cardHolder', { styles });
-        this._cardNumberElement = mollieClient.createComponent('cardNumber', { styles });
-        this._verificationCodeElement = mollieClient.createComponent('verificationCode', { styles });
-        this._expiryDateElement = mollieClient.createComponent('expiryDate', { styles });
+        setTimeout(() => {
+            if (!containerId || container?.style.display !== 'none') {
+                const mollieClient = this._getMollieClient();
 
-        this._cardNumberElement.mount(`#${cardNumberId}`);
-        this._expiryDateElement.mount(`#${cardExpiryId}`);
-        this._verificationCodeElement.mount(`#${cardCvcId}`);
-        this._cardHolderElement.mount(`#${cardHolderId}`);
+                this._cardHolderElement = mollieClient.createComponent('cardHolder', { styles });
+                this._cardHolderElement.mount(`#${cardHolderId}`);
+
+                this._cardNumberElement = mollieClient.createComponent('cardNumber', { styles });
+                this._cardNumberElement.mount(`#${cardNumberId}`);
+
+                this._verificationCodeElement = mollieClient.createComponent('verificationCode', { styles });
+                this._verificationCodeElement.mount(`#${cardCvcId}`);
+
+                this._expiryDateElement = mollieClient.createComponent('expiryDate', { styles });
+                this._expiryDateElement.mount(`#${cardExpiryId}`);
+            }
+        }, 0);
     }
 }
