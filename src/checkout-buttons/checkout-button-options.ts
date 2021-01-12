@@ -55,25 +55,31 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
 
     /**
      * The options that are required to facilitate Braintree GooglePay. They can be
-     * omitted unles you need to support Braintree GooglePay.
+     * omitted unless you need to support Braintree GooglePay.
      */
     googlepaybraintree?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Checkout.com GooglePay. They can be
-     * omitted unles you need to support Checkout.com GooglePay.
+     * omitted unless you need to support Checkout.com GooglePay.
      */
     googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
 
     /**
+     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
+     * omitted unless you need to support CybersourceV2 GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
+
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unles you need to support Stripe GooglePay.
+     * omitted unless you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Authorize.Net GooglePay.
-     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
     googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }

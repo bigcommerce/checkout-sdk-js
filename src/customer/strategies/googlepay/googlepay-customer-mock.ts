@@ -107,6 +107,26 @@ export function getCheckoutcomCustomerInitializeOptions(mode: Mode = Mode.Full):
      }
 }
 
+export function getCybersourceV2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepaycybersourcev2' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayCybersourceV2 = { googlepaycybersourcev2: { ...container } };
+    const googlepayCyberSourceV2WithInvalidContainer = { googlepaycybersourcev2: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete:
+            return { ...methodId };
+        case Mode.UndefinedMethodId:
+            return { ...undefinedMethodId, ...googlepayCybersourceV2 };
+        case Mode.InvalidContainer:
+            return { ...methodId, ...googlepayCyberSourceV2WithInvalidContainer };
+        default:
+            return { ...methodId, ...googlepayCybersourceV2 };
+     }
+}
+
 export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaystripe' };
     const undefinedMethodId = { methodId: undefined };

@@ -15,6 +15,7 @@ enum PaymentStrategyType {
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
     CYBERSOURCE = 'cybersource',
     CYBERSOURCEV2 = 'cybersourcev2',
+    CYBERSOURCEV2_GOOGLE_PAY = 'googlepaycybersourcev2',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
     LAYBUY = 'laybuy',

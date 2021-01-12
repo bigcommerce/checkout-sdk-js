@@ -158,6 +158,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
     googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
 
     /**
+     * The options that are required to initialize the GooglePay CybersourceV2 payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
+
+    /**
      * The options that are required to initialize the GooglePay Stripe payment method.
      * They can be omitted unless you need to support GooglePay.
      */

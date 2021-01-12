@@ -11,7 +11,7 @@ import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
@@ -156,6 +156,18 @@ export default function createCustomerStrategyRegistry(
         )
     );
 
+    registry.register('googlepaycybersourcev2', () =>
+        new GooglePayCustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayCybersourceV2Initializer()
+            ),
+            formPoster
+        )
+    );
+
     registry.register('googlepaystripe', () =>
         new GooglePayCustomerStrategy(
             store,
@@ -165,8 +177,8 @@ export default function createCustomerStrategyRegistry(
                 new GooglePayStripeInitializer()
             ),
             formPoster
-    )
-);
+        )
+    );
 
     registry.register('default', () =>
         new DefaultCustomerStrategy(
