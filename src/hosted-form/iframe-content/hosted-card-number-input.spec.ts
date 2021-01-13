@@ -20,7 +20,7 @@ describe('HostedCardNumberInput', () => {
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
-    let numberFormatter: Pick<CardNumberFormatter, 'format'>;
+    let numberFormatter: Pick<CardNumberFormatter, 'format' | 'unformat'>;
     let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
     let styles: HostedInputStylesMap;
 
@@ -49,7 +49,7 @@ describe('HostedCardNumberInput', () => {
                 errors: {},
             })),
         };
-        numberFormatter = { format: jest.fn() };
+        numberFormatter = { format: jest.fn(), unformat: value => value.replace(/ /g, '') };
         paymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
@@ -122,6 +122,17 @@ describe('HostedCardNumberInput', () => {
                 type: HostedInputEventType.BinChanged,
                 payload: {
                     bin: '411111',
+                },
+            });
+
+        element.value = '4987 6511 1111 1111';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+        expect(eventPoster.post)
+            .toHaveBeenCalledWith({
+                type: HostedInputEventType.BinChanged,
+                payload: {
+                    bin: '498765',
                 },
             });
     });
