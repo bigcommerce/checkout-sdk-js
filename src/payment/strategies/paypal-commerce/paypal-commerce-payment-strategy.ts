@@ -21,6 +21,7 @@ import { ApproveDataOptions,
 
 const ORDER_STATUS_APPROVED = 'approved';
 const POLLING_INTERVAL = 3000;
+const POLLING_MAX_TIME = 600000;
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -32,7 +33,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
         private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private _pollingInterval?: any
+        private _pollingInterval?: number,
+        private _pollingTimer?: number,
     ) {}
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -66,7 +68,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
                 return onValidate(actions.resolve, actions.reject);
             },
-            onCancel: () => this._deinitializePollingMechanism(),
+            onCancel: () => {
+                this._deinitializePollingTimer(this._pollingInterval);
+                this._deinitializePollingTimer(this._pollingTimer);
+                },
         };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -112,7 +117,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._deinitializePollingMechanism();
+        this._deinitializePollingTimer(this._pollingTimer);
+        this._deinitializePollingTimer(this._pollingInterval);
         this._orderId = undefined;
         this._paypalCommercePaymentProcessor.deinitialize();
 
@@ -120,25 +126,40 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     private _initializePollingMechanism(submitForm: () => void, gatewayId?: string) {
-        this._pollingInterval = setInterval(async () =>  {
+       this._initializePollingTimer();
+       this._pollingInterval = window.setTimeout(async () =>  {
             try {
                 if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+                    console.log('%c POLLING TIMEOUT', 'color: green');
                     const res = await this._paypalCommerceRequestSender.getOrderStatus();
                     if (res.status.toLowerCase() === ORDER_STATUS_APPROVED) {
-                        this._deinitializePollingMechanism();
+                        this._deinitializePollingTimer(this._pollingTimer);
+                        this._deinitializePollingTimer(this._pollingInterval);
                         this._tokenizePayment({orderID: this._paypalCommercePaymentProcessor.getOrderId()}, submitForm);
+                    } else {
+                        this._initializePollingMechanism(submitForm, gatewayId)
                     }
                 }
             } catch (e) {
-                this._deinitializePollingMechanism();
+                this._deinitializePollingTimer(this._pollingInterval);
+                this._deinitializePollingTimer(this._pollingTimer);
             }
         }, POLLING_INTERVAL);
     }
 
-    private _deinitializePollingMechanism() {
-        if (this._pollingInterval) {
-            clearInterval(this._pollingInterval);
-            this._pollingInterval = null;
+    private _deinitializePollingTimer(timer?: number) {
+        if (timer) {
+            clearTimeout(timer);
+            timer = 0;
+        }
+    }
+
+    private _initializePollingTimer(): void {
+        if(!this._pollingTimer) {
+            this._pollingTimer = window.setTimeout(() => {
+                this._deinitializePollingTimer(this._pollingInterval);
+                this._deinitializePollingTimer(this._pollingTimer);
+            }, POLLING_MAX_TIME);
         }
     }
 
