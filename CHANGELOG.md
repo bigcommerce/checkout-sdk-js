@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.121.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.121.0...v1.121.1) (2021-01-13)
+
+
+### Bug Fixes
+
+* **payment:** INT-3717 Unformat cardNumber before notifying a bin number change ([c16324c](https://github.com/bigcommerce/checkout-sdk-js/commit/c16324cc9432cd0ec114c8778ebfc1fc5fdd6d1e))
+
 ## [1.121.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.120.0...v1.121.0) (2020-12-29)
 
 
