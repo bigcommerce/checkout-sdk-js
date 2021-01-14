@@ -18,7 +18,7 @@ export interface OrderData {
 }
 
 export interface OrderStatus {
-    status: string;
+    status: 'APPROVED' | 'CREATED' | string;
 }
 
 export enum StyleButtonLabel {

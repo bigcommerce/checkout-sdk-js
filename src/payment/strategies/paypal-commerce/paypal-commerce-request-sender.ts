@@ -39,7 +39,7 @@ export default class PaypalCommerceRequestSender {
         return res.body as OrderData;
     }
 
-    async getOrderStatus(): Promise<OrderStatus> {
+    async getOrderStatus() {
         const url = '/api/storefront/initialization/paypalcommerce';
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,

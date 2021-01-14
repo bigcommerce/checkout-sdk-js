@@ -30,11 +30,11 @@ export default class PaypalCommercePaymentProcessor {
     private _paypalMessages?: PaypalCommerceMessages;
     private _hostedFields?: PaypalCommerceHostedFields;
     private _fundingSource?: string;
+    private _orderId?: string;
 
     constructor(
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private _orderId?: string
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
     ) {}
 
     async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {

@@ -73,6 +73,10 @@ export interface PaypalCommercePaymentInitializeOptions {
      * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
      */
     onRenderButton?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
 }
 
 /**
