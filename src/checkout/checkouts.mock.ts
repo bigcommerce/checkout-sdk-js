@@ -48,6 +48,7 @@ export function getCheckout(): Checkout {
         taxTotal: 3,
         subtotal: 190,
         grandTotal: 190,
+        giftWrappingCostTotal: 0,
         outstandingBalance: 190,
         giftCertificates: [],
         balanceDue: 0,
