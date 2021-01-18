@@ -39,6 +39,7 @@ export function getOrder(): Order {
         },
         orderAmount: 190,
         orderAmountAsInteger: 19000,
+        giftWrappingCostTotal: 0,
         orderId: 295,
         payments: [
             getGatewayOrderPayment(),

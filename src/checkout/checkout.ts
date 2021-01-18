@@ -19,6 +19,7 @@ export default interface Checkout {
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
+    giftWrappingCostTotal: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**

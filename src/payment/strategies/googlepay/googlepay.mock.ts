@@ -50,6 +50,7 @@ export function getCheckoutMock(): Checkout {
         balanceDue: 0,
         createdTime: '',
         updatedTime: '',
+        giftWrappingCostTotal: 0,
     };
 }
 
