@@ -80,6 +80,7 @@ declare interface Checkout {
     isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
+    giftWrappingCostTotal: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     /**
@@ -575,6 +576,7 @@ declare interface Order {
     orderAmountAsInteger: number;
     orderId: number;
     payments?: OrderPayments;
+    giftWrappingCostTotal: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     status: string;

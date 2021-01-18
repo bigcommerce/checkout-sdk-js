@@ -19,6 +19,7 @@
 * [customerId](order.md#customerid)
 * [customerMessage](order.md#customermessage)
 * [discountAmount](order.md#discountamount)
+* [giftWrappingCostTotal](order.md#giftwrappingcosttotal)
 * [handlingCostTotal](order.md#handlingcosttotal)
 * [hasDigitalItems](order.md#hasdigitalitems)
 * [isComplete](order.md#iscomplete)
@@ -89,6 +90,12 @@ ___
 ###  discountAmount
 
 • **discountAmount**: *number*
+
+___
+
+###  giftWrappingCostTotal
+
+• **giftWrappingCostTotal**: *number*
 
 ___
 

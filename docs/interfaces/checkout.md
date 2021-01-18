@@ -20,6 +20,7 @@
 * [customerMessage](checkout.md#customermessage)
 * [discounts](checkout.md#discounts)
 * [giftCertificates](checkout.md#giftcertificates)
+* [giftWrappingCostTotal](checkout.md#giftwrappingcosttotal)
 * [grandTotal](checkout.md#grandtotal)
 * [handlingCostTotal](checkout.md#handlingcosttotal)
 * [id](checkout.md#id)
@@ -95,6 +96,12 @@ ___
 ###  giftCertificates
 
 • **giftCertificates**: *[GiftCertificate](giftcertificate.md)[]*
+
+___
+
+###  giftWrappingCostTotal
+
+• **giftWrappingCostTotal**: *number*
 
 ___
 

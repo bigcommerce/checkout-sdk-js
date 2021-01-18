@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.122.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.121.1...v1.122.0) (2021-01-18)
+
+
+### Features
+
+* **order:** CHECKOUT-2322 Add gift wrapping total ([6078f2d](https://github.com/bigcommerce/checkout-sdk-js/commit/6078f2d41a6db22d52a6b58ae0066ed9ef87efcf))
+
 ### [1.121.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.121.0...v1.121.1) (2021-01-13)
 
 
