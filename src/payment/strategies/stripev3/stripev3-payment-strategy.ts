@@ -87,6 +87,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                 paymentIntent = await this._confirmVaultedPayment(clientSecret);
 
+                if (!paymentIntent.id) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+                }
+
                 paymentPayload = {
                     methodId,
                     paymentData: {
@@ -98,6 +102,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             paymentIntent = await this._confirmStripePayment(paymentMethod, shouldSaveInstrument);
+
+            if (!paymentIntent.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+            }
 
             paymentPayload = {
                 methodId,
