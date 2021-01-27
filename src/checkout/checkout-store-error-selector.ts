@@ -284,6 +284,13 @@ export default interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to create account, otherwise undefined.
      */
     getCreateCustomerAccountError(): Error | undefined;
+
+    /**
+     * Returns an error if unable to create customer address.
+     *
+     * @returns The error object if unable to create address, otherwise undefined.
+     */
+    getCreateCustomerAddressError(): Error | undefined;
 }
 
 export type CheckoutStoreErrorSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreErrorSelector;
@@ -351,6 +358,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getLoadConfigError: state.config.getLoadError,
             getSignInEmailError: state.signInEmail.getSendError,
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
+            getCreateCustomerAddressError: state.customer.getCreateAddressError,
         };
 
         return {

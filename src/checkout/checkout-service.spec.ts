@@ -186,6 +186,7 @@ describe('CheckoutService', () => {
         customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(customerRequestSender, 'createAccount').mockResolvedValue(getResponse({}));
+        jest.spyOn(customerRequestSender, 'createAddress').mockResolvedValue(getResponse({}));
 
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
 
@@ -440,6 +441,19 @@ describe('CheckoutService', () => {
                     lastName: 'last',
                     password: 'password',
                 }, undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#createCustomerAddress()', () => {
+        it('creates customer address', async () => {
+            const address = getShippingAddress();
+            const state = await checkoutService.createCustomerAddress(address);
+
+            expect(customerRequestSender.createAddress)
+                .toHaveBeenCalledWith(address, undefined);
 
             expect(state.data.getCheckout())
                 .toEqual(store.getState().checkout.getCheckout());

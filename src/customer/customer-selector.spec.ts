@@ -64,4 +64,40 @@ describe('CustomerSelector', () => {
             expect(selector.isCreatingCustomerAccount()).toEqual(false);
         });
     });
+
+    describe('#getCreateAddressError()', () => {
+        it('returns current customer', () => {
+            const createAddressError = new Error();
+
+            selector = createCustomerSelector({
+                errors: { createAddressError },
+                statuses: {},
+            });
+
+            expect(selector.getCreateAddressError()).toEqual(createAddressError);
+        });
+
+        it('returns undefined if customer is unavailable', () => {
+            selector = createCustomerSelector(DEFAULT_STATE);
+
+            expect(selector.getCreateAddressError()).toEqual(undefined);
+        });
+    });
+
+    describe('#isCreatingCustomerAccount()', () => {
+        it('returns is creating address', () => {
+            selector = createCustomerSelector({
+                errors: { },
+                statuses: { isCreatingAddress: true },
+            });
+
+            expect(selector.isCreatingCustomerAddress()).toEqual(true);
+        });
+
+        it('returns undefined if customer is unavailable', () => {
+            selector = createCustomerSelector(DEFAULT_STATE);
+
+            expect(selector.isCreatingCustomerAddress()).toEqual(false);
+        });
+    });
 });
