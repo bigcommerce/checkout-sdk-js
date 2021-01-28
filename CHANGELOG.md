@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.124.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.123.0...v1.124.0) (2021-01-28)
+
+
+### Features
+
+* **payment:** INT-3537 Add CYBS One Platform Payment Strategy ([3bab19d](https://github.com/bigcommerce/checkout-sdk-js/commit/3bab19d478c66f114a5c02d8d499b1fabd7bed62))
+
+
+### Bug Fixes
+
+* **payment:** INT-3655 Avoid passing null nonce token to StripeV3 ([1ac7b18](https://github.com/bigcommerce/checkout-sdk-js/commit/1ac7b181b0e8bc4aed7e631b94838a86f1e15513))
+* **payment:** INT-3743 Add Mada cards validation ([0e08640](https://github.com/bigcommerce/checkout-sdk-js/commit/0e08640c8af3dd5df8807e608939b6c2d5ce81c3))
+
 ## [1.123.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.122.0...v1.123.0) (2021-01-19)
 
 
