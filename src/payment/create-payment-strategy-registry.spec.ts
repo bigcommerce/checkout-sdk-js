@@ -19,6 +19,7 @@ import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource';
+import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
@@ -121,6 +122,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate cybersource', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCE);
         expect(paymentStrategy).toBeInstanceOf(CyberSourcePaymentStrategy);
+    });
+
+    it('can instantiate cybersourcev2', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2);
+        expect(paymentStrategy).toBeInstanceOf(CyberSourceV2PaymentStrategy);
     });
 
     it('can instantiate klarna', () => {

@@ -36,6 +36,7 @@ import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
+import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { ExternalPaymentStrategy } from './strategies/external';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
@@ -223,6 +224,20 @@ export default function createPaymentStrategyRegistry(
                 store,
                 paymentActionCreator,
                 paymentMethodActionCreator,
+                new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.CYBERSOURCEV2, () =>
+        new CyberSourceV2PaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            new CardinalThreeDSecureFlowV2(
+                store,
+                paymentActionCreator,
                 new CardinalClient(new CardinalScriptLoader(scriptLoader))
             )
         )
