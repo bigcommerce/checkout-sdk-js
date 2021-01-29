@@ -1,5 +1,5 @@
 import { createAction, Action } from '@bigcommerce/data-store';
-import { merge, omit } from 'lodash';
+import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
@@ -80,7 +80,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             await braintreePaypalPaymentStrategy.initialize(options);
 
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options.braintree);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('foo', options.braintree);
         });
 
         it('preloads paypal', async () => {
@@ -89,31 +89,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
             expect(braintreePaymentProcessorMock.preloadPaypal).toHaveBeenCalled();
         });
 
-        it('skips all initialization if a nonce is present in the paymentProvider', async () => {
-            store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
-                paymentMethods: {
-                    data: [
-                        { ...paymentMethodMock, nonce: 'some-nonce' },
-                    ],
-                },
-            }));
-
-            braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                braintreePaymentProcessorMock
-            );
-
-            await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
-
-            expect(braintreePaymentProcessorMock.preloadPaypal).not.toHaveBeenCalled();
-            expect(braintreePaymentProcessorMock.initialize).not.toHaveBeenCalled();
-        });
-
         it('throws error if unable to initialize', async () => {
             paymentMethodMock.clientToken = undefined;
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethodMock);
 
             try {
                 await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
@@ -140,6 +119,19 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Object));
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+        });
+
+        it('refresh the state if paymentMethod has nonce value', async () => {
+            paymentMethodMock.nonce = 'some-nonce';
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethodMock);
+
+            await braintreePaypalPaymentStrategy.initialize(options);
+            await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(1);
+            expect(braintreePaymentProcessorMock.preloadPaypal).toHaveBeenCalledTimes(1);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledTimes(1);
         });
 
         it('pass the options to submitOrder', async () => {
@@ -217,6 +209,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
         it('does not call paypal if a nonce is present', async () => {
             paymentMethodMock.nonce = 'some-nonce';
 
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethodMock);
+
             const expected = expect.objectContaining({
                 paymentData: {
                     formattedPayload: {
@@ -289,6 +284,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             it('calls submit payment with the right payload', async () => {
                 paymentMethodMock.config.isVaultingEnabled = true;
+
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(paymentMethodMock);
 
                 await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
@@ -372,11 +370,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
                         },
                     },
                 };
+
+                paymentMethodMock.config.isVaultingEnabled = true;
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(paymentMethodMock);
             });
 
             it('initializes paypal in vault mode', async () => {
-                paymentMethodMock.config.isVaultingEnabled = true;
-
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {
@@ -427,8 +427,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('sends set_as_default_stored_instrument set to null when vaulting and NOT making default', async () => {
-                paymentMethodMock.config.isVaultingEnabled = true;
-
                 await braintreePaypalPaymentStrategy.initialize(options);
                 await braintreePaypalPaymentStrategy.execute({
                     payment: {
@@ -451,8 +449,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('sends set_as_default_stored_instrument set to true when vaulting and making default', async () => {
-                paymentMethodMock.config.isVaultingEnabled = true;
-
                 await braintreePaypalPaymentStrategy.initialize(options);
                 await braintreePaypalPaymentStrategy.execute({
                     payment: {
@@ -476,6 +472,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('throws if vaulting is enabled and trying to save an instrument', async () => {
+                paymentMethodMock.config.isVaultingEnabled = false;
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(paymentMethodMock);
                 await braintreePaypalPaymentStrategy.initialize(options);
 
                 try {

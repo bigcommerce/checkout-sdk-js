@@ -9,6 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import { BraintreePaymentInitializeOptions } from '../../strategies/braintree';
 import PaymentStrategy from '../payment-strategy';
 
 import { BraintreeError } from './braintree';
@@ -28,29 +29,25 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         private _credit: boolean = false
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
 
-        this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
-
-        if (this._paymentMethod && this._paymentMethod.nonce) {
-            return Promise.resolve(this._store.getState());
+        if (!this._paymentMethod || !this._paymentMethod.nonce) {
+            this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        if (this._paymentMethod.clientToken) {
+            return this._loadPaypal(braintreeOptions);
+        }
 
-                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-                this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, braintreeOptions);
+        if (!this._paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
-                return this._braintreePaymentProcessor.preloadPaypal();
-            })
-            .then(() => this._store.getState())
-            .catch((error: Error) => this._handleError(error));
+        return this._loadPaypal(braintreeOptions);
     }
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -87,8 +84,9 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         throw new PaymentMethodFailedError(error.message);
     }
 
-    private _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {
+    private async _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {
         const state = this._store.getState();
+
         const grandTotal = state.checkout.getOutstandingBalance(useStoreCredit);
         const config = state.config.getStoreConfig();
 
@@ -106,9 +104,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         const { currency, storeProfile: { storeLanguage } } = config;
         const { nonce, config: { isVaultingEnabled } } = this._paymentMethod;
-        const { paymentData = {} } = payment;
+        const { methodId, paymentData = {} } = payment;
 
         if (nonce) {
+            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+            this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
             return Promise.resolve({ ...payment, paymentData: this._formattedPayload(nonce) });
         }
 
@@ -159,5 +160,21 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private _loadPaypal(braintreeOptions?: BraintreePaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        try {
+            this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, braintreeOptions);
+
+            this._braintreePaymentProcessor.preloadPaypal();
+        } catch (error) {
+            this._handleError(error);
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 }
