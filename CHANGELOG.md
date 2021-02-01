@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.124.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.124.0...v1.124.1) (2021-02-01)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5324 Set nonce in memory instead of local storage ([0515427](https://github.com/bigcommerce/checkout-sdk-js/commit/05154279c82293c04f246ffacdaf760ca6de449b))
+
 ## [1.124.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.123.0...v1.124.0) (2021-01-28)
 
 
