@@ -121,7 +121,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'buyer-country': 'IT',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
         });
     });
 
@@ -141,7 +141,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 intent: 'capture',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
         });
     });
 
@@ -176,7 +176,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 intent: 'capture',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
         });
 
         it('render PayPal button if orderId is undefined', async () => {

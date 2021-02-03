@@ -28,6 +28,7 @@ import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
+import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -82,6 +83,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate braintree', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE);
         expect(paymentStrategy).toBeInstanceOf(BraintreeCreditCardPaymentStrategy);
+    });
+
+    it('can instantiate APM', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS);
+        expect(paymentStrategy).toBeInstanceOf(PaypalCommercePaymentStrategy);
     });
 
     it('can instantiate bluesnapv2', () => {

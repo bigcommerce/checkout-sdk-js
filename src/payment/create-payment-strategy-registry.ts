@@ -342,6 +342,17 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, () =>
+        new PaypalCommercePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
+            new PaypalCommerceFundingKeyResolver(),
+            new PaypalCommerceRequestSender(requestSender)
+        )
+    );
+
     registry.register(PaymentStrategyType.SAGE_PAY, () =>
         new SagePayPaymentStrategy(
             store,
@@ -560,7 +571,7 @@ export default function createPaymentStrategyRegistry(
             storeCreditActionCreator,
             new BoltScriptLoader(scriptLoader)
         )
-);
+    );
 
     return registry;
 }

@@ -93,5 +93,19 @@ describe('PaypalCommerceRequestSender', () => {
                 headers,
             }));
         });
+        it('create order from checkout page for APM', async () => {
+            paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
+            await paypalCommerceRequestSender.setupPayment('abc', { isCheckout: true, isAPM: true });
+
+            const headers = {
+                'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                'Content-Type': ContentType.Json,
+            };
+
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercealternativemethods', expect.objectContaining({
+                body: {cartId: 'abc'},
+                headers,
+            }));
+        });
     });
 });

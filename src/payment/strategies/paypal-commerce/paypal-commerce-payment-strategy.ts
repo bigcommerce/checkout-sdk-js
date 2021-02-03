@@ -77,7 +77,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript);
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId);
 
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,

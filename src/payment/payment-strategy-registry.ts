@@ -37,9 +37,12 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
             return PaymentStrategyType.KLARNAV2;
         }
 
-        if (paymentMethod.id === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT ||
-            paymentMethod.gateway === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+        if (paymentMethod.id === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT) {
             return PaymentStrategyType.PAYPAL_COMMERCE;
+        }
+
+        if ( paymentMethod.gateway === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+            return PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         }
 
         const methodId = paymentMethod.gateway || paymentMethod.id;
