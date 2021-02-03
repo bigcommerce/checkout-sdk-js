@@ -1,14 +1,28 @@
 import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError } from '../../../common/error/errors';
+import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentStrategyType } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions,
+    ButtonsOptions,
+    PaypalCommerceCreditCardPaymentInitializeOptions,
+    PaypalCommerceFundingKeyResolver,
+    PaypalCommerceInitializationData,
+    PaypalCommercePaymentInitializeOptions,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptParams } from './index';
+
+const ORDER_STATUS_APPROVED = 'APPROVED';
+const ORDER_STATUS_CREATED = 'CREATED';
+const POLLING_INTERVAL = 3000;
+const POLLING_MAX_TIME = 600000;
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -18,7 +32,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
-        private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver
+        private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver,
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private _pollingInterval?: number,
+        private _pollingTimer = 0
     ) {}
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -46,8 +63,18 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const paramsScript = this._getOptionsScript(initializationData, currencyCode);
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
-            onApprove: data => this._tokenizePayment(data, submitForm),
-            onClick: async (_, actions) => onValidate(actions.resolve, actions.reject),
+            onApprove: data => {
+                this._deinitializePollingTimer(gatewayId);
+                this._tokenizePayment(data, submitForm);
+            },
+            onClick: async (_, actions) => {
+                this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
+
+                return onValidate(actions.resolve, actions.reject);
+            },
+            onCancel: () => {
+                this._deinitializePollingTimer(gatewayId);
+            },
         };
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript);
@@ -92,11 +119,51 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    async deinitialize(): Promise<InternalCheckoutSelectors> {
+    async deinitialize({gatewayId}: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        this._deinitializePollingTimer(gatewayId);
         this._orderId = undefined;
         this._paypalCommercePaymentProcessor.deinitialize();
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private _initializePollingMechanism(submitForm: () => void, gatewayId?: string, methodId?: any, paypalcommerce?: any ) {
+        if (gatewayId !== PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS)  {
+            return;
+        }
+
+        this._pollingInterval = window.setTimeout(async () => {
+            try {
+                this._pollingTimer += POLLING_INTERVAL;
+
+                const { status } = await this._paypalCommerceRequestSender.getOrderStatus();
+
+                if (status === ORDER_STATUS_APPROVED) {
+                    this._deinitializePollingTimer(gatewayId);
+                    this._tokenizePayment({ orderID: this._paypalCommercePaymentProcessor.getOrderId() }, submitForm);
+                } else if (status === ORDER_STATUS_CREATED  && this._pollingTimer < POLLING_MAX_TIME) {
+                    this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
+                } else {
+                    this._reinitializeButtons({ gatewayId, methodId, paypalcommerce });
+                    throw new TimeoutError();
+                }
+            } catch (e) {
+                this._deinitializePollingTimer(gatewayId);
+                paypalcommerce.onError?.(e);
+            }
+        }, POLLING_INTERVAL);
+    }
+
+    private _reinitializeButtons({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions) {
+        this.deinitialize({methodId, gatewayId});
+        this.initialize({ gatewayId, methodId, paypalcommerce });
+    }
+
+    private _deinitializePollingTimer(gatewayId?: string) {
+        if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+            clearTimeout(this._pollingInterval);
+            this._pollingTimer = 0;
+        }
     }
 
     private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommercePaymentInitializeOptions {
