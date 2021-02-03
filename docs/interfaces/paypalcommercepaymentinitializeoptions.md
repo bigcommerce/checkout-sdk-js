@@ -54,6 +54,7 @@ service.initializePayment({
 
 ### Methods
 
+* [onError](paypalcommercepaymentinitializeoptions.md#optional-onerror)
 * [onRenderButton](paypalcommercepaymentinitializeoptions.md#optional-onrenderbutton)
 * [onValidate](paypalcommercepaymentinitializeoptions.md#onvalidate)
 * [submitForm](paypalcommercepaymentinitializeoptions.md#submitform)
@@ -67,6 +68,22 @@ service.initializePayment({
 The ID of a container where the payment widget should be inserted into.
 
 ## Methods
+
+### `Optional` onError
+
+▸ **onError**(`error`: [Error](amazonpaywidgeterror.md#error)): *void*
+
+A callback for displaying error popup. This callback requires error object as parameter.
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`error` | [Error](amazonpaywidgeterror.md#error) |
+
+**Returns:** *void*
+
+___
 
 ### `Optional` onRenderButton
 

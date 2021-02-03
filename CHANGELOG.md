@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.125.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.124.1...v1.125.0) (2021-02-03)
+
+
+### Features
+
+* **payment:** PAYPAL-876 implemented polling mechanism ([29a08c4](https://github.com/bigcommerce/checkout-sdk-js/commit/29a08c4527d4e39332a58198feb54914886f3908))
+* **payment:** PAYPAL-876 implemented polling mechanism on front end ([aca1d29](https://github.com/bigcommerce/checkout-sdk-js/commit/aca1d29a6eadd906c12d16038e66ce55931ff81e))
+* **payment:** PAYPAL-876 implemented polling mechanism on front end ([30aca53](https://github.com/bigcommerce/checkout-sdk-js/commit/30aca53e184b5aeb0c8d94fdd15c6c7fbe9ccdb5))
+* **payment:** PAYPAL-876 temp ([5bed143](https://github.com/bigcommerce/checkout-sdk-js/commit/5bed143c118e9ecd9a19b80fb40d53d7d2674801))
+* **payment:** PAYPAL-883 fixed conflicts ([15fa4d5](https://github.com/bigcommerce/checkout-sdk-js/commit/15fa4d58d7c37d884526f987a69cbd7ebecc8a7b))
+
 ### [1.124.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.124.0...v1.124.1) (2021-02-01)
 
 
