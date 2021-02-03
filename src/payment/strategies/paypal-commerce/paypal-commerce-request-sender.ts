@@ -8,6 +8,7 @@ export interface ParamsForProvider {
     isCredit?: boolean;
     isCheckout?: boolean;
     isCreditCard?: boolean;
+    isAPM?: boolean;
 }
 
 export default class PaypalCommerceRequestSender {
@@ -16,7 +17,7 @@ export default class PaypalCommerceRequestSender {
     ) {}
 
     async setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<OrderData> {
-        const { isCredit, isCheckout, isCreditCard } = params;
+        const { isCredit, isCheckout, isCreditCard, isAPM } = params;
         let provider = 'paypalcommerce';
 
         if (isCreditCard) {
@@ -25,6 +26,10 @@ export default class PaypalCommerceRequestSender {
             provider = isCredit ? 'paypalcommercecreditcheckout' : 'paypalcommercecheckout';
         } else if (isCredit) {
             provider = 'paypalcommercecredit';
+        }
+
+        if (isAPM) {
+            provider = 'paypalcommercealternativemethods';
         }
 
         const url = `/api/storefront/payment/${provider}`;

@@ -2,6 +2,7 @@ import { isNil, omitBy } from 'lodash';
 
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
+import PaymentStrategyType from '../../payment-strategy-type';
 
 import { ButtonsOptions, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
@@ -31,14 +32,16 @@ export default class PaypalCommercePaymentProcessor {
     private _hostedFields?: PaypalCommerceHostedFields;
     private _fundingSource?: string;
     private _orderId?: string;
+    private _gatewayId?: string;
 
     constructor(
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender
     ) {}
 
-    async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
+    async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean, gatewayId?: string): Promise<PaypalCommerceSDK> {
         this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, isProgressiveOnboardingAvailable);
+        this._gatewayId = gatewayId;
 
         return this._paypal;
     }
@@ -158,7 +161,8 @@ export default class PaypalCommercePaymentProcessor {
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
         const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' || this._fundingSource === 'paylater' };
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, paramsForProvider);
+        const isAPM = this._gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {...paramsForProvider, isAPM});
         this._orderId = orderId;
 
         return orderId;
