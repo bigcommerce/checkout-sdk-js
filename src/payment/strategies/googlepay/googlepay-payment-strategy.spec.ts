@@ -230,7 +230,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize(googlePayOptions);
             await strategy.execute(getGoogleOrderRequestBody());
@@ -264,7 +264,7 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(paymentData));
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize(googlePayOptions);
             await strategy.execute(getGoogleOrderRequestBody());
@@ -287,7 +287,7 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(
                 Promise.reject({statusCode: 'ERROR'})
             );
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize(googlePayOptions);
             await strategy.execute(getGoogleOrderRequestBody());
@@ -310,7 +310,7 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(
                 Promise.reject({statusCode: 'CANCELED'})
             );
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize(googlePayOptions);
             await strategy.execute(getGoogleOrderRequestBody());
@@ -326,7 +326,6 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(paymentData));
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
             await strategy.initialize(googlePayOptions);
             try {
@@ -351,7 +350,7 @@ describe('GooglePayPaymentStrategy', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(paymentData));
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize(googlePayOptions);
             try {
@@ -371,7 +370,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize({
                 methodId: 'googlepayadyenv2',
@@ -384,7 +383,7 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: 'googlepayadyenv2',
                 paymentData: {
-                    nonce: '{"type":"paywithgoogle","googlePayToken":"token","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"' + new Date().getTimezoneOffset().toString() + '"}}',
+                    nonce: 'token',
                     method: 'googlepayadyenv2',
                     cardInformation: 'ci',
                 },
@@ -400,7 +399,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize({
                 methodId: 'googlepayauthorizenet',
@@ -429,7 +428,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePaymentMethodData);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
 
             await strategy.initialize({
                 methodId: 'googlepaystripe',

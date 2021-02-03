@@ -1,5 +1,4 @@
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -8,7 +7,6 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
-import { AdyenPaymentMethodType } from '../adyenv2';
 import PaymentStrategy from '../payment-strategy';
 
 import { GooglePaymentData, PaymentMethodData } from './googlepay';
@@ -138,38 +136,24 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethod(this._methodId);
+        const {
+            initializationData: {
+                nonce,
+                card_information: cardInformation,
+            },
+        } = this._store.getState().paymentMethods.getPaymentMethodOrThrow(this._methodId);
 
-        if (!paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        if (!paymentMethod.initializationData.nonce) {
+        if (!nonce) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
-        let nonce;
-
-        if (this._methodId === 'googlepayadyenv2') {
-            nonce = JSON.stringify({
-                type: AdyenPaymentMethodType.GooglePay,
-                googlePayToken: paymentMethod.initializationData.nonce,
-                browser_info: getBrowserInfo(),
-            });
-        } else {
-            nonce = paymentMethod.initializationData.nonce;
-        }
-
-        const paymentData = {
-            method: this._methodId,
-            nonce,
-            cardInformation: paymentMethod.initializationData.card_information,
-        };
-
         return {
             methodId: this._methodId,
-            paymentData,
+            paymentData: {
+                method: this._methodId,
+                nonce,
+                cardInformation,
+            },
         };
     }
 

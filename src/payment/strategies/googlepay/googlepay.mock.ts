@@ -198,7 +198,7 @@ export function getAdyenV2PaymentMethodMock(): PaymentMethod {
 export function getAdyenV2TokenizedPayload(): TokenizePayload {
     return {
         type: 'CARD',
-        nonce: '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        nonce: '{\"type\":\"paywithgoogle\",\"googlePayToken\":\"{\\\"signature\\\":\\\"foo\\\",\\\"protocolVersion\\\":\\\"ECv1\\\",\\\"signedMessage\\\":\\\"{\\\"encryptedMessage\\\":\\\"foo\\\",\\\"ephemeralPublicKey\\\":\\\"foo\\\"}\\\"}\"}',
         details: {
             cardType: 'MASTERCARD',
             lastFour: '0304',
