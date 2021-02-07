@@ -65,6 +65,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'cybersource',
         method: 'credit_card',
     },
+    cybersourcev2: {
+        provider: 'cybersourcev2',
+        method: 'credit_card',
+    },
     converge: {
         provider: 'converge',
         method: 'credit_card',
