@@ -7,6 +7,17 @@ export interface BoltCheckout {
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
 }
 
+export interface BoltDeveloperModeParams {
+    developerMode: BoltDeveloperMode;
+    developerDomain: string;
+}
+
+export enum BoltDeveloperMode {
+    SandboxMode = 'bolt_sandbox',
+    StagingMode = 'bolt_staging',
+    DevelopmentMode = 'bolt_development',
+}
+
 export interface BoltClient {
     open(): void;
 }
