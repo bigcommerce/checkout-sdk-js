@@ -23,6 +23,8 @@ export function getStripeV3JsMock(): StripeV3Client {
         confirmCardPayment: jest.fn(),
         confirmIdealPayment: jest.fn(),
         confirmSepaDebitPayment: jest.fn(),
+        createPaymentMethod: jest.fn(),
+        handleCardAction: jest.fn(),
     };
 }
 
@@ -45,6 +47,8 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
         confirmCardPayment: jest.fn(),
         confirmIdealPayment: jest.fn(),
         confirmSepaDebitPayment: jest.fn(),
+        createPaymentMethod: jest.fn(),
+        handleCardAction: jest.fn(),
     };
 }
 
@@ -153,6 +157,22 @@ export function getWrongPaymentResponse(): unknown {
     return {
         paymentIntent: {
             otherKey: 'other_value',
+        },
+    };
+}
+
+export function getWrongPaymentMethodResponse(): unknown {
+    return {
+        paymentMethod: {
+            otherKey: 'other_value',
+        },
+    };
+}
+
+export function getPaymentMethodResponse(): unknown {
+    return {
+        paymentMethod: {
+            id: 'pm_1234',
         },
     };
 }
