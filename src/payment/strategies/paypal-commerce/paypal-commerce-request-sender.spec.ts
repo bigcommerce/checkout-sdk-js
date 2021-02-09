@@ -102,7 +102,7 @@ describe('PaypalCommerceRequestSender', () => {
                 'Content-Type': ContentType.Json,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercealternativemethods', expect.objectContaining({
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercealternativemethodscheckout', expect.objectContaining({
                 body: {cartId: 'abc'},
                 headers,
             }));

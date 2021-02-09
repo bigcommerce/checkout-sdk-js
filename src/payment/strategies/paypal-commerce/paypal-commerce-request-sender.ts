@@ -29,7 +29,7 @@ export default class PaypalCommerceRequestSender {
         }
 
         if (isAPM) {
-            provider = 'paypalcommercealternativemethods';
+            provider = 'paypalcommercealternativemethodscheckout';
         }
 
         const url = `/api/storefront/payment/${provider}`;
