@@ -9,6 +9,8 @@ export default interface CustomerSelector {
     getCustomer(): Customer | undefined;
     getCreateAccountError(): Error | undefined;
     isCreatingCustomerAccount(): boolean;
+    getCreateAddressError(): Error | undefined;
+    isCreatingCustomerAddress(): boolean;
 }
 
 export type CustomerSelectorFactory = (state: CustomerState) => CustomerSelector;
@@ -29,6 +31,16 @@ export function createCustomerSelectorFactory(): CustomerSelectorFactory {
         status => () => status
     );
 
+    const getCreateAddressError = createSelector(
+        (state: CustomerState) => state.errors.createAddressError,
+        error => () => error
+    );
+
+    const isCreatingCustomerAddress = createSelector(
+        (state: CustomerState) => !!state.statuses.isCreatingAddress,
+        status => () => status
+    );
+
     return memoizeOne((
         state: CustomerState = DEFAULT_STATE
     ): CustomerSelector => {
@@ -36,6 +48,8 @@ export function createCustomerSelectorFactory(): CustomerSelectorFactory {
             getCustomer: getCustomer(state),
             getCreateAccountError: getCreateAccountError(state),
             isCreatingCustomerAccount: isCreatingCustomerAccount(state),
+            getCreateAddressError: getCreateAddressError(state),
+            isCreatingCustomerAddress: isCreatingCustomerAddress(state),
         };
     });
 }

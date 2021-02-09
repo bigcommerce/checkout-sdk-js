@@ -1,3 +1,5 @@
+import { AddressRequestBody } from '../address';
+
 export default interface CustomerAccountRequestBody {
     firstName: string;
     lastName: string;
@@ -13,3 +15,5 @@ export default interface CustomerAccountRequestBody {
 export interface CustomerAccountInternalRequestBody extends CustomerAccountRequestBody {
     token?: string;
 }
+
+export type CustomerAddressRequestBody = AddressRequestBody;

@@ -342,6 +342,13 @@ export default interface CheckoutStoreStatusSelector {
      * @returns True if creating, otherwise false.
      */
     isCreatingCustomerAccount(): boolean;
+
+    /**
+     * Checks whether a customer address is being created
+     *
+     * @returns True if creating, otherwise false.
+     */
+    isCreatingCustomerAddress(): boolean;
 }
 
 export type CheckoutStoreStatusSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreStatusSelector;
@@ -446,6 +453,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isUpdatingBillingAddress: state.billingAddress.isUpdating,
             isUpdatingSubscriptions: state.subscriptions.isUpdating,
             isCreatingCustomerAccount: state.customer.isCreatingCustomerAccount,
+            isCreatingCustomerAddress: state.customer.isCreatingCustomerAddress,
             isContinuingAsGuest: state.billingAddress.isContinuingAsGuest,
             isUpdatingShippingAddress: state.shippingStrategies.isUpdatingAddress,
             isUpdatingConsignment: state.consignments.isUpdating,

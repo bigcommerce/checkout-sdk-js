@@ -1,5 +1,5 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, from, of } from 'rxjs';
+import { concat, defer, from, of, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
@@ -7,8 +7,8 @@ import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { isSpamProtectionExecuteSucceededAction, SpamProtectionActionCreator } from '../spam-protection';
 
-import CustomerAccountRequestBody from './customer-account';
-import { CreateCustomerAction, CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
+import CustomerAccountRequestBody, { CustomerAddressRequestBody } from './customer-account';
+import { CreateCustomerAction, CreateCustomerAddressAction, CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
 
@@ -52,6 +52,22 @@ export default class CustomerActionCreator {
                 catchError(error => throwErrorAction(CustomerActionType.CreateCustomerFailed, error))
             );
         };
+    }
+
+    createAddress(
+        customerAddress: CustomerAddressRequestBody,
+        options?: RequestOptions
+    ): Observable<CreateCustomerAddressAction> {
+        return concat(
+            of(createAction(CustomerActionType.CreateCustomerAddressRequested)),
+            defer(async () => {
+                const { body } = await this._customerRequestSender.createAddress(customerAddress, options);
+
+                return createAction(CustomerActionType.CreateCustomerAddressSucceeded, body);
+            })
+        ).pipe(
+            catchError(error => throwErrorAction(CustomerActionType.CreateCustomerAddressFailed, error))
+        );
     }
 
     signInCustomer(

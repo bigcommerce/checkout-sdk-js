@@ -1,8 +1,9 @@
 import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { getResponse } from '../common/http-request/responses.mock';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
-import CustomerAccountRequestBody from './customer-account';
+import CustomerAccountRequestBody, { CustomerAddressRequestBody } from './customer-account';
 import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
@@ -55,6 +56,39 @@ describe('CustomerRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer', {
                 ...options,
                 body: customerAccount,
+            });
+        });
+    });
+
+    describe('#createAddress()', () => {
+        let customerAddress: CustomerAddressRequestBody;
+        let response: Response<InternalCustomerResponseBody>;
+
+        beforeEach(() => {
+            customerAddress = getShippingAddress();
+
+            response = getResponse(getCustomerResponseBody());
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
+        });
+
+        it('posts customer credentials', async () => {
+            const output = await customerRequestSender.createAddress(customerAddress);
+
+            expect(output).toEqual(response);
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer-address', {
+                body: customerAddress,
+            });
+        });
+
+        it('posts customer credentials with timeout', async () => {
+            const options = { timeout: createTimeout() };
+            const output = await customerRequestSender.createAddress(customerAddress, options);
+
+            expect(output).toEqual(response);
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer-address', {
+                ...options,
+                body: customerAddress,
             });
         });
     });

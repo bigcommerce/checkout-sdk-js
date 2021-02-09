@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -564,12 +564,43 @@ export default class CheckoutService {
      * of development. Therefore the API is unstable and not ready for public
      * consumption.
      *
+     * @alpha
      * @param customerAccount - The customer account data.
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
     createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerActionCreator.createCustomer(customerAccount, options);
+
+        return this._dispatch(action);
+    }
+
+    /**
+     * Creates a customer account address.
+     *
+     * @remarks
+     * ```js
+     * checkoutService.createCustomerAddress({
+     *   firstName: 'Foo',
+     *   lastName: 'Bar',
+     *   address1: '55 Market St',
+     *   stateOrProvinceCode: 'CA',
+     *   countryCode: 'US',
+     *   postalCode: '90110'
+     *   customFields: [],
+     * });
+     * ```
+     * Please note that `createCustomerAccountAddress` is currently in an early stage
+     * of development. Therefore the API is unstable and not ready for public
+     * consumption.
+     *
+     * @alpha
+     * @param customerAddress - The customer account data.
+     * @param options - Options for creating customer account.
+     * @returns A promise that resolves to the current state.
+     */
+    createCustomerAddress(customerAddress: CustomerAddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerActionCreator.createAddress(customerAddress, options);
 
         return this._dispatch(action);
     }

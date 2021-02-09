@@ -13,11 +13,14 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
 
+import Customer from './customer';
 import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
 import CustomerRequestSender from './customer-request-sender';
+import { getCustomer } from './customers.mock';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 import { getCustomerResponseBody } from './internal-customers.mock';
 
@@ -28,6 +31,7 @@ describe('CustomerActionCreator', () => {
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let errorResponse: Response<ErrorResponseBody>;
     let response: Response<InternalCustomerResponseBody>;
+    let customerResponse: Response<Customer>;
     let store: CheckoutStore;
 
     beforeEach(() => {
@@ -39,12 +43,14 @@ describe('CustomerActionCreator', () => {
         const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
 
         response = getResponse(getCustomerResponseBody());
+        customerResponse = getResponse(getCustomer());
         errorResponse = getErrorResponse();
         store = createCheckoutStore(getCheckoutStoreState());
 
         customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.resolve({}));
+        jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(Promise.resolve(customerResponse));
         jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.resolve(response));
         jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.resolve(response));
 
@@ -185,20 +191,40 @@ describe('CustomerActionCreator', () => {
                 { type: CustomerActionType.CreateCustomerSucceeded },
             ]);
         });
+    });
 
-        it('emits actions to reload current checkout', async () => {
-            const customer = {
-                email: 'foo@bar.com',
-                password: 'foobar',
-                firstName: 'first',
-                lastName: 'last',
-            };
+    describe('#createAddress()', () => {
+        it('emits actions if able to create customer address', async () => {
+            const address = getShippingAddress();
 
-            await from(customerActionCreator.createCustomer(customer)(store))
+            const actions = await customerActionCreator.createAddress(address)
+                .pipe(toArray())
                 .toPromise();
 
-            expect(checkoutActionCreator.loadCurrentCheckout)
-                .toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerAddressRequested },
+                { type: CustomerActionType.CreateCustomerAddressSucceeded, payload: getCustomer() },
+            ]);
+        });
+
+        it('emits error actions if unable to create customer address', async () => {
+            jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(Promise.reject(errorResponse));
+
+            const address = getShippingAddress();
+
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await customerActionCreator.createAddress(address)
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerAddressRequested },
+                { type: CustomerActionType.CreateCustomerAddressFailed, payload: errorResponse, error: true },
+            ]);
         });
     });
 
