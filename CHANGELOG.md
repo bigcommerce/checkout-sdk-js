@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.126.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.125.0...v1.126.0) (2021-02-09)
+
+
+### Features
+
+* **checkout:** INT-2544 Create strategy For redirect flow on checkout.com apms ([31022c7](https://github.com/bigcommerce/checkout-sdk-js/commit/31022c7aca2f6b3ccff0b51695e1c03aac00d415))
+* **payment:** INT-3831 enable vaulting on cybersource v2 ([7ba0849](https://github.com/bigcommerce/checkout-sdk-js/commit/7ba0849a186fdc9eb6cf029fa7594b37ac9544dd))
+* **shopper:** CHECKOUT-4726 Allow creating customer address ([1546208](https://github.com/bigcommerce/checkout-sdk-js/commit/1546208336baa1b20f07417ab758e085299f452b))
+
 ## [1.125.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.124.1...v1.125.0) (2021-02-03)
 
 

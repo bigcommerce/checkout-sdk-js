@@ -24,6 +24,7 @@ retrieve the current checkout state and subscribe to its changes.
 * [continueAsGuest](checkoutservice.md#continueasguest)
 * [createConsignments](checkoutservice.md#createconsignments)
 * [createCustomerAccount](checkoutservice.md#createcustomeraccount)
+* [createCustomerAddress](checkoutservice.md#createcustomeraddress)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
 * [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
@@ -279,11 +280,50 @@ Please note that `createCustomerAccount` is currently in an early stage
 of development. Therefore the API is unstable and not ready for public
 consumption.
 
+**`alpha`** 
+
 **Parameters:**
 
 Name | Type | Description |
 ------ | ------ | ------ |
 `customerAccount` | [CustomerAccountRequestBody](../interfaces/customeraccountrequestbody.md) | The customer account data. |
+`options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for creating customer account. |
+
+**Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+A promise that resolves to the current state.
+
+___
+
+###  createCustomerAddress
+
+▸ **createCustomerAddress**(`customerAddress`: [CustomerAddressRequestBody](../README.md#customeraddressrequestbody), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+Creates a customer account address.
+
+**`remarks`** 
+```js
+checkoutService.createCustomerAddress({
+  firstName: 'Foo',
+  lastName: 'Bar',
+  address1: '55 Market St',
+  stateOrProvinceCode: 'CA',
+  countryCode: 'US',
+  postalCode: '90110'
+  customFields: [],
+});
+```
+Please note that `createCustomerAccountAddress` is currently in an early stage
+of development. Therefore the API is unstable and not ready for public
+consumption.
+
+**`alpha`** 
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`customerAddress` | [CustomerAddressRequestBody](../README.md#customeraddressrequestbody) | The customer account data. |
 `options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for creating customer account. |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*

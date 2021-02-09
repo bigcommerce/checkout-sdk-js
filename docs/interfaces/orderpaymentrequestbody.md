@@ -37,7 +37,7 @@ ___
 
 ### `Optional` paymentData
 
-• **paymentData**? : *[CreditCardInstrument](creditcardinstrument.md) | [HostedInstrument](hostedinstrument.md) | [HostedCreditCardInstrument](../README.md#hostedcreditcardinstrument) | [HostedVaultedInstrument](../README.md#hostedvaultedinstrument) | [NonceInstrument](nonceinstrument.md) | [VaultedInstrument](vaultedinstrument.md)*
+• **paymentData**? : *[CreditCardInstrument](creditcardinstrument.md) | [HostedInstrument](hostedinstrument.md) | [HostedCreditCardInstrument](../README.md#hostedcreditcardinstrument) | [HostedVaultedInstrument](../README.md#hostedvaultedinstrument) | [NonceInstrument](nonceinstrument.md) | [VaultedInstrument](vaultedinstrument.md) | [CreditCardInstrument](creditcardinstrument.md) & [WithDocumentInstrument](withdocumentinstrument.md)*
 
 An object that contains the details of a credit card, vaulted payment
 instrument or nonce instrument.

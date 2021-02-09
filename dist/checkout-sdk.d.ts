@@ -1790,11 +1790,37 @@ declare class CheckoutService {
      * of development. Therefore the API is unstable and not ready for public
      * consumption.
      *
+     * @alpha
      * @param customerAccount - The customer account data.
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
     createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Creates a customer account address.
+     *
+     * @remarks
+     * ```js
+     * checkoutService.createCustomerAddress({
+     *   firstName: 'Foo',
+     *   lastName: 'Bar',
+     *   address1: '55 Market St',
+     *   stateOrProvinceCode: 'CA',
+     *   countryCode: 'US',
+     *   postalCode: '90110'
+     *   customFields: [],
+     * });
+     * ```
+     * Please note that `createCustomerAccountAddress` is currently in an early stage
+     * of development. Therefore the API is unstable and not ready for public
+     * consumption.
+     *
+     * @alpha
+     * @param customerAddress - The customer account data.
+     * @param options - Options for creating customer account.
+     * @returns A promise that resolves to the current state.
+     */
+    createCustomerAddress(customerAddress: CustomerAddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates the subscriptions associated to an email.
      *
@@ -2568,6 +2594,12 @@ declare interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to create account, otherwise undefined.
      */
     getCreateCustomerAccountError(): Error | undefined;
+    /**
+     * Returns an error if unable to create customer address.
+     *
+     * @returns The error object if unable to create address, otherwise undefined.
+     */
+    getCreateCustomerAddressError(): Error | undefined;
 }
 
 /**
@@ -3080,6 +3112,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if creating, otherwise false.
      */
     isCreatingCustomerAccount(): boolean;
+    /**
+     * Checks whether a customer address is being created
+     *
+     * @returns True if creating, otherwise false.
+     */
+    isCreatingCustomerAddress(): boolean;
 }
 
 declare interface Consignment {
@@ -3335,6 +3373,8 @@ declare interface CustomerAddress extends Address {
     id: number;
     type: string;
 }
+
+declare type CustomerAddressRequestBody = AddressRequestBody;
 
 declare interface CustomerCredentials {
     email: string;
@@ -4331,7 +4371,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -5573,6 +5613,10 @@ declare interface WechatDataPaymentMethodState {
 
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+declare interface WithDocumentInstrument {
+    ccDocument: string;
 }
 
 declare interface ZipCodeElementOptions {

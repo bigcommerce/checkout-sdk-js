@@ -275,6 +275,7 @@
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
 * [WechatState](interfaces/wechatstate.md)
+* [WithDocumentInstrument](interfaces/withdocumentinstrument.md)
 * [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)
 
 ### Type aliases
@@ -290,6 +291,7 @@
 * [BraintreeFormFieldStyles](README.md#braintreeformfieldstyles)
 * [CheckoutIncludeParam](README.md#checkoutincludeparam)
 * [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
+* [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 * [FlashMessageType](README.md#flashmessagetype)
 * [FormFieldFieldType](README.md#formfieldfieldtype)
 * [FormFieldType](README.md#formfieldtype)
@@ -394,6 +396,12 @@ ___
 ###  ConsignmentsRequestBody
 
 Ƭ **ConsignmentsRequestBody**: *[ConsignmentCreateRequestBody](interfaces/consignmentcreaterequestbody.md)[]*
+
+___
+
+###  CustomerAddressRequestBody
+
+Ƭ **CustomerAddressRequestBody**: *[AddressRequestBody](interfaces/addressrequestbody.md)*
 
 ___
 
