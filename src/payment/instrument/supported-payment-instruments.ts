@@ -53,6 +53,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'checkoutcom',
         method: 'credit_card',
     },
+    'checkoutcom.credit_card': {
+        provider: 'checkoutcom',
+        method: 'credit_card',
+    },
     stripe: {
         provider: 'stripe',
         method: 'credit_card',

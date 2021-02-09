@@ -10,6 +10,7 @@ enum PaymentStrategyType {
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',
     CHECKOUTCOM = 'checkoutcom',
+    CHECKOUTCOM_APM = 'checkoutcomapm',
     CREDIT_CARD = 'creditcard',
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
     CYBERSOURCE = 'cybersource',
