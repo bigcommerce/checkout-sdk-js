@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.128.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.127.0...v1.128.0) (2021-02-09)
+
+
+### Features
+
+* **payment:** INT-3659 Add payment method flow to Stripe v3 ([7b4b388](https://github.com/bigcommerce/checkout-sdk-js/commit/7b4b38892bfccf59fb54a7151530c1a447fa532a))
+
 ## [1.127.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.126.0...v1.127.0) (2021-02-09)
 
 
