@@ -147,6 +147,11 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(CyberSourceV2PaymentStrategy);
     });
 
+    it('can instantiate googlepaycybersourcev2', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
     it('can instantiate klarna', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.KLARNA);
         expect(paymentStrategy).toBeInstanceOf(KlarnaPaymentStrategy);
@@ -199,6 +204,11 @@ describe('CreatePaymentStrategyRegistry', () => {
 
     it('can instantiate googlepaybraintree', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_GOOGLE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
+    it('can instantiate googlepaycybersourcev2', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY);
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 

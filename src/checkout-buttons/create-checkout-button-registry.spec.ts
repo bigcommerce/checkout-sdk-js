@@ -37,6 +37,10 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('googlepaybraintree')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 
+    it('returns registry with GooglePay on CybersourceV2 Credit registered', () => {
+        expect(registry.get('googlepaycybersourcev2')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
     it('returns registry with GooglePay on Stripe Credit registered', () => {
         expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
     });

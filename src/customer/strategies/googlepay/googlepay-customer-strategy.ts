@@ -97,6 +97,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             return options.googlepaycheckoutcom;
         }
 
+        if (options.methodId === 'googlepaycybersourcev2' && options.googlepaycybersourcev2) {
+            return options.googlepaycybersourcev2;
+        }
+
         if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
             return options.googlepaystripe;
         }

@@ -122,6 +122,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepaycheckoutcom;
         }
 
+        if (options.methodId === 'googlepaycybersourcev2' && options.googlepaycybersourcev2) {
+            return options.googlepaycybersourcev2;
+        }
+
         if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }
