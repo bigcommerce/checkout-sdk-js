@@ -195,22 +195,27 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
     containerId: string;
     /**
      * The options that are required to facilitate Braintree GooglePay. They can be
-     * omitted unles you need to support Braintree GooglePay.
+     * omitted unless you need to support Braintree GooglePay.
      */
     googlepaybraintree?: GooglePayButtonInitializeOptions;
     /**
      * The options that are required to facilitate Checkout.com GooglePay. They can be
-     * omitted unles you need to support Checkout.com GooglePay.
+     * omitted unless you need to support Checkout.com GooglePay.
      */
     googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
+     * omitted unless you need to support CybersourceV2 GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unles you need to support Stripe GooglePay.
+     * omitted unless you need to support Stripe GooglePay.
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
     /**
      * The options that are required to facilitate Authorize.Net GooglePay.
-     * They can be omitted unles you need to support Authorize.Net GooglePay.
+     * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
     googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 }
@@ -312,6 +317,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
+    GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",

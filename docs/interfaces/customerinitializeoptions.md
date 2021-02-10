@@ -32,6 +32,7 @@ information in order to initialize the customer step of checkout.
 * [googlepayauthorizenet](customerinitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](customerinitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](customerinitializeoptions.md#optional-googlepaycheckoutcom)
+* [googlepaycybersourcev2](customerinitializeoptions.md#optional-googlepaycybersourcev2)
 * [googlepaystripe](customerinitializeoptions.md#optional-googlepaystripe)
 * [masterpass](customerinitializeoptions.md#optional-masterpass)
 * [methodId](customerinitializeoptions.md#optional-methodid)
@@ -106,6 +107,15 @@ ___
 ### `Optional` googlepaycheckoutcom
 
 • **googlepaycheckoutcom**? : *[GooglePayCustomerInitializeOptions](googlepaycustomerinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### `Optional` googlepaycybersourcev2
+
+• **googlepaycybersourcev2**? : *[GooglePayCustomerInitializeOptions](googlepaycustomerinitializeoptions.md)*
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
