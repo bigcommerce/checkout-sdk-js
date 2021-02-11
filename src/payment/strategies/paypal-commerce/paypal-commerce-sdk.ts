@@ -63,7 +63,7 @@ export interface ButtonsOptions {
     onApprove?(data: ApproveDataOptions): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
-    onError?(): void;
+    onError?(error: Error): void;
 }
 
 export interface MessagesOptions {

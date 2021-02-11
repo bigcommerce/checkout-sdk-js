@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { IframeEventListener, IframeEventPoster, IFrameComponent } from '../common/iframe';
+import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 import { bindDecorator as bind } from '../common/utility';
@@ -10,7 +11,6 @@ import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content';
-import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 export const ALLOW_COOKIE_ATTEMPT_INTERVAL = 10 * 60 * 1000;

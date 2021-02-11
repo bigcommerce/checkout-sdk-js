@@ -1,3 +1,5 @@
+import { LoadingIndicatorStyles } from '../common/loading-indicator';
+
 export default interface EmbeddedCheckoutStyles {
     // Base
     body?: BodyStyles;
@@ -85,10 +87,4 @@ export interface ChecklistStyles extends BlockElementStyles {
 
 export interface StepStyles extends BlockElementStyles {
     icon?: BlockElementStyles;
-}
-
-export interface LoadingIndicatorStyles {
-    size?: number;
-    color?: string;
-    backgroundColor?: string;
 }

@@ -1,4 +1,4 @@
-import { LoadingIndicatorStyles } from './embedded-checkout-styles';
+import { LoadingIndicatorStyles } from './loading-indicator-styles';
 
 const DEFAULT_STYLES: LoadingIndicatorStyles = {
     size: 70,
