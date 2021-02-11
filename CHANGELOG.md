@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.129.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.129.0...v1.129.1) (2021-02-11)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5324 Upgrade BigPay client version ([3aa965b](https://github.com/bigcommerce/checkout-sdk-js/commit/3aa965b4258be2a7995d6a2655939ce98d8549f7))
+
 ## [1.129.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.128.0...v1.129.0) (2021-02-10)
 
 
