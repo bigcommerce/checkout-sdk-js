@@ -1,4 +1,4 @@
-import CheckoutButtonStrategy from '../../../checkout-buttons/strategies/checkout-button-strategy';
+import { CheckoutButtonStrategy } from '../../../checkout-buttons/strategies';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
 import { BraintreeClient,
