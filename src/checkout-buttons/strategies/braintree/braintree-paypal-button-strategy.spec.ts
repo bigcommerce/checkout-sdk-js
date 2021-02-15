@@ -67,11 +67,11 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.payment().catch(() => {});
+                    options.createOrder().catch(() => {});
                 });
 
                 eventEmitter.on('authorize', () => {
-                    options.onAuthorize({ payerId: 'PAYER_ID' }).catch(() => {});
+                    options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
                 });
             });
 
@@ -90,6 +90,9 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypal')
             .mockReturnValue(Promise.resolve(paypal));
 
+        jest.spyOn(braintreeSDKCreator, 'getPaypal')
+            .mockReturnValue(Promise.resolve(paypal));
+
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
@@ -97,8 +100,9 @@ describe('BraintreePaypalButtonStrategy', () => {
             store,
             checkoutActionCreator,
             braintreeSDKCreator,
-            paypalScriptLoader,
-            formPoster
+            formPoster,
+            undefined,
+            window
         );
     });
 
@@ -109,8 +113,9 @@ describe('BraintreePaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 braintreeSDKCreator,
-                paypalScriptLoader,
-                formPoster
+                formPoster,
+                undefined,
+                window
             );
 
             await strategy.initialize(options);
@@ -123,13 +128,13 @@ describe('BraintreePaypalButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
-        expect(paypalScriptLoader.loadPaypal).toHaveBeenCalled();
+        expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
     });
 
     it('throws error if unable to initialize Braintree or PayPal JS client', async () => {
         const expectedError = new Error('Unable to load JS client');
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypal')
+        jest.spyOn(braintreeSDKCreator, 'getPaypal')
             .mockReturnValue(Promise.reject(expectedError));
 
         try {
@@ -142,11 +147,11 @@ describe('BraintreePaypalButtonStrategy', () => {
     it('renders PayPal checkout button', async () => {
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith({
+        expect(paypal.Buttons).toHaveBeenCalledWith({
             commit: false,
             env: 'production',
-            onAuthorize: expect.any(Function),
-            payment: expect.any(Function),
+            onApprove: expect.any(Function),
+            createOrder: expect.any(Function),
             style: {
                 label: undefined,
                 shape: 'rect',
@@ -218,8 +223,9 @@ describe('BraintreePaypalButtonStrategy', () => {
             store,
             checkoutActionCreator,
             braintreeSDKCreator,
-            paypalScriptLoader,
-            formPoster
+            formPoster,
+            undefined,
+            window
         );
 
         await strategy.initialize(options);
@@ -472,9 +478,9 @@ describe('BraintreePaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 braintreeSDKCreator,
-                paypalScriptLoader,
                 formPoster,
-                true
+                true,
+                window
             );
         });
 

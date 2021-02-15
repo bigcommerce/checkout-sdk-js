@@ -15,5 +15,6 @@ export function getPaypalMock(): PaypalSDK {
             closeFlow: jest.fn(),
             setup: jest.fn(),
         },
+        Buttons: jest.fn(),
     };
 }
