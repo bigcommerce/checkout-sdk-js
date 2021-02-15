@@ -363,7 +363,11 @@ export interface RenderButtonsData {
 export type RenderButtons = (instance: PaypalClientInstance) => void;
 
 export interface PaypalClientInstance {
-    loadPayPalSDK(callback: RenderButtons): void;
+    loadPayPalSDK(config: Config, callback: RenderButtons): void;
     tokenizePayment(data: PaypalAuthorizeData): BraintreeTokenizePayload;
-    createPayment(): void;
+    createPayment(data: BraintreePaypalRequest): Promise<string>;
+}
+
+export interface Config {
+    currency?: string ;
 }

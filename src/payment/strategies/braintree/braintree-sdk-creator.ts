@@ -8,7 +8,7 @@ import { BraintreeClient,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
+    BraintreeVisaCheckout, Config,
     GooglePayBraintreeSDK,
     PaypalClientInstance,
     RenderButtons } from './braintree';
@@ -26,6 +26,7 @@ export default class BraintreeSDKCreator {
         paypal?: Promise<BraintreeDataCollector>;
     } = {};
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
+    private _paypalcheckoutInstance?: PaypalClientInstance;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -60,20 +61,22 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    getPaypalCheckout(renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(config: Config, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
                 .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {
-                    instance.loadPayPalSDK(() => {
+                    this._paypalcheckoutInstance = instance;
+                    instance.loadPayPalSDK({
+                        currency: config.currency,
+                    }, () => {
                         renderButtonCallback(instance);
                     });
-                }))
-                .catch(error => {
-                    throw error;
-                });
+                }));
+        } else if (this._paypalcheckoutInstance) {
+            renderButtonCallback(this._paypalcheckoutInstance);
         }
 
         return this._paypalCheckout;
