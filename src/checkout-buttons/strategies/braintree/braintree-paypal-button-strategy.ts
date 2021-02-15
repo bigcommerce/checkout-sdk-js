@@ -76,8 +76,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     label: this._offerCredit ? 'credit' : undefined,
                     ...pick(paypalOptions.style, 'layout', 'size', 'color', 'tagline', 'fundingicons'),
                 },
-                createOrder: () => this._setupPayment(paypalOptions.shippingAddress, paypalOptions.onPaymentError),
-                onApprove: (data: PaypalAuthorizeData) => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
+                payment: () => this._setupPayment(paypalOptions.shippingAddress, paypalOptions.onPaymentError),
+                onAuthorize: (data: PaypalAuthorizeData) => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
             }).render(container);
         }
     }

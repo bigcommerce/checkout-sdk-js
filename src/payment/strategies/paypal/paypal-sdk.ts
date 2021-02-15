@@ -24,8 +24,8 @@ export interface PaypalButtonOptions {
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
     client?: PaypalClientToken;
-    createOrder(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
-    onApprove(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
 }
 
 export interface PaypalClientToken {

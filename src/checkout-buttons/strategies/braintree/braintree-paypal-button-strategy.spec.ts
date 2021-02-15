@@ -67,11 +67,11 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.createOrder().catch(() => {});
+                    options.payment().catch(() => {});
                 });
 
                 eventEmitter.on('authorize', () => {
-                    options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
+                    options.onAuthorize({ payerId: 'PAYER_ID' }).catch(() => {});
                 });
             });
 
