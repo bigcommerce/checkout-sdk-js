@@ -41,8 +41,9 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-            new PaypalScriptLoader(scriptLoader),
-            formPoster
+            formPoster,
+            undefined,
+            window
         )
     );
 
@@ -51,9 +52,9 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-            new PaypalScriptLoader(scriptLoader),
             formPoster,
-            true
+            true,
+            window
         )
     );
 

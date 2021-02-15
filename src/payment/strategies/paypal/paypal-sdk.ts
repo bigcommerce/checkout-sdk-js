@@ -2,6 +2,7 @@ export interface PaypalSDK {
     Button: PaypalButton;
     checkout: PaypalExpressCheckout;
     FUNDING: PaypalFundingTypeList;
+    Buttons(options: PaypalButtonOptions): PaypalButtonRender;
 }
 
 export interface PaypalFundingTypeList {
@@ -13,14 +14,18 @@ export interface PaypalButton {
     render(options: PaypalButtonOptions, container: string): void;
 }
 
+export interface PaypalButtonRender {
+    render(container: string): void;
+}
+
 export interface PaypalButtonOptions {
     env?: string;
     commit?: boolean;
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
     client?: PaypalClientToken;
-    payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
-    onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    createOrder(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onApprove(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
 }
 
 export interface PaypalClientToken {
@@ -133,4 +138,5 @@ export interface PaypalExpressCheckoutOptions {
 
 export interface PaypalHostWindow extends Window {
     paypal?: PaypalSDK;
+    flag?: boolean;
 }

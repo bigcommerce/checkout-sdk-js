@@ -1,6 +1,17 @@
+import CheckoutButtonStrategy from '../../../checkout-buttons/strategies/checkout-button-strategy';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeModule, BraintreePaypal, BraintreePaypalCheckout, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeHostedFields,
+    BraintreeHostedFieldsCreatorConfig,
+    BraintreeModule,
+    BraintreePaypal,
+    BraintreePaypalCheckout,
+    BraintreeThreeDSecure,
+    BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
+    RenderButtons } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -43,19 +54,23 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypal(),
             ])
-            .then(([client, paypal]) => paypal.create({ client }));
+                .then(([client, paypal]) => paypal.create({ client }));
         }
 
         return this._paypal;
     }
 
-    getPaypalCheckout(): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(renderButtonCallback: RenderButtons, context: CheckoutButtonStrategy): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
-                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }));
+                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: any) =>  {
+                     instance.loadPayPalSDK(() => {
+                         renderButtonCallback.bind(context)();
+                   });
+                }));
         }
 
         return this._paypalCheckout;
@@ -67,7 +82,7 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.load3DS(),
             ])
-            .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
+                .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
         }
 
         return this._3ds;
@@ -82,14 +97,14 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
-            .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
-            .catch(error => {
-                if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
-                    return { deviceData: undefined, teardown: () => Promise.resolve() };
-                }
+                .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
+                .catch(error => {
+                    if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
+                        return { deviceData: undefined, teardown: () => Promise.resolve() };
+                    }
 
-                throw error;
-            });
+                    throw error;
+                });
 
             this._dataCollectors[cacheKey] = cached;
         }
@@ -103,7 +118,7 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadVisaCheckout(),
             ])
-            .then(([client, visaCheckout]) => visaCheckout.create({ client }));
+                .then(([client, visaCheckout]) => visaCheckout.create({ client }));
         }
 
         return this._visaCheckout;
