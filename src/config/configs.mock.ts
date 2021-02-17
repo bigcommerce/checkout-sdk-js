@@ -26,6 +26,7 @@ export function getConfig(): Config {
                 hasMultiShippingEnabled: true,
                 googleMapsApiKey: '',
                 googleRecaptchaSitekey: 'sitekey',
+                isAccountCreationEnabled: true,
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
                 isStorefrontSpamProtectionEnabled: false,
