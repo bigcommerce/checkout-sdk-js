@@ -131,6 +131,8 @@ export function getBraintreeRequestData(): BraintreeRequestData {
         data: {
             creditCard: {
                 billingAddress: {
+                    countryCodeAlpha2: 'US',
+                    locality: 'Some City',
                     countryName: 'United States',
                     postalCode: '95555',
                     streetAddress: '12345 Testing Way',

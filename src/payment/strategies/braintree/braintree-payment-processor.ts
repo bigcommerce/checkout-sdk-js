@@ -129,7 +129,7 @@ export default class BraintreePaymentProcessor {
         amount: number,
         nonce: string
     ): Promise<BraintreeVerifyPayload> {
-        if (!this._threeDSecureOptions) {
+        if (!this._threeDSecureOptions || !nonce) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -171,6 +171,8 @@ export default class BraintreePaymentProcessor {
                         validate: false,
                     },
                     billingAddress: billingAddress && {
+                        countryCodeAlpha2: billingAddress.countryCode,
+                        locality: billingAddress.city,
                         countryName: billingAddress.country,
                         postalCode: billingAddress.postalCode,
                         streetAddress: billingAddress.address2 ?
