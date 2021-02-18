@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.130.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.130.0...v1.130.1) (2021-02-18)
+
+
+### Bug Fixes
+
+* **checkout:** INT-3665 3D Secure is declining the transaction in Braintree without any reason in some stores ([4d5528e](https://github.com/bigcommerce/checkout-sdk-js/commit/4d5528e0b7fdd3a141898b02d2ae2345af3ac624))
+* **common:** CHECKOUT-5612 Add isAccountCreationEnabled prop to StoreConfig ([74cc00e](https://github.com/bigcommerce/checkout-sdk-js/commit/74cc00e301185aed9acf7b0f42141f0dea035a20))
+
 ## [1.130.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.129.1...v1.130.0) (2021-02-15)
 
 

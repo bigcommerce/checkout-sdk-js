@@ -17,6 +17,7 @@
 * [googleRecaptchaSitekey](checkoutsettings.md#googlerecaptchasitekey)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
 * [hasMultiShippingEnabled](checkoutsettings.md#hasmultishippingenabled)
+* [isAccountCreationEnabled](checkoutsettings.md#isaccountcreationenabled)
 * [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
@@ -80,6 +81,12 @@ ___
 ###  hasMultiShippingEnabled
 
 • **hasMultiShippingEnabled**: *boolean*
+
+___
+
+###  isAccountCreationEnabled
+
+• **isAccountCreationEnabled**: *boolean*
 
 ___
 
