@@ -279,10 +279,40 @@ describe('ZipPaymentStrategy', () => {
             const requestUrl = '/api/storefront/payment/zip/save-external-id';
             jest.spyOn(zipScriptLoader, 'load')
                 .mockResolvedValue(referredZipClient);
-            await strategy.initialize(zipOptions);
 
+            await strategy.initialize(zipOptions);
             await strategy.execute(orderRequestBody, zipOptions);
             expect(requestSender.sendRequest).toHaveBeenCalledWith(requestUrl, expect.any(Object));
+        });
+
+        it('continues to order confirmation if the registration is referred with experiment zip_deferred_flow enabled', async () => {
+            const referredZipClient = getZipScriptMock('referred');
+            const requestUrl = '/api/storefront/payment/zip/save-external-id';
+
+            paymentMethodMock = {
+                ...getZip(),
+                initializationData: {
+                    deferredFlowV2Enabled: true,
+                },
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethodMock);
+
+            jest.spyOn(zipScriptLoader, 'load')
+                .mockResolvedValue(referredZipClient);
+
+            const expectedPayment = {
+                methodId: 'zip',
+                paymentData: {
+                    nonce: 'checkoutId',
+                },
+            };
+
+            await strategy.initialize(zipOptions);
+            await strategy.execute(orderRequestBody, zipOptions);
+            expect(requestSender.sendRequest).toHaveBeenCalledWith(requestUrl, expect.any(Object));
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
     });
 
