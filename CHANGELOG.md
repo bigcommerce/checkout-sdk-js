@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.131.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.130.1...v1.131.0) (2021-02-22)
+
+
+### Features
+
+* **payment:** PAYPAL-876 added preloader for APM when polling mechanism is running ([2d613b8](https://github.com/bigcommerce/checkout-sdk-js/commit/2d613b86e7b195c95ef7e1c0a607a58d11269eb9))
+
 ### [1.130.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.130.0...v1.130.1) (2021-02-18)
 
 
