@@ -1,12 +1,12 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 
 import embedCheckout from './embed-checkout';
 import EmbeddedCheckout from './embedded-checkout';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
-import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('./embedded-checkout', () => {

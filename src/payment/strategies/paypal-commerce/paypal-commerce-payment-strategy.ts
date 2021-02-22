@@ -1,6 +1,7 @@
 import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
+import { LoadingIndicator } from '../../../common/loading-indicator';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
@@ -23,9 +24,13 @@ const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
 const POLLING_INTERVAL = 3000;
 const POLLING_MAX_TIME = 600000;
+const LOADING_INDICATOR_STYLES = {
+    backgroundColor: 'black',
+};
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
+    private _loadingIndicator?: LoadingIndicator;
 
     constructor(
         private _store: CheckoutStore,
@@ -42,7 +47,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle } = initializationData ?? {};
-
+        this._loadingIndicator = new LoadingIndicator({styles: LOADING_INDICATOR_STYLES});
         if (orderId) {
             this._orderId = orderId;
 
@@ -59,6 +64,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         const { container, onRenderButton, submitForm, onValidate } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
+        const loadingIndicatorContainerId = container.split('#')[1];
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode);
         const buttonParams: ButtonsOptions = {
@@ -66,17 +72,23 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             onApprove: data => {
                 this._deinitializePollingTimer(gatewayId);
                 this._tokenizePayment(data, submitForm);
+                this._loadingIndicator?.hide();
+
             },
             onClick: async (_, actions) => {
                 this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
+                this._loadingIndicator?.show(loadingIndicatorContainerId);
 
                 return onValidate(actions.resolve, actions.reject);
             },
             onCancel: () => {
                 this._deinitializePollingTimer(gatewayId);
+                this._loadingIndicator?.hide();
             },
-            onError: () => {
+            onError: (e: Error) => {
                 this._deinitializePollingTimer(gatewayId);
+                this._loadingIndicator?.hide();
+                paypalcommerce.onError?.(e);
             },
         };
 
@@ -132,6 +144,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
     private _initializePollingMechanism(submitForm: () => void, gatewayId?: string, methodId?: any, paypalcommerce?: any ) {
         if (gatewayId !== PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS)  {
+            this._loadingIndicator?.hide();
+
             return;
         }
 
@@ -148,6 +162,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                     this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
                 } else {
                     this._reinitializeButtons({ gatewayId, methodId, paypalcommerce });
+                    this._loadingIndicator?.hide();
                     throw new TimeoutError();
                 }
             } catch (e) {
