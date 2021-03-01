@@ -19,7 +19,11 @@ export default class BoltScriptLoader {
             },
         };
 
-        await this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/connect-bigcommerce.js`, options);
+        await Promise.all([
+            this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/connect-bigcommerce.js`, options),
+            this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/track.js`),
+        ]);
+
         if (!this._window.BoltCheckout) {
             throw new PaymentMethodClientUnavailableError();
         }
