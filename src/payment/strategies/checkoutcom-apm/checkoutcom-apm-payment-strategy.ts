@@ -89,7 +89,7 @@ export default class CheckoutcomAPMPaymentStrategy extends CreditCardPaymentStra
     }
 
     private _createFormattedPayload(methodId: string, paymentData: PaymentInstrument): WithDocumentInstrument {
-        const documentSupportedAPMs = ['boleto', 'oxxo', 'qpay'];
+        const documentSupportedAPMs = ['boleto', 'oxxo', 'qpay', 'ideal'];
         const formattedPayload: WithDocumentInstrument = { ccDocument: '' };
         const { ccDocument: document } = paymentData as WithDocumentInstrument;
 
