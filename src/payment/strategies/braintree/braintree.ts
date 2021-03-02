@@ -360,4 +360,10 @@ export interface RenderButtonsData {
     container: string;
 }
 
-export type RenderButtons = () => void;
+export type RenderButtons = (instance: PaypalClientInstance) => void;
+
+export interface PaypalClientInstance {
+    loadPayPalSDK(callback: RenderButtons): void;
+    tokenizePayment(data: PaypalAuthorizeData): BraintreeTokenizePayload;
+    createPayment(): void;
+}

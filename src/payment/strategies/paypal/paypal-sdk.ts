@@ -24,8 +24,11 @@ export interface PaypalButtonOptions {
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
     client?: PaypalClientToken;
-    payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
-    onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    payment?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onAuthorize?(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+
 }
 
 export interface PaypalClientToken {
@@ -138,5 +141,4 @@ export interface PaypalExpressCheckoutOptions {
 
 export interface PaypalHostWindow extends Window {
     paypal?: PaypalSDK;
-    flag?: boolean;
 }

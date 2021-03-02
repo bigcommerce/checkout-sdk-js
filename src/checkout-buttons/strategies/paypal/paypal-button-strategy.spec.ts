@@ -74,19 +74,25 @@ describe('PaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.payment({
-                        payerId: 'PAYER_ID',
-                        paymentID: 'PAYMENT_ID',
-                        payerID: 'PAYER_ID',
-                    }, actionsMock).catch(() => {});
+                    if (options.payment) {
+                        options.payment({
+                            payerId: 'PAYER_ID',
+                            paymentID: 'PAYMENT_ID',
+                            payerID: 'PAYER_ID',
+                        }, actionsMock).catch(() => {
+                        });
+                    }
                 });
 
                 eventEmitter.on('authorize', () => {
-                    options.onAuthorize({
-                        payerId: 'PAYER_ID',
-                        paymentID: 'PAYMENT_ID',
-                        payerID: 'PAYER_ID',
-                    }, actionsMock).catch(() => {});
+                    if (options.onAuthorize) {
+                        options.onAuthorize({
+                            payerId: 'PAYER_ID',
+                            paymentID: 'PAYMENT_ID',
+                            payerID: 'PAYER_ID',
+                        }, actionsMock).catch(() => {
+                        });
+                    }
                 });
             });
 
