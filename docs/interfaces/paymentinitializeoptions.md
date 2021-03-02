@@ -39,6 +39,7 @@ current checkout flow.
 * [klarnav2](paymentinitializeoptions.md#optional-klarnav2)
 * [masterpass](paymentinitializeoptions.md#optional-masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
+* [mollie](paymentinitializeoptions.md#optional-mollie)
 * [params](paymentinitializeoptions.md#optional-params)
 * [paypalcommerce](paymentinitializeoptions.md#optional-paypalcommerce)
 * [paypalexpress](paymentinitializeoptions.md#optional-paypalexpress)
@@ -232,6 +233,15 @@ ___
 *Inherited from [PaymentInitializeOptions](paymentinitializeoptions.md).[methodId](paymentinitializeoptions.md#methodid)*
 
 The identifier of the payment method.
+
+___
+
+### `Optional` mollie
+
+• **mollie**? : *[MolliePaymentInitializeOptions](molliepaymentinitializeoptions.md)*
+
+The options that are required to initialize the Mollie payment method.
+They can be omitted unless you need to support Mollie.
 
 ___
 

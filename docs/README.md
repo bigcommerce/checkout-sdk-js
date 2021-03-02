@@ -206,6 +206,7 @@
 * [Locales](interfaces/locales.md)
 * [MasterpassCustomerInitializeOptions](interfaces/masterpasscustomerinitializeoptions.md)
 * [MasterpassPaymentInitializeOptions](interfaces/masterpasspaymentinitializeoptions.md)
+* [MolliePaymentInitializeOptions](interfaces/molliepaymentinitializeoptions.md)
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
 * [Order](interfaces/order.md)

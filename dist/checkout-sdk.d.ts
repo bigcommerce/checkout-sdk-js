@@ -4315,6 +4315,14 @@ declare interface MasterpassPaymentInitializeOptions {
     walletButton?: string;
 }
 
+declare interface MolliePaymentInitializeOptions {
+    cardNumberId: string;
+    cardHolderId: string;
+    cardCvcId: string;
+    cardExpiryId: string;
+    styles: object;
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
@@ -4536,6 +4544,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeV3.
      */
     stripev3?: StripeV3PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Mollie payment method.
+     * They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
 }
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;

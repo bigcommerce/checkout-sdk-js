@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.132.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.131.0...v1.132.0) (2021-03-02)
+
+
+### Features
+
+* **checkout:** INT-3675 Add Bolt's tracking script to checkout ([f6faa1a](https://github.com/bigcommerce/checkout-sdk-js/commit/f6faa1a8c7914a751e01c0d3ab8a0c1987bb573a))
+* **payment:** INT-3408 migrate masterpass to SRC ([7f30282](https://github.com/bigcommerce/checkout-sdk-js/commit/7f3028278516b5433767d0e89b8313f54c0053f8))
+* **payment:** INT-3610 added Mollie Checkout ([d8f3df6](https://github.com/bigcommerce/checkout-sdk-js/commit/d8f3df6981770b2ae469d53d71005f86d58cc151))
+
 ## [1.131.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.130.1...v1.131.0) (2021-02-22)
 
 
