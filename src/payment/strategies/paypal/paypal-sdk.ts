@@ -34,8 +34,8 @@ export interface PaypalClientToken {
 }
 
 export interface PaypalFundingType {
-    allowed?: string[];
-    disallowed?: string[];
+    allowed?: Array<string | undefined>;
+    disallowed?: Array<string | undefined>;
 }
 
 export interface PaypalButtonStyleOptions {

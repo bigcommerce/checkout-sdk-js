@@ -5,7 +5,12 @@ import { Address, LegacyAddress } from '../../../address';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
-import { BraintreeError, BraintreePaypalCheckout, BraintreeShippingAddressOverride, BraintreeSDKCreator, BraintreeTokenizePayload, RenderButtonsData } from '../../../payment/strategies/braintree';
+import { BraintreeError,
+    BraintreePaypalCheckout,
+    BraintreeShippingAddressOverride,
+    BraintreeSDKCreator,
+    BraintreeTokenizePayload,
+    RenderButtonsData } from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -42,10 +47,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             container,
         };
 
-        const that = this;
-
         return Promise.all([
-            this._braintreeSDKCreator.getPaypalCheckout(this.renderButtons, that),
+            this._braintreeSDKCreator.getPaypalCheckout(() => this.renderButtons()),
             this._braintreeSDKCreator.getPaypal(),
         ])
             .then(([paypalCheckout]) => {
@@ -59,22 +62,22 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const { paypalOptions, paymentMethod, container } = this._renderButtonsData as RenderButtonsData;
 
         if (paypalOptions.allowCredit) {
-            allowedSources.push((this._window && this._window.paypal) && this._window.paypal.FUNDING.CREDIT);
+            allowedSources.push(this._window.paypal?.FUNDING.CREDIT);
         } else {
-            disallowedSources.push((this._window && this._window.paypal) && this._window.paypal.FUNDING.CREDIT);
+            disallowedSources.push(this._window.paypal?.FUNDING.CREDIT);
         }
         if (this._window && this._window.paypal) {
             this._window.paypal.Buttons({
                 env: paymentMethod.config.testMode ? 'sandbox' : 'production',
                 commit: paypalOptions.shouldProcessPayment ? true : false,
                 funding: {
-                    allowed: allowedSources as string[],
-                    disallowed: disallowedSources as string[],
+                    allowed: allowedSources,
+                    disallowed: disallowedSources,
                 },
                 style: {
                     shape: 'rect',
                     label: this._offerCredit ? 'credit' : undefined,
-                    ...pick(paypalOptions.style, 'layout', 'size', 'color', 'tagline', 'fundingicons'),
+                    ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
                 },
                 payment: () => this._setupPayment(paypalOptions.shippingAddress, paypalOptions.onPaymentError),
                 onAuthorize: (data: PaypalAuthorizeData) => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),

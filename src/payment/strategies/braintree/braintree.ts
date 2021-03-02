@@ -359,3 +359,7 @@ export interface RenderButtonsData {
 }
 
 export type RenderButtons = () => void;
+
+export interface PaypalClientInstance {
+    loadPayPalSDK(callback: RenderButtons): void;
+}

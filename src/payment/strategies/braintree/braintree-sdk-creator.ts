@@ -1,4 +1,3 @@
-import { CheckoutButtonStrategy } from '../../../checkout-buttons/strategies';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
 import { BraintreeClient,
@@ -11,6 +10,7 @@ import { BraintreeClient,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
     GooglePayBraintreeSDK,
+    PaypalClientInstance,
     RenderButtons } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
@@ -60,17 +60,20 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    getPaypalCheckout(renderButtonCallback: RenderButtons, context: CheckoutButtonStrategy): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
-                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: any) =>  {
-                     instance.loadPayPalSDK(() => {
-                         renderButtonCallback.bind(context)();
-                   });
-                }));
+                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {
+                    instance.loadPayPalSDK(() => {
+                        renderButtonCallback();
+                    });
+                }))
+                .catch(error => {
+                    throw error;
+                });
         }
 
         return this._paypalCheckout;

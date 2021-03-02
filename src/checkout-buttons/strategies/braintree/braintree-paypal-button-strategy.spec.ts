@@ -14,7 +14,10 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
 import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
-import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import { PaypalButtonOptions,
+    PaypalHostWindow,
+    PaypalScriptLoader,
+    PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -75,6 +78,21 @@ describe('BraintreePaypalButtonStrategy', () => {
                 });
             });
 
+        jest.spyOn(paypal, 'Buttons')
+            .mockImplementation((options: PaypalButtonOptions) => {
+                eventEmitter.on('payment', () => {
+                    options.payment().catch(() => {});
+                });
+
+                eventEmitter.on('authorize', () => {
+                    options.onAuthorize({ payerId: 'PAYER_ID' }).catch(() => {});
+                });
+
+                return {
+                    render: jest.fn(),
+                };
+            });
+
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
             .mockReturnValue(() => from([
                 createAction(CheckoutActionType.LoadCheckoutRequested),
@@ -82,7 +100,11 @@ describe('BraintreePaypalButtonStrategy', () => {
             ]));
 
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
-            .mockReturnValue(Promise.resolve(paypalCheckout));
+            .mockImplementation(callback => {
+                callback();
+
+                return Promise.resolve(paypalCheckout);
+            });
 
         jest.spyOn(braintreeSDKCreator, 'getDataCollector')
             .mockReturnValue(Promise.resolve(dataCollector));
@@ -96,6 +118,8 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
+        (window as PaypalHostWindow).paypal = paypal;
+
         strategy = new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -104,6 +128,10 @@ describe('BraintreePaypalButtonStrategy', () => {
             undefined,
             window
         );
+    });
+
+    afterEach(() => {
+        delete (window as PaypalHostWindow).paypal;
     });
 
     it('throws error if required data is not loaded', async () => {
@@ -150,8 +178,8 @@ describe('BraintreePaypalButtonStrategy', () => {
         expect(paypal.Buttons).toHaveBeenCalledWith({
             commit: false,
             env: 'production',
-            onApprove: expect.any(Function),
-            createOrder: expect.any(Function),
+            onAuthorize: expect.any(Function),
+            payment: expect.any(Function),
             style: {
                 label: undefined,
                 shape: 'rect',
@@ -160,7 +188,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                 allowed: [],
                 disallowed: [paypal.FUNDING.CREDIT],
             },
-        }, 'checkout-button');
+        });
     });
 
     it('customizes style of PayPal checkout button', async () => {
@@ -182,7 +210,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith(expect.objectContaining({
+        expect(paypal.Buttons).toHaveBeenCalledWith(expect.objectContaining({
             style: {
                 color: 'blue',
                 shape: 'pill',
@@ -192,13 +220,12 @@ describe('BraintreePaypalButtonStrategy', () => {
                 tagline: true,
                 fundingicons: false,
             },
-        }), 'checkout-button');
+        }));
     });
 
     it('throws error if unable to render PayPal button', async () => {
         const expectedError = new Error('Unable to render PayPal button');
-
-        jest.spyOn(paypal.Button, 'render')
+        jest.spyOn(paypal, 'Buttons')
             .mockImplementation(() => {
                 throw expectedError;
             });
@@ -230,8 +257,8 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render)
-            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }), 'checkout-button');
+        expect(paypal.Buttons)
+            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }));
     });
 
     it('loads checkout details when customer is ready to pay', async () => {
@@ -487,7 +514,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         it('renders PayPal Credit checkout button', async () => {
             await strategy.initialize(options);
 
-            expect(paypal.Button.render).toHaveBeenCalledWith({
+            expect(paypal.Buttons).toHaveBeenCalledWith({
                 commit: false,
                 env: 'production',
                 onAuthorize: expect.any(Function),
@@ -500,7 +527,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                     allowed: [paypal.FUNDING.CREDIT],
                     disallowed: [],
                 },
-            }, 'checkout-button');
+            });
         });
 
         it('sets up PayPal Credit payment flow with current checkout details when customer is ready to pay', async () => {
