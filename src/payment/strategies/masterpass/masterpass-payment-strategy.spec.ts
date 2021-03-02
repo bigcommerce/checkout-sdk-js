@@ -91,6 +91,9 @@ describe('MasterpassPaymentStrategy', () => {
 
         it('throws an exception if masterpass options is not passed', () => {
             initOptions.masterpass = undefined;
+            paymentMethodMock.initializationData = {
+                checkoutId: 'checkout-id',
+            };
             const error = 'Unable to initialize payment because "options.masterpass" argument is not provided.';
 
             return expect(strategy.initialize(initOptions)).rejects.toThrow(error);
@@ -102,7 +105,7 @@ describe('MasterpassPaymentStrategy', () => {
 
             beforeEach(() => {
                 paymentMethodMock.initializationData = {
-                    allowedCardTypes: ['visa', 'amex', 'mastercard'],
+                    allowedCardTypes: ['visa', 'amex', 'master'],
                     checkoutId: 'checkout-id',
                 };
 
@@ -110,13 +113,12 @@ describe('MasterpassPaymentStrategy', () => {
                     allowedCardTypes: [
                         'visa',
                         'amex',
-                        'mastercard',
+                        'master',
                     ],
                     amount: '190.00',
                     cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     checkoutId: 'checkout-id',
                     currency: 'USD',
-                    suppressShippingAddress: false,
                     callbackUrl: getCallbackUrlMock(),
                 };
 
@@ -126,7 +128,7 @@ describe('MasterpassPaymentStrategy', () => {
 
             it('loads the script and calls the checkout when the wallet button is clicked', async () => {
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(false);
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(false, 'en_US', 'checkout-id');
                 walletButton.click();
                 expect(masterpassScript.checkout).toHaveBeenCalledWith(payload);
             });
@@ -134,7 +136,7 @@ describe('MasterpassPaymentStrategy', () => {
             it('loads the script in test mode, and calls the checkout when the wallet button is clicked', async () => {
                 paymentMethodMock.config.testMode = true;
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(true);
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkout-id');
                 walletButton.click();
                 expect(masterpassScript.checkout).toHaveBeenCalled();
             });
@@ -143,7 +145,7 @@ describe('MasterpassPaymentStrategy', () => {
                 paymentMethodMock.config.testMode = true;
                 initOptions.masterpass = {};
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(true);
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkout-id');
                 walletButton.click();
                 expect(masterpassScript.checkout).not.toHaveBeenCalled();
             });

@@ -5,7 +5,7 @@ import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
@@ -50,6 +50,9 @@ describe('MasterpassCustomerStrategy', () => {
 
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
+
+        jest.spyOn(store.getState().config, 'getStoreConfig')
+        .mockReturnValue(getConfig().storeConfig);
 
         requestSender = createRequestSender();
 
@@ -99,7 +102,7 @@ describe('MasterpassCustomerStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(true);
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkoutId');
         });
 
         it('loads masterpass without test mode if disabled', async () => {
@@ -107,7 +110,7 @@ describe('MasterpassCustomerStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false, 'en_US', 'checkoutId');
         });
 
         it('fails to initialize the strategy if no methodId is supplied', async () => {

@@ -10,9 +10,9 @@ export default class MasterpassScriptLoader {
         public _window: MasterpassHostWindow = window
     ) {}
 
-    load(testMode?: boolean): Promise<Masterpass> {
+    load(testMode?: boolean, locale?: string, checkoutId?: string): Promise<Masterpass> {
         return this._scriptLoader
-            .loadScript(`//${testMode ? 'sandbox.' : ''}masterpass.com/integration/merchant.js`)
+            .loadScript(`https://${testMode ? 'sandbox.' : ''}src.mastercard.com/srci/integration/merchant.js?locale=${locale}&checkoutid=${checkoutId}`)
             .then(() => {
                 if (!this._window.masterpass) {
                     throw new PaymentMethodClientUnavailableError();

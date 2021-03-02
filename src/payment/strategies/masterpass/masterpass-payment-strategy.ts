@@ -26,14 +26,19 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
-
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfig();
         this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
         if (!this._paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode)
+        if (!storeConfig) {
+            throw new InvalidArgumentError('Unable to retrieve store configuration');
+        }
+
+        return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode, storeConfig.storeProfile.storeLanguage, this._paymentMethod.initializationData.checkoutId)
             .then(masterpass => {
                 this._masterpassClient = masterpass;
 
@@ -116,7 +121,6 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
             amount: checkout.subtotal.toFixed(2),
             currency: storeConfig.currency.code,
             cartId: checkout.cart.id,
-            suppressShippingAddress: false,
             callbackUrl: getCallbackUrl('checkout'),
         };
     }

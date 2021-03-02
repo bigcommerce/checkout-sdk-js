@@ -37,6 +37,11 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
 
+                const storeConfig = state.config.getStoreConfig();
+                if (!storeConfig) {
+                    throw new InvalidArgumentError('Unable to retrieve store configuration');
+                }
+
                 const { container } = masterpassOptions;
 
                 const payload = {
@@ -49,7 +54,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                     callbackUrl: getCallbackUrl('checkout'),
                 };
 
-                return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode)
+                return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode, storeConfig.storeProfile.storeLanguage, this._paymentMethod.initializationData.checkoutId)
                     .then(Masterpass => {
                         this._signInButton = this._createSignInButton(container);
 
@@ -93,15 +98,25 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
     private _createSignInButton(containerId: string): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfig();
+
+        if (!this._paymentMethod || !this._paymentMethod.initializationData.checkoutId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
+        if (!storeConfig) {
+            throw new InvalidArgumentError('Unable to retrieve store configuration');
+        }
+
         const button = document.createElement('input');
 
         button.type = 'image';
-        button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
+        button.src = `https://${this._paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${this._paymentMethod.initializationData.checkoutId}`;
         container.appendChild(button);
 
         return button;
