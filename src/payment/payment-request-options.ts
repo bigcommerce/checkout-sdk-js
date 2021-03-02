@@ -12,6 +12,7 @@ import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
+import { MolliePaymentInitializeOptions } from './strategies/mollie';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
@@ -174,4 +175,10 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeV3.
      */
     stripev3?: StripeV3PaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Mollie payment method.
+     * They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
 }

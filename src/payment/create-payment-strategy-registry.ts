@@ -44,6 +44,7 @@ import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
+import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
@@ -595,6 +596,15 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.MOLLIE, () =>
+        new MolliePaymentStrategy(
+            store,
+            new MollieScriptLoader(scriptLoader),
+            orderActionCreator,
+            paymentActionCreator
         )
     );
 
