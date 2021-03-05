@@ -16,7 +16,7 @@ import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
-import { CheckoutcomAPMPaymentStrategy } from './strategies/checkoutcom-apm';
+import { CheckoutcomAPMPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
@@ -126,6 +126,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate checkout.com apms', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CHECKOUTCOM_APM);
         expect(paymentStrategy).toBeInstanceOf(CheckoutcomAPMPaymentStrategy);
+    });
+
+    it('can instantiate checkout.com SEPA', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CHECKOUTCOM_SEPA);
+        expect(paymentStrategy).toBeInstanceOf(CheckoutcomSEPAPaymentStrategy);
     });
 
     it('can instantiate converge', () => {

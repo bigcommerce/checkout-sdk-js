@@ -3,13 +3,12 @@ import { NotInitializedError, NotInitializedErrorType, RequestError } from '../.
 import { OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
-import { PaymentInstrument, WithDocumentInstrument } from '../../payment';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import { AdditionalActionRequired, AdditionalActionType } from '../../payment-response-body';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { CreditCardPaymentStrategy } from '../credit-card';
 
-export default class CheckoutcomAPMPaymentStrategy extends CreditCardPaymentStrategy {
+export default class CheckoutcomCustomPaymentStrategy extends CreditCardPaymentStrategy {
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
@@ -20,28 +19,6 @@ export default class CheckoutcomAPMPaymentStrategy extends CreditCardPaymentStra
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
-    }
-
-    protected async _executeWithoutHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { payment, ...order } = payload;
-        const paymentData = payment && payment.paymentData;
-
-        if (!payment || !paymentData) {
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
-        }
-
-        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-
-        const _paymentData = {
-            ...paymentData,
-            formattedPayload: this._createFormattedPayload(payment.methodId, paymentData),
-        };
-
-        try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData: _paymentData }));
-        } catch (error) {
-            return this._processResponse(error);
-        }
     }
 
     protected async _executeWithHostedForm(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors>  {
@@ -67,7 +44,7 @@ export default class CheckoutcomAPMPaymentStrategy extends CreditCardPaymentStra
         return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
     }
 
-    private _processResponse(error: RequestError): Promise<InternalCheckoutSelectors> {
+    protected _processResponse(error: RequestError): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError)) {
             return Promise.reject(error);
         }
@@ -86,17 +63,5 @@ export default class CheckoutcomAPMPaymentStrategy extends CreditCardPaymentStra
         return new Promise(() => {
             window.location.replace(additionalActionRequired.data.redirect_url);
         });
-    }
-
-    private _createFormattedPayload(methodId: string, paymentData: PaymentInstrument): WithDocumentInstrument {
-        const documentSupportedAPMs = ['boleto', 'oxxo', 'qpay', 'ideal'];
-        const formattedPayload: WithDocumentInstrument = { ccDocument: '' };
-        const { ccDocument: document } = paymentData as WithDocumentInstrument;
-
-        if (documentSupportedAPMs.indexOf(methodId) !== -1 && document) {
-            formattedPayload.ccDocument = document;
-        }
-
-        return formattedPayload;
     }
 }
