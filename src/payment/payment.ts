@@ -15,9 +15,10 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithHostedFormNonce |
     CreditCardInstrument & WithDocumentInstrument |
     CreditCardInstrument & WithCheckoutcomiDealInstrument |
+    CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent> |
+    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -56,6 +57,11 @@ export interface WithCheckoutcomSEPAInstrument {
 
 export interface WithCheckoutcomiDealInstrument {
     bic: string;
+}
+
+export interface WithCheckoutcomFawryInstrument {
+    customerMobile: string;
+    customerEmail: string;
 }
 
 export interface WithHostedFormNonce {
