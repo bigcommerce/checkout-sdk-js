@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.133.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.132.0...v1.133.0) (2021-03-10)
+
+
+### Features
+
+* **checkout:** INT-3700 Load Bolt Scripts from different environments ([980e9be](https://github.com/bigcommerce/checkout-sdk-js/commit/980e9be9bd9d983dbb8a77ede24b1e6e09d8f5c7))
+
 ## [1.132.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.131.0...v1.132.0) (2021-03-02)
 
 
