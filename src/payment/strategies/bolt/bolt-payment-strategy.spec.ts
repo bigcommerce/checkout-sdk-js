@@ -120,7 +120,13 @@ describe('BoltPaymentStrategy', () => {
     describe('#initialize', () => {
         it('successfully initializes the bolt strategy and loads the bolt client', async () => {
             await expect(strategy.initialize(boltClientScriptInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true);
+            expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true, undefined);
+        });
+
+        it('successfully initializes the bolt strategy and loads the bolt client with developer params', async () => {
+            paymentMethodMock.initializationData.developerConfig = { developerMode: 'bolt_sandbox', developerDomain: '' };
+            await expect(strategy.initialize(boltClientScriptInitializationOptions)).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
         });
 
         it('fails to initialize the bolt strategy if publishableKey is not provided', async () => {

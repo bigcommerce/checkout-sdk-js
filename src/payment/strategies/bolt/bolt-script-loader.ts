@@ -2,7 +2,7 @@ import { LoadScriptOptions, ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { BoltCheckout, BoltHostWindow } from './bolt';
+import { BoltCheckout, BoltDeveloperMode, BoltDeveloperModeParams, BoltHostWindow } from './bolt';
 
 export default class BoltScriptLoader {
     constructor(
@@ -10,7 +10,7 @@ export default class BoltScriptLoader {
         public _window: BoltHostWindow = window
     ) {}
 
-    async load(publishableKey: string, testMode?: boolean): Promise<BoltCheckout> {
+    async load(publishableKey: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
         const options: LoadScriptOptions = {
             async: true,
             attributes: {
@@ -20,8 +20,8 @@ export default class BoltScriptLoader {
         };
 
         await Promise.all([
-            this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/connect-bigcommerce.js`, options),
-            this._scriptLoader.loadScript(`//connect${testMode ? '-sandbox' : ''}.bolt.com/track.js`),
+            this._scriptLoader.loadScript(`//${this.getDomainURL(!!testMode, developerModeParams)}/connect-bigcommerce.js`, options),
+            this._scriptLoader.loadScript(`//${this.getDomainURL(!!testMode, developerModeParams)}/track.js`),
         ]);
 
         if (!this._window.BoltCheckout) {
@@ -29,5 +29,23 @@ export default class BoltScriptLoader {
         }
 
         return this._window.BoltCheckout;
+    }
+
+    private getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
+
+        if (!testMode) {
+            return 'connect.bolt.com';
+        }
+
+        if (developerModeParams) {
+            switch (developerModeParams.developerMode) {
+                case BoltDeveloperMode.StagingMode:
+                    return 'connect-staging.bolt.com';
+                case BoltDeveloperMode.DevelopmentMode:
+                    return `connect.${developerModeParams.developerDomain}`;
+            }
+        }
+
+        return 'connect-sandbox.bolt.com';
     }
 }

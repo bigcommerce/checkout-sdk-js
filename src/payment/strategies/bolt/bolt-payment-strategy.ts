@@ -40,9 +40,9 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            const { publishableKey } = paymentMethod.initializationData;
+            const { developerConfig, publishableKey } = paymentMethod.initializationData;
 
-            this._boltClient = await this._boltScriptLoader.load(publishableKey, paymentMethod.config.testMode);
+            this._boltClient = await this._boltScriptLoader.load(publishableKey, paymentMethod.config.testMode, developerConfig);
         }
 
         return Promise.resolve(this._store.getState());

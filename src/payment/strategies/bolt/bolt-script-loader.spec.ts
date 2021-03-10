@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { BoltCheckout, BoltHostWindow } from './bolt';
+import { BoltCheckout, BoltDeveloperMode, BoltHostWindow } from './bolt';
 import BoltScriptLoader from './bolt-script-loader';
 import { getBoltScriptMock } from './bolt.mock';
 
@@ -38,11 +38,32 @@ describe('BoltScriptLoader', () => {
         });
 
         it('loads the bolt script in test mode', async () => {
-          await boltScriptLoader.load(publishableKey, true);
+            await boltScriptLoader.load(publishableKey, true);
 
-          expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
-          expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
-      });
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
+        });
+
+        it('loads the bolt script in staging mode', async () => {
+            await boltScriptLoader.load(publishableKey, true, { developerMode: BoltDeveloperMode.StagingMode, developerDomain: ''});
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-staging.bolt.com/connect-bigcommerce.js', expect.any(Object));
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-staging.bolt.com/track.js');
+        });
+
+        it('loads the bolt script in sandbox mode', async () => {
+            await boltScriptLoader.load(publishableKey, true, { developerMode: BoltDeveloperMode.SandboxMode, developerDomain: ''});
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
+        });
+
+        it('loads the bolt script in development mode', async () => {
+            await boltScriptLoader.load(publishableKey, true, { developerMode: BoltDeveloperMode.DevelopmentMode, developerDomain: 'test.sample.com'});
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.test.sample.com/connect-bigcommerce.js', expect.any(Object));
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.test.sample.com/track.js');
+        });
 
         it('returns the Bolt Client from the window', async () => {
             const client = await boltScriptLoader.load(publishableKey);
