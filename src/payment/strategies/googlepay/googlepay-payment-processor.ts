@@ -213,6 +213,8 @@ export default class GooglePayPaymentProcessor {
         const remoteBillingAddress = this._store.getState().billingAddress.getBillingAddress();
 
         if (!remoteBillingAddress) {
+            console.log('The billing address does not exist');
+
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
