@@ -16,6 +16,7 @@ enum PaymentStrategyType {
     CONVERGE = 'converge',
     CYBERSOURCE = 'cybersource',
     CYBERSOURCEV2 = 'cybersourcev2',
+    DIGITALRIVER = 'digitalriver',
     CYBERSOURCEV2_GOOGLE_PAY = 'googlepaycybersourcev2',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',

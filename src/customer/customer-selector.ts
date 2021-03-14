@@ -1,12 +1,15 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 
 import Customer from './customer';
 import CustomerState, { DEFAULT_STATE } from './customer-state';
 
 export default interface CustomerSelector {
     getCustomer(): Customer | undefined;
+    getCustomerOrThrow(): Customer;
     getCreateAccountError(): Error | undefined;
     isCreatingCustomerAccount(): boolean;
     getCreateAddressError(): Error | undefined;
@@ -19,6 +22,13 @@ export function createCustomerSelectorFactory(): CustomerSelectorFactory {
     const getCustomer = createSelector(
         (state: CustomerState) => state.data,
         customer => () => customer
+    );
+
+    const getCustomerOrThrow = createSelector(
+        getCustomer,
+        getCustomer => () => {
+            return guard(getCustomer(), () => new MissingDataError(MissingDataErrorType.MissingCustomer));
+        }
     );
 
     const getCreateAccountError = createSelector(
@@ -46,6 +56,7 @@ export function createCustomerSelectorFactory(): CustomerSelectorFactory {
     ): CustomerSelector => {
         return {
             getCustomer: getCustomer(state),
+            getCustomerOrThrow: getCustomerOrThrow(state),
             getCreateAccountError: getCreateAccountError(state),
             isCreatingCustomerAccount: isCreatingCustomerAccount(state),
             getCreateAddressError: getCreateAddressError(state),

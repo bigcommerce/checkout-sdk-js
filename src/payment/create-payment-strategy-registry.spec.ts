@@ -22,6 +22,7 @@ import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
+import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
@@ -145,6 +146,12 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate cybersourcev2', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2);
         expect(paymentStrategy).toBeInstanceOf(CyberSourceV2PaymentStrategy);
+    });
+
+    it('can instantiate digitalRiver', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.DIGITALRIVER);
+
+        expect(paymentStrategy).toBeInstanceOf(DigitalRiverPaymentStrategy);
     });
 
     it('can instantiate googlepaycybersourcev2', () => {

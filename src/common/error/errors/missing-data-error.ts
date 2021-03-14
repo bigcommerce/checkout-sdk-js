@@ -5,6 +5,7 @@ export enum MissingDataErrorType {
     MissingCart,
     MissingCheckout,
     MissingConsignments,
+    MissingCustomer,
     MissingCheckoutConfig,
     MissingOrder,
     MissingOrderConfig,
@@ -45,6 +46,9 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingCheckout:
         return 'Unable to proceed because checkout data is unavailable.';
+
+    case MissingDataErrorType.MissingCustomer:
+        return 'Unable to proceed because customer data is unavailable.';
 
     case MissingDataErrorType.MissingCheckoutConfig:
     case MissingDataErrorType.MissingOrderConfig:

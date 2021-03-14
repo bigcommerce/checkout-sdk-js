@@ -8,6 +8,7 @@ import { BoltPaymentInitializeOptions } from './strategies/bolt';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
+import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
@@ -91,6 +92,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * support Visa Checkout.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Digital River payment method.
+     * They can be omitted unless you need to support Digital River.
+     */
+    digitalriver?: DigitalRiverPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Klarna payment method.
