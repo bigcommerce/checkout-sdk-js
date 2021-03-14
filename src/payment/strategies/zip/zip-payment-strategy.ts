@@ -85,6 +85,10 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
                     if (state === ZipModalEvent.CheckoutReferred && checkoutId) {
                         await this._prepareForReferredRegistration(payment.methodId, checkoutId);
 
+                        if (this._paymentMethod?.initializationData?.deferredFlowV2Enabled) {
+                            return resolve(checkoutId);
+                        }
+
                         return resolve();
                     }
 
