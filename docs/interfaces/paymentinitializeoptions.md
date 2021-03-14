@@ -28,6 +28,7 @@ current checkout flow.
 * [braintreevisacheckout](paymentinitializeoptions.md#optional-braintreevisacheckout)
 * [chasepay](paymentinitializeoptions.md#optional-chasepay)
 * [creditCard](paymentinitializeoptions.md#optional-creditcard)
+* [digitalriver](paymentinitializeoptions.md#optional-digitalriver)
 * [gatewayId](paymentinitializeoptions.md#optional-gatewayid)
 * [googlepayadyenv2](paymentinitializeoptions.md#optional-googlepayadyenv2)
 * [googlepayauthorizenet](paymentinitializeoptions.md#optional-googlepayauthorizenet)
@@ -130,6 +131,15 @@ ___
 Please note that this option is currently in an early stage of
 development. Therefore the API is unstable and not ready for public
 consumption.
+
+___
+
+### `Optional` digitalriver
+
+• **digitalriver**? : *[DigitalRiverPaymentInitializeOptions](digitalriverpaymentinitializeoptions.md)*
+
+The options that are required to initialize the Digital River payment method.
+They can be omitted unless you need to support Digital River.
 
 ___
 

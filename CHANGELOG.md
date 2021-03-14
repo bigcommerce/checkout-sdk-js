@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.134.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.133.0...v1.134.0) (2021-03-14)
+
+
+### Features
+
+* **payment:** INT-3840 creating digital river strategy ([6062bbf](https://github.com/bigcommerce/checkout-sdk-js/commit/6062bbf9d78c6c9c9f5cadb8f0c6a619c8af6827))
+* **payment:** INT-3896 [Zip] it returns the nonce value when it's a referred payment ([d123551](https://github.com/bigcommerce/checkout-sdk-js/commit/d12355120b5ebef56de44dcb16c5c45f3a1dbcbc))
+
 ## [1.133.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.132.0...v1.133.0) (2021-03-10)
 
 
