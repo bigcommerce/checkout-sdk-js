@@ -2,6 +2,8 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { StoreCreditActionCreator } from '../../../store-credit';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -22,6 +24,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _storeCreditActionCreator: StoreCreditActionCreator,
         private _digitalRiverScriptLoader: DigitalRiverScriptLoader
     ) {}
 
@@ -86,6 +90,11 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
+        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+
+        if (useStoreCredit !== undefined) {
+            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+        }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
@@ -93,7 +102,17 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
         }
 
-        return Promise.resolve(this._store.getState());
+        const paymentPayload = {
+            methodId: payment.methodId,
+            paymentData: {
+                nonce: JSON.stringify({
+                    checkoutId: this._digitalRiverCheckoutId,
+                    source: this._loadSuccessResponse,
+                }),
+            },
+        };
+
+        return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
