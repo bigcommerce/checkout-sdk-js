@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.134.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.0...v1.134.1) (2021-03-16)
+
+
+### Bug Fixes
+
+* **checkout:** INT-2546 Add ideal to document supported apms ([9c69506](https://github.com/bigcommerce/checkout-sdk-js/commit/9c695064612a01a7ce66d1a47a09c6b0e884715e))
+
 ## [1.134.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.133.0...v1.134.0) (2021-03-14)
 
 
