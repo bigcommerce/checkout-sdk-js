@@ -109,7 +109,7 @@ export function getGooglePayAddressMock(): GooglePayAddress {
         companyName: 'mock',
         countryCode: 'mock',
         locality: 'mock',
-        name: 'mock',
+        name: 'mock mock',
         postalCode: 'mock',
         sortingCode: 'mock',
         phoneNumber: 'mock',
