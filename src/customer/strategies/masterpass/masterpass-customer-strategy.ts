@@ -54,7 +54,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                     callbackUrl: getCallbackUrl('checkout'),
                 };
 
-                return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode, storeConfig.storeProfile.storeLanguage, this._paymentMethod.initializationData.checkoutId)
+                return this._masterpassScriptLoader.load(this._paymentMethod, storeConfig.storeProfile.storeLanguage)
                     .then(Masterpass => {
                         this._signInButton = this._createSignInButton(container);
 
@@ -116,7 +116,12 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         const button = document.createElement('input');
 
         button.type = 'image';
-        button.src = `https://${this._paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${this._paymentMethod.initializationData.checkoutId}`;
+
+        if (this._paymentMethod.initializationData.isMasterpassSrcEnabled) {
+            button.src = `https://${this._paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${this._paymentMethod.initializationData.checkoutId}`;
+        } else {
+            button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
+        }
         container.appendChild(button);
 
         return button;

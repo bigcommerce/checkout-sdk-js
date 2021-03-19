@@ -38,7 +38,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to retrieve store configuration');
         }
 
-        return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode, storeConfig.storeProfile.storeLanguage, this._paymentMethod.initializationData.checkoutId)
+        return this._masterpassScriptLoader.load(this._paymentMethod, storeConfig.storeProfile.storeLanguage)
             .then(masterpass => {
                 this._masterpassClient = masterpass;
 

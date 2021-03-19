@@ -128,7 +128,7 @@ describe('MasterpassPaymentStrategy', () => {
 
             it('loads the script and calls the checkout when the wallet button is clicked', async () => {
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(false, 'en_US', 'checkout-id');
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
                 walletButton.click();
                 expect(masterpassScript.checkout).toHaveBeenCalledWith(payload);
             });
@@ -136,7 +136,7 @@ describe('MasterpassPaymentStrategy', () => {
             it('loads the script in test mode, and calls the checkout when the wallet button is clicked', async () => {
                 paymentMethodMock.config.testMode = true;
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkout-id');
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
                 walletButton.click();
                 expect(masterpassScript.checkout).toHaveBeenCalled();
             });
@@ -145,7 +145,7 @@ describe('MasterpassPaymentStrategy', () => {
                 paymentMethodMock.config.testMode = true;
                 initOptions.masterpass = {};
                 await strategy.initialize(initOptions);
-                expect(scriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkout-id');
+                expect(scriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
                 walletButton.click();
                 expect(masterpassScript.checkout).not.toHaveBeenCalled();
             });

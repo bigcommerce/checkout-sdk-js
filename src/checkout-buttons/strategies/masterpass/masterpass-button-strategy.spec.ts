@@ -107,7 +107,7 @@ describe('MasterpassButtonStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkoutId');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
         });
 
         it('loads masterpass without test mode if disabled', async () => {
@@ -115,7 +115,7 @@ describe('MasterpassButtonStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false, 'en_US', 'checkoutId');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
         });
 
         it('fails to initialize the strategy if no container is supplied', async () => {

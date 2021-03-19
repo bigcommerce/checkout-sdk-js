@@ -38,7 +38,7 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
                     throw new InvalidArgumentError('Unable to retrieve store configuration');
                 }
 
-                return this._masterpassScriptLoader.load(paymentMethod.config.testMode, storeConfig.storeProfile.storeLanguage, paymentMethod.initializationData.checkoutId);
+                return this._masterpassScriptLoader.load(paymentMethod, storeConfig.storeProfile.storeLanguage);
             })
             .then(masterpass => {
                 this._masterpassClient = masterpass;
@@ -77,7 +77,13 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         const button = document.createElement('input');
 
         button.type = 'image';
-        button.src = `https://${paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${paymentMethod.initializationData.checkoutId}`;
+
+        if (paymentMethod.initializationData.isMasterpassSrcEnabled) {
+            button.src = `https://${paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${paymentMethod.initializationData.checkoutId}`;
+        } else {
+            button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
+        }
+
         buttonContainer.appendChild(button);
 
         button.addEventListener('click', this._handleWalletButtonClick);
