@@ -1,3 +1,5 @@
+import braintreeBrowserDetection from '@braintree/browser-detection';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
 import { Overlay } from '../../../common/overlay';
@@ -9,6 +11,10 @@ import BraintreeHostedForm from './braintree-hosted-form';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { getBraintreePaymentData, getBraintreeRequestData, getClientMock, getThreeDSecureMock, getThreeDSecureOptionsMock, getTokenizeResponseBody, getVerifyPayload } from './braintree.mock';
+
+jest.mock('@braintree/browser-detection', () => ({
+    supportsPopups: jest.fn(() => false),
+}));
 
 describe('BraintreePaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
@@ -270,54 +276,79 @@ describe('BraintreePaymentProcessor', () => {
                 });
         });
 
-        it('toggles overlay', async () => {
-            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+        describe('when popups are supported', () => {
+            it('toggles overlay', async () => {
+                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
 
-            await processor.paypal({
-                amount: 200,
-                locale: 'en',
-                currency: 'USD',
-            });
-            expect(overlay.show)
-                .toHaveBeenCalled();
+                const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
 
-            expect(overlay.remove)
-                .toHaveBeenCalled();
-        });
-
-        it('removes overlay if tokenization fails', async () => {
-            jest.spyOn(paypal, 'tokenize')
-                .mockRejectedValue(new Error());
-
-            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
-
-            try {
                 await processor.paypal({
                     amount: 200,
                     locale: 'en',
                     currency: 'USD',
                 });
-            } catch (error) {
+                expect(overlay.show)
+                    .toHaveBeenCalled();
+
                 expect(overlay.remove)
                     .toHaveBeenCalled();
-            }
-        });
-
-        it('focus PayPal window when overlay is clicked', async () => {
-            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
-
-            await processor.paypal({
-                amount: 200,
-                locale: 'en',
-                currency: 'USD',
             });
 
-            const { onClick } = (overlay.show as jest.Mock).mock.calls[0][0];
+            it('removes overlay if tokenization fails', async () => {
+                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
 
-            onClick();
+                jest.spyOn(paypal, 'tokenize')
+                    .mockRejectedValue(new Error());
 
-            expect(paypal.focusWindow)
-                .toHaveBeenCalled();
+                const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+                try {
+                    await processor.paypal({
+                        amount: 200,
+                        locale: 'en',
+                        currency: 'USD',
+                    });
+                } catch (error) {
+                    expect(overlay.remove)
+                        .toHaveBeenCalled();
+                }
+            });
+
+            it('focus PayPal window when overlay is clicked', async () => {
+                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
+
+                const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+                await processor.paypal({
+                    amount: 200,
+                    locale: 'en',
+                    currency: 'USD',
+                });
+
+                const { onClick } = (overlay.show as jest.Mock).mock.calls[0][0];
+
+                onClick();
+
+                expect(paypal.focusWindow)
+                    .toHaveBeenCalled();
+            });
+
+        });
+
+        describe('when popups are not supported', () => {
+            it('does not toggle the overlay', async () => {
+                braintreeBrowserDetection.supportsPopups = jest.fn(() => false);
+
+                const processor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+                await processor.paypal({
+                    amount: 200,
+                    locale: 'en',
+                    currency: 'USD',
+                });
+                expect(overlay.show)
+                    .not.toHaveBeenCalled();
+            });
         });
     });
 });

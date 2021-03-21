@@ -1,3 +1,5 @@
+import { supportsPopups } from '@braintree/browser-detection';
+
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { Overlay } from '../../../common/overlay';
@@ -56,11 +58,15 @@ export default class BraintreePaymentProcessor {
     }
 
     paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
+        const newWindowFlow = supportsPopups();
+
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => {
-                this._overlay.show({
-                    onClick: () => paypal.focusWindow(),
-                });
+                if (newWindowFlow) {
+                    this._overlay.show({
+                        onClick: () => paypal.focusWindow(),
+                    });
+                }
 
                 return paypal.tokenize({
                     enableShippingAddress: true,
