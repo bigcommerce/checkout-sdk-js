@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.134.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.1...v1.134.2) (2021-03-21)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-6642 Make Paypal overlay modal/new window aware ([#1088](https://github.com/bigcommerce/checkout-sdk-js/issues/1088)) ([326c961](https://github.com/bigcommerce/checkout-sdk-js/commit/326c9611b0a80c9c49d4278f4a240e23f7c18bdb))
+
 ### [1.134.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.0...v1.134.1) (2021-03-16)
 
 
