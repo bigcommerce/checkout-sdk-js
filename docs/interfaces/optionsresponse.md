@@ -15,6 +15,7 @@ https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/d
 
 * [button](optionsresponse.md#optional-button)
 * [flow](optionsresponse.md#optional-flow)
+* [paymentMethodConfiguration](optionsresponse.md#optional-paymentmethodconfiguration)
 * [showComplianceSection](optionsresponse.md#optional-showcompliancesection)
 * [showSavePaymentAgreement](optionsresponse.md#optional-showsavepaymentagreement)
 * [showTermsOfSaleDisclosure](optionsresponse.md#optional-showtermsofsaledisclosure)
@@ -35,6 +36,14 @@ ___
 • **flow**? : *undefined | string*
 
 Use this option if you are using Drop-in within a standard checkout flow. Example Value: "checkout"
+
+___
+
+### `Optional` paymentMethodConfiguration
+
+• **paymentMethodConfiguration**? : *[BaseElementOptions](baseelementoptions.md)*
+
+Additional configuration details for drop-in.
 
 ___
 

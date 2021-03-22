@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.135.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.2...v1.135.0) (2021-03-22)
+
+
+### Features
+
+* **payment:** INT-3947 Suppress PayPal and Klarna ([5fd75a0](https://github.com/bigcommerce/checkout-sdk-js/commit/5fd75a054169b12f677831b98a444a7fa8cb5165))
+
 ### [1.134.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.1...v1.134.2) (2021-03-21)
 
 

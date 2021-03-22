@@ -548,6 +548,17 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 
 declare interface BaseElementOptions {
     /**
+     * Set custom class names on the container DOM element when the Digital River element is in a particular state.
+     */
+    classes?: DigitalRiverElementClasses;
+    /**
+     * Remove specific payment methods when rendering drop-in.
+     */
+    disabledPaymentMethods?: string[];
+}
+
+declare interface BaseElementOptions_2 {
+    /**
      * Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
      * which consists of CSS properties nested under objects for each variant.
      */
@@ -562,7 +573,7 @@ declare interface BaseElementOptions {
     disabled?: boolean;
 }
 
-declare interface BaseIndividualElementOptions extends BaseElementOptions {
+declare interface BaseIndividualElementOptions extends BaseElementOptions_2 {
     containerId: string;
 }
 
@@ -988,7 +999,7 @@ declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
 }
 
-declare interface CardElementOptions extends BaseElementOptions {
+declare interface CardElementOptions extends BaseElementOptions_2 {
     /**
      * A pre-filled set of values to include in the input (e.g., {postalCode: '94110'}).
      * Note that sensitive card information (card number, CVC, and expiration date)
@@ -3494,6 +3505,39 @@ declare interface DigitalItem extends LineItem {
     downloadSize: string;
 }
 
+/**
+ * Custom classes
+ * You can specify custom classes as part of a Class object included within the Options object when you create or
+ * update an element. If you do not provide custom classes, the system uses the default options.
+ * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/digitalriver.js/reference/elements#custom-classes
+ */
+declare interface DigitalRiverElementClasses {
+    /**
+     * The Element is in its base state. The user either has not entered anything into the input field or is currently typing.
+     */
+    base?: string;
+    /**
+     * The Element is in its complete state. The user has input value, and it meets the basic validation requirements of that field.
+     */
+    complete?: string;
+    /**
+     * The Element is empty. The Element once had value but is now empty.
+     */
+    empty?: string;
+    /**
+     * The Element has focus.
+     */
+    focus?: string;
+    /**
+     * The Element has value, but it does not meet the basic validation requirements of the field.
+     */
+    invalid?: string;
+    /**
+     * The element has a value that has been automatically filled by the browser.
+     */
+    webkitAutofill?: string;
+}
+
 declare interface DigitalRiverPaymentInitializeOptions {
     /**
      * The ID of a container which the Digital River drop in component should be mounted
@@ -3959,7 +4003,7 @@ declare interface HostedStoredCardFieldOptionsMap {
 
 declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
-declare interface IbanElementOptions extends BaseElementOptions {
+declare interface IbanElementOptions extends BaseElementOptions_2 {
     /**
      * Specify the list of countries or country-groups whose IBANs you want to allow.
      * Must be ['SEPA'].
@@ -3980,7 +4024,7 @@ declare enum IconStyle {
     Default = "default"
 }
 
-declare interface IdealElementOptions extends BaseElementOptions {
+declare interface IdealElementOptions extends BaseElementOptions_2 {
     value?: string;
     /**
      * Hides the icon in the Element. Default is false.
@@ -4404,6 +4448,10 @@ declare interface OptionsResponse {
      * Use this option to show the required terms of sale disclosure. These localized terms automatically update if recurring products are purchased.
      */
     showTermsOfSaleDisclosure?: boolean;
+    /**
+     * Additional configuration details for drop-in.
+     */
+    paymentMethodConfiguration?: BaseElementOptions;
 }
 
 declare interface Order {

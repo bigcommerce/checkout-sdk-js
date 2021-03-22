@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-* [BaseElementOptions](baseelementoptions.md)
+* [BaseElementOptions_2](baseelementoptions_2.md)
 
   ↳ **BaseIndividualElementOptions**
 
@@ -29,7 +29,7 @@
 
 • **classes**? : *[StripeElementClasses](stripeelementclasses.md)*
 
-*Inherited from [BaseElementOptions](baseelementoptions.md).[classes](baseelementoptions.md#optional-classes)*
+*Inherited from [BaseElementOptions_2](baseelementoptions_2.md).[classes](baseelementoptions_2.md#optional-classes)*
 
 Set custom class names on the container DOM element when the Stripe element is in a particular state.
 
@@ -45,7 +45,7 @@ ___
 
 • **disabled**? : *undefined | false | true*
 
-*Inherited from [BaseElementOptions](baseelementoptions.md).[disabled](baseelementoptions.md#optional-disabled)*
+*Inherited from [BaseElementOptions_2](baseelementoptions_2.md).[disabled](baseelementoptions_2.md#optional-disabled)*
 
 Applies a disabled state to the Element such that user input is not accepted. Default is false.
 
@@ -55,7 +55,7 @@ ___
 
 • **style**? : *[StripeElementStyle](stripeelementstyle.md)*
 
-*Inherited from [BaseElementOptions](baseelementoptions.md).[style](baseelementoptions.md#optional-style)*
+*Inherited from [BaseElementOptions_2](baseelementoptions_2.md).[style](baseelementoptions_2.md#optional-style)*
 
 Customize the appearance of an element using CSS properties passed in a [Style](https://stripe.com/docs/js/appendix/style) object,
 which consists of CSS properties nested under objects for each variant.
