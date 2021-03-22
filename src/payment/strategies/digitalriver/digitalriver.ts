@@ -51,12 +51,12 @@ export interface DigitalRiverDropInConfiguration {
             postalCode: string;
             country: string;
         };
-
-        /**
-         * Additional configuration details for configuration structure (classes, styles etc..)
-         */
-        paymentMethodConfiguration?: BaseElementOptions;
     };
+
+    /**
+     * Additional configuration details for configuration structure (classes, styles etc..)
+     */
+    paymentMethodConfiguration?: BaseElementOptions;
 
     /**
      * The function called when the shopper has authorized payment and a payment source has been successfully created.
@@ -141,6 +141,11 @@ export interface OptionsResponse {
      * Use this option to show the required terms of sale disclosure. These localized terms automatically update if recurring products are purchased.
      */
     showTermsOfSaleDisclosure?: boolean;
+
+    /**
+     * Additional configuration details for drop-in.
+     */
+    paymentMethodConfiguration?: BaseElementOptions;
 }
 
 export interface ButtonResponse {
@@ -187,6 +192,11 @@ interface BaseElementOptions {
      * Set custom class names on the container DOM element when the Digital River element is in a particular state.
      */
     classes?: DigitalRiverElementClasses;
+
+    /**
+     * Remove specific payment methods when rendering drop-in.
+     */
+    disabledPaymentMethods?: string[];
 }
 
 /**

@@ -40,6 +40,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         const billing = state.billingAddress.getBillingAddressOrThrow();
         const customer = state.customer.getCustomerOrThrow();
+        const { paymentMethodConfiguration } = this._getDigitalRiverInitializeOptions().configuration;
         this._digitalRiverCheckoutId = clientToken.checkoutId;
         this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
 
@@ -60,6 +61,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     country: billing.countryCode,
                 },
             },
+            paymentMethodConfiguration,
             onSuccess: (data?: OnSuccessResponse) => {
                 this._onSuccessResponse(data);
             },
