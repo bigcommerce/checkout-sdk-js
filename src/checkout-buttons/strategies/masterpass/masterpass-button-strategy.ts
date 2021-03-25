@@ -38,7 +38,14 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
                     throw new InvalidArgumentError('Unable to retrieve store configuration');
                 }
 
-                return this._masterpassScriptLoader.load(paymentMethod, storeConfig.storeProfile.storeLanguage);
+                const masterpassScriptLoaderParams = {
+                    useMasterpassSrc: paymentMethod.initializationData.isMasterpassSrcEnabled,
+                    language: storeConfig.storeProfile.storeLanguage,
+                    testMode: paymentMethod.config.testMode,
+                    checkoutId: paymentMethod.initializationData.checkoutId,
+                };
+
+                return this._masterpassScriptLoader.load(masterpassScriptLoaderParams);
             })
             .then(masterpass => {
                 this._masterpassClient = masterpass;
@@ -79,7 +86,20 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         button.type = 'image';
 
         if (paymentMethod.initializationData.isMasterpassSrcEnabled) {
-            button.src = `https://${paymentMethod.config.testMode ? 'sandbox.' : ''}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg?locale=${storeConfig.storeProfile.storeLanguage}&paymentmethod=master,visa,amex,discover&checkoutid=${paymentMethod.initializationData.checkoutId}`;
+            const subdomain = paymentMethod.config.testMode ? 'sandbox.' : '';
+            const { storeLanguage } = storeConfig.storeProfile;
+            const { checkoutId } = paymentMethod.initializationData;
+
+            const params = [
+                `locale=${storeLanguage}`,
+                `paymentmethod=master,visa,amex,discover`,
+                `checkoutid=${checkoutId}`,
+            ];
+
+            button.src = [
+                `https://${subdomain}src.mastercard.com/assets/img/btn/src_chk_btn_126x030px.svg`,
+                params.join('&'),
+            ].join('?');
         } else {
             button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
         }

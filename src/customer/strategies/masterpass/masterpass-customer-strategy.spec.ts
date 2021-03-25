@@ -34,6 +34,7 @@ describe('MasterpassCustomerStrategy', () => {
             initializationData: {
                 checkoutId: 'checkoutId',
                 allowedCardTypes: ['visa', 'amex', 'mastercard'],
+                isMasterpassSrcEnabled: false,
             },
         };
 
@@ -92,6 +93,12 @@ describe('MasterpassCustomerStrategy', () => {
 
     describe('#initialize()', () => {
         let masterpassOptions: CustomerInitializeOptions;
+        const masterpassScriptLoaderParams = {
+            useMasterpassSrc: false,
+            language: 'en_US',
+            testMode: true,
+            checkoutId: 'checkoutId',
+        };
 
         beforeEach(() => {
             masterpassOptions = { methodId: 'masterpass', masterpass: { container: 'login' } };
@@ -102,15 +109,16 @@ describe('MasterpassCustomerStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
 
         it('loads masterpass without test mode if disabled', async () => {
             paymentMethodMock.config.testMode = false;
+            masterpassScriptLoaderParams.testMode = false;
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(paymentMethodMock, 'en_US');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
 
         it('fails to initialize the strategy if no methodId is supplied', async () => {
