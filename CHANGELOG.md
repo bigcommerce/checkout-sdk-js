@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.136.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.135.0...v1.136.0) (2021-03-28)
+
+
+### Features
+
+* **payment:** INT-3905 creating execute for digital river and credit card ([2937cdd](https://github.com/bigcommerce/checkout-sdk-js/commit/2937cddde9a12ca4f6c1daecd6ade5047680ee6b))
+
 ## [1.135.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.134.2...v1.135.0) (2021-03-22)
 
 
