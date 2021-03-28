@@ -256,6 +256,8 @@ export default function createPaymentStrategyRegistry(
             store,
             paymentMethodActionCreator,
             orderActionCreator,
+            paymentActionCreator,
+            storeCreditActionCreator,
             new DigitalRiverScriptLoader(scriptLoader, getStylesheetLoader())
         )
     );
