@@ -57,6 +57,7 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
+import { HostedFormStrategy as SDKHostedFormStrategy, Strategy as SDKStrategy } from './strategies/sdk';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
@@ -617,6 +618,33 @@ export default function createPaymentStrategyRegistry(
             new MollieScriptLoader(scriptLoader),
             orderActionCreator,
             paymentActionCreator
+        )
+    );
+
+    /*
+        In theory, we can use a singular strategy here for all
+        except for methods using hosted credit cards fields
+    */
+
+    /*
+        BIG TODO:
+            how do we handle non-standard SDK methods
+            which have their own client side code?
+
+        We don't want these accidentally falling into either of these two strategies
+    */
+    registry.register(PaymentStrategyType.SDK, () =>
+        new SDKStrategy(
+            store,
+            orderActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.SDK_HOSTED, () =>
+        new SDKHostedFormStrategy(
+            store,
+            orderActionCreator,
+            hostedFormFactory
         )
     );
 
