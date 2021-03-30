@@ -148,18 +148,14 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
         });
 
-        it('calls submit payment', async () => {
+        it('calls submit hosted form with payment data', async () => {
             await paymentStrategy.initialize(options);
             await paymentStrategy.execute(orderRequestBody, options);
 
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(2);
+            expect(paypalCommerceHostedForm.submit).toHaveBeenCalledTimes(1);
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
-        });
-
-        it('calls submit hosted form', async () => {
-            await paymentStrategy.initialize(options);
-            await paymentStrategy.execute(orderRequestBody, options);
-
-            expect(paypalCommerceHostedForm.submit).toHaveBeenCalled();
         });
 
         it('throw error without payment data', async () => {
