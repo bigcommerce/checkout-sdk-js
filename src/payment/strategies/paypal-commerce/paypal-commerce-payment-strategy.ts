@@ -77,9 +77,14 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
             onClick: async (_, actions) => {
                 this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
-                this._loadingIndicator?.show(loadingIndicatorContainerId);
 
-                return onValidate(actions.resolve, actions.reject);
+                const onValidationPassed = () => {
+                    this._loadingIndicator?.show(loadingIndicatorContainerId);
+
+                    return actions.resolve();
+                };
+
+                return onValidate(onValidationPassed, actions.reject);
             },
             onCancel: () => {
                 this._deinitializePollingTimer(gatewayId);
