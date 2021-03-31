@@ -156,18 +156,28 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _mapGooglePayAddressToBillingAddress(paymentData: GooglePaymentData, id: string): BillingAddressUpdateRequestBody {
+        const firstName = paymentData.paymentMethodData.info.billingAddress.name.split(' ').slice(0, -1).join(' ');
+        const address1 =  paymentData.paymentMethodData.info.billingAddress.address1;
+        const city =  paymentData.paymentMethodData.info.billingAddress.locality;
+        const postalCode =  paymentData.paymentMethodData.info.billingAddress.postalCode;
+        const countryCode =  paymentData.paymentMethodData.info.billingAddress.countryCode;
+
+        if (!firstName || !address1 || !city || !postalCode || !countryCode) {
+            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+        }
+
         return {
             id,
-            firstName: paymentData.paymentMethodData.info.billingAddress.name.split(' ').slice(0, -1).join(' '),
+            firstName,
             lastName: paymentData.paymentMethodData.info.billingAddress.name.split(' ').slice(-1).join(' '),
             company: paymentData.paymentMethodData.info.billingAddress.companyName,
-            address1: paymentData.paymentMethodData.info.billingAddress.address1,
+            address1,
             address2: paymentData.paymentMethodData.info.billingAddress.address2 + paymentData.paymentMethodData.info.billingAddress.address3,
-            city: paymentData.paymentMethodData.info.billingAddress.locality,
+            city,
             stateOrProvince: paymentData.paymentMethodData.info.billingAddress.administrativeArea,
             stateOrProvinceCode: paymentData.paymentMethodData.info.billingAddress.administrativeArea,
-            postalCode: paymentData.paymentMethodData.info.billingAddress.postalCode,
-            countryCode: paymentData.paymentMethodData.info.billingAddress.countryCode,
+            postalCode,
+            countryCode,
             phone: paymentData.paymentMethodData.info.billingAddress.phoneNumber,
             customFields: [],
             email: paymentData.email,
