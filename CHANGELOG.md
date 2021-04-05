@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.136.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.136.1...v1.136.2) (2021-04-05)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-965 Check that there are no inventory underselling or overselling issues in PayPal Commerce ([a0f4952](https://github.com/bigcommerce/checkout-sdk-js/commit/a0f49522c39d9d615904eac3a65174b3a64f9dc6))
+
 ### [1.136.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.136.0...v1.136.1) (2021-03-31)
 
 
