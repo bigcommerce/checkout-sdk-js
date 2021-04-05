@@ -11,6 +11,7 @@ enum PaymentStrategyType {
     BOLT = 'bolt',
     CHECKOUTCOM = 'checkoutcom',
     CHECKOUTCOM_APM = 'checkoutcomapm',
+    CHECKOUTCOM_SEPA = 'checkoutcomsepa',
     CREDIT_CARD = 'creditcard',
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
     CONVERGE = 'converge',
