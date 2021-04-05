@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.137.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.136.2...v1.137.0) (2021-04-05)
+
+
+### Features
+
+* **payment:** INT-3931 Add strategy for checkout.com with SEPA ([5538a3b](https://github.com/bigcommerce/checkout-sdk-js/commit/5538a3b80f13ff653142bcd598553195168834b1))
+
 ### [1.136.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.136.1...v1.136.2) (2021-04-05)
 
 

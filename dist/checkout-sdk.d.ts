@@ -4507,7 +4507,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -5764,6 +5764,11 @@ declare interface WechatDataPaymentMethodState {
 
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+declare interface WithCheckoutcomSEPAInstrument {
+    iban: string;
+    bic: string;
 }
 
 declare interface WithDocumentInstrument {
