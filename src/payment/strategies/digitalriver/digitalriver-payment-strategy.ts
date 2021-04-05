@@ -18,6 +18,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _submitFormEvent?: () => void;
     private _loadSuccessResponse?: OnSuccessResponse;
     private _digitalRiverCheckoutId?: string;
+    private _unsubscribe?: (() => void);
     private _digitalRiverInitializeOptions?: DigitalRiverPaymentInitializeOptions;
 
     constructor(
@@ -78,6 +79,24 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         };
 
         this._digitalRiverJS = await this._digitalRiverScriptLoader.load(paymentMethod.initializationData.publicKey, paymentMethod.initializationData.paymentLanguage);
+        this._unsubscribe = await this._store.subscribe(
+            state => {
+                if (state.paymentStrategies.isInitialized(options.methodId)) {
+                     this._digitalRiverDropComponent = this._getDigitalRiverJs().createDropin( configuration );
+                     this._digitalRiverDropComponent.mount(this._getDigitalRiverInitializeOptions().containerId);
+                }
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.outstandingBalance;
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.coupons;
+            }
+        );
         this._digitalRiverDropComponent = await this._getDigitalRiverJs().createDropin( configuration );
         await this._digitalRiverDropComponent.mount(this._getDigitalRiverInitializeOptions().containerId);
 
@@ -85,6 +104,10 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
+
         return Promise.resolve(this._store.getState());
     }
 
