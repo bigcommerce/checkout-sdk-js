@@ -41,14 +41,14 @@ describe('DigitalRiverScriptLoader', () => {
         });
 
         it('loads the JS and CSS', async () => {
-            await digitalRiverScriptLoader.load('pk_test1234', 'en-US');
+            await digitalRiverScriptLoader.load();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
             expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
         });
 
         it('it returns a DigitalRiverJS instance', async () => {
-            expect(await digitalRiverScriptLoader.load('pk_test1234', 'en-US')).toBe(digitalRiverJs);
+            expect(await digitalRiverScriptLoader.load()).toBe(digitalRiverJs);
         });
 
         it('throws an error when window is not set', async () => {
@@ -58,7 +58,7 @@ describe('DigitalRiverScriptLoader', () => {
                 return Promise.resolve();
             });
 
-            return expect(digitalRiverScriptLoader.load('pk_test_fail', 'en-US')).rejects.toBeInstanceOf(PaymentMethodClientUnavailableError);
+            return expect(digitalRiverScriptLoader.load()).rejects.toBeInstanceOf(PaymentMethodClientUnavailableError);
         });
     });
 });
