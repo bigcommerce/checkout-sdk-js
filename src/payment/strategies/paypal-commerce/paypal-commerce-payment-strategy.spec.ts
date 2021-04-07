@@ -22,7 +22,7 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
+import { PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, ClickActions } from './index';
 
 describe('PaypalCommercePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -40,6 +40,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
+    let onClickActions: ClickActions;
     let submitForm: () => void;
 
     beforeEach(() => {
@@ -87,6 +88,17 @@ describe('PaypalCommercePaymentStrategy', () => {
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
                         options.onApprove({ orderID });
+                    }
+                });
+
+                onClickActions = {
+                    resolve: jest.fn(),
+                    reject: jest.fn(),
+                };
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(null, onClickActions);
                     }
                 });
             });
@@ -251,6 +263,13 @@ describe('PaypalCommercePaymentStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(submitForm).toHaveBeenCalled();
+        });
+
+        it('call onValidate onclick', async () => {
+            await paypalCommercePaymentStrategy.initialize(options);
+            eventEmitter.emit('onClick');
+
+            expect(paypalcommerceOptions.onValidate).toHaveBeenCalled();
         });
 
         it('throw error if paypalcommerce is undefined', async () => {
