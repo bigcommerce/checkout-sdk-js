@@ -36,6 +36,7 @@ describe('MasterpassButtonStrategy', () => {
             initializationData: {
                 checkoutId: 'checkoutId',
                 allowedCardTypes: ['visa', 'amex', 'mastercard'],
+                isMasterpassSrcEnabled: false,
             },
         };
 
@@ -97,6 +98,12 @@ describe('MasterpassButtonStrategy', () => {
     describe('#initialize()', () => {
         let masterpassOptions: CheckoutButtonInitializeOptions;
         const methodId = CheckoutButtonMethodType.MASTERPASS;
+        const masterpassScriptLoaderParams = {
+            useMasterpassSrc: false,
+            language: 'en_US',
+            testMode: true,
+            checkoutId: 'checkoutId',
+        };
 
         beforeEach(() => {
             masterpassOptions = { methodId, containerId: 'login' };
@@ -107,15 +114,16 @@ describe('MasterpassButtonStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(true, 'en_US', 'checkoutId');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
 
         it('loads masterpass without test mode if disabled', async () => {
             paymentMethodMock.config.testMode = false;
+            masterpassScriptLoaderParams.testMode = false;
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false, 'en_US', 'checkoutId');
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
 
         it('fails to initialize the strategy if no container is supplied', async () => {
