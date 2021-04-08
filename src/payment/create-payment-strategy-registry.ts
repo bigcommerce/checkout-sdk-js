@@ -346,10 +346,6 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    const LOADING_INDICATOR_STYLES = {
-        backgroundColor: 'black',
-    };
-
     registry.register(PaymentStrategyType.PAYPAL_COMMERCE, () =>
         new PaypalCommercePaymentStrategy(
             store,
@@ -358,7 +354,7 @@ export default function createPaymentStrategyRegistry(
             createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
-            new LoadingIndicator({styles: LOADING_INDICATOR_STYLES})
+            new LoadingIndicator({ styles: { backgroundColor: 'black' } })
         )
     );
 
@@ -370,7 +366,7 @@ export default function createPaymentStrategyRegistry(
             createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
-            new LoadingIndicator({styles: LOADING_INDICATOR_STYLES})
+            new LoadingIndicator({ styles: { backgroundColor: 'black' } })
         )
     );
 

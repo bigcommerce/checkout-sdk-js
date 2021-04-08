@@ -35,7 +35,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
         private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private _loadingIndicator?: LoadingIndicator,
+        private _loadingIndicator: LoadingIndicator,
         private _pollingInterval?: number,
         private _pollingTimer = 0
     ) {}
