@@ -31,16 +31,11 @@ export default class CheckoutcomiDealPaymentStrategy extends CheckoutcomCustomPa
         }
     }
 
-    private _createFormattedPayload(methodId: string, paymentData: PaymentInstrument): WithCheckoutcomiDealInstrument {
-        const formattedPayload: WithCheckoutcomiDealInstrument = { bic: '' };
-        const bic = 'bic' in paymentData
-            ? paymentData.bic
-            : '';
-
-        if (CHECKOUTCOM_IDEAL_PAYMENT_METHOD === methodId && bic) {
-            formattedPayload.bic = bic;
+    private _createFormattedPayload(methodId: string, paymentData: PaymentInstrument): WithCheckoutcomiDealInstrument | undefined {
+        if (CHECKOUTCOM_IDEAL_PAYMENT_METHOD === methodId && 'bic' in paymentData) {
+            return { bic: paymentData.bic };
         }
 
-        return formattedPayload;
+        return;
     }
 }
