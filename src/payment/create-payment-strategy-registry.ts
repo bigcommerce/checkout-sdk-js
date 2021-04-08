@@ -4,6 +4,7 @@ import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigco
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
+import { LoadingIndicator } from '../common/loading-indicator';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
@@ -345,6 +346,10 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    const LOADING_INDICATOR_STYLES = {
+        backgroundColor: 'black',
+    };
+
     registry.register(PaymentStrategyType.PAYPAL_COMMERCE, () =>
         new PaypalCommercePaymentStrategy(
             store,
@@ -352,7 +357,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
             new PaypalCommerceFundingKeyResolver(),
-            new PaypalCommerceRequestSender(requestSender)
+            new PaypalCommerceRequestSender(requestSender),
+            new LoadingIndicator({styles: LOADING_INDICATOR_STYLES})
         )
     );
 
@@ -363,7 +369,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
             new PaypalCommerceFundingKeyResolver(),
-            new PaypalCommerceRequestSender(requestSender)
+            new PaypalCommerceRequestSender(requestSender),
+            new LoadingIndicator({styles: LOADING_INDICATOR_STYLES})
         )
     );
 

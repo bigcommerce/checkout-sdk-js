@@ -10,6 +10,7 @@ import { getCart } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { LoadingIndicator } from '../../../common/loading-indicator';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -40,6 +41,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
+    let loader: LoadingIndicator;
     let onClickActions: ClickActions;
     let submitForm: () => void;
 
@@ -60,8 +62,13 @@ describe('PaypalCommercePaymentStrategy', () => {
             container: '#container',
             submitForm,
             onRenderButton: jest.fn(),
-            onValidate: jest.fn(),
+            onValidate: jest.fn((resolve, _) => {
+                return resolve();
+            }),
         };
+
+        loader = new LoadingIndicator();
+        jest.spyOn(loader, 'show');
 
         options = {
             methodId: paymentMethod.id,
@@ -112,7 +119,8 @@ describe('PaypalCommercePaymentStrategy', () => {
             paymentActionCreator,
             paypalCommercePaymentProcessor,
             paypalCommerceFundingKeyResolver,
-            new PaypalCommerceRequestSender(requestSender)
+            new PaypalCommerceRequestSender(requestSender),
+            loader
         );
     });
 
@@ -267,9 +275,18 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         it('call onValidate onclick', async () => {
             await paypalCommercePaymentStrategy.initialize(options);
+
             eventEmitter.emit('onClick');
 
             expect(paypalcommerceOptions.onValidate).toHaveBeenCalled();
+        });
+
+        it('show loader if validation is passed onclick', async () => {
+            await paypalCommercePaymentStrategy.initialize(options);
+
+            eventEmitter.emit('onClick');
+
+            expect(loader.show).toHaveBeenCalled();
         });
 
         it('throw error if paypalcommerce is undefined', async () => {
