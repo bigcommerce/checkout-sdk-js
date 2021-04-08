@@ -12,13 +12,13 @@ import HostedInputStorage from './hosted-input-storage';
 describe('HostedInputInitializer', () => {
     let container: HTMLElement;
     let eventListener: IframeEventListener<HostedFieldEventMap>;
-    let factory: Pick<HostedInputFactory, 'create'>;
+    let factory: Pick<HostedInputFactory, 'create' | 'normalizeParentOrigin'>;
     let initializer: HostedInputInitializer;
     let input: Pick<HostedInput, 'attach'>;
     let storage: Pick<HostedInputStorage, 'setNonce'>;
 
     beforeEach(() => {
-        factory = { create: jest.fn() };
+        factory = { create: jest.fn(), normalizeParentOrigin: jest.fn() };
         storage = { setNonce: jest.fn() };
         eventListener = new IframeEventListener('https://store.foobar.com');
         input = { attach: jest.fn() };
@@ -118,5 +118,19 @@ describe('HostedInputInitializer', () => {
 
         expect(() => initializer.initialize('input-container'))
             .toThrowError(InvalidHostedFormConfigError);
+    });
+
+    it('normalises parent origin for input factory', async () => {
+        process.nextTick(() => {
+            eventListener.trigger({
+                type: HostedFieldEventType.AttachRequested,
+                payload: { type: HostedFieldType.CardNumber, origin: 'https://www.foobar.com' },
+            });
+        });
+
+        await initializer.initialize('input-container');
+
+        expect(factory.normalizeParentOrigin)
+            .toHaveBeenCalled();
     });
 });

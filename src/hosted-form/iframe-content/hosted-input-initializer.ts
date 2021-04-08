@@ -19,7 +19,7 @@ export default class HostedInputInitializer {
         private _factory: HostedInputFactory,
         private _storage: HostedInputStorage,
         private _eventListener: IframeEventListener<HostedFieldEventMap>
-    ) {}
+    ) { }
 
     initialize(containerId: string, nonce?: string): Promise<HostedInput> {
         if (nonce) {
@@ -37,7 +37,12 @@ export default class HostedInputInitializer {
         )
             .pipe(
                 map(({ payload }) => {
-                    const { accessibilityLabel, cardInstrument, fontUrls, placeholder, styles, type } = payload;
+                    const { accessibilityLabel, cardInstrument, fontUrls, placeholder, styles, origin, type } = payload;
+
+                    if (origin) {
+                        this._factory.normalizeParentOrigin(origin);
+                    }
+
                     const field = this._factory.create(form, type, styles, fontUrls, placeholder, accessibilityLabel, cardInstrument);
 
                     field.attach();

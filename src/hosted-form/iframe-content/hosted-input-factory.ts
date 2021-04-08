@@ -1,6 +1,7 @@
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
+import { appendWww, parseUrl } from '../../common/url';
 import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
 import { CardInstrument } from '../../payment/instrument';
 import HostedFieldType from '../hosted-field-type';
@@ -52,6 +53,23 @@ export default class HostedInputFactory {
         }
 
         return this._createInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+    }
+
+    normalizeParentOrigin(origin: string): void {
+        if (this._parentOrigin === origin) {
+            return;
+        }
+
+        if (this._parentOrigin !== appendWww(parseUrl(origin)).origin &&
+            origin !== appendWww(parseUrl(this._parentOrigin)).origin) {
+            return;
+        }
+
+        this._parentOrigin = origin;
+    }
+
+    getParentOrigin(): string {
+        return this._parentOrigin;
     }
 
     private _createExpiryInput(
