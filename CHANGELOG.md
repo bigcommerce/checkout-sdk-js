@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.137.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.1...v1.137.2) (2021-04-08)
+
+
+### Bug Fixes
+
+* **payment:** INT-3408 added masterpass SRC experiment ([933609a](https://github.com/bigcommerce/checkout-sdk-js/commit/933609ae27a938bfb3b9e3e976f5f9014d650731))
+* **payment:** INT-3408 refactor script loader ([f064474](https://github.com/bigcommerce/checkout-sdk-js/commit/f064474710c2dfc09f4a075a5f060874f31e843b))
+
 ### [1.137.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.0...v1.137.1) (2021-04-08)
 
 
