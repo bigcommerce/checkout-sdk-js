@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.137.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.0...v1.137.1) (2021-04-08)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-5740 Post to and receive messages from www subdomain ([2e80137](https://github.com/bigcommerce/checkout-sdk-js/commit/2e801378f0c1b845e1b77f3394ec0d0f72a475d8))
+
 ## [1.137.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.136.2...v1.137.0) (2021-04-05)
 
 
