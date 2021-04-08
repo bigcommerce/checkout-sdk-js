@@ -1,4 +1,4 @@
-import { parseUrl } from '../url';
+import { appendWww, parseUrl } from '../url';
 import { bindDecorator as bind } from '../utility';
 
 import { IframeEventMap } from './iframe-event';
@@ -7,12 +7,15 @@ import isIframeEvent from './is-iframe-event';
 export default class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>> {
     private _isListening: boolean;
     private _listeners: EventListeners<TEventMap>;
-    private _sourceOrigin: string;
+    private _sourceOrigins: string[];
 
     constructor(
         sourceOrigin: string
     ) {
-        this._sourceOrigin = parseUrl(sourceOrigin).origin;
+        this._sourceOrigins = [
+            parseUrl(sourceOrigin).origin,
+            appendWww(parseUrl(sourceOrigin)).origin,
+        ];
         this._isListening = false;
         this._listeners = {};
     }
@@ -75,7 +78,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 
     @bind
     private _handleMessage(event: MessageEvent): void {
-        if ((event.origin !== this._sourceOrigin) ||
+        if ((this._sourceOrigins.indexOf(event.origin) === -1) ||
             !isIframeEvent(event.data as TEventMap[keyof TEventMap], event.data.type)
         ) {
             return;

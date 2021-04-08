@@ -109,6 +109,7 @@ describe('HostedField', () => {
                     fontUrls: [],
                     placeholder: 'Enter your card number here',
                     styles: { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
+                    origin: document.location.origin,
                     type: HostedFieldType.CardNumber,
                 },
             }, {

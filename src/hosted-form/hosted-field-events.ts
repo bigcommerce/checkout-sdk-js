@@ -30,6 +30,7 @@ export interface HostedFieldAttachEvent {
         fontUrls?: string[];
         placeholder?: string;
         styles?: HostedFieldStylesMap;
+        origin?: string;
         type: HostedFieldType;
     };
 }

@@ -74,6 +74,7 @@ export default class HostedField {
                             fontUrls: this._getFontUrls(),
                             placeholder: this._placeholder,
                             styles: this._styles,
+                            origin: document.location.origin,
                             type: this._type,
                         },
                     }, {

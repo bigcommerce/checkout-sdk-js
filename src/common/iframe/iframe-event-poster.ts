@@ -30,11 +30,13 @@ export default class IframeEventPoster<TEvent> {
         event: TEvent,
         options?: IframeEventPostOptions<TSuccessEvent, TErrorEvent>
     ): Promise<TSuccessEvent> | void {
-        if (window === this._targetWindow) {
+        const targetWindow = this._targetWindow;
+
+        if (window === targetWindow) {
             return;
         }
 
-        if (!this._targetWindow) {
+        if (!targetWindow) {
             throw new Error('Unable to post message because target window is not set.');
         }
 
@@ -56,7 +58,7 @@ export default class IframeEventPoster<TEvent> {
             )
             .toPromise();
 
-        this._targetWindow.postMessage(event, this._targetOrigin);
+        targetWindow.postMessage(event, this._targetOrigin);
 
         return result;
     }

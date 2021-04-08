@@ -50,6 +50,16 @@ describe('IframeEventListener', () => {
         expect(handleComplete).not.toHaveBeenCalled();
     });
 
+    it('responds to event with www subdomain', () => {
+        eventEmitter.emit('message', {
+            origin: origin.replace('http://', 'http://www.'),
+            data: { type: TestEventType.Loaded },
+        });
+
+        expect(handleLoaded).toHaveBeenCalled();
+        expect(handleComplete).not.toHaveBeenCalled();
+    });
+
     it('does not respond to event with unrecognized origin', () => {
         eventEmitter.emit('message', {
             origin: 'https://foobar.com',
