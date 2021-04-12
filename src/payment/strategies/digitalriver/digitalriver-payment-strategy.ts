@@ -3,19 +3,17 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import DigitalRiverJS, { DigitalRiverDropIn, DigitalRiverInitializeToken, DigitalRiverInstance, DigitalRiverWindow, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverJS, { DigitalRiverDropIn, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
 export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _digitalRiverJS?: DigitalRiverJS;
-    private _digitalRiverInstance?: DigitalRiverInstance;
     private _digitalRiverDropComponent?: DigitalRiverDropIn;
     private _submitFormEvent?: () => void;
     private _loadSuccessResponse?: OnSuccessResponse;
@@ -36,33 +34,22 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         this._digitalRiverInitializeOptions = options.digitalriver;
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(options.methodId);
         const { publicKey, paymentLanguage: locale } = paymentMethod.initializationData;
-        const digitalRiverWindow: DigitalRiverWindow = await this._digitalRiverScriptLoader.load();
         const { containerId } = this._getDigitalRiverInitializeOptions();
 
-        this._digitalRiverInstance = digitalRiverWindow.DigitalRiver;
-
-        if (!this._digitalRiverInstance) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        this._digitalRiverJS = new this._digitalRiverInstance(publicKey, { locale });
+        this._digitalRiverJS = await this._digitalRiverScriptLoader.load(publicKey, locale);
 
         this._unsubscribe = await this._store.subscribe(
-            state => {
+            async state => {
                 if (state.paymentStrategies.isInitialized(options.methodId)) {
                     const container = document.getElementById(containerId);
 
                     if (container) {
                         container.innerHTML = '';
 
-                        if (!this._digitalRiverInstance) {
-                            throw new PaymentMethodClientUnavailableError();
-                        }
-
-                        this._digitalRiverJS = new this._digitalRiverInstance(publicKey, { locale });
+                        this._digitalRiverJS = await this._digitalRiverScriptLoader.load(publicKey, locale);
                     }
 
-                    this._loadWidget(options);
+                    await this._loadWidget(options);
                 }
             },
             state => {
@@ -181,7 +168,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
         const billing = state.billingAddress.getBillingAddressOrThrow();
         const customer = state.customer.getCustomerOrThrow();
-        const {paymentMethodConfiguration} = this._getDigitalRiverInitializeOptions().configuration;
+        const { paymentMethodConfiguration } = this._getDigitalRiverInitializeOptions().configuration;
         const { containerId, configuration } = this._getDigitalRiverInitializeOptions();
         const { clientToken } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 

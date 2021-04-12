@@ -1,5 +1,7 @@
 import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
+import { PaymentMethodClientUnavailableError } from '../../errors';
+
 import { DigitalRiverWindow } from './digitalriver';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 import { getDigitalRiverJSMock } from './digitalriver.mock';
@@ -39,14 +41,14 @@ describe('DigitalRiverScriptLoader', () => {
         });
 
         it('loads the JS and CSS', async () => {
-            await digitalRiverScriptLoader.load();
+            await digitalRiverScriptLoader.load('pk_test1234', 'en-US');
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
             expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
         });
 
         it('it returns a DigitalRiverJS instance', async () => {
-            expect(await digitalRiverScriptLoader.load()).toBe(windowMock);
+            expect(await digitalRiverScriptLoader.load('pk_test1234', 'en-US')).toBe(digitalRiverJs);
         });
 
         it('it returns a DigitalRiver undefined instance', async () => {
@@ -55,9 +57,8 @@ describe('DigitalRiverScriptLoader', () => {
 
                 return Promise.resolve();
             });
-            const response = await digitalRiverScriptLoader.load();
 
-            return expect(response.DigitalRiver).toEqual(undefined);
+            return expect(digitalRiverScriptLoader.load('pk_test1234', 'en-US')).rejects.toThrow(new PaymentMethodClientUnavailableError());
         });
     });
 });

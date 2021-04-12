@@ -25,7 +25,7 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock } from '../digitalriver/digitalriver.mock';
 
-import { DigitalRiverWindow, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
+import { OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -117,15 +117,13 @@ describe('DigitalRiverPaymentStrategy', () => {
         let options: PaymentInitializeOptions;
         let onErrorCallback: (error: OnCancelOrErrorResponse) => {};
         let onSuccessCallback: (data?: OnSuccessResponse) => {};
-        const mockWindow = {} as DigitalRiverWindow;
 
         beforeEach(() => {
             jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
             jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(mockWindow));
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
             options = getInitializeOptionsMock();
-            mockWindow.DigitalRiver = jest.fn(() => digitalRiverLoadResponse);
         });
 
         it('loads DigitalRiver script', async () => {
@@ -198,9 +196,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when load response is empty or not provided', () => {
-            const error = 'Unable to proceed because the client library of a payment method is not loaded or ready to be used.';
-            mockWindow.DigitalRiver = undefined;
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(mockWindow));
+            const error = 'Unable to proceed because the payment step of checkout has not been initialized.';
+
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
             const promise = strategy.initialize(options);
 
@@ -262,11 +260,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         let onSuccessCallback: (data: OnSuccessResponse) => {};
         const digitalRiverLoadResponse = getDigitalRiverJSMock();
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
-        const mockWindow = {} as DigitalRiverWindow;
-        mockWindow.DigitalRiver = jest.fn(() => digitalRiverLoadResponse);
 
         beforeEach(() => {
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(mockWindow));
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             jest.spyOn(orderActionCreator, 'submitOrder')
