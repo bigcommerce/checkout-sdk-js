@@ -51,14 +51,14 @@ describe('DigitalRiverScriptLoader', () => {
             expect(await digitalRiverScriptLoader.load('pk_test1234', 'en-US')).toBe(digitalRiverJs);
         });
 
-        it('throws an error when window is not set', async () => {
+        it('it returns a DigitalRiver undefined instance', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 windowMock.DigitalRiver = undefined;
 
                 return Promise.resolve();
             });
 
-            return expect(digitalRiverScriptLoader.load('pk_test_fail', 'en-US')).rejects.toBeInstanceOf(PaymentMethodClientUnavailableError);
+            return expect(digitalRiverScriptLoader.load('pk_test1234', 'en-US')).rejects.toThrow(new PaymentMethodClientUnavailableError());
         });
     });
 });

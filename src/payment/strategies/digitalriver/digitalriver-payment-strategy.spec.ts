@@ -91,6 +91,8 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
             .mockReturnValue(applyStoreCreditAction);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+            .mockReturnValue(paymentMethodMock);
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
@@ -124,19 +126,26 @@ describe('DigitalRiverPaymentStrategy', () => {
             options = getInitializeOptionsMock();
         });
 
-        it('returns the state', () => {
-            return expect(strategy.initialize(options)).resolves.toBe(store.getState());
-        });
-
         it('loads DigitalRiver script', async () => {
-            await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+            await strategy.initialize(options);
 
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
+        });
+
+        it('loads DigitalRiver when widget was updated ', async () => {
+            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+            jest.spyOn(document, 'getElementById').mockReturnValue('mock');
+
+            await strategy.initialize(options);
+
+            expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
         it('calls onSuccess callback from DigitalRiver', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onSuccess}) => {
-                onSuccessCallback = onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
+                onSuccessCallback = configuration.onSuccess;
 
                 return digitalRiverComponent;
             });
@@ -187,11 +196,13 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when load response is empty or not provided', () => {
+            const error = 'Unable to proceed because the payment step of checkout has not been initialized.';
+
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(NotInitializedError);
+            return expect(promise).rejects.toThrow(error);
         });
 
         it('throws an error when DigitalRiver options is not provided', () => {
@@ -272,8 +283,8 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('creates the order and submit payment with credit card', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onSuccess}) => {
-                onSuccessCallback = onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
+                onSuccessCallback = configuration.onSuccess;
 
                 return digitalRiverComponent;
             });
@@ -304,6 +315,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                                 },
                                 readyForStorage: true,
                             },
+                            sessionId: '1234',
                         }),
                     },
                 }
@@ -345,6 +357,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                                 },
                                 readyForStorage: true,
                             },
+                            sessionId: '1234',
                         }),
                     },
                 }

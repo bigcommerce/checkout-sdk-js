@@ -11,7 +11,7 @@ export default class DigitalRiverScriptLoader {
         private _window: DigitalRiverWindow = window
     ) {}
 
-    async load(digitalRiverPublicApiKey: string, locale: string): Promise<DigitalRiverJS> {
+    async load(publicKey: string, locale: string): Promise<DigitalRiverJS> {
         await Promise.all([
             this._stylesheetLoader.loadStylesheet(`https://js.digitalriverws.com/v1/css/DigitalRiver.css`),
             this._scriptLoader.loadScript(`https://js.digitalriverws.com/v1/DigitalRiver.js`),
@@ -21,6 +21,6 @@ export default class DigitalRiverScriptLoader {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return new this._window.DigitalRiver(digitalRiverPublicApiKey, { locale });
+        return Promise.resolve(new this._window.DigitalRiver(publicKey, { locale } ));
     }
 }

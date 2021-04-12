@@ -4,14 +4,16 @@ export interface DigitalRiverWindow extends Window {
      * This function accepts an optional options object using the following format DigitalRiver(publishableApiKey{, options})
      * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/digitalriver.js/reference/digital-river-publishable-api-key
      */
-    DigitalRiver?: new(apiKey: string, options?: DigitalRiverJSOptions) => DigitalRiverJS;
+    DigitalRiver?: DigitalRiverClass;
 }
+
+export type DigitalRiverClass = new(apiKey: string, options?: DigitalRiverJSOptions) => DigitalRiverJS;
 
 export default interface DigitalRiverJS {
     createDropin(configuration: DigitalRiverDropInConfiguration): DigitalRiverDropIn;
 }
 
-interface DigitalRiverJSOptions {
+export interface DigitalRiverJSOptions {
     /**
      * The locale used to localize the various display and error strings within DigitalRiver.js
      * Currently supported locales:
