@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.137.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.2...v1.137.3) (2021-04-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-970 add unit test for click handler on paypal checkout ([503e60b](https://github.com/bigcommerce/checkout-sdk-js/commit/503e60be649fd0757f729477c2e07fa2c831db44))
+* **payment:** PAYPAL-970 added loader test ([113d2f2](https://github.com/bigcommerce/checkout-sdk-js/commit/113d2f2821c94e27914ea4af4be64c7cd11e7a7b))
+* **payment:** PAYPAL-970 don't show loading indicator if checkout form hasn't passed validation ([c571f90](https://github.com/bigcommerce/checkout-sdk-js/commit/c571f9009e2e9804da6d3f67ef11040e35938caf))
+* **payment:** PAYPAL-970 fix linter error ([75b914f](https://github.com/bigcommerce/checkout-sdk-js/commit/75b914fb7eebaabd36fb33ff7f3f04a9d9ba6e4b))
+* **payment:** PAYPAL-970 small fixes after code review ([083e2c5](https://github.com/bigcommerce/checkout-sdk-js/commit/083e2c5419c5d2ec13e5e85aa6329e71720c01f2))
+
 ### [1.137.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.1...v1.137.2) (2021-04-08)
 
 
