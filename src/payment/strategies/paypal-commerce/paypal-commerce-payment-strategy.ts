@@ -24,13 +24,9 @@ const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
 const POLLING_INTERVAL = 3000;
 const POLLING_MAX_TIME = 600000;
-const LOADING_INDICATOR_STYLES = {
-    backgroundColor: 'black',
-};
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
-    private _loadingIndicator?: LoadingIndicator;
 
     constructor(
         private _store: CheckoutStore,
@@ -39,6 +35,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
         private _paypalCommerceFundingKeyResolver: PaypalCommerceFundingKeyResolver,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private _loadingIndicator: LoadingIndicator,
         private _pollingInterval?: number,
         private _pollingTimer = 0
     ) {}
@@ -47,7 +44,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle } = initializationData ?? {};
-        this._loadingIndicator = new LoadingIndicator({styles: LOADING_INDICATOR_STYLES});
+
         if (orderId) {
             this._orderId = orderId;
 
@@ -77,9 +74,14 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
             onClick: async (_, actions) => {
                 this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
-                this._loadingIndicator?.show(loadingIndicatorContainerId);
 
-                return onValidate(actions.resolve, actions.reject);
+                const onValidationPassed = () => {
+                    this._loadingIndicator?.show(loadingIndicatorContainerId);
+
+                    return actions.resolve();
+                };
+
+                return onValidate(onValidationPassed, actions.reject);
             },
             onCancel: () => {
                 this._deinitializePollingTimer(gatewayId);
