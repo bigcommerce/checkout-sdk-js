@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.139.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.138.0...v1.139.0) (2021-04-13)
+
+
+### Features
+
+* **payment:** INT-3702 added vaulted cc ([8f6f2a1](https://github.com/bigcommerce/checkout-sdk-js/commit/8f6f2a1cef716386de329c5d052d570b43019ff6))
+
 ## [1.138.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.3...v1.138.0) (2021-04-13)
 
 

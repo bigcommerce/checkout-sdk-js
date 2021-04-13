@@ -2,6 +2,29 @@
 
 # Interface: MolliePaymentInitializeOptions
 
+A set of options that are required to initialize the Mollie payment method.
+
+Once Mollie payment is initialized, credit card form fields are provided by the
+payment provider as IFrames, these will be inserted into the current page. These
+options provide a location and styling for each of the form fields.
+
+```js
+service.initializePayment({
+     methodId: 'mollie',
+     mollie: {
+         containerId: 'container',
+         cardNumberId: '',
+         cardHolderId: '',
+         cardCvcId: '',
+         cardExpiryId: '',
+         styles : {
+             base: {
+                 color: '#fff'
+             }
+         }
+     }
+});
+
 ## Hierarchy
 
 * **MolliePaymentInitializeOptions**
@@ -14,6 +37,7 @@
 * [cardExpiryId](molliepaymentinitializeoptions.md#cardexpiryid)
 * [cardHolderId](molliepaymentinitializeoptions.md#cardholderid)
 * [cardNumberId](molliepaymentinitializeoptions.md#cardnumberid)
+* [containerId](molliepaymentinitializeoptions.md#containerid)
 * [styles](molliepaymentinitializeoptions.md#styles)
 
 ## Properties
@@ -22,11 +46,15 @@
 
 • **cardCvcId**: *string*
 
+The location to insert Mollie Component
+
 ___
 
 ###  cardExpiryId
 
 • **cardExpiryId**: *string*
+
+The location to insert Mollie Component
 
 ___
 
@@ -34,14 +62,30 @@ ___
 
 • **cardHolderId**: *string*
 
+The location to insert Mollie Component
+
 ___
 
 ###  cardNumberId
 
 • **cardNumberId**: *string*
 
+The location to insert Mollie Component
+
+___
+
+###  containerId
+
+• **containerId**: *string*
+
+ContainerId is use in Mollie for determined either its showing or not the
+container, because when Mollie has Vaulted Instruments it gets hide,
+and shows an error because can't mount Provider Components
+
 ___
 
 ###  styles
 
 • **styles**: *object*
+
+A set of styles required for the mollie components
