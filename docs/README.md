@@ -282,6 +282,7 @@
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
 * [WechatState](interfaces/wechatstate.md)
 * [WithCheckoutcomSEPAInstrument](interfaces/withcheckoutcomsepainstrument.md)
+* [WithCheckoutcomiDealInstrument](interfaces/withcheckoutcomidealinstrument.md)
 * [WithDocumentInstrument](interfaces/withdocumentinstrument.md)
 * [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)
 

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.138.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.3...v1.138.0) (2021-04-13)
+
+
+### Features
+
+* **payment:** INT-4021 Add strategy for iDeal APM ([752796b](https://github.com/bigcommerce/checkout-sdk-js/commit/752796bb109acadd118d94f51d04a3cc8cd1deb5))
+* **payment:** INT-4021 Test Cleanup ([61dfc25](https://github.com/bigcommerce/checkout-sdk-js/commit/61dfc257e6dbfb4b66661890403a96097a5f0f30))
+* **payment:** INT-4117 Support reload DR widget ([beb388a](https://github.com/bigcommerce/checkout-sdk-js/commit/beb388a233d64ee3532cf28ec4e33bd44095837f))
+* **payment:** INT-4117 Support reload DR widget + capsula changes ([bcfd2eb](https://github.com/bigcommerce/checkout-sdk-js/commit/bcfd2eb2b4a48220aafa1ffb3e1ef55f5b3e32d8))
+
 ### [1.137.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.137.2...v1.137.3) (2021-04-12)
 
 
