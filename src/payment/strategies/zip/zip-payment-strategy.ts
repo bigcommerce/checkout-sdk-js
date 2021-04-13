@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -75,6 +75,29 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        if (this._redirectFlowIsTrue()) {
+            let nonce: { id: string };
+            try {
+                nonce = JSON.parse(this._paymentMethod.clientToken);
+            } catch (error) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            await this._prepareForReferredRegistration(payment.methodId, nonce.id);
+
+            try {
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment({methodId: payment.methodId, paymentData: { nonce: nonce.id }}));
+            } catch (error) {
+                if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+                    return new Promise(() => {
+                        const { redirect_url } = error.body.additional_action_required.data;
+                        window.location.replace(redirect_url);
+                    });
+                }
+                throw error;
+            }
+        }
+
         const nonce = await new Promise<string | undefined>((resolve, reject) => {
             zipClient.Checkout.init({
                 onComplete: async ({ checkoutId, state }) => {
@@ -124,6 +147,10 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
 
     finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    private _redirectFlowIsTrue(): boolean {
+        return this._paymentMethod?.initializationData?.redirectFlowV2Enabled;
     }
 
     private _prepareForReferredRegistration(provider: string, externalId: string): Promise<Response<any>> {
