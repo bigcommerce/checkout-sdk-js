@@ -65,4 +65,26 @@ describe('AfterpayScriptLoader', () => {
             '//portal.us-sandbox.afterpay.com/afterpay-async.js'
         );
     });
+
+    it('loads widget script v2 when Feature is enabled', () => {
+        const method = merge({}, getAfterpay(), { initializationData: { deferredFlowV2Enabled: true } });
+
+        afterpayScriptLoader.load(method, 'AU');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.afterpay.com/afterpay-async.js'
+        );
+
+        afterpayScriptLoader.load(method, 'NZ');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.afterpay.com/afterpay-async.js'
+        );
+
+        afterpayScriptLoader.load(method, 'US');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.afterpay.com/afterpay-async.js'
+        );
+    });
 });

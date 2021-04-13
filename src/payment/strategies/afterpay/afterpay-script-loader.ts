@@ -32,18 +32,23 @@ export default class AfterpayScriptLoader {
      */
     load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk> {
         const testMode = method.config.testMode || false;
-        const scriptURI = this._getScriptURI(countryCode, testMode);
+        const deferredFlowEnabled = method.initializationData.deferredFlowV2Enabled || false;
+        const scriptURI = this._getScriptURI(countryCode, testMode, deferredFlowEnabled);
 
         return this._scriptLoader.loadScript(scriptURI)
             .then(() => (window as unknown as AfterpayWindow).AfterPay);
     }
 
-    private _getScriptURI(countryCode: string, testMode: boolean): string {
+  private _getScriptURI(countryCode: string, testMode: boolean, deferredFlowEnabled: boolean): string {
+        if (deferredFlowEnabled) {
+          return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
+        }
+
         if (countryCode === 'US') {
             return testMode ? SCRIPTS_US.SANDBOX : SCRIPTS_US.PROD;
         }
 
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
-    }
+  }
 
 }
