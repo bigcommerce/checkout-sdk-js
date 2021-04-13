@@ -20,6 +20,11 @@ const SCRIPTS_US: AfterpayScripts = {
     SANDBOX: '//portal.us-sandbox.afterpay.com/afterpay-async.js',
 };
 
+const SCRIPTS_V2_DEFAULT: AfterpayScripts = {
+  PROD: '//portal.afterpay.com/afterpay.js',
+  SANDBOX: '//portal.sandbox.afterpay.com/afterpay.js',
+};
+
 /** Class responsible for loading the Afterpay SDK */
 export default class AfterpayScriptLoader {
     constructor(
@@ -32,18 +37,23 @@ export default class AfterpayScriptLoader {
      */
     load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk> {
         const testMode = method.config.testMode || false;
-        const scriptURI = this._getScriptURI(countryCode, testMode);
+        const isUpgraded = method.initializationData.afterpayUpgraded || false;
+        const scriptURI = this._getScriptURI(countryCode, testMode, isUpgraded);
 
         return this._scriptLoader.loadScript(scriptURI)
             .then(() => (window as unknown as AfterpayWindow).AfterPay);
     }
 
-    private _getScriptURI(countryCode: string, testMode: boolean): string {
+  private _getScriptURI(countryCode: string, testMode: boolean, isUpgraded: boolean): string {
+        if (isUpgraded) {
+          return testMode ? SCRIPTS_V2_DEFAULT.SANDBOX : SCRIPTS_V2_DEFAULT.PROD;
+        }
+
         if (countryCode === 'US') {
             return testMode ? SCRIPTS_US.SANDBOX : SCRIPTS_US.PROD;
         }
 
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
-    }
+  }
 
 }
