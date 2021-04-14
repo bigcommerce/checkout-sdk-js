@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.140.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.139.1...v1.140.0) (2021-04-14)
+
+
+### Features
+
+* **payment:** INT-2503 Add strategy for checkout.com with Fawry ([878ebd7](https://github.com/bigcommerce/checkout-sdk-js/commit/878ebd70c588e5920414d2637c1db09f202d7146))
+
+
+### Bug Fixes
+
+* **payment:** INT-3611 Refresh the state in Googlepay and Braintree refactor ([a33dc55](https://github.com/bigcommerce/checkout-sdk-js/commit/a33dc5539861f809eff2763a2d89cbb5d56192e9))
+
 ### [1.139.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.139.0...v1.139.1) (2021-04-14)
 
 ## [1.139.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.138.0...v1.139.0) (2021-04-13)

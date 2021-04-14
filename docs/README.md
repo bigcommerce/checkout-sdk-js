@@ -281,6 +281,7 @@
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
 * [WechatState](interfaces/wechatstate.md)
+* [WithCheckoutcomFawryInstrument](interfaces/withcheckoutcomfawryinstrument.md)
 * [WithCheckoutcomSEPAInstrument](interfaces/withcheckoutcomsepainstrument.md)
 * [WithCheckoutcomiDealInstrument](interfaces/withcheckoutcomidealinstrument.md)
 * [WithDocumentInstrument](interfaces/withdocumentinstrument.md)
