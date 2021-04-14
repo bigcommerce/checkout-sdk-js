@@ -97,6 +97,9 @@ export function getGooglePaymentDataMock(): GooglePaymentData {
 export function getGoogleOrderRequestBody(): OrderRequestBody {
     return {
         useStoreCredit: true,
+        payment: {
+            methodId: 'googlepaybraintree',
+        },
     };
 }
 
