@@ -5,9 +5,8 @@ import { MollieClient } from './mollie';
 
 export function getInitializeOptions(): PaymentInitializeOptions {
     return {
-        methodId: 'credit_card',
+        methodId: 'creditcard',
         mollie: {
-            containerId: 'mollie-element',
             cardCvcId: 'mollie-card-cvc-component-field',
             cardExpiryId: 'mollie-card-expiry-component-field',
             cardHolderId: 'mollie-card-holder-component-field',
@@ -43,7 +42,7 @@ export function getOrderRequestBodyWithCreditCard(): OrderRequestBody {
     return {
         useStoreCredit: false,
         payment: {
-            methodId: 'credit_card',
+            methodId: 'creditcard',
             gatewayId: 'mollie',
             paymentData: undefined,
         },
