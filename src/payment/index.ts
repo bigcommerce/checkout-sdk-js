@@ -13,6 +13,7 @@ export {
     default as Payment,
     CreditCardInstrument,
     WithCheckoutcomiDealInstrument,
+    WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,
     HostedCreditCardInstrument,
     HostedInstrument,

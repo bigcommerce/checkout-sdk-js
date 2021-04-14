@@ -33,7 +33,7 @@ import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow, CardinalThreeDSecureFlowV2 } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { CheckoutcomiDealPaymentStrategy, CheckoutcomAPMPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
+import { CheckoutcomiDealPaymentStrategy, CheckoutcomAPMPaymentStrategy, CheckoutcomFawryPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
@@ -634,6 +634,15 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.CHECKOUTCOM_IDEAL, () =>
         new CheckoutcomiDealPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_FAWRY, () =>
+        new CheckoutcomFawryPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,

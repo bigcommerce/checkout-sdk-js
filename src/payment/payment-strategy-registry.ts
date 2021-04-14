@@ -16,6 +16,7 @@ const checkoutcomStrategies: {
     credit_card: PaymentStrategyType.CHECKOUTCOM,
     sepa: PaymentStrategyType.CHECKOUTCOM_SEPA,
     ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
+    fawry: PaymentStrategyType.CHECKOUTCOM_FAWRY,
 };
 export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, PaymentStrategyType> {
     constructor(
