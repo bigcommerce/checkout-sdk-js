@@ -15,7 +15,7 @@ export { default as CheckoutStoreSelector, CheckoutStoreSelectorFactory, createC
 export { default as CheckoutStoreState } from './checkout-store-state';
 export { default as CheckoutStoreStatusSelector, CheckoutStoreStatusSelectorFactory, createCheckoutStoreStatusSelectorFactory } from './checkout-store-status-selector';
 export { default as CheckoutStore, CheckoutStoreOptions, ReadableCheckoutStore } from './checkout-store';
-export { default as CheckoutValidator } from './checkout-validator';
+export { default as CheckoutValidator, ComparableCheckout } from './checkout-validator';
 export { default as InternalCheckoutSelectors } from './internal-checkout-selectors';
 
 export { default as createActionTransformer } from './create-action-transformer';
