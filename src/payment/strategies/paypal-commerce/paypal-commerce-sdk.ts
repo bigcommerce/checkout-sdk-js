@@ -191,6 +191,7 @@ export interface PaypalCommerceInitializationData {
     isPayPalCreditAvailable?: boolean;
     isProgressiveOnboardingAvailable?: boolean;
     clientToken?: string;
+    attributionId?: string;
 }
 
 export type DisableFundingType = Array<'credit' | 'card'>;
@@ -203,7 +204,7 @@ export interface PaypalCommerceScriptParams  {
     'buyer-country'?: string;
     'disable-funding'?: DisableFundingType;
     'data-client-token'?: string;
-    'partner-attribution-id'?: string;
+    'data-partner-attribution-id'?: string;
     currency?: string;
     commit?: boolean;
     intent?: 'capture' | 'authorize';
