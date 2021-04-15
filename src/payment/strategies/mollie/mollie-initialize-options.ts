@@ -28,7 +28,7 @@ export default interface MolliePaymentInitializeOptions {
      * container, because when Mollie has Vaulted Instruments it gets hide,
      * and shows an error because can't mount Provider Components
      */
-    containerId: string;
+    containerId?: string;
 
     /**
      * The location to insert Mollie Component

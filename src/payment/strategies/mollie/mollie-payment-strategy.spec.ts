@@ -120,6 +120,16 @@ describe('MolliePaymentStrategy', () => {
                 expect(mollieClient.createComponent).toBeCalledTimes(4);
                 expect(mollieElement.mount).toBeCalledTimes(4);
             });
+
+            it('does initialize without containerId', async () => {
+                delete options.mollie?.containerId;
+                await strategy.initialize(options);
+
+                expect(mollieScriptLoader.load).toBeCalledWith('test_T0k3n', 'en_US', true);
+                jest.runAllTimers();
+                expect(mollieClient.createComponent).toBeCalledTimes(4);
+                expect(mollieElement.mount).toBeCalledTimes(4);
+            });
         });
 
         describe('#execute', () => {

@@ -180,7 +180,11 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
      */
     private _mountElements() {
         const { containerId, cardNumberId, cardCvcId, cardExpiryId, cardHolderId, styles } = this._getInitializeOptions();
-        const container = document.getElementById(containerId);
+        let container: HTMLElement | null;
+
+        if (containerId) {
+            container = document.getElementById(containerId);
+        }
 
         setTimeout(() => {
             if (!containerId || container?.style.display !== 'none') {
