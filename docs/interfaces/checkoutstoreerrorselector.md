@@ -475,11 +475,11 @@ ___
 
 ###  getSubmitOrderError
 
-▸ **getSubmitOrderError**(): *[Error](amazonpaywidgeterror.md#error) | undefined*
+▸ **getSubmitOrderError**(): *[Error](amazonpaywidgeterror.md#error) | [CartChangedError](../classes/cartchangederror.md) | undefined*
 
 Returns an error if unable to submit the current order.
 
-**Returns:** *[Error](amazonpaywidgeterror.md#error) | undefined*
+**Returns:** *[Error](amazonpaywidgeterror.md#error) | [CartChangedError](../classes/cartchangederror.md) | undefined*
 
 The error object if unable to submit, otherwise undefined.
 

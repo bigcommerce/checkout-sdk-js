@@ -1,19 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) › [RequestError](requesterror.md)
+[@bigcommerce/checkout-sdk](../README.md) › [CartChangedError](cartchangederror.md)
 
-# Class: RequestError ‹**TBody**›
-
-Throw this error if we are unable to make a request to the server. It wraps
-any server response into a JS error object.
-
-## Type parameters
-
-▪ **TBody**
+# Class: CartChangedError
 
 ## Hierarchy
 
   ↳ [StandardError](standarderror.md)
 
-  ↳ **RequestError**
+  ↳ **CartChangedError**
 
 ## Implements
 
@@ -23,61 +16,49 @@ any server response into a JS error object.
 
 ### Constructors
 
-* [constructor](requesterror.md#constructor)
+* [constructor](cartchangederror.md#constructor)
 
 ### Properties
 
-* [body](requesterror.md#body)
-* [errors](requesterror.md#errors)
-* [headers](requesterror.md#headers)
-* [message](requesterror.md#message)
-* [name](requesterror.md#name)
-* [stack](requesterror.md#optional-stack)
-* [status](requesterror.md#status)
-* [type](requesterror.md#type)
+* [data](cartchangederror.md#data)
+* [message](cartchangederror.md#message)
+* [name](cartchangederror.md#name)
+* [stack](cartchangederror.md#optional-stack)
+* [type](cartchangederror.md#type)
 
 ## Constructors
 
 ###  constructor
 
-\+ **new RequestError**(`response?`: Response‹TBody | object›, `__namedParameters?`: object): *[RequestError](requesterror.md)*
+\+ **new CartChangedError**(`previous`: [ComparableCheckout](../README.md#comparablecheckout), `updated`: [ComparableCheckout](../README.md#comparablecheckout)): *[CartChangedError](cartchangederror.md)*
 
 *Overrides [StandardError](standarderror.md).[constructor](standarderror.md#constructor)*
 
 **Parameters:**
 
-▪`Optional`  **response**: *Response‹TBody | object›*
-
-▪`Optional`  **__namedParameters**: *object*
-
 Name | Type |
 ------ | ------ |
-`errors` | undefined &#124; object[] |
-`message` | undefined &#124; string |
+`previous` | [ComparableCheckout](../README.md#comparablecheckout) |
+`updated` | [ComparableCheckout](../README.md#comparablecheckout) |
 
-**Returns:** *[RequestError](requesterror.md)*
+**Returns:** *[CartChangedError](cartchangederror.md)*
 
 ## Properties
 
-###  body
+###  data
 
-• **body**: *TBody | object*
+• **data**: *object*
 
-___
-
-###  errors
-
-• **errors**: *Array‹object›*
-
-___
-
-###  headers
-
-• **headers**: *object*
+**`alpha`** 
+Please note that this option is currently in an early stage of
+development. Therefore the API is unstable and not ready for public
+consumption.
 
 #### Type declaration:
 
-* \[ **key**: *string*\]: any
+* **previous**: *[ComparableCheckout](../README.md#comparablecheckout)*
+
+* **updated**: *[ComparableCheckout](../README.md#comparablecheckout)*
 
 ___
 
@@ -110,12 +91,6 @@ ___
 *Implementation of [CustomError](../interfaces/customerror.md).[stack](../interfaces/customerror.md#optional-stack)*
 
 *Inherited from [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md).[stack](../interfaces/amazonpaywidgeterror.md#optional-stack)*
-
-___
-
-###  status
-
-• **status**: *number*
 
 ___
 

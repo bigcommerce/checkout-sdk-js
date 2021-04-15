@@ -1069,6 +1069,20 @@ declare interface Cart {
     updatedTime: string;
 }
 
+declare class CartChangedError extends StandardError {
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    data: {
+        previous: ComparableCheckout;
+        updated: ComparableCheckout;
+    };
+    constructor(previous: ComparableCheckout, updated: ComparableCheckout);
+}
+
 declare interface ChasePayCustomerInitializeOptions {
     container: string;
 }
@@ -2404,7 +2418,7 @@ declare interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | undefined;
+    getSubmitOrderError(): Error | CartChangedError | undefined;
     /**
      * Returns an error if unable to finalize the current order.
      *
@@ -3146,6 +3160,10 @@ declare interface CheckoutStoreStatusSelector {
      */
     isCreatingCustomerAddress(): boolean;
 }
+
+declare type ComparableCheckout = Pick<Checkout, 'outstandingBalance' | 'coupons' | 'giftCertificates'> & {
+    cart: Partial<Cart>;
+};
 
 declare interface Consignment {
     id: string;

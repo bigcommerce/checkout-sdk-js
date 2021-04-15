@@ -27,6 +27,7 @@
 
 ### Classes
 
+* [CartChangedError](classes/cartchangederror.md)
 * [CheckoutButtonErrorSelector](classes/checkoutbuttonerrorselector.md)
 * [CheckoutButtonInitializer](classes/checkoutbuttoninitializer.md)
 * [CheckoutButtonStatusSelector](classes/checkoutbuttonstatusselector.md)
@@ -299,6 +300,7 @@
 * [BraintreeFormFieldFocusEventData](README.md#braintreeformfieldfocuseventdata)
 * [BraintreeFormFieldStyles](README.md#braintreeformfieldstyles)
 * [CheckoutIncludeParam](README.md#checkoutincludeparam)
+* [ComparableCheckout](README.md#comparablecheckout)
 * [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 * [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 * [FlashMessageType](README.md#flashmessagetype)
@@ -399,6 +401,12 @@ ___
 Ƭ **CheckoutIncludeParam**: *object*
 
 #### Type declaration:
+
+___
+
+###  ComparableCheckout
+
+Ƭ **ComparableCheckout**: *Pick‹[Checkout](interfaces/checkout.md), "outstandingBalance" | "coupons" | "giftCertificates"› & object*
 
 ___
 

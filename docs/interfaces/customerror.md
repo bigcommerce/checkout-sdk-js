@@ -10,6 +10,7 @@
 
 ## Implemented by
 
+* [CartChangedError](../classes/cartchangederror.md)
 * [RequestError](../classes/requesterror.md)
 * [StandardError](../classes/standarderror.md)
 

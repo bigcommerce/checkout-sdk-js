@@ -11,6 +11,8 @@ all custom errors thrown in this library.
 
   ↳ **StandardError**
 
+  ↳ [CartChangedError](cartchangederror.md)
+
   ↳ [RequestError](requesterror.md)
 
 ## Implements
