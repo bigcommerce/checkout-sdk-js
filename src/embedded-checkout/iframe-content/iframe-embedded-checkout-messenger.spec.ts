@@ -1,4 +1,5 @@
 import { CartChangedError } from '../../cart/errors';
+import { getCheckout } from '../../checkout/checkouts.mock';
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 
@@ -40,7 +41,10 @@ describe('EmbeddedCheckoutMessenger', () => {
     });
 
     it('posts `complete` event to parent window', () => {
-        const error = new CartChangedError();
+        const error = new CartChangedError(
+            getCheckout(),
+            getCheckout()
+        );
 
         messenger.postError(error);
 
