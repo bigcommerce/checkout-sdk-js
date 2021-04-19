@@ -1,19 +1,20 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import { handler } from './handler';
+import { initializers, PaymentProcessor } from './initializers';
 
 /*
     BIG TODO: How do we handle the return journey of redirects?
 */
 
 /*
-    This strategy would be used for all PPSDK methods, other than:
-        - ones requiring our credit card hosted field
-        - 'non-standard' SDK methods
+    This strategy would be used for all PPSDK methods
 
     Key points:
         - The use of a "PPSDK Response Handler", which would
@@ -31,14 +32,50 @@ import { handler } from './handler';
 */
 
 export class Strategy implements PaymentStrategy {
+    protected _paymentProcessor?: PaymentProcessor;
+
     constructor(
         protected _store: CheckoutStore,
         protected _orderActionCreator: OrderActionCreator
     ) {}
 
-    initialize(): Promise<InternalCheckoutSelectors> {
-        // Nothing to be done here?
-        return Promise.resolve(this._store.getState());
+    async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (!options || !options.methodId) {
+            // TODO: Can we make this object and attribute mandatory?
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { methodId } = options;
+
+        /*
+            TODO: probably too brittle to just use methodId going forward
+
+            if methodId is 'card', how do we differentiate between standard and "has own JS" implementations?
+
+            N.B. looking for a "has own JS" initializer, not finding one,
+            then falling back to a default one for that methodId
+            could produce some unpredictable (and likely broken) UX during execute
+        */
+        const initializer = initializers[methodId];
+
+        if (!initializer) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        // Suggestions for better names welcome :D
+        const paymentProcessor = await initializer({
+            options,
+            store: this._store,
+        });
+
+        if (!paymentProcessor) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        // Sore the processor for later use in execute
+        this._paymentProcessor = paymentProcessor;
+
+        return this._store.getState();
     }
 
     deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -47,26 +84,28 @@ export class Strategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        // this strategy doesn't really know what the view will send it
-        // it will just pass it on to the processing/checkout endpoint
+        const { payment, ...order } = payload;
 
-        if (!options?.gatewayId || !options?.methodId) {
-            // throw? reject?
-            return Promise.reject();
+        if (!payment || !payment.methodId) {
+            throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
-        const { gatewayId: paymentProvider, methodId } = options;
+        const paymentProcessor = this._paymentProcessor;
 
-        const jsonBody = JSON.stringify(payload);
+        if (!paymentProcessor) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
 
-        const initialResponse = await fetch(`/payment/${paymentProvider}.${methodId}`, {
-            method: 'POST',
-            body: jsonBody,
-        });
+        const createOrder = () => this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        const getPaymentStep = () => paymentProcessor(payment);
+        const loadOrder = () => this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
 
-        // Same handler as used in HostedFormStrategy
-        return handler(initialResponse)
-            .then(() => this._store.dispatch(this._orderActionCreator.loadCurrentOrder()));
+        // TODO: move to async/await format?
+        return createOrder()
+            // Very key differences to a typical strategy:
+            .then(getPaymentStep)
+            .then(handler)
+            .then(loadOrder);
     }
 
     finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

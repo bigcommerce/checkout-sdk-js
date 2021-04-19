@@ -48,7 +48,6 @@ enum PaymentStrategyType {
     SEZZLE = 'sezzle',
     ZIP = 'zip',
     SDK = 'SDK',
-    SDK_HOSTED = 'SDK_HOSTED',
 }
 
 export default PaymentStrategyType;

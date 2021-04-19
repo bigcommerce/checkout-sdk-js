@@ -34,26 +34,8 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
 
-        /*
-            In theory, we can use a singular strategy here for all
-            except for methods using hosted credit cards fields
-        */
-
-        /*
-            BIG TODO:
-                how do we handle non-standard SDK methods
-                which have their own client side code?
-
-            We don't want these accidentally falling into either of these two strategies
-        */
         if (paymentMethod.gateway === 'SDK') {
-
-            if (paymentMethod.method === 'card') {
-                return PaymentStrategyType.SDK_HOSTED;
-            } else {
-                // N.B. this is dangerous, we need an escape hatch for non standard SDK methods
-                return PaymentStrategyType.SDK;
-            }
+            return PaymentStrategyType.SDK;
         }
 
         if (paymentMethod.gateway === 'klarna') {
