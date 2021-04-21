@@ -10,10 +10,6 @@ import { handler } from './handler';
 import { initializers, PaymentProcessor } from './initializers';
 
 /*
-    BIG TODO: How do we handle the return journey of redirects?
-*/
-
-/*
     This strategy would be used for all PPSDK methods
 
     Key points:
@@ -96,20 +92,64 @@ export class Strategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const createOrder = () => this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        // Submitting the order should let us restore it post redirect in finalize
+        const submitOrder = () => this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
         const getPaymentStep = () => paymentProcessor(payment);
         const loadOrder = () => this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
 
         // TODO: move to async/await format?
-        return createOrder()
+        return submitOrder()
             // Very key differences to a typical strategy:
             .then(getPaymentStep)
             .then(handler)
             .then(loadOrder);
     }
 
-    finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        // Nothing to be done here?
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        /*
+            This is actually called first, before initialize
+            We can check if there was a payment left for us to continue
+            i.e. at the return of a redirect
+
+            N.B. we will need a different mechanism for continue steps in the future
+            'finalize' runs and dead-ends prior to rendering payment methods
+            some future steps will want to run with the method choice visually open
+            we'll likely need a new 'continueOrderIfNeeded' feature in checkout-js
+        */
+
+        const state = this._store.getState();
+        const order = state.order.getOrder();
+        const status = state.payment.getPaymentStatus();
+        const method = options?.methodId;
+        const provider = state.payment.getPaymentId()?.providerId;
+
+        // Is this a correct use of this 'INITIALIZE' status?
+        if (provider && method && order && status === 'INITIALIZE') {
+            // Now we know we should carry on asking for next steps
+
+            /*
+                Where can we get this 'sdkPaymentId' value from?
+                Either from a get param of the checkout page itself (added by the returning redirect)
+                or by extending '/internalapi/v1/checkout/order' to store it as part of payment state there
+            */
+            const sdkPaymentId = ''; // Will need a real value
+
+            // These functions would be built elsewhere
+            const dispatchOrderFinalizedNotice = () => this._store.dispatch(
+                this._orderActionCreator.finalizeOrder(order.orderId, options)
+            );
+            const getPaymentStep = () => fetch(`/payment/${provider}.${method}/${sdkPaymentId}`);
+
+            // Similar to the return step of execute
+            return getPaymentStep()
+                .then(handler)
+                .then(dispatchOrderFinalizedNotice);
+        }
+
+        // Else, no payment to continue...
+
+        // This looks odd, but is normal
+        // In effect, this just leads to checkout loading up methods as normal
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 }

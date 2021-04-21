@@ -14,8 +14,9 @@ export const isRedirect = (x: unknown): x is Redirect => {
 export const handleRedirect = (redirect: Redirect): Promise<void> => {
     const action = redirect.formFields ? 'POST' : 'GET';
 
-    return new Promise(() => {
-        // Perform redirect etc based on the action and payload etc
-        window.location.assign(redirect.url);
-    });
+    // Perform redirect etc based on the action and payload etc
+    window.location.assign(redirect.url);
+
+    // Will never resolve, we've redirected away
+    return new Promise<never>(() => {});
 };
