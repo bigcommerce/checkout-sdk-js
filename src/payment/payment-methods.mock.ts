@@ -692,6 +692,24 @@ export function getMollie(): PaymentMethod {
     };
 }
 
+export function getMoneris(): PaymentMethod {
+    return {
+        id: 'moneris',
+        gateway: '',
+        logoUrl: '',
+        method: 'moneris',
+        supportedCards: [],
+        config: {
+            displayName: 'Moneris',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            profileId: 'ABC123',
+        },
+    };
+}
+
 export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
@@ -717,6 +735,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getPaypalCommerce(),
         getSquare(),
         getStripeV3(),
+        getMoneris(),
     ];
 }
 
