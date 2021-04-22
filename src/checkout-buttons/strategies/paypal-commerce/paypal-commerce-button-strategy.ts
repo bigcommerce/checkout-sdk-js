@@ -74,7 +74,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptParams {
-        const { clientId, intent, isPayPalCreditAvailable, merchantId } = initializationData;
+        const { clientId, intent, isPayPalCreditAvailable, merchantId, attributionId } = initializationData;
         const disableFunding: DisableFundingType = [ 'card' ];
 
         if (!isPayPalCreditAvailable) {
@@ -89,6 +89,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             components: ['buttons', 'messages'],
             'disable-funding': disableFunding,
             intent,
+            'data-partner-attribution-id': attributionId,
         };
     }
 }
