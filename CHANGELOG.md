@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.143.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.142.0...v1.143.0) (2021-04-22)
+
+
+### Features
+
+* **payment:** PAYPAL-982 Pass BN code into the banners script ([8a71bfb](https://github.com/bigcommerce/checkout-sdk-js/commit/8a71bfba5a54bc91ed3501a34705fc1778ca4e91))
+
 ## [1.142.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.141.0...v1.142.0) (2021-04-22)
 
 
