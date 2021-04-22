@@ -64,6 +64,8 @@ describe('MolliePaymentStrategy', () => {
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
+        jest.useFakeTimers();
+
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
@@ -89,7 +91,7 @@ describe('MolliePaymentStrategy', () => {
         );
     });
 
-    describe('#Initialize & Executes', () => {
+    describe('#Initialize & #Execute', () => {
         let options: PaymentInitializeOptions;
 
         beforeEach(() => {
@@ -114,6 +116,17 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(options);
 
                 expect(mollieScriptLoader.load).toBeCalledWith('test_T0k3n', 'en_US', true);
+                jest.runAllTimers();
+                expect(mollieClient.createComponent).toBeCalledTimes(4);
+                expect(mollieElement.mount).toBeCalledTimes(4);
+            });
+
+            it('does initialize without containerId', async () => {
+                delete options.mollie?.containerId;
+                await strategy.initialize(options);
+
+                expect(mollieScriptLoader.load).toBeCalledWith('test_T0k3n', 'en_US', true);
+                jest.runAllTimers();
                 expect(mollieClient.createComponent).toBeCalledTimes(4);
                 expect(mollieElement.mount).toBeCalledTimes(4);
             });
@@ -133,14 +146,15 @@ describe('MolliePaymentStrategy', () => {
                 }
             });
 
-            it('should call submitPayment when paying with creditcard', async () => {
+            it('should call submitPayment when paying with credit_card', async () => {
                 await strategy.initialize(options);
+                jest.runAllTimers();
                 await strategy.execute(getOrderRequestBodyWithCreditCard());
 
                 expect(mollieClient.createToken).toBeCalled();
                 expect(paymentActionCreator.submitPayment).toBeCalledWith({
                     gatewayId: 'mollie',
-                    methodId: 'creditcard',
+                    methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
                             browser_info: {
@@ -149,11 +163,38 @@ describe('MolliePaymentStrategy', () => {
                                 language: 'en-US',
                                 screen_height: 0,
                                 screen_width: 0,
-                                time_zone_offset: '0',
+                                time_zone_offset: new Date().getTimezoneOffset().toString(),
                             },
                             credit_card_token : {
                                 token: 'tkn_test',
                             },
+                        },
+                    },
+                });
+            });
+
+            it('should call submitPayment when saving vaulted', async () => {
+                await strategy.initialize(options);
+                jest.runAllTimers();
+                const { payment } = getOrderRequestBodyWithCreditCard();
+                await strategy.execute({ ...payment, payment: { methodId: 'credit_card', paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } } });
+                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                    methodId: 'credit_card',
+                    paymentData: {
+                        formattedPayload: {
+                            browser_info: {
+                                color_depth: 24,
+                                java_enabled: false,
+                                language: 'en-US',
+                                screen_height: 0,
+                                screen_width: 0,
+                                time_zone_offset: new Date().getTimezoneOffset().toString(),
+                            },
+                            credit_card_token : {
+                                token: 'tkn_test',
+                            },
+                            set_as_default_stored_instrument: true,
+                            vault_payment_instrument: true,
                         },
                     },
                 });
@@ -170,16 +211,12 @@ describe('MolliePaymentStrategy', () => {
                 });
             });
         });
-
-        afterEach(() =>  {
-            jest.resetAllMocks();
-        });
     });
 
     describe('#finalize()', () => {
         it('finalize mollie', () => {
             const promise = strategy.finalize();
-            expect(promise).resolves.toBe({});
+            expect(promise).resolves.toBe(store.getState());
         });
     });
 
@@ -194,16 +231,22 @@ describe('MolliePaymentStrategy', () => {
 
             jest.spyOn(store.getState().config, 'getStoreConfig')
                 .mockReturnValue({ storeProfile: { storeLanguage:  'en_US' } });
+
+            jest.spyOn(document, 'querySelectorAll');
         });
 
         it('deinitialize mollie payment strategy', async () => {
             await strategy.initialize(options);
 
+            jest.runAllTimers();
+            expect(mollieClient.createComponent).toBeCalledTimes(4);
             expect(mollieElement.mount).toBeCalledTimes(4);
 
             const promise = strategy.deinitialize();
 
-            expect(mollieElement.unmount).toBeCalledTimes(4);
+            expect(document.querySelectorAll).toBeCalledTimes(2);
+            expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-component');
+            expect(document.querySelectorAll).toHaveBeenNthCalledWith(2, '.mollie-components-controller');
 
             return expect(promise).resolves.toBe(store.getState());
         });
