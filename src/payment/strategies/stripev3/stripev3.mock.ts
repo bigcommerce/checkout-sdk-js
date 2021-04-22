@@ -153,22 +153,6 @@ export function getConfirmPaymentResponse(): unknown {
     };
 }
 
-export function getWrongPaymentResponse(): unknown {
-    return {
-        paymentIntent: {
-            otherKey: 'other_value',
-        },
-    };
-}
-
-export function getWrongPaymentMethodResponse(): unknown {
-    return {
-        paymentMethod: {
-            otherKey: 'other_value',
-        },
-    };
-}
-
 export function getPaymentMethodResponse(): unknown {
     return {
         paymentMethod: {
