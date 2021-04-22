@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.142.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.141.0...v1.142.0) (2021-04-22)
+
+
+### Features
+
+* **payment:** INT-3702 added vaulted cc ([cdf639c](https://github.com/bigcommerce/checkout-sdk-js/commit/cdf639c658ff489b03eef03d137266486e0cc50d))
+* **payment:** INT-3702 fix containerId ([7d6bc75](https://github.com/bigcommerce/checkout-sdk-js/commit/7d6bc754f93516357a5f3a6d03051f1a28638033))
+
+
+### Bug Fixes
+
+* **payment:** INT-4063 Avoid holding inventory if a payment intent confirmation fails for StripeV3 ([e291784](https://github.com/bigcommerce/checkout-sdk-js/commit/e291784ab81c98001e865e1e07836bf927ff6a45))
+
 ## [1.141.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.140.0...v1.141.0) (2021-04-15)
 
 
