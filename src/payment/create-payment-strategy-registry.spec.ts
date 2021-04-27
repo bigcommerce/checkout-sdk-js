@@ -34,6 +34,7 @@ import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
 import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
 import { PPSDKStrategy } from './strategies/ppsdk';
+import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -204,6 +205,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate paypalexpresscredit', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT);
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
+    });
+
+    it('can instantiate quadpay', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.QUADPAY);
+        expect(paymentStrategy).toBeInstanceOf(QuadpayPaymentStrategy);
     });
 
     it('can instantiate sagepay', () => {

@@ -59,6 +59,7 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { PPSDKStrategy } from './strategies/ppsdk';
+import { QuadpayPaymentStrategy, QuadpayScriptLoader } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -387,6 +388,19 @@ export default function createPaymentStrategyRegistry(
     registry.register(PaymentStrategyType.PPSDK, () =>
         new PPSDKStrategy(
             store
+        )
+    );
+
+    registry.register(PaymentStrategyType.QUADPAY, () =>
+        new QuadpayPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            storeCreditActionCreator,
+            remoteCheckoutActionCreator,
+            new QuadpayScriptLoader(scriptLoader),
+            requestSender
         )
     );
 
