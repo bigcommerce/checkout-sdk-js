@@ -60,6 +60,7 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         paypalcommerceOptions = {
             container: '#container',
+            clientId: '123',
             submitForm,
             onRenderButton: jest.fn(),
             onValidate: jest.fn((resolve, _) => {
