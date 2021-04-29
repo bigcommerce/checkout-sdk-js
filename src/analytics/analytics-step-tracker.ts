@@ -8,7 +8,7 @@ import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
 
-import { AnalyticsTracker } from './analytics-tracker-window';
+import { analyticsHit, hasPayloadLimit, AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
 export interface StepTrackerConfig {
@@ -129,8 +129,7 @@ export default class AnalyticsStepTracker implements StepTracker {
         }
 
         const isEcommerceGAEnabled = this.checkoutService.getState().data
-            .getConfig()?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
-
+                .getConfig()?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
         const payload = this.getTrackingPayload({
             orderId,
             revenue: orderAmount,
@@ -142,26 +141,31 @@ export default class AnalyticsStepTracker implements StepTracker {
             lineItems,
         });
 
-        if (isEcommerceGAEnabled && this.analytics.hasPayloadLimit(payload)) {
-            this.analytics.hit('transaction', {
-                '&ti': payload.orderId,
-                '&ta': payload.affiliation,
-                '&tr': payload.revenue,
-                '&ts': payload.shipping,
-                '&tt': payload.tax,
-                '&tcc': payload.coupon,
-                '&cu': payload.currency,
-            });
-
-            payload.products.map(product => {
-                this.analytics.hit('item', {
+        if (isEcommerceGAEnabled && hasPayloadLimit(payload)) {
+            analyticsHit(
+                'transaction',
+                {
                     '&ti': payload.orderId,
-                    '&in': product.name,
-                    '&ic': product.sku,
-                    '&iv': `${product.category}`,
-                    '&ip': product.price,
-                    '&iq': product.quantity,
-                });
+                    '&ta': payload.affiliation,
+                    '&tr': payload.revenue,
+                    '&ts': payload.shipping,
+                    '&tt': payload.tax,
+                    '&tcc': payload.coupon,
+                    '&cu': payload.currency,
+                }
+            );
+            payload.products.map(product => {
+                analyticsHit(
+                    'item',
+                    {
+                        '&ti': payload.orderId,
+                        '&in': product.name,
+                        '&ic': product.sku,
+                        '&iv': `${product.category}`,
+                        '&ip': product.price,
+                        '&iq': product.quantity,
+                    }
+                );
             });
 
             return this.clearExtraItemData(cartId);

@@ -1,9 +1,11 @@
+import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { createCheckoutService, CheckoutService } from '../checkout';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../common/error/errors';
 import { ShopperCurrency } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { Order } from '../order';
+import { getPhysicalItem } from '../order/line-items.mock';
 import { getOrder } from '../order/orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
@@ -322,14 +324,21 @@ describe('AnalyticsStepTracker', () => {
         describe('[Experiment flow] When order reach Google Analytics payload limit', () => {
             const analytics = {
                 track: jest.fn(),
-                hit: jest.fn(),
-                hasPayloadLimit: jest.fn(),
             };
 
             beforeEach(() => {
                 jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue(getOrder());
-                analytics.hasPayloadLimit.mockReturnValueOnce(true);
+                    .mockReturnValue({
+                        ...getOrder(),
+                        lineItems: {
+                            physicalItems: Array.from(new Array(100)).map(() => getPhysicalItem()),
+                            digitalItems: [],
+                            giftCertificates: [
+                                getGiftCertificateItem(),
+                            ],
+                            customItems: [],
+                        },
+                    });
 
                 jest.spyOn(checkoutService.getState().data, 'getConfig')
                     .mockReturnValue({
@@ -352,8 +361,6 @@ describe('AnalyticsStepTracker', () => {
             });
 
             it('Payload reach limit, and we will go through all products separately', () => {
-                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
-                expect(analytics.hit).toHaveBeenCalledTimes(3);
                 expect(analytics.track).not.toHaveBeenCalled();
             });
         });
@@ -392,8 +399,6 @@ describe('AnalyticsStepTracker', () => {
 
             it('Analytics\' function hit and hasPayloadLimit should not execute ', () => {
                 expect(analytics.track).toHaveBeenCalledTimes(1);
-                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
-                expect(analytics.hit).not.toHaveBeenCalled();
             });
         });
     });
