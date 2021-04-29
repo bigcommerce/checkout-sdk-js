@@ -71,7 +71,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         const shouldSaveInstrument = (paymentData as HostedInstrument)?.shouldSaveInstrument;
         const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)?.shouldSetAsDefaultInstrument;
 
-        if (!payment) {
+        if (!payment || !paymentData) {
             throw new PaymentArgumentInvalidError([ 'payment' ]);
         }
 
@@ -105,7 +105,17 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             } else {
                 await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+                const issuer = 'issuer' in paymentData ? paymentData.issuer : '';
+
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment({
+                    ...payment,
+                    paymentData: {
+                        ...paymentData,
+                        formattedPayload: {
+                            issuer,
+                        },
+                    },
+                }));
             }
         } catch (error) {
 

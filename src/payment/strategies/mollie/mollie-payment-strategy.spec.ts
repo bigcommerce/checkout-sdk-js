@@ -20,7 +20,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 import {  MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
 import MollieScriptLoader from './mollie-script-loader';
-import { getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
+import { getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs,  getOrderRequestBodyVaultAPMs, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
 
 describe('MolliePaymentStrategy', () => {
     let orderRequestSender: OrderRequestSender;
@@ -207,7 +207,29 @@ describe('MolliePaymentStrategy', () => {
                 expect(paymentActionCreator.submitPayment).toBeCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
-                    paymentData: undefined,
+                    paymentData: {
+                        formattedPayload: {
+                            issuer: 'foo',
+                        },
+                        issuer: 'foo',
+                    },
+                });
+            });
+
+            it('should save vault_payment_instrument on APMs', async () => {
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBodyVaultAPMs());
+
+                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                    gatewayId: 'mollie',
+                    methodId: 'belfius',
+                    paymentData: {
+                        formattedPayload: {
+                            issuer: '',
+                        },
+                        shouldSaveInstrument: true,
+                        shouldSetAsDefaultInstrument: false,
+                    },
                 });
             });
         });
