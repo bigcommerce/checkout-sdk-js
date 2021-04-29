@@ -1,11 +1,10 @@
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
@@ -19,9 +18,8 @@ import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
 export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _googlePayOptions?: GooglePayPaymentInitializeOptions;
+    private _methodId?: string;
     private _walletButton?: HTMLElement;
-    private _paymentMethod?: PaymentMethod;
-    private _buttonClickEventHandler?: (event: Event ) => Promise<InternalCheckoutSelectors>;
 
     constructor(
         private _store: CheckoutStore,
@@ -34,84 +32,71 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         private _googlePayAdyenV2PaymentProcessor?: GooglePayAdyenV2PaymentProcessor
     ) {}
 
-    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId } = options;
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        this._methodId = options.methodId;
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        return this._googlePayPaymentProcessor.initialize(this._methodId)
+            .then(() => {
+                this._googlePayOptions = this._getGooglePayOptions(options);
 
-        this._googlePayOptions = this._getGooglePayOptions(options);
+                if (!this._googlePayOptions) {
+                    throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
+                }
 
-        this._buttonClickEventHandler = this._handleButtlonClickedEvent(methodId);
+                const walletButton = this._googlePayOptions.walletButton && document.getElementById(this._googlePayOptions.walletButton);
 
-        if (this._paymentMethod.initializationData.nonce) {
-            return Promise.resolve(this._store.getState());
-        }
+                if (walletButton) {
+                    this._walletButton = walletButton;
+                    this._walletButton.addEventListener('click', this._handleWalletButtonClick);
+                }
 
-        await this._googlePayPaymentProcessor.initialize(methodId);
-
-        if (!this._googlePayOptions.walletButton) {
-            throw new InvalidArgumentError('walletButton argument is missing');
-        }
-
-        const walletButton = document.getElementById(this._googlePayOptions.walletButton);
-
-        if (!walletButton) {
-            throw new InvalidArgumentError('Unable to create wallet, walletButton ID could not be found');
-        }
-
-        this._walletButton = walletButton;
-        this._walletButton.addEventListener('click', this._buttonClickEventHandler);
-
-        return Promise.resolve(this._store.getState());
+                return this._store.getState();
+            });
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._walletButton && this._buttonClickEventHandler) {
-            this._walletButton.removeEventListener('click', this._buttonClickEventHandler);
+        if (this._walletButton) {
+            this._walletButton.removeEventListener('click', this._handleWalletButtonClick);
         }
 
-        this._buttonClickEventHandler = undefined;
         this._walletButton = undefined;
 
         return this._googlePayPaymentProcessor.deinitialize()
             .then(() => this._store.getState());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._googlePayOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
         }
 
-        if (!payload.payment) {
-            throw new PaymentArgumentInvalidError(['payment']);
-        }
+        const {
+            onError = () => {},
+            onPaymentSelect = () => {},
+        } = this._googlePayOptions;
 
-        const { methodId } = payload.payment;
+        return Promise.resolve(this._getPayment())
+            .then(payment => {
+                if (!payment.paymentData.nonce || !payment.paymentData.cardInformation) {
+                    // TODO: Find a way to share the code with _handleWalletButtonClick method
+                    return this._googlePayPaymentProcessor.displayWallet()
+                        .then(paymentData => this._paymentInstrumentSelected(paymentData))
+                        .then(() => onPaymentSelect())
+                        .then(() => this._getPayment())
+                        .catch(error => {
+                            if (error.statusCode !== 'CANCELED') {
+                                onError(error);
+                            }
+                        });
+                }
 
-        let payment = await this._getPayment(methodId);
-
-        if (!payment.paymentData.nonce || !payment.paymentData.cardInformation) {
-            const {
-                onError = () => {},
-                onPaymentSelect = () => {},
-            } = this._googlePayOptions;
-            await this._displayWallet(methodId, onPaymentSelect, onError);
-            payment = await this._getPayment(methodId);
-
-            if (!payment.paymentData.nonce) {
-                throw new MissingDataError(MissingDataErrorType.MissingPayment);
-            }
-        }
-
-        try {
-            await this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: payload.useStoreCredit }, options));
-
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
-        } catch (error) {
-            this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error);
-            throw error;
-        }
+                return payment;
+            })
+            .then(() =>
+                this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: payload.useStoreCredit }, options))
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(this._getPayment())))
+                    .catch(error => this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error) || Promise.reject(error))
+            );
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -149,51 +134,80 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepaystripe;
         }
 
-        throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
+        throw new InvalidArgumentError();
     }
 
-    private async _getPayment(methodId: string): Promise<PaymentMethodData> {
-        if (!methodId) {
+    private _getPayment(): PaymentMethodData {
+        if (!this._methodId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        let state = this._store.getState();
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(this._methodId);
 
-        const { nonce } = this._paymentMethod.initializationData;
-        if (nonce) {
-            state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-            this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { card_information: cardInformation } = this._paymentMethod.initializationData;
+        if (!paymentMethod.initializationData.nonce) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        let nonce;
+
+        if (this._methodId === 'googlepayadyenv2') {
+            nonce = JSON.stringify({
+                type: AdyenPaymentMethodType.GooglePay,
+                googlePayToken: paymentMethod.initializationData.nonce,
+                browser_info: getBrowserInfo(),
+            });
+        } else {
+            nonce = paymentMethod.initializationData.nonce;
+        }
+
+        const paymentData = {
+            method: this._methodId,
+            nonce,
+            cardInformation: paymentMethod.initializationData.card_information,
+        };
 
         return {
-            methodId,
-            paymentData: {
-                method: methodId,
-                cardInformation,
-                nonce: this._getNonce(methodId, this._paymentMethod),
-            },
+            methodId: this._methodId,
+            paymentData,
         };
     }
 
-    private _getNonce(methodId: string, { initializationData: { nonce }}: PaymentMethod) {
-        if (methodId === 'googlepayadyenv2') {
-            return JSON.stringify({
-                type: AdyenPaymentMethodType.GooglePay,
-                googlePayToken: nonce,
-                browser_info: getBrowserInfo(),
-            });
-        }
+    @bind
+    private _handleWalletButtonClick(event: Event): Promise<InternalCheckoutSelectors> {
+        event.preventDefault();
 
-        return nonce;
-    }
-
-    private async _paymentInstrumentSelected(paymentData: GooglePaymentData, methodId: string) {
-        if (!methodId) {
+        if (!this._methodId || !this._googlePayOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
+
+        const {
+            onError = () => {},
+            onPaymentSelect = () => {},
+        } = this._googlePayOptions;
+
+        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
+            return this._googlePayPaymentProcessor.displayWallet()
+                .then(paymentData => this._paymentInstrumentSelected(paymentData))
+                .then(() => onPaymentSelect())
+                .catch(error => {
+                    if (error.statusCode !== 'CANCELED') {
+                        onError(error);
+                    }
+                });
+        }, { methodId: this._methodId }), { queueId: 'widgetInteraction' });
+    }
+
+    private async _paymentInstrumentSelected(paymentData: GooglePaymentData) {
+        if (!this._methodId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const methodId = this._methodId;
 
         // TODO: Revisit how we deal with GooglePaymentData after receiving it from Google
         await this._googlePayPaymentProcessor.handleSuccess(paymentData);
@@ -202,43 +216,5 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
             this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
         ]);
-    }
-
-    private _handleButtlonClickedEvent(methodId: string): (event?: Event) => Promise<InternalCheckoutSelectors> {
-
-        return (event?: Event) => {
-            event?.preventDefault();
-
-            if (!methodId || !this._googlePayOptions) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
-
-            const {
-                onError = () => {},
-                onPaymentSelect = () => {},
-            } = this._googlePayOptions;
-
-            return this._store.dispatch(
-                this._paymentStrategyActionCreator.widgetInteraction(
-                    async () => await this._displayWallet(methodId, onPaymentSelect, onError),
-                        { methodId }
-                ),
-                { queueId: 'widgetInteraction' }
-            );
-        };
-    }
-
-    private async _displayWallet(methodId: string, onPaymentSelect: () => void, onError: (onError: Error) => void ): Promise<void> {
-        try {
-            const paymentData = await this._googlePayPaymentProcessor.displayWallet();
-            await this._paymentInstrumentSelected(paymentData, methodId);
-
-            return onPaymentSelect();
-        } catch (error) {
-            if (error.statusCode === 'CANCELED') {
-                throw new Error('CANCELED');
-            }
-            onError(error);
-        }
     }
 }
