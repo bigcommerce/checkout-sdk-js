@@ -152,14 +152,6 @@ describe('GooglePayPaymentStrategy', () => {
             expect(googlePayPaymentProcessor.initialize).toHaveBeenCalled();
         });
 
-        it('does not reload the state', async () => {
-            paymentMethodMock.config.testMode = true;
-
-            await strategy.initialize(googlePayOptions);
-
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(0);
-        });
-
         it('does not load googlepay if initialization options are not provided', async () => {
             googlePayOptions = { methodId: 'googlepaybraintree'};
 
@@ -235,7 +227,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
         });
 
-        it('creates the order and submit payment form cart', async () => {
+        it('creates the order and submit payment', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
                 initializationData: {
                     nonce: 'nonce',
@@ -252,77 +244,6 @@ describe('GooglePayPaymentStrategy', () => {
 
             await strategy.execute(getGoogleOrderRequestBody());
 
-            expect(store.getState().paymentMethods.getPaymentMethodOrThrow).toHaveBeenCalledTimes(2);
-            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-        });
-
-        it('creates the order and submit payment form checkout page', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue({
-                initializationData: {
-                    nonce: 'nonce',
-                    card_information: {
-                        type: 'type',
-                        number: 'number',
-                    },
-                },
-            }).mockReturnValueOnce({
-                initializationData: {
-                    nonce: '',
-                    card_information: {
-                        type: 'type',
-                        number: 'number',
-                    },
-                },
-            });
-            await strategy.initialize(googlePayOptions);
-
-            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-
-            await strategy.execute(getGoogleOrderRequestBody());
-
-            expect(store.getState().paymentMethods.getPaymentMethodOrThrow).toHaveBeenCalledTimes(3);
-            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-        });
-
-        it('creates the order and submit payment form checkout page with declined card', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue({
-                initializationData: {
-                    nonce: 'nonce',
-                    card_information: {
-                        type: 'type',
-                        number: 'number',
-                    },
-                },
-            }).mockReturnValueOnce({
-                initializationData: {
-                    nonce: '',
-                    card_information: {
-                        type: 'type',
-                        number: 'number',
-                    },
-                },
-            }).mockReturnValueOnce({
-                initializationData: {
-                    nonce: '',
-                    card_information: {
-                        type: 'type',
-                        number: 'number',
-                    },
-                },
-            });
-            await strategy.initialize(googlePayOptions);
-
-            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-
-            await strategy.execute(getGoogleOrderRequestBody());
-
-            expect(store.getState().paymentMethods.getPaymentMethodOrThrow).toHaveBeenCalledTimes(4);
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
         });
