@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.144.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.144.0...v1.144.1) (2021-04-29)
+
+
+### Bug Fixes
+
+* **payment:** INT-4266 Googlepay - fixing where nonce value is going to be reloaded ([399b670](https://github.com/bigcommerce/checkout-sdk-js/commit/399b670709893f69ae2d3f10e57b3aee6346feab))
+
 ## [1.144.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.143.0...v1.144.0) (2021-04-29)
 
 
