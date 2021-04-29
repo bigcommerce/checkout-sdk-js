@@ -5067,10 +5067,12 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  * service.initializePayment({
  *     methodId: 'paypalcommerce',
  *     paypalcommerce: {
- *         container: 'container',
+ *         container: '#container',
+ *         clientId: 'YOUR_CLIENT_ID'
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
- *             service.submitOrder(
+ *         // Example function
+ *             this.submitOrder(
  *                {
  *                   payment: { methodId: 'paypalcommerce', }
  *               }
@@ -5078,7 +5080,8 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  *         },
  * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
  *         onValidate: (resolve, reject) => {
- *             const isValid = service.validatePaymentForm();
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
  *             if (isValid) {
  *                 return resolve();
  *             }
@@ -5086,7 +5089,8 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  *         },
  * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
  *         onRenderButton: () => {
- *             service.hidePaymentSubmitButton();
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
  *         }
  *     },
  * });
@@ -5094,9 +5098,13 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  */
 declare interface PaypalCommercePaymentInitializeOptions {
     /**
-     * The ID of a container where the payment widget should be inserted into.
+     * The CSS selector of a container where the payment widget should be inserted into.
      */
     container: string;
+    /**
+     *  The Client ID of the Paypal App
+     */
+    clientId: string;
     /**
      * A callback that gets called when a buyer click on Smart Payment Button
      * and should validate payment form.

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.144.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.143.0...v1.144.0) (2021-04-29)
+
+
+### Features
+
+* **payment:** INT-4150 changing zip strategy flow ([fd2354a](https://github.com/bigcommerce/checkout-sdk-js/commit/fd2354ad5d9c2a8ebe3a7a87bf12723644bec248))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-983 Improve the Checkout SDK documentation around PayPal Commerce ([613c456](https://github.com/bigcommerce/checkout-sdk-js/commit/613c4566dd787c58d4b4f649027f5b6cddf03a91))
+
 ## [1.143.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.142.0...v1.143.0) (2021-04-22)
 
 
