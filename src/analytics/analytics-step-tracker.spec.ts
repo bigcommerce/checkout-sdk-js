@@ -11,6 +11,7 @@ import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import AnalyticsStepTracker, { AnalyticStepId, AnalyticStepType } from './analytics-step-tracker';
+import AnalyticsTrackerWindow from './analytics-tracker-window';
 
 describe('AnalyticsStepTracker', () => {
     let checkoutService: CheckoutService;
@@ -325,6 +326,8 @@ describe('AnalyticsStepTracker', () => {
             const analytics = {
                 track: jest.fn(),
             };
+            const _window = window as unknown as AnalyticsTrackerWindow;
+            _window.ga = () => {};
 
             beforeEach(() => {
                 jest.spyOn(checkoutService.getState().data, 'getOrder')
