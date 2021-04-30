@@ -1,5 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
@@ -7,7 +7,8 @@ import { of, Observable } from 'rxjs';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
-import { NotInitializedError } from '../../../common/error/errors';
+import { NotInitializedError, RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
@@ -25,6 +26,7 @@ import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 import PaymentStrategy from '../payment-strategy';
 
 import { Zip } from './zip';
@@ -102,8 +104,7 @@ describe('ZipPaymentStrategy', () => {
             .mockReturnValue(submitPaymentAction);
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockResolvedValue(store.getState());
-        jest.spyOn(store, 'dispatch')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(store, 'dispatch');
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
@@ -313,6 +314,40 @@ describe('ZipPaymentStrategy', () => {
             await strategy.execute(orderRequestBody, zipOptions);
             expect(requestSender.sendRequest).toHaveBeenCalledWith(requestUrl, expect.any(Object));
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
+        it('redirects to Zip url', async () => {
+            const paymentMethodMock = {
+                ...getZip(),
+                initializationData: {
+                    redirectFlowV2Enabled: true,
+                },
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethodMock);
+
+            const error = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                status: 'additional_action_required',
+                additional_action_required: {
+                    type: 'external_redirect',
+                    data: {
+                        redirect_url: 'http://some-url',
+                    },
+                } ,
+            }));
+            window.location.replace = jest.fn();
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+
+            await strategy.deinitialize();
+            await strategy.initialize(zipOptions);
+            strategy.execute(orderRequestBody, zipOptions);
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(window.location.replace).toBeCalledWith('http://some-url');
         });
     });
 
