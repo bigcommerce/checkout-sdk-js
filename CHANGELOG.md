@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.144.2-alpha.f5845da8dd2b1ae3cf45b86cf5a9b1a4f813d203](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.143.1-alpha.59ead628348469eafe3716c11d7c4e84c64ae9a0...v1.144.2-alpha.f5845da8dd2b1ae3cf45b86cf5a9b1a4f813d203) (2021-04-30)
+
+
+### Features
+
+* **payment:** INT-4150 changing zip strategy flow ([fd2354a](https://github.com/bigcommerce/checkout-sdk-js/commit/fd2354ad5d9c2a8ebe3a7a87bf12723644bec248))
+
+
+### Bug Fixes
+
+* **checkout:** DATA-7883 segment ([04f364c](https://github.com/bigcommerce/checkout-sdk-js/commit/04f364ce7bb667bc607cdf69748963de6af6f3da))
+* **checkout:** DATA-7883 segment ([86d78a9](https://github.com/bigcommerce/checkout-sdk-js/commit/86d78a90d5b2b5dae52edb43b61f29a8d23bacfb))
+* **payment:** INT-4266 Googlepay - fixing where nonce value is going to be reloaded ([399b670](https://github.com/bigcommerce/checkout-sdk-js/commit/399b670709893f69ae2d3f10e57b3aee6346feab))
+
 ### [1.144.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.144.0...v1.144.1) (2021-04-29)
 
 
