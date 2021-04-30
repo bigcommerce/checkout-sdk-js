@@ -1,4 +1,4 @@
-import { keys } from 'lodash';
+import { isFunction, keys } from 'lodash';
 
 import { LineItemMap } from '../cart';
 import { Checkout, CheckoutService } from '../checkout';
@@ -8,7 +8,7 @@ import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
 
-import { analyticsHit, hasPayloadLimit, AnalyticsTracker } from './analytics-tracker-window';
+import AnalyticsTrackerWindow, { analyticsHit, hasPayloadLimit, AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
 export interface StepTrackerConfig {
@@ -140,8 +140,9 @@ export default class AnalyticsStepTracker implements StepTracker {
             extraItemsData,
             lineItems,
         });
+        const _window = window as unknown as AnalyticsTrackerWindow;
 
-        if (isEcommerceGAEnabled && hasPayloadLimit(payload)) {
+        if (isEcommerceGAEnabled && hasPayloadLimit(payload) && isFunction(_window?.ga)) {
             analyticsHit(
                 'transaction',
                 {
