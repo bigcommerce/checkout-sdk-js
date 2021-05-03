@@ -346,6 +346,23 @@ export function getAmazonPay(): PaymentMethod {
     };
 }
 
+export function getClearpay(): PaymentMethod {
+    return {
+        id: 'PAY_BY_INSTALLMENT',
+        gateway: 'clearpay',
+        logoUrl: '',
+        method: 'multi-option',
+        supportedCards: [],
+        config: {
+            displayName: 'Pay over time',
+            merchantId: '33133',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+    };
+}
+
 export function getStripe(): PaymentMethod {
     return {
         id: 'stripe',
@@ -690,6 +707,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
         getCheckoutcom(),
+        getClearpay(),
         getGooglePay(),
         getGooglePayAdyenV2(),
         getGooglePayCybersourceV2(),

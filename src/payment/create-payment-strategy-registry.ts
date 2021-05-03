@@ -34,6 +34,7 @@ import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProc
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow, CardinalThreeDSecureFlowV2 } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { CheckoutcomiDealPaymentStrategy, CheckoutcomAPMPaymentStrategy, CheckoutcomFawryPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
+import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
@@ -221,6 +222,18 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             hostedFormFactory,
             formPoster
+        )
+    );
+
+    registry.register(PaymentStrategyType.CLEARPAY, () =>
+        new ClearpayPaymentStrategy(
+            store,
+            checkoutValidator,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            storeCreditActionCreator,
+            new ClearpayScriptLoader(scriptLoader)
         )
     );
 
