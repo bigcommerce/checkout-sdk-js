@@ -874,14 +874,6 @@ export interface StripeAdditionalAction {
     data: StripeAdditionalActionData;
 }
 
-export interface StripeAdditionalActionError {
-    body: {
-        errors?: Array<{ code: string; message?: string }>;
-        additional_action_required: StripeAdditionalAction;
-        three_ds_result: { token: string };
-    };
-}
-
 export interface StripeCardElements {
     [index: number]: StripeElement;
 }
