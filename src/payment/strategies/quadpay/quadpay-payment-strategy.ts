@@ -1,26 +1,20 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
+import { noop } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
 import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { Quadpay, QuadpayModalEvent } from './quadpay';
-import QuadpayScriptLoader from './quadpay-script-loader';
-
 export default class QuadpayPaymentStrategy implements PaymentStrategy {
-    private _paymentMethod?: PaymentMethod;
-    private _quadPayClient?: Quadpay;
-
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
@@ -28,129 +22,68 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _quadPayScriptLoader: QuadpayScriptLoader,
         private _requestSender: RequestSender
     ) { }
 
-    async initialize(): Promise<InternalCheckoutSelectors> {
-        const quadpay = await this._quadPayScriptLoader.load();
-        this._quadPayClient = quadpay;
-
-        return this._store.getState();
-    }
-
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._paymentMethod = undefined;
-        this._quadPayClient = undefined;
-
+    initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
-        const { _quadPayClient: quadPayClient } = this;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        if (!quadPayClient) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
+        let nonce: string;
+        const { methodId } = payment;
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
+        const { clientToken = '' } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
-
-        if (useStoreCredit !== undefined) {
-            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
-        }
-
-        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-        await this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(payment.methodId, { useStoreCredit }));
-
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
-
-        this._paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
-
-        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+        try {
+            ({ id: nonce } = JSON.parse(clientToken));
+        } catch (error) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        if (this._redirectFlowIsTrue()) {
-            let nonce: { id: string };
-            try {
-                nonce = JSON.parse(this._paymentMethod.clientToken);
-            } catch (error) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            await this._prepareForReferredRegistration(payment.methodId, nonce.id);
-
-            try {
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment({methodId: payment.methodId, paymentData: { nonce: nonce.id }}));
-            } catch (error) {
-                if (error instanceof RequestError && error.body.status === 'additional_action_required') {
-                    return new Promise(() => {
-                        const { redirect_url } = error.body.additional_action_required.data;
-                        window.location.replace(redirect_url);
-                    });
-                }
-                throw error;
-            }
+        if (!nonce) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
-        const nonce = await new Promise<string | undefined>((resolve, reject) => {
-            quadPayClient.Checkout.init({
-                onComplete: async ({ checkoutId, state }) => {
-                    if (state === QuadpayModalEvent.CancelCheckout) {
-                        return reject(new PaymentMethodCancelledError());
-                    }
+        const paymentPayload = {
+            methodId,
+            paymentData: { nonce },
+        };
 
-                    if (state === QuadpayModalEvent.CheckoutReferred && checkoutId) {
-                        await this._prepareForReferredRegistration(payment.methodId, checkoutId);
+        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
-                        if (this._paymentMethod?.initializationData?.deferredFlowV2Enabled) {
-                            return resolve(checkoutId);
-                        }
+        await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+        await this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }));
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        await this._prepareForReferredRegistration(methodId, nonce);
 
-                        return resolve();
-                    }
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        } catch (error) {
+            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+                const { redirect_url } = error.body.additional_action_required.data;
 
-                    if (state === QuadpayModalEvent.CheckoutApproved && checkoutId) {
-                        return resolve(checkoutId);
-                    }
+                window.location.replace(redirect_url);
 
-                    if (state === QuadpayModalEvent.CheckoutDeclined) {
-                        return reject(new PaymentMethodDeclinedError('Unfortunately your application was declined. Please select another payment method.'));
-                    }
+                return new Promise(noop);
+            }
 
-                    reject(new PaymentMethodInvalidError());
-                },
-                onCheckout: openModal => {
-                    if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                    }
-
-                    openModal(JSON.parse(this._paymentMethod.clientToken));
-                },
-            });
-        });
-
-        if (nonce !== undefined) {
-            return this._store.dispatch(this._paymentActionCreator.submitPayment({
-                methodId: payment.methodId,
-                paymentData: { nonce },
-            }));
+            throw error;
         }
-
-        return this._store.getState();
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _redirectFlowIsTrue(): boolean {
-        return this._paymentMethod?.initializationData?.redirectFlowV2Enabled;
+    deinitialize(): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 
     private _prepareForReferredRegistration(provider: string, externalId: string): Promise<Response<any>> {

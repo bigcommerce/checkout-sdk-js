@@ -730,6 +730,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getMollie(),
         getPaypalExpress(),
         getPaypalCommerce(),
+        getQuadpay(),
         getSquare(),
         getStripeV3(),
     ];
