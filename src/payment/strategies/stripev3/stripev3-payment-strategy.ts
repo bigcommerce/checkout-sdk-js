@@ -19,7 +19,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import isIndividualCardElementOptions, { PaymentIntent, PaymentMethod as StripePaymentMethod, StripeAdditionalAction, StripeAdditionalActionError, StripeAddress, StripeBillingDetails, StripeCardElements, StripeConfirmCardPaymentData, StripeConfirmIdealPaymentData, StripeConfirmPaymentData, StripeConfirmSepaPaymentData, StripeElement, StripeElements, StripeElementOptions, StripeElementType, StripeError, StripePaymentMethodType, StripeShippingAddress, StripeV3Client } from './stripev3';
+import isIndividualCardElementOptions, { PaymentIntent, PaymentMethod as StripePaymentMethod, StripeAdditionalAction, StripeAddress, StripeBillingDetails, StripeCardElements, StripeConfirmCardPaymentData, StripeConfirmIdealPaymentData, StripeConfirmPaymentData, StripeConfirmSepaPaymentData, StripeElement, StripeElements, StripeElementOptions, StripeElementType, StripeError, StripePaymentMethodType, StripeShippingAddress, StripeV3Client } from './stripev3';
 import StripeV3PaymentInitializeOptions from './stripev3-initialize-options';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 
@@ -59,6 +59,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
         let formattedPayload: { [key: string]: any };
+        let stripeError: StripeError | undefined;
 
         if (!payment || !payment.paymentData) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -90,7 +91,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             }
             const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-            const { id: token } = await this._confirmStripePayment(paymentMethod);
+            const result = await this._confirmStripePayment(paymentMethod);
+            const { id: token } = result.paymentIntent ?? result.paymentMethod ?? { id: '' };
+            stripeError = result.error;
 
             formattedPayload = {
                 credit_card_token: { token },
@@ -108,7 +111,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
-            return await this._processAdditionalAction(error, methodId, shouldSaveInstrument, shouldSetAsDefaultInstrument);
+            return await this._processAdditionalAction(
+                this._handleEmptyPaymentIntentError(error, stripeError),
+                methodId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument
+            );
         }
     }
 
@@ -131,7 +139,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     private async _processAdditionalAction(
-        error: StripeAdditionalActionError,
+        error: Error,
         methodId: string,
         shouldSaveInstrument: boolean,
         shouldSetAsDefaultInstrument: boolean
@@ -140,7 +148,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             throw error;
         }
 
-        const isAdditionalActionError = some(error.body.errors, {code: 'additional_action_required'});
+        const isAdditionalActionError = some(error.body.errors, { code: 'additional_action_required' });
         const isThreeDSecureRequiredError = some(error.body.errors, { code: 'three_d_secure_required' });
 
         if (isAdditionalActionError) {
@@ -157,7 +165,8 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         if (isThreeDSecureRequiredError) {
             const clientSecret = error.body.three_ds_result.token;
-            const { id: token } = await this._handleCustomerAction(clientSecret);
+            const result = await this._getStripeJs().handleCardAction(clientSecret);
+            const { id: token } = result.paymentIntent || { id: '' };
 
             const formattedPayload = {
                 credit_card_token: { token },
@@ -167,80 +176,73 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             const paymentPayload = this._buildPaymentPayload(methodId, formattedPayload, shouldSetAsDefaultInstrument);
 
-            return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            try {
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            } catch (error) {
+                throw this._handleEmptyPaymentIntentError(error, result.error);
+            }
         }
 
         throw error;
     }
 
-    private async _confirmStripePayment(paymentMethod: PaymentMethod): Promise<PaymentIntent | StripePaymentMethod> {
-        const { clientToken: clientSecret, returnUrl } = paymentMethod;
+    private _handleEmptyPaymentIntentError(
+        error: Error,
+        stripeError: StripeError | undefined
+    ) {
+        if (!(error instanceof RequestError)) {
+            return error;
+        }
+
+        return some(error.body.errors, { code: 'required_field' }) && stripeError
+            ? new Error(stripeError.message)
+            : error;
+    }
+
+    private async _confirmStripePayment(paymentMethod: PaymentMethod): Promise<{
+        paymentIntent?: PaymentIntent | undefined;
+        paymentMethod?: StripePaymentMethod | undefined;
+        error?: StripeError | undefined;
+    }> {
+        const { clientToken: clientSecret, method, returnUrl } = paymentMethod;
 
         if (!clientSecret) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        let data;
-        let error: StripeError | undefined;
-        let paymentIntent: PaymentIntent | undefined;
-        let stripePaymentMethod: StripePaymentMethod | undefined;
-
-        switch (paymentMethod.method) {
+        switch (method) {
             case StripeElementType.Alipay:
-                ({error, paymentIntent} = await this._getStripeJs().confirmAlipayPayment(
-                    clientSecret, { return_url: returnUrl }, { handleActions: false } ));
+                return await this._getStripeJs().confirmAlipayPayment(clientSecret, { return_url: returnUrl }, { handleActions: false } );
 
-                break;
-
-            case StripeElementType.CreditCard:
-                const element: any = this._useIndividualCardFields ? this._getStripeCardElements()[0] : this._getStripeElement();
-                const customer = this._store.getState().customer.getCustomer();
-                const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-                const billingDetails = this._mapStripeBillingDetails(billingAddress, customer);
-
-                ({error, paymentMethod: stripePaymentMethod} = await this._getStripeJs().createPaymentMethod(
-                    {
-                        type: StripePaymentMethodType.CreditCard,
-                        card: element,
-                        billing_details: billingDetails,
-                    })
+            case StripeElementType.CreditCard: {
+                const card = this._useIndividualCardFields ? this._getStripeCardElements()[0] : this._getStripeElement();
+                const billingDetails = this._mapStripeBillingDetails(
+                    this._store.getState().billingAddress.getBillingAddress(),
+                    this._store.getState().customer.getCustomer()
                 );
 
-                break;
+                return await this._getStripeJs().createPaymentMethod({
+                    type: StripePaymentMethodType.CreditCard,
+                    card,
+                    billing_details: billingDetails,
+                });
+            }
 
-            case StripeElementType.iDEAL:
-                data = this._mapStripePaymentData(StripePaymentMethodType.iDEAL, returnUrl);
-                ({error, paymentIntent} = await this._getStripeJs().confirmIdealPayment(
-                    clientSecret, data, { handleActions: false }));
+            case StripeElementType.iDEAL: {
+                const data = this._mapStripePaymentData(StripePaymentMethodType.iDEAL, returnUrl);
 
-                break;
+                return await this._getStripeJs().confirmIdealPayment(clientSecret, data, { handleActions: false });
+            }
 
-            case StripeElementType.Sepa:
-                data = this._mapStripePaymentData(StripePaymentMethodType.Sepa);
-                ({error, paymentIntent} = await this._getStripeJs().confirmSepaDebitPayment(clientSecret, data));
+            case StripeElementType.Sepa: {
+                const data = this._mapStripePaymentData(StripePaymentMethodType.Sepa);
 
-                break;
+                return await this._getStripeJs().confirmSepaDebitPayment(clientSecret, data);
+            }
+
+            default:
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-
-        if (error) {
-            return { id: '', status: '' };
-        }
-
-        if (stripePaymentMethod && paymentMethod.method === StripeElementType.CreditCard) {
-            return stripePaymentMethod;
-        }
-
-        if (paymentIntent) {
-            return paymentIntent;
-        }
-
-        return { id: '', status: '' };
-    }
-
-    private async _handleCustomerAction(clientSecret: string): Promise<PaymentIntent> {
-        const { paymentIntent } = await this._getStripeJs().handleCardAction(clientSecret);
-
-        return paymentIntent ?? { id: '', status: '' };
     }
 
     private _getInitializeOptions(): PaymentInitializeOptions {
