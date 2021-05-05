@@ -57,6 +57,7 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommerceHostedForm,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
+import { PPSDKStrategy } from './strategies/ppsdk';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -367,6 +368,12 @@ export default function createPaymentStrategyRegistry(
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
             new LoadingIndicator({ styles: { backgroundColor: 'black' } })
+        )
+    );
+
+    registry.register(PaymentStrategyType.PPSDK, () =>
+        new PPSDKStrategy(
+            store
         )
     );
 

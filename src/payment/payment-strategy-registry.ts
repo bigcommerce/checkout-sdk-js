@@ -41,6 +41,15 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
+        const ppsdkFeatureOn =
+            this._store.getState()
+                .config.getStoreConfig()
+                ?.checkoutSettings.features['PAYMENTS-6806.enable_ppsdk_strategy'];
+
+        if (ppsdkFeatureOn && paymentMethod.type === PaymentStrategyType.PPSDK) {
+            return PaymentStrategyType.PPSDK;
+        }
+
         if (paymentMethod.gateway === 'klarna') {
             return PaymentStrategyType.KLARNAV2;
         }
