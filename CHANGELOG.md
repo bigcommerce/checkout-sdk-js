@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.145.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.144.1...v1.145.0) (2021-05-05)
+
+
+### Features
+
+* **payment:** INT-4258 StripeV3: Improve error handling ([48da4f4](https://github.com/bigcommerce/checkout-sdk-js/commit/48da4f4b51cd9d34c9f7cefa04de2ddde02bf714))
+
 ### [1.144.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.144.0...v1.144.1) (2021-04-29)
 
 
