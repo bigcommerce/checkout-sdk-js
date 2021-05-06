@@ -32,6 +32,7 @@ import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
 import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
+import { PPSDKStrategy } from './strategies/ppsdk';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -247,5 +248,10 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate zip', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.ZIP);
         expect(paymentStrategy).toBeInstanceOf(ZipPaymentStrategy);
+    });
+
+    it('can instantiate ppsdk', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.PPSDK);
+        expect(paymentStrategy).toBeInstanceOf(PPSDKStrategy);
     });
 });

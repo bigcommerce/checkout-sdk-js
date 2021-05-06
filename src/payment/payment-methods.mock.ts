@@ -146,6 +146,16 @@ export function getPaypal(): PaymentMethod {
     };
 }
 
+export function getPPSDK(): PaymentMethod {
+    return {
+        id: 'cabbagepay',
+        method: 'credit-card',
+        supportedCards: [],
+        config: {},
+        type: 'PAYMENT_TYPE_SDK',
+    };
+}
+
 export function getAdyenAmex(): PaymentMethod {
     return {
         id: 'amex',
