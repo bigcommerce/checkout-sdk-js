@@ -191,7 +191,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 AmazonPayV2PayOptions.PayAndShip,
             createCheckoutSession: {
                 method: checkoutSessionMethod,
-                url: `${config.links.siteLink}/remote-checkout/${paymentMethod.id}/payment-session`,
+                url: `${config.storeProfile.shopPath}/remote-checkout/${paymentMethod.id}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
             placement: AmazonPayV2Placement.Checkout,
