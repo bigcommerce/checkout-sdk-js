@@ -182,7 +182,7 @@ describe('ClearpayPaymentStrategy', () => {
         });
 
         it('loads payment client token', () => {
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway, undefined);
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(`${paymentMethod.gateway}?method=${paymentMethod.id}`);
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
     });
@@ -240,11 +240,7 @@ describe('ClearpayPaymentStrategy', () => {
         });
 
         it('throws error if unable to finalize order due to missing data', async () => {
-            try {
-                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            await expect(strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway })).rejects.toThrow(MissingDataError);
         });
     });
 });

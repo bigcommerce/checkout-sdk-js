@@ -41,10 +41,13 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gatewayId;
+        if (!payload.payment) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
+        }
+        const { gatewayId, methodId } = payload.payment;
 
-        if (!paymentId) {
-            throw new PaymentArgumentInvalidError(['payment.gatewayId']);
+        if (!gatewayId || !methodId) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
         const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
@@ -58,13 +61,13 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
         state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
+            this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`)
         );
 
-        this._redirectToClearpay(state.paymentMethods.getPaymentMethod(paymentId));
+        await this._redirectToClearpay(state.paymentMethods.getPaymentMethod(methodId));
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
-        return new Promise<never>(() => {});
+        return new Promise(() => {});
     }
 
     async finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -95,12 +98,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        this._clearpaySdk.initialize({countryCode: this._mapCountryToISO2()});
+        this._clearpaySdk.initialize({countryCode: 'GB'});
         this._clearpaySdk.redirect({ token: paymentMethod.clientToken });
-    }
-
-    // Maps the country code to be passed to the sdk initialization
-    private _mapCountryToISO2(): string {
-        return 'GB';
     }
 }
