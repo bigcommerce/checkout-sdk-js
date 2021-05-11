@@ -1,5 +1,5 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -60,11 +60,16 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
          // Validate nothing has changed before redirecting to Clearpay checkout page
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
+        const { countryCode } = this._store.getState().billingAddress.getBillingAddressOrThrow();
+        if (!this._validateBillingAddress(countryCode)) {
+            throw new InvalidArgumentError('Unable to proceed because billing country is not supported.');
+        }
+
         state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`)
         );
 
-        await this._redirectToClearpay(state.paymentMethods.getPaymentMethod(methodId));
+        await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId));
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise(() => {});
@@ -93,12 +98,16 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
-    private _redirectToClearpay(paymentMethod?: PaymentMethod): void {
+    private _redirectToClearpay(countryCode: string, paymentMethod?: PaymentMethod): void {
         if (!this._clearpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        this._clearpaySdk.initialize({countryCode: 'GB'});
+        this._clearpaySdk.initialize({countryCode});
         this._clearpaySdk.redirect({ token: paymentMethod.clientToken });
+    }
+
+    private _validateBillingAddress( countryCode: string): boolean {
+        return countryCode === 'GB';
     }
 }

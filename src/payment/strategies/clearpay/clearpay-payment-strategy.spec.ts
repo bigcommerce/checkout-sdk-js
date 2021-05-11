@@ -7,7 +7,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -24,6 +24,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import ClearpayPaymentStrategy from './clearpay-payment-strategy';
 import ClearpayScriptLoader from './clearpay-script-loader';
+import { getBillingAddress } from './clearpay.mock';
 
 describe('ClearpayPaymentStrategy', () => {
     let checkoutValidator: CheckoutValidator;
@@ -49,7 +50,10 @@ describe('ClearpayPaymentStrategy', () => {
 
     beforeEach(() => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
-        store = createCheckoutStore(getCheckoutStoreState());
+        store = createCheckoutStore({
+            ...getCheckoutStoreState(),
+            billingAddress: { data: getBillingAddress(), errors: {}, statuses: {} },
+        });
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
@@ -184,6 +188,26 @@ describe('ClearpayPaymentStrategy', () => {
         it('loads payment client token', () => {
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(`${paymentMethod.gateway}?method=${paymentMethod.id}`);
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
+        });
+
+        it('throws error if GB isn\'t the courtryCode in the billing address', async () => {
+            await strategy.deinitialize();
+
+            store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                billingAddress: { data: {...getBillingAddress(), countryCode: '' }, errors: {}, statuses: {} },
+            });
+            strategy = new ClearpayPaymentStrategy(
+                store,
+                checkoutValidator,
+                orderActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                storeCreditActionCreator,
+                scriptLoader
+            );
+
+            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
         });
     });
 
