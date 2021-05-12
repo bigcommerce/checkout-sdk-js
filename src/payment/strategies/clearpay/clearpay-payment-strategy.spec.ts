@@ -158,7 +158,7 @@ describe('ClearpayPaymentStrategy', () => {
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
         });
 
-        it('validates the checkout', () => {
+        it('validates nothing has changed before redirecting to Clearpay checkout page', () => {
             expect(checkoutValidator.validate).toHaveBeenCalled();
         });
 

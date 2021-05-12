@@ -57,11 +57,10 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             state = await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
         }
 
-         // Validate nothing has changed before redirecting to Clearpay checkout page
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
         const { countryCode } = this._store.getState().billingAddress.getBillingAddressOrThrow();
-        if (!this._validateBillingAddress(countryCode)) {
+        if (!this._isCountrySupported(countryCode)) {
             throw new InvalidArgumentError('Unable to proceed because billing country is not supported.');
         }
 
@@ -107,7 +106,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         this._clearpaySdk.redirect({ token: paymentMethod.clientToken });
     }
 
-    private _validateBillingAddress( countryCode: string): boolean {
+    private _isCountrySupported( countryCode: string): boolean {
         return countryCode === 'GB';
     }
 }
