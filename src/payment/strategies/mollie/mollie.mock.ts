@@ -45,7 +45,7 @@ export function getOrderRequestBodyWithCreditCard(): OrderRequestBody {
         payment: {
             methodId: 'credit_card',
             gatewayId: 'mollie',
-            paymentData: undefined,
+            paymentData: {},
         },
     };
 }
@@ -56,7 +56,23 @@ export function getOrderRequestBodyAPMs(): OrderRequestBody {
         payment: {
             methodId: 'belfius',
             gatewayId: 'mollie',
-            paymentData: undefined,
+            paymentData: {
+                issuer: 'foo',
+            },
+        },
+    };
+}
+
+export function getOrderRequestBodyVaultAPMs(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'belfius',
+            gatewayId: 'mollie',
+            paymentData: {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: false,
+            },
         },
     };
 }

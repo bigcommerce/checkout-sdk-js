@@ -18,7 +18,7 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent> |
+    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -48,6 +48,10 @@ export interface CreditCardInstrument {
 
 export interface WithDocumentInstrument {
     ccDocument: string;
+}
+
+export interface WithMollieIssuerInstrument {
+    issuer: string;
 }
 
 export interface WithCheckoutcomSEPAInstrument {

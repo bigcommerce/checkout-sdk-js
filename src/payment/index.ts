@@ -24,7 +24,8 @@ export {
     NonceInstrument,
     ThreeDSecure,
     ThreeDSecureToken,
-    WithDocumentInstrument
+    WithDocumentInstrument,
+    WithMollieIssuerInstrument
 } from './payment';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';

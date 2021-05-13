@@ -1,2 +1,2 @@
-export const supportedCountries = ['AT', 'CH', 'DE', 'DK', 'ES', 'FI', 'GB', 'NL', 'NO', 'NZ', 'SE'];
+export const supportedCountries = ['AT', 'BE', 'CH', 'DE', 'DK', 'ES', 'FI', 'GB', 'IT', 'NL', 'NO', 'NZ', 'SE'];
 export const supportedCountriesRequiringStates = ['AU'];
