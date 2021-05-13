@@ -286,6 +286,7 @@
 * [WithCheckoutcomSEPAInstrument](interfaces/withcheckoutcomsepainstrument.md)
 * [WithCheckoutcomiDealInstrument](interfaces/withcheckoutcomidealinstrument.md)
 * [WithDocumentInstrument](interfaces/withdocumentinstrument.md)
+* [WithMollieIssuerInstrument](interfaces/withmollieissuerinstrument.md)
 * [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)
 
 ### Type aliases

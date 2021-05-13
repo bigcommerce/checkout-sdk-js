@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.147.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.146.0...v1.147.0) (2021-05-13)
+
+
+### Features
+
+* **payment:** INT-4071 Clearpay - Create custom strategy ([ff7ea13](https://github.com/bigcommerce/checkout-sdk-js/commit/ff7ea134df8703a5e8fc011554902314a5fcb8a8))
+* **payment:** INT-4071 Clearpay - rename function that validate the countrycode ([e44941f](https://github.com/bigcommerce/checkout-sdk-js/commit/e44941f60a471bb7cdd49407aee761354b4feafb))
+* **payment:** INT-4071 validate countryCode in billingAddress ([3f7993d](https://github.com/bigcommerce/checkout-sdk-js/commit/3f7993d0efe33e2b31e28a67d810c45646d7b8dc))
+* **payment:** INT-4071 wip ([4520461](https://github.com/bigcommerce/checkout-sdk-js/commit/4520461aecf269ba6cf497f2423dd3ba48eedb9a))
+* **payment:** INT-4237 Add issuer for Mollie APMs ([21bfded](https://github.com/bigcommerce/checkout-sdk-js/commit/21bfded889dba0afb22396d439910116934cebe4))
+
 ## [1.146.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.145.0...v1.146.0) (2021-05-10)
 
 
