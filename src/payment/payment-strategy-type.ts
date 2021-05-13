@@ -16,6 +16,7 @@ enum PaymentStrategyType {
     CHECKOUTCOM_IDEAL = 'checkoutcomideal',
     CREDIT_CARD = 'creditcard',
     CHECKOUTCOM_GOOGLE_PAY = 'googlepaycheckoutcom',
+    CLEARPAY = 'clearpay',
     CONVERGE = 'converge',
     CYBERSOURCE = 'cybersource',
     CYBERSOURCEV2 = 'cybersourcev2',
