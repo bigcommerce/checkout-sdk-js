@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { NotImplementedError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { ButtonsOptions, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
@@ -23,6 +24,7 @@ describe('PaypalCommercePaymentProcessor', () => {
     let cart: Cart;
     let containers: HTMLElement[];
     let render: () => void;
+    let renderApmFields: (container: string) => void;
     let submit: () => (PaypalCommerceHostedFieldsApprove);
     let orderID: string;
     let fundingSource: string;
@@ -72,7 +74,12 @@ describe('PaypalCommercePaymentProcessor', () => {
         jest.spyOn(paypalCommerceRequestSender, 'setupPayment')
             .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({ body: orderID })));
 
-        render = jest.spyOn(paypal, 'Buttons')
+        renderApmFields = jest.fn();
+        jest.spyOn(paypal, 'Fields')
+            .mockImplementation(jest.fn().mockReturnValue({ render: renderApmFields }));
+
+        render = jest.fn();
+        jest.spyOn(paypal, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
                 eventEmitter.on('onClick', () => {
                     if (options.onClick) {
@@ -93,7 +100,7 @@ describe('PaypalCommercePaymentProcessor', () => {
                 });
 
                 return {
-                    render: () => {},
+                    render,
                     isEligible: () => true,
                 };
             });
@@ -174,7 +181,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             await paypalCommercePaymentProcessor.initialize(initOptions);
             await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container');
 
-            expect(render).toHaveBeenCalled();
+            expect(render).toHaveBeenCalledWith('container');
         });
 
         it('throws error if unable to setting PayPalCommerce button', async () => {
@@ -247,6 +254,60 @@ describe('PaypalCommercePaymentProcessor', () => {
                 expect(error).toEqual(expectedError);
             }
         });
+    });
+
+    describe('render apmFields', () => {
+        it('sets PaypalCommerce apmFields without styles and fields predifined values', async () => {
+            await paypalCommercePaymentProcessor.initialize(initOptions);
+            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+
+            expect(paypal.Fields).toHaveBeenCalledWith({
+                fundingSource: 'p24',
+                style: undefined,
+                fields: {
+                    name: {
+                        value: undefined,
+                    },
+                    email: {
+                        value: undefined,
+                    },
+                },
+            });
+        });
+
+        it('render PaypalCommerce apmFields', async () => {
+            await paypalCommercePaymentProcessor.initialize(initOptions);
+            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+
+            expect(renderApmFields).toHaveBeenCalledWith('#fieldsContainer');
+        });
+
+        it('throws error if unable to set PayPalCommerce fields', async () => {
+            /* tslint:disable-next-line */
+            paypal.Fields = undefined!;
+
+            const expectedError = new PaymentMethodClientUnavailableError();
+
+            try {
+                await paypalCommercePaymentProcessor.initialize(initOptions);
+                await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+            } catch (error) {
+                expect(error).toEqual(expectedError);
+            }
+        });
+
+        it('should clear PaypalCommerce apmFields container on re-render', async () => {
+            const container = document.createElement('div');
+            container.id = 'fieldsContainer';
+            container.innerHTML = 'Test';
+            document.body.appendChild(container);
+
+            await paypalCommercePaymentProcessor.initialize(initOptions);
+            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+
+            expect(container.innerHTML).toEqual('');
+        });
+
     });
 
     describe('validate style for PaypalCommerce checkout button', () => {

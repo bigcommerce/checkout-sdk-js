@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
@@ -41,6 +42,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let cart: Cart;
     let orderID: string;
+    let container: HTMLElement;
     let loader: LoadingIndicator;
     let onClickActions: ClickActions;
     let submitForm: () => void;
@@ -55,12 +57,18 @@ describe('PaypalCommercePaymentStrategy', () => {
         eventEmitter = new EventEmitter();
         paypalCommerceFundingKeyResolver = new PaypalCommerceFundingKeyResolver();
 
+        container = document.createElement('div');
+        container.id = 'container';
+        document.body.appendChild(container);
+
         store = createCheckoutStore(getCheckoutStoreState());
         submitForm = jest.fn();
 
         paypalcommerceOptions = {
             container: '#container',
             clientId: '123',
+            apmFieldsContainer: '#fieldsContainer',
+            apmFieldsStyles: { base: {backgroundColor: 'white'} },
             submitForm,
             onRenderButton: jest.fn(),
             onValidate: jest.fn((resolve, _) => {
@@ -111,6 +119,8 @@ describe('PaypalCommercePaymentStrategy', () => {
                 });
             });
 
+        paypalCommercePaymentProcessor.renderFields = jest.fn();
+
         jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
             .mockReturnValue('PAYPAL');
 
@@ -123,6 +133,10 @@ describe('PaypalCommercePaymentStrategy', () => {
             new PaypalCommerceRequestSender(requestSender),
             loader
         );
+    });
+
+    afterEach(() => {
+        document.body.removeChild(container);
     });
 
     describe('Country test mode on', () => {
@@ -140,6 +154,11 @@ describe('PaypalCommercePaymentStrategy', () => {
                 currency: 'USD',
                 intent: 'capture',
                 'buyer-country': 'IT',
+                components: [
+                    'buttons',
+                    'messages',
+                    'fields',
+                ],
             };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
@@ -160,6 +179,11 @@ describe('PaypalCommercePaymentStrategy', () => {
                 commit: true,
                 currency: 'USD',
                 intent: 'capture',
+                components: [
+                    'buttons',
+                    'messages',
+                    'fields',
+                ],
             };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
@@ -195,6 +219,11 @@ describe('PaypalCommercePaymentStrategy', () => {
                 commit: true,
                 currency: 'USD',
                 intent: 'capture',
+                components: [
+                    'buttons',
+                    'messages',
+                    'fields',
+                ],
             };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
@@ -262,6 +291,35 @@ describe('PaypalCommercePaymentStrategy', () => {
                         onRenderButton: expect.any(Function),
                         fundingKey: 'P24' }
                 );
+        });
+
+        it('render Przelewy24 fields if orderIdis undefined and methodId is przelewy24', async () => {
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
+
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+
+            const {firstName, lastName, email} = getBillingAddress();
+            expect(paypalCommercePaymentProcessor.renderFields)
+                .toHaveBeenCalledWith({
+                    apmFieldsContainer: paypalcommerceOptions.apmFieldsContainer,
+                    fundingKey: 'P24',
+                    apmFieldsStyles: paypalcommerceOptions.apmFieldsStyles,
+                    fullName: `${firstName} ${lastName}`,
+                    email,
+                });
+        });
+
+        it("throw an error if apmFieldsContainer wasn't provided when trying to initialize Przelewy24 method", async () => {
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
+            paypalcommerceOptions.apmFieldsContainer = undefined;
+            const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "apmFieldsContainer".');
+            try {
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+            } catch (error) {
+                expect(error).toEqual(expectedError);
+            }
         });
 
         it('call submitForm after approve', async () => {

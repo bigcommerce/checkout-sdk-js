@@ -4,7 +4,7 @@ import { NotImplementedError, NotInitializedError, NotInitializedErrorType } fro
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, FieldsOptions, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -25,9 +25,18 @@ interface EventsHostedFields {
     inputSubmitRequest?(event: PaypalCommerceHostedFieldsState): void;
 }
 
+export interface RenderApmFieldsParams {
+    apmFieldsContainer: string;
+    fundingKey: keyof PaypalCommerceSDKFunding;
+    apmFieldsStyles?: PaypalFieldsStyleOptions;
+    fullName?: string;
+    email?: string;
+}
+
 export default class PaypalCommercePaymentProcessor {
     private _paypal?: PaypalCommerceSDK;
     private _paypalButtons?: PaypalCommerceButtons;
+    private _paypalFields?: PaypalCommerceFields;
     private _paypalMessages?: PaypalCommerceMessages;
     private _hostedFields?: PaypalCommerceHostedFields;
     private _fundingSource?: string;
@@ -56,6 +65,7 @@ export default class PaypalCommercePaymentProcessor {
         const buttonParams: ButtonsOptions = {
             ...params,
             createOrder: () => this._setupPayment(cartId, paramsForProvider),
+
             onClick: async (data, actions) => {
                 this._fundingSource = data.fundingSource;
 
@@ -83,6 +93,42 @@ export default class PaypalCommercePaymentProcessor {
         this._paypalButtons.render(container);
 
         return this._paypalButtons;
+    }
+
+    renderFields({
+        apmFieldsContainer,
+        fundingKey,
+        apmFieldsStyles,
+        fullName,
+        email,
+    }: RenderApmFieldsParams): PaypalCommerceFields {
+        if (!this._paypal || !this._paypal.Fields) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        const fieldsParams: FieldsOptions = {
+            fundingSource: this._paypal.FUNDING[fundingKey],
+            style: apmFieldsStyles,
+            fields: {
+                name: {
+                    value: fullName,
+                },
+                email: {
+                    value: email,
+                },
+            },
+        };
+
+        this._paypalFields = this._paypal.Fields(fieldsParams);
+
+        const fieldContainerElement = document.querySelector(apmFieldsContainer);
+        if (fieldContainerElement) {
+            fieldContainerElement.innerHTML = '';
+        }
+
+        this._paypalFields.render(apmFieldsContainer);
+
+        return this._paypalFields;
     }
 
     getOrderId() {

@@ -43,5 +43,9 @@ describe('paypalCommerceFundingKeyResolver', () => {
         it('should return "BLIK"', () => {
             expect(paypalCommerceFundingKeyResolver.resolve('blik', 'paypalcommercealternativemethods')).toEqual('BLIK');
         });
+
+        it('should return "TRUSTLY"', () => {
+            expect(paypalCommerceFundingKeyResolver.resolve('trustly', 'paypalcommercealternativemethods')).toEqual('TRUSTLY');
+        });
     });
 });
