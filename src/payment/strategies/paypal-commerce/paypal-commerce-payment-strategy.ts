@@ -12,6 +12,7 @@ import PaymentStrategy from '../payment-strategy';
 
 import { ApproveDataOptions,
     ButtonsOptions,
+    ComponentsScriptType,
     PaypalCommerceCreditCardPaymentInitializeOptions,
     PaypalCommerceFundingKeyResolver,
     PaypalCommerceInitializationData,
@@ -22,11 +23,13 @@ import { ApproveDataOptions,
 
 const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
+const PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
 const POLLING_INTERVAL = 3000;
 const POLLING_MAX_TIME = 600000;
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
+    private _isAPM?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -41,9 +44,15 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     ) {}
 
     async initialize({ gatewayId, methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { paymentMethods: { getPaymentMethodOrThrow }, cart: { getCartOrThrow } } = this._store.getState();
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+            cart: { getCartOrThrow },
+            billingAddress: { getBillingAddressOrThrow },
+        } = this._store.getState();
+
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle } = initializationData ?? {};
+        this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
 
         if (orderId) {
             this._orderId = orderId;
@@ -59,8 +68,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".');
         }
 
-        const { container, onRenderButton, submitForm, onValidate } = paypalcommerce;
+        const { container, apmFieldsContainer, apmFieldsStyles, onRenderButton, submitForm, onValidate } = paypalcommerce;
         const { id: cartId, currency: { code: currencyCode } } = getCartOrThrow();
+        const { firstName, lastName, email } = getBillingAddressOrThrow();
+
         const loadingIndicatorContainerId = container.split('#')[1];
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode);
@@ -96,9 +107,25 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId);
 
+        const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
+
+        if (this._isAPM)  {
+            const fullName = `${firstName} ${lastName}`;
+            if (!apmFieldsContainer) {
+                throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "apmFieldsContainer".');
+            }
+            this._paypalCommercePaymentProcessor.renderFields({
+                apmFieldsContainer,
+                fundingKey,
+                apmFieldsStyles,
+                fullName,
+                email,
+            });
+        }
+
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,
-            fundingKey: this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId),
+            fundingKey,
             paramsForProvider: {isCheckout: true},
         });
 
@@ -145,7 +172,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     private _initializePollingMechanism(submitForm: () => void, gatewayId?: string, methodId?: any, paypalcommerce?: any ) {
-        if (gatewayId !== PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS)  {
+        if (!this._isAPM)  {
             this._loadingIndicator?.hide();
 
             return;
@@ -160,7 +187,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 if (status === ORDER_STATUS_APPROVED) {
                     this._deinitializePollingTimer(gatewayId);
                     this._tokenizePayment({ orderID: this._paypalCommercePaymentProcessor.getOrderId() }, submitForm);
-                } else if (status === ORDER_STATUS_CREATED  && this._pollingTimer < POLLING_MAX_TIME) {
+                } else if (
+                    (status === ORDER_STATUS_CREATED || status === PAYER_ACTION_REQUIRED) &&
+                    this._pollingTimer < POLLING_MAX_TIME
+                ) {
                     this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
                 } else {
                     this._reinitializeButtons({ gatewayId, methodId, paypalcommerce });
@@ -197,12 +227,14 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
     private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptParams {
         const { clientId, intent, merchantId, buyerCountry, isDeveloperModeApplicable } = initializationData;
+
         const returnObject = {
             'client-id': clientId,
             'merchant-id': merchantId,
             commit: true,
             currency: currencyCode,
             intent,
+            components: ['buttons', 'messages', 'fields'] as ComponentsScriptType,
         };
 
         return isDeveloperModeApplicable ? { ...returnObject, 'buyer-country': buyerCountry } : returnObject;

@@ -5,6 +5,9 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
         Messages: () => ({
             render: jest.fn(),
         }),
+        Fields: () => ({
+            render: jest.fn(),
+        }),
         FUNDING: {
             PAYPAL: 'paypal',
             CREDIT: 'credit',

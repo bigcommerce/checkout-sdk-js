@@ -30,6 +30,8 @@ export default class PaypalCommerceFundingKeyResolver {
                     return 'SOFORT';
                 case 'blik':
                     return 'BLIK';
+                case 'trustly':
+                    return 'TRUSTLY';
             }
         }
 

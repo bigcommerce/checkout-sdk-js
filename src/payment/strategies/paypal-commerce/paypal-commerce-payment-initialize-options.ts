@@ -1,3 +1,5 @@
+import { PaypalFieldsStyleOptions } from './index';
+
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
@@ -14,6 +16,8 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * ```html
  * <!-- This is where the PayPal button will be inserted -->
  * <div id="container"></div>
+ * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
+ * <div id="apm-fields-container"></div>
  * ```
  *
  * ```js
@@ -21,7 +25,28 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  *     methodId: 'paypalcommerce',
  *     paypalcommerce: {
  *         container: '#container',
- *         clientId: 'YOUR_CLIENT_ID'
+ *         apmFieldsContainer: '#apm-fields-container',
+ *         apmFieldsStyles: {
+ *             base: {
+ *                   backgroundColor: 'transparent',
+ *               },
+ *               input: {
+ *                   backgroundColor: 'white',
+ *                   fontSize: '1rem',
+ *                   color: '#333',
+ *                   borderColor: '#d9d9d9',
+ *                   borderRadius: '4px',
+ *                   borderWidth: '1px',
+ *                   padding: '1rem',
+ *               },
+ *               invalid: {
+ *                   color: '#ed6a6a',
+ *               },
+ *               active: {
+ *                   color: '#4496f6',
+ *               },
+ *         },
+ *         clientId: 'YOUR_CLIENT_ID',
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
  *         // Example function
@@ -59,6 +84,18 @@ export interface PaypalCommercePaymentInitializeOptions {
      *  The Client ID of the Paypal App
      */
     clientId: string;
+
+    /**
+     * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
+     * It's necessary to specify this parameter when using Alternative Payment Methods.
+     * Without it alternative payment methods will not work.
+     */
+    apmFieldsContainer?: string;
+
+    /**
+     * Object with styles to customize alternative payment methods fields.
+     */
+    apmFieldsStyles?: PaypalFieldsStyleOptions;
 
     /**
      * A callback that gets called when a buyer click on Smart Payment Button
