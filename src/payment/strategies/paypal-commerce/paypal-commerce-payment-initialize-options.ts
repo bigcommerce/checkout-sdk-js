@@ -50,7 +50,7 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
  *         // Example function
- *             this.submitOrder(
+ *             submitOrder(
  *                {
  *                   payment: { methodId: 'paypalcommerce', }
  *               }
@@ -59,7 +59,7 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
  *         onValidate: (resolve, reject) => {
  *         // Example function
- *             const isValid = this.validatePaymentForm();
+ *             const isValid = validatePaymentForm();
  *             if (isValid) {
  *                 return resolve();
  *             }
@@ -68,7 +68,7 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
  * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
  *         onRenderButton: () => {
  *         // Example function
- *             this.hidePaymentSubmitButton();
+ *             hidePaymentSubmitButton();
  *         }
  *     },
  * });
@@ -77,6 +77,7 @@ export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOpt
 export interface PaypalCommercePaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
+     * For example if you have element with id="paypal-container" - then your container will look like "#paypal-container"
      */
     container: string;
 
@@ -87,8 +88,8 @@ export interface PaypalCommercePaymentInitializeOptions {
 
     /**
      * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
-     * It's necessary to specify this parameter when using Alternative Payment Methods.
-     * Without it alternative payment methods will not work.
+     * If you want  Alternative Payment Methods to be displayed - you need to specify apmFieldsContainer. Without it alternative payment methods will not work.
+     * For example if you have element with id="apm-fields-container" - then your container will look like "#apm-fields-container"
      */
     apmFieldsContainer?: string;
 
