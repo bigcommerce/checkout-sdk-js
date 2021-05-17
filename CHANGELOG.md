@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.147.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.147.0...v1.147.1) (2021-05-17)
+
+
+### Bug Fixes
+
+* **checkout:** INT-3941 Updated remote-checkout path on button initialization ([226232f](https://github.com/bigcommerce/checkout-sdk-js/commit/226232f9f0f3c5e47da31c4da17419d434eb74da))
+
 ## [1.147.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.146.0...v1.147.0) (2021-05-13)
 
 
