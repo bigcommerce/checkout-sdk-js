@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.148.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.147.1...v1.148.0) (2021-05-17)
+
+
+### Features
+
+* **payment:** PAYPAL-976 Paypal APM fields intagration was added ([b5266cf](https://github.com/bigcommerce/checkout-sdk-js/commit/b5266cf073a1f896d8a4844ad5607eb1799d2579))
+
 ### [1.147.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.147.0...v1.147.1) (2021-05-17)
 
 

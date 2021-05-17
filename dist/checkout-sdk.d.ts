@@ -5061,6 +5061,8 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  * ```html
  * <!-- This is where the PayPal button will be inserted -->
  * <div id="container"></div>
+ * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
+ * <div id="apm-fields-container"></div>
  * ```
  *
  * ```js
@@ -5068,7 +5070,28 @@ declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOp
  *     methodId: 'paypalcommerce',
  *     paypalcommerce: {
  *         container: '#container',
- *         clientId: 'YOUR_CLIENT_ID'
+ *         apmFieldsContainer: '#apm-fields-container',
+ *         apmFieldsStyles: {
+ *             base: {
+ *                   backgroundColor: 'transparent',
+ *               },
+ *               input: {
+ *                   backgroundColor: 'white',
+ *                   fontSize: '1rem',
+ *                   color: '#333',
+ *                   borderColor: '#d9d9d9',
+ *                   borderRadius: '4px',
+ *                   borderWidth: '1px',
+ *                   padding: '1rem',
+ *               },
+ *               invalid: {
+ *                   color: '#ed6a6a',
+ *               },
+ *               active: {
+ *                   color: '#4496f6',
+ *               },
+ *         },
+ *         clientId: 'YOUR_CLIENT_ID',
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
  *         // Example function
@@ -5105,6 +5128,16 @@ declare interface PaypalCommercePaymentInitializeOptions {
      *  The Client ID of the Paypal App
      */
     clientId: string;
+    /**
+     * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
+     * It's necessary to specify this parameter when using Alternative Payment Methods.
+     * Without it alternative payment methods will not work.
+     */
+    apmFieldsContainer?: string;
+    /**
+     * Object with styles to customize alternative payment methods fields.
+     */
+    apmFieldsStyles?: PaypalFieldsStyleOptions;
     /**
      * A callback that gets called when a buyer click on Smart Payment Button
      * and should validate payment form.
@@ -5164,6 +5197,32 @@ declare interface PaypalCommerceStoredCardFieldsMap {
  */
 declare interface PaypalExpressPaymentInitializeOptions {
     useRedirectFlow?: boolean;
+}
+
+declare interface PaypalFieldsStyleOptions {
+    base?: {
+        backgroundColor?: string;
+        color?: string;
+        fontSize?: string;
+        fontFamily?: string;
+        lineHeight?: string;
+        letterSpacing?: string;
+    };
+    input?: {
+        backgroundColor?: string;
+        fontSize?: string;
+        color?: string;
+        borderColor?: string;
+        borderRadius?: string;
+        borderWidth?: string;
+        padding?: string;
+    };
+    invalid?: {
+        color?: string;
+    };
+    active?: {
+        color?: string;
+    };
 }
 
 declare interface PhysicalItem extends LineItem {

@@ -11,6 +11,8 @@ Also, PayPal (also known as PayPal Commerce Platform) requires specific options 
 ```html
 <!-- This is where the PayPal button will be inserted -->
 <div id="container"></div>
+<!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
+<div id="apm-fields-container"></div>
 ```
 
 ```js
@@ -18,7 +20,28 @@ service.initializePayment({
     methodId: 'paypalcommerce',
     paypalcommerce: {
         container: '#container',
-        clientId: 'YOUR_CLIENT_ID'
+        apmFieldsContainer: '#apm-fields-container',
+        apmFieldsStyles: {
+            base: {
+                  backgroundColor: 'transparent',
+              },
+              input: {
+                  backgroundColor: 'white',
+                  fontSize: '1rem',
+                  color: '#333',
+                  borderColor: '#d9d9d9',
+                  borderRadius: '4px',
+                  borderWidth: '1px',
+                  padding: '1rem',
+              },
+              invalid: {
+                  color: '#ed6a6a',
+              },
+              active: {
+                  color: '#4496f6',
+              },
+        },
+        clientId: 'YOUR_CLIENT_ID',
 // Callback for submitting payment form that gets called when a buyer approves PayPal payment
         submitForm: () => {
         // Example function
@@ -54,6 +77,8 @@ service.initializePayment({
 
 ### Properties
 
+* [apmFieldsContainer](paypalcommercepaymentinitializeoptions.md#optional-apmfieldscontainer)
+* [apmFieldsStyles](paypalcommercepaymentinitializeoptions.md#optional-apmfieldsstyles)
 * [clientId](paypalcommercepaymentinitializeoptions.md#clientid)
 * [container](paypalcommercepaymentinitializeoptions.md#container)
 
@@ -65,6 +90,24 @@ service.initializePayment({
 * [submitForm](paypalcommercepaymentinitializeoptions.md#submitform)
 
 ## Properties
+
+### `Optional` apmFieldsContainer
+
+• **apmFieldsContainer**? : *undefined | string*
+
+The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
+It's necessary to specify this parameter when using Alternative Payment Methods.
+Without it alternative payment methods will not work.
+
+___
+
+### `Optional` apmFieldsStyles
+
+• **apmFieldsStyles**? : *[PaypalFieldsStyleOptions](paypalfieldsstyleoptions.md)*
+
+Object with styles to customize alternative payment methods fields.
+
+___
 
 ###  clientId
 

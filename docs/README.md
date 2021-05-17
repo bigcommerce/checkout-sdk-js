@@ -243,6 +243,7 @@
 * [PaypalCommerceStoredCardFieldOptions](interfaces/paypalcommercestoredcardfieldoptions.md)
 * [PaypalCommerceStoredCardFieldsMap](interfaces/paypalcommercestoredcardfieldsmap.md)
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
+* [PaypalFieldsStyleOptions](interfaces/paypalfieldsstyleoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)
 * [Promotion](interfaces/promotion.md)
 * [Region](interfaces/region.md)
