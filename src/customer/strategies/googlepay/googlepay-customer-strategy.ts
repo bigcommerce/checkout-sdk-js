@@ -32,7 +32,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
         return this._googlePayPaymentProcessor.initialize(methodId)
             .then(() => {
-                this._walletButton = this._createSignInButton(googlePayOptions.container);
+                this._walletButton = this._createSignInButton(googlePayOptions.container, googlePayOptions);
             })
             .then(() => this._store.getState());
     }
@@ -66,14 +66,15 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    private _createSignInButton(containerId: string): HTMLElement {
+    private _createSignInButton(containerId: string, buttonOptions: GooglePayCustomerInitializeOptions): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
+        const { buttonType, buttonColor } = buttonOptions;
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
-        const button = this._googlePayPaymentProcessor.createButton(this._handleWalletButtonClick);
+        const button = this._googlePayPaymentProcessor.createButton(this._handleWalletButtonClick, buttonType, buttonColor);
 
         container.appendChild(button);
 
