@@ -586,6 +586,10 @@ declare interface BaseInstrument {
     type: string;
 }
 
+declare interface BaseStrategy {
+    type: string;
+}
+
 declare interface BillingAddress extends Address {
     id: string;
     email?: string;
@@ -4057,6 +4061,8 @@ declare interface IndividualCardElementOptions {
     zipCodeElementOptions?: ZipCodeElementOptions;
 }
 
+declare type InitialisationStrategies = None;
+
 declare interface InlineElementStyles {
     color?: string;
     fontFamily?: string;
@@ -4477,6 +4483,10 @@ declare interface NonceInstrument {
     deviceSessionId?: string;
 }
 
+declare interface None extends BaseStrategy {
+    type: 'NONE';
+}
+
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 /**
@@ -4749,6 +4759,7 @@ declare interface PaymentMethod {
     nonce?: string;
     initializationData?: any;
     returnUrl?: string;
+    initializationStrategy?: InitialisationStrategies;
 }
 
 declare interface PaymentMethodConfig {

@@ -70,6 +70,7 @@
 * [BaseElementOptions_2](interfaces/baseelementoptions_2.md)
 * [BaseIndividualElementOptions](interfaces/baseindividualelementoptions.md)
 * [BaseInstrument](interfaces/baseinstrument.md)
+* [BaseStrategy](interfaces/basestrategy.md)
 * [BillingAddress](interfaces/billingaddress.md)
 * [BillingAddressRequestBody](interfaces/billingaddressrequestbody.md)
 * [BlockElementStyles](interfaces/blockelementstyles.md)
@@ -214,6 +215,7 @@
 * [MolliePaymentInitializeOptions](interfaces/molliepaymentinitializeoptions.md)
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
+* [None](interfaces/none.md)
 * [OptionsResponse](interfaces/optionsresponse.md)
 * [Order](interfaces/order.md)
 * [OrderPayment](interfaces/orderpayment.md)
@@ -319,6 +321,7 @@
 * [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
 * [HostedInputStyles](README.md#hostedinputstyles)
 * [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
+* [InitialisationStrategies](README.md#initialisationstrategies)
 * [Instrument](README.md#instrument)
 * [Omit](README.md#omit)
 * [OrderPayments](README.md#orderpayments)
@@ -505,6 +508,12 @@ ___
 ###  HostedVaultedInstrument
 
 Ƭ **HostedVaultedInstrument**: *[Omit](README.md#omit)‹[VaultedInstrument](interfaces/vaultedinstrument.md), "ccNumber" | "ccCvv"›*
+
+___
+
+###  InitialisationStrategies
+
+Ƭ **InitialisationStrategies**: *[None](interfaces/none.md)*
 
 ___
 

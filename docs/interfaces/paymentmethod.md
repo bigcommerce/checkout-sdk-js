@@ -15,6 +15,7 @@
 * [gateway](paymentmethod.md#optional-gateway)
 * [id](paymentmethod.md#id)
 * [initializationData](paymentmethod.md#optional-initializationdata)
+* [initializationStrategy](paymentmethod.md#optional-initializationstrategy)
 * [logoUrl](paymentmethod.md#optional-logourl)
 * [method](paymentmethod.md#method)
 * [nonce](paymentmethod.md#optional-nonce)
@@ -51,6 +52,12 @@ ___
 ### `Optional` initializationData
 
 • **initializationData**? : *any*
+
+___
+
+### `Optional` initializationStrategy
+
+• **initializationStrategy**? : *[InitialisationStrategies](../README.md#initialisationstrategies)*
 
 ___
 
