@@ -1,3 +1,5 @@
+import { HostedFormOptions } from '../../../hosted-form';
+
 /**
  * A set of options that are required to initialize the Mollie payment method.
  *
@@ -54,4 +56,9 @@ export default interface MolliePaymentInitializeOptions {
      * A set of styles required for the mollie components
      */
     styles: object;
+
+    /**
+     * Hosted Form Validation Options
+     */
+    form?: HostedFormOptions;
 }

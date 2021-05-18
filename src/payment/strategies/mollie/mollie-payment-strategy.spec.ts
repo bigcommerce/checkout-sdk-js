@@ -5,10 +5,12 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { PaymentActionCreator } from '../..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
+import { FinalizeOrderAction, LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -20,7 +22,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 import {  MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
 import MollieScriptLoader from './mollie-script-loader';
-import { getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs,  getOrderRequestBodyVaultAPMs, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
+import { getHostedFormInitializeOptions, getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs, getOrderRequestBodyVaultedCC, getOrderRequestBodyVaultAPMs, getOrderRequestBodyVaultCC, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
 
 describe('MolliePaymentStrategy', () => {
     let orderRequestSender: OrderRequestSender;
@@ -34,6 +36,7 @@ describe('MolliePaymentStrategy', () => {
     let strategy: MolliePaymentStrategy;
     let mollieClient: MollieClient;
     let mollieElement: MollieElement;
+    let formFactory: HostedFormFactory;
 
     beforeEach(() => {
         mollieClient = getMollieClient();
@@ -83,7 +86,9 @@ describe('MolliePaymentStrategy', () => {
         jest.spyOn(mollieClient, 'createComponent')
             .mockReturnValue(mollieElement);
 
+        formFactory = new HostedFormFactory(store);
         strategy = new MolliePaymentStrategy(
+            formFactory,
             store,
             mollieScriptLoader,
             orderActionCreator,
@@ -176,9 +181,10 @@ describe('MolliePaymentStrategy', () => {
             it('should call submitPayment when saving vaulted', async () => {
                 await strategy.initialize(options);
                 jest.runAllTimers();
-                const { payment } = getOrderRequestBodyWithCreditCard();
-                await strategy.execute({ ...payment, payment: { methodId: 'credit_card', paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } } });
+                const { payment } = getOrderRequestBodyVaultCC();
+                await strategy.execute({ payment });
                 expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                    gatewayId: 'mollie',
                     methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
@@ -232,6 +238,81 @@ describe('MolliePaymentStrategy', () => {
                     },
                 });
             });
+        });
+    });
+
+    describe('When Hosted Form is enabled', () => {
+        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+        let initializeOptions: PaymentInitializeOptions;
+        let loadOrderAction: Observable<LoadOrderSucceededAction>;
+        let state: InternalCheckoutSelectors;
+
+        beforeEach(() => {
+            form = {
+                attach: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(() => Promise.resolve()),
+                validate: jest.fn(() => Promise.resolve()),
+            };
+            initializeOptions = getHostedFormInitializeOptions();
+            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
+            state = store.getState();
+
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(getMollie());
+
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValue(loadOrderAction);
+
+            jest.spyOn(formFactory, 'create')
+                .mockReturnValue(form);
+        });
+
+        it('creates hosted form', async () => {
+            await strategy.initialize(initializeOptions);
+
+            expect(formFactory.create)
+                .toHaveBeenCalledWith(
+                    'https://bigpay.integration.zone',
+                    initializeOptions.mollie?.form
+                );
+        });
+
+        it('attaches hosted form to container', async () => {
+            await strategy.initialize(initializeOptions);
+
+            expect(form.attach)
+                .toHaveBeenCalled();
+        });
+
+        it('submits payment data with hosted form', async () => {
+            const payload = getOrderRequestBodyVaultedCC();
+
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(payload);
+
+            expect(form.submit)
+                .toHaveBeenCalledWith(payload.payment);
+        });
+
+        it('validates user input before submitting data', async () => {
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(getOrderRequestBodyVaultedCC());
+
+            expect(form.validate)
+                .toHaveBeenCalled();
+        });
+
+        it('does not submit payment data with hosted form if validation fails', async () => {
+            jest.spyOn(form, 'validate')
+                .mockRejectedValue(new Error());
+
+            try {
+                await strategy.initialize(initializeOptions);
+                await strategy.execute(getOrderRequestBodyVaultedCC());
+            } catch (error) {
+                expect(form.submit)
+                    .not.toHaveBeenCalled();
+            }
         });
     });
 
