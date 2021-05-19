@@ -74,7 +74,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         const loadingIndicatorContainerId = container.split('#')[1];
 
-        const paramsScript = this._getOptionsScript(initializationData, currencyCode);
+        const paramsScript = this._getOptionsScript(initializationData, currencyCode, this._isAPM ? methodId : undefined);
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
             onApprove: data => {
@@ -225,7 +225,11 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         submitForm();
     }
 
-    private _getOptionsScript(initializationData: PaypalCommerceInitializationData, currencyCode: Cart['currency']['code']): PaypalCommerceScriptParams {
+    private _getOptionsScript(
+        initializationData: PaypalCommerceInitializationData,
+        currencyCode: Cart['currency']['code'],
+        apmMehodId?: string
+    ): PaypalCommerceScriptParams {
         const { clientId, intent, merchantId, buyerCountry, isDeveloperModeApplicable } = initializationData;
 
         const returnObject = {
@@ -234,9 +238,11 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             commit: true,
             currency: currencyCode,
             intent,
-            components: ['buttons', 'messages', 'fields'] as ComponentsScriptType,
+            components: ['buttons', 'messages', 'fields', 'funding-eligibility'] as ComponentsScriptType,
+            ...(apmMehodId && { 'enable-funding': apmMehodId}),
+            ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
         };
 
-        return isDeveloperModeApplicable ? { ...returnObject, 'buyer-country': buyerCountry } : returnObject;
+        return returnObject;
     }
 }
