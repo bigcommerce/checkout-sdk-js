@@ -99,7 +99,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('Creates the button', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.GooglePayAdyenV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
@@ -107,7 +107,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         });
 
         it('Validates if strategy has been initialized', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, Mode.GooglePayAdyenV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
