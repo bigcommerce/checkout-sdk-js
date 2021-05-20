@@ -1,8 +1,5 @@
-import { RequestSender, Response } from '@bigcommerce/request-sender';
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -12,6 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
+import StorefrontPaymentRequestSender from '../../storefront-payment-request-sender';
 import PaymentStrategy from '../payment-strategy';
 
 import { Zip, ZipModalEvent } from './zip';
@@ -29,7 +27,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _zipScriptLoader: ZipScriptLoader,
-        private _requestSender: RequestSender
+        private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender
     ) { }
 
     async initialize(): Promise<InternalCheckoutSelectors> {
@@ -153,19 +151,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         return this._paymentMethod?.initializationData?.redirectFlowV2Enabled;
     }
 
-    private _prepareForReferredRegistration(provider: string, externalId: string): Promise<Response<any>> {
-        const url = `/api/storefront/payment/${provider}/save-external-id`;
-        const options = {
-            headers: {
-                Accept: ContentType.JsonV1,
-                'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            },
-            body: {
-                externalId,
-                provider,
-            },
-        };
-
-        return this._requestSender.post(url, options);
+    private _prepareForReferredRegistration(methodId: string, externalId: string): Promise<void> {
+        return this._storefrontPaymentRequestSender.saveExternalId(methodId, externalId);
     }
 }

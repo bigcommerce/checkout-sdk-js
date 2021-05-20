@@ -9,14 +9,13 @@ import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { PaymentMethodActionCreator, PaymentRequestSender } from '../../../payment';
+import { PaymentMethodActionCreator, PaymentRequestSender, StorefrontPaymentRequestSender } from '../../../payment';
 import { getPaymentMethodsState, getQuadpay } from '../../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -39,6 +38,7 @@ describe('QuadpayPaymentStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let storeCreditActionCreator: StoreCreditActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let storefrontPaymentRequestSender: StorefrontPaymentRequestSender;
     let checkoutMock: Checkout;
     let applyStoreCreditAction: Observable<Action>;
     let submitOrderAction: Observable<Action>;
@@ -76,6 +76,7 @@ describe('QuadpayPaymentStrategy', () => {
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender)
         );
+        storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
         checkoutMock = getCheckout();
 
@@ -97,6 +98,9 @@ describe('QuadpayPaymentStrategy', () => {
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockResolvedValue(store.getState());
 
+        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId')
+            .mockResolvedValue(undefined);
+
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
 
@@ -113,7 +117,7 @@ describe('QuadpayPaymentStrategy', () => {
             paymentMethodActionCreator,
             storeCreditActionCreator,
             remoteCheckoutActionCreator,
-            requestSender
+            storefrontPaymentRequestSender
         );
     });
 
@@ -158,7 +162,7 @@ describe('QuadpayPaymentStrategy', () => {
                 expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
                 expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, quadpayOptions);
-                expect(requestSender.post).toHaveBeenCalled();
+                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(expectedPayment.methodId, expectedPayment.paymentData.nonce);
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             });
 
@@ -170,25 +174,8 @@ describe('QuadpayPaymentStrategy', () => {
                 expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
                 expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: true });
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, quadpayOptions);
-                expect(requestSender.post).toHaveBeenCalled();
+                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(expectedPayment.methodId, expectedPayment.paymentData.nonce);
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
-            });
-        });
-
-        it('prepares for a referred registration', async () => {
-            const requestUrl = '/api/storefront/payment/quadpay/save-external-id';
-
-            await strategy.execute(orderRequestBody, quadpayOptions);
-
-            expect(requestSender.post).toHaveBeenCalledWith(requestUrl, {
-                body: {
-                    externalId: 'checkout_id',
-                    provider: 'quadpay',
-                },
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                },
             });
         });
 

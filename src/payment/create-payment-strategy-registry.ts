@@ -22,6 +22,7 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
+import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
 import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
@@ -97,6 +98,7 @@ export default function createPaymentStrategyRegistry(
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
+    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -399,7 +401,7 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             storeCreditActionCreator,
             remoteCheckoutActionCreator,
-            requestSender
+            storefrontPaymentRequestSender
         )
     );
 
@@ -583,7 +585,7 @@ export default function createPaymentStrategyRegistry(
             storeCreditActionCreator,
             remoteCheckoutActionCreator,
             new ZipScriptLoader(scriptLoader),
-            requestSender
+            storefrontPaymentRequestSender
         )
     );
 

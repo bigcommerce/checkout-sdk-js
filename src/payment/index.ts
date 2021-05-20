@@ -49,3 +49,4 @@ export { default as PaymentStrategyRegistry } from './payment-strategy-registry'
 export { default as PaymentStrategySelector, PaymentStrategySelectorFactory, createPaymentStrategySelectorFactory } from './payment-strategy-selector';
 export { default as PaymentStrategyState } from './payment-strategy-state';
 export { default as PaymentStrategyType } from './payment-strategy-type';
+export { default as StorefrontPaymentRequestSender } from './storefront-payment-request-sender';
