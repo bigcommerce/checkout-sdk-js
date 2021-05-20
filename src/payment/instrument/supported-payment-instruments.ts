@@ -101,6 +101,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'barclaycard',
         method: 'credit_card',
     },
+    digitalriver: {
+        provider: 'digitalriver',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
