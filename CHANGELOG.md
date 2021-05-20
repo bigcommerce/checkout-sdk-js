@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.150.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.149.0...v1.150.0) (2021-05-20)
+
+
+### Features
+
+* **checkout:** PAYPAL-1024 make APM work regardless of shopper geolocation ([73cad65](https://github.com/bigcommerce/checkout-sdk-js/commit/73cad654ec91e93a7eb48720e6c329330a1d6e10))
+
 ## [1.149.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.148.0...v1.149.0) (2021-05-18)
 
 
