@@ -31,7 +31,7 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
     const googlepayadyenv2 = { googlepayadyenv2: { buttonType: ButtonType.Short } };
-    const googlepayauthorizenet = { googlepaybraintree: { buttonType: ButtonType.Short } };
+    const googlepayauthorizenet = { googlepayauthorizenet: { buttonType: ButtonType.Short } };
     const googlepaybraintree = { googlepaybraintree: { buttonType: ButtonType.Short } };
     const googlepaycheckoutcom = { googlepaycheckoutcom: { buttonType: ButtonType.Short } };
     const googlepaycybersourcev2 = { googlepaycybersourcev2: { buttonType: ButtonType.Short } };

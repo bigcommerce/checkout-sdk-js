@@ -8,6 +8,7 @@ import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
+import { GooglePayButtonInitializeOptions } from './googlepay-button-options';
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _methodId?: string;
     private _walletButton?: HTMLElement;
@@ -22,6 +23,8 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId } = options;
 
+        const googlePayOptions = this._getGooglePayOptions(options);
+
         if (!containerId || !methodId) {
             throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
         }
@@ -31,7 +34,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         await this._googlePayPaymentProcessor.initialize(this._getMethodId());
 
-        this._walletButton = this._createSignInButton(containerId);
+        this._walletButton = this._createSignInButton(containerId, googlePayOptions);
     }
 
     deinitialize(): Promise<void> {
@@ -43,14 +46,15 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
-    private _createSignInButton(containerId: string): HTMLElement {
+    private _createSignInButton(containerId: string, buttonOptions: GooglePayButtonInitializeOptions): HTMLElement {
         const container = document.getElementById(containerId);
+        const { buttonType, buttonColor } = buttonOptions;
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
-        const googlePayButton = this._googlePayPaymentProcessor.createButton(this._handleWalletButtonClick);
+        const googlePayButton = this._googlePayPaymentProcessor.createButton(this._handleWalletButtonClick, buttonType, buttonColor);
 
         container.appendChild(googlePayButton);
 
@@ -63,6 +67,35 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         return this._methodId;
+    }
+
+    private _getGooglePayOptions(options: CheckoutButtonInitializeOptions): GooglePayButtonInitializeOptions {
+
+        if (options.methodId === 'googlepayadyenv2' && options.googlepayadyenv2) {
+            return options.googlepayadyenv2;
+        }
+
+        if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
+            return options.googlepayauthorizenet;
+        }
+
+        if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
+            return options.googlepaybraintree;
+        }
+
+        if (options.methodId === 'googlepaycheckoutcom' && options.googlepaycheckoutcom) {
+            return options.googlepaycheckoutcom;
+        }
+
+        if (options.methodId === 'googlepaycybersourcev2' && options.googlepaycybersourcev2) {
+            return options.googlepaycybersourcev2;
+        }
+
+        if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
+            return options.googlepaystripe;
+        }
+
+        throw new InvalidArgumentError();
     }
 
     @bind

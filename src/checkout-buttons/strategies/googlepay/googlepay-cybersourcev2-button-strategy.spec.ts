@@ -105,7 +105,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('Creates the button', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2, Mode.GooglePayCybersourceV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
@@ -113,7 +113,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         });
 
         it('initializes paymentProcessor only once', async () => {
-            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2);
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2, Mode.GooglePayCybersourceV2);
 
             await strategy.initialize(checkoutButtonOptions);
 
