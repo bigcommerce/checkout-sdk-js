@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.151.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.150.0...v1.151.0) (2021-05-24)
+
+
+### Features
+
+* **payment:** INT-4197 added test ([453974f](https://github.com/bigcommerce/checkout-sdk-js/commit/453974f555a90e21d7ab67dd5f021386a2e12821))
+* **payment:** INT-4197 added type and color parameters on googlepay checkout button ([34a5cec](https://github.com/bigcommerce/checkout-sdk-js/commit/34a5cec2bf4a90940a3bc5d31b29f9657e126e4c))
+
 ## [1.150.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.149.0...v1.150.0) (2021-05-20)
 
 

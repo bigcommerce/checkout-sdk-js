@@ -20,6 +20,7 @@
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#optional-braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#optional-braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
+* [googlepayadyenv2](checkoutbuttoninitializeoptions.md#optional-googlepayadyenv2)
 * [googlepayauthorizenet](checkoutbuttoninitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](checkoutbuttoninitializeoptions.md#optional-googlepaycheckoutcom)
@@ -65,6 +66,15 @@ ___
 • **containerId**: *string*
 
 The ID of a container which the checkout button should be inserted.
+
+___
+
+### `Optional` googlepayadyenv2
+
+• **googlepayadyenv2**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support adyenv2 GooglePay.
 
 ___
 

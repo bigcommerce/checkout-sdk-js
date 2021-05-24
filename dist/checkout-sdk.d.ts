@@ -1236,6 +1236,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     containerId: string;
     /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support adyenv2 GooglePay.
+     */
+    googlepayadyenv2?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Braintree GooglePay. They can be
      * omitted unless you need to support Braintree GooglePay.
      */
@@ -3820,6 +3825,19 @@ declare interface GooglePayCustomerInitializeOptions {
      * It should be an HTML element.
      */
     container: string;
+    /**
+     * The color of the GooglePay button that will be inserted.
+     *  black (default): a black button suitable for use on white or light backgrounds.
+     *  white: a white button suitable for use on colorful backgrounds.
+     */
+    buttonColor?: ButtonColor;
+    /**
+     * The size of the GooglePay button that will be inserted.
+     *  long: "Buy with Google Pay" button (default). A translated button label may appear
+     *         if a language specified in the viewer's browser matches an available language.
+     *  short: Google Pay payment button without the "Buy with" text.
+     */
+    buttonType?: ButtonType;
 }
 
 /**
