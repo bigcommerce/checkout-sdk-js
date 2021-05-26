@@ -8,6 +8,7 @@ import { CustomerInitializeOptions, CustomerRequestOptions } from '../../custome
 import CustomerStrategy from '../customer-strategy';
 
 export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
+    private _isInitializing: boolean = false;
     private _walletButton?: HTMLElement;
 
     constructor(
@@ -18,6 +19,7 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+        this._isInitializing = true;
         const { methodId, amazonpay } = options;
 
         if (!methodId || !amazonpay) {
@@ -30,10 +32,13 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
         this._walletButton = this._createSignInButton(amazonpay.container, methodId);
 
+        this._isInitializing = false;
+
         return this._store.getState();
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._isInitializing = false;
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
@@ -63,10 +68,14 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         );
     }
 
-    private _createSignInButton(containerId: string, methodId: string): HTMLElement {
+    private _createSignInButton(containerId: string, methodId: string): HTMLElement | undefined {
         const container = document.getElementById(containerId);
 
         if (!container) {
+            if (!this._isInitializing) {
+                return undefined;
+            }
+
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 

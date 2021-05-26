@@ -12,6 +12,7 @@ import CustomerStrategy from '../customer-strategy';
 import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
+    private _isInitializing: boolean = false;
     private _walletButton?: HTMLElement;
 
     constructor(
@@ -22,6 +23,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+        this._isInitializing = true;
         const { methodId }  = options;
 
         const googlePayOptions = this._getGooglePayOptions(options);
@@ -34,17 +36,24 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             .then(() => {
                 this._walletButton = this._createSignInButton(googlePayOptions.container, googlePayOptions);
             })
-            .then(() => this._store.getState());
+            .then(() => {
+                this._isInitializing = false;
+
+                return this._store.getState();
+            });
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
+    async deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._isInitializing = false;
+
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
         }
 
-        return this._googlePayPaymentProcessor.deinitialize()
-            .then(() => this._store.getState());
+        await this._googlePayPaymentProcessor.deinitialize();
+
+        return this._store.getState();
     }
 
     signIn(): Promise<InternalCheckoutSelectors> {
@@ -66,11 +75,15 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    private _createSignInButton(containerId: string, buttonOptions: GooglePayCustomerInitializeOptions): HTMLElement {
+    private _createSignInButton(containerId: string, buttonOptions: GooglePayCustomerInitializeOptions): HTMLElement | undefined {
         const container = document.querySelector(`#${containerId}`);
         const { buttonType, buttonColor } = buttonOptions;
 
         if (!container) {
+            if (!this._isInitializing) {
+                return undefined;
+            }
+
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 

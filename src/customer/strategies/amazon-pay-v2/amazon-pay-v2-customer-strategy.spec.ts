@@ -142,6 +142,21 @@ describe('AmazonPayV2CustomerStrategy', () => {
 
             await expect(strategy.initialize(customerInitializeOptions)).rejects.toThrow(InvalidArgumentError);
         });
+
+        it('does not fail to initialize when no valid container id is supplied and initialize step is over before payment processor is finished loding scripts', async () => {
+            customerInitializeOptions = getAmazonPayV2CustomerInitializeOptions(Mode.InvalidContainer);
+
+            jest.spyOn(paymentProcessor, 'initialize')
+                .mockImplementation(jest.fn(async () => {
+                    await strategy.deinitialize();
+
+                    return Promise.resolve();
+                }));
+
+            await strategy.initialize(customerInitializeOptions);
+
+            expect(paymentProcessor.createButton).not.toHaveBeenCalled();
+        });
     });
 
     describe('#deinitialize()', () => {
