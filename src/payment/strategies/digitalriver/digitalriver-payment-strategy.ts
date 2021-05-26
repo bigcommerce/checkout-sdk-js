@@ -85,7 +85,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const {payment, ...order} = orderRequest;
+        const { payment, ...order } = orderRequest;
 
         if (!payment || !payment.paymentData) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -93,7 +93,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         const { paymentData, methodId } = payment;
         const { shouldSetAsDefaultInstrument = false } = paymentData as HostedInstrument;
-        const {isStoreCreditApplied: useStoreCredit} = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
         if (useStoreCredit !== undefined) {
             await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
@@ -102,7 +102,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         if (!this._digitalRiverCheckoutData) {
-            throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         if (isVaultedInstrument(paymentData)) {
@@ -127,7 +127,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } else {
             if (!this._loadSuccessResponse) {
-                throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
+                throw new PaymentArgumentInvalidError(['this._loadSuccessResponse']);
             }
 
             const paymentPayload = {
@@ -230,12 +230,10 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const configJs = { ...configuration, showSavePaymentAgreement: Boolean(customer.email) };
-
         this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
         const digitalRiverConfiguration = {
             sessionId: this._digitalRiverCheckoutData.sessionId,
-            options: { ...configJs },
+            options: { ...configuration, showSavePaymentAgreement: Boolean(customer.email) },
             billingAddress: {
                 firstName: billing.firstName,
                 lastName: billing.lastName,

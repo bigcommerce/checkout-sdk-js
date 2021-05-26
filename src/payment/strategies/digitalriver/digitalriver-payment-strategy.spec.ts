@@ -15,6 +15,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -376,21 +377,18 @@ describe('DigitalRiverPaymentStrategy', () => {
             );
         });
 
-        it('throws an error when DigitalRiver checkout data is not provided', async () => {
-            const error = new Error('Unable to submit payment for the order because the payload is invalid. Make sure the following fields are provided correctly: payment.paymentData.');
+        it('throws an error when payment is not provided', () => {
             payload.payment = undefined;
 
             const promise = strategy.execute(payload, undefined);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toBeInstanceOf(PaymentArgumentInvalidError);
         });
 
-        it('throws an error when payment is not provided', async () => {
-            const error = new Error('Unable to proceed because payload payment argument is not provided.');
-
+        it('throws an error when DigitalRiver checkout data is not provided', () => {
             const promise = strategy.execute(payload, undefined);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toBeInstanceOf(MissingDataError);
         });
     });
 
