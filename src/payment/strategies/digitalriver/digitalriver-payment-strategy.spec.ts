@@ -15,6 +15,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -306,17 +307,23 @@ describe('DigitalRiverPaymentStrategy', () => {
                 {
                     methodId: 'authorizenet',
                     paymentData: {
-                        nonce: JSON.stringify({
-                            checkoutId: '12345676543',
-                            source: {
-                                source: {
-                                    id: '1',
-                                    reusable: false,
-                                },
-                                readyForStorage: true,
+                        formattedPayload: {
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    checkoutId: '12345676543',
+                                    source: {
+                                        source: {
+                                            id: '1',
+                                            reusable: false,
+                                        },
+                                        readyForStorage: true,
+                                    },
+                                    sessionId: '1234',
+                                }),
                             },
-                            sessionId: '1234',
-                        }),
+                            set_as_default_stored_instrument: false,
+                            vault_payment_instrument: true,
+                        },
                     },
                 }
             );
@@ -348,29 +355,40 @@ describe('DigitalRiverPaymentStrategy', () => {
                 {
                     methodId: 'authorizenet',
                     paymentData: {
-                        nonce: JSON.stringify({
-                            checkoutId: '12345676543',
-                            source: {
-                                source: {
-                                    id: '1',
-                                    reusable: false,
-                                },
-                                readyForStorage: true,
+                        formattedPayload: {
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    checkoutId: '12345676543',
+                                    source: {
+                                        source: {
+                                            id: '1',
+                                            reusable: false,
+                                        },
+                                        readyForStorage: true,
+                                    },
+                                    sessionId: '1234',
+                                }),
                             },
-                            sessionId: '1234',
-                        }),
+                            set_as_default_stored_instrument: false,
+                            vault_payment_instrument: true,
+                        },
                     },
                 }
             );
         });
 
-        it('throws an error when payment is not provided', async () => {
-            const error = new Error('Unable to proceed because payload payment argument is not provided.');
+        it('throws an error when payment is not provided', () => {
             payload.payment = undefined;
 
             const promise = strategy.execute(payload, undefined);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toBeInstanceOf(PaymentArgumentInvalidError);
+        });
+
+        it('throws an error when DigitalRiver checkout data is not provided', () => {
+            const promise = strategy.execute(payload, undefined);
+
+            return expect(promise).rejects.toBeInstanceOf(MissingDataError);
         });
     });
 
@@ -383,7 +401,22 @@ describe('DigitalRiverPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
+        const digitalRiverLoadResponse = getDigitalRiverJSMock();
+        const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
+        const customer = getCustomer();
+        let options: PaymentInitializeOptions;
+
+        beforeEach(() => {
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
+            jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
+            jest.spyOn(document, 'getElementById').mockReturnValue('');
+            options = getInitializeOptionsMock();
+        });
+
         it('returns the state', async () => {
+            await strategy.initialize(options);
             expect(await strategy.deinitialize()).toEqual(store.getState());
         });
     });
