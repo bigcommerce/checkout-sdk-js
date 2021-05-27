@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.152.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.151.0...v1.152.0) (2021-05-27)
+
+
+### Features
+
+* **payment:** INT-4310 resolving mexico review ([f4ce08b](https://github.com/bigcommerce/checkout-sdk-js/commit/f4ce08b5ffe9033d31d85f0d903878f971a192da))
+* **payment:** INT-4310 Update DR strategy to support vaulted instruments ([964130d](https://github.com/bigcommerce/checkout-sdk-js/commit/964130d945ac2c3ef411c8ab4951e52b8fef40f7))
+
 ## [1.151.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.150.0...v1.151.0) (2021-05-24)
 
 
