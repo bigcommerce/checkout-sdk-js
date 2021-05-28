@@ -8,7 +8,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -142,6 +142,14 @@ describe('MonerisPaymentStrategy', () => {
             expect(document.createElement).toHaveBeenCalledWith('iframe');
         });
 
+        it('only creates the iframe once when tryng to initialize more than once', async () => {
+            await strategy.initialize(initializeOptions);
+            await strategy.initialize(initializeOptions);
+
+            expect(document.getElementById).toHaveBeenCalledWith(containerId);
+            expect(container.childElementCount).toEqual(1);
+        });
+
         it('initializes moneris iframe and sets src to the live environment', async () => {
             paymentMethodMock.config.testMode = false;
             await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
@@ -188,7 +196,7 @@ describe('MonerisPaymentStrategy', () => {
             checkoutMock.isStoreCreditApplied = true;
 
             await strategy.initialize(initializeOptions);
-            const promise =  strategy.execute(payload, options);
+            const promise = strategy.execute(payload, options);
 
             await new Promise(resolve => process.nextTick(resolve));
 
@@ -219,6 +227,12 @@ describe('MonerisPaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
+
+        it('fails to executes moneris strategy when the strategy is not previously initialized', async () => {
+            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
+
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
     });
 
     describe('#deinitialize()', () => {
@@ -234,6 +248,13 @@ describe('MonerisPaymentStrategy', () => {
 
             expect(await strategy.deinitialize()).toEqual(store.getState());
             expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
+        });
+
+        it('deinitializes strategy and removes the iframe if it exists', async () => {
+            await strategy.initialize(initializeOptions);
+
+            expect(await strategy.deinitialize()).toEqual(store.getState());
+            expect(container.childElementCount).toEqual(0);
         });
     });
 

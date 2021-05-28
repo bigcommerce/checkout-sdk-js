@@ -15,7 +15,6 @@ const RESPONSE_SUCCESS_CODE = '001';
 
 export default class MonerisPaymentStrategy implements PaymentStrategy {
     private _iframe?: HTMLIFrameElement;
-    private _monerisURL?: string;
     private _windowEventListener?: (response: MessageEvent) => void;
 
     constructor(
@@ -39,17 +38,23 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._iframe = this._createIframe(monerisOptions.containerId, initializationData.profileId, !!config.testMode);
+        if (!this._iframe) {
+            this._iframe = this._createIframe(monerisOptions.containerId, initializationData.profileId, !!config.testMode);
+        }
 
         return Promise.resolve(this._store.getState());
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { payment, ...order } = payload;
+        const { payment , ...order } = payload;
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
+
+        const paymentMethod = getPaymentMethodOrThrow(payment.methodId);
+        const testMode = paymentMethod.config.testMode;
 
         const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
@@ -60,15 +65,21 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         const nonce = await new Promise<string | undefined>((resolve, reject) => {
-            const frameref = this._iframe?.contentWindow;
-
-            if (!this._monerisURL) {
+            if (!this._iframe) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            frameref?.postMessage('tokenize', this._monerisURL);
+            const frameref = this._iframe.contentWindow;
 
-            this._windowEventListener = (response: MessageEvent) => this._handleMonerisResponse(response, resolve, reject);
+            frameref?.postMessage('tokenize', this._monerisURL(!!testMode));
+
+            this._windowEventListener = (response: MessageEvent) => {
+                try {
+                    resolve(this._handleMonerisResponse(response));
+                } catch (error) {
+                    reject(error);
+                }
+            };
 
             window.addEventListener('message', this._windowEventListener);
         });
@@ -93,6 +104,11 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             this._windowEventListener = undefined;
         }
 
+        if (this._iframe && this._iframe.parentNode) {
+            this._iframe.parentNode.removeChild(this._iframe);
+            this._iframe = undefined;
+        }
+
         return Promise.resolve(this._store.getState());
     }
 
@@ -114,22 +130,24 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         iframe.name = IFRAME_NAME;
         iframe.id = IFRAME_NAME;
 
-        this._monerisURL = `https://${ testMode ? 'esqa' : 'www3' }.moneris.com/HPPtoken/index.php`;
-
-        iframe.src = `${ this._monerisURL }?id=${profileId}&pmmsg=true&css_body=${cssBody}&css_textbox=${cssTextbox}&css_textbox_pan=${csstextboxPan}&enable_exp=1&css_textbox_exp=${cssTextboxExpiry}&enable_cvd=1&css_textbox_cvd=${csstexboxCvd}&display_labels=1`;
+        iframe.src = `${ this._monerisURL(testMode) }?id=${profileId}&pmmsg=true&css_body=${cssBody}&css_textbox=${cssTextbox}&css_textbox_pan=${csstextboxPan}&enable_exp=1&css_textbox_exp=${cssTextboxExpiry}&enable_cvd=1&css_textbox_cvd=${csstexboxCvd}&display_labels=1`;
 
         container.appendChild(iframe);
 
         return iframe;
     }
 
-    private _handleMonerisResponse(response: MessageEvent, resolve: (nonce: string) => void, reject: (reason: Error) => void): void {
+    private _handleMonerisResponse(response: MessageEvent): string {
         const monerisResponse: MonerisResponseData = JSON.parse(response.data);
 
         if (monerisResponse.responseCode[0] !== RESPONSE_SUCCESS_CODE) {
-            return reject(new Error(monerisResponse.errorMessage));
+            throw new Error(monerisResponse.errorMessage);
         }
 
-        return resolve(monerisResponse.dataKey);
+        return monerisResponse.dataKey;
+    }
+
+    private _monerisURL(testMode: boolean): string {
+        return `https://${ testMode ? 'esqa' : 'www3' }.moneris.com/HPPtoken/index.php`;
     }
 }
