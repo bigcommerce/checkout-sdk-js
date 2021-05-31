@@ -22,6 +22,7 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
+import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
 import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
@@ -59,6 +60,7 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { PPSDKStrategy } from './strategies/ppsdk';
+import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -96,6 +98,7 @@ export default function createPaymentStrategyRegistry(
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
+    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -390,6 +393,18 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.QUADPAY, () =>
+        new QuadpayPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            storeCreditActionCreator,
+            remoteCheckoutActionCreator,
+            storefrontPaymentRequestSender
+        )
+    );
+
     registry.register(PaymentStrategyType.SAGE_PAY, () =>
         new SagePayPaymentStrategy(
             store,
@@ -570,7 +585,7 @@ export default function createPaymentStrategyRegistry(
             storeCreditActionCreator,
             remoteCheckoutActionCreator,
             new ZipScriptLoader(scriptLoader),
-            requestSender
+            storefrontPaymentRequestSender
         )
     );
 

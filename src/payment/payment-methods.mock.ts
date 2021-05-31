@@ -580,6 +580,21 @@ export function getZip(): PaymentMethod {
     };
 }
 
+export function getQuadpay(): PaymentMethod {
+    return {
+        id: 'quadpay',
+        logoUrl: '',
+        method: 'quadpay',
+        supportedCards: [],
+        config: {
+            displayName: 'Quadpay',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: '{"id":"checkout_id"}',
+    };
+}
+
 export function getStripeV3(method: string = 'card', shouldUseIndividualCardFields: boolean = false): PaymentMethod {
     return {
         id: method,
@@ -715,6 +730,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getMollie(),
         getPaypalExpress(),
         getPaypalCommerce(),
+        getQuadpay(),
         getSquare(),
         getStripeV3(),
     ];
