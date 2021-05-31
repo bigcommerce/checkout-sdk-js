@@ -17,9 +17,7 @@ import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../er
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
-import { getPaypalCommerce,
-    getPaypalCommerceTestModeOff,
-    getPaypalCommerceTestModeOn } from '../../payment-methods.mock';
+import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategyType from '../../payment-strategy-type';
 import PaymentStrategy from '../payment-strategy';
@@ -139,59 +137,6 @@ describe('PaypalCommercePaymentStrategy', () => {
         document.body.removeChild(container);
     });
 
-    describe('Country test mode on', () => {
-        beforeEach(() => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerceTestModeOn(), initializationData: { ...getPaypalCommerceTestModeOn().initializationData, orderId: undefined } });
-        });
-
-        it('returns country if test mode on', async () => {
-            await paypalCommercePaymentStrategy.initialize(options);
-
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                'buyer-country': 'IT',
-                components: [
-                    'buttons',
-                    'messages',
-                    'fields',
-                    'funding-eligibility',
-                ],
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
-        });
-    });
-
-    describe('Country test mode off', () => {
-        beforeEach(() => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerceTestModeOff(), initializationData: { ...getPaypalCommerceTestModeOff().initializationData, orderId: undefined } });
-        });
-
-        it('returns country if test mode off', async () => {
-            await paypalCommercePaymentStrategy.initialize(options);
-
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                components: [
-                    'buttons',
-                    'messages',
-                    'fields',
-                    'funding-eligibility',
-                ],
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
-        });
-    });
-
     describe('#initialize()', () => {
         beforeEach(() => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
@@ -236,7 +181,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
                 .mockReturnValue('P24');
 
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
 
             const obj = {
                 'client-id': 'abc',
@@ -249,7 +194,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                     'fields',
                     'funding-eligibility',
                 ],
-                'enable-funding': 'przelewy24',
+                'enable-funding': 'p24',
             };
 
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, 'paypalcommercealternativemethods');
@@ -304,7 +249,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
                 .mockReturnValue('P24');
 
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
 
             expect(paypalCommercePaymentProcessor.renderButtons)
                 .toHaveBeenCalledWith(cart.id, `${paypalcommerceOptions.container}`,
@@ -319,11 +264,11 @@ describe('PaypalCommercePaymentStrategy', () => {
                 );
         });
 
-        it('renders Przelewy24 fields if orderIdis undefined and methodId is przelewy24', async () => {
+        it('renders Przelewy24 fields if orderIdis undefined and methodId is p24', async () => {
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
                 .mockReturnValue('P24');
 
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
 
             const {firstName, lastName, email} = getBillingAddress();
             expect(paypalCommercePaymentProcessor.renderFields)
@@ -342,7 +287,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             paypalcommerceOptions.apmFieldsContainer = undefined;
             const expectedError = new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "apmFieldsContainer".');
             try {
-                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' });
+                await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
@@ -433,12 +378,12 @@ describe('PaypalCommercePaymentStrategy', () => {
 
         it('submits Payment with orderId and method_id if method is alternative', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerce(), id: 'przelewy24', gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS });
+                .mockReturnValue({ ...getPaypalCommerce(), id: 'p24', gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS });
 
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
                 .mockReturnValue('P24');
 
-            const alternativeOptions = { gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'przelewy24' };
+            const alternativeOptions = { gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' };
             options = { ...options, ...alternativeOptions };
             orderRequestBody = { payment: alternativeOptions};
 
@@ -449,7 +394,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                         vault_payment_instrument: null,
                         set_as_default_stored_instrument: null,
                         device_info: null,
-                        method_id: 'przelewy24',
+                        method_id: 'p24',
                         paypal_account: {
                             order_id: paymentMethod.initializationData.orderId,
                         },
