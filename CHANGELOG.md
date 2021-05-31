@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.153.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.152.0...v1.153.0) (2021-05-31)
+
+
+### Features
+
+* **payment:** INT-4242 Add Quadpay payment strategy ([95fc8c1](https://github.com/bigcommerce/checkout-sdk-js/commit/95fc8c105be374c8f97e30d343e9e7fe552e82a1))
+* **payment:** INT-4242 Create StorefrontPaymentRequestSender ([626e618](https://github.com/bigcommerce/checkout-sdk-js/commit/626e618a614ee9503188b42c21d77b45c7eabcaf))
+
+
+### Code Refactoring
+
+* **payment:** INT-4242 Quadpay code cleanup ([19d9480](https://github.com/bigcommerce/checkout-sdk-js/commit/19d9480dd105f9203206251ce3ef5ada65a7877e))
+
 ## [1.152.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.151.0...v1.152.0) (2021-05-27)
 
 
