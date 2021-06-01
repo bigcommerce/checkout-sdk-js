@@ -18,7 +18,7 @@ export default class PaypalCommerceFundingKeyResolver {
                     return 'BANCONTACT';
                 case 'giropay':
                     return 'GIROPAY';
-                case 'przelewy24':
+                case 'p24':
                     return 'P24';
                 case 'eps':
                     return 'EPS';
