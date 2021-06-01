@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.155.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.154.0...v1.155.0) (2021-06-01)
+
+
+### Features
+
+* **payment:** PAYPAL-863 Braintree: PayPal JS SDK Smart Buttons ([#1074](https://github.com/bigcommerce/checkout-sdk-js/issues/1074)) ([e32555a](https://github.com/bigcommerce/checkout-sdk-js/commit/e32555a902679f45b11332f7df8a62efec550d61))
+
 ## [1.154.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.153.0...v1.154.0) (2021-06-01)
 
 
