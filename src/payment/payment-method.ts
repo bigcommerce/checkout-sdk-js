@@ -1,5 +1,4 @@
 import PaymentMethodConfig from './payment-method-config';
-import InitialisationStrategies from './ppsdk-initialisation-strategies';
 export default interface PaymentMethod {
     id: string;
     config: PaymentMethodConfig;
@@ -12,5 +11,5 @@ export default interface PaymentMethod {
     nonce?: string;
     initializationData?: any;
     returnUrl?: string;
-    initializationStrategy?: InitialisationStrategies;
+    initializationStrategy?: unknown;
 }

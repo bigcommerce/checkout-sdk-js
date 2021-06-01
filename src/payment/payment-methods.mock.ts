@@ -129,6 +129,22 @@ export function getPPSDK(): PaymentMethod {
         supportedCards: [],
         config: {},
         type: 'PAYMENT_TYPE_SDK',
+        initializationStrategy: {
+            type: 'NONE',
+        },
+    };
+}
+
+export function getUnsupportedPPSDK(): PaymentMethod {
+    return {
+        id: 'unsupported-cabbagepay',
+        method: 'credit-card',
+        supportedCards: [],
+        config: {},
+        type: 'PAYMENT_TYPE_SDK',
+        initializationStrategy: {
+            type: 'SOMETHING_UNSUPPORTED',
+        },
     };
 }
 
@@ -728,6 +744,8 @@ export function getPaymentMethods(): PaymentMethod[] {
         getSquare(),
         getStripeV3(),
         getMoneris(),
+        getPPSDK(),
+        getUnsupportedPPSDK(),
     ];
 }
 

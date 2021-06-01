@@ -390,7 +390,8 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.PPSDK, () =>
         new PPSDKStrategy(
-            store
+            store,
+            orderActionCreator
         )
     );
 

@@ -8,6 +8,7 @@ import { Registry, RegistryOptions } from '../common/registry';
 import PaymentMethod from './payment-method';
 import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategyType from './payment-strategy-type';
+import { isPPSDKPaymentMethod } from './ppsdk-payment-method';
 import { PaymentStrategy } from './strategies';
 
 const checkoutcomStrategies: {
@@ -46,7 +47,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
                 .config.getStoreConfig()
                 ?.checkoutSettings.features['PAYMENTS-6806.enable_ppsdk_strategy'];
 
-        if (ppsdkFeatureOn && paymentMethod.type === PaymentStrategyType.PPSDK) {
+        if (ppsdkFeatureOn && isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
 
