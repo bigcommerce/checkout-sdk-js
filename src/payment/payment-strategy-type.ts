@@ -27,6 +27,7 @@ enum PaymentStrategyType {
     LAYBUY = 'laybuy',
     LEGACY = 'legacy',
     MOLLIE = 'mollie',
+    MONERIS = 'moneris',
     NO_PAYMENT_DATA_REQUIRED = 'nopaymentdatarequired',
     OFFLINE = 'offline',
     OFFSITE = 'offsite',
