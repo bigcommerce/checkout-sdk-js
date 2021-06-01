@@ -4488,6 +4488,22 @@ declare interface MolliePaymentInitializeOptions {
     styles: object;
 }
 
+declare interface MonerisStylingProps {
+    cssBody?: string;
+    cssTextbox?: string;
+    cssTextboxPan?: string;
+    cssTextboxExpiry?: string;
+    csstexboxCvd?: string;
+}
+
+declare interface MonerisaymentInitializeOptions {
+    /**
+     * The ID of a container where the Moneris iframe component should be mounted
+     */
+    containerId: string;
+    style?: MonerisStylingProps;
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
@@ -4701,6 +4717,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Moneris payment method.
+     * They can be omitted unless you need to support Moneris.
+     */
+    moneris?: MonerisaymentInitializeOptions;
     /**
      * The options that are required to initialize the PayPal Express payment method.
      * They can be omitted unless you need to support PayPal Express.

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.154.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.153.0...v1.154.0) (2021-06-01)
+
+
+### Features
+
+* **payment:** INT-4205 Add Moneris strategy ([fff5070](https://github.com/bigcommerce/checkout-sdk-js/commit/fff5070ed3062b1a1d1a4f8c6f25b786ad76d987))
+* **payment:** INT-4205 Cleanup Strategy and add additional tests ([73e7357](https://github.com/bigcommerce/checkout-sdk-js/commit/73e7357fd1fcf8790e7b2edeb6317d6ee631475f))
+
 ## [1.153.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.152.0...v1.153.0) (2021-05-31)
 
 

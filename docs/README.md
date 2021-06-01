@@ -213,6 +213,8 @@
 * [MasterpassCustomerInitializeOptions](interfaces/masterpasscustomerinitializeoptions.md)
 * [MasterpassPaymentInitializeOptions](interfaces/masterpasspaymentinitializeoptions.md)
 * [MolliePaymentInitializeOptions](interfaces/molliepaymentinitializeoptions.md)
+* [MonerisStylingProps](interfaces/monerisstylingprops.md)
+* [MonerisaymentInitializeOptions](interfaces/monerisaymentinitializeoptions.md)
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
 * [None](interfaces/none.md)

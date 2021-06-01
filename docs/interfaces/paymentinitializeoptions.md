@@ -41,6 +41,7 @@ current checkout flow.
 * [masterpass](paymentinitializeoptions.md#optional-masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
 * [mollie](paymentinitializeoptions.md#optional-mollie)
+* [moneris](paymentinitializeoptions.md#optional-moneris)
 * [params](paymentinitializeoptions.md#optional-params)
 * [paypalcommerce](paymentinitializeoptions.md#optional-paypalcommerce)
 * [paypalexpress](paymentinitializeoptions.md#optional-paypalexpress)
@@ -252,6 +253,15 @@ ___
 
 The options that are required to initialize the Mollie payment method.
 They can be omitted unless you need to support Mollie.
+
+___
+
+### `Optional` moneris
+
+• **moneris**? : *[MonerisaymentInitializeOptions](monerisaymentinitializeoptions.md)*
+
+The options that are required to initialize the Moneris payment method.
+They can be omitted unless you need to support Moneris.
 
 ___
 
