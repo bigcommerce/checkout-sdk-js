@@ -50,7 +50,9 @@ describe('PaypalExpressPaymentStrategy', () => {
             FUNDING: {
                 CARD: 'card',
                 CREDIT: 'credit',
+                PAYPAL: 'paypal',
             },
+            Buttons: jest.fn(),
         };
 
         scriptLoader = new PaypalScriptLoader(createScriptLoader());

@@ -5,8 +5,14 @@ import { Address, LegacyAddress } from '../../../address';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
-import { BraintreeError, BraintreePaypalCheckout, BraintreeShippingAddressOverride, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
-import { PaypalAuthorizeData, PaypalScriptLoader } from '../../../payment/strategies/paypal';
+import { BraintreeError,
+    BraintreePaypalCheckout,
+    BraintreeShippingAddressOverride,
+    BraintreeSDKCreator,
+    BraintreeTokenizePayload,
+    PaypalClientInstance,
+    RenderButtonsData } from '../../../payment/strategies/braintree';
+import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -18,59 +24,83 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _braintreeSDKCreator: BraintreeSDKCreator,
-        private _paypalScriptLoader: PaypalScriptLoader,
         private _formPoster: FormPoster,
-        private _offerCredit: boolean = false
+        private _offerCredit: boolean = false,
+        private _window: PaypalHostWindow,
+        private _renderButtonsData?: RenderButtonsData
     ) {}
 
-    initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+    async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const paypalOptions = (this._offerCredit ? options.braintreepaypalcredit : options.braintreepaypal) || {};
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
+        const storeState = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+        const currency = storeState.config.getStoreConfig()?.shopperCurrency;
 
         if (!paymentMethod || !paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
+        const container = `#${options.containerId}`;
+
+        this._renderButtonsData = {
+            paymentMethod,
+            paypalOptions,
+            container,
+        };
 
         return Promise.all([
-            this._braintreeSDKCreator.getPaypalCheckout(),
-            this._paypalScriptLoader.loadPaypal(),
+            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code }, (paypalCheckoutInstance: PaypalClientInstance) => this.renderButtons(paypalCheckoutInstance)),
+            this._braintreeSDKCreator.getPaypal(),
         ])
-            .then(([paypalCheckout, paypal]) => {
-                this._paypalCheckout = paypalCheckout;
-
-                const allowedSources = [];
-                const disallowedSources = [];
-
-                if (paypalOptions.allowCredit) {
-                    allowedSources.push(paypal.FUNDING.CREDIT);
-                } else {
-                    disallowedSources.push(paypal.FUNDING.CREDIT);
+            .then(([paypalCheckout]) => {
+                if (!this._paypalCheckout) {
+                    this._paypalCheckout = paypalCheckout;
                 }
+            });
+    }
 
-                return paypal.Button.render({
+    renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
+        const { paypalOptions, paymentMethod, container } = this._renderButtonsData as RenderButtonsData;
+        const { paypal } = this._window;
+
+        if (paypal) {
+            const FUNDING_SOURCES = [];
+            for (const fundingKey in paypal.FUNDING) {
+                if (paypal.FUNDING.hasOwnProperty(fundingKey)) {
+                    const skipCreditSource = (fundingKey === 'CREDIT' || fundingKey === 'PAYLATER') && !paypalOptions.allowCredit;
+                    if (fundingKey === 'CARD' || skipCreditSource) {
+                        continue;
+                    }
+                    FUNDING_SOURCES.push(fundingKey.toLowerCase());
+                }
+            }
+
+            FUNDING_SOURCES.forEach(source => {
+                const button = paypal.Buttons({
                     env: paymentMethod.config.testMode ? 'sandbox' : 'production',
-                    commit: paypalOptions.shouldProcessPayment ? true : false,
-                    funding: {
-                        allowed: allowedSources,
-                        disallowed: disallowedSources,
-                    },
+                    fundingSource: source,
+                    commit: false,
                     style: {
                         shape: 'rect',
                         label: this._offerCredit ? 'credit' : undefined,
                         ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
                     },
-                    payment: () => this._setupPayment(paypalOptions.shippingAddress, paypalOptions.onPaymentError),
-                    onAuthorize: data => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
-                }, options.containerId);
+                    createOrder: () => this._setupPayment(paypalCheckoutInstance, paypalOptions.shippingAddress, paypalOptions.onPaymentError),
+                    onApprove: (data: PaypalAuthorizeData) => this._tokenizePayment(data, paypalCheckoutInstance, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
+                });
+
+                if (button.isEligible()) {
+                    button.render(container);
+                }
             });
+        }
     }
 
     deinitialize(): Promise<void> {
-        this._paypalCheckout = undefined;
         this._paymentMethod = undefined;
+        this._paypalCheckout = undefined;
 
         this._braintreeSDKCreator.teardown();
 
@@ -78,6 +108,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     }
 
     private _setupPayment(
+        paypalCheckoutInstance: PaypalClientInstance,
         address?: Address | null,
         onError?: (error: BraintreeError | StandardError) => void
     ): Promise<string> {
@@ -90,10 +121,6 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     customer && customer.addresses && customer.addresses[0] :
                     address;
 
-                if (!this._paypalCheckout) {
-                    throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
-                }
-
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
@@ -102,13 +129,13 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                return this._paypalCheckout.createPayment({
+                return paypalCheckoutInstance.createPayment({
                     flow: 'checkout',
                     enableShippingAddress: true,
                     shippingAddressEditable: false,
                     shippingAddressOverride: shippingAddress ? this._mapToBraintreeAddress(shippingAddress) : undefined,
-                    amount: checkout.outstandingBalance,
-                    currency: config.currency.code,
+                    amount: checkout?.outstandingBalance,
+                    currency: config?.currency.code,
                     offerCredit: this._offerCredit,
                 });
             })
@@ -123,17 +150,18 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
     private _tokenizePayment(
         data: PaypalAuthorizeData,
+        paypalCheckoutInstance: PaypalClientInstance,
         shouldProcessPayment?: boolean,
         onError?: (error: BraintreeError | StandardError) => void
     ): Promise<BraintreeTokenizePayload> {
-        if (!this._paypalCheckout || !this._paymentMethod) {
+        if (!this._paymentMethod || !paypalCheckoutInstance) {
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
         }
 
         const methodId = this._paymentMethod.id;
 
         return Promise.all([
-            this._paypalCheckout.tokenizePayment(data),
+            paypalCheckoutInstance.tokenizePayment(data),
             this._braintreeSDKCreator.getDataCollector({ paypal: true }),
         ])
             .then(([payload, { deviceData }]) => {

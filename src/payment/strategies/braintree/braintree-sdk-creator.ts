@@ -1,6 +1,17 @@
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeModule, BraintreePaypal, BraintreePaypalCheckout, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeHostedFields,
+    BraintreeHostedFieldsCreatorConfig,
+    BraintreeModule,
+    BraintreePaypal,
+    BraintreePaypalCheckout,
+    BraintreeThreeDSecure,
+    BraintreeVisaCheckout, Config,
+    GooglePayBraintreeSDK,
+    PaypalClientInstance,
+    RenderButtons } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -15,6 +26,7 @@ export default class BraintreeSDKCreator {
         paypal?: Promise<BraintreeDataCollector>;
     } = {};
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
+    private _paypalcheckoutInstance?: PaypalClientInstance;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -43,19 +55,28 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypal(),
             ])
-            .then(([client, paypal]) => paypal.create({ client }));
+                .then(([client, paypal]) => paypal.create({ client }));
         }
 
         return this._paypal;
     }
 
-    getPaypalCheckout(): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(config: Config, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
-                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }));
+                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {
+                    this._paypalcheckoutInstance = instance;
+                    instance.loadPayPalSDK({
+                        currency: config.currency,
+                    }, () => {
+                        renderButtonCallback(instance);
+                    });
+                }));
+        } else if (this._paypalcheckoutInstance) {
+            renderButtonCallback(this._paypalcheckoutInstance);
         }
 
         return this._paypalCheckout;
@@ -67,7 +88,7 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.load3DS(),
             ])
-            .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
+                .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
         }
 
         return this._3ds;
@@ -82,14 +103,14 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
-            .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
-            .catch(error => {
-                if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
-                    return { deviceData: undefined, teardown: () => Promise.resolve() };
-                }
+                .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
+                .catch(error => {
+                    if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
+                        return { deviceData: undefined, teardown: () => Promise.resolve() };
+                    }
 
-                throw error;
-            });
+                    throw error;
+                });
 
             this._dataCollectors[cacheKey] = cached;
         }
@@ -103,7 +124,7 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadVisaCheckout(),
             ])
-            .then(([client, visaCheckout]) => visaCheckout.create({ client }));
+                .then(([client, visaCheckout]) => visaCheckout.create({ client }));
         }
 
         return this._visaCheckout;

@@ -14,7 +14,10 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
 import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
-import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import { PaypalButtonOptions,
+    PaypalHostWindow,
+    PaypalScriptLoader,
+    PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -67,12 +70,40 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.payment().catch(() => {});
+                    if (options.createOrder) {
+                        options.createOrder().catch(() => {
+                        });
+                    }
                 });
 
-                eventEmitter.on('authorize', () => {
-                    options.onAuthorize({ payerId: 'PAYER_ID' }).catch(() => {});
+                eventEmitter.on('approve', () => {
+                    if (options.onApprove) {
+                        options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {
+                        });
+                    }
                 });
+            });
+
+        jest.spyOn(paypal, 'Buttons')
+            .mockImplementation((options: PaypalButtonOptions) => {
+                eventEmitter.on('createOrder', () => {
+                    if (options.createOrder) {
+                        options.createOrder().catch(() => {
+                        });
+                    }
+                });
+
+                eventEmitter.on('approve', () => {
+                    if (options.onApprove) {
+                       options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {
+                        });
+                    }
+                });
+
+                return {
+                    render: jest.fn(),
+                    isEligible: jest.fn(),
+                };
             });
 
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
@@ -82,7 +113,11 @@ describe('BraintreePaypalButtonStrategy', () => {
             ]));
 
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
-            .mockReturnValue(Promise.resolve(paypalCheckout));
+            .mockImplementation(({}, callback) => {
+                callback(paypalCheckout);
+
+                return Promise.resolve(paypalCheckout);
+            });
 
         jest.spyOn(braintreeSDKCreator, 'getDataCollector')
             .mockReturnValue(Promise.resolve(dataCollector));
@@ -90,16 +125,26 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypal')
             .mockReturnValue(Promise.resolve(paypal));
 
+        jest.spyOn(braintreeSDKCreator, 'getPaypal')
+            .mockReturnValue(Promise.resolve(paypal));
+
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
+
+        (window as PaypalHostWindow).paypal = paypal;
 
         strategy = new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
             braintreeSDKCreator,
-            paypalScriptLoader,
-            formPoster
+            formPoster,
+            undefined,
+            window
         );
+    });
+
+    afterEach(() => {
+        delete (window as PaypalHostWindow).paypal;
     });
 
     it('throws error if required data is not loaded', async () => {
@@ -109,8 +154,9 @@ describe('BraintreePaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 braintreeSDKCreator,
-                paypalScriptLoader,
-                formPoster
+                formPoster,
+                undefined,
+                window
             );
 
             await strategy.initialize(options);
@@ -123,13 +169,13 @@ describe('BraintreePaypalButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
-        expect(paypalScriptLoader.loadPaypal).toHaveBeenCalled();
+        expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
     });
 
     it('throws error if unable to initialize Braintree or PayPal JS client', async () => {
         const expectedError = new Error('Unable to load JS client');
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypal')
+        jest.spyOn(braintreeSDKCreator, 'getPaypal')
             .mockReturnValue(Promise.reject(expectedError));
 
         try {
@@ -142,20 +188,17 @@ describe('BraintreePaypalButtonStrategy', () => {
     it('renders PayPal checkout button', async () => {
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith({
+        expect(paypal.Buttons).toHaveBeenCalledWith({
             commit: false,
             env: 'production',
-            onAuthorize: expect.any(Function),
-            payment: expect.any(Function),
+            onApprove: expect.any(Function),
+            createOrder: expect.any(Function),
             style: {
                 label: undefined,
                 shape: 'rect',
             },
-            funding: {
-                allowed: [],
-                disallowed: [paypal.FUNDING.CREDIT],
-            },
-        }, 'checkout-button');
+            fundingSource: paypal.FUNDING.PAYPAL,
+        });
     });
 
     it('customizes style of PayPal checkout button', async () => {
@@ -177,7 +220,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith(expect.objectContaining({
+        expect(paypal.Buttons).toHaveBeenCalledWith(expect.objectContaining({
             style: {
                 color: 'blue',
                 shape: 'pill',
@@ -187,13 +230,12 @@ describe('BraintreePaypalButtonStrategy', () => {
                 tagline: true,
                 fundingicons: false,
             },
-        }), 'checkout-button');
+        }));
     });
 
     it('throws error if unable to render PayPal button', async () => {
         const expectedError = new Error('Unable to render PayPal button');
-
-        jest.spyOn(paypal.Button, 'render')
+        jest.spyOn(paypal, 'Buttons')
             .mockImplementation(() => {
                 throw expectedError;
             });
@@ -218,14 +260,15 @@ describe('BraintreePaypalButtonStrategy', () => {
             store,
             checkoutActionCreator,
             braintreeSDKCreator,
-            paypalScriptLoader,
-            formPoster
+            formPoster,
+            undefined,
+            window
         );
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render)
-            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }), 'checkout-button');
+        expect(paypal.Buttons)
+            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }));
     });
 
     it('loads checkout details when customer is ready to pay', async () => {
@@ -233,7 +276,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        eventEmitter.emit('payment');
+        eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -261,7 +304,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             },
         });
 
-        eventEmitter.emit('payment');
+        eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -288,7 +331,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             },
         });
 
-        eventEmitter.emit('payment');
+        eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -300,7 +343,7 @@ describe('BraintreePaypalButtonStrategy', () => {
     it('sets up PayPal payment flow with current checkout details when customer is ready to pay', async () => {
         await strategy.initialize(options);
 
-        eventEmitter.emit('payment');
+        eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -327,7 +370,7 @@ describe('BraintreePaypalButtonStrategy', () => {
     it('tokenizes PayPal payment details when authorization event is triggered', async () => {
         await strategy.initialize(options);
 
-        eventEmitter.emit('authorize');
+        eventEmitter.emit('approve');
 
         expect(paypalCheckout.tokenizePayment).toHaveBeenCalledWith({ payerId: 'PAYER_ID' });
     });
@@ -335,7 +378,7 @@ describe('BraintreePaypalButtonStrategy', () => {
     it('posts payment details to server to set checkout data when PayPal payment details are tokenized', async () => {
         await strategy.initialize(options);
 
-        eventEmitter.emit('authorize');
+        eventEmitter.emit('approve');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -381,7 +424,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        eventEmitter.emit('authorize');
+        eventEmitter.emit('approve');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -424,7 +467,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        eventEmitter.emit('payment');
+        eventEmitter.emit('createOrder');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -439,7 +482,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        eventEmitter.emit('authorize');
+        eventEmitter.emit('approve');
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -472,35 +515,32 @@ describe('BraintreePaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 braintreeSDKCreator,
-                paypalScriptLoader,
                 formPoster,
-                true
+                true,
+                window
             );
         });
 
         it('renders PayPal Credit checkout button', async () => {
             await strategy.initialize(options);
 
-            expect(paypal.Button.render).toHaveBeenCalledWith({
+            expect(paypal.Buttons).toHaveBeenCalledWith({
                 commit: false,
                 env: 'production',
-                onAuthorize: expect.any(Function),
-                payment: expect.any(Function),
+                onApprove: expect.any(Function),
+                createOrder: expect.any(Function),
                 style: {
                     label: 'credit',
                     shape: 'rect',
                 },
-                funding: {
-                    allowed: [paypal.FUNDING.CREDIT],
-                    disallowed: [],
-                },
-            }, 'checkout-button');
+                fundingSource: paypal.FUNDING.PAYPAL,
+            });
         });
 
         it('sets up PayPal Credit payment flow with current checkout details when customer is ready to pay', async () => {
             await strategy.initialize(options);
 
-            eventEmitter.emit('payment');
+            eventEmitter.emit('createOrder');
 
             await new Promise(resolve => process.nextTick(resolve));
 

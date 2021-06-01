@@ -2,15 +2,22 @@ export interface PaypalSDK {
     Button: PaypalButton;
     checkout: PaypalExpressCheckout;
     FUNDING: PaypalFundingTypeList;
+    Buttons(options: PaypalButtonOptions): PaypalButtonRender;
 }
 
 export interface PaypalFundingTypeList {
     CARD: string;
     CREDIT: string;
+    PAYPAL: string;
 }
 
 export interface PaypalButton {
     render(options: PaypalButtonOptions, container: string): void;
+}
+
+export interface PaypalButtonRender {
+    render(container: string): void;
+    isEligible(): boolean;
 }
 
 export interface PaypalButtonOptions {
@@ -18,9 +25,13 @@ export interface PaypalButtonOptions {
     commit?: boolean;
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
+    fundingSource?: string;
     client?: PaypalClientToken;
-    payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
-    onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    payment?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onAuthorize?(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+
 }
 
 export interface PaypalClientToken {
