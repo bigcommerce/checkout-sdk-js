@@ -230,7 +230,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         currencyCode: Cart['currency']['code'],
         apmMehodId?: string
     ): PaypalCommerceScriptParams {
-        const { clientId, intent, merchantId, buyerCountry, isDeveloperModeApplicable } = initializationData;
+        const { clientId, intent, merchantId } = initializationData;
 
         const returnObject = {
             'client-id': clientId,
@@ -240,7 +240,6 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             intent,
             components: ['buttons', 'messages', 'fields', 'funding-eligibility'] as ComponentsScriptType,
             ...(apmMehodId && { 'enable-funding': apmMehodId}),
-            ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
         };
 
         return returnObject;
