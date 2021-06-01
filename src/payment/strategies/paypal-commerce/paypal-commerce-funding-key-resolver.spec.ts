@@ -21,7 +21,7 @@ describe('paypalCommerceFundingKeyResolver', () => {
         });
 
         it('should return "P24"', () => {
-            expect(paypalCommerceFundingKeyResolver.resolve('przelewy24', 'paypalcommercealternativemethods')).toEqual('P24');
+            expect(paypalCommerceFundingKeyResolver.resolve('p24', 'paypalcommercealternativemethods')).toEqual('P24');
         });
 
         it('should return "EPS"', () => {
