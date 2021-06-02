@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.155.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.155.0...v1.155.1) (2021-06-02)
+
+
+### Bug Fixes
+
+* **checkout:** PAYPAL-1055 change expected methodId from przelewy24 to p24 ([7405a6e](https://github.com/bigcommerce/checkout-sdk-js/commit/7405a6eea40b90780cb50c27c20227ea51692269))
+* **checkout:** PAYPAL-1055 removed buyer-country property from paypal commerce initialization ([bf2ff1a](https://github.com/bigcommerce/checkout-sdk-js/commit/bf2ff1ad874e7e79bb84ac1fbe395db045354f42))
+
 ## [1.155.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.154.0...v1.155.0) (2021-06-01)
 
 
