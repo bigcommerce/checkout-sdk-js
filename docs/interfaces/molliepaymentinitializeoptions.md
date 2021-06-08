@@ -38,6 +38,7 @@ service.initializePayment({
 * [cardHolderId](molliepaymentinitializeoptions.md#cardholderid)
 * [cardNumberId](molliepaymentinitializeoptions.md#cardnumberid)
 * [containerId](molliepaymentinitializeoptions.md#optional-containerid)
+* [form](molliepaymentinitializeoptions.md#optional-form)
 * [styles](molliepaymentinitializeoptions.md#styles)
 
 ## Properties
@@ -81,6 +82,14 @@ ___
 ContainerId is use in Mollie for determined either its showing or not the
 container, because when Mollie has Vaulted Instruments it gets hide,
 and shows an error because can't mount Provider Components
+
+___
+
+### `Optional` form
+
+• **form**? : *[HostedFormOptions](hostedformoptions.md)*
+
+Hosted Form Validation Options
 
 ___
 
