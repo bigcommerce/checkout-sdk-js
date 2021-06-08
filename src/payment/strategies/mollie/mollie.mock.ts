@@ -1,3 +1,4 @@
+import { HostedFieldType } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
@@ -6,6 +7,7 @@ import { MollieClient } from './mollie';
 export function getInitializeOptions(): PaymentInitializeOptions {
     return {
         methodId: 'credit_card',
+        gatewayId: 'mollie',
         mollie: {
             containerId: 'mollie-element',
             cardCvcId: 'mollie-card-cvc-component-field',
@@ -13,6 +15,28 @@ export function getInitializeOptions(): PaymentInitializeOptions {
             cardHolderId: 'mollie-card-holder-component-field',
             cardNumberId: 'mollie-card-number-component-field',
             styles: {valid: '#0f0'},
+        },
+    };
+}
+
+export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
+    return {
+        methodId: 'credit_card',
+        gatewayId: 'mollie',
+        mollie: {
+            containerId: 'mollie-element',
+            cardCvcId: 'mollie-card-cvc-component-field',
+            cardExpiryId: 'mollie-card-expiry-component-field',
+            cardHolderId: 'mollie-card-holder-component-field',
+            cardNumberId: 'mollie-card-number-component-field',
+            styles: {valid: '#0f0'},
+            form: {
+                fields: {
+                    [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                    [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                    [HostedFieldType.CardName]: { containerId: 'card-name' },
+                },
+            },
         },
     };
 }
@@ -72,6 +96,35 @@ export function getOrderRequestBodyVaultAPMs(): OrderRequestBody {
             paymentData: {
                 shouldSaveInstrument: true,
                 shouldSetAsDefaultInstrument: false,
+            },
+        },
+    };
+}
+
+export function getOrderRequestBodyVaultCC(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'credit_card',
+            gatewayId: 'mollie',
+            paymentData: {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+            },
+        },
+    };
+}
+
+export function getOrderRequestBodyVaultedCC(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'credit_card',
+            gatewayId: 'mollie',
+            paymentData: {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+                instrumentId: '1234',
             },
         },
     };

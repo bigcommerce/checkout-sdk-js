@@ -4,7 +4,8 @@ import { PaymentActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
@@ -27,7 +28,10 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     private _verificationCodeElement?: MollieElement;
     private _expiryDateElement?: MollieElement;
 
+    private _hostedForm?: HostedForm;
+
     constructor(
+        private _hostedFormFactory: HostedFormFactory,
         private _store: CheckoutStore,
         private _mollieScriptLoader: MollieScriptLoader,
         private _orderActionCreator: OrderActionCreator,
@@ -35,11 +39,16 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     ) { }
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { mollie, methodId } = options;
+        const { mollie, methodId, gatewayId } = options;
 
         if (!mollie) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.mollie" argument is not provided.');
         }
+
+        if (!methodId || !gatewayId) {
+            throw new InvalidArgumentError('Unable to initialize payment because "methodId" and/or "gatewayId" argument is not provided.');
+        }
+
         const state = this._store.getState();
         const storeConfig = state.config.getStoreConfig();
 
@@ -50,14 +59,16 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         this._initializeOptions = mollie;
 
         const paymentMethods = state.paymentMethods;
-        const paymentMethod = paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const paymentMethod = paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
         const { config: { merchantId, testMode } } = paymentMethod;
 
         if (!merchantId) {
             throw new InvalidArgumentError('Unable to initialize payment because "merchantId" argument is not provided.');
         }
 
-        if (methodId === MolliePaymentMethodType.creditcard) {
+        if (this.isCreditCard(methodId) && mollie.form  && this.shouldShowTSVHostedForm(methodId, gatewayId)) {
+            this._hostedForm = await this._mountCardVerificationfields(mollie.form);
+        } else if (this.isCreditCard(methodId)) {
             this._mollieClient = await this._loadMollieJs(merchantId, storeConfig.storeProfile.storeLanguage, testMode);
             this._mountElements();
         }
@@ -68,55 +79,23 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment , ...order} = payload;
         const paymentData = payment?.paymentData;
-        const shouldSaveInstrument = (paymentData as HostedInstrument)?.shouldSaveInstrument;
-        const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)?.shouldSetAsDefaultInstrument;
 
-        if (!payment || !paymentData) {
-            throw new PaymentArgumentInvalidError([ 'payment' ]);
+        if (!payment || !payment.gatewayId || !paymentData) {
+            throw new PaymentArgumentInvalidError([ 'payment', 'gatewayId', 'paymentData' ]);
         }
 
         try {
-            if (payment.methodId === MolliePaymentMethodType.creditcard) {
-                await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-                if (paymentData && isVaultedInstrument(paymentData)) {
-                    return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
-                }
-
-                const { token, error } = await this._getMollieClient().createToken();
-
-                if (error) {
-                    return Promise.reject(error);
-                }
-
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment({
-                    ...payment,
-                    paymentData: {
-                        formattedPayload: {
-                            credit_card_token: {
-                                token,
-                            },
-                            vault_payment_instrument: shouldSaveInstrument,
-                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
-                            browser_info: getBrowserInfo(),
-                        },
-                    },
-                }));
-            } else {
-                await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-
-                const issuer = 'issuer' in paymentData ? paymentData.issuer : '';
-
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment({
-                    ...payment,
-                    paymentData: {
-                        ...paymentData,
-                        formattedPayload: {
-                            issuer,
-                        },
-                    },
-                }));
+            if (isVaultedInstrument(paymentData)) {
+                return await this.executeWithVaulted(payment);
             }
+
+            if (this.isCreditCard(payment.methodId)) {
+                return await this.executeWithCC(payment);
+            }
+
+            return await this.executeWithAPM(payment);
         } catch (error) {
 
             return this._processAdditionalAction(error);
@@ -133,6 +112,106 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         this.removeMollieComponents();
 
         return Promise.resolve(this._store.getState());
+    }
+
+    protected async executeWithCC(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        const paymentData = payment.paymentData;
+        const shouldSaveInstrument = (paymentData as HostedInstrument)?.shouldSaveInstrument;
+        const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)?.shouldSetAsDefaultInstrument;
+
+        const { token, error } = await this._getMollieClient().createToken();
+
+        if (error) {
+            return Promise.reject(error);
+        }
+
+        return await this._store.dispatch(this._paymentActionCreator.submitPayment({
+            ...payment,
+            paymentData: {
+                formattedPayload: {
+                    credit_card_token: {
+                        token,
+                    },
+                    vault_payment_instrument: shouldSaveInstrument,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                    browser_info: getBrowserInfo(),
+                },
+            },
+        }));
+    }
+
+    protected async executeWithVaulted(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId)) {
+            const form = this._hostedForm;
+
+            if (!form) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            await form.validate();
+            await form.submit(payment);
+
+            return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
+        } else {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+        }
+    }
+
+    protected async executeWithAPM(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        const paymentData = payment.paymentData;
+        const issuer = paymentData && 'issuer' in paymentData ? paymentData.issuer : '';
+
+        return await this._store.dispatch(this._paymentActionCreator.submitPayment({
+            ...payment,
+            paymentData: {
+                ...paymentData,
+                formattedPayload: {
+                    issuer,
+                },
+            },
+        }));
+    }
+
+    private isCreditCard(methodId: string): boolean {
+        return (methodId === MolliePaymentMethodType.creditcard);
+    }
+
+    private shouldShowTSVHostedForm(methodId: string, gatewayId: string): boolean {
+        return (this._isHostedPaymentFormEnabled(methodId, gatewayId) && this._isHostedFieldAvailable());
+    }
+
+    private _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
+        return new Promise(async (resolve , reject) => {
+            try {
+                const { config } = this._store.getState();
+                const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+                if (!bigpayBaseUrl) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                const form = this._hostedFormFactory.create(bigpayBaseUrl, formOptions);
+
+                await form.attach();
+
+                resolve(form);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    private _isHostedPaymentFormEnabled(methodId: string, gatewayId?: string): boolean {
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+
+        return paymentMethod.config.isHostedFormEnabled === true;
+    }
+
+    private _isHostedFieldAvailable(): boolean {
+        const options = this._getInitializeOptions();
+
+        return !!options.form?.fields;
     }
 
     private removeMollieComponents(): void {
