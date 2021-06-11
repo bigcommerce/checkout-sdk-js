@@ -4,9 +4,13 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '.
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 
+import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
 import { PPSDKStrategy } from './ppsdk-strategy';
+import { createStepHandler } from './step-handler';
 
 describe('PPSDKStrategy', () => {
+    const stepHandler = createStepHandler();
+    const paymentProcessorRegistry = createPaymentProcessorRegistry(createRequestSender(), stepHandler);
     let store: ReturnType<typeof createCheckoutStore>;
     let orderActionCreator: InstanceType<typeof OrderActionCreator>;
     let submitSpy: jest.SpyInstance;
@@ -28,7 +32,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a valid PPSDK payment method', () => {
         describe('#initialize', () => {
             it('does not throw an error', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
                 expect(() => strategy.initialize({ methodId: 'cabbagepay' })).not.toThrow();
             });
@@ -36,10 +40,10 @@ describe('PPSDKStrategy', () => {
 
         describe('#execute', () => {
             it('after a successful initialization, submits the order', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
                 strategy.initialize({ methodId: 'cabbagepay' });
-                strategy.execute({});
+                strategy.execute({}, { methodId: 'cabbagepay' });
 
                 expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
             });
@@ -49,7 +53,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a not yet supported PPSDK payment method', () => {
         describe('#initialize', () => {
             it('throws an error', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
                 expect(() => strategy.initialize({ methodId: 'unsupported-cabbagepay' })).toThrow();
             });
@@ -59,7 +63,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a non PPSDK payment method', () => {
         describe('#initialize', () => {
             it('throws an error', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
                 expect(() => strategy.initialize({ methodId: 'braintree' })).toThrow();
             });
@@ -69,7 +73,7 @@ describe('PPSDKStrategy', () => {
     describe('when not successfully initialized', () => {
         describe('#execute', () => {
             it('throws an error', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
                 expect(() => strategy.execute({})).toThrow();
             });

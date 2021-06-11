@@ -1,5 +1,5 @@
-import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
-
-export const stepHandler = (_stepResponse: PaymentsAPIResponse): Promise<void> => {
-    return Promise.resolve();
-};
+export class StepHandler {
+    handle() {
+        return Promise.resolve();
+    }
+}
