@@ -146,6 +146,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepaycybersourcev2;
         }
 
+        if (options.methodId === 'googlepayorbital' && options.googlepayorbital) {
+            return options.googlepayorbital;
+        }
+
         if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }

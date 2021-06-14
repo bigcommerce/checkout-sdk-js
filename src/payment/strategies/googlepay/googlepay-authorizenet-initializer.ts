@@ -3,7 +3,7 @@ import { round } from 'lodash';
 import { PaymentMethod } from '../..';
 import { Checkout } from '../../../checkout';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizationSpecification, TokenizePayload, TokenizeType } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizationSpecification, TokenizePayload } from './googlepay';
 
 const baseRequest = {
     apiVersion: 2,
@@ -38,7 +38,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
         } = paymentData;
 
         return Promise.resolve({
-            type: type as TokenizeType,
+            type,
             nonce: btoa(token),
             details: {
                 cardType,

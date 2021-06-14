@@ -102,6 +102,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             return options.googlepaycybersourcev2;
         }
 
+        if (options.methodId === 'googlepayorbital' && options.googlepayorbital) {
+            return options.googlepayorbital;
+        }
+
         if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
             return options.googlepaystripe;
         }

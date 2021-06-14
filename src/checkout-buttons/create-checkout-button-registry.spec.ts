@@ -41,6 +41,10 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('googlepaycybersourcev2')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 
+    it('returns registry with GooglePay on Orbital Credit registered', () => {
+        expect(registry.get('googlepayorbital')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
     it('returns registry with GooglePay on Stripe Credit registered', () => {
         expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
     });

@@ -93,5 +93,11 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+     googlepayorbital?: GooglePayCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
 }

@@ -78,6 +78,12 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
 
     /**
+     * The options that are required to facilitate Orbital GooglePay. They can be
+     * omitted unless you need to support Orbital GooglePay.
+     */
+     googlepayorbital?: GooglePayButtonInitializeOptions;
+
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
      * omitted unless you need to support Stripe GooglePay.
      */

@@ -3,7 +3,7 @@ import { round } from 'lodash';
 import { Checkout } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload, TokenizeType } from './googlepay';
+import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 
 export default class GooglePayAdyenV2Initializer implements GooglePayInitializer {
     initialize(
@@ -35,7 +35,7 @@ export default class GooglePayAdyenV2Initializer implements GooglePayInitializer
         } = paymentData;
 
         return Promise.resolve({
-            type: type as TokenizeType,
+            type,
             nonce: token,
             details: {
                 cardType,

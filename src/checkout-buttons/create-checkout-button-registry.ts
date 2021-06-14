@@ -129,6 +129,18 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
+    registry.register(CheckoutButtonMethodType.GOOGLEPAY_ORBITAL, () =>
+        new GooglePayButtonStrategy(
+            store,
+            formPoster,
+            checkoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayCybersourceV2Initializer()
+            )
+        )
+    );
+
     registry.register(CheckoutButtonMethodType.GOOGLEPAY_STRIPE, () =>
         new GooglePayButtonStrategy(
             store,
