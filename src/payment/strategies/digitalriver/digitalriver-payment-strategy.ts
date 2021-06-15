@@ -1,5 +1,7 @@
+import { some } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
@@ -10,7 +12,15 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import DigitalRiverJS, { DigitalRiverDropIn, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverJS, {
+    DigitalRiverAdditionalProviderData,
+    DigitalRiverAuthenticateSourceResponse,
+    DigitalRiverDropIn,
+    DigitalRiverInitializeToken,
+    OnCancelOrErrorResponse,
+    OnReadyResponse,
+    OnSuccessResponse
+} from './digitalriver';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -124,7 +134,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                 },
             };
 
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                .catch(error => this._processAdditionalAction(error, shouldSetAsDefaultInstrument, paymentData.instrumentId, methodId));
         } else {
             if (!this._loadSuccessResponse) {
                 throw new PaymentArgumentInvalidError(['this._loadSuccessResponse']);
@@ -264,5 +275,52 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         this._digitalRiverDropComponent.mount(containerId);
 
         return state;
+    }
+
+    private async _processAdditionalAction(error: unknown, shouldSetAsDefaultInstrument: boolean, instrumentId: string, methodId: string): Promise<InternalCheckoutSelectors> {
+        if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
+            return Promise.reject(error);
+        }
+
+        const additionalAction: DigitalRiverAdditionalProviderData = error.body.provider_data;
+
+        if (!this._digitalRiverCheckoutData) {
+            throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
+        }
+
+        return this._getDigitalRiverJs().authenticateSource({
+            sessionId: this._digitalRiverCheckoutData.sessionId,
+            sourceId: additionalAction.source_id,
+            sourceClientSecret: additionalAction.source_client_secret,
+        }).then((data: DigitalRiverAuthenticateSourceResponse) => {
+            if (data.status === 'complete' || data.status === 'authentication_not_required') {
+                if (!this._digitalRiverCheckoutData) {
+                    throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
+                }
+
+                const paymentPayload = {
+                    methodId,
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: instrumentId,
+                            },
+                            verification_value: '000',
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    checkoutId: this._digitalRiverCheckoutData.checkoutId,
+                                }),
+                            },
+                            confirm: true,
+                        },
+                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                    },
+                };
+
+                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            } else {
+                throw new Error('Source authentication failed, please try again');
+            }
+        });
     }
 }

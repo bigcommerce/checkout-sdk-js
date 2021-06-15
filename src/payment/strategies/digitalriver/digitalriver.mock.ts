@@ -10,6 +10,7 @@ export function getDigitalRiverJSMock(): DigitalRiverJS {
                 mount: jest.fn(),
             };
         }),
+        authenticateSource: jest.fn(),
     };
 }
 
