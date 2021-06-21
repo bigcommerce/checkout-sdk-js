@@ -13,10 +13,6 @@ const getToken = cond([
 ]);
 
 export class PaymentProcessorRegistry extends Registry<PaymentProcessor | undefined, PaymentProcessorType> {
-    constructor() {
-        super();
-    }
-
     getByMethod(paymentMethod: PPSDKPaymentMethod): PaymentProcessor | undefined {
         const token = getToken(paymentMethod.initializationStrategy);
 
