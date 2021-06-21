@@ -1,5 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -24,9 +24,10 @@ import { PaymentMethodActionType } from '../../payment-method-actions';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock } from '../digitalriver/digitalriver.mock';
+import { getVaultedInstrument } from '../../payments.mock';
+import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock';
 
-import { OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
+import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -389,6 +390,62 @@ describe('DigitalRiverPaymentStrategy', () => {
             const promise = strategy.execute(payload, undefined);
 
             return expect(promise).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        describe('using vaulted cards', () => {
+            it('calls authenticateSource method when paying with vaulted instrument and 3DS is required', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, getAdditionalActionError())));
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(Promise.resolve({status: 'complete'}));
+
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                expect(digitalRiverLoadResponse.authenticateSource).toHaveBeenCalled();
+            });
+
+            it('calls authenticateSource and authentication fails', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, getAdditionalActionError())));
+                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(Promise.resolve({status: AuthenticationSourceStatus.failed}));
+
+                await strategy.initialize(options);
+                await expect(strategy.execute(getOrderRequestBodyWithVaultedInstrument())).rejects.toThrow();
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                expect(digitalRiverLoadResponse.authenticateSource).toHaveBeenCalled();
+            });
+
+            it('calls submitPayment when paying with vaulted instrument', async () => {
+                const expectedPaymentPayload = {
+                    methodId: 'digitalriver',
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: getVaultedInstrument().instrumentId,
+                            },
+                            verification_value: '000',
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    checkoutId: '12345676543',
+                                }),
+                            },
+                        },
+                        set_as_default_stored_instrument: false,
+                    },
+                };
+
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(submitPaymentAction);
+
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPaymentPayload);
+            });
         });
     });
 

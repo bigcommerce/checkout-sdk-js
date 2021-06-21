@@ -26,7 +26,13 @@ export interface DigitalRiverAdditionalProviderData {
 }
 
 export interface DigitalRiverAuthenticateSourceResponse {
-    status: string;
+    status: AuthenticationSourceStatus;
+}
+
+export enum AuthenticationSourceStatus {
+    complete = 'complete',
+    authentication_not_required = 'authentication_not_required',
+    failed = 'failed',
 }
 
 export interface DigitalRiverJSOptions {

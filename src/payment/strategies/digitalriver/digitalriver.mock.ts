@@ -1,7 +1,11 @@
+import { RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
+import { OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
-import DigitalRiverJS, { DigitalRiverInitializeToken } from './digitalriver';
+import DigitalRiverJS, { DigitalRiverAdditionalProviderData, DigitalRiverInitializeToken } from './digitalriver';
 
 export function getDigitalRiverJSMock(): DigitalRiverJS {
     return {
@@ -37,6 +41,16 @@ export function getInitializeOptionsMock(): PaymentInitializeOptions {
     };
 }
 
+export function getOrderRequestBodyWithVaultedInstrument(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'digitalriver',
+            paymentData: getVaultedInstrument(),
+        },
+    };
+}
+
 export function getClientMock(): DigitalRiverInitializeToken {
     return {
         sessionId: '1234',
@@ -65,4 +79,25 @@ export function getDigitalRiverPaymentMethodMock(): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
     };
+}
+
+function getAdditionalActionErrorResponse(): DigitalRiverAdditionalProviderData {
+    return {
+        source_id: 'sourceId',
+        source_client_secret: 'sourceClientSecret',
+    };
+}
+
+export function getAdditionalActionError(): RequestError {
+    return new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        ...{
+            provider_data: getAdditionalActionErrorResponse(),
+            errors: [
+                {
+                    code: 'additional_action_required',
+                },
+            ],
+        },
+    }));
 }
