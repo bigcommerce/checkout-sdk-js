@@ -1,7 +1,10 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { set } from 'lodash';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 
 import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
@@ -38,44 +41,66 @@ describe('PPSDKStrategy', () => {
             });
         });
 
-        describe('#execute', () => {
-            it('after a successful initialization, submits the order', () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
+        describe('when the bigpayBaseUrl is correctly set within store config', () => {
+            describe('#execute', () => {
+                it('submits the order', () => {
+                    const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
-                strategy.initialize({ methodId: 'cabbagepay' });
-                strategy.execute({}, { methodId: 'cabbagepay' });
+                    strategy.initialize({ methodId: 'cabbagepay' });
+                    strategy.execute({}, { methodId: 'cabbagepay' });
 
-                expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
+                    expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
+                });
+            });
+        });
+
+        describe('when the bigpayBaseUrl is not set within store config', () => {
+            describe('#execute', () => {
+                it('throws a MissingDataError error', async () => {
+                    const store = createCheckoutStore(getCheckoutStoreState());
+                    const config = set(getConfig(), 'paymentSettings.bigpayBaseUrl', '');
+                    jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(config);
+
+                    const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
+
+                    strategy.initialize({ methodId: 'cabbagepay' });
+
+                    await expect(strategy.execute({}, { methodId: 'cabbagepay' }))
+                        .rejects.toBeInstanceOf(MissingDataError);
+                });
             });
         });
     });
 
     describe('when initialized with a not yet supported PPSDK payment method', () => {
         describe('#initialize', () => {
-            it('throws an error', () => {
+            it('throws a NotInitializedError error', async () => {
                 const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
-                expect(() => strategy.initialize({ methodId: 'unsupported-cabbagepay' })).toThrow();
+                await expect(strategy.initialize({ methodId: 'unsupported-cabbagepay' }))
+                    .rejects.toBeInstanceOf(NotInitializedError);
             });
         });
     });
 
     describe('when initialized with a non PPSDK payment method', () => {
         describe('#initialize', () => {
-            it('throws an error', () => {
+            it('throws a NotInitializedError error', async () => {
                 const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
-                expect(() => strategy.initialize({ methodId: 'braintree' })).toThrow();
+                await expect(strategy.initialize({ methodId: 'braintree' }))
+                    .rejects.toBeInstanceOf(NotInitializedError);
             });
         });
     });
 
     describe('when not successfully initialized', () => {
         describe('#execute', () => {
-            it('throws an error', () => {
+            it('throws a NotInitializedError error', async () => {
                 const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
-                expect(() => strategy.execute({})).toThrow();
+                await expect(strategy.execute({}))
+                    .rejects.toBeInstanceOf(NotInitializedError);
             });
         });
     });

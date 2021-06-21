@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -17,7 +17,13 @@ export class PPSDKStrategy implements PaymentStrategy {
         private _paymentProcessorRegistry: PaymentProcessorRegistry
     ) {}
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const bigpayBaseUrl = this._store.getState().config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+        if (!bigpayBaseUrl) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
         if (!options?.methodId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -31,16 +37,17 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => paymentProcessor.process(paymentMethod, payment))
-            .then(() => this._store.getState());
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        await paymentProcessor.process({ paymentMethod, payment, bigpayBaseUrl });
+
+        return this._store.getState();
     }
 
-    finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    async finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.getState();
     }
 
-    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (!options?.methodId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -57,10 +64,10 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return Promise.resolve(this._store.getState());
+        return this._store.getState();
     }
 
-    deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    async deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.getState();
     }
 }

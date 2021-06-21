@@ -1,5 +1,3 @@
-import { get, isString } from 'lodash';
-
 import PaymentMethod from './payment-method';
 import PaymentStrategyType from './payment-strategy-type';
 
@@ -14,6 +12,6 @@ export const isPPSDKPaymentMethod = ( paymentMethod: PaymentMethod ): paymentMet
 
     return (
         type === PaymentStrategyType.PPSDK &&
-        isString(get(initializationStrategy, 'type'))
+        typeof initializationStrategy?.type === 'string'
     );
 };
