@@ -1,0 +1,1 @@
+export { isNone } from './none';
