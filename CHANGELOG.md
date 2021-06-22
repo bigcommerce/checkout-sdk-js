@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.157.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.157.0...v1.157.1) (2021-06-22)
+
+
+### Bug Fixes
+
+* **payment:** INT-4266 Renew the nonce for Google Payment when the payment fails. ([c7b54bf](https://github.com/bigcommerce/checkout-sdk-js/commit/c7b54bfa74809f734d6b8a4513e0b74bfe2d819a))
+
 ## [1.157.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.156.0...v1.157.0) (2021-06-22)
 
 
