@@ -4,7 +4,7 @@ import { createCheckoutButtonSelectorFactory } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { createConfigSelectorFactory } from '../config';
 import { createCouponSelectorFactory, createGiftCertificateSelectorFactory } from '../coupon';
-import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } from '../customer';
+import { createCustomerContinueStrategySelectorFactory, createCustomerSelectorFactory, createCustomerStrategySelectorFactory } from '../customer';
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
@@ -35,6 +35,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createCouponSelector = createCouponSelectorFactory();
     const createCustomerSelector = createCustomerSelectorFactory();
     const createCustomerStrategySelector = createCustomerStrategySelectorFactory();
+    const createCustomerContinueStrategySelector = createCustomerContinueStrategySelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createInstrumentSelector = createInstrumentSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
@@ -60,6 +61,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const coupons = createCouponSelector(state.coupons);
         const customer = createCustomerSelector(state.customer);
         const customerStrategies = createCustomerStrategySelector(state.customerStrategies);
+        const customerContinueStrategies = createCustomerContinueStrategySelector(state.customerContinueStrategies);
         const form = createFormSelector(state.formFields);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = createInstrumentSelector(state.instruments);
@@ -91,6 +93,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             coupons,
             customer,
             customerStrategies,
+            customerContinueStrategies,
             form,
             giftCertificates,
             instruments,

@@ -7,7 +7,7 @@ import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerContinueStrategyRegistry, createCustomerStrategyRegistry, CustomerActionCreator, CustomerContinueStrategyActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -94,6 +94,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, requestSender)),
+        new CustomerContinueStrategyActionCreator(createCustomerContinueStrategyRegistry(store)),
         new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),

@@ -5,6 +5,11 @@ export interface BoltHostWindow extends Window {
 export interface BoltCheckout {
     configure(cart: BoltCart, hints: {}, callbacks?: BoltCallbacks): BoltClient;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
+    openCheckout(email: string): BoltOpenCheckoutResponse;
+}
+
+export interface BoltOpenCheckoutResponse {
+    has_bolt_account: boolean;
 }
 
 export interface BoltDeveloperModeParams {

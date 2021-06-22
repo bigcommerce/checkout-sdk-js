@@ -9,7 +9,19 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import {
+    CustomerAccountRequestBody,
+    CustomerActionCreator,
+    CustomerAddressRequestBody,
+    CustomerContinueOptions,
+    CustomerContinueRequestOptions,
+    CustomerContinueStrategyActionCreator,
+    CustomerCredentials,
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    CustomerStrategyActionCreator,
+    GuestCredentials
+} from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -55,6 +67,7 @@ export default class CheckoutService {
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
+        private _customerContinueStrategyActionCreator: CustomerContinueStrategyActionCreator,
         private _errorActionCreator: ErrorActionCreator,
         private _giftCertificateActionCreator: GiftCertificateActionCreator,
         private _instrumentActionCreator: InstrumentActionCreator,
@@ -72,6 +85,36 @@ export default class CheckoutService {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
         this._storeProjection = createDataStoreProjection(this._store, this._selectorsFactory);
+    }
+
+    initializeContinueCustomer(options?: CustomerContinueRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerContinueStrategyActionCreator.initialize(options);
+
+        return this._dispatch(action, { queueId: 'customerContinueStrategy' });
+    }
+
+    deinitializeContinueCustomer(options?: CustomerContinueRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerContinueStrategyActionCreator.deinitialize(options);
+
+        return this._dispatch(action, { queueId: 'customerContinueStrategy' });
+    }
+
+    executeBeforeSignIn(options: CustomerContinueOptions): Promise<CheckoutSelectors> {
+        const action = this._customerContinueStrategyActionCreator.executeBeforeSignIn(options);
+
+        return this._dispatch(action, { queueId: 'customerContinueStrategy' });
+    }
+
+    executeBeforeSignUp(options: CustomerContinueOptions): Promise<CheckoutSelectors> {
+        const action = this._customerContinueStrategyActionCreator.executeBeforeSignUp(options);
+
+        return this._dispatch(action, { queueId: 'customerContinueStrategy' });
+    }
+
+    executeBeforeContinueAsGuest(options: CustomerContinueOptions): Promise<CheckoutSelectors> {
+        const action = this._customerContinueStrategyActionCreator.executeBeforeContinueAsGuest(options);
+
+        return this._dispatch(action, { queueId: 'customerContinueStrategy' });
     }
 
     /**

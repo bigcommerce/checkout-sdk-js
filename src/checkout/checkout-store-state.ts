@@ -3,7 +3,7 @@ import { CartState } from '../cart';
 import { CheckoutButtonState } from '../checkout-buttons';
 import { ConfigState } from '../config';
 import { CouponState, GiftCertificateState } from '../coupon';
-import { CustomerState, CustomerStrategyState } from '../customer';
+import { CustomerContinueStrategyState, CustomerState, CustomerStrategyState } from '../customer';
 import { FormFieldsState } from '../form';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
@@ -28,6 +28,7 @@ export default interface CheckoutStoreState {
     consignments: ConsignmentState;
     customer: CustomerState;
     customerStrategies: CustomerStrategyState;
+    customerContinueStrategies: CustomerContinueStrategyState;
     formFields: FormFieldsState;
     giftCertificates: GiftCertificateState;
     instruments: InstrumentState;
