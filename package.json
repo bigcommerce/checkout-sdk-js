@@ -4,6 +4,7 @@
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
+  "module": "dist/esm/bundles/checkout-sdk.js",
   "typings": "dist/checkout-sdk.d.ts",
   "files": [
     "dist/",
@@ -21,7 +22,8 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prepare": "check-node-version --node '>=6' --npm '>=6'",
-    "build": "npm run bundle && npm run bundle-dts && npm run docs",
+    "build:esm": "tsc -b tsconfig.esm.json",
+    "build": "npm run bundle && npm run bundle-dts && npm run docs && npm run build:esm",
     "prebuild-server": "rm -rf dist-server",
     "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
     "prebundle": "rm -rf dist",
