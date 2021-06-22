@@ -586,10 +586,6 @@ declare interface BaseInstrument {
     type: string;
 }
 
-declare interface BaseStrategy {
-    type: string;
-}
-
 declare interface BillingAddress extends Address {
     id: string;
     email?: string;
@@ -4079,7 +4075,9 @@ declare interface IndividualCardElementOptions {
     zipCodeElementOptions?: ZipCodeElementOptions;
 }
 
-declare type InitialisationStrategies = None;
+declare interface InitializationStrategy extends Partial<UnknownObject> {
+    type: string;
+}
 
 declare interface InlineElementStyles {
     color?: string;
@@ -4521,10 +4519,6 @@ declare interface NonceInstrument {
     deviceSessionId?: string;
 }
 
-declare interface None extends BaseStrategy {
-    type: 'NONE';
-}
-
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 /**
@@ -4802,7 +4796,7 @@ declare interface PaymentMethod {
     nonce?: string;
     initializationData?: any;
     returnUrl?: string;
-    initializationStrategy?: InitialisationStrategies;
+    initializationStrategy?: InitializationStrategy;
 }
 
 declare interface PaymentMethodConfig {
@@ -5934,6 +5928,10 @@ declare interface TranslationData {
 
 declare interface Translations {
     [key: string]: string | Translations;
+}
+
+declare interface UnknownObject {
+    [key: string]: unknown;
 }
 
 declare interface VaultedInstrument {

@@ -57,7 +57,7 @@ ___
 
 ### `Optional` initializationStrategy
 
-• **initializationStrategy**? : *[InitialisationStrategies](../README.md#initialisationstrategies)*
+• **initializationStrategy**? : *[InitializationStrategy](initializationstrategy.md)*
 
 ___
 

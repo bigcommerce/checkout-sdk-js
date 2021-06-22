@@ -70,7 +70,6 @@
 * [BaseElementOptions_2](interfaces/baseelementoptions_2.md)
 * [BaseIndividualElementOptions](interfaces/baseindividualelementoptions.md)
 * [BaseInstrument](interfaces/baseinstrument.md)
-* [BaseStrategy](interfaces/basestrategy.md)
 * [BillingAddress](interfaces/billingaddress.md)
 * [BillingAddressRequestBody](interfaces/billingaddressrequestbody.md)
 * [BlockElementStyles](interfaces/blockelementstyles.md)
@@ -192,6 +191,7 @@
 * [IbanElementOptions](interfaces/ibanelementoptions.md)
 * [IdealElementOptions](interfaces/idealelementoptions.md)
 * [IndividualCardElementOptions](interfaces/individualcardelementoptions.md)
+* [InitializationStrategy](interfaces/initializationstrategy.md)
 * [InlineElementStyles](interfaces/inlineelementstyles.md)
 * [InputDetail](interfaces/inputdetail.md)
 * [InputStyles](interfaces/inputstyles.md)
@@ -217,7 +217,6 @@
 * [MonerisaymentInitializeOptions](interfaces/monerisaymentinitializeoptions.md)
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
-* [None](interfaces/none.md)
 * [OptionsResponse](interfaces/optionsresponse.md)
 * [Order](interfaces/order.md)
 * [OrderPayment](interfaces/orderpayment.md)
@@ -284,6 +283,7 @@
 * [ThreeDSecureToken](interfaces/threedsecuretoken.md)
 * [TranslationData](interfaces/translationdata.md)
 * [Translations](interfaces/translations.md)
+* [UnknownObject](interfaces/unknownobject.md)
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
 * [WechatState](interfaces/wechatstate.md)
@@ -323,7 +323,6 @@
 * [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
 * [HostedInputStyles](README.md#hostedinputstyles)
 * [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
-* [InitialisationStrategies](README.md#initialisationstrategies)
 * [Instrument](README.md#instrument)
 * [Omit](README.md#omit)
 * [OrderPayments](README.md#orderpayments)
@@ -510,12 +509,6 @@ ___
 ###  HostedVaultedInstrument
 
 Ƭ **HostedVaultedInstrument**: *[Omit](README.md#omit)‹[VaultedInstrument](interfaces/vaultedinstrument.md), "ccNumber" | "ccCvv"›*
-
-___
-
-###  InitialisationStrategies
-
-Ƭ **InitialisationStrategies**: *[None](interfaces/none.md)*
 
 ___
 
