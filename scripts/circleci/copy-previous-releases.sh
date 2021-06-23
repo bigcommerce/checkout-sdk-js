@@ -6,7 +6,7 @@ set -u
 git clone --depth 1 git@github.com:bigcommerce/checkout-sdk-js-server.git /tmp/repo-server
 
 # Copy previous releases into a folder for further modification
-cp -rf /tmp/repo-server/public ~/repo/dist-cdn
+cp -rf /tmp/repo-server/public/* ~/repo/dist-cdn
 
 # Rewrite the placeholder text contained in those releases with the production URL
 for file in ~/repo/dist-cdn/*/loader-v*.js; do
