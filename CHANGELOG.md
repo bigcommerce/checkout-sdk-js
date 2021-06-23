@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.158.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.158.0...v1.158.1) (2021-06-23)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-5873 Fix path to copy previous releases from ([d5a16ed](https://github.com/bigcommerce/checkout-sdk-js/commit/d5a16ed422aa2f6a266075fd1bf5cfee2e0ea43a))
+
 ## [1.158.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.157.1...v1.158.0) (2021-06-23)
 
 
