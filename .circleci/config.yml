@@ -98,6 +98,24 @@ jobs:
             source /tmp/release_version.txt
             scripts/circleci/update-server.sh
 
+  build_cdn:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: Build artifact for CDN deployment
+          command: npm run build-cdn
+      # The following step can be removed once previous releases are pushed to GCS bucket
+      - run:
+          name: "Copy files of previous releases for GCS deployment"
+          command: scripts/circleci/copy-previous-releases.sh
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - dist-cdn
+      - ci/notify-failure
+
 workflows:
   version: 2
 
@@ -122,20 +140,27 @@ workflows:
           filters:
             <<: *release_filter
       - approve:
-          filters:
-            <<: *release_filter
           type: approval
           requires:
             - test
             - build
       - release:
-          filters:
-            <<: *release_filter
           requires:
             - approve
       - update_server:
-          filters:
-            <<: *release_filter
           requires:
-            - approve
             - release
+      - build_cdn:
+          requires:
+            - release
+      - ci/build-js-artifact:
+          context: "Artifact Bucket Access"
+          dist_directory: dist-cdn
+          prepare_dist_directory:
+            - attach_workspace:
+                at: ~/repo
+          requires:
+            - build_cdn
+      - ci/notify-success:
+          requires:
+            - ci/build-js-artifact
