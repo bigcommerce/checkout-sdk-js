@@ -91,13 +91,11 @@ function getAdditionalActionErrorResponse(): DigitalRiverAdditionalProviderData 
 export function getAdditionalActionError(): RequestError {
     return new RequestError(getResponse({
         ...getErrorPaymentResponseBody(),
-        ...{
-            provider_data: getAdditionalActionErrorResponse(),
+        provider_data: getAdditionalActionErrorResponse(),
             errors: [
                 {
                     code: 'additional_action_required',
                 },
             ],
-        },
     }));
 }

@@ -427,14 +427,13 @@ describe('DigitalRiverPaymentStrategy', () => {
                             bigpay_token: {
                                 token: getVaultedInstrument().instrumentId,
                             },
-                            verification_value: '000',
                             credit_card_token: {
                                 token: JSON.stringify({
                                     checkoutId: '12345676543',
                                 }),
                             },
+                            set_as_default_stored_instrument: null,
                         },
-                        set_as_default_stored_instrument: false,
                     },
                 };
 

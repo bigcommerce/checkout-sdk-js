@@ -115,14 +115,13 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                         bigpay_token: {
                             token: paymentData.instrumentId,
                         },
-                        verification_value: '000',
                         credit_card_token: {
                             token: JSON.stringify({
                                 checkoutId: this._digitalRiverCheckoutData.checkoutId,
                             }),
                         },
+                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                     },
-                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                 },
             };
 
@@ -297,15 +296,14 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                             bigpay_token: {
                                 token: instrumentId,
                             },
-                            verification_value: '000',
                             credit_card_token: {
                                 token: JSON.stringify({
                                     checkoutId: this._digitalRiverCheckoutData.checkoutId,
                                 }),
                             },
                             confirm: true,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                         },
-                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                     },
                 };
 
