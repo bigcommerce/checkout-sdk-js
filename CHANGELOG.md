@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.158.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.157.1...v1.158.0) (2021-06-23)
+
+
+### Features
+
+* **common:** CHECKOUT-5873 Deploy compiled assets to GCS ([f87db6b](https://github.com/bigcommerce/checkout-sdk-js/commit/f87db6bb8e7549bf12a49fde3ac18e05093921b9))
+
 ### [1.157.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.157.0...v1.157.1) (2021-06-22)
 
 
