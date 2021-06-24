@@ -1,3 +1,4 @@
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { set } from 'lodash';
 
@@ -9,10 +10,10 @@ import { OrderActionCreator, OrderRequestSender } from '../../../order';
 
 import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
 import { PPSDKStrategy } from './ppsdk-strategy';
-import { createStepHandler } from './step-handler';
+import { createContinueHandler, createStepHandler } from './step-handler';
 
 describe('PPSDKStrategy', () => {
-    const stepHandler = createStepHandler();
+    const stepHandler = createStepHandler(createContinueHandler(new FormPoster()));
     const paymentProcessorRegistry = createPaymentProcessorRegistry(createRequestSender(), stepHandler);
     let store: ReturnType<typeof createCheckoutStore>;
     let orderActionCreator: InstanceType<typeof OrderActionCreator>;
@@ -99,7 +100,7 @@ describe('PPSDKStrategy', () => {
             it('throws a NotInitializedError error', async () => {
                 const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry);
 
-                await expect(strategy.execute({}))
+                await expect(strategy.execute({}, { methodId: '123' }))
                     .rejects.toBeInstanceOf(NotInitializedError);
             });
         });
