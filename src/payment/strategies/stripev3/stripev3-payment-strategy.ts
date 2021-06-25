@@ -92,6 +92,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             const result = await this._confirmStripePayment(paymentMethod);
+            const { clientToken, method } = paymentMethod;
             const { id: token } = result.paymentIntent ?? result.paymentMethod ?? { id: '' };
             stripeError = result.error;
 
@@ -100,6 +101,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 vault_payment_instrument: shouldSaveInstrument,
                 confirm: false,
             };
+
+            if (method === StripeElementType.CreditCard) {
+                formattedPayload.client_token = clientToken;
+            }
         }
 
         if (!shouldSubmitOrderBeforeLoadingAPM) {
