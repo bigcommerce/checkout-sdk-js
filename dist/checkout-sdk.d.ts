@@ -4261,6 +4261,9 @@ declare interface LabelStyles extends InlineElementStyles {
 
 declare interface LanguageConfig {
     defaultTranslations: Translations;
+    defaultLocale?: string;
+    fallbackTranslations?: Translations;
+    fallbackLocale?: string;
     locale: string;
     locales: Locales;
     translations: Translations;
