@@ -5,7 +5,7 @@ import PaymentMethod from '../../payment-method';
 
 import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 
-export default class GooglePayCybersourceV2Initializer implements GooglePayInitializer {
+export default class GooglePayOrbitalInitializer implements GooglePayInitializer {
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
@@ -88,7 +88,7 @@ export default class GooglePayCybersourceV2Initializer implements GooglePayIniti
                 tokenizationSpecification: {
                     type: 'PAYMENT_GATEWAY',
                     parameters: {
-                        gateway: 'cybersource',
+                        gateway: 'chase',
                         gatewayMerchantId,
                     },
                 },

@@ -76,7 +76,7 @@ export interface GooglePaymentData {
             token: string;
             type: string;
         };
-        type: string;
+        type: TokenizeType;
     };
     shippingAddress: GooglePayAddress;
     email: string;

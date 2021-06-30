@@ -127,6 +127,26 @@ export function getCybersourceV2CustomerInitializeOptions(mode: Mode = Mode.Full
      }
 }
 
+export function getOrbitalCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepayorbital' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayOrbital = { googlepayorbital: { ...container } };
+    const googlepayOrbitalWithInvalidContainer = { googlepayorbital: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete:
+            return { ...methodId };
+        case Mode.UndefinedMethodId:
+            return { ...undefinedMethodId, ...googlepayOrbital };
+        case Mode.InvalidContainer:
+            return { ...methodId, ...googlepayOrbitalWithInvalidContainer };
+        default:
+            return { ...methodId, ...googlepayOrbital };
+     }
+}
+
 export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaystripe' };
     const undefinedMethodId = { methodId: undefined };

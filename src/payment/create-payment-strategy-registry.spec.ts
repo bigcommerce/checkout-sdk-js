@@ -172,6 +172,11 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 
+    it('can instantiate googlepayorbital', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.ORBITAL_GOOGLE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
     it('can instantiate klarna', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.KLARNA);
         expect(paymentStrategy).toBeInstanceOf(KlarnaPaymentStrategy);
