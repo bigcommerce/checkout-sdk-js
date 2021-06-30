@@ -214,6 +214,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Orbital GooglePay. They can be
+     * omitted unless you need to support Orbital GooglePay.
+     */
+    googlepayorbital?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
      * omitted unless you need to support Stripe GooglePay.
      */
@@ -323,6 +328,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",
+    GOOGLEPAY_ORBITAL = "googlepayorbital",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",

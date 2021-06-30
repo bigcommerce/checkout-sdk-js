@@ -14,6 +14,7 @@
 * [GOOGLEPAY_BRAINTREE](checkoutbuttonmethodtype.md#googlepay_braintree)
 * [GOOGLEPAY_CHECKOUTCOM](checkoutbuttonmethodtype.md#googlepay_checkoutcom)
 * [GOOGLEPAY_CYBERSOURCEV2](checkoutbuttonmethodtype.md#googlepay_cybersourcev2)
+* [GOOGLEPAY_ORBITAL](checkoutbuttonmethodtype.md#googlepay_orbital)
 * [GOOGLEPAY_STRIPE](checkoutbuttonmethodtype.md#googlepay_stripe)
 * [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
 * [PAYPALCOMMERCE](checkoutbuttonmethodtype.md#paypalcommerce)
@@ -66,6 +67,12 @@ ___
 ###  GOOGLEPAY_CYBERSOURCEV2
 
 • **GOOGLEPAY_CYBERSOURCEV2**: = "googlepaycybersourcev2"
+
+___
+
+###  GOOGLEPAY_ORBITAL
+
+• **GOOGLEPAY_ORBITAL**: = "googlepayorbital"
 
 ___
 

@@ -1252,6 +1252,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Orbital GooglePay. They can be
+     * omitted unless you need to support Orbital GooglePay.
+     */
+    googlepayorbital?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Stripe GooglePay. They can be
      * omitted unless you need to support Stripe GooglePay.
      */
@@ -1361,6 +1366,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",
+    GOOGLEPAY_ORBITAL = "googlepayorbital",
     GOOGLEPAY_STRIPE = "googlepaystripe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
@@ -3500,6 +3506,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepayorbital?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
 }
 
@@ -4768,6 +4779,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayorbital?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Stripe payment method.
      * They can be omitted unless you need to support GooglePay.

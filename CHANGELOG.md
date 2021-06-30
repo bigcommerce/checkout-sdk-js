@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.160.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.159.0...v1.160.0) (2021-06-30)
+
+
+### Features
+
+* **payment:** INT-4342 added google pay on orbital ([6ef0eaa](https://github.com/bigcommerce/checkout-sdk-js/commit/6ef0eaac0e400fb42009ef6bebaa53b7d6dcdf84))
+
 ## [1.159.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.158.1...v1.159.0) (2021-06-30)
 
 

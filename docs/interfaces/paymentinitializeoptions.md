@@ -35,6 +35,7 @@ current checkout flow.
 * [googlepaybraintree](paymentinitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](paymentinitializeoptions.md#optional-googlepaycheckoutcom)
 * [googlepaycybersourcev2](paymentinitializeoptions.md#optional-googlepaycybersourcev2)
+* [googlepayorbital](paymentinitializeoptions.md#optional-googlepayorbital)
 * [googlepaystripe](paymentinitializeoptions.md#optional-googlepaystripe)
 * [klarna](paymentinitializeoptions.md#optional-klarna)
 * [klarnav2](paymentinitializeoptions.md#optional-klarnav2)
@@ -197,6 +198,15 @@ ___
 • **googlepaycybersourcev2**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
 
 The options that are required to initialize the GooglePay CybersourceV2 payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### `Optional` googlepayorbital
+
+• **googlepayorbital**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
 
 ___

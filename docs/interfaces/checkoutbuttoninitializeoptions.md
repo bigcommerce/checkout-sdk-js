@@ -25,6 +25,7 @@
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](checkoutbuttoninitializeoptions.md#optional-googlepaycheckoutcom)
 * [googlepaycybersourcev2](checkoutbuttoninitializeoptions.md#optional-googlepaycybersourcev2)
+* [googlepayorbital](checkoutbuttoninitializeoptions.md#optional-googlepayorbital)
 * [googlepaystripe](checkoutbuttoninitializeoptions.md#optional-googlepaystripe)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#optional-params)
@@ -111,6 +112,15 @@ ___
 
 The options that are required to facilitate CybersourceV2 GooglePay. They can be
 omitted unless you need to support CybersourceV2 GooglePay.
+
+___
+
+### `Optional` googlepayorbital
+
+• **googlepayorbital**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to facilitate Orbital GooglePay. They can be
+omitted unless you need to support Orbital GooglePay.
 
 ___
 
