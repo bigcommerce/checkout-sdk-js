@@ -407,7 +407,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                 expect(digitalRiverLoadResponse.authenticateSource).toHaveBeenCalled();
             });
 
-            it('calls authenticateSource and authentication fails', async () => {
+            it('calls authenticateSource method, authentication fails and execute method fails', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, getAdditionalActionError())));
                 jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(Promise.resolve({status: AuthenticationSourceStatus.failed}));
@@ -432,6 +432,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                                     checkoutId: '12345676543',
                                 }),
                             },
+                            confirm: false,
                             set_as_default_stored_instrument: null,
                         },
                     },
