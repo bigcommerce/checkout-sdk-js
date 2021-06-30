@@ -219,18 +219,38 @@ describe('BraintreeHostedForm', () => {
             .toHaveBeenCalledWith({ fieldType: 'cardCode' });
     });
 
-    it('notifies when card number changes', async () => {
-        const handleCardTypeChange = jest.fn();
+    describe('#cardTypeChange', () => {
+        let handleCardTypeChange: jest.Mock;
 
-        await subject.initialize({
-            ...formOptions,
-            onCardTypeChange: handleCardTypeChange,
+        beforeEach(async () => {
+            handleCardTypeChange = jest.fn();
+
+            await subject.initialize({
+                ...formOptions,
+                onCardTypeChange: handleCardTypeChange,
+            });
         });
 
-        cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'Visa' }] });
+        it('notifies when card number changes', () => {
+            cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }] });
 
-        expect(handleCardTypeChange)
-            .toHaveBeenCalledWith({ cardType: 'Visa' });
+            expect(handleCardTypeChange)
+                .toHaveBeenCalledWith({ cardType: 'visa' });
+        });
+
+        it('notifies when card number changes and type is master-card', () => {
+            cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'master-card' }] });
+
+            expect(handleCardTypeChange)
+                .toHaveBeenCalledWith({ cardType: 'mastercard' });
+        });
+
+        it('notifies when card number changes and type of card is not yet known', () => {
+            cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }, { type: 'master-card' }] });
+
+            expect(handleCardTypeChange)
+                .toHaveBeenCalledWith({ cardType: undefined });
+        });
     });
 
     it('notifies when there are validation errors', async () => {
