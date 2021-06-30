@@ -21,26 +21,23 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _masterpassScriptLoader: MasterpassScriptLoader
+        private _masterpassScriptLoader: MasterpassScriptLoader,
+        private _locale: string
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
-        const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfig();
+        const locale = this.formatLocale(this._locale);
+
         this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
         if (!this._paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        if (!storeConfig) {
-            throw new InvalidArgumentError('Unable to retrieve store configuration');
-        }
-
         const masterpassScriptLoaderParams = {
             useMasterpassSrc: this._paymentMethod.initializationData.isMasterpassSrcEnabled,
-            language: storeConfig.storeProfile.storeLanguage,
+            language: locale,
             testMode: this._paymentMethod.config.testMode,
             checkoutId: this._paymentMethod.initializationData.checkoutId,
         };
@@ -142,5 +139,12 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
 
         const payload = this._createMasterpassPayload();
         this._masterpassClient.checkout(payload);
+    }
+
+    private formatLocale( localeLanguage: string): string {
+        const locale = localeLanguage.replace(/[-_]/g, '_');
+        const formatedLocale = locale.includes('_') ? `${locale}` : `${locale}_${locale}`;
+
+        return formatedLocale.toLowerCase();
     }
 }
