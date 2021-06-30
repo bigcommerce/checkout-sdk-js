@@ -1,9 +1,10 @@
 import { Logger, NoopLogger } from '../common/log';
 
+import LanguageConfig from './language-config';
 import LanguageService from './language-service';
 
 describe('LanguageService', () => {
-    let config;
+    let config: Partial<LanguageConfig>;
     let langService: LanguageService;
     let logger: Logger;
 
@@ -98,6 +99,72 @@ describe('LanguageService', () => {
 
         it('should return the translation key if both custom and default translation is missing', () => {
             expect(langService.translate('test.random')).toEqual('optimized_checkout.test.random');
+        });
+
+        it('returns custom translations if defined, otherwise use default and then fallback translations', () => {
+            config = {
+                translations: {
+                    optimized_checkout: {
+                        test: {
+                            greeting_text: 'Good morning',
+                        },
+                    },
+                },
+                defaultTranslations: {
+                    optimized_checkout: {
+                        test: {
+                            greeting_text: 'Morning',
+                            hello_text: 'Hello',
+                        },
+                    },
+                },
+                fallbackTranslations: {
+                    optimized_checkout: {
+                        test: {
+                            greeting_text: 'Good day',
+                            hello_text: 'Hi',
+                            goodbye_text: 'Goodbye',
+                        },
+                    },
+                },
+            };
+
+            langService = new LanguageService(config, logger);
+
+            expect(langService.translate('test.greeting_text')).toEqual('Good morning');
+            expect(langService.translate('test.hello_text')).toEqual('Hello');
+            expect(langService.translate('test.goodbye_text')).toEqual('Goodbye');
+        });
+
+        it('formats default and fallback strings based on locale specified', () => {
+            config = {
+                ...config,
+                defaultLocale: 'fr', // French has less ordinals than English
+                defaultTranslations: {
+                    optimized_checkout: {
+                        test: {
+                            direction_text: 'Prenez la {count, selectordinal, one{#re} other{#e}} à droite',
+                        },
+                    },
+                },
+                fallbackLocale: 'en',
+                fallbackTranslations: {
+                    optimized_checkout: {
+                        test: {
+                            position_text: '{count, selectordinal, one{#st} two{#nd} few{#rd} other{#th}} position',
+                        },
+                    },
+                },
+            };
+
+            langService = new LanguageService(config, logger);
+
+            expect(langService.translate('test.direction_text', { count: 1 })).toEqual('Prenez la 1re à droite');
+            expect(langService.translate('test.direction_text', { count: 2 })).toEqual('Prenez la 2e à droite');
+            expect(langService.translate('test.direction_text', { count: 3 })).toEqual('Prenez la 3e à droite');
+            expect(langService.translate('test.position_text', { count: 1 })).toEqual('1st position');
+            expect(langService.translate('test.position_text', { count: 2 })).toEqual('2nd position');
+            expect(langService.translate('test.position_text', { count: 3 })).toEqual('3rd position');
         });
     });
 
