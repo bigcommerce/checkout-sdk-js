@@ -117,15 +117,23 @@ export default class LanguageService {
         const locales = config.locales || {};
         const translations = this._flattenObject(config.translations || {});
         const defaultTranslations = this._flattenObject(config.defaultTranslations || {});
-        const translationKeys = union(Object.keys(defaultTranslations), Object.keys(translations));
+        const fallbackTranslations = this._flattenObject(config.fallbackTranslations || {});
+        const translationKeys = union(
+            Object.keys(fallbackTranslations),
+            Object.keys(defaultTranslations),
+            Object.keys(translations)
+        );
 
         translationKeys.forEach(key => {
             if (translations && translations[key]) {
                 output.translations[key] = translations[key];
                 output.locales[key] = locales[key] || output.locale;
-            } else {
+            } else if (defaultTranslations[key]) {
                 output.translations[key] = defaultTranslations[key];
-                output.locales[key] = DEFAULT_LOCALE;
+                output.locales[key] = config.defaultLocale ?? DEFAULT_LOCALE;
+            } else {
+                output.translations[key] = fallbackTranslations[key];
+                output.locales[key] = config.fallbackLocale ?? DEFAULT_LOCALE;
             }
         });
 
