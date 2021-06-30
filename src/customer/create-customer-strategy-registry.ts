@@ -31,7 +31,8 @@ import { SquareCustomerStrategy } from './strategies/square';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
-    requestSender: RequestSender
+    requestSender: RequestSender,
+    locale: string
 ): Registry<CustomerStrategy> {
     const registry = new Registry<CustomerStrategy>();
     const scriptLoader = getScriptLoader();
@@ -112,7 +113,8 @@ export default function createCustomerStrategyRegistry(
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            new MasterpassScriptLoader(scriptLoader)
+            new MasterpassScriptLoader(scriptLoader),
+            locale
         )
     );
 

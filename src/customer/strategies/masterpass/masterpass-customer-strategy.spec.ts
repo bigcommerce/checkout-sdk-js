@@ -27,6 +27,7 @@ describe('MasterpassCustomerStrategy', () => {
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let strategy: CustomerStrategy;
+    let locale: string;
 
     beforeEach(() => {
         paymentMethodMock = {
@@ -57,6 +58,8 @@ describe('MasterpassCustomerStrategy', () => {
 
         requestSender = createRequestSender();
 
+        locale = 'en-US';
+
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender)
         );
@@ -75,7 +78,8 @@ describe('MasterpassCustomerStrategy', () => {
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            masterpassScriptLoader
+            masterpassScriptLoader,
+            locale
         );
 
         container = document.createElement('div');
@@ -95,7 +99,7 @@ describe('MasterpassCustomerStrategy', () => {
         let masterpassOptions: CustomerInitializeOptions;
         const masterpassScriptLoaderParams = {
             useMasterpassSrc: false,
-            language: 'en_US',
+            language: 'en_us',
             testMode: true,
             checkoutId: 'checkoutId',
         };
@@ -162,6 +166,28 @@ describe('MasterpassCustomerStrategy', () => {
                     }
                 }
             }
+        });
+
+        it('loads masterpass script with correct locale when locale contains "-" character', async () => {
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'en_us'});
+        });
+
+        it('loads masterpass script with correct locale', async () => {
+            locale = 'FR';
+
+            strategy = new MasterpassCustomerStrategy(
+                store,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'fr_fr'});
         });
     });
 

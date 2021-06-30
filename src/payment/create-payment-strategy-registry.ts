@@ -533,7 +533,8 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            new MasterpassScriptLoader(scriptLoader)
+            new MasterpassScriptLoader(scriptLoader),
+            locale
         )
     );
 
