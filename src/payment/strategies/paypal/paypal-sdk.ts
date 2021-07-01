@@ -52,6 +52,7 @@ export interface PaypalButtonStyleOptions {
     shape?: 'pill' | 'rect';
     tagline?: boolean;
     fundingicons?: boolean;
+    height?: number;
 }
 
 export interface PaypalActions {

@@ -54,6 +54,9 @@ describe('BraintreePaypalButtonStrategy', () => {
         paypalOptions = {
             onAuthorizeError: jest.fn(),
             onPaymentError: jest.fn(),
+            style: {
+                height: 45,
+            },
         };
 
         options = {
@@ -196,6 +199,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             style: {
                 label: undefined,
                 shape: 'rect',
+                height: 45,
             },
             fundingSource: paypal.FUNDING.PAYPAL,
         });
@@ -214,6 +218,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                     label: 'paypal',
                     tagline: true,
                     fundingicons: false,
+                    height: 45,
                 },
             },
         };
@@ -229,6 +234,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                 label: 'paypal',
                 tagline: true,
                 fundingicons: false,
+                height: 45,
             },
         }));
     });
@@ -507,6 +513,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                     allowCredit: true,
                     style: {
                         label: 'credit',
+                        height: 45,
                     },
                 },
             };
@@ -532,6 +539,7 @@ describe('BraintreePaypalButtonStrategy', () => {
                 style: {
                     label: 'credit',
                     shape: 'rect',
+                    height: 45,
                 },
                 fundingSource: paypal.FUNDING.PAYPAL,
             });
