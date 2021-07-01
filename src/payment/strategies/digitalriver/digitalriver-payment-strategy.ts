@@ -115,7 +115,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     throw error;
                 }
 
-                const confirm: boolean = await this._authenticateSource(error.body.provider_data);
+                const confirm = await this._authenticateSource(error.body.provider_data);
 
                 return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutId, shouldSetAsDefaultInstrument, confirm);
             }
