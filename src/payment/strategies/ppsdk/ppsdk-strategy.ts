@@ -43,7 +43,7 @@ export class PPSDKStrategy implements PaymentStrategy {
         return this._store.getState();
     }
 
-    async finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async finalize(): Promise<InternalCheckoutSelectors> {
         return this._store.getState();
     }
 

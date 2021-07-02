@@ -1,5 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
+import { CreditCardInstrument, HostedCreditCardInstrument, HostedInstrument, HostedVaultedInstrument, NonceInstrument, VaultedInstrument, WithCheckoutcomiDealInstrument, WithCheckoutcomFawryInstrument, WithCheckoutcomSEPAInstrument, WithDocumentInstrument, WithMollieIssuerInstrument } from './payment';
 import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
@@ -201,4 +202,28 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Mollie.
      */
     mollie?: MolliePaymentInitializeOptions;
+}
+
+/**
+ * A set of options that are required to finalize order on the payment step of the
+ * current checkout flow.
+ */
+export interface PaymentFinalizeOptions extends RequestOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId?: string;
+
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Adyen and Klarna.
+     */
+    gatewayId?: string;
+
+    /**
+     * An object that contains the details of a credit card, vaulted payment
+     * instrument or nonce instrument.
+     */
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument;
 }

@@ -3,7 +3,7 @@ import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitial
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentMethod from '../../payment-method';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentFinalizeOptions, PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import PaymentStrategy from '../payment-strategy';
 
@@ -102,7 +102,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(options?: PaymentFinalizeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const order = state.order.getOrder();
 

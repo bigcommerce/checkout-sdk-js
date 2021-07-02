@@ -27,7 +27,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             this._executeWithoutHostedForm(payload, options);
     }
 
-    finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

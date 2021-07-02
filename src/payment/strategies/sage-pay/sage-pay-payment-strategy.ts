@@ -6,7 +6,7 @@ import { RequestError } from '../../../common/error/errors';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentFinalizeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { CreditCardPaymentStrategy } from '../credit-card';
 
@@ -38,7 +38,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(options?: PaymentFinalizeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const order = state.order.getOrder();
 
@@ -46,6 +46,6 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
-        return super.finalize(options);
+        return super.finalize();
     }
 }
