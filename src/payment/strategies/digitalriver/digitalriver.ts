@@ -11,6 +11,28 @@ export type DigitalRiverClass = new(apiKey: string, options?: DigitalRiverJSOpti
 
 export default interface DigitalRiverJS {
     createDropin(configuration: DigitalRiverDropInConfiguration): DigitalRiverDropIn;
+    authenticateSource(data: DigitalRiverAuthenticateSourceRequest): Promise<DigitalRiverAuthenticateSourceResponse>;
+}
+
+interface DigitalRiverAuthenticateSourceRequest {
+    sessionId: string;
+    sourceId: string;
+    sourceClientSecret: string;
+}
+
+export interface DigitalRiverAdditionalProviderData {
+    source_id: string;
+    source_client_secret: string;
+}
+
+export interface DigitalRiverAuthenticateSourceResponse {
+    status: AuthenticationSourceStatus;
+}
+
+export enum AuthenticationSourceStatus {
+    complete = 'complete',
+    authentication_not_required = 'authentication_not_required',
+    failed = 'failed',
 }
 
 export interface DigitalRiverJSOptions {
