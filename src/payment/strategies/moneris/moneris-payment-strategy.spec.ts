@@ -156,7 +156,7 @@ describe('MonerisPaymentStrategy', () => {
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
             expect(iframe).toBeTruthy();
-            expect(iframe.src).toMatch(/www3.moneris.com/);
+            expect(iframe.src).toContain('www3.moneris.com');
         });
 
         it('initializes moneris iframe and sets src to the test environment', async () => {
@@ -165,7 +165,62 @@ describe('MonerisPaymentStrategy', () => {
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
             expect(iframe).toBeTruthy();
-            expect(iframe.src).toMatch(/esqa.moneris.com/);
+            expect(iframe.src).toContain('esqa.moneris.com');
+        });
+
+        it('initialize moneris iframe and sets data labels from initialization data', async () => {
+            paymentMethodMock.config.testMode = true;
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('pan_label=Credit%20Card&exp_label=Expiration%20Date&cvd_label=CVV');
+        });
+
+        it('initialize moneris iframe and sets data labels if initialization data is null', async () => {
+            paymentMethodMock.config.testMode = true;
+            paymentMethodMock.initializationData = { profileId: 'ABC123' };
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('pan_label=Credit%20Card%20Number&exp_label=Expiration&cvd_label=CVD');
+        });
+
+        it('initialize moneris iframe and sets expiry field', async () => {
+            paymentMethodMock.config.testMode = true;
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('enable_exp=1');
+        });
+
+        it('initialize moneris iframe and sets cvv field', async () => {
+            paymentMethodMock.config.testMode = true;
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('enable_cvd=1');
+        });
+
+        it('initialize moneris iframe and sets labels enabled', async () => {
+            paymentMethodMock.config.testMode = true;
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('display_labels=1');
+        });
+
+        it('initialize moneris iframe and sets hosted fields css', async () => {
+            paymentMethodMock.config.testMode = true;
+            await expect(strategy.initialize(initializeOptions)).resolves.toEqual(store.getState());
+
+            const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+            expect(iframe).toBeTruthy();
+            expect(iframe.src).toContain('css_body=background:white;&css_textbox=border-width:2px;&css_textbox_pan=width:140px;&css_textbox_exp=width:40px;&css_textbox_cvd=width:40px');
         });
 
         it('fails to initialize moneris strategy when initialization options are not provided', () => {

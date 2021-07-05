@@ -1,3 +1,5 @@
+import { map } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError , MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -8,7 +10,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import MonerisStylingProps,  { MonerisResponseData } from './moneris';
+import MonerisStylingProps,  { MoneriesHostedFieldsQueryParams, MonerisInitializationData, MonerisResponseData } from './moneris';
 
 const IFRAME_NAME = 'moneris-payment-iframe';
 const RESPONSE_SUCCESS_CODE = '001';
@@ -39,7 +41,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         }
 
         if (!this._iframe) {
-            this._iframe = this._createIframe(monerisOptions.containerId, initializationData.profileId, !!config.testMode);
+            this._iframe = this._createIframe(monerisOptions.containerId, initializationData, !!config.testMode);
         }
 
         return Promise.resolve(this._store.getState());
@@ -112,7 +114,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _createIframe(containerId: string, profileId: string, testMode: boolean, style?: MonerisStylingProps): HTMLIFrameElement {
+    private _createIframe(containerId: string, initializationData: MonerisInitializationData, testMode: boolean, style?: MonerisStylingProps): HTMLIFrameElement {
         const container = document.getElementById(containerId);
 
         if (!container) {
@@ -120,17 +122,28 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         }
 
         const iframe = document.createElement('iframe');
-        // Example CSS styling as provided by Moneris' documentation
-        const cssBody = style?.cssBody ?? 'background:white;';
-        const cssTextbox = style?.cssTextbox ?? 'border-width:2px;';
-        const csstextboxPan = style?.cssTextboxPan ?? 'width:140px;';
-        const cssTextboxExpiry = style?.cssTextboxExpiry ?? 'width:40px;';
-        const csstexboxCvd = style?.csstexboxCvd ?? 'width:40px';
+        const monerisQueryParams: MoneriesHostedFieldsQueryParams = {
+            id: initializationData.profileId,
+            pmmsg: true,
+            display_labels: 1,
+            enable_exp: 1,
+            enable_cvd: 1,
+            css_body: style?.cssBody || 'background:white;',
+            css_textbox: style?.cssTextbox || 'border-width:2px;',
+            css_textbox_pan: style?.cssTextboxPan || 'width:140px;',
+            css_textbox_exp: style?.cssTextboxExpiry || 'width:40px;',
+            css_textbox_cvd: style?.csstexboxCvd || 'width:40px',
+            pan_label: initializationData?.creditCardLabel || 'Credit Card Number',
+            exp_label: initializationData?.expiryDateLabel || 'Expiration',
+            cvd_label: initializationData?.cvdLabel || 'CVD',
+        };
+
+        const queryString = map(monerisQueryParams, (value, key) => `${key}=${value}`).join('&');
 
         iframe.name = IFRAME_NAME;
         iframe.id = IFRAME_NAME;
 
-        iframe.src = `${ this._monerisURL(testMode) }?id=${profileId}&pmmsg=true&css_body=${cssBody}&css_textbox=${cssTextbox}&css_textbox_pan=${csstextboxPan}&enable_exp=1&css_textbox_exp=${cssTextboxExpiry}&enable_cvd=1&css_textbox_cvd=${csstexboxCvd}&display_labels=1`;
+        iframe.src = `${ this._monerisURL(testMode) }?${queryString}`;
 
         container.appendChild(iframe);
 

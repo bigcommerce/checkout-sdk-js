@@ -742,6 +742,9 @@ export function getMoneris(): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         initializationData: {
             profileId: 'ABC123',
+            creditCardLabel: 'Credit Card',
+            expiryDateLabel: 'Expiration Date',
+            cvdLabel: 'CVV',
         },
     };
 }
