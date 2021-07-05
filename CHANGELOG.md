@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.161.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.160.0...v1.161.0) (2021-07-05)
+
+
+### Features
+
+* **payment:** INT-4309 Adding additional action to Digital River ([b046460](https://github.com/bigcommerce/checkout-sdk-js/commit/b046460e16d851612a00c7c6f471cad492d2ea13))
+* **payment:** INT-4423 Set labels to Moneris iframe creation process ([208500c](https://github.com/bigcommerce/checkout-sdk-js/commit/208500c181a930f120073e13ae762c7ea0fca912))
+
+
+### Bug Fixes
+
+* **payment:** INT-4309 Addresing Ignacio feedback ([93197d6](https://github.com/bigcommerce/checkout-sdk-js/commit/93197d63cf7d4a4a03dfc62ba3b8e3aeb74fa772))
+* **payment:** INT-4309 Addresing Ignacio feedback ([e9e5adb](https://github.com/bigcommerce/checkout-sdk-js/commit/e9e5adb975ee9a5906e60ecd3db08818ff14c4ad))
+* **payment:** INT-4309 Addresing Ignacio feedback 2 ([4fff2a2](https://github.com/bigcommerce/checkout-sdk-js/commit/4fff2a210877765dfd3d427ef0314169b5c3657c))
+* **payment:** INT-4309 Updating Digital River unit tests ([72ad20a](https://github.com/bigcommerce/checkout-sdk-js/commit/72ad20a0900883a8f8d733ea33d9a1cf1d844287))
+
 ## [1.160.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.159.0...v1.160.0) (2021-06-30)
 
 
