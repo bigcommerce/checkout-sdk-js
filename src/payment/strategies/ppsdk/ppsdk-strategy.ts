@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -25,7 +25,7 @@ export class PPSDKStrategy implements PaymentStrategy {
         }
 
         if (!options?.methodId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
         const paymentMethod = getPPSDKMethod(this._store, options.methodId);
@@ -49,7 +49,7 @@ export class PPSDKStrategy implements PaymentStrategy {
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (!options?.methodId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
         const paymentMethod = getPPSDKMethod(this._store, options.methodId);

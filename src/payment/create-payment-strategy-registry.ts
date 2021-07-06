@@ -392,7 +392,10 @@ export default function createPaymentStrategyRegistry(
         new PPSDKStrategy(
             store,
             orderActionCreator,
-            createPaymentProcessorRegistry(requestSender, createStepHandler())
+            createPaymentProcessorRegistry(
+                requestSender,
+                createStepHandler(formPoster)
+            )
         )
     );
 
