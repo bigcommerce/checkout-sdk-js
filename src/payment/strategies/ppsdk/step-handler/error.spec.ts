@@ -1,10 +1,10 @@
 import { RequestError } from '../../../../common/error/errors';
 
-import { handleError, isError, Error } from './error';
+import { handleError, isError, ErrorResponse } from './error';
 
 describe('handleError', () => {
     it('rejects with RequestError', async () => {
-        const errorResponse = {
+        const errorResponse: ErrorResponse = {
             body: {
                 type: 'error',
             },
@@ -19,8 +19,13 @@ describe('handleError', () => {
 
 describe('isError', () => {
     it('returns true when passed a valid error response', () => {
-        const errorResponse: Error = {
-            type: 'error',
+        const errorResponse: ErrorResponse = {
+            body: {
+                type: 'error',
+            },
+            status: 200,
+            statusText: '',
+            headers: [],
         };
 
         expect(isError(errorResponse)).toBe(true);
@@ -28,7 +33,12 @@ describe('isError', () => {
 
     it('returns false when passed an invalid error response', () => {
         const invalidResponse = {
-            type: 'anything',
+            body: {
+                type: 'anything',
+            },
+            status: 200,
+            statusText: '',
+            headers: [],
         };
 
         expect(isError(invalidResponse)).toBe(false);

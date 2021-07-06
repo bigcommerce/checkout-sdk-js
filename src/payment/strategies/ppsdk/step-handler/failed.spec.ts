@@ -1,10 +1,10 @@
 import { RequestError } from '../../../../common/error/errors';
 
-import { handleFailed, isFailed, Failed } from './failed';
+import { handleFailed, isFailed, FailedResponse } from './failed';
 
 describe('handleFailed', () => {
     it('rejects with RequestError', async () => {
-        const failedResponse = {
+        const failedResponse: FailedResponse = {
             body: {
                 type: 'failed',
                 code: 'any-failure',
@@ -20,17 +20,27 @@ describe('handleFailed', () => {
 
 describe('isFailed', () => {
     it('returns true when passed a valid failure response', () => {
-        const failureResponse: Failed = {
-            type: 'failed',
-            code: 'anything',
+        const failedResponse: FailedResponse = {
+            body: {
+                type: 'failed',
+                code: 'any-failure',
+            },
+            status: 200,
+            statusText: '',
+            headers: [],
         };
 
-        expect(isFailed(failureResponse)).toBe(true);
+        expect(isFailed(failedResponse)).toBe(true);
     });
 
     it('returns false when passed an invalid failure response', () => {
         const invalidResponse = {
-            type: 'anything',
+            body: {
+                type: 'anything',
+            },
+            status: 200,
+            statusText: '',
+            headers: [],
         };
 
         expect(isFailed(invalidResponse)).toBe(false);

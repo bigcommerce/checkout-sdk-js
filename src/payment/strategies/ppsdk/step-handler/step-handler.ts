@@ -27,11 +27,11 @@ export class StepHandler {
             return this._continueHandler.handle(body);
         }
 
-        if (isFailed(body)) {
+        if (isFailed(response)) {
             return handleFailed(response);
         }
 
-        if (isError(body)) {
+        if (isError(response)) {
             return handleError(response);
         }
 
