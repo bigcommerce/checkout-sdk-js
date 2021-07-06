@@ -3,7 +3,7 @@ import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 import { isContinue, ContinueHandler } from './continue-handler';
 import { handleError, isError } from './error';
 import { handleFailed, isFailed } from './failed';
-import { handleNetworkError, isNetworkError } from './network-error';
+import { handleServerError, isServerError } from './server-error';
 import { handleSuccess, isSuccess } from './success';
 import { handleUnsupported } from './unsupported';
 
@@ -15,8 +15,8 @@ export class StepHandler {
     handle(response: PaymentsAPIResponse): Promise<void> {
         const { body, status } = response;
 
-        if (isNetworkError(status)) {
-            return handleNetworkError(response);
+        if (isServerError(status)) {
+            return handleServerError(response);
         }
 
         if (isSuccess(body)) {
