@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.162.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.161.0...v1.162.0) (2021-07-06)
+
+
+### Features
+
+* **payment:** PAYMENTS-6805 add core stepHandler to PPSDK strategy ([#1162](https://github.com/bigcommerce/checkout-sdk-js/issues/1162)) ([4ffed6f](https://github.com/bigcommerce/checkout-sdk-js/commit/4ffed6f2a468e255de2ac363176d6dc24d729d13))
+
 ## [1.161.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.160.0...v1.161.0) (2021-07-05)
 
 
