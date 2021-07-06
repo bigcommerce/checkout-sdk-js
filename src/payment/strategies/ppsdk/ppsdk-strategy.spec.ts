@@ -10,10 +10,10 @@ import { OrderActionCreator, OrderRequestSender } from '../../../order';
 
 import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
 import { PPSDKStrategy } from './ppsdk-strategy';
-import { createContinueHandler, createStepHandler } from './step-handler';
+import { createStepHandler } from './step-handler';
 
 describe('PPSDKStrategy', () => {
-    const stepHandler = createStepHandler(createContinueHandler(new FormPoster()));
+    const stepHandler = createStepHandler(new FormPoster());
     const paymentProcessorRegistry = createPaymentProcessorRegistry(createRequestSender(), stepHandler);
     let store: ReturnType<typeof createCheckoutStore>;
     let orderActionCreator: InstanceType<typeof OrderActionCreator>;

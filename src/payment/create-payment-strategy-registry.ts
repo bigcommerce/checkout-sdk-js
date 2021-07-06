@@ -61,7 +61,6 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { createPaymentProcessorRegistry, createStepHandler, PPSDKStrategy } from './strategies/ppsdk';
-import { createContinueHandler } from './strategies/ppsdk/step-handler';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
@@ -395,9 +394,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             createPaymentProcessorRegistry(
                 requestSender,
-                createStepHandler(
-                    createContinueHandler(formPoster)
-                )
+                createStepHandler(formPoster)
             )
         )
     );

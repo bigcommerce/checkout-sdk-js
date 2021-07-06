@@ -2,12 +2,12 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 
 import { RequestError } from '../../../../common/error/errors';
 
-import { createContinueHandler } from './create-continue-handler';
+import { ContinueHandler } from './continue-handler';
 import { StepHandler } from './step-handler';
 
 describe('StepHandler', () => {
     const formPoster = createFormPoster();
-    const continueHandler = createContinueHandler(formPoster);
+    const continueHandler = new ContinueHandler(formPoster);
     const handler = new StepHandler(continueHandler);
 
     describe('#handler', () => {
