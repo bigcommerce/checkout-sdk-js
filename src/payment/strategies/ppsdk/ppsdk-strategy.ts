@@ -1,12 +1,15 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import { getPPSDKPaymentId } from './get-ppsdk-payment-id';
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PaymentProcessor } from './ppsdk-payment-processor';
 import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
+import { PaymentResumer } from './ppsdk-payment-resumer';
 
 export class PPSDKStrategy implements PaymentStrategy {
     private _paymentProcessor?: PaymentProcessor;
@@ -14,7 +17,8 @@ export class PPSDKStrategy implements PaymentStrategy {
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentProcessorRegistry: PaymentProcessorRegistry
+        private _paymentProcessorRegistry: PaymentProcessorRegistry,
+        private _paymentResumer: PaymentResumer
     ) {}
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -43,7 +47,25 @@ export class PPSDKStrategy implements PaymentStrategy {
         return this._store.getState();
     }
 
-    async finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const bigpayBaseUrl = this._store.getState().config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+        if (!bigpayBaseUrl) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!options?.methodId) {
+            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+        }
+
+        const paymentId = getPPSDKPaymentId(this._store, options.methodId);
+
+        if (!paymentId) {
+            throw new OrderFinalizationNotRequiredError();
+        }
+
+        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl });
+
         return this._store.getState();
     }
 
