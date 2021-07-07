@@ -14,5 +14,14 @@ export const isFailed = (response: PaymentsAPIResponse): response is FailedRespo
     get(response.body, 'type') === 'failed' &&
     isString(get(response.body, 'code'));
 
+const toRequestErrorFormat = (failedResponse: FailedResponse) => ({
+    ...failedResponse,
+    body: {
+        errors: [
+            { code: failedResponse.body.code },
+        ],
+    },
+});
+
 export const handleFailed = (response: FailedResponse): Promise<void> =>
-    Promise.reject(new RequestError(response));
+    Promise.reject(new RequestError(toRequestErrorFormat(response)));

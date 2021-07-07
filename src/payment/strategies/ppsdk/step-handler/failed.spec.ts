@@ -15,6 +15,11 @@ describe('handleFailed', () => {
         };
 
         await expect(handleFailed(failedResponse)).rejects.toBeInstanceOf(RequestError);
+        await expect(handleFailed(failedResponse)).rejects.toStrictEqual(
+            expect.objectContaining({
+                body: { errors: [{ code: 'any-failure' }] },
+            })
+        );
     });
 });
 
