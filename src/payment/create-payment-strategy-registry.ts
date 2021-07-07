@@ -60,7 +60,7 @@ import { createPaypalCommercePaymentProcessor,
     PaypalCommerceHostedForm,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender } from './strategies/paypal-commerce';
-import { createPaymentProcessorRegistry, createStepHandler, PPSDKStrategy } from './strategies/ppsdk';
+import { createPaymentProcessorRegistry, createStepHandler, PaymentResumer, PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
@@ -100,6 +100,7 @@ export default function createPaymentStrategyRegistry(
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
+    const stepHandler = createStepHandler(formPoster);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -392,10 +393,8 @@ export default function createPaymentStrategyRegistry(
         new PPSDKStrategy(
             store,
             orderActionCreator,
-            createPaymentProcessorRegistry(
-                requestSender,
-                createStepHandler(formPoster)
-            )
+            createPaymentProcessorRegistry(requestSender, stepHandler),
+            new PaymentResumer(requestSender, stepHandler)
         )
     );
 
