@@ -5,21 +5,18 @@ import { PaymentProcessor, ProcessorSettings } from '../ppsdk-payment-processor'
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 import { StepHandler } from '../step-handler';
 
-export class NonePaymentProcessor implements PaymentProcessor {
+export class ResumePaymentProcessor implements PaymentProcessor {
     constructor(
         private _requestSender: RequestSender,
         private _stepHandler: StepHandler
     ) {}
 
-    process({ paymentMethod, bigpayBaseUrl }: ProcessorSettings) {
-        if (!paymentMethod) {
+    process({ paymentId, bigpayBaseUrl }: ProcessorSettings) {
+        if (!paymentId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const paymentMethodId = `${paymentMethod.id}.${paymentMethod.method}`;
-        const body = { payment_method_id: paymentMethodId };
-
-        return this._requestSender.post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, { body })
+        return this._requestSender.get<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments/${paymentId}`)
             .then(response => this._stepHandler.handle(response));
     }
 }

@@ -7,6 +7,7 @@ import PaymentStrategy from '../payment-strategy';
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PaymentProcessor } from './ppsdk-payment-processor';
 import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
+import { PaymentProcessorType } from './ppsdk-payment-processor-type';
 
 export class PPSDKStrategy implements PaymentStrategy {
     private _paymentProcessor?: PaymentProcessor;
@@ -43,7 +44,29 @@ export class PPSDKStrategy implements PaymentStrategy {
         return this._store.getState();
     }
 
-    async finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const bigpayBaseUrl = this._store.getState().config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+        if (!bigpayBaseUrl) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!options?.methodId) {
+            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+        }
+
+        const orderPayments = this._store.getState().order.getOrder()?.payments;
+        const currentPayment = orderPayments?.find(({ providerId }) => providerId === options.methodId);
+        const paymentId = currentPayment?.paymentId;
+        const paymentMethod = getPPSDKMethod(this._store, options.methodId);
+        const paymentResumer = this._paymentProcessorRegistry.get(PaymentProcessorType.RESUME);
+
+        if (!paymentId || !paymentResumer || !paymentMethod) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        await paymentResumer.process({ paymentId, bigpayBaseUrl });
+
         return this._store.getState();
     }
 

@@ -42,6 +42,7 @@ export type OrderMeta = OrderMetaState;
 export interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    paymentId?: string;
     description: string;
     amount: number;
 }
