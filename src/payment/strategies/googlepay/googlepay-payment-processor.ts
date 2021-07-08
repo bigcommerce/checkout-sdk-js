@@ -10,6 +10,7 @@ import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
 import { ButtonColor, ButtonType, EnvironmentType, GooglePaymentData, GooglePayAddress, GooglePayClient, GooglePayInitializer, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
+import { getFirstAndLastName } from './googlepay-get-first-and-last-name';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
 export default class GooglePayPaymentProcessor {
@@ -156,7 +157,8 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _mapGooglePayAddressToBillingAddress(paymentData: GooglePaymentData, id: string): BillingAddressUpdateRequestBody {
-        const firstName = paymentData.paymentMethodData.info.billingAddress.name.split(' ').slice(0, -1).join(' ');
+        const fullName = paymentData.paymentMethodData.info.billingAddress.name;
+        const [firstName, lastName] = getFirstAndLastName(fullName);
         const address1 =  paymentData.paymentMethodData.info.billingAddress.address1;
         const city =  paymentData.paymentMethodData.info.billingAddress.locality;
         const postalCode =  paymentData.paymentMethodData.info.billingAddress.postalCode;
@@ -169,7 +171,7 @@ export default class GooglePayPaymentProcessor {
         return {
             id,
             firstName,
-            lastName: paymentData.paymentMethodData.info.billingAddress.name.split(' ').slice(-1).join(' '),
+            lastName,
             company: paymentData.paymentMethodData.info.billingAddress.companyName,
             address1,
             address2: paymentData.paymentMethodData.info.billingAddress.address2 + paymentData.paymentMethodData.info.billingAddress.address3,
@@ -185,9 +187,11 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _mapGooglePayAddressToShippingAddress(address: GooglePayAddress): AddressRequestBody {
+        const [firstName, lastName] = getFirstAndLastName(address.name);
+
         return {
-            firstName: address.name.split(' ').slice(0, -1).join(' '),
-            lastName: address.name.split(' ').slice(-1).join(' '),
+            firstName,
+            lastName,
             company: address.companyName,
             address1: address.address1,
             address2: address.address2 + address.address3,
