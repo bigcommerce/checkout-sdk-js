@@ -238,6 +238,18 @@ describe('GooglePayPaymentProcessor', () => {
             expect(googlePayInitializer.parseResponse).toHaveBeenCalled();
         });
 
+        it('throw response error without fullname', async () => {
+            jest.spyOn(googlePayInitializer, 'parseResponse').mockReturnValue(tokenizePayload);
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(getGooglePayAddressMock());
+            const googlePaymentDataMock = getGooglePaymentDataMock();
+            googlePaymentDataMock.paymentMethodData.info.billingAddress.name = '';
+
+            await processor.initialize('googlepay');
+
+            expect(processor.handleSuccess(googlePaymentDataMock)).rejects.toThrow(MissingDataError);
+        });
+
         it('throws when methodId from state is missed', async () => {
             jest.spyOn(googlePayInitializer, 'parseResponse').mockReturnValue(Promise.resolve(tokenizePayload));
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
