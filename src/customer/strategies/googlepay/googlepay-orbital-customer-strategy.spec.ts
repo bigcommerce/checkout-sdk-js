@@ -1,16 +1,25 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster/';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { getCart, getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { createGooglePayPaymentProcessor, GooglePayOrbitalInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerInitializeOptions } from '../../customer-request-options';
+import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
@@ -18,9 +27,14 @@ import { getOrbitalCustomerInitializeOptions, Mode } from './googlepay-customer-
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let container: HTMLDivElement;
-    let formPoster: FormPoster;
+    let customerActionCreator: CustomerActionCreator;
     let customerInitializeOptions: CustomerInitializeOptions;
+    let formPoster: FormPoster;
+    let googleRecaptcha: GoogleRecaptcha;
+    let googleRecaptchaMockWindow: GoogleRecaptchaWindow;
+    let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let paymentProcessor: GooglePayPaymentProcessor;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
@@ -50,11 +64,37 @@ describe('GooglePayCustomerStrategy', () => {
 
         formPoster = createFormPoster();
 
+        googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
+        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender()),
+                new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(createRequestSender())
+            )
+        );
+
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(createRequestSender()),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(createRequestSender())
+            )
+        );
+
         strategy = new GooglePayCustomerStrategy(
             store,
             remoteCheckoutActionCreator,
             paymentProcessor,
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         jest.spyOn(formPoster, 'postForm')

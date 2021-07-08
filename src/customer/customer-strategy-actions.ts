@@ -7,6 +7,12 @@ export enum CustomerStrategyActionType {
     SignOutFailed = 'CUSTOMER_STRATEGY_SIGN_OUT_FAILED',
     SignOutRequested = 'CUSTOMER_STRATEGY_SIGN_OUT_REQUESTED',
     SignOutSucceeded = 'CUSTOMER_STRATEGY_SIGN_OUT_SUCCEEDED',
+    SignUpFailed = 'CUSTOMER_STRATEGY_SIGN_UP_FAILED',
+    SignUpRequested = 'CUSTOMER_STRATEGY_SIGN_UP_REQUESTED',
+    SignUpSucceeded = 'CUSTOMER_STRATEGY_SIGN_UP_SUCCEEDED',
+    ContinueAsGuestFailed = 'CUSTOMER_STRATEGY_CONTINUE_AS_GUEST_FAILED',
+    ContinueAsGuestRequested = 'CUSTOMER_STRATEGY_CONTINUE_AS_GUEST_REQUESTED',
+    ContinueAsGuestSucceeded = 'CUSTOMER_STRATEGY_CONTINUE_AS_GUEST_SUCCEEDED',
     InitializeFailed = 'CUSTOMER_STRATEGY_INITIALIZE_FAILED',
     InitializeRequested = 'CUSTOMER_STRATEGY_INITIALIZE_REQUESTED',
     InitializeSucceeded = 'CUSTOMER_STRATEGY_INITIALIZE_SUCCEEDED',
@@ -21,6 +27,8 @@ export enum CustomerStrategyActionType {
 export type CustomerStrategyAction =
     CustomerStrategySignInAction |
     CustomerStrategySignOutAction |
+    CustomerStrategySignUpAction |
+    CustomerStrategyContinueAsGuestAction |
     CustomerStrategyInitializeAction |
     CustomerStrategyDeinitializeAction |
     CustomerStrategyWidgetAction;
@@ -34,6 +42,16 @@ export type CustomerStrategySignOutAction =
     SignOutRequestedAction |
     SignOutSucceededAction |
     SignOutFailedAction;
+
+export type CustomerStrategySignUpAction =
+    SignUpRequestedAction |
+    SignUpSucceededAction |
+    SignUpFailedAction;
+
+export type CustomerStrategyContinueAsGuestAction =
+    ContinueAsGuestRequestedAction |
+    ContinueAsGuestSucceededAction |
+    ContinueAsGuestFailedAction;
 
 export type CustomerStrategyInitializeAction =
     InitializeRequestedAction |
@@ -72,6 +90,30 @@ export interface SignOutSucceededAction extends Action {
 
 export interface SignOutFailedAction extends Action<Error> {
     type: CustomerStrategyActionType.SignOutFailed;
+}
+
+export interface SignUpRequestedAction extends Action {
+    type: CustomerStrategyActionType.SignUpRequested;
+}
+
+export interface SignUpSucceededAction extends Action {
+    type: CustomerStrategyActionType.SignUpSucceeded;
+}
+
+export interface SignUpFailedAction extends Action<Error> {
+    type: CustomerStrategyActionType.SignUpFailed;
+}
+
+export interface ContinueAsGuestRequestedAction extends Action {
+    type: CustomerStrategyActionType.ContinueAsGuestRequested;
+}
+
+export interface ContinueAsGuestSucceededAction extends Action {
+    type: CustomerStrategyActionType.ContinueAsGuestSucceeded;
+}
+
+export interface ContinueAsGuestFailedAction extends Action<Error> {
+    type: CustomerStrategyActionType.ContinueAsGuestFailed;
 }
 
 export interface InitializeRequestedAction extends Action {

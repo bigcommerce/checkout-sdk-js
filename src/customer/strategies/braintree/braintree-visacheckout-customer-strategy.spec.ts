@@ -4,18 +4,26 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../../../common/dom';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getBraintreeVisaCheckout } from '../../../payment/payment-methods.mock';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../../payment/strategies/braintree';
+import { getQuote } from '../../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import createCustomerStrategyRegistry from '../../create-customer-strategy-registry';
+import CustomerActionCreator from '../../customer-action-creator';
+import { CustomerActionType } from '../../customer-actions';
 import { CustomerInitializeOptions } from '../../customer-request-options';
+import CustomerRequestSender from '../../customer-request-sender';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import { CustomerStrategyActionType } from '../../customer-strategy-actions';
 import { getRemoteCustomer } from '../../internal-customers.mock';
@@ -25,9 +33,14 @@ import BraintreeVisaCheckoutCustomerStrategy from './braintree-visacheckout-cust
 
 describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor;
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
+    let customerActionCreator: CustomerActionCreator;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
+    let googleRecaptcha: GoogleRecaptcha;
+    let googleRecaptchaMockWindow: GoogleRecaptchaWindow;
+    let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
@@ -71,6 +84,30 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 
+        googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
+        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender()),
+                new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(createRequestSender())
+            )
+        );
+
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(createRequestSender()),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(createRequestSender())
+            )
+        );
+
         strategy = new BraintreeVisaCheckoutCustomerStrategy(
             store,
             checkoutActionCreator,
@@ -78,7 +115,9 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             customerStrategyActionCreator,
             remoteCheckoutActionCreator,
             braintreeVisaCheckoutPaymentProcessor,
-            visaCheckoutScriptLoader
+            visaCheckoutScriptLoader,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         container = document.createElement('div');
@@ -217,6 +256,29 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
     });
 
+    describe('#continueAsGuest()', () => {
+        beforeEach(async () => {
+            await strategy.initialize({ methodId: 'visaCheckout', braintreevisacheckout: { container: 'login' } });
+        });
+
+        it('runs default continue as guest flow', async () => {
+            const credentials = { email: 'foo@bar.com' };
+            const options = { methodId: 'amazonpay' };
+            const action = of(createAction(BillingAddressActionType.ContinueAsGuestRequested, getQuote()));
+
+            jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.continueAsGuest(credentials, options);
+
+            expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith(credentials, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
+        });
+    });
+
     describe('#signIn()', () => {
         beforeEach(async () => {
             await strategy.initialize({ methodId: 'visaCheckout', braintreevisacheckout: { container: 'login' } });
@@ -249,6 +311,29 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             await strategy.signOut(options);
             expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('braintreevisacheckout', options);
             expect(store.dispatch).toHaveBeenCalledWith('data');
+        });
+    });
+
+    describe('#signUp()', () => {
+        beforeEach(async () => {
+            await strategy.initialize({ methodId: 'visaCheckout', braintreevisacheckout: { container: 'login' } });
+        });
+
+        it('runs default sign up customer flow', async () => {
+            const customerAccount = { firstName: 'foo', lastName: 'bar', email: 'foo@bar.com', password: 'foobar' };
+            const options = { methodId: 'amazonpay' };
+            const action = of(createAction(CustomerActionType.CreateCustomerRequested, getQuote()));
+
+            jest.spyOn(customerActionCreator, 'createCustomer')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.signUp(customerAccount, options);
+
+            expect(customerActionCreator.createCustomer).toHaveBeenCalledWith(customerAccount, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
         });
     });
 

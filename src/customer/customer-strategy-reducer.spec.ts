@@ -125,6 +125,49 @@ describe('customerStrategyReducer()', () => {
         });
     });
 
+    it('returns the pending flag as true if the customer continues as a guest', () => {
+        const action = createAction(
+            CustomerStrategyActionType.ContinueAsGuestRequested,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            continueAsGuestMethodId: 'foobar',
+            isContinuingAsGuest: true,
+        });
+    });
+
+    it('returns the pending flag as false if the customer has continued as guest successfully', () => {
+        const action = createAction(
+            CustomerStrategyActionType.ContinueAsGuestSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            continueAsGuestMethodId: undefined,
+            isContinuingAsGuest: false,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isContinuingAsGuest: false,
+        });
+    });
+
+    it('returns error if customer has failed to continue as guest', () => {
+        const action = createErrorAction(
+            CustomerStrategyActionType.ContinueAsGuestFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            continueAsGuestMethodId: 'foobar',
+            continueAsGuestError: action.payload,
+        });
+    });
+
     it('returns pending flag as true if signing in customer', () => {
         const action = createAction(
             CustomerStrategyActionType.SignInRequested,
@@ -208,6 +251,49 @@ describe('customerStrategyReducer()', () => {
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             isSigningOut: false,
+        });
+    });
+
+    it('returns pending flag as true if signing up customer', () => {
+        const action = createAction(
+            CustomerStrategyActionType.SignUpRequested,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            signUpMethodId: 'foobar',
+            isSigningUp: true,
+        });
+    });
+
+    it('returns pending flag as false if customer has signed up successfully', () => {
+        const action = createAction(
+            CustomerStrategyActionType.SignUpSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            signUpMethodId: undefined,
+            isSigningUp: false,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isSigningUp: false,
+        });
+    });
+
+    it('returns error if customer has failed to sign up', () => {
+        const action = createErrorAction(
+            CustomerStrategyActionType.SignUpFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            signUpMethodId: 'foobar',
+            signUpError: action.payload,
         });
     });
 

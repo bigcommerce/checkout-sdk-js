@@ -4,15 +4,36 @@ import { Observable, Observer } from 'rxjs';
 import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
+import CustomerAccountRequestBody from './customer-account';
 import CustomerCredentials from './customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from './customer-request-options';
-import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import { CustomerStrategyActionType, CustomerStrategyContinueAsGuestAction, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategySignUpAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import { GuestCredentials } from './guest-credentials';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
     constructor(
         private _strategyRegistry: Registry<CustomerStrategy>
     ) {}
+
+    continueAsGuest(credentials: GuestCredentials, options?: CustomerRequestOptions): Observable<CustomerStrategyContinueAsGuestAction> {
+        return Observable.create((observer: Observer<CustomerStrategyContinueAsGuestAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(CustomerStrategyActionType.ContinueAsGuestRequested, undefined, meta));
+
+            this._strategyRegistry.get(methodId)
+                .continueAsGuest(credentials, options)
+                .then(() => {
+                    observer.next(createAction(CustomerStrategyActionType.ContinueAsGuestSucceeded, undefined, meta));
+                    observer.complete();
+                })
+                .catch(error => {
+                    observer.error(createErrorAction(CustomerStrategyActionType.ContinueAsGuestFailed, error, meta));
+                });
+        });
+    }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Observable<CustomerStrategySignInAction> {
         return Observable.create((observer: Observer<CustomerStrategySignInAction>) => {
@@ -48,6 +69,25 @@ export default class CustomerStrategyActionCreator {
                 })
                 .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.SignOutFailed, error, meta));
+                });
+        });
+    }
+
+    signUp(customerAccount: CustomerAccountRequestBody, options?: CustomerRequestOptions): Observable<CustomerStrategySignUpAction> {
+        return Observable.create((observer: Observer<CustomerStrategySignUpAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(CustomerStrategyActionType.SignUpRequested, undefined, meta));
+
+            this._strategyRegistry.get(methodId)
+                .signUp(customerAccount, options)
+                .then(() => {
+                    observer.next(createAction(CustomerStrategyActionType.SignUpSucceeded, undefined, meta));
+                    observer.complete();
+                })
+                .catch(error => {
+                    observer.error(createErrorAction(CustomerStrategyActionType.SignUpFailed, error, meta));
                 });
         });
     }

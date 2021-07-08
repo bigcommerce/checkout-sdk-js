@@ -15,6 +15,25 @@ describe('CustomerStrategySelector', () => {
         };
     });
 
+    describe('#getContinueAsGuestError()', () => {
+        it('returns error if unable to continue as guest', () => {
+            const continueAsGuestError = getErrorResponse();
+
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { continueAsGuestError },
+            });
+
+            expect(selector.getContinueAsGuestError()).toEqual(continueAsGuestError);
+        });
+
+        it('does not returns error if able to continue as guest', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.getContinueAsGuestError()).toBeUndefined();
+        });
+    });
+
     describe('#getSignInError()', () => {
         it('returns error if unable to sign in', () => {
             const signInError = getErrorResponse();
@@ -50,6 +69,25 @@ describe('CustomerStrategySelector', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.getSignOutError()).toBeUndefined();
+        });
+    });
+
+    describe('#getSignUpError()', () => {
+        it('returns error if unable to sign up', () => {
+            const signUpError = getErrorResponse();
+
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { signUpError },
+            });
+
+            expect(selector.getSignUpError()).toEqual(signUpError);
+        });
+
+        it('does not return error if able to sign up', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.getSignUpError()).toBeUndefined();
         });
     });
 
@@ -113,6 +151,23 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#isContinuingAsGuest()', () => {
+        it('returns true if shopper continues as guest', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { isContinuingAsGuest: true },
+            });
+
+            expect(selector.isContinuingAsGuest()).toEqual(true);
+        });
+
+        it('returns false if shopper has not signed in', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.isContinuingAsGuest()).toEqual(false);
+        });
+    });
+
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
             selector = createCustomerStrategySelector({
@@ -144,6 +199,23 @@ describe('CustomerStrategySelector', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.isSigningOut()).toEqual(false);
+        });
+    });
+
+    describe('#isSigningUp()', () => {
+        it('returns true if signing up', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { isSigningUp: true },
+            });
+
+            expect(selector.isSigningUp()).toEqual(true);
+        });
+
+        it('returns false if not signing up', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.isSigningUp()).toEqual(false);
         });
     });
 
