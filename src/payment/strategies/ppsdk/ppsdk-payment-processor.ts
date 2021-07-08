@@ -3,7 +3,7 @@ import { PPSDKPaymentMethod } from '../../ppsdk-payment-method';
 
 export interface ProcessorSettings {
     paymentMethod: PPSDKPaymentMethod;
-    payment: OrderPaymentRequestBody | undefined;
+    payment?: OrderPaymentRequestBody;
     bigpayBaseUrl: string;
 }
 
