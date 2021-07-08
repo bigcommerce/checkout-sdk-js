@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.162.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.162.0...v1.162.1) (2021-07-08)
+
+
+### Bug Fixes
+
+* **payment:** INT-4448 Braintree cardTypeChange event ([0ca0018](https://github.com/bigcommerce/checkout-sdk-js/commit/0ca0018f3e6125539c7397c7ccc742d3ab034285))
+
 ## [1.162.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.161.0...v1.162.0) (2021-07-06)
 
 
