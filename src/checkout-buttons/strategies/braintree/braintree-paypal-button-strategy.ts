@@ -12,9 +12,11 @@ import { BraintreeError,
     BraintreeTokenizePayload,
     PaypalClientInstance,
     RenderButtonsData } from '../../../payment/strategies/braintree';
-import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
+import { PaypalAuthorizeData, PaypalButtonStyleOptions, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+
+import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
 
 export default class BraintreePaypalButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCheckout?: BraintreePaypalCheckout;
@@ -64,6 +66,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
         const { paypalOptions, paymentMethod, container } = this._renderButtonsData as RenderButtonsData;
         const { paypal } = this._window;
+        let updatedPaypalOptions: BraintreePaypalButtonInitializeOptions;
 
         if (paypal) {
             const FUNDING_SOURCES = [];
@@ -77,6 +80,10 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 }
             }
 
+            if (paypalOptions) {
+                 updatedPaypalOptions = this._validateHeight(paypalOptions);
+            }
+
             FUNDING_SOURCES.forEach(source => {
                 const button = paypal.Buttons({
                     env: paymentMethod.config.testMode ? 'sandbox' : 'production',
@@ -85,7 +92,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     style: {
                         shape: 'rect',
                         label: this._offerCredit ? 'credit' : undefined,
-                        ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
+                        ...pick(updatedPaypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons', 'height'),
                     },
                     createOrder: () => this._setupPayment(paypalCheckoutInstance, paypalOptions.shippingAddress, paypalOptions.onPaymentError),
                     onApprove: (data: PaypalAuthorizeData) => this._tokenizePayment(data, paypalCheckoutInstance, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
@@ -105,6 +112,24 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         this._braintreeSDKCreator.teardown();
 
         return Promise.resolve();
+    }
+
+    private _validateHeight(paypalOptions: BraintreePaypalButtonInitializeOptions): BraintreePaypalButtonInitializeOptions {
+        const updatedPaypalOptions = {...paypalOptions};
+        const { style } = updatedPaypalOptions;
+        const { height } = style as PaypalButtonStyleOptions;
+
+        if (updatedPaypalOptions.style) {
+            if (typeof height === 'number') {
+                updatedPaypalOptions.style.height = height < 25
+                    ? 25
+                    : (height > 55 ? 55 : height);
+            } else {
+                delete updatedPaypalOptions.style.height;
+            }
+        }
+
+        return updatedPaypalOptions;
     }
 
     private _setupPayment(
