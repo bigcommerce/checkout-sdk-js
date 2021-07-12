@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.163.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.162.1...v1.163.0) (2021-07-12)
+
+
+### Features
+
+* **payment:** PAYMENTS-6811 map failure codes to RequestError error codes ([#1173](https://github.com/bigcommerce/checkout-sdk-js/issues/1173)) ([597ba5d](https://github.com/bigcommerce/checkout-sdk-js/commit/597ba5deebc0528586d591c2c2741d9534d98348))
+* **payment:** PAYMENTS-6814 add NonePaymentProcessor test ([#1176](https://github.com/bigcommerce/checkout-sdk-js/issues/1176)) ([8dc9e6f](https://github.com/bigcommerce/checkout-sdk-js/commit/8dc9e6f00a3b45fab2ef28cddff4d0bf89474c6e))
+
 ### [1.162.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.162.0...v1.162.1) (2021-07-08)
 
 
