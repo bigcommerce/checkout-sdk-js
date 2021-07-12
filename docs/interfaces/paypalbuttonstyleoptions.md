@@ -12,6 +12,7 @@
 
 * [color](paypalbuttonstyleoptions.md#optional-color)
 * [fundingicons](paypalbuttonstyleoptions.md#optional-fundingicons)
+* [height](paypalbuttonstyleoptions.md#optional-height)
 * [label](paypalbuttonstyleoptions.md#optional-label)
 * [layout](paypalbuttonstyleoptions.md#optional-layout)
 * [shape](paypalbuttonstyleoptions.md#optional-shape)
@@ -29,6 +30,12 @@ ___
 ### `Optional` fundingicons
 
 • **fundingicons**? : *undefined | false | true*
+
+___
+
+### `Optional` height
+
+• **height**? : *undefined | number*
 
 ___
 

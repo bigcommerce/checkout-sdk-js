@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.164.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.163.0...v1.164.0) (2021-07-12)
+
+
+### Features
+
+* **payment:** PAYPAL-1026 fixed braintree button height ([#1169](https://github.com/bigcommerce/checkout-sdk-js/issues/1169)) ([67aa575](https://github.com/bigcommerce/checkout-sdk-js/commit/67aa575b20d0e17d0305fa41ca4d51cccd2e67e0))
+
 ## [1.163.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.162.1...v1.163.0) (2021-07-12)
 
 
