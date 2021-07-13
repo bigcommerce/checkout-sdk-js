@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.164.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.164.0...v1.164.1) (2021-07-13)
+
+
+### Bug Fixes
+
+* **payment:** INT-4087 Send the client token back to update the payment intent related for StripeV3 ([#1164](https://github.com/bigcommerce/checkout-sdk-js/issues/1164)) ([97417ab](https://github.com/bigcommerce/checkout-sdk-js/commit/97417ab13d00930158351e9480e404c9e187e623))
+
 ## [1.164.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.163.0...v1.164.0) (2021-07-12)
 
 
