@@ -2,14 +2,16 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
@@ -45,9 +47,11 @@ describe('StripeV3PaymentStrategy', () => {
     let stripeScriptLoader: StripeV3ScriptLoader;
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let formFactory: HostedFormFactory;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+        formFactory = new HostedFormFactory(store);
         const requestSender = createRequestSender();
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const scriptLoader = createScriptLoader();
@@ -106,6 +110,7 @@ describe('StripeV3PaymentStrategy', () => {
             orderActionCreator,
             stripeScriptLoader,
             storeCreditActionCreator,
+            formFactory,
             'en_US'
         );
     });
@@ -219,6 +224,61 @@ describe('StripeV3PaymentStrategy', () => {
 
             await expect(strategy.initialize(options))
                 .rejects.toThrow(InvalidArgumentError);
+        });
+
+        describe('mounts hosted field verfication for TSV', () => {
+            let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+            let initializeOptions: PaymentInitializeOptions;
+            let state: InternalCheckoutSelectors;
+            const tsvFormActive = true;
+
+            beforeEach(() => {
+                jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+                form = {
+                    attach: jest.fn(() => Promise.resolve()),
+                    submit: jest.fn(() => Promise.resolve()),
+                    validate: jest.fn(() => Promise.resolve()),
+                };
+
+                initializeOptions = getStripeV3InitializeOptionsMockSingleElements(false, tsvFormActive);
+                state = store.getState();
+
+                jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(merge(
+                        getStripeV3('card', true),
+                        { config: { isHostedFormEnabled: true } }
+                    ));
+
+                jest.spyOn(formFactory, 'create')
+                    .mockReturnValue(form);
+            });
+
+            it('creates hosted form', async () => {
+                await strategy.initialize(initializeOptions);
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(formFactory.create)
+                    .toHaveBeenCalledWith(
+                        'https://bigpay.integration.zone',
+                        // tslint:disable-next-line:no-non-null-assertion
+                        initializeOptions.stripev3!.form!
+                    );
+            });
+
+            it('attaches hosted form to container', async () => {
+                await strategy.initialize(initializeOptions);
+
+                expect(form.attach)
+                    .toHaveBeenCalled();
+            });
+
+            it('validates user input before submitting data', async () => {
+                await strategy.initialize(initializeOptions);
+                await strategy.execute(getStripeV3OrderRequestBodyVaultMock());
+
+                expect(form.validate)
+                    .toHaveBeenCalled();
+            });
         });
     });
 

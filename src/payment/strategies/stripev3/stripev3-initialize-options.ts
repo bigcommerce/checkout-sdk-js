@@ -1,3 +1,5 @@
+import { HostedFormOptions } from '../../../hosted-form';
+
 import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
 
 /**
@@ -52,4 +54,6 @@ export default interface StripeV3PaymentInitializeOptions {
     containerId: string;
 
     options?: StripeElementOptions | IndividualCardElementOptions;
+
+    form?: HostedFormOptions;
 }
