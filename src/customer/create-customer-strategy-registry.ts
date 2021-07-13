@@ -9,6 +9,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
+import { BoltScriptLoader } from '../payment/strategies/bolt';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
@@ -22,6 +23,7 @@ import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
+import { BoltCustomerStrategy } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
@@ -42,6 +44,15 @@ export default function createCustomerStrategyRegistry(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const formPoster = createFormPoster();
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(
+        createSpamProtection(scriptLoader),
+        new SpamProtectionRequestSender(requestSender)
+    );
+    const customerActionCreator = new CustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+        checkoutActionCreator,
+        spamProtectionActionCreator
+    );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
@@ -86,6 +97,15 @@ export default function createCustomerStrategyRegistry(
             remoteCheckoutActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
             new VisaCheckoutScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register('bolt', () =>
+        new BoltCustomerStrategy(
+            store,
+            new BoltScriptLoader(scriptLoader),
+            paymentMethodActionCreator,
+            customerActionCreator
         )
     );
 
@@ -195,14 +215,7 @@ export default function createCustomerStrategyRegistry(
     registry.register('default', () =>
         new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(
-                new CustomerRequestSender(requestSender),
-                checkoutActionCreator,
-                new SpamProtectionActionCreator(
-                    createSpamProtection(scriptLoader),
-                    new SpamProtectionRequestSender(requestSender)
-                )
-            )
+            customerActionCreator
         )
     );
 

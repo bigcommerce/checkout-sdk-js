@@ -22,9 +22,9 @@ describe('DefaultCustomerStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         const requestSender = createRequestSender();
-        const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
         const scriptLoader = new ScriptLoader();
-        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
+        const googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, googleRecaptchaMockWindow);
         const mutationObserverFactory = new MutationObserverFactory();
         const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
 
@@ -40,6 +40,19 @@ describe('DefaultCustomerStrategy', () => {
                 new SpamProtectionRequestSender(requestSender)
             )
         );
+    });
+
+    it('runs fallback automatically on customer continue', async () => {
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
+
+        const mockFallback = jest.fn();
+
+        jest.spyOn(store, 'dispatch');
+
+        const output = await strategy.customerContinue({ fallback: mockFallback });
+
+        expect(mockFallback.mock.calls.length).toBe(1);
+        expect(output).toEqual(store.getState());
     });
 
     it('dispatches action to sign in customer', async () => {

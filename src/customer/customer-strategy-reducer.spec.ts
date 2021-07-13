@@ -125,6 +125,49 @@ describe('customerStrategyReducer()', () => {
         });
     });
 
+    it('returns the pending flag as true if the customer continue', () => {
+        const action = createAction(
+            CustomerStrategyActionType.CustomerContinueRequested,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            customerContinueMethodId: 'foobar',
+            isCustomerContinuing: true,
+        });
+    });
+
+    it('returns the pending flag as false if the customer has continued successfully', () => {
+        const action = createAction(
+            CustomerStrategyActionType.CustomerContinueSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            customerContinueMethodId: undefined,
+            isCustomerContinuing: false,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isCustomerContinuing: false,
+        });
+    });
+
+    it('returns error if customer has failed to continue', () => {
+        const action = createErrorAction(
+            CustomerStrategyActionType.CustomerContinueFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            customerContinueMethodId: 'foobar',
+            customerContinueError: action.payload,
+        });
+    });
+
     it('returns pending flag as true if signing in customer', () => {
         const action = createAction(
             CustomerStrategyActionType.SignInRequested,

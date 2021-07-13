@@ -73,6 +73,19 @@ function errorsReducer(
             deinitializeMethodId: action.meta && action.meta.methodId,
         });
 
+    case CustomerStrategyActionType.CustomerContinueRequested:
+    case CustomerStrategyActionType.CustomerContinueSucceeded:
+        return objectMerge(errors, {
+            customerContinueError: undefined,
+            customerContinueMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.CustomerContinueFailed:
+        return objectMerge(errors, {
+            customerContinueError: action.payload,
+            customerContinueMethodId: action.meta && action.meta.methodId,
+        });
+
     case CustomerStrategyActionType.SignInRequested:
     case CustomerStrategyActionType.SignInSucceeded:
         return objectMerge(errors, {
@@ -146,6 +159,19 @@ function statusesReducer(
         return objectMerge(statuses, {
             isDeinitializing: false,
             deinitializeMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.CustomerContinueRequested:
+        return objectMerge(statuses, {
+            isCustomerContinuing: true,
+            customerContinueMethodId: action.meta && action.meta.methodId,
+        });
+
+    case CustomerStrategyActionType.CustomerContinueFailed:
+    case CustomerStrategyActionType.CustomerContinueSucceeded:
+        return objectMerge(statuses, {
+            isCustomerContinuing: false,
+            customerContinueMethodId: undefined,
         });
 
     case CustomerStrategyActionType.SignInRequested:

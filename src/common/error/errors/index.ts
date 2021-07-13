@@ -11,6 +11,7 @@ export { default as StorefrontRequestError } from './map-from-storefront-error-r
 export { default as TimeoutError } from './timeout-error';
 export { default as UnrecoverableError } from './unrecoverable-error';
 export { default as UnsupportedBrowserError } from './unsupported-browser-error';
+export { default as UnhandledExternalError } from './unhandeled_external_error';
 
 export { default as mapFromInternalErrorResponse } from './map-from-internal-error-response';
 export { default as mapFromPaymentErrorResponse } from './map-from-payment-error-response';

@@ -19,13 +19,17 @@ export interface CustomerStrategyErrorsState {
     signInMethodId?: string;
     signOutError?: Error;
     signOutMethodId?: string;
+    customerContinueError?: Error;
+    customerContinueMethodId?: string;
     widgetInteractionError?: Error;
     widgetInteractionMethodId?: string;
 }
 
 export interface CustomerStrategyStatusesState {
+    customerContinueMethodId?: string;
     deinitializeMethodId?: string;
     initializeMethodId?: string;
+    isCustomerContinuing?: boolean;
     isDeinitializing?: boolean;
     isInitializing?: boolean;
     isSigningIn?: boolean;

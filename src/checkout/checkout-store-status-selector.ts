@@ -150,6 +150,18 @@ export default interface CheckoutStoreStatusSelector {
     isInitializingCustomer(methodId?: string): boolean;
 
     /**
+     * Checks whether the current customer is continuing with custom flow.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * signing in using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for continuing the
+     * current customer.
+     * @returns True if the customer is continuing with custom flow, otherwise false.
+     */
+    isCustomerContinuing(methodId?: string): boolean;
+
+    /**
      * Checks whether shipping options are loading.
      *
      * @returns True if shipping options are loading, otherwise false.
@@ -447,6 +459,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,
+            isCustomerContinuing: state.customerStrategies.isCustomerContinuing,
             isInitializingCustomer: state.customerStrategies.isInitializing,
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),

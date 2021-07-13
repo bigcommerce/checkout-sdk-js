@@ -15,6 +15,25 @@ describe('CustomerStrategySelector', () => {
         };
     });
 
+    describe('#getCustomerContinueError()', () => {
+        it('returns error if unable to continue', () => {
+            const customerContinueError = getErrorResponse();
+
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { customerContinueError },
+            });
+
+            expect(selector.getCustomerContinueError()).toEqual(customerContinueError);
+        });
+
+        it('does not returns error if able to continue', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.getCustomerContinueError()).toBeUndefined();
+        });
+    });
+
     describe('#getSignInError()', () => {
         it('returns error if unable to sign in', () => {
             const signInError = getErrorResponse();
@@ -110,6 +129,23 @@ describe('CustomerStrategySelector', () => {
             });
 
             expect(selector.getWidgetInteractionError()).toEqual(undefined);
+        });
+    });
+
+    describe('#isCustomerContinuing()', () => {
+        it('returns true if shopper continuing', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { isCustomerContinuing: true },
+            });
+
+            expect(selector.isCustomerContinuing()).toEqual(true);
+        });
+
+        it('returns false if shopper has not continued', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.isCustomerContinuing()).toEqual(false);
         });
     });
 
