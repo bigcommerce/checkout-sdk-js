@@ -360,6 +360,28 @@ describe('StripeV3PaymentStrategy', () => {
                     expect(response).toBe(store.getState());
                 });
 
+                it('submit payment with credit card and passes back the client token', async () => {
+                    await strategy.initialize(options);
+                    const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
+
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            methodId: 'card',
+                            paymentData: expect.objectContaining({
+                                formattedPayload: {
+                                    credit_card_token: {
+                                        token: 'pm_1234',
+                                    },
+                                    confirm: false,
+                                    client_token: 'myToken',
+                                    vault_payment_instrument: false,
+                                },
+                            }),
+                        })
+                    );
+                    expect(response).toBe(store.getState());
+                });
+
                 it('with a signed user without phone number', async () => {
                     const customer = getCustomer();
                     customer.addresses[0].phone = '';
