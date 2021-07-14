@@ -4,6 +4,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import { getPPSDKPaymentId } from './get-ppsdk-payment-id';
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PaymentProcessor } from './ppsdk-payment-processor';
 import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
@@ -55,13 +56,10 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
-        const orderPayments = this._store.getState().order.getOrder()?.payments;
-        const currentPayment = orderPayments?.find(({ providerId }) => providerId === options.methodId);
-        const paymentId = currentPayment?.paymentId;
-        const paymentMethod = getPPSDKMethod(this._store, options.methodId);
+        const paymentId = getPPSDKPaymentId(this._store, options.methodId);
         const paymentResumer = this._paymentProcessorRegistry.get(PaymentProcessorType.RESUME);
 
-        if (!paymentId || !paymentResumer || !paymentMethod) {
+        if (!paymentId || !paymentResumer) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
