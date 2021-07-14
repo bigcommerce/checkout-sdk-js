@@ -8,7 +8,7 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, Chec
 import { getCheckoutState, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
@@ -40,21 +40,29 @@ describe('SquarePaymentStrategy', () => {
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
 
-    const formFactory = (options: SquareFormOptions) => {
+    const formFactory = jest.fn((options: SquareFormOptions) => {
         if (options.callbacks) {
             callbacks = options.callbacks;
         }
 
         return squareForm;
-    };
+    });
 
     const squareForm = {
-        build: () => {
+        build: jest.fn(() => {
             if (callbacks.paymentFormLoaded) {
                 callbacks.paymentFormLoaded({} as SquarePaymentForm);
             }
-        },
-        requestCardNonce: () => {},
+        }),
+        requestCardNonce: jest.fn(() => {
+            if (callbacks.cardNonceResponseReceived) {
+                callbacks.cardNonceResponseReceived(undefined, 'nonce');
+            }
+        }),
+        setPostalCode: jest.fn(),
+        verifyBuyer: jest.fn((_nonce, _verificationDetails, callback) => {
+            callback({}, { token: '1234' });
+        }),
     };
 
     const squareOptions = {
@@ -66,11 +74,11 @@ describe('SquarePaymentStrategy', () => {
 
     beforeEach(() => {
         store = createCheckoutStore({
+            ...getCheckoutStoreState(),
             paymentMethods: getPaymentMethodsState(),
             checkout: getCheckoutState(),
             config: getConfigState(),
             formFields: getFormFieldsState(),
-            billingAddress: getCheckoutStoreState().billingAddress,
         });
         orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentMethod = getSquare();
@@ -79,6 +87,7 @@ describe('SquarePaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const storeConfig = getConfig().storeConfig;
 
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
@@ -124,12 +133,11 @@ describe('SquarePaymentStrategy', () => {
             .mockReturnValue(submitPaymentAction);
 
         jest.spyOn(store, 'dispatch');
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+            .mockReturnValue(storeConfig);
 
         jest.spyOn(scriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(formFactory));
-
-        jest.spyOn(squareForm, 'build');
-        jest.spyOn(squareForm, 'requestCardNonce');
+            .mockReturnValue(formFactory);
 
         (scriptLoader.load as jest.Mock).mockClear();
         (squareForm.build as jest.Mock).mockClear();
@@ -178,9 +186,6 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('Creates Payload', () => {
-                    jest.spyOn(store.getState().checkout, 'getCheckout')
-                    .mockReturnValue(getSquarePaymentInitializeOptions());
-
                     if (callbacks.createPaymentRequest) {
                         callbacks.createPaymentRequest();
                     }
@@ -189,41 +194,31 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('Fails because no checkout information is present' , () => {
-                    store = createCheckoutStore({});
+                    jest.spyOn(store.getState().checkout, 'getCheckout')
+                    .mockReturnValueOnce(undefined);
 
                     if (callbacks.createPaymentRequest) {
-                        try {
-                            callbacks.createPaymentRequest();
-                        } catch (error) {
-                            expect(error).toBeInstanceOf(MissingDataError);
-                        }
+                        return expect(callbacks.createPaymentRequest).toThrowError(MissingDataError);
                     }
                 });
             });
         });
 
         describe('when form fails to load', () => {
-            beforeEach(() => {
-                jest.spyOn(squareForm, 'build').mockImplementation(() => {
+            it('rejects the promise', async () => {
+                squareForm.build.mockImplementationOnce(() => {
                     if (callbacks.unsupportedBrowserDetected) {
                         callbacks.unsupportedBrowserDetected();
                     }
                 });
-            });
 
-            afterEach(() => (squareForm.build as any).mockRestore());
-
-            it('rejects the promise', () => {
                 const initOptions = {
                     methodId: paymentMethod.id,
                     square: squareOptions,
                 };
 
-                strategy.initialize(initOptions)
+                await strategy.initialize(initOptions)
                     .catch(e => expect(e).toBeInstanceOf(UnsupportedBrowserError));
-
-                expect(scriptLoader.load).toHaveBeenCalledTimes(1);
-                expect(squareForm.build).toHaveBeenCalledTimes(0);
             });
         });
     });
@@ -236,15 +231,6 @@ describe('SquarePaymentStrategy', () => {
         };
         const cardData = getCardData();
 
-        describe('when form has not been initialized', () => {
-            it('rejects the promise', () => {
-                strategy.execute(payload)
-                    .catch(e => expect(e).toBeInstanceOf(NotInitializedError));
-
-                expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
-            });
-        });
-
         describe('when the form has been initialized', () => {
             beforeEach(async () => {
                 const initOptions = {
@@ -255,30 +241,33 @@ describe('SquarePaymentStrategy', () => {
                 await strategy.initialize(initOptions);
             });
 
-            it('fails if payment name is not passed', () => {
-                try {
-                    strategy.execute({});
-                } catch (error) {
-                    expect(error).toBeInstanceOf(InvalidArgumentError);
-                    expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
-                }
+            afterEach(() => {
+                jest.restoreAllMocks();
             });
 
-            it('requests the nonce', () => {
-                strategy.execute(payload);
+            it('fails if payment is not passed', () => {
+                return expect(strategy.execute({})).rejects.toBeInstanceOf(InvalidArgumentError);
+            });
+
+            it('requests the nonce', async () => {
+                await strategy.execute(payload);
+
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(1);
             });
 
-            it('cancels the first request when a newer is made', async () => {
-                strategy.execute(payload).catch(e => expect(e).toBeInstanceOf(TimeoutError));
+            it('cancels the first request when a newer is made', () => {
+                squareForm.requestCardNonce.mockImplementationOnce(() => {
+                    setTimeout(() => {
+                        if (callbacks.cardNonceResponseReceived) {
+                            callbacks.cardNonceResponseReceived(undefined, 'nonce');
+                        }
+                    }, 0);
+                });
 
-                setTimeout(() => {
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(undefined, 'nonce');
-                    }
-                }, 0);
-
-                await strategy.execute(payload);
+                return Promise.all([
+                    expect(strategy.execute(payload)).rejects.toBeInstanceOf(TimeoutError),
+                    strategy.execute(payload),
+                ]);
             });
 
             describe('when the nonce is received', () => {
@@ -286,13 +275,10 @@ describe('SquarePaymentStrategy', () => {
 
                 beforeEach(() => {
                     promise = strategy.execute({ payment: { methodId: 'square' }, useStoreCredit: true });
-
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(undefined, 'nonce');
-                    }
                 });
 
-                it('places the order with the right arguments', () => {
+                it('places the order with the right arguments', async () => {
+                    await promise;
                     expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: true }, undefined);
                     expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
                 });
@@ -303,7 +289,8 @@ describe('SquarePaymentStrategy', () => {
                     expect(value).toEqual(store.getState());
                 });
 
-                it('submits the payment  with the right arguments', () => {
+                it('submits the payment  with the right arguments', async () => {
+                    await promise;
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                         methodId: 'square',
                         paymentData: {
@@ -314,12 +301,6 @@ describe('SquarePaymentStrategy', () => {
             });
 
             describe('when a failure happens receiving the nonce', () => {
-                beforeEach(() => {
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(undefined, 'nonce', cardData, undefined, undefined);
-                    }
-                });
-
                 it('does not place the order', () => {
                     expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(0);
                     expect(store.dispatch).not.toHaveBeenCalledWith(submitOrderAction);
@@ -333,76 +314,118 @@ describe('SquarePaymentStrategy', () => {
             describe('when cardNonceResponseReceived returns errors and callback is passed', () => {
                 const catchSpy = jest.fn();
 
-                beforeEach(async () => {
+                it('calls onError callback and throws', async () => {
+                    squareForm.requestCardNonce.mockImplementationOnce(() => {
+                        if (callbacks.cardNonceResponseReceived) {
+                            callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
+                        }
+                    });
+
                     await strategy.initialize(initOptions);
-
-                    strategy.execute(payload).catch(catchSpy);
-
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
-                    }
-                });
-
-                it('calls onError callback', () => {
+                    await strategy.execute(payload).catch(catchSpy);
                     // tslint:disable-next-line:no-non-null-assertion
                     expect(initOptions.square!.onError).toHaveBeenCalled();
-                });
-
-                it('rejects the promise', () => {
                     expect(catchSpy).toHaveBeenCalled();
                 });
             });
 
             describe('when cardNonceResponseReceived returns errors and no callback is passed', () => {
-                const catchSpy = jest.fn();
+                it('rejects the promise', async () => {
+                    try {
+                        squareForm.requestCardNonce.mockImplementationOnce(() => {
+                            if (callbacks.cardNonceResponseReceived) {
+                                callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), '', undefined, undefined, undefined);
+                            }
+                        });
 
-                beforeEach(async () => {
-                    await strategy.initialize({
-                        ...initOptions,
-                        square: {
-                            // tslint:disable-next-line:no-non-null-assertion
-                            ...initOptions.square!,
-                            onError: undefined,
-                        },
-                    });
-
-                    strategy.execute(payload).catch(catchSpy);
-
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
+                        await strategy.initialize({
+                            ...initOptions,
+                            square: {
+                                // tslint:disable-next-line:no-non-null-assertion
+                                ...initOptions.square!,
+                                onError: undefined,
+                            },
+                        });
+                        await strategy.execute(payload);
+                    } catch (e) {
+                        expect(e).toEqual([{field: 'some-field', message: 'some-message', type: 'some-type'}]);
                     }
-                });
-
-                it('rejects the promise', () => {
-                    expect(catchSpy).toHaveBeenCalled();
                 });
             });
 
             describe('when the nonce is received', () => {
                 const payloadVaulted = getPayloadVaulted();
 
-                beforeEach(async () => {
-                    await strategy.initialize(initOptions);
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(undefined, 'nonce', cardData, undefined, undefined);
-                    }
-                });
-
                 it('calls submit order with the order request information for masterpass', async () => {
+                    await strategy.initialize(initOptions);
                     cardData.digital_wallet_type = DigitalWalletType.none;
 
-                    const promise: Promise<InternalCheckoutSelectors> = strategy.execute(payloadVaulted, initOptions);
-                    if (callbacks.cardNonceResponseReceived) {
-                        callbacks.cardNonceResponseReceived(undefined, 'nonce', cardData, undefined, undefined);
-                    }
+                    await strategy.execute(payloadVaulted, initOptions);
                     jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getSquarePaymentInitializeOptions());
-                    await promise.then(() => {
-                        expect(store.dispatch).toHaveBeenCalledTimes(3);
-                        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: true }, initOptions);
-                        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'square', paymentData: { nonce: 'nonce' }});
+
+                    expect(store.dispatch).toHaveBeenCalledTimes(2);
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: true }, initOptions);
+                    expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'square', paymentData: { nonce: 'nonce' }});
+                });
+            });
+
+            describe('verifyBuyer', () => {
+                beforeEach(() => {
+                    jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                        .mockReturnValue({
+                            ...getConfig().storeConfig,
+                            checkoutSettings: {
+                                ...getConfig().storeConfig.checkoutSettings,
+                                features: {
+                                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
+                                },
+                            },
+                        });
+                });
+
+                afterEach(() => {
+                    jest.restoreAllMocks();
+                });
+
+                it('call verifyBuyer', async () => {
+                    const response = await strategy.execute(payload);
+                    expect(squareForm.verifyBuyer).toHaveBeenCalled();
+                    expect(response).toEqual(store.getState());
+                });
+
+                it('rejects when veirfyBuyerFails', () => {
+                    squareForm.verifyBuyer.mockImplementationOnce((_nonce, _verificationDetails, cb) => {
+                        cb({ message: 'an error', type: 'error' });
+                    });
+
+                    return expect(strategy.execute(payload)).rejects.toEqual({ message: 'an error', type: 'error' });
+                });
+
+                it('submits the payment  with the right arguments and experiment is on ', async () => {
+                    await strategy.initialize(initOptions);
+                    await strategy.execute(payload);
+
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                        methodId: 'square',
+                        paymentData: {
+                            nonce: 'nonce',
+                            token: '1234',
+                        },
                     });
                 });
+            });
+        });
+
+        describe('when form has not been initialized', () => {
+            afterEach(() => {
+                jest.restoreAllMocks();
+            });
+
+            it('rejects the promise', () => {
+                formFactory.mockImplementationOnce(() => undefined);
+
+                return expect(strategy.execute(payload)).rejects.toBeInstanceOf(NotInitializedError);
             });
         });
     });
