@@ -1,6 +1,5 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
-import { omit } from 'lodash';
-import { noop } from 'rxjs';
+import { isEmpty, noop, omit } from 'lodash';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
@@ -14,7 +13,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Contact, DigitalWalletType, NonceGenerationError, SquareFormElement, SquareFormOptions, SquarePaymentRequest } from './square-form';
+import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, NonceGenerationError, SquareFormElement, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
 import SquareScriptLoader from './square-script-loader';
 
@@ -35,37 +34,43 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         private _scriptLoader: SquareScriptLoader
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
+        const { square: squareOptions } = options;
+
+        if (!squareOptions) {
+            throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');
+        }
+
+        this._squareOptions = squareOptions;
 
         this._syncPaymentMethod(methodId);
 
-        return this._scriptLoader.load()
-            .then(createSquareForm =>
-                new Promise((resolve, reject) => {
-                    this._paymentForm = createSquareForm(
-                        this._getFormOptions(options, { resolve, reject })
-                    );
-                    this._paymentForm.build();
-                }))
-            .then(() => this._store.getState());
+        return new Promise(async (resolve, reject) => {
+            const createSquareForm = await this._scriptLoader.load();
+
+            this._paymentForm = createSquareForm(
+                this._getFormOptions({ resolve, reject })
+            );
+
+            this._getPaymentForm().build();
+        }).then(() => this._store.getState());
     }
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = orderRequest;
-
         if (!payment || !payment.methodId) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
         }
 
         this._syncPaymentMethod(payment.methodId);
 
-        return this._getNonceInstrument(payment.methodId)
-            .then(paymentData =>
-                this._store.dispatch(this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options))
-                .then(() =>
-                    this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
-                ));
+        const paymentData = await this._getNonceInstrument(payment.methodId);
+
+        await this._store.dispatch(this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options));
+        await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData}));
+
+        return this._store.getState();
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -78,9 +83,9 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
 
     private _syncPaymentMethod(methodId: string): void {
         const state = this._store.getState();
-        this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+        if (!this._paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
     }
@@ -108,42 +113,41 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         }
 
         return new Promise<NonceInstrument>((resolve, reject) => {
-            if (!this._paymentForm) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
-
             if (this._deferredRequestNonce) {
                 this._deferredRequestNonce.reject(new TimeoutError());
             }
 
             this._deferredRequestNonce = { resolve, reject };
-            this._paymentForm.requestCardNonce();
+            this._getPaymentForm().requestCardNonce();
         });
     }
 
-    private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): SquareFormOptions {
-        const { square: squareOptions } = options;
-
-        if (!squareOptions || !this._paymentMethod) {
-            throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');
-        }
-
-        this._squareOptions = squareOptions;
+    private _getFormOptions(deferred: DeferredPromise): SquareFormOptions {
 
         return {
-            ...this._squareOptions,
-            ...this._paymentMethod.initializationData,
+            ...this._getInitializeOptions(),
+            ...this._paymentMethod?.initializationData,
             callbacks: {
-                cardNonceResponseReceived: (errors, nonce, cardData, billingContact, shippingContact) => {
-                    if (cardData && cardData.digital_wallet_type !== DigitalWalletType.none) {
-                        this._handleWalletNonceResponse(errors, nonce, cardData, billingContact, shippingContact);
-                    } else {
-                        this._handleCardNonceResponse(errors, nonce);
-                    }
+                cardNonceResponseReceived: (errors, nonce = '', cardData, billingContact, shippingContact) => {
+                    this._getPaymentForm().verifyBuyer(
+                        nonce,
+                        this._getVerificationDetails(),
+                        (error: SquareVerificationError, verificationResults: SquareVerificationResult) => {
+                            if (!isEmpty(error)) {
+                                this._getDeferredRequestNonce().reject(error);
+                            } else {
+                                if (cardData && cardData.digital_wallet_type !== DigitalWalletType.none) {
+                                    this._handleWalletNonceResponse(errors, nonce, cardData, billingContact, shippingContact);
+                                } else {
+                                    this._handleCardNonceResponse(errors, nonce, verificationResults.token);
+                                }
+                            }
+                        }
+                    );
                 },
-                createPaymentRequest: () => this._paymentRequestPayload(),
+                createPaymentRequest: this._paymentRequestPayload.bind(this),
                 methodsSupported: methods => {
-                    const { masterpass } = squareOptions;
+                    const { masterpass } = this._getInitializeOptions() ;
 
                     if (masterpass) {
                         this._showPaymentMethods(methods, masterpass);
@@ -158,16 +162,23 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         };
     }
 
+    private _getInitializeOptions(): SquarePaymentInitializeOptions {
+        if (!this._squareOptions) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._squareOptions;
+    }
+
     private _handleWalletNonceResponse(
-        errors?: NonceGenerationError[],
-        nonce?: string,
-        cardData?: CardData,
+        errors: NonceGenerationError[] | undefined,
+        nonce: string,
+        cardData: CardData,
         billingContact?: Contact,
         shippingContact?: Contact
     ): void {
         const onError = this._squareOptions && this._squareOptions.onError || noop;
         const onPaymentSelect = this._squareOptions && this._squareOptions.onPaymentSelect || noop;
-
         if (errors) {
             onError(errors);
         } else if (nonce && this._paymentMethod) {
@@ -183,22 +194,20 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _handleCardNonceResponse(errors?: NonceGenerationError[], nonce?: string): void {
-        if (!this._deferredRequestNonce) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
+    private _handleCardNonceResponse(errors?: NonceGenerationError[], nonce?: string, token?: string): void {
+        const deferredRequest = this._getDeferredRequestNonce();
 
-        if (nonce && !errors) {
-            this._deferredRequestNonce.resolve({ nonce });
+        if (nonce && token && !errors) {
+            deferredRequest.resolve({ nonce, token });
 
             return;
         }
 
-        const onError = this._squareOptions && this._squareOptions.onError || noop;
+        const onError = this._squareOptions?.onError || noop;
 
         onError(errors);
 
-        this._deferredRequestNonce.reject(errors);
+        deferredRequest.reject(errors);
     }
 
     private _paymentInstrumentSelected(
@@ -221,14 +230,10 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
     private _paymentRequestPayload(): SquarePaymentRequest {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
-        const storeConfig = state.config.getStoreConfig();
+        const storeConfig = state.config.getStoreConfigOrThrow();
 
         if (!checkout) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-        }
-
-        if (!storeConfig) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
         return {
@@ -265,12 +270,8 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         const state = this._store.getState();
         const billingAddress = state.billingAddress.getBillingAddress();
 
-        if (!this._paymentForm) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
         if (billingAddress && billingAddress.postalCode) {
-            this._paymentForm.setPostalCode(billingAddress.postalCode);
+            this._getPaymentForm().setPostalCode(billingAddress.postalCode);
         }
     }
 
@@ -281,9 +282,58 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             masterpassBtn.style.display = 'inline-block';
         }
     }
-}
 
-export interface DeferredPromise {
-    resolve(resolution?: NonceInstrument): void;
-    reject(reason?: any): void;
+    private _getBillingContact(): Contact {
+        const state = this._store.getState();
+        const billingAddress = state.billingAddress.getBillingAddressOrThrow();
+
+        return {
+            givenName: billingAddress.firstName,
+            familyName: billingAddress.lastName,
+            email: billingAddress.email || '',
+            country: billingAddress.countryCode,
+            countryName: billingAddress.country,
+            region: '',
+            city: billingAddress.city,
+            postalCode: billingAddress.postalCode,
+            addressLines: [ billingAddress.address1, billingAddress.address2],
+            phone: billingAddress.phone,
+        };
+    }
+
+    private _getAmountAndCurrencyCode(): string[] {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+        const checkout = state.checkout.getCheckoutOrThrow();
+
+        return [String(checkout.grandTotal), storeConfig.currency.code];
+    }
+
+    private _getVerificationDetails(): VerificationDetails {
+        const billingContact = this._getBillingContact();
+        const [ amount, currencyCode ] = this._getAmountAndCurrencyCode();
+
+        return  {
+            intent: SquareIntent.CHARGE,
+            currencyCode,
+            amount,
+            billingContact,
+        };
+    }
+
+    private _getDeferredRequestNonce(): DeferredPromise {
+        if (!this._deferredRequestNonce) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._deferredRequestNonce;
+    }
+
+    private _getPaymentForm(): SquarePaymentForm {
+        if (!this._paymentForm) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._paymentForm;
+    }
 }
