@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -74,6 +76,12 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         }
 
         if (this._redirectFlowIsTrue()) {
+            const redirectUrl = this._paymentMethod?.initializationData?.redirectUrl;
+
+            if (!redirectUrl) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
             let nonce: { id: string };
             try {
                 nonce = JSON.parse(this._paymentMethod.clientToken);
@@ -87,10 +95,9 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
                 return await this._store.dispatch(this._paymentActionCreator.submitPayment({methodId: payment.methodId, paymentData: { nonce: nonce.id }}));
             } catch (error) {
                 if (error instanceof RequestError && error.body.status === 'additional_action_required') {
-                    return new Promise(() => {
-                        const { redirect_url } = error.body.additional_action_required.data;
-                        window.location.replace(redirect_url);
-                    });
+                    window.location.replace(redirectUrl);
+
+                    return new Promise(noop);
                 }
                 throw error;
             }
