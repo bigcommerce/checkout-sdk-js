@@ -335,12 +335,6 @@ describe('ZipPaymentStrategy', () => {
             const error = new RequestError(getResponse({
                 ...getErrorPaymentResponseBody(),
                 status: 'additional_action_required',
-                additional_action_required: {
-                    type: 'external_redirect',
-                    data: {
-                        redirect_url: 'http://some-url',
-                    },
-                } ,
             }));
             window.location.replace = jest.fn();
 

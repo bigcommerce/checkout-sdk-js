@@ -74,7 +74,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         }
 
         if (this._redirectFlowIsTrue()) {
-            let nonce: { id: string };
+            let nonce: { id: string; uri: string };
             try {
                 nonce = JSON.parse(this._paymentMethod.clientToken);
             } catch (error) {
@@ -86,10 +86,9 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             try {
                 return await this._store.dispatch(this._paymentActionCreator.submitPayment({methodId: payment.methodId, paymentData: { nonce: nonce.id }}));
             } catch (error) {
-                if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+                if (error instanceof RequestError && error.body.status === 'additional_action_required' && nonce.uri) {
                     return new Promise(() => {
-                        const { redirect_url } = error.body.additional_action_required.data;
-                        window.location.replace(redirect_url);
+                        window.location.replace(nonce.uri);
                     });
                 }
                 throw error;
