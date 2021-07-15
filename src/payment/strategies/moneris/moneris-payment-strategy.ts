@@ -142,7 +142,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
         iframe.name = IFRAME_NAME;
         iframe.id = IFRAME_NAME;
-        iframe.style.borderColor = 'transparent';
+        iframe.style.border = 'none';
         iframe.src = `${ this._monerisURL(testMode) }?${queryString}`;
 
         container.appendChild(iframe);
