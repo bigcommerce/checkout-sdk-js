@@ -35,13 +35,13 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        let nonce: string;
+        let nonce: { id: string; uri: string };
         const { methodId } = payment;
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
         const { clientToken = '' } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         try {
-            ({ id: nonce } = JSON.parse(clientToken));
+            nonce = JSON.parse(clientToken);
         } catch (error) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -52,7 +52,7 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
 
         const paymentPayload = {
             methodId,
-            paymentData: { nonce },
+            paymentData: { nonce: nonce.id },
         };
 
         const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
@@ -60,15 +60,13 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
         await this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }));
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-        await this._prepareForReferredRegistration(methodId, nonce);
+        await this._prepareForReferredRegistration(methodId, nonce.id);
 
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
             if (error instanceof RequestError && error.body.status === 'additional_action_required') {
-                const { redirect_url } = error.body.additional_action_required.data;
-
-                window.location.replace(redirect_url);
+                window.location.replace(nonce.uri);
 
                 return new Promise(noop);
             }
