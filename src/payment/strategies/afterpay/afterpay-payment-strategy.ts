@@ -28,14 +28,14 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
-        const config = state.config.getStoreConfig();
-        const storeCountryName = config ? config.storeProfile.storeCountry : '';
+        const currencyCode = state.cart.getCart()?.currency.code || '';
+        const countryCode = this._mapCurrencyToISO2(currencyCode);
 
         if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, this._mapCountryToISO2(storeCountryName));
+        this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, countryCode);
 
         return this._store.getState();
     }
@@ -56,8 +56,8 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         }
 
         let state = this._store.getState();
-        const config = state.config.getStoreConfig();
-        const storeCountryName = config ? config.storeProfile.storeCountry : '';
+        const currencyCode = state.cart.getCart()?.currency.code || '';
+        const countryCode = this._mapCurrencyToISO2(currencyCode);
         const { useStoreCredit } = payload;
 
         if (useStoreCredit !== undefined) {
@@ -72,7 +72,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
         );
 
-        await this._redirectToAfterpay(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId));
+        await this._redirectToAfterpay(countryCode, state.paymentMethods.getPaymentMethod(paymentId));
 
         // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise<never>(() => {});
@@ -101,28 +101,23 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
-    private _redirectToAfterpay(countryName: string, paymentMethod?: PaymentMethod): void {
+    private _redirectToAfterpay(countryCode: string, paymentMethod?: PaymentMethod): void {
         if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        this._afterpaySdk.initialize({ countryCode: this._mapCountryToISO2(countryName)});
+        this._afterpaySdk.initialize({ countryCode });
         this._afterpaySdk.redirect({ token: paymentMethod.clientToken });
     }
 
-    private _mapCountryToISO2(countryName: string): string {
-        switch (countryName) {
-        case 'Australia':
-            return 'AU';
+    private _mapCurrencyToISO2(currencyCode: string): string {
+        const countryByCurrency: { [key: string]: string } = {
+            AUD: 'AU',
+            NZD: 'NZ',
+            CAD: 'CA',
+            USD: 'US',
+        };
 
-        case 'New Zealand':
-            return 'NZ';
-
-        case 'United States':
-            return 'US';
-
-        default:
-            return 'AU';
-        }
+        return countryByCurrency[currencyCode] || 'AU';
     }
 }
