@@ -220,7 +220,7 @@ describe('MonerisPaymentStrategy', () => {
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
             expect(iframe).toBeTruthy();
-            expect(iframe.src).toContain('css_body=background:white;&css_textbox=border-width:2px;&css_textbox_pan=width:140px;&css_textbox_exp=width:40px;&css_textbox_cvd=width:40px');
+            expect(iframe.src).toContain('css_body=background:transparent;&css_textbox=border-width:2px;&css_textbox_pan=width:140px;&css_textbox_exp=width:40px;&css_textbox_cvd=width:40px');
         });
 
         it('fails to initialize moneris strategy when initialization options are not provided', () => {

@@ -128,7 +128,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             display_labels: 1,
             enable_exp: 1,
             enable_cvd: 1,
-            css_body: style?.cssBody || 'background:white;',
+            css_body: style?.cssBody || 'background:transparent;',
             css_textbox: style?.cssTextbox || 'border-width:2px;',
             css_textbox_pan: style?.cssTextboxPan || 'width:140px;',
             css_textbox_exp: style?.cssTextboxExpiry || 'width:40px;',
@@ -142,7 +142,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
         iframe.name = IFRAME_NAME;
         iframe.id = IFRAME_NAME;
-
+        iframe.style.border = 'none';
         iframe.src = `${ this._monerisURL(testMode) }?${queryString}`;
 
         container.appendChild(iframe);
