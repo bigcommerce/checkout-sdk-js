@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.165.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.164.1...v1.165.0) (2021-07-18)
+
+
+### Features
+
+* **payment:** INT-4141 Make iframe border and background transparent ([4600855](https://github.com/bigcommerce/checkout-sdk-js/commit/46008559fef1bf6b3e9e88b9e71711102fa50bac))
+* **payment:** INT-4141 Update test ([c26f39a](https://github.com/bigcommerce/checkout-sdk-js/commit/c26f39a6a42ad2770c373075b8b7e57b35fa9e59))
+* **payment:** INT-4141 Use border: none instead border: transparent ([7a65022](https://github.com/bigcommerce/checkout-sdk-js/commit/7a650228cfcf5d7ca22230674c84b4b937af78fc))
+
 ### [1.164.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.164.0...v1.164.1) (2021-07-13)
 
 
