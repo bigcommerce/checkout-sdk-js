@@ -10,7 +10,7 @@ import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, O
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
-import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
+import { PaymentFinalizeOptions, PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
@@ -61,7 +61,7 @@ export default class PaymentStrategyActionCreator {
         };
     }
 
-    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {
+    finalize(options?: PaymentFinalizeOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(PaymentStrategyActionType.FinalizeRequested)),
             this._loadOrderPaymentsIfNeeded(store, options),

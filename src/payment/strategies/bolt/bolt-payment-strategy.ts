@@ -1,4 +1,4 @@
-import { isNonceLike } from '../..';
+import { isNonceLike, PaymentFinalizeOptions } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -62,10 +62,48 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    finalize(): Promise<InternalCheckoutSelectors> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
+    /**
+     * The method that will be triggered by Bolt to finalize an order
+     * if 'Full Checkout with Fraud Protection' configuration mode enabled
+     *
+     * @param options PaymentRequestOptions
+     * @returns Promise<InternalCheckoutSelectors>
+     */
+    finalize(options?: PaymentFinalizeOptions): Promise<InternalCheckoutSelectors> {
+        if (this._useBoltClient) {
+            return Promise.reject(new OrderFinalizationNotRequiredError());
+        }
+
+        if (!options) {
+            throw new PaymentArgumentInvalidError(['options']);
+        }
+
+        const { methodId, paymentData } = options;
+
+        if (!methodId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        if (!paymentData || !isNonceLike(paymentData)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        const paymentPayload = {
+            methodId,
+            paymentData,
+        };
+
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
+    /**
+     * The method triggers when Bolt have 'Fraud Protection Only' configuration mode enabled
+     * and temporary for 'Bolt Accounts' configuration mode too
+     *
+     * @param payload OrderRequestBody
+     * @param options PaymentRequestOptions
+     * @returns Promise<InternalCheckoutSelectors>
+     */
     private async _executeWithBoltClient(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
@@ -127,28 +165,20 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
-    private async _executeWithBoltCheckout(payload: OrderRequestBody, _options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    /**
+     * The method triggers when Bolt have 'Full Checkout with Fraud Protection' configuration mode enabled
+     *
+     * @param payload OrderRequestBody
+     * @param options PaymentRequestOptions
+     * @returns Promise<InternalCheckoutSelectors>
+     */
+    private async _executeWithBoltCheckout(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { methodId, paymentData } = payment;
-
-        if (!methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        if (!paymentData || !isNonceLike(paymentData)) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
-        }
-
-        await this._store.dispatch(this._orderActionCreator.submitOrder(order, _options));
-
-        return this._store.dispatch(this._paymentActionCreator.submitPayment({
-            methodId,
-            paymentData,
-        }));
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
     }
 }

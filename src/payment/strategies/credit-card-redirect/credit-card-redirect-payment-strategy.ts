@@ -8,7 +8,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentFinalizeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { CreditCardPaymentStrategy } from '../credit-card';
 
@@ -28,7 +28,7 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
         );
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(options?: PaymentFinalizeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const order = state.order.getOrder();
 

@@ -187,10 +187,6 @@ describe('BoltPaymentStrategy', () => {
             await strategy.initialize(boltTakeOverInitializationOptions);
             await strategy.execute(payload);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
-            expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
-            expect(boltClient.configure).not.toHaveBeenCalled();
         });
 
         it('fails to execute the bolt strategy if no payment is provided when using bolt client', async () => {
@@ -236,29 +232,6 @@ describe('BoltPaymentStrategy', () => {
             expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
             expect(boltClient.configure).not.toHaveBeenCalled();
         });
-
-        it('fails to execute the strategy if no method id is provided with checkout takeover', async () => {
-            payload.payment = {
-                methodId: '',
-            };
-
-            await strategy.initialize(boltTakeOverInitializationOptions);
-            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-            expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
-            expect(boltClient.configure).not.toHaveBeenCalled();
-        });
-
-        it('fails to execute the strategy if no nonce is provided with checkout takeover', async () => {
-            payload.payment = {
-                methodId: 'bolt',
-                paymentData: { },
-            };
-
-            await strategy.initialize(boltTakeOverInitializationOptions);
-            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-            expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
-            expect(boltClient.configure).not.toHaveBeenCalled();
-        });
     });
 
     describe('#deinitialize()', () => {
@@ -271,8 +244,53 @@ describe('BoltPaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        it('throws error to inform that order finalization is not required', async () => {
-            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+        describe('finalizes order with loading the bolt client', () => {
+            it('throws error to inform that order finalization is not required', async () => {
+                await strategy.initialize(boltClientScriptInitializationOptions);
+                await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+            });
+        });
+
+        describe('finalizes order without loading the bolt client', () => {
+            const expectedPayment = {
+                methodId: 'bolt',
+                paymentData: {
+                    nonce: 'transactionReference',
+                },
+            };
+
+            it('fails to finalize order if no options are provided', async () => {
+                await strategy.initialize(boltTakeOverInitializationOptions);
+                expect(() => strategy.finalize()).toThrow(PaymentArgumentInvalidError);
+                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('fails to finalize order if no method id is provided', async () => {
+                payload.payment = {
+                    methodId: '',
+                };
+
+                await strategy.initialize(boltTakeOverInitializationOptions);
+                expect(() => strategy.finalize(payload.payment)).toThrow(MissingDataError);
+                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('fails to finalize order if no nonce is provided', async () => {
+                payload.payment = {
+                    methodId: 'bolt',
+                    paymentData: { },
+                };
+
+                await strategy.initialize(boltTakeOverInitializationOptions);
+                expect(() => strategy.finalize(payload.payment)).toThrow(MissingDataError);
+                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+            });
+
+            it('successfully finalizes order', async () => {
+                await strategy.initialize(boltTakeOverInitializationOptions);
+                await strategy.finalize(payload.payment);
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+            });
         });
     });
 });
