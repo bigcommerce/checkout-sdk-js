@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.165.1-alpha.04c65a07094926491c0719367acd0a636cc09be4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.165.0...v1.165.1-alpha.04c65a07094926491c0719367acd0a636cc09be4) (2021-07-19)
+
+
+### Features
+
+* **payment:** INT-4584 - Refactor Quadpay uri data for redirect ([3b91c07](https://github.com/bigcommerce/checkout-sdk-js/commit/3b91c07b456e9d82aff6475f60f50887ddf67fc5))
+* **payment:** INT-4585 - Refactor Zip uri data for redirect ([04c65a0](https://github.com/bigcommerce/checkout-sdk-js/commit/04c65a07094926491c0719367acd0a636cc09be4))
+
 ## [1.165.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.164.1...v1.165.0) (2021-07-18)
 
 
