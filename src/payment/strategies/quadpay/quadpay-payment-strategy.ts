@@ -65,7 +65,7 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
-            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+            if (error instanceof RequestError && error.body.status === 'additional_action_required' && nonce.uri) {
                 window.location.replace(nonce.uri);
 
                 return new Promise(noop);
