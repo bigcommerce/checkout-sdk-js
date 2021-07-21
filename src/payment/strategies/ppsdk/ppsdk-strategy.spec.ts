@@ -1,14 +1,11 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { set } from 'lodash';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
-import { getConfig } from '../../../config/configs.mock';
-import { GatewayOrderPayment, OrderActionCreator, OrderRequestSender } from '../../../order';
+import { NotInitializedError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrder } from '../../../order/orders.mock';
 
 import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
@@ -67,15 +64,8 @@ describe('PPSDKStrategy', () => {
                 describe('#finalize', () => {
                     it('calls the payment resumer', async () => {
                         const store = createCheckoutStore(getCheckoutStoreState());
-                        const orderPayment: GatewayOrderPayment =  {
-                            providerId: 'cabbagepay',
-                            description: '',
-                            amount: 225,
-                            detail: { step: 'INITIALIZE', instructions: '' },
-                            paymentId: 'abc',
-                        };
-                        const order = set(getOrder(), 'payments', [orderPayment]);
-                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(order);
+
+                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
@@ -92,15 +82,8 @@ describe('PPSDKStrategy', () => {
                 describe('#finalize', () => {
                     it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
                         const store = createCheckoutStore(getCheckoutStoreState());
-                        const orderPayment: GatewayOrderPayment =  {
-                            providerId: 'not-a-match',
-                            description: '',
-                            amount: 225,
-                            detail: { step: 'INITIALIZE', instructions: '' },
-                            paymentId: 'abc',
-                        };
-                        const order = set(getOrder(), 'payments', [orderPayment]);
-                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(order);
+
+                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue(undefined);
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
@@ -111,36 +94,6 @@ describe('PPSDKStrategy', () => {
 
                         expect(resumerSpy).not.toHaveBeenCalled();
                     });
-                });
-            });
-        });
-
-        describe('when the bigpayBaseUrl is not set within store config', () => {
-            describe('#execute', () => {
-                it('throws a MissingDataError error', async () => {
-                    const store = createCheckoutStore(getCheckoutStoreState());
-                    const config = set(getConfig(), 'paymentSettings.bigpayBaseUrl', '');
-                    jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(config);
-
-                    const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
-
-                    strategy.initialize({ methodId: 'cabbagepay' });
-
-                    await expect(strategy.execute({}, { methodId: 'cabbagepay' }))
-                        .rejects.toBeInstanceOf(MissingDataError);
-                });
-            });
-
-            describe('#finalize', () => {
-                it('throws a MissingDataError error', async () => {
-                    const store = createCheckoutStore(getCheckoutStoreState());
-                    const config = set(getConfig(), 'paymentSettings.bigpayBaseUrl', '');
-                    jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(config);
-
-                    const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
-
-                    await expect(strategy.finalize({ methodId: 'cabbagepay' }))
-                        .rejects.toBeInstanceOf(MissingDataError);
                 });
             });
         });

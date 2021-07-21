@@ -14,6 +14,7 @@ export default interface OrderSelector {
     getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
     getLoadError(): Error | undefined;
+    getPaymentId(methodId: string): string | undefined;
     isLoading(): boolean;
 }
 
@@ -63,6 +64,15 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
         error => () => error
     );
 
+    const getPaymentId = createSelector(
+        (state: OrderState) => state.data?.payments,
+        (payments = []) => (methodId: string) => {
+            const currentPayment = payments.find(({ providerId }) => providerId === methodId);
+
+            return currentPayment?.paymentId;
+        }
+    );
+
     const isLoading = createSelector(
         (state: OrderState) => !!state.statuses.isLoading,
         status => () => status
@@ -78,6 +88,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
             getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
             getOrderMeta: getOrderMeta(state),
             getLoadError: getLoadError(state),
+            getPaymentId: getPaymentId(state),
             isLoading: isLoading(state),
         };
     });

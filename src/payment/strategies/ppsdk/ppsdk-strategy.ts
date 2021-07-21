@@ -1,11 +1,10 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { getPPSDKPaymentId } from './get-ppsdk-payment-id';
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PaymentProcessor } from './ppsdk-payment-processor';
 import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
@@ -22,11 +21,7 @@ export class PPSDKStrategy implements PaymentStrategy {
     ) {}
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const bigpayBaseUrl = this._store.getState().config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
-
-        if (!bigpayBaseUrl) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
+        const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
 
         if (!options?.methodId) {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
@@ -48,17 +43,13 @@ export class PPSDKStrategy implements PaymentStrategy {
     }
 
     async finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const bigpayBaseUrl = this._store.getState().config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
-
-        if (!bigpayBaseUrl) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
+        const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
 
         if (!options?.methodId) {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
-        const paymentId = getPPSDKPaymentId(this._store, options.methodId);
+        const paymentId = this._store.getState().order.getPaymentId(options?.methodId);
 
         if (!paymentId) {
             throw new OrderFinalizationNotRequiredError();
