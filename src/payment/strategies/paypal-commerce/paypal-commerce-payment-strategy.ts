@@ -51,7 +51,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         } = this._store.getState();
 
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { orderId, buttonStyle } = initializationData ?? {};
+        const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
 
         if (orderId) {
@@ -109,7 +109,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 
-        if (this._isAPM)  {
+        if (this._isAPM && shouldRenderFields)  {
             const fullName = `${firstName} ${lastName}`;
             if (!apmFieldsContainer) {
                 throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerce" argument should contain "apmFieldsContainer".');
