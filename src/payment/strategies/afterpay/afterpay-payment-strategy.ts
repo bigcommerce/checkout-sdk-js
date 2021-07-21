@@ -1,6 +1,8 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotCompletedError } from '../../../order/errors';
+import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -21,6 +23,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {}
@@ -98,7 +101,14 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        } catch (error) {
+            await this._remoteCheckoutRequestSender.forgetCheckout();
+            await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
+
+            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+        }
     }
 
     private _redirectToAfterpay(countryCode: string, paymentMethod?: PaymentMethod): void {

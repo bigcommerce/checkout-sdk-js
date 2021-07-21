@@ -88,4 +88,16 @@ describe('RemoteCheckoutRequestSender', () => {
         expect(output).toEqual(response);
         expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/events/shopper-checkout-service-provider-authorization-requested', options);
     });
+
+    it('sends request to forget the remote checkout provider', async () => {
+        const response = getResponse({});
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'post').mockReturnValue(response);
+
+        const output = await remoteCheckoutRequestSender.forgetCheckout(options);
+
+        expect(output).toEqual(response);
+        expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/forget-checkout', options);
+    });
 });

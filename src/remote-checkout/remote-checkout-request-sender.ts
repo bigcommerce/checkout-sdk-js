@@ -51,6 +51,12 @@ export default class RemoteCheckoutRequestSender {
 
         return this._requestSender.post(url, { timeout });
     }
+
+    forgetCheckout({ timeout }: RequestOptions = {}): Promise<Response<any>> {
+        const url = `/remote-checkout/forget-checkout`;
+
+        return this._requestSender.post(url, { timeout });
+    }
 }
 
 export interface InitializePaymentOptions {
