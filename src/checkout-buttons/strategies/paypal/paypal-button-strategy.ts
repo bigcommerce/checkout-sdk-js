@@ -62,7 +62,8 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
                     },
                     style: {
                         shape: 'rect',
-                        ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
+                        ...pick(paypalOptions.style, 'layout', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
+                        size: (paymentMethod.id === 'paypalexpress' && paypalOptions.style?.size === 'small') ? 'responsive' : paypalOptions.style?.size,
                     },
                     payment: (_, actions) => this._setupPayment(merchantId, actions, paypalOptions.onPaymentError),
                     onAuthorize: (data, actions) => this._tokenizePayment(data, actions, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
