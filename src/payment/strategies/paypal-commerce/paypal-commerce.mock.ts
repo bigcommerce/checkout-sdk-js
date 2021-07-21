@@ -22,6 +22,7 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
             SOFORT: 'sofort',
             TRUSTLY: 'trustly',
             VERKKOPANKKI: 'verkkopankki',
+            VENMO: 'venmo',
         },
         Buttons: () => ({
             render: jest.fn(),

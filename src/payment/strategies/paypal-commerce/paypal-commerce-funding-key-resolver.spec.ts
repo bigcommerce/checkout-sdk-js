@@ -47,5 +47,9 @@ describe('paypalCommerceFundingKeyResolver', () => {
         it('should return "TRUSTLY"', () => {
             expect(paypalCommerceFundingKeyResolver.resolve('trustly', 'paypalcommercealternativemethods')).toEqual('TRUSTLY');
         });
+
+        it('should return "VENMO"', () => {
+            expect(paypalCommerceFundingKeyResolver.resolve('venmo', 'paypalcommercealternativemethods')).toEqual('VENMO');
+        });
     });
 });

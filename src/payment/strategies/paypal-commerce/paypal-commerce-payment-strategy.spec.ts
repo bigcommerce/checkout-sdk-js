@@ -140,7 +140,7 @@ describe('PaypalCommercePaymentStrategy', () => {
     describe('#initialize()', () => {
         beforeEach(() => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined } });
+                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined, shouldRenderFields: true } });
         });
 
         it('returns checkout state', async () => {
@@ -279,6 +279,17 @@ describe('PaypalCommercePaymentStrategy', () => {
                     fullName: `${firstName} ${lastName}`,
                     email,
                 });
+        });
+
+        it('does not render APM fields when shouldRenderFields is false', async () => {
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('P24');
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined, shouldRenderFields: false } });
+
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
+
+            expect(paypalCommercePaymentProcessor.renderFields).not.toHaveBeenCalled();
         });
 
         it("throws an error if apmFieldsContainer wasn't provided when trying to initialize Przelewy24 method", async () => {
