@@ -7,6 +7,9 @@ export enum CustomerStrategyActionType {
     SignOutFailed = 'CUSTOMER_STRATEGY_SIGN_OUT_FAILED',
     SignOutRequested = 'CUSTOMER_STRATEGY_SIGN_OUT_REQUESTED',
     SignOutSucceeded = 'CUSTOMER_STRATEGY_SIGN_OUT_SUCCEEDED',
+    CustomerContinueFailed = 'CUSTOMER_STRATEGY_CUSTOMER_CONTINUE_FAILED',
+    CustomerContinueRequested = 'CUSTOMER_STRATEGY_CUSTOMER_CONTINUE_REQUESTED',
+    CustomerContinueSucceeded = 'CUSTOMER_STRATEGY_CUSTOMER_CONTINUE_SUCCEEDED',
     InitializeFailed = 'CUSTOMER_STRATEGY_INITIALIZE_FAILED',
     InitializeRequested = 'CUSTOMER_STRATEGY_INITIALIZE_REQUESTED',
     InitializeSucceeded = 'CUSTOMER_STRATEGY_INITIALIZE_SUCCEEDED',
@@ -21,6 +24,7 @@ export enum CustomerStrategyActionType {
 export type CustomerStrategyAction =
     CustomerStrategySignInAction |
     CustomerStrategySignOutAction |
+    CustomerStrategyCustomerContinueAction |
     CustomerStrategyInitializeAction |
     CustomerStrategyDeinitializeAction |
     CustomerStrategyWidgetAction;
@@ -34,6 +38,11 @@ export type CustomerStrategySignOutAction =
     SignOutRequestedAction |
     SignOutSucceededAction |
     SignOutFailedAction;
+
+export type CustomerStrategyCustomerContinueAction =
+    CustomerContinueRequestedAction |
+    CustomerContinueSucceededAction |
+    CustomerContinueFailedAction;
 
 export type CustomerStrategyInitializeAction =
     InitializeRequestedAction |
@@ -72,6 +81,18 @@ export interface SignOutSucceededAction extends Action {
 
 export interface SignOutFailedAction extends Action<Error> {
     type: CustomerStrategyActionType.SignOutFailed;
+}
+
+export interface CustomerContinueRequestedAction extends Action {
+    type: CustomerStrategyActionType.CustomerContinueRequested;
+}
+
+export interface CustomerContinueSucceededAction extends Action {
+    type: CustomerStrategyActionType.CustomerContinueSucceeded;
+}
+
+export interface CustomerContinueFailedAction extends Action<Error> {
+    type: CustomerStrategyActionType.CustomerContinueFailed;
 }
 
 export interface InitializeRequestedAction extends Action {

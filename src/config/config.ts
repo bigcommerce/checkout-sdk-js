@@ -88,6 +88,7 @@ export interface StoreCurrency {
 }
 
 export interface CheckoutSettings {
+    customContinueFlowProviderId: string | null;
     features: { [featureName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;

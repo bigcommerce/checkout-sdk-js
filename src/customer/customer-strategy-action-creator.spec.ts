@@ -40,19 +40,21 @@ describe('CustomerStrategyActionCreator', () => {
         const mutationObserverFactory = new MutationObserverFactory();
         const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
 
+        const customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(requestSender),
+            checkoutActionCreator,
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(requestSender)
+            )
+        );
+
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         registry = createCustomerStrategyRegistry(store, createRequestSender());
         strategy = new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(
-                new CustomerRequestSender(requestSender),
-                checkoutActionCreator,
-                new SpamProtectionActionCreator(
-                    googleRecaptcha,
-                    new SpamProtectionRequestSender(requestSender)
-                )
-            )
+            customerActionCreator
         );
 
         jest.spyOn(registry, 'get')

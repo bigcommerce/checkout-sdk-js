@@ -6,7 +6,7 @@ import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { getShippableItemsCount } from '../../../shipping';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
@@ -51,6 +51,14 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         throw new NotImplementedError(
             'In order to sign in via Google Pay, the shopper must click on "Google Pay" button.'
         );
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {

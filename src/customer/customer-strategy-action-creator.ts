@@ -5,8 +5,8 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
 import CustomerCredentials from './customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from './customer-request-options';
-import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import { CustomerContinueOptions, CustomerInitializeOptions, CustomerRequestOptions } from './customer-request-options';
+import { CustomerStrategyActionType, CustomerStrategyCustomerContinueAction, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
@@ -48,6 +48,25 @@ export default class CustomerStrategyActionCreator {
                 })
                 .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.SignOutFailed, error, meta));
+                });
+        });
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Observable<CustomerStrategyCustomerContinueAction> {
+        return Observable.create((observer: Observer<CustomerStrategyCustomerContinueAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(CustomerStrategyActionType.CustomerContinueRequested, undefined, meta));
+
+            this._strategyRegistry.get(methodId)
+                .customerContinue(options)
+                .then(() => {
+                    observer.next(createAction(CustomerStrategyActionType.CustomerContinueSucceeded, undefined, meta));
+                    observer.complete();
+                })
+                .catch(error => {
+                    observer.error(createErrorAction(CustomerStrategyActionType.CustomerContinueFailed, error, meta));
                 });
         });
     }

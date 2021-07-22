@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerContinueOptions, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -661,6 +661,17 @@ export default class CheckoutService {
      */
     signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.signIn(credentials, options);
+
+        return this._dispatch(action, { queueId: 'customerStrategy' });
+    }
+
+    /**
+     *
+     * todo: write normal method description
+     *
+     */
+    customerContinue(options?: CustomerContinueOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.customerContinue(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
     }

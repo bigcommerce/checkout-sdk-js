@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';
-import { CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class DefaultCustomerStrategy implements CustomerStrategy {
@@ -9,6 +9,14 @@ export default class DefaultCustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _customerActionCreator: CustomerActionCreator
     ) {}
+
+    initialize(): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
@@ -22,11 +30,11 @@ export default class DefaultCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    initialize(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
-    }
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 }

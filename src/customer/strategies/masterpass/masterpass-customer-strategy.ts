@@ -3,7 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class MasterpassCustomerStrategy implements CustomerStrategy {
@@ -101,6 +101,14 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 
     private _createSignInButton(containerId: string): HTMLElement {

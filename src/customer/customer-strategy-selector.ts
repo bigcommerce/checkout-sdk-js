@@ -5,10 +5,12 @@ import { createSelector } from '../common/selector';
 import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state';
 
 export default interface CustomerStrategySelector {
+    getCustomerContinueError(methodId?: string): Error | undefined;
     getSignInError(methodId?: string): Error | undefined;
     getSignOutError(methodId?: string): Error | undefined;
     getInitializeError(methodId?: string): Error | undefined;
     getWidgetInteractionError(methodId?: string): Error | undefined;
+    isCustomerContinuing(methodId?: string): boolean;
     isSigningIn(methodId?: string): boolean;
     isSigningOut(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
@@ -19,6 +21,18 @@ export default interface CustomerStrategySelector {
 export type CustomerStrategySelectorFactory = (state: CustomerStrategyState) => CustomerStrategySelector;
 
 export function createCustomerStrategySelectorFactory(): CustomerStrategySelectorFactory {
+    const getCustomerContinueError = createSelector(
+        (state: CustomerStrategyState) => state.errors.customerContinueMethodId,
+        (state: CustomerStrategyState) => state.errors.customerContinueError,
+        (customerContinueMethodId, customerContinueError) => (methodId?: string) => {
+            if (methodId && customerContinueMethodId !== methodId) {
+                return;
+            }
+
+            return customerContinueError;
+        }
+    );
+
     const getSignInError = createSelector(
         (state: CustomerStrategyState) => state.errors.signInMethodId,
         (state: CustomerStrategyState) => state.errors.signInError,
@@ -64,6 +78,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return widgetInteractionError;
+        }
+    );
+
+    const isCustomerContinuing = createSelector(
+        (state: CustomerStrategyState) => state.statuses.customerContinueMethodId,
+        (state: CustomerStrategyState) => state.statuses.isCustomerContinuing,
+        (customerContinueMethodId, isCustomerContinuing) => (methodId?: string) => {
+            if (methodId && customerContinueMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isCustomerContinuing;
         }
     );
 
@@ -131,8 +157,10 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         return {
             getSignInError: getSignInError(state),
             getSignOutError: getSignOutError(state),
+            getCustomerContinueError: getCustomerContinueError(state),
             getInitializeError: getInitializeError(state),
             getWidgetInteractionError: getWidgetInteractionError(state),
+            isCustomerContinuing: isCustomerContinuing(state),
             isSigningIn: isSigningIn(state),
             isSigningOut: isSigningOut(state),
             isInitializing: isInitializing(state),

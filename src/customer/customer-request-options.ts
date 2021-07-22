@@ -101,3 +101,17 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
 }
+
+/**
+ * A set of options that are required to pass the customer step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific suggestion for customer to pass
+ * the customer step. For example, Bolt suggests the customer to use
+ * their custom checkout with prefilled form values. As a result, you
+ * may need to provide additional information.
+ *
+ */
+export interface CustomerContinueOptions extends CustomerRequestOptions {
+    fallback?(): void;
+}

@@ -19,6 +19,7 @@ export function getConfig(): Config {
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
+                customContinueFlowProviderId: null,
                 features: {},
                 enableOrderComments: true,
                 enableTermsAndConditions: false,

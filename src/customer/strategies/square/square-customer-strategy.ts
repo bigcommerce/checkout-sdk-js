@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotImplementedError } from '../../../common/error/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class SquareCustomerStrategy implements CustomerStrategy {
@@ -28,6 +28,14 @@ export default class SquareCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 
     initialize(): Promise<InternalCheckoutSelectors> {

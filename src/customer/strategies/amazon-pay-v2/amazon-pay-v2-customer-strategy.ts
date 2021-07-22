@@ -4,7 +4,7 @@ import { PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { getShippableItemsCount } from '../../../shipping';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
@@ -61,6 +61,14 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 
     private _createSignInButton(containerId: string, methodId: string): HTMLElement {

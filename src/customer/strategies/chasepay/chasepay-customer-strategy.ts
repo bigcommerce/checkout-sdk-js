@@ -6,7 +6,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { ChasePayScriptLoader, ChasePaySuccessPayload } from '../../../payment/strategies/chasepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerContinueOptions, CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class ChasePayCustomerStrategy implements CustomerStrategy {
@@ -114,6 +114,14 @@ export default class ChasePayCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    customerContinue(options?: CustomerContinueOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.fallback) {
+            options.fallback();
+        }
+
+        return Promise.resolve(this._store.getState());
     }
 
     private _setExternalCheckoutData(payload: ChasePaySuccessPayload, requestId: string): Promise<Response<any>> {
