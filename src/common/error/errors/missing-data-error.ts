@@ -6,6 +6,7 @@ export enum MissingDataErrorType {
     MissingCheckout,
     MissingConsignments,
     MissingCustomer,
+    MissingCustomerEmail,
     MissingCheckoutConfig,
     MissingOrder,
     MissingOrderConfig,
@@ -15,6 +16,7 @@ export enum MissingDataErrorType {
     MissingPaymentMethod,
     MissingPaymentToken,
     MissingShippingAddress,
+    MissingFallback,
 }
 
 /**
@@ -49,6 +51,12 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingCustomer:
         return 'Unable to proceed because customer data is unavailable.';
+
+    case MissingDataErrorType.MissingCustomerEmail:
+        return 'Unable to proceed because customer email data is unavailable.';
+
+    case MissingDataErrorType.MissingFallback:
+        return 'Unable to proceed because fallback is unavailable.';
 
     case MissingDataErrorType.MissingCheckoutConfig:
     case MissingDataErrorType.MissingOrderConfig:

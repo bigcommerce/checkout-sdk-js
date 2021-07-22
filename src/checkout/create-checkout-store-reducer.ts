@@ -5,7 +5,7 @@ import { cartReducer } from '../cart';
 import { checkoutButtonReducer } from '../checkout-buttons';
 import { configReducer } from '../config';
 import { couponReducer, giftCertificateReducer } from '../coupon';
-import { customerReducer, customerStrategyReducer } from '../customer';
+import { customerContinueStrategyReducer, customerReducer, customerStrategyReducer } from '../customer';
 import { formFieldsReducer } from '../form';
 import { countryReducer } from '../geography';
 import { orderReducer } from '../order';
@@ -32,6 +32,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         coupons: couponReducer,
         customer: customerReducer,
         customerStrategies: customerStrategyReducer,
+        customerContinueStrategies: customerContinueStrategyReducer,
         formFields: formFieldsReducer,
         giftCertificates: giftCertificateReducer,
         instruments: instrumentReducer,

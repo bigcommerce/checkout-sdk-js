@@ -5,7 +5,7 @@ import { getConfigState } from '../config/configs.mock';
 import { getCoupon, getCouponsState, getShippingCoupon } from '../coupon/coupons.mock';
 import { getGiftCertificate, getGiftCertificatesState } from '../coupon/gift-certificates.mock';
 import { getCustomer, getCustomerState } from '../customer/customers.mock';
-import { getCustomerStrategyState } from '../customer/internal-customers.mock';
+import { getCustomerContinueStrategyState, getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getOrderState } from '../order/orders.mock';
@@ -127,6 +127,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         coupons: getCouponsState(),
         customer: getCustomerState(),
         customerStrategies: getCustomerStrategyState(),
+        customerContinueStrategies: getCustomerContinueStrategyState(),
         formFields: getFormFieldsState(),
         giftCertificates: getGiftCertificatesState(),
         instruments: getInstrumentsState(),

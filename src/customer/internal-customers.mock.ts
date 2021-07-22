@@ -67,3 +67,11 @@ export function getCustomerStrategyState(): CustomerStrategyState {
         statuses: {},
     };
 }
+
+export function getCustomerContinueStrategyState(): CustomerStrategyState {
+    return {
+        data: {},
+        errors: {},
+        statuses: {},
+    };
+}

@@ -11,7 +11,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerContinueStrategyRegistry, createCustomerStrategyRegistry, CustomerActionCreator, CustomerContinueStrategyActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -60,6 +60,7 @@ describe('CheckoutService', () => {
     let formFieldsRequestSender: FormFieldsRequestSender;
     let couponRequestSender: CouponRequestSender;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
+    let customerContinueStrategyActionCreator: CustomerContinueStrategyActionCreator;
     let errorActionCreator: ErrorActionCreator;
     let giftCertificateRequestSender: GiftCertificateRequestSender;
     let instrumentActionCreator: InstrumentActionCreator;
@@ -226,6 +227,10 @@ describe('CheckoutService', () => {
             createCustomerStrategyRegistry(store, requestSender)
         );
 
+        customerContinueStrategyActionCreator = new CustomerContinueStrategyActionCreator(
+            createCustomerContinueStrategyRegistry(store)
+        );
+
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
         spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -266,6 +271,7 @@ describe('CheckoutService', () => {
             new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
+            customerContinueStrategyActionCreator,
             errorActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
             instrumentActionCreator,
