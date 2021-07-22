@@ -1,14 +1,23 @@
+import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { createCheckoutService, CheckoutService } from '../checkout';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../common/error/errors';
 import { ShopperCurrency } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { Order } from '../order';
+import { getPhysicalItem } from '../order/line-items.mock';
 import { getOrder } from '../order/orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import AnalyticsStepTracker, { AnalyticStepId, AnalyticStepType } from './analytics-step-tracker';
+import { isGoogleAnalyticsAvailable, isPayloadSizeLimitReached, sendGoogleAnalytics } from './analytics-tracker-ga';
+
+jest.mock('./analytics-tracker-ga', () => ({
+    isGoogleAnalyticsAvailable: jest.fn(),
+    isPayloadSizeLimitReached: jest.fn(),
+    sendGoogleAnalytics: jest.fn(),
+}));
 
 describe('AnalyticsStepTracker', () => {
     let checkoutService: CheckoutService;
@@ -32,8 +41,6 @@ describe('AnalyticsStepTracker', () => {
     beforeEach(() => {
         analytics = {
             track: jest.fn(),
-            hit: jest.fn(),
-            hasPayloadLimit: jest.fn(),
         };
 
         sessionStorage = {
@@ -319,17 +326,23 @@ describe('AnalyticsStepTracker', () => {
             });
         });
 
-        describe('[Experiment flow] When order reach Google Analytics payload limit', () => {
-            const analytics = {
-                track: jest.fn(),
-                hit: jest.fn(),
-                hasPayloadLimit: jest.fn(),
-            };
-
+        describe('When order reach Google Analytics payload limit', () => {
             beforeEach(() => {
+                (isGoogleAnalyticsAvailable as jest.Mock<any>).mockImplementation(() => true);
+                (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => true);
+
                 jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue(getOrder());
-                analytics.hasPayloadLimit.mockReturnValueOnce(true);
+                    .mockReturnValue({
+                        ...getOrder(),
+                        lineItems: {
+                            physicalItems: Array.from(new Array(100)).map(() => getPhysicalItem()),
+                            digitalItems: [],
+                            giftCertificates: [
+                                getGiftCertificateItem(),
+                            ],
+                            customItems: [],
+                        },
+                    });
 
                 jest.spyOn(checkoutService.getState().data, 'getConfig')
                     .mockReturnValue({
@@ -351,24 +364,26 @@ describe('AnalyticsStepTracker', () => {
                 analyticsStepTracker.trackOrderComplete();
             });
 
-            it('Payload reach limit, and we will go through all products separately', () => {
-                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
-                expect(analytics.hit).toHaveBeenCalledTimes(3);
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('Payload reach limit and we will go through all products separately', () => {
+                expect(isGoogleAnalyticsAvailable).toHaveBeenCalled();
+                expect(isPayloadSizeLimitReached).toHaveBeenCalled();
+                expect(sendGoogleAnalytics).toHaveBeenCalledTimes(102);
                 expect(analytics.track).not.toHaveBeenCalled();
             });
         });
 
-        describe('[Experiment flow] when order does not reach Google Analytics payload limit', () => {
-            const analytics = {
-                track: jest.fn(),
-                hit: jest.fn(),
-                hasPayloadLimit: jest.fn(),
-            };
-
+        describe('When order does not reach Google Analytics payload limit', () => {
             beforeEach(() => {
+                (isGoogleAnalyticsAvailable as jest.Mock<any>).mockImplementation(() => true);
+                (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => false);
+                (sendGoogleAnalytics as jest.Mock<any>).mockImplementation();
+
                 jest.spyOn(checkoutService.getState().data, 'getOrder')
                     .mockReturnValue(getOrder());
-                analytics.hasPayloadLimit.mockReturnValueOnce(false);
 
                 jest.spyOn(checkoutService.getState().data, 'getConfig')
                     .mockReturnValue({
@@ -390,10 +405,15 @@ describe('AnalyticsStepTracker', () => {
                 analyticsStepTracker.trackOrderComplete();
             });
 
-            it('Analytics\' function hit and hasPayloadLimit should not execute ', () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('analytics.track() should be executed', () => {
+                expect(isGoogleAnalyticsAvailable).toHaveBeenCalled();
+                expect(isPayloadSizeLimitReached).toHaveBeenCalled();
+                expect(sendGoogleAnalytics).not.toHaveBeenCalled();
                 expect(analytics.track).toHaveBeenCalledTimes(1);
-                expect(analytics.hasPayloadLimit).toHaveBeenCalled();
-                expect(analytics.hit).not.toHaveBeenCalled();
             });
         });
     });
@@ -534,11 +554,11 @@ describe('AnalyticsStepTracker', () => {
 
             it('sends step complete event again if different shippingMethod method is selected', () => {
                 jest.spyOn(checkoutService.getState().data, 'getSelectedShippingOption')
-                        .mockReturnValue({
-                            ...getShippingOption(),
-                            id: 'id-foo',
-                            description: 'foo',
-                        });
+                    .mockReturnValue({
+                        ...getShippingOption(),
+                        id: 'id-foo',
+                        description: 'foo',
+                    });
 
                 jest.spyOn(checkoutService.getState().data, 'getSelectedPaymentMethod')
                     .mockReturnValue(undefined);

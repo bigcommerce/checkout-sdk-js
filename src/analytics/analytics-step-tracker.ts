@@ -8,6 +8,7 @@ import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
 
+import { isGoogleAnalyticsAvailable, isPayloadSizeLimitReached, sendGoogleAnalytics } from './analytics-tracker-ga';
 import { AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
@@ -128,7 +129,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             return;
         }
 
-        const isEcommerceGAEnabled = this.checkoutService.getState().data
+        const isMissingOrdersExperimentEnabled = this.checkoutService.getState().data
             .getConfig()?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
 
         const payload = this.getTrackingPayload({
@@ -142,28 +143,34 @@ export default class AnalyticsStepTracker implements StepTracker {
             lineItems,
         });
 
-        if (isEcommerceGAEnabled && this.analytics.hasPayloadLimit(payload)) {
-            this.analytics.hit('transaction', {
-                '&ti': payload.orderId,
-                '&ta': payload.affiliation,
-                '&tr': payload.revenue,
-                '&ts': payload.shipping,
-                '&tt': payload.tax,
-                '&tcc': payload.coupon,
-                '&cu': payload.currency,
-            });
-
-            payload.products.map(product => {
-                this.analytics.hit('item', {
+        if (isMissingOrdersExperimentEnabled && isGoogleAnalyticsAvailable() && isPayloadSizeLimitReached(payload)) {
+            sendGoogleAnalytics(
+                'transaction',
+                {
                     '&ti': payload.orderId,
-                    '&in': product.name,
-                    '&ic': product.sku,
-                    '&iv': `${product.category}`,
-                    '&ip': product.price,
-                    '&iq': product.quantity,
-                });
+                    '&ta': payload.affiliation,
+                    '&tr': payload.revenue,
+                    '&ts': payload.shipping,
+                    '&tt': payload.tax,
+                    '&tcc': payload.coupon,
+                    '&cu': payload.currency,
+                }
+            );
+            payload.products.forEach(product => {
+                sendGoogleAnalytics(
+                    'item',
+                    {
+                        '&ti': payload.orderId,
+                        '&in': product.name,
+                        '&ic': product.sku,
+                        '&iv': `${product.category}`,
+                        '&ip': product.price,
+                        '&iq': product.quantity,
+                    }
+                );
             });
 
+            // TODO: decide how to send large orders to Segment without sending to GA again
             return this.clearExtraItemData(cartId);
         }
 
