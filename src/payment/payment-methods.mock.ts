@@ -612,7 +612,7 @@ export function getQuadpay(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
-        clientToken: '{"id":"checkout_id"}',
+        clientToken: '{"id":"checkout_id", "uri":"http://some-url"}',
     };
 }
 
