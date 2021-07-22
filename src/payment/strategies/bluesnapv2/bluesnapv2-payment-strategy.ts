@@ -4,7 +4,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { OrderFinalizationNotCompletedError, OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -62,7 +62,9 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
         const status = state.payment.getPaymentStatus();
 
         if (order && (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)) {
-            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
+            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options)).catch(() => {
+                return Promise.reject(new OrderFinalizationNotCompletedError());
+            });
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
