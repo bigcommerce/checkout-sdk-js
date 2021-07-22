@@ -66,7 +66,7 @@ export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElemen
     };
 }
 
-export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: boolean = false): PaymentInitializeOptions {
+export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: boolean = false, tsvFormActive: boolean = false): PaymentInitializeOptions {
     const paymentInitializeOptions: PaymentInitializeOptions = {
         methodId: 'card',
     };
@@ -108,6 +108,32 @@ export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: b
                 options: {
                     ...individualCardElementOptions,
                     zipCodeElementOptions: { containerId: 'stripe-postal-code-component-field' },
+                },
+            },
+        };
+    }
+
+    if (tsvFormActive) {
+        return {
+            ...paymentInitializeOptions,
+            stripev3: {
+                ...stripeV3PaymentInitializeOptions,
+                options: {
+                    ...individualCardElementOptions,
+                },
+                form: {
+                    fields: {
+                        cardCodeVerification: {
+                                accessibilityLabel: 'CVV',
+                                containerId: 'stripev3-ccCvv',
+                                instrumentId: '1234',
+                            },
+                        cardNumberVerification: {
+                            accessibilityLabel: 'Number',
+                            containerId: 'stripev3-ccNumber',
+                            instrumentId: '1234',
+                        },
+                    },
                 },
             },
         };
