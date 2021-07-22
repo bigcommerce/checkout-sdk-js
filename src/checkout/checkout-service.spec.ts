@@ -427,23 +427,25 @@ describe('CheckoutService', () => {
 
     describe('#createCustomerAccount()', () => {
         it('creates customer account', async () => {
-            const state = await checkoutService.createCustomerAccount({
+            const options = { methodId: getPaymentMethod().id };
+            const action = of(createAction('CREATE_CUSTOMER'));
+
+            const customerAccount = {
                 email: 'foo@bar.com',
                 firstName: 'first',
                 lastName: 'last',
                 password: 'password',
-            });
+            };
 
-            expect(customerRequestSender.createAccount)
-                .toHaveBeenCalledWith({
-                    email: 'foo@bar.com',
-                    firstName: 'first',
-                    lastName: 'last',
-                    password: 'password',
-                }, undefined);
+            jest.spyOn(customerStrategyActionCreator, 'signUp')
+                .mockReturnValue(action);
 
-            expect(state.data.getCheckout())
-                .toEqual(store.getState().checkout.getCheckout());
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.createCustomerAccount(customerAccount, options);
+
+            expect(customerStrategyActionCreator.signUp).toHaveBeenCalledWith(customerAccount, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 
@@ -774,17 +776,18 @@ describe('CheckoutService', () => {
 
     describe('#continueAsGuest()', () => {
         it('dispatches action to continue as guest', async () => {
+            const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('SIGN_IN_GUEST'));
 
-            jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
+            jest.spyOn(customerStrategyActionCreator, 'continueAsGuest')
                 .mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
 
-            await checkoutService.continueAsGuest({ email: 'foo@bar.com' });
+            await checkoutService.continueAsGuest({ email: 'foo@bar.com' }, options);
 
-            expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith({ email: 'foo@bar.com' }, undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
+            expect(customerStrategyActionCreator.continueAsGuest).toHaveBeenCalledWith({ email: 'foo@bar.com' }, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 

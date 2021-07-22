@@ -42,6 +42,7 @@ function dataReducer(
     return data;
 }
 
+// tslint:disable-next-line cyclomatic-complexity
 function errorsReducer(
     errors: CustomerStrategyErrorsState = DEFAULT_STATE.errors,
     action: CustomerStrategyAction
@@ -73,6 +74,19 @@ function errorsReducer(
             deinitializeMethodId: action.meta && action.meta.methodId,
         });
 
+    case CustomerStrategyActionType.ContinueAsGuestRequested:
+    case CustomerStrategyActionType.ContinueAsGuestSucceeded:
+        return objectMerge(errors, {
+            continueAsGuestError: undefined,
+            continueAsGuestMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.ContinueAsGuestFailed:
+        return objectMerge(errors, {
+            continueAsGuestError: action.payload,
+            continueAsGuestMethodId: action.meta && action.meta.methodId,
+        });
+
     case CustomerStrategyActionType.SignInRequested:
     case CustomerStrategyActionType.SignInSucceeded:
         return objectMerge(errors, {
@@ -99,6 +113,19 @@ function errorsReducer(
             signOutMethodId: action.meta && action.meta.methodId,
         });
 
+    case CustomerStrategyActionType.SignUpRequested:
+    case CustomerStrategyActionType.SignUpSucceeded:
+        return objectMerge(errors, {
+            signUpError: undefined,
+            signUpMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.SignUpFailed:
+        return objectMerge(errors, {
+            signUpError: action.payload,
+            signUpMethodId: action.meta && action.meta.methodId,
+        });
+
     case CustomerStrategyActionType.WidgetInteractionStarted:
     case CustomerStrategyActionType.WidgetInteractionFinished:
         return objectMerge(errors, {
@@ -117,6 +144,7 @@ function errorsReducer(
     }
 }
 
+// tslint:disable-next-line cyclomatic-complexity
 function statusesReducer(
     statuses: CustomerStrategyStatusesState = DEFAULT_STATE.statuses,
     action: CustomerStrategyAction
@@ -148,6 +176,19 @@ function statusesReducer(
             deinitializeMethodId: undefined,
         });
 
+    case CustomerStrategyActionType.ContinueAsGuestRequested:
+        return objectMerge(statuses, {
+            isContinuingAsGuest: true,
+            continueAsGuestMethodId: action.meta && action.meta.methodId,
+        });
+
+    case CustomerStrategyActionType.ContinueAsGuestFailed:
+    case CustomerStrategyActionType.ContinueAsGuestSucceeded:
+        return objectMerge(statuses, {
+            isContinuingAsGuest: false,
+            continueAsGuestMethodId: undefined,
+        });
+
     case CustomerStrategyActionType.SignInRequested:
         return objectMerge(statuses, {
             isSigningIn: true,
@@ -172,6 +213,19 @@ function statusesReducer(
         return objectMerge(statuses, {
             isSigningOut: false,
             signOutMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.SignUpRequested:
+        return objectMerge(statuses, {
+            isSigningUp: true,
+            signUpMethodId: action.meta && action.meta.methodId,
+        });
+
+    case CustomerStrategyActionType.SignUpFailed:
+    case CustomerStrategyActionType.SignUpSucceeded:
+        return objectMerge(statuses, {
+            isSigningUp: false,
+            signUpMethodId: undefined,
         });
 
     case CustomerStrategyActionType.WidgetInteractionStarted:

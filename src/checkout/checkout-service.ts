@@ -569,10 +569,10 @@ export default class CheckoutService {
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
-    createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._customerActionCreator.createCustomer(customerAccount, options);
+    createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.signUp(customerAccount, options);
 
-        return this._dispatch(action);
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**
@@ -632,10 +632,10 @@ export default class CheckoutService {
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */
-    continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._billingAddressActionCreator.continueAsGuest(credentials, options);
+    continueAsGuest(credentials: GuestCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.continueAsGuest(credentials, options);
 
-        return this._dispatch(action);
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**

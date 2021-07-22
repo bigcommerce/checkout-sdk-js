@@ -1,9 +1,13 @@
+import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import CustomerAccountRequestBody from '../../customer-account';
+import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { GuestCredentials } from '../../guest-credentials';
 import CustomerStrategy from '../customer-strategy';
 
 export default class MasterpassCustomerStrategy implements CustomerStrategy {
@@ -14,7 +18,9 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _masterpassScriptLoader: MasterpassScriptLoader
+        private _masterpassScriptLoader: MasterpassScriptLoader,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _customerActionCreator: CustomerActionCreator
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -100,6 +106,18 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
+        );
+    }
+
+    signUp(customerAccount: CustomerAccountRequestBody, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._customerActionCreator.createCustomer(customerAccount, options)
+        );
+    }
+
+    continueAsGuest(credentials: GuestCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._billingAddressActionCreator.continueAsGuest(credentials, options)
         );
     }
 

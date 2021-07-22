@@ -1,16 +1,29 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster/';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
+import { of } from 'rxjs';
 
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
 import { getCart, getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { createGooglePayPaymentProcessor, GooglePayPaymentProcessor, GooglePayStripeInitializer } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
+import { getQuote } from '../../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import CustomerActionCreator from '../../customer-action-creator';
+import { CustomerActionType } from '../../customer-actions';
 import { CustomerInitializeOptions } from '../../customer-request-options';
+import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
@@ -18,9 +31,14 @@ import { getStripeCustomerInitializeOptions, Mode } from './googlepay-customer-m
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let container: HTMLDivElement;
-    let formPoster: FormPoster;
+    let customerActionCreator: CustomerActionCreator;
     let customerInitializeOptions: CustomerInitializeOptions;
+    let formPoster: FormPoster;
+    let googleRecaptcha: GoogleRecaptcha;
+    let googleRecaptchaMockWindow: GoogleRecaptchaWindow;
+    let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let paymentProcessor: GooglePayPaymentProcessor;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
@@ -50,11 +68,37 @@ describe('GooglePayCustomerStrategy', () => {
 
         formPoster = createFormPoster();
 
+        googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
+        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender()),
+                new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(createRequestSender())
+            )
+        );
+
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(createRequestSender()),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(createRequestSender())
+            )
+        );
+
         strategy = new GooglePayCustomerStrategy(
             store,
             remoteCheckoutActionCreator,
             paymentProcessor,
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         jest.spyOn(formPoster, 'postForm')
@@ -142,6 +186,31 @@ describe('GooglePayCustomerStrategy', () => {
         });
     });
 
+    describe('#continueAsGuest()', () => {
+        beforeEach(async () => {
+            customerInitializeOptions = getStripeCustomerInitializeOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+        });
+
+        it('runs default continue as guest flow', async () => {
+            const credentials = { email: 'foo@bar.com' };
+            const options = { methodId: 'googlepaystripe' };
+            const action = of(createAction(BillingAddressActionType.ContinueAsGuestRequested, getQuote()));
+
+            jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.continueAsGuest(credentials, options);
+
+            expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith(credentials, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
+        });
+    });
+
     describe('#signIn()', () => {
         it('throws error if trying to sign in programmatically', async () => {
             customerInitializeOptions = getStripeCustomerInitializeOptions();
@@ -193,6 +262,31 @@ describe('GooglePayCustomerStrategy', () => {
 
             expect(await strategy.signOut(options)).toEqual(store.getState());
             expect(store.getState).toHaveBeenCalledTimes(4);
+        });
+    });
+
+    describe('#signUp()', () => {
+        beforeEach(async () => {
+            customerInitializeOptions = getStripeCustomerInitializeOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+        });
+
+        it('runs default sign up customer flow', async () => {
+            const customerAccount = { firstName: 'foo', lastName: 'bar', email: 'foo@bar.com', password: 'foobar' };
+            const options = { methodId: 'googlepaystripe' };
+            const action = of(createAction(CustomerActionType.CreateCustomerRequested, getQuote()));
+
+            jest.spyOn(customerActionCreator, 'createCustomer')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.signUp(customerAccount, options);
+
+            expect(customerActionCreator.createCustomer).toHaveBeenCalledWith(customerAccount, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
         });
     });
 

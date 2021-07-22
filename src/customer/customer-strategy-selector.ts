@@ -5,12 +5,16 @@ import { createSelector } from '../common/selector';
 import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state';
 
 export default interface CustomerStrategySelector {
+    getContinueAsGuestError(methodId?: string): Error | undefined;
     getSignInError(methodId?: string): Error | undefined;
     getSignOutError(methodId?: string): Error | undefined;
+    getSignUpError(methodId?: string): Error | undefined;
     getInitializeError(methodId?: string): Error | undefined;
     getWidgetInteractionError(methodId?: string): Error | undefined;
+    isContinuingAsGuest(methodId?: string): boolean;
     isSigningIn(methodId?: string): boolean;
     isSigningOut(methodId?: string): boolean;
+    isSigningUp(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
@@ -19,6 +23,18 @@ export default interface CustomerStrategySelector {
 export type CustomerStrategySelectorFactory = (state: CustomerStrategyState) => CustomerStrategySelector;
 
 export function createCustomerStrategySelectorFactory(): CustomerStrategySelectorFactory {
+    const getContinueAsGuestError = createSelector(
+        (state: CustomerStrategyState) => state.errors.continueAsGuestMethodId,
+        (state: CustomerStrategyState) => state.errors.continueAsGuestError,
+        (continueAsGuestMethodId, continueAsGuestError) => (methodId?: string) => {
+            if (methodId && continueAsGuestMethodId !== methodId) {
+                return;
+            }
+
+            return continueAsGuestError;
+        }
+    );
+
     const getSignInError = createSelector(
         (state: CustomerStrategyState) => state.errors.signInMethodId,
         (state: CustomerStrategyState) => state.errors.signInError,
@@ -40,6 +56,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return signOutError;
+        }
+    );
+
+    const getSignUpError = createSelector(
+        (state: CustomerStrategyState) => state.errors.signUpMethodId,
+        (state: CustomerStrategyState) => state.errors.signUpError,
+        (signUpMethodId, signUpError) => (methodId?: string) => {
+            if (methodId && signUpMethodId !== methodId) {
+                return;
+            }
+
+            return signUpError;
         }
     );
 
@@ -67,6 +95,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         }
     );
 
+    const isContinuingAsGuest = createSelector(
+        (state: CustomerStrategyState) => state.statuses.continueAsGuestMethodId,
+        (state: CustomerStrategyState) => state.statuses.isContinuingAsGuest,
+        (continueAsGuestMethodId, isContinuingAsGuest) => (methodId?: string) => {
+            if (methodId && continueAsGuestMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isContinuingAsGuest;
+        }
+    );
+
     const isSigningIn = createSelector(
         (state: CustomerStrategyState) => state.statuses.signInMethodId,
         (state: CustomerStrategyState) => state.statuses.isSigningIn,
@@ -88,6 +128,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return !!isSigningOut;
+        }
+    );
+
+    const isSigningUp = createSelector(
+        (state: CustomerStrategyState) => state.statuses.signUpMethodId,
+        (state: CustomerStrategyState) => state.statuses.isSigningUp,
+        (signUpMethodId, isSigningUp) => (methodId?: string) => {
+            if (methodId && signUpMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isSigningUp;
         }
     );
 
@@ -131,10 +183,14 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         return {
             getSignInError: getSignInError(state),
             getSignOutError: getSignOutError(state),
+            getSignUpError: getSignUpError(state),
+            getContinueAsGuestError: getContinueAsGuestError(state),
             getInitializeError: getInitializeError(state),
             getWidgetInteractionError: getWidgetInteractionError(state),
+            isContinuingAsGuest: isContinuingAsGuest(state),
             isSigningIn: isSigningIn(state),
             isSigningOut: isSigningOut(state),
+            isSigningUp: isSigningUp(state),
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
             isWidgetInteracting: isWidgetInteracting(state),

@@ -1,26 +1,43 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { of } from 'rxjs';
 
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
+import { getQuote } from '../../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import CustomerActionCreator from '../../customer-action-creator';
+import { CustomerActionType } from '../../customer-actions';
 import { CustomerInitializeOptions } from '../../customer-request-options';
+import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
 import ChasePayCustomerStrategy from './chasepay-customer-strategy';
 
 describe('ChasePayCustomerStrategy', () => {
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let container: HTMLDivElement;
+    let customerActionCreator: CustomerActionCreator;
+    let googleRecaptcha: GoogleRecaptcha;
+    let googleRecaptchaMockWindow: GoogleRecaptchaWindow;
+    let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
@@ -60,6 +77,30 @@ describe('ChasePayCustomerStrategy', () => {
         jest.spyOn(chasePayScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(JPMC));
 
+        googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
+        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender()),
+                new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(createRequestSender())
+            )
+        );
+
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(createRequestSender()),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(createRequestSender())
+            )
+        );
+
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         requestSender = createRequestSender();
         formPoster = createFormPoster();
@@ -69,7 +110,9 @@ describe('ChasePayCustomerStrategy', () => {
             remoteCheckoutActionCreator,
             chasePayScriptLoader,
             requestSender,
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         container = document.createElement('div');
@@ -214,6 +257,29 @@ describe('ChasePayCustomerStrategy', () => {
         });
     });
 
+    describe('#continueAsGuest()', () => {
+        beforeEach(async () => {
+            await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });
+        });
+
+        it('runs default continue as guest flow', async () => {
+            const credentials = { email: 'foo@bar.com' };
+            const options = { methodId: 'chasepay' };
+            const action = of(createAction(BillingAddressActionType.ContinueAsGuestRequested, getQuote()));
+
+            jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.continueAsGuest(credentials, options);
+
+            expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith(credentials, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
+        });
+    });
+
     describe('#signIn()', () => {
         beforeEach(async () => {
             await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });
@@ -247,6 +313,29 @@ describe('ChasePayCustomerStrategy', () => {
 
             expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('chasepay', options);
             expect(store.dispatch).toHaveBeenCalled();
+        });
+    });
+
+    describe('#signUp()', () => {
+        beforeEach(async () => {
+            await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });
+        });
+
+        it('runs default sign up customer flow', async () => {
+            const customerAccount = { firstName: 'foo', lastName: 'bar', email: 'foo@bar.com', password: 'foobar' };
+            const options = { methodId: 'chasepay' };
+            const action = of(createAction(CustomerActionType.CreateCustomerRequested, getQuote()));
+
+            jest.spyOn(customerActionCreator, 'createCustomer')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const output = await strategy.signUp(customerAccount, options);
+
+            expect(customerActionCreator.createCustomer).toHaveBeenCalledWith(customerAccount, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(store.getState());
         });
     });
 });

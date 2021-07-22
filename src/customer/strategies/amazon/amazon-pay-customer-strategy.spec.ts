@@ -3,28 +3,44 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../../checkout';
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
+import { MutationObserverFactory } from '../../../common/dom';
 import { MissingDataError } from '../../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import { AmazonPayLogin, AmazonPayLoginButton, AmazonPayLoginButtonOptions, AmazonPayLoginOptions, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
+import { getQuote } from '../../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteTokenResponseBody } from '../../../remote-checkout/remote-checkout.mock';
+import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import CustomerActionCreator from '../../customer-action-creator';
+import { CustomerActionType } from '../../customer-actions';
+import CustomerRequestSender from '../../customer-request-sender';
 import CustomerStrategy from '../customer-strategy';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 
 describe('AmazonPayCustomerStrategy', () => {
     let authorizeSpy: jest.Mock;
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let buttonConstructorSpy: jest.Mock;
     let container: HTMLDivElement;
+    let customerActionCreator: CustomerActionCreator;
+    let googleRecaptcha: GoogleRecaptcha;
+    let googleRecaptchaMockWindow: GoogleRecaptchaWindow;
+    let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let hostWindow: AmazonPayWindow;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
+
     let scriptLoader: AmazonPayScriptLoader;
     let strategy: CustomerStrategy;
     let state: CheckoutStoreState;
@@ -60,9 +76,30 @@ describe('AmazonPayCustomerStrategy', () => {
 
     beforeEach(() => {
         authorizeSpy = jest.fn();
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(createRequestSender()),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(createRequestSender())
+            )
+        );
         buttonConstructorSpy = jest.fn();
         container = document.createElement('div');
         hostWindow = window;
+        googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
+        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender()),
+                new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            ),
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(createRequestSender())
+            )
+        );
         paymentMethod = getAmazonPay();
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
@@ -75,7 +112,9 @@ describe('AmazonPayCustomerStrategy', () => {
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,
-            scriptLoader
+            scriptLoader,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         container.setAttribute('id', 'login');
@@ -230,7 +269,9 @@ describe('AmazonPayCustomerStrategy', () => {
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,
-            scriptLoader
+            scriptLoader,
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         jest.spyOn(store, 'dispatch');
@@ -262,5 +303,39 @@ describe('AmazonPayCustomerStrategy', () => {
         await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
+    });
+
+    it('runs default continue as guest flow', async () => {
+        const credentials = { email: 'foo@bar.com' };
+        const options = { methodId: 'amazon' };
+        const action = of(createAction(BillingAddressActionType.ContinueAsGuestRequested, getQuote()));
+
+        jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
+
+        const output = await strategy.continueAsGuest(credentials, options);
+
+        expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith(credentials, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
+    });
+
+    it('runs default sign up customer flow', async () => {
+        const customerAccount = { firstName: 'foo', lastName: 'bar', email: 'foo@bar.com', password: 'foobar' };
+        const options = { methodId: 'amazon' };
+        const action = of(createAction(CustomerActionType.CreateCustomerRequested, getQuote()));
+
+        jest.spyOn(customerActionCreator, 'createCustomer')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
+
+        const output = await strategy.signUp(customerAccount, options);
+
+        expect(customerActionCreator.createCustomer).toHaveBeenCalledWith(customerAccount, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
     });
 });

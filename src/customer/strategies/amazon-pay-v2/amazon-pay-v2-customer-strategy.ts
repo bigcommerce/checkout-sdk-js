@@ -1,10 +1,14 @@
+import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { getShippableItemsCount } from '../../../shipping';
+import CustomerAccountRequestBody from '../../customer-account';
+import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { GuestCredentials } from '../../guest-credentials';
 import CustomerStrategy from '../customer-strategy';
 
 export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
@@ -14,7 +18,9 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor
+        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _customerActionCreator: CustomerActionCreator
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -60,6 +66,18 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
 
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
+        );
+    }
+
+    signUp(customerAccount: CustomerAccountRequestBody, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._customerActionCreator.createCustomer(customerAccount, options)
+        );
+    }
+
+    continueAsGuest(credentials: GuestCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._billingAddressActionCreator.continueAsGuest(credentials, options)
         );
     }
 

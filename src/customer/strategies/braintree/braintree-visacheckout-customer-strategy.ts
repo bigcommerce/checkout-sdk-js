@@ -1,10 +1,14 @@
+import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutPaymentSuccessPayload, VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import CustomerAccountRequestBody from '../../customer-account';
+import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
+import { GuestCredentials } from '../../guest-credentials';
 import CustomerStrategy from '../customer-strategy';
 
 export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy {
@@ -18,7 +22,9 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
-        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
+        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _customerActionCreator: CustomerActionCreator
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -89,6 +95,18 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options)
+        );
+    }
+
+    signUp(customerAccount: CustomerAccountRequestBody, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._customerActionCreator.createCustomer(customerAccount, options)
+        );
+    }
+
+    continueAsGuest(credentials: GuestCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._billingAddressActionCreator.continueAsGuest(credentials, options)
         );
     }
 

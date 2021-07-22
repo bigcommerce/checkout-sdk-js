@@ -2,6 +2,7 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
@@ -9,12 +10,14 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
+import { BoltScriptLoader } from '../payment/strategies/bolt';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
@@ -22,6 +25,7 @@ import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
+import { BoltCustomerStrategy } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
@@ -42,6 +46,20 @@ export default function createCustomerStrategyRegistry(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const formPoster = createFormPoster();
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(
+        createSpamProtection(scriptLoader),
+        new SpamProtectionRequestSender(requestSender)
+    );
+    const customerActionCreator = new CustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+        checkoutActionCreator,
+        spamProtectionActionCreator
+    );
+    const subscriptionActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
+    const billingAddressActionCreator = new BillingAddressActionCreator(
+        new BillingAddressRequestSender(requestSender),
+        subscriptionActionCreator
+    );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
@@ -54,7 +72,9 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayAdyenV2Initializer()
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -64,7 +84,9 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,
-            new AmazonPayScriptLoader(scriptLoader)
+            new AmazonPayScriptLoader(scriptLoader),
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -73,7 +95,9 @@ export default function createCustomerStrategyRegistry(
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            createAmazonPayV2PaymentProcessor()
+            createAmazonPayV2PaymentProcessor(),
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -85,7 +109,19 @@ export default function createCustomerStrategyRegistry(
             new CustomerStrategyActionCreator(registry),
             remoteCheckoutActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
-            new VisaCheckoutScriptLoader(scriptLoader)
+            new VisaCheckoutScriptLoader(scriptLoader),
+            billingAddressActionCreator,
+            customerActionCreator
+        )
+    );
+
+    registry.register('bolt', () =>
+        new BoltCustomerStrategy(
+            store,
+            new BoltScriptLoader(scriptLoader),
+            paymentMethodActionCreator,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -96,14 +132,18 @@ export default function createCustomerStrategyRegistry(
             remoteCheckoutActionCreator,
             new ChasePayScriptLoader(scriptLoader),
             requestSender,
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
     registry.register('squarev2', () =>
         new SquareCustomerStrategy(
             store,
-            new RemoteCheckoutActionCreator(remoteCheckoutRequestSender)
+            new RemoteCheckoutActionCreator(remoteCheckoutRequestSender),
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -112,7 +152,9 @@ export default function createCustomerStrategyRegistry(
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            new MasterpassScriptLoader(scriptLoader)
+            new MasterpassScriptLoader(scriptLoader),
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -124,7 +166,9 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayAuthorizeNetInitializer()
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -140,7 +184,9 @@ export default function createCustomerStrategyRegistry(
                     )
                 )
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -152,7 +198,9 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayCheckoutcomInitializer(requestSender)
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -164,7 +212,9 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayCybersourceV2Initializer()
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -176,7 +226,9 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayOrbitalInitializer()
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
@@ -188,21 +240,17 @@ export default function createCustomerStrategyRegistry(
                 store,
                 new GooglePayStripeInitializer()
             ),
-            formPoster
+            formPoster,
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 
     registry.register('default', () =>
         new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(
-                new CustomerRequestSender(requestSender),
-                checkoutActionCreator,
-                new SpamProtectionActionCreator(
-                    createSpamProtection(scriptLoader),
-                    new SpamProtectionRequestSender(requestSender)
-                )
-            )
+            billingAddressActionCreator,
+            customerActionCreator
         )
     );
 

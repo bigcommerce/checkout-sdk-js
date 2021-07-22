@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../common/dom';
@@ -11,6 +12,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import CustomerActionCreator from './customer-action-creator';
@@ -40,19 +42,29 @@ describe('CustomerStrategyActionCreator', () => {
         const mutationObserverFactory = new MutationObserverFactory();
         const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
 
+        const customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(requestSender),
+            checkoutActionCreator,
+            new SpamProtectionActionCreator(
+                googleRecaptcha,
+                new SpamProtectionRequestSender(requestSender)
+            )
+        );
+
+        const billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(requestSender),
+            new SubscriptionsActionCreator(
+                new SubscriptionsRequestSender(requestSender)
+            )
+        );
+
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         registry = createCustomerStrategyRegistry(store, createRequestSender());
         strategy = new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(
-                new CustomerRequestSender(requestSender),
-                checkoutActionCreator,
-                new SpamProtectionActionCreator(
-                    googleRecaptcha,
-                    new SpamProtectionRequestSender(requestSender)
-                )
-            )
+            billingAddressActionCreator,
+            customerActionCreator
         );
 
         jest.spyOn(registry, 'get')
