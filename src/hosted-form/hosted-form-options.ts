@@ -1,3 +1,5 @@
+import { Omit } from '../common/types';
+
 import HostedFieldType from './hosted-field-type';
 import { HostedInputBlurEvent, HostedInputCardTypeChangeEvent, HostedInputEnterEvent, HostedInputFocusEvent, HostedInputStyles, HostedInputValidateEvent } from './iframe-content';
 
@@ -9,6 +11,9 @@ export default interface HostedFormOptions {
     onEnter?(data: HostedFieldEnterEventData): void;
     onFocus?(data: HostedFieldFocusEventData): void;
     onValidate?(data: HostedFieldValidateEventData): void;
+}
+export interface HostedFormValidationOptions extends Omit<HostedFormOptions, 'fields'> {
+    fields: HostedStoredCardFieldOptionsMap;
 }
 
 export type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
