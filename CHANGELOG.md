@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.166.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.165.0...v1.166.0) (2021-07-22)
+
+
+### Features
+
+* **payment:** PAYMENTS-7169 add resume payment ability to PPSDK strategy ([#1188](https://github.com/bigcommerce/checkout-sdk-js/issues/1188)) ([c874e0f](https://github.com/bigcommerce/checkout-sdk-js/commit/c874e0fbbd09503629c3c555c232cd3da08e6141))
+
 ## [1.165.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.164.1...v1.165.0) (2021-07-18)
 
 

@@ -16,6 +16,7 @@
 * [description](gatewayorderpayment.md#description)
 * [detail](gatewayorderpayment.md#detail)
 * [gatewayId](gatewayorderpayment.md#optional-gatewayid)
+* [paymentId](gatewayorderpayment.md#optional-paymentid)
 * [providerId](gatewayorderpayment.md#providerid)
 
 ## Properties
@@ -53,6 +54,14 @@ ___
 • **gatewayId**? : *undefined | string*
 
 *Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[gatewayId](gatewayorderpayment.md#optional-gatewayid)*
+
+___
+
+### `Optional` paymentId
+
+• **paymentId**? : *undefined | string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[paymentId](gatewayorderpayment.md#optional-paymentid)*
 
 ___
 

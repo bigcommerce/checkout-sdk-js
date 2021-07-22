@@ -4605,6 +4605,7 @@ declare interface Order {
 declare interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    paymentId?: string;
     description: string;
     amount: number;
 }

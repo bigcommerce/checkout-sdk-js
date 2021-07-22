@@ -17,6 +17,7 @@
 * [amount](orderpayment.md#amount)
 * [description](orderpayment.md#description)
 * [gatewayId](orderpayment.md#optional-gatewayid)
+* [paymentId](orderpayment.md#optional-paymentid)
 * [providerId](orderpayment.md#providerid)
 
 ## Properties
@@ -36,6 +37,12 @@ ___
 ### `Optional` gatewayId
 
 • **gatewayId**? : *undefined | string*
+
+___
+
+### `Optional` paymentId
+
+• **paymentId**? : *undefined | string*
 
 ___
 

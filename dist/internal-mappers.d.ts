@@ -595,6 +595,7 @@ declare interface OrderMetaState extends InternalOrderMeta {
 declare interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    paymentId?: string;
     description: string;
     amount: number;
 }
