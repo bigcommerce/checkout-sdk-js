@@ -7,7 +7,8 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -175,15 +176,59 @@ describe('AfterpayPaymentStrategy', () => {
         it('throws error if trying to execute before initialization', async () => {
             await strategy.deinitialize();
 
-            try {
-                await strategy.execute(payload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
-            }
+            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
+        });
+
+        it('throws error if amount is outside the Afterpay limits', async () => {
+            store = createCheckoutStore(merge(getCheckoutStoreState(), {
+                checkout: { data: { outstandingBalance: 5 } },
+            }));
+
+            strategy = new AfterpayPaymentStrategy(
+                store,
+                checkoutValidator,
+                orderActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                storeCreditActionCreator,
+                scriptLoader
+            );
+
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+
+            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('throws InvalidArgumentError if payment method is not found', async () => {
+            const errorResponse = merge(
+                getErrorResponse(), {
+                    body: {
+                        status: 404,
+                    },
+                });
+
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
+                throw new RequestError(errorResponse);
+            });
+
+            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('throws RequestError if loadPaymentMethod fails', async () => {
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
+                throw new RequestError(getErrorResponse());
+            });
+
+            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(RequestError);
         });
 
         it('loads payment client token', () => {
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway, undefined);
+            expect(paymentMethodActionCreator.loadPaymentMethod)
+                .toHaveBeenCalledWith(`${paymentMethod.gateway}?method=${paymentMethod.id}`, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
     });

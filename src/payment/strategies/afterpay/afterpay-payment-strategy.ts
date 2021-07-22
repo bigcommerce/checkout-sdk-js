@@ -1,5 +1,6 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -14,6 +15,7 @@ import AfterpaySdk from './afterpay-sdk';
 
 export default class AfterpayPaymentStrategy implements PaymentStrategy {
     private _afterpaySdk?: AfterpaySdk;
+    private _invalidAmountErrorMessage = 'The amount for your order is not supported by Afterpay, please select another payment method';
 
     constructor(
         private _store: CheckoutStore,
@@ -49,10 +51,13 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gatewayId;
+        if (!payload.payment) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
+        }
+        const { gatewayId, methodId } = payload.payment;
 
-        if (!paymentId) {
-            throw new PaymentArgumentInvalidError(['payment.gatewayId']);
+        if (!gatewayId || !methodId) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
         let state = this._store.getState();
@@ -68,11 +73,17 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
-        state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
-        );
+        state = await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        await this._redirectToAfterpay(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId));
+        const checkout = state.checkout.getCheckout();
+        const amount = checkout?.outstandingBalance || 0;
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+
+        if (this._outsideLimits(amount, paymentMethod)) {
+            throw new InvalidArgumentError(this._invalidAmountErrorMessage);
+        }
+
+        await this._redirectToAfterpay(storeCountryName, paymentMethod);
 
         // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise<never>(() => {});
@@ -123,6 +134,26 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         default:
             return 'AU';
+        }
+    }
+
+    private _outsideLimits(amount: number, paymentMethod?: PaymentMethod): boolean {
+        const $minimum = paymentMethod?.initializationData?.min || 0;
+
+        return amount < $minimum || amount > paymentMethod?.initializationData?.max;
+    }
+
+    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
+        try {
+            return await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
+            );
+        } catch (error) {
+            if (error instanceof RequestError && error?.body?.status === 404) {
+                throw new InvalidArgumentError(this._invalidAmountErrorMessage);
+            }
+
+            throw error;
         }
     }
 }

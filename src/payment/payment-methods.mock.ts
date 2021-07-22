@@ -269,6 +269,10 @@ export function getAfterpay(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        initializationData: {
+            max: 1000,
+            min: 10,
+        },
     };
 }
 
