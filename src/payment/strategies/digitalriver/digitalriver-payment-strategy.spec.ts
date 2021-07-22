@@ -135,6 +135,65 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
+        it('loads DigitalRiver script with vaulting enable and customer email', async () => {
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
+                .mockReturnValue({...getBillingAddress(), email: undefined});
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
+                .mockReturnValue({ ...getCustomer(), email: 'customer@bigcommerce.com'});
+
+            if (options.digitalriver) {
+                options.digitalriver.configuration.showSavePaymentAgreement = true;
+            }
+
+            await strategy.initialize(options);
+
+            expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+                expect.objectContaining({
+                    options: expect.objectContaining({
+                        showSavePaymentAgreement: true,
+                    }),
+                })
+            );
+            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+                expect.objectContaining({
+                    billingAddress: expect.objectContaining({
+                        email: 'customer@bigcommerce.com',
+                    }),
+                })
+            );
+        });
+
+        it('loads DigitalRiver script without vaulting enable and customer email', async () => {
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
+                .mockReturnValue({...getBillingAddress(), email: undefined});
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
+                .mockReturnValue({ ...getCustomer(), email: 'customer@bigcommerce.com'});
+
+            if (options.digitalriver) {
+                options.digitalriver.configuration.showSavePaymentAgreement = true;
+            }
+
+            await strategy.initialize(options);
+
+            expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+                expect.objectContaining({
+                    options: expect.objectContaining({
+                        showSavePaymentAgreement: false,
+                    }),
+                })
+            );
+            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+                expect.objectContaining({
+                    billingAddress: expect.objectContaining({
+                        email: 'customer@bigcommerce.com',
+                    }),
+                })
+            );
+        });
+
         it('loads DigitalRiver when widget was updated ', async () => {
             jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
             jest.spyOn(document, 'getElementById').mockReturnValue('mock');

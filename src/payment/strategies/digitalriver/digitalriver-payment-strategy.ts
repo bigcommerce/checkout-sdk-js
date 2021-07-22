@@ -227,7 +227,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
         const digitalRiverConfiguration = {
             sessionId: this._digitalRiverCheckoutData.sessionId,
-            options: { ...configuration, showSavePaymentAgreement: Boolean(customer.email) },
+            options: { ...configuration, showSavePaymentAgreement: Boolean(customer.email) && configuration.showSavePaymentAgreement },
             billingAddress: {
                 firstName: billing.firstName,
                 lastName: billing.lastName,
