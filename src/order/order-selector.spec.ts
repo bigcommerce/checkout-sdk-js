@@ -1,10 +1,13 @@
+import { set } from 'lodash';
+
 import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
+import { GatewayOrderPayment } from '.';
 import OrderSelector, { createOrderSelectorFactory, OrderSelectorFactory } from './order-selector';
-import { getOrder } from './orders.mock';
+import { getOrder, getOrderState } from './orders.mock';
 
 describe('OrderSelector', () => {
     let createOrderSelector: OrderSelectorFactory;
@@ -54,6 +57,34 @@ describe('OrderSelector', () => {
             orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
 
             expect(orderSelector.getLoadError()).toBeUndefined();
+        });
+    });
+
+    describe('#getPaymentId()', () => {
+        describe('when there is a matching payment method', () => {
+            it('returns the paymentId', () => {
+                const orderPayment: GatewayOrderPayment = {
+                    providerId: 'some-provider-id',
+                    description: '',
+                    amount: 225,
+                    detail: { step: 'INITIALIZE', instructions: '' },
+                    paymentId: 'abc',
+                };
+
+                const orderState = set(getOrderState(), 'data.payments', [orderPayment]);
+
+                orderSelector = createOrderSelector(orderState, selectors.billingAddress, selectors.coupons);
+
+                expect(orderSelector.getPaymentId('some-provider-id')).toEqual('abc');
+            });
+        });
+
+        describe('when there is no matching payment method', () => {
+            it('returns undefined', () => {
+                orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+
+                expect(orderSelector.getPaymentId('some-non-matching-id')).toBeUndefined();
+            });
         });
     });
 
