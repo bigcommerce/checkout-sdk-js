@@ -25,6 +25,7 @@ describe('CustomerStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: DefaultCustomerStrategy;
+    let locale: string;
 
     beforeEach(() => {
         const requestSender = createRequestSender();
@@ -42,7 +43,8 @@ describe('CustomerStrategyActionCreator', () => {
 
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        registry = createCustomerStrategyRegistry(store, createRequestSender());
+        locale = 'en';
+        registry = createCustomerStrategyRegistry(store, createRequestSender(), locale);
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

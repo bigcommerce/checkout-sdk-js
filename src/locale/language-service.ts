@@ -108,6 +108,7 @@ export default class LanguageService {
 
     private _transformConfig(config: Partial<LanguageConfig> = {}): LanguageConfig {
         const output: LanguageConfig = {
+            defaultLocale: '',
             defaultTranslations: {},
             translations: {},
             locales: {},

@@ -32,6 +32,7 @@ describe('MasterpassPaymentStrategy', () => {
     let initOptions: PaymentInitializeOptions;
     let paymentMethodMock: PaymentMethod;
     let masterpassScript: Masterpass;
+    let locale: string;
 
     beforeEach(() => {
         initOptions = {
@@ -73,12 +74,15 @@ describe('MasterpassPaymentStrategy', () => {
         jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(masterpassScript));
         jest.spyOn(masterpassScript, 'checkout').mockReturnValue(true);
 
+        locale = 'en-US';
+
         // Strategy
         strategy = new MasterpassPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
-            scriptLoader
+            scriptLoader,
+            locale
         );
     });
 
@@ -97,6 +101,47 @@ describe('MasterpassPaymentStrategy', () => {
             const error = 'Unable to initialize payment because "options.masterpass" argument is not provided.';
 
             return expect(strategy.initialize(initOptions)).rejects.toThrow(error);
+        });
+
+        it('loads masterpass script with correct locale', async () => {
+            locale = 'fr';
+
+             // Strategy
+            strategy = new MasterpassPaymentStrategy(
+                store,
+                orderActionCreator,
+                paymentActionCreator,
+                scriptLoader,
+                locale
+            );
+
+            paymentMethodMock.initializationData = {
+                checkoutId: 'checkout-id',
+                isMasterpassSrcEnabled: false,
+            };
+            await strategy.initialize(initOptions);
+
+            expect(scriptLoader.load).toHaveBeenLastCalledWith({
+                useMasterpassSrc: false,
+                language: 'fr_fr',
+                testMode: false,
+                checkoutId: 'checkout-id',
+            });
+        });
+
+        it('loads masterpass script with correct locale when locale contains "-" character', async () => {
+            paymentMethodMock.initializationData = {
+                checkoutId: 'checkout-id',
+                isMasterpassSrcEnabled: false,
+            };
+            await strategy.initialize(initOptions);
+
+            expect(scriptLoader.load).toHaveBeenLastCalledWith({
+                useMasterpassSrc: false,
+                language: 'en_us',
+                testMode: false,
+                checkoutId: 'checkout-id',
+            });
         });
 
         describe('on click button handler', () => {
@@ -131,7 +176,7 @@ describe('MasterpassPaymentStrategy', () => {
                 await strategy.initialize(initOptions);
                 expect(scriptLoader.load).toHaveBeenLastCalledWith({
                     useMasterpassSrc: false,
-                    language: 'en_US',
+                    language: 'en_us',
                     testMode: false,
                     checkoutId: 'checkout-id',
                 });
@@ -144,7 +189,7 @@ describe('MasterpassPaymentStrategy', () => {
                 await strategy.initialize(initOptions);
                 expect(scriptLoader.load).toHaveBeenLastCalledWith({
                     useMasterpassSrc: false,
-                    language: 'en_US',
+                    language: 'en_us',
                     testMode: true,
                     checkoutId: 'checkout-id',
                 });
@@ -158,7 +203,7 @@ describe('MasterpassPaymentStrategy', () => {
                 await strategy.initialize(initOptions);
                 expect(scriptLoader.load).toHaveBeenLastCalledWith({
                     useMasterpassSrc: false,
-                    language: 'en_US',
+                    language: 'en_us',
                     testMode: true,
                     checkoutId: 'checkout-id',
                 });

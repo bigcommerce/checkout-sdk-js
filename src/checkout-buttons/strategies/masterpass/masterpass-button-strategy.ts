@@ -13,7 +13,8 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _masterpassScriptLoader: MasterpassScriptLoader
+        private _masterpassScriptLoader: MasterpassScriptLoader,
+        private _locale: string
     ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -28,19 +29,15 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
             .then(state => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-                const storeConfig = state.config.getStoreConfig();
+                const locale = this.formatLocale(this._locale);
 
                 if (!paymentMethod || !paymentMethod.initializationData.checkoutId) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (!storeConfig) {
-                    throw new InvalidArgumentError('Unable to retrieve store configuration');
-                }
-
                 const masterpassScriptLoaderParams = {
                     useMasterpassSrc: paymentMethod.initializationData.isMasterpassSrcEnabled,
-                    language: storeConfig.storeProfile.storeLanguage,
+                    language: locale,
                     testMode: paymentMethod.config.testMode,
                     checkoutId: paymentMethod.initializationData.checkoutId,
                 };
@@ -87,11 +84,11 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
 
         if (paymentMethod.initializationData.isMasterpassSrcEnabled) {
             const subdomain = paymentMethod.config.testMode ? 'sandbox.' : '';
-            const { storeLanguage } = storeConfig.storeProfile;
+            const locale = this.formatLocale(this._locale);
             const { checkoutId } = paymentMethod.initializationData;
 
             const params = [
-                `locale=${storeLanguage}`,
+                `locale=${locale}`,
                 `paymentmethod=master,visa,amex,discover`,
                 `checkoutid=${checkoutId}`,
             ];
@@ -141,5 +138,12 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         }
 
         this._masterpassClient.checkout(this._createMasterpassPayload());
+    }
+
+    private formatLocale( localeLanguage: string): string {
+        const locale = localeLanguage.replace(/[-_]/g, '_');
+        const formatedLocale = locale.includes('_') ? `${locale}` : `${locale}_${locale}`;
+
+        return formatedLocale.toLowerCase();
     }
 }

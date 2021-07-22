@@ -29,6 +29,7 @@ describe('MasterpassButtonStrategy', () => {
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let strategy: CheckoutButtonStrategy;
+    let locale: string;
 
     beforeEach(() => {
         paymentMethodMock = {
@@ -75,10 +76,13 @@ describe('MasterpassButtonStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
+        locale = 'en-US';
+
         strategy = new MasterpassButtonStrategy(
             store,
             checkoutActionCreator,
-            masterpassScriptLoader
+            masterpassScriptLoader,
+            locale
         );
 
         container = document.createElement('div');
@@ -100,7 +104,7 @@ describe('MasterpassButtonStrategy', () => {
         const methodId = CheckoutButtonMethodType.MASTERPASS;
         const masterpassScriptLoaderParams = {
             useMasterpassSrc: false,
-            language: 'en_US',
+            language: 'en_us',
             testMode: true,
             checkoutId: 'checkoutId',
         };
@@ -176,6 +180,29 @@ describe('MasterpassButtonStrategy', () => {
                     expect(masterpass.checkout).toHaveBeenCalled();
                 }
             }
+        });
+
+        it('loads masterpass script with correct locale when locale contains "-" character', async () => {
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+        });
+
+        it('loads masterpass script with correct locale', async () => {
+            locale = 'FR';
+
+            strategy = new MasterpassButtonStrategy(
+                store,
+                checkoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            masterpassScriptLoaderParams.language = 'fr_fr';
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
     });
 

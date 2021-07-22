@@ -18,11 +18,12 @@ describe('CheckoutButtonInitializer', () => {
     let initializer: CheckoutButtonInitializer;
     let buttonActionCreator: CheckoutButtonStrategyActionCreator;
     let store: CheckoutStore;
+    const locale = 'en';
 
     beforeEach(() => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster()),
+            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster(), locale),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         );
 

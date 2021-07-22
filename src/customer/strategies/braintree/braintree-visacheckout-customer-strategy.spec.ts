@@ -60,7 +60,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         visaCheckoutScriptLoader.load = jest.fn(() => Promise.resolve(visaCheckoutSDK));
 
-        const registry = createCustomerStrategyRegistry(store, createRequestSender());
+        const registry = createCustomerStrategyRegistry(store, createRequestSender(),  '');
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
