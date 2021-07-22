@@ -201,6 +201,7 @@ export interface PaypalCommerceSDKFunding {
     BLIK: string;
     TRUSTLY: string;
     VERKKOPANKKI: string;
+    VENMO: string;
 }
 
 export interface PaypalCommerceSDK {
