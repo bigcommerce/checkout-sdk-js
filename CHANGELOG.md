@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.168.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.167.0...v1.168.0) (2021-07-23)
+
+
+### Features
+
+* **checkout:** PAYPAL-1057 added Venmo APM to paypal commerce ([e55f4d5](https://github.com/bigcommerce/checkout-sdk-js/commit/e55f4d5ee0511b4bde005aaa970498467d29beaa))
+
 ## [1.167.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.166.0...v1.167.0) (2021-07-22)
 
 
