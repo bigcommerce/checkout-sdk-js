@@ -868,7 +868,7 @@ describe('StripeV3PaymentStrategy', () => {
                     const errorResponse = new RequestError(getResponse({
                         ...getErrorPaymentResponseBody(),
                         errors: [
-                            {code: 'three_d_secure_required'},
+                            { code: 'three_d_secure_required' },
                         ],
                         three_ds_result: {
                             token: 'token',
@@ -889,6 +889,45 @@ describe('StripeV3PaymentStrategy', () => {
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
                     expect(stripeV3JsMock.handleCardAction).toHaveBeenCalled();
+                });
+
+                it('throws stripe error when call handleCardAction and then call confirmCardPayment to shopper auth and complete the payment', async () => {
+                    const errorResponse = new RequestError(getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [
+                            { code: 'three_d_secure_required' },
+                        ],
+                        three_ds_result: {
+                            token: 'token',
+                        },
+                        status: 'error',
+                    }));
+                    const stripeErrorMessage = 'Stripe Exception';
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+                    stripeV3JsMock.handleCardAction = jest.fn(
+                        () => Promise.reject(new Error(stripeErrorMessage))
+                    );
+                    stripeV3JsMock.confirmCardPayment = jest.fn(
+                        () => Promise.resolve(getConfirmPaymentResponse())
+                    );
+
+                    await strategy.initialize(options);
+                    await strategy.execute(getStripeV3OrderRequestBodyMock());
+
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                confirm: false,
+                            }),
+                        }),
+                    }));
+                    expect(stripeV3JsMock.handleCardAction).toHaveBeenCalled();
+                    expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
                 });
 
                 it('throws unknown error when using stored instrument', async () => {
