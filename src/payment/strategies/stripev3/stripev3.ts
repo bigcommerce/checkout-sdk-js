@@ -41,6 +41,21 @@ export interface PaymentIntent {
      * Status of this PaymentIntent. Read more about each PaymentIntent [status](https://stripe.com/docs/payments/intents#intent-statuses).
      */
     status: 'succeeded' | string;
+
+     /**
+      * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
+      */
+     last_payment_error: LastPaymentError | null;
+}
+
+/**
+ * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
+ */
+export interface LastPaymentError {
+    /**
+     * A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.
+     */
+     message?: string;
 }
 
 /**
@@ -71,6 +86,11 @@ export interface StripeError {
      * A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.
      */
     message?: string;
+
+    /**
+     * The PaymentIntent object.
+     */
+    payment_intent: PaymentIntent;
 }
 
 /**
