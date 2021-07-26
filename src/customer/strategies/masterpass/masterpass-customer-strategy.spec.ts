@@ -189,6 +189,51 @@ describe('MasterpassCustomerStrategy', () => {
 
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'fr_fr'});
         });
+
+        it('loads masterpass script with default locale for unsupported country code', async () => {
+            locale = 'es_fr';
+
+            strategy = new MasterpassCustomerStrategy(
+                store,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'es_es'});
+        });
+
+        it('loads masterpass script with default locale for unsupported language', async () => {
+            locale = 'tr';
+
+            strategy = new MasterpassCustomerStrategy(
+                store,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'en_us'});
+        });
+
+        it('loads masterpass script with correct locale for supported language and country', async () => {
+            locale = 'zh_hk';
+
+            strategy = new MasterpassCustomerStrategy(
+                store,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'zh_hk'});
+        });
     });
 
     describe('#deinitialize()', () => {

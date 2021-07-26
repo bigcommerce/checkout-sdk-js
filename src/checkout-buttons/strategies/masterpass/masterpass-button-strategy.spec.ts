@@ -204,6 +204,54 @@ describe('MasterpassButtonStrategy', () => {
 
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
         });
+
+        it('loads masterpass script with default locale for unsupported country code', async () => {
+            locale = 'es_fr';
+
+            strategy = new MasterpassButtonStrategy(
+                store,
+                checkoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            masterpassScriptLoaderParams.language = 'es_es';
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+        });
+
+        it('loads masterpass script with default locale for unsupported language', async () => {
+            locale = 'tr';
+
+            strategy = new MasterpassButtonStrategy(
+                store,
+                checkoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            masterpassScriptLoaderParams.language = 'en_us';
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+        });
+
+        it('loads masterpass script with correct locale for supported language and country', async () => {
+            locale = 'zh_hk';
+
+            strategy = new MasterpassButtonStrategy(
+                store,
+                checkoutActionCreator,
+                masterpassScriptLoader,
+                locale
+            );
+            masterpassScriptLoaderParams.language = 'zh_hk';
+
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+        });
     });
 
     describe('#deinitialize()', () => {
