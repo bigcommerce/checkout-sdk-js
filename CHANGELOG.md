@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.168.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.168.0...v1.168.1) (2021-07-27)
+
+
+### Bug Fixes
+
+* **payment:** INT-4598 handle vaulting Enable checkbox ([cee0198](https://github.com/bigcommerce/checkout-sdk-js/commit/cee01981b80a6d4ae1b84586b860d0168b83ace6))
+* **payment:** INT-4661 [Afterpay] get countryCode by shopperCurrency ([ca41447](https://github.com/bigcommerce/checkout-sdk-js/commit/ca41447c42bd4d199b9ae8908e6ad9a2345cf8ac))
+
 ## [1.168.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.167.0...v1.168.0) (2021-07-23)
 
 
