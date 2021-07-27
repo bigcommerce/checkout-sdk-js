@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import { formatLocale, getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
@@ -34,7 +34,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                 }
 
                 const cart = state.cart.getCart();
-                const locale = this.formatLocale(this._locale);
+                const locale = formatLocale(this._locale);
 
                 if (!cart) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
@@ -119,7 +119,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         if (this._paymentMethod.initializationData.isMasterpassSrcEnabled) {
             const subdomain = this._paymentMethod.config.testMode ? 'sandbox.' : '';
             const { checkoutId } = this._paymentMethod.initializationData;
-            const locale = this.formatLocale(this._locale);
+            const locale = formatLocale(this._locale);
 
             const params = [
                 `locale=${locale}`,
@@ -137,38 +137,5 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         container.appendChild(button);
 
         return button;
-    }
-
-    private formatLocale( localeLanguage: string): string {
-        const supportedLocales: {[language: string]: string[]} = {es: ['es_es', 'es_mx', 'es_pe', 'es_co', 'es_ar', 'es_cl'],
-            en: ['en_us', 'en_gb', 'en_ca', 'en_es', 'en_fr', 'en_ie', 'en_sg', 'en_au', 'en_nz', 'en_my', 'en_hk', 'en_th', 'en_ae', 'en_sa', 'en_qa', 'en_kw', 'en_za'],
-            pt: ['pt_br'],
-            zu: ['zu_za'],
-            ar: ['ar_sa', 'ar_ae', 'ar_qa', 'ar_kw'],
-            zh: ['zh_sg', 'zh_hk'],
-            ms: ['ms_my'],
-            uk: ['uk_ua'],
-            sv: ['sv_se'],
-            hr: ['hr_hr'],
-            pl: ['pl_pl'],
-            nl: ['nl_be'],
-            it: ['it_it'],
-            de: ['de_de'],
-            fr: ['fr_fr', 'fr_ca']};
-        let formatedLocale = localeLanguage.replace('-', '_').toLowerCase();
-        const regexLocale = formatedLocale.match(/^([a-z]{2})((?:\_)([a-z]{2}))?$/);
-        if (regexLocale && regexLocale[3]) {
-            if (regexLocale[1] in supportedLocales) {
-                formatedLocale = supportedLocales[regexLocale[1]].indexOf(regexLocale[0]) !== -1 ? formatedLocale : supportedLocales[regexLocale[1]][0];
-            } else {
-                formatedLocale = 'en_us';
-            }
-        } else if (regexLocale) {
-            formatedLocale = regexLocale[1] in supportedLocales ? supportedLocales[regexLocale[1]][0] : 'en_us';
-        } else {
-            formatedLocale = 'en_us';
-        }
-
-        return formatedLocale;
     }
 }
