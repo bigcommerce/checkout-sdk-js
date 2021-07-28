@@ -1,4 +1,4 @@
-import { supportedLocales } from './masterpass-supported-locales'
+import { supportedLocales } from './masterpass-supported-locales';
 
 export default function formatLocale(localeLanguage: string): string {
     let locale = 'en_us';
