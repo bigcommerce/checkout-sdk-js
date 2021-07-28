@@ -74,15 +74,13 @@ describe('MasterpassPaymentStrategy', () => {
         jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(masterpassScript));
         jest.spyOn(masterpassScript, 'checkout').mockReturnValue(true);
 
-        locale = 'en-US';
-
         // Strategy
         strategy = new MasterpassPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             scriptLoader,
-            locale
+            'en-US'
         );
     });
 

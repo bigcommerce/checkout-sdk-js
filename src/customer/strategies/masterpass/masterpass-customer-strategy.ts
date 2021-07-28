@@ -34,7 +34,6 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                 }
 
                 const cart = state.cart.getCart();
-                const locale = formatLocale(this._locale);
 
                 if (!cart) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
@@ -54,7 +53,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
                 const masterpassScriptLoaderParams = {
                     useMasterpassSrc: this._paymentMethod.initializationData.isMasterpassSrcEnabled,
-                    language: locale,
+                    language: formatLocale(this._locale),
                     testMode: this._paymentMethod.config.testMode,
                     checkoutId: this._paymentMethod.initializationData.checkoutId,
                 };
@@ -119,10 +118,9 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         if (this._paymentMethod.initializationData.isMasterpassSrcEnabled) {
             const subdomain = this._paymentMethod.config.testMode ? 'sandbox.' : '';
             const { checkoutId } = this._paymentMethod.initializationData;
-            const locale = formatLocale(this._locale);
 
             const params = [
-                `locale=${locale}`,
+                `locale=${formatLocale(this._locale)}`,
                 `paymentmethod=master,visa,amex,discover`,
                 `checkoutid=${checkoutId}`,
             ];

@@ -22,8 +22,18 @@ describe('formatLocale', () => {
     });
 
     it('uses a default locale with invalid input', () => {
-        expect(formatLocale('79634dfg'))
+        expect(formatLocale('esp_mex'))
         .toBe('en_us');
+    });
+
+    it('only uses the valid part of a string', () => {
+        expect(formatLocale('es_mx_invalid_data'))
+        .toBe('es_mx');
+    });
+
+    it('uses the default country with invalid countries', () => {
+        expect(formatLocale('es_mex'))
+        .toBe('es_es');
     });
 
     it('maintains the value of valid locale', () => {

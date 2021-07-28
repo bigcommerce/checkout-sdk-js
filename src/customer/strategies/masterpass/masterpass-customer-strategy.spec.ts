@@ -58,8 +58,6 @@ describe('MasterpassCustomerStrategy', () => {
 
         requestSender = createRequestSender();
 
-        locale = 'en-US';
-
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender)
         );
@@ -79,7 +77,7 @@ describe('MasterpassCustomerStrategy', () => {
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             masterpassScriptLoader,
-            locale
+            'en-US'
         );
 
         container = document.createElement('div');

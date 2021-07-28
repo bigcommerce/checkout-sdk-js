@@ -76,13 +76,11 @@ describe('MasterpassButtonStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
-        locale = 'en-US';
-
         strategy = new MasterpassButtonStrategy(
             store,
             checkoutActionCreator,
             masterpassScriptLoader,
-            locale
+            'en-US'
         );
 
         container = document.createElement('div');
@@ -183,7 +181,6 @@ describe('MasterpassButtonStrategy', () => {
         });
 
         it('loads masterpass script with correct locale when locale contains "-" character', async () => {
-
             await strategy.initialize(masterpassOptions);
 
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);

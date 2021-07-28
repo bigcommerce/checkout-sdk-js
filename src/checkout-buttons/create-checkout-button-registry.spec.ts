@@ -12,10 +12,9 @@ import { GooglePayButtonStrategy } from './strategies/googlepay';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
-    const locale = 'en';
 
     beforeEach(() => {
-        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender(), createFormPoster(), locale);
+        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender(), createFormPoster(), 'en');
     });
 
     it('returns registry with Braintree PayPal registered', () => {

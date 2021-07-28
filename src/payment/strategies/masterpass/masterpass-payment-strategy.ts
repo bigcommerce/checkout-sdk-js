@@ -28,7 +28,6 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
-        const locale = formatLocale(this._locale);
 
         this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
@@ -38,7 +37,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
 
         const masterpassScriptLoaderParams = {
             useMasterpassSrc: this._paymentMethod.initializationData.isMasterpassSrcEnabled,
-            language: locale,
+            language: formatLocale(this._locale),
             testMode: this._paymentMethod.config.testMode,
             checkoutId: this._paymentMethod.initializationData.checkoutId,
         };
