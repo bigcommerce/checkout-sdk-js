@@ -268,7 +268,7 @@ ___
 
 ### `Optional` moneris
 
-• **moneris**? : *[MonerisPaymentInitializeOptions](monerispaymentinitializeoptions.md)*
+• **moneris**? : *[MonerisaymentInitializeOptions](monerisaymentinitializeoptions.md)*
 
 The options that are required to initialize the Moneris payment method.
 They can be omitted unless you need to support Moneris.
