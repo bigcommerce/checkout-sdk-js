@@ -14,6 +14,7 @@ import { PaymentStrategy } from './strategies';
 const checkoutcomStrategies: {
     [key: string]: PaymentStrategyType;
 } = {
+    card: PaymentStrategyType.CHECKOUTCOM,
     credit_card: PaymentStrategyType.CHECKOUTCOM,
     sepa: PaymentStrategyType.CHECKOUTCOM_SEPA,
     ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
