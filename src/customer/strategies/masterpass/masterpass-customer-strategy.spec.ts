@@ -27,7 +27,6 @@ describe('MasterpassCustomerStrategy', () => {
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let strategy: CustomerStrategy;
-    let locale: string;
 
     beforeEach(() => {
         paymentMethodMock = {

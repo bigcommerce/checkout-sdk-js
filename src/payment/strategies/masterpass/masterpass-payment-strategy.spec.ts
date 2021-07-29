@@ -32,7 +32,6 @@ describe('MasterpassPaymentStrategy', () => {
     let initOptions: PaymentInitializeOptions;
     let paymentMethodMock: PaymentMethod;
     let masterpassScript: Masterpass;
-    let locale: string;
 
     beforeEach(() => {
         initOptions = {
