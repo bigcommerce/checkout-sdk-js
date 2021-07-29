@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.169.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.168.1...v1.169.0) (2021-07-29)
+
+
+### Features
+
+* **payment:** INT-4222 Add vaulting compatibility to Moneris ([dc318d7](https://github.com/bigcommerce/checkout-sdk-js/commit/dc318d72a2faa708066c59f07f9c23c98b01b94c))
+
 ### [1.168.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.168.0...v1.168.1) (2021-07-27)
 
 
