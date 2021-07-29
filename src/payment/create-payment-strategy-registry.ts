@@ -708,7 +708,6 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.MONERIS, () =>
         new MonerisPaymentStrategy(
-            hostedFormFactory,
             store,
             orderActionCreator,
             paymentActionCreator,
