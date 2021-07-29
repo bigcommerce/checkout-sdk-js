@@ -6,14 +6,12 @@ import { EventEmitter } from 'events';
 import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory } from '../../../hosted-form';
-import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getOrder } from '../../../order/orders.mock';
 import { PaymentMethod, PaymentRequestSender } from '../../../payment';
 import { getMoneris } from '../../../payment/payment-methods.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -25,7 +23,6 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import MonerisPaymentStrategy from './moneris-payment-strategy';
-import { getHostedFormInitializeOptions, getOrderRequestBodyVaultedCC } from './moneris.mock';
 
 describe('MonerisPaymentStrategy', () => {
     const containerId = 'moneris_iframe_container';
@@ -34,7 +31,6 @@ describe('MonerisPaymentStrategy', () => {
     let checkoutMock: Checkout;
     let container: HTMLDivElement;
     let eventEmitter: EventEmitter;
-    let formFactory: HostedFormFactory;
     let initializeOptions: PaymentInitializeOptions;
     let options: PaymentRequestOptions;
     let orderActionCreator: OrderActionCreator;
@@ -131,14 +127,7 @@ describe('MonerisPaymentStrategy', () => {
                 return eventEmitter.removeListener(type, listener);
             });
 
-        formFactory = new HostedFormFactory(store);
-        strategy = new MonerisPaymentStrategy(
-            formFactory,
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            storeCreditActionCreator
-        );
+        strategy = new MonerisPaymentStrategy(store, orderActionCreator, paymentActionCreator, storeCreditActionCreator);
     });
 
     afterEach(() => {
@@ -234,17 +223,17 @@ describe('MonerisPaymentStrategy', () => {
             expect(iframe.src).toContain('css_body=background:transparent;&css_textbox=border-width:2px;&css_textbox_pan=width:140px;&css_textbox_exp=width:40px;&css_textbox_cvd=width:40px');
         });
 
-        it('fails to initialize moneris strategy when initialization options are not provided', async () => {
+        it('fails to initialize moneris strategy when initialization options are not provided', () => {
             initializeOptions.moneris = undefined;
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
+            expect(() => strategy.initialize(initializeOptions)).toThrow(InvalidArgumentError);
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
             expect(iframe).toBeFalsy();
         });
 
-        it('fails to initialize moneris strategy when initialization data is missing', async () => {
+        it('fails to initialize moneris strategy when initialization data is missing', () => {
             paymentMethodMock.initializationData = undefined;
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
+            expect(() => strategy.initialize(initializeOptions)).toThrow(MissingDataError);
 
             const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
             expect(iframe).toBeFalsy();
@@ -257,8 +246,6 @@ describe('MonerisPaymentStrategy', () => {
                 methodId: 'moneris',
                 paymentData: {
                     nonce: 'ABC123',
-                    shouldSaveInstrument: false,
-                    shouldSetAsDefaultInstrument: false,
                 },
             };
             checkoutMock.isStoreCreditApplied = true;
@@ -273,44 +260,6 @@ describe('MonerisPaymentStrategy', () => {
             await promise;
 
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
-        });
-
-        it('submits payment and sends shouldSaveInstrument and shouldSetAsDefaultInstrument if provided', async () => {
-            const expectedPayment = {
-                methodId: 'moneris',
-                paymentData: {
-                    nonce: 'ABC123',
-                    shouldSaveInstrument: true,
-                    shouldSetAsDefaultInstrument: true,
-                },
-            };
-            const vaultingPayload = merge(payload, { payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true }}});
-
-            await strategy.initialize(initializeOptions);
-            const promise = strategy.execute(vaultingPayload, options);
-
-            await new Promise(resolve => process.nextTick(resolve));
-
-            eventEmitter.emit('message', { data: '{\"responseCode\":[\"001\"],\"errorMessage\":null,\"dataKey\":\"ABC123\",\"bin\":\"1234\"}'});
-
-            await promise;
-
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
-        });
-
-        it('submits payment with intrument if provided', async () => {
-            const expectedPayment = {
-                methodId: 'moneris',
-                paymentData: {
-                    instrumentId: 'instrument_123',
-                },
-            };
-            const vaultingPayload = merge(payload, { payment: { paymentData: { instrumentId: 'instrument_123' }}});
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(vaultingPayload, options);
-
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
@@ -338,83 +287,6 @@ describe('MonerisPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
 
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('When Hosted Form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
-        let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
-        let state: InternalCheckoutSelectors;
-
-        beforeEach(() => {
-            form = {
-                attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
-                validate: jest.fn(() => Promise.resolve()),
-            };
-            initializeOptions = getHostedFormInitializeOptions();
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            state = store.getState();
-
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(merge(getMoneris(), { config: { isHostedFormEnabled: true }}));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
-
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
-        });
-
-        it('creates hosted form', async () => {
-            await strategy.initialize(initializeOptions);
-
-            expect(formFactory.create)
-                .toHaveBeenCalledWith(
-                    'https://bigpay.integration.zone',
-                    initializeOptions.moneris?.form
-                );
-        });
-
-        it('attaches hosted form to container', async () => {
-            await strategy.initialize(initializeOptions);
-
-            expect(form.attach)
-                .toHaveBeenCalled();
-        });
-
-        it('submits payment data with hosted form', async () => {
-            const payload = getOrderRequestBodyVaultedCC();
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(form.submit)
-                .toHaveBeenCalledWith(payload.payment);
-        });
-
-        it('validates user input before submitting data', async () => {
-            const payload = getOrderRequestBodyVaultedCC();
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(form.validate)
-                .toHaveBeenCalled();
-        });
-
-        it('does not submit payment data with hosted form if validation fails', async () => {
-            jest.spyOn(form, 'validate')
-                .mockRejectedValue(new Error());
-
-            try {
-                await strategy.initialize(initializeOptions);
-                await strategy.execute(getOrderRequestBodyVaultedCC());
-            } catch (error) {
-                expect(form.submit)
-                    .not.toHaveBeenCalled();
-            }
         });
     });
 

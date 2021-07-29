@@ -736,7 +736,6 @@ export function getMoneris(): PaymentMethod {
         method: 'moneris',
         supportedCards: [],
         config: {
-            isHostedFormEnabled: false,
             displayName: 'Moneris',
             testMode: false,
         },
