@@ -102,15 +102,13 @@ describe('MasterpassPaymentStrategy', () => {
         });
 
         it('loads masterpass script with correct locale', async () => {
-            locale = 'FR';
-
              // Strategy
             strategy = new MasterpassPaymentStrategy(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
                 scriptLoader,
-                locale
+                'FR'
             );
 
             paymentMethodMock.initializationData = {
@@ -128,15 +126,13 @@ describe('MasterpassPaymentStrategy', () => {
         });
 
         it('loads masterpass script with default locale for unsupported country code', async () => {
-            locale = 'es_fr';
-
              // Strategy
             strategy = new MasterpassPaymentStrategy(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
                 scriptLoader,
-                locale
+                'es_fr'
             );
 
             paymentMethodMock.initializationData = {
@@ -154,15 +150,13 @@ describe('MasterpassPaymentStrategy', () => {
         });
 
         it('loads masterpass script with default locale for unsupported language', async () => {
-            locale = 'tr';
-
              // Strategy
             strategy = new MasterpassPaymentStrategy(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
                 scriptLoader,
-                locale
+                'tr'
             );
 
             paymentMethodMock.initializationData = {
@@ -180,15 +174,13 @@ describe('MasterpassPaymentStrategy', () => {
         });
 
         it('loads masterpass script with correct locale for supported language and country', async () => {
-            locale = 'zh_hk';
-
              // Strategy
             strategy = new MasterpassPaymentStrategy(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
                 scriptLoader,
-                locale
+                'zh_hk'
             );
 
             paymentMethodMock.initializationData = {

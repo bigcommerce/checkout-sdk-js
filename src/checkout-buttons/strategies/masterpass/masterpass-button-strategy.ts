@@ -29,7 +29,6 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
             .then(state => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-                const locale = formatLocale(this._locale);
 
                 if (!paymentMethod || !paymentMethod.initializationData.checkoutId) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -37,7 +36,7 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
 
                 const masterpassScriptLoaderParams = {
                     useMasterpassSrc: paymentMethod.initializationData.isMasterpassSrcEnabled,
-                    language: locale,
+                    language: formatLocale(this._locale),
                     testMode: paymentMethod.config.testMode,
                     checkoutId: paymentMethod.initializationData.checkoutId,
                 };
@@ -84,11 +83,10 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
 
         if (paymentMethod.initializationData.isMasterpassSrcEnabled) {
             const subdomain = paymentMethod.config.testMode ? 'sandbox.' : '';
-            const locale = formatLocale(this._locale);
             const { checkoutId } = paymentMethod.initializationData;
 
             const params = [
-                `locale=${locale}`,
+                `locale=${formatLocale(this._locale)}`,
                 `paymentmethod=master,visa,amex,discover`,
                 `checkoutid=${checkoutId}`,
             ];

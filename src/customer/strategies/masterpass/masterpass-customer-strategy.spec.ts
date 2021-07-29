@@ -174,14 +174,12 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('loads masterpass script with correct locale', async () => {
-            locale = 'FR';
-
             strategy = new MasterpassCustomerStrategy(
                 store,
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                locale
+                'FR'
             );
             await strategy.initialize(masterpassOptions);
 
@@ -189,14 +187,12 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('loads masterpass script with default locale for unsupported country code', async () => {
-            locale = 'es_fr';
-
             strategy = new MasterpassCustomerStrategy(
                 store,
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                locale
+                'es_fr'
             );
             await strategy.initialize(masterpassOptions);
 
@@ -204,14 +200,12 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('loads masterpass script with default locale for unsupported language', async () => {
-            locale = 'tr';
-
             strategy = new MasterpassCustomerStrategy(
                 store,
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                locale
+                'tr'
             );
             await strategy.initialize(masterpassOptions);
 
@@ -219,14 +213,12 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('loads masterpass script with correct locale for supported language and country', async () => {
-            locale = 'zh_hk';
-
             strategy = new MasterpassCustomerStrategy(
                 store,
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                locale
+                'zh_hk'
             );
             await strategy.initialize(masterpassOptions);
 
