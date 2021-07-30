@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.169.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.1...v1.169.2) (2021-07-30)
+
+
+### Bug Fixes
+
+* **payment:** INT-4685 Orbital initializer added properly ([4546591](https://github.com/bigcommerce/checkout-sdk-js/commit/4546591f010a6f7577b3f7e7b85fa06b4a90a78a))
+
 ### [1.169.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.0...v1.169.1) (2021-07-29)
 
 ## [1.169.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.168.1...v1.169.0) (2021-07-29)
