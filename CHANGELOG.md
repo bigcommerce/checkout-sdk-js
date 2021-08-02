@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.169.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.2...v1.169.3) (2021-08-02)
+
+
+### Bug Fixes
+
+* **payment:** INT-4481 Success pay without the last name in the credit/debit card ([ab95b9e](https://github.com/bigcommerce/checkout-sdk-js/commit/ab95b9e693d57c3306bd8d5609f3037186a93490))
+
 ### [1.169.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.1...v1.169.2) (2021-07-30)
 
 
