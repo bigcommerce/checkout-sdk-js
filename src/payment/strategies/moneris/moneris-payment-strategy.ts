@@ -2,7 +2,7 @@ import { map } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError , MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory, HostedFormValidationOptions } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
@@ -190,7 +190,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         return this._initializeOptions;
     }
 
-    private async _mountCardVerificationfields(formOptions: HostedFormValidationOptions): Promise<HostedForm> {
+    private async _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
         try {
             const { config } = this._store.getState();
             const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
