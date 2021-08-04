@@ -10,7 +10,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getShippableItemsCount } from '../../../shipping';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -173,6 +173,13 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const result = await this._getStripeJs().handleCardAction(clientSecret);
             const { id: token } = result.paymentIntent || { id: '' };
 
+            if (result.error) {
+                if (this._isCancellationError(result.error)) {
+                    throw new PaymentMethodCancelledError();
+                }
+                throw new Error(result.error.message);
+            }
+
             const formattedPayload = {
                 credit_card_token: { token },
                 vault_payment_instrument: shouldSaveInstrument,
@@ -189,6 +196,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         throw error;
+    }
+
+    private _isCancellationError(stripeError: StripeError | undefined) {
+        return stripeError && (stripeError.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1);
     }
 
     private _handleEmptyPaymentIntentError(
