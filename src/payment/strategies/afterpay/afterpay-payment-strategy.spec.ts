@@ -200,26 +200,6 @@ describe('AfterpayPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
         });
 
-        it('throws error if amount is outside the Afterpay limits', async () => {
-            store = createCheckoutStore(merge(getCheckoutStoreState(), {
-                checkout: { data: { outstandingBalance: 5 } },
-            }));
-
-            strategy = new AfterpayPaymentStrategy(
-                store,
-                checkoutValidator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                storeCreditActionCreator,
-                scriptLoader
-            );
-
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-
-            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
-        });
-
         it('throws InvalidArgumentError if payment method is not found', async () => {
             const errorResponse = merge(
                 getErrorResponse(), {

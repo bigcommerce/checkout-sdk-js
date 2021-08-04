@@ -73,15 +73,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
-        state = await this._loadPaymentMethod(gatewayId, methodId, options);
-
-        const checkout = state.checkout.getCheckout();
-        const amount = checkout?.outstandingBalance || 0;
-        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
-
-        if (this._outsideLimits(amount, paymentMethod)) {
-            throw new InvalidArgumentError(this._invalidAmountErrorMessage);
-        }
+        const paymentMethod = await this._loadPaymentMethod(gatewayId, methodId, options);
 
         await this._redirectToAfterpay(countryCode, paymentMethod);
 
@@ -132,17 +124,14 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return countryByCurrency[currencyCode] || 'AU';
     }
 
-    private _outsideLimits(amount: number, paymentMethod?: PaymentMethod): boolean {
-        const $minimum = paymentMethod?.initializationData?.min || 0;
-
-        return amount < $minimum || amount > paymentMethod?.initializationData?.max;
-    }
-
-    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
+    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<PaymentMethod> {
+        let paymentMethod;
         try {
-            return await this._store.dispatch(
+            const state = await this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
             );
+
+            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
         } catch (error) {
             if (error instanceof RequestError && error?.body?.status === 404) {
                 throw new InvalidArgumentError(this._invalidAmountErrorMessage);
@@ -150,5 +139,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
             throw error;
         }
+
+        if (!paymentMethod.clientToken) {
+            throw new InvalidArgumentError(this._invalidAmountErrorMessage);
+        }
+
+        return paymentMethod;
     }
 }
