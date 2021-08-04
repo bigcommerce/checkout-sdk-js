@@ -7,7 +7,7 @@ import { of, Observable } from 'rxjs';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
-import { NotInitializedError, RequestError } from '../../../common/error/errors';
+import { MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -321,11 +321,26 @@ describe('ZipPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
+        it('fails to execute if redirectUrl is null', async () => {
+            const paymentMethodMock = {
+                ...getZip(),
+                initializationData: {
+                    redirectFlowV2Enabled: true,
+                    redirectUrl: null,
+                },
+            };
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethodMock);
+
+            await expect(strategy.execute(orderRequestBody, zipOptions)).rejects.toThrow(MissingDataError);
+        });
+
         it('redirects to Zip url', async () => {
             const paymentMethodMock = {
                 ...getZip(),
                 initializationData: {
                     redirectFlowV2Enabled: true,
+                    redirectUrl: 'http://some-url',
                 },
             };
 
@@ -335,12 +350,6 @@ describe('ZipPaymentStrategy', () => {
             const error = new RequestError(getResponse({
                 ...getErrorPaymentResponseBody(),
                 status: 'additional_action_required',
-                additional_action_required: {
-                    type: 'external_redirect',
-                    data: {
-                        redirect_url: 'http://some-url',
-                    },
-                } ,
             }));
             window.location.replace = jest.fn();
 
