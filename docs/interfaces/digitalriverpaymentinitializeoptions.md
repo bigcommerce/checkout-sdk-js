@@ -2,6 +2,76 @@
 
 # Interface: DigitalRiverPaymentInitializeOptions
 
+A set of options that are required to initialize the DigitalRiver payment method.
+
+When DigitalRiver is initialized, a widget will be inserted into the DOM. The widget has a list of payment options for the customer to choose from.
+
+```html
+<!-- This is where the widget will be inserted -->
+<div id="container"></div>
+```
+
+```js
+service.initializePayment({
+  methodId: 'digitalriver',
+  digitalriver: {
+      containerId: 'digitalriver-component-field',
+      // Callback for submitting payment form that gets called when a buyer approves DR payment
+      onSubmitForm: () => {
+          // Example function
+          this.submitOrder(
+              {
+                  payment: {methodId: 'digitalriver',}
+              }
+          );
+      },
+      onError: (error) => {
+          console.log(error);
+      },
+  }
+});
+```
+
+Additional options can be passed in to customize the components and register
+event callbacks.
+
+```js
+service.initializePayment({
+  methodId: 'digitalriver',
+  digitalriver: {
+      containerId: 'digitalriver-component-field',
+      configuration: {
+          flow: 'checkout',
+          showSavePaymentAgreement: false,
+          showComplianceSection: true,
+          button: {
+              type: 'submitOrder',
+          },
+          usage: 'unscheduled',
+          showTermsOfSaleDisclosure: true,
+          paymentMethodConfiguration: {
+              classes: {
+                  // these classes are to control styles on BC side
+                  base: 'form-input optimizedCheckout-form-input'
+              },
+          },
+      },
+      // Callback for submitting payment form that gets called when a buyer approves DR payment
+     onSubmitForm: () => {
+          // Example function
+          this.submitOrder(
+              {
+                  payment: {methodId: 'digitalriver',}
+              }
+          );
+      },
+      onError: (error) => {
+          console.log(error);
+      },
+  }
+});
+```
+
 ## Hierarchy
 
 * **DigitalRiverPaymentInitializeOptions**

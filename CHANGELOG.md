@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.170.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.3...v1.170.0) (2021-08-04)
+
+
+### Features
+
+* **payment:** INT-4584 - Refactor Quadpay uri data for redirect ([ac11929](https://github.com/bigcommerce/checkout-sdk-js/commit/ac1192971fd468066b401719f447e31e879302a7))
+* **payment:** INT-4585 - Refactor Zip uri data for redirect ([323372b](https://github.com/bigcommerce/checkout-sdk-js/commit/323372b8d712d80c9b6a649ac7add048ebdc4899))
+
+
+### Bug Fixes
+
+* **payment:** INT-4438 update SDK documentation for Digital River ([fa094fc](https://github.com/bigcommerce/checkout-sdk-js/commit/fa094fc3b4ab82d47f2ce901de337b05c472aa6d))
+* **payment:** INT-4480 Throws stripe error when user closes the auth modal on Stripe V3 ([6577e8a](https://github.com/bigcommerce/checkout-sdk-js/commit/6577e8a769b7bec8f5bb82793ba35fabc8fe29ed))
+
 ### [1.169.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.2...v1.169.3) (2021-08-02)
 
 
