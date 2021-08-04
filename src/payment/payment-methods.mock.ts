@@ -613,6 +613,9 @@ export function getQuadpay(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: '{"id":"checkout_id"}',
+        initializationData: {
+            redirectUrl: 'http://some-url',
+        },
     };
 }
 

@@ -183,12 +183,6 @@ describe('QuadpayPaymentStrategy', () => {
             const additionalActionRequiredError = new RequestError(getResponse({
                 ...getErrorPaymentResponseBody(),
                 status: 'additional_action_required',
-                additional_action_required: {
-                    type: 'external_redirect',
-                    data: {
-                        redirect_url: 'http://some-url',
-                    },
-                } ,
             }));
             const paymentFailedErrorAction = of(createErrorAction(
                 PaymentActionType.SubmitPaymentFailed,
@@ -229,6 +223,13 @@ describe('QuadpayPaymentStrategy', () => {
         it('fails to execute if nonce is empty', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue({ ...getQuadpay(), clientToken: JSON.stringify({ id: '' }) });
+
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
+        });
+
+        it('fails to execute if redirectUrl is empty', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getQuadpay(), initializationData: { redirectUrl: ''} });
 
             await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
         });

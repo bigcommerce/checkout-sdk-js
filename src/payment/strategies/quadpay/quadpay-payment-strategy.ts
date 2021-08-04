@@ -38,7 +38,7 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         let nonce: string;
         const { methodId } = payment;
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
-        const { clientToken = '' } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { clientToken = '', initializationData: { redirectUrl } = {} } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         try {
             ({ id: nonce } = JSON.parse(clientToken));
@@ -48,6 +48,10 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
 
         if (!nonce) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
+        if (!redirectUrl) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paymentPayload = {
@@ -66,9 +70,7 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
             if (error instanceof RequestError && error.body.status === 'additional_action_required') {
-                const { redirect_url } = error.body.additional_action_required.data;
-
-                window.location.replace(redirect_url);
+                window.location.replace(redirectUrl);
 
                 return new Promise(noop);
             }
