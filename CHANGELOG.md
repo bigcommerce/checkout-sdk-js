@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.171.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.170.0...v1.171.0) (2021-08-05)
+
+
+### Features
+
+* **payment:** INT-3946 added locale from browser on masterpass SRC ([b9a335d](https://github.com/bigcommerce/checkout-sdk-js/commit/b9a335d582b72f268d2d9082c6a52ebf1bbabeb8))
+
+
+### Bug Fixes
+
+* **payment:** INT-3946 missing semicolon ([60afc6e](https://github.com/bigcommerce/checkout-sdk-js/commit/60afc6e401bc4129eab1fe764926485c1e9c7821))
+* **payment:** INT-3946 PR requested changes ([c805d55](https://github.com/bigcommerce/checkout-sdk-js/commit/c805d55707df4df3cafcf65292b11e78b4476de4))
+* **payment:** INT-3946 removed unused variables ([f8f5f68](https://github.com/bigcommerce/checkout-sdk-js/commit/f8f5f68c7e4f2c1ccd5de360bd1d84bd00a7bc67))
+* **payment:** INT-3946 using supported locales on masterpass SRC ([b719bf8](https://github.com/bigcommerce/checkout-sdk-js/commit/b719bf8818f68e7cbdaaf085e4b3f7da063363b7))
+* **payment:** INT-3946 using supported locales on masterpass SRC ([6eaf14f](https://github.com/bigcommerce/checkout-sdk-js/commit/6eaf14f0f5b888c2da4cf1b3b037f028878938b2))
+* **payment:** INT-3946 using supported locales on masterpass SRC ([1b30227](https://github.com/bigcommerce/checkout-sdk-js/commit/1b302276571de56126de80a087c62edf890777af))
+
 ## [1.170.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.169.3...v1.170.0) (2021-08-04)
 
 
