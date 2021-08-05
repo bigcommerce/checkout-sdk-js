@@ -5,6 +5,7 @@ export interface BoltHostWindow extends Window {
 export interface BoltCheckout {
     configure(cart: BoltCart, hints: {}, callbacks?: BoltCallbacks): BoltClient;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
+    getTransactionReference(): Promise<string | undefined>;
 }
 
 export interface BoltDeveloperModeParams {
