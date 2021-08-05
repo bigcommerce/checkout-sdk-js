@@ -22,7 +22,7 @@ describe('CheckoutButtonInitializer', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster()),
+            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster(), 'en'),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         );
 

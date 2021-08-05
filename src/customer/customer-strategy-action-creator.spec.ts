@@ -42,7 +42,7 @@ describe('CustomerStrategyActionCreator', () => {
 
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        registry = createCustomerStrategyRegistry(store, createRequestSender());
+        registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

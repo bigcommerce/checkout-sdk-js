@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import { formatLocale, getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
@@ -14,7 +14,8 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _masterpassScriptLoader: MasterpassScriptLoader
+        private _masterpassScriptLoader: MasterpassScriptLoader,
+        private _locale: string
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -33,13 +34,9 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                 }
 
                 const cart = state.cart.getCart();
+
                 if (!cart) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
-                }
-
-                const storeConfig = state.config.getStoreConfig();
-                if (!storeConfig) {
-                    throw new InvalidArgumentError('Unable to retrieve store configuration');
                 }
 
                 const { container } = masterpassOptions;
@@ -56,7 +53,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
                 const masterpassScriptLoaderParams = {
                     useMasterpassSrc: this._paymentMethod.initializationData.isMasterpassSrcEnabled,
-                    language: storeConfig.storeProfile.storeLanguage,
+                    language: formatLocale(this._locale),
                     testMode: this._paymentMethod.config.testMode,
                     checkoutId: this._paymentMethod.initializationData.checkoutId,
                 };
@@ -105,8 +102,6 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
     private _createSignInButton(containerId: string): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
-        const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfig();
 
         if (!this._paymentMethod || !this._paymentMethod.initializationData.checkoutId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -116,21 +111,16 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
-        if (!storeConfig) {
-            throw new InvalidArgumentError('Unable to retrieve store configuration');
-        }
-
         const button = document.createElement('input');
 
         button.type = 'image';
 
         if (this._paymentMethod.initializationData.isMasterpassSrcEnabled) {
             const subdomain = this._paymentMethod.config.testMode ? 'sandbox.' : '';
-            const { storeLanguage } = storeConfig.storeProfile;
             const { checkoutId } = this._paymentMethod.initializationData;
 
             const params = [
-                `locale=${storeLanguage}`,
+                `locale=${formatLocale(this._locale)}`,
                 `paymentmethod=master,visa,amex,discover`,
                 `checkoutid=${checkoutId}`,
             ];

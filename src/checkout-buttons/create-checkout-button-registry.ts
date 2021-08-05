@@ -25,6 +25,7 @@ export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
     requestSender: RequestSender,
     formPoster: FormPoster,
+    locale: string,
     host?: string
 ): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
     const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
@@ -62,7 +63,8 @@ export default function createCheckoutButtonRegistry(
         new MasterpassButtonStrategy(
             store,
             checkoutActionCreator,
-            new MasterpassScriptLoader(scriptLoader)
+            new MasterpassScriptLoader(scriptLoader),
+            locale
         ));
 
     registry.register(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, () =>

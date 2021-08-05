@@ -14,7 +14,7 @@ describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
 
     beforeEach(() => {
-        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender(), createFormPoster());
+        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender(), createFormPoster(), 'en');
     });
 
     it('returns registry with Braintree PayPal registered', () => {
