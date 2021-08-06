@@ -7,8 +7,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
-import { getErrorResponse } from '../../../common/http-request/responses.mock';
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -198,33 +197,6 @@ describe('AfterpayPaymentStrategy', () => {
             await strategy.deinitialize();
 
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
-        });
-
-        it('throws InvalidArgumentError if payment method is not found', async () => {
-            const errorResponse = merge(
-                getErrorResponse(), {
-                    body: {
-                        status: 404,
-                    },
-                });
-
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
-                throw new RequestError(errorResponse);
-            });
-
-            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
-        });
-
-        it('throws RequestError if loadPaymentMethod fails', async () => {
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
-                throw new RequestError(getErrorResponse());
-            });
-
-            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(RequestError);
         });
 
         it('loads payment client token', () => {

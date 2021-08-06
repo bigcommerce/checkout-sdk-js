@@ -1,6 +1,5 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
-import { RequestOptions } from '../../../common/http-request';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -15,7 +14,7 @@ import AfterpaySdk from './afterpay-sdk';
 
 export default class AfterpayPaymentStrategy implements PaymentStrategy {
     private _afterpaySdk?: AfterpaySdk;
-    private _invalidAmountErrorMessage = 'The amount for your order is not supported by Afterpay, please select another payment method';
+    private _isSupportedAmount?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -37,6 +36,31 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        const checkout = state.checkout.getCheckout();
+        const amount = checkout?.outstandingBalance || 0;
+
+        this._isSupportedAmount = !this._outsideLimits(amount, paymentMethod);
+
+        this._store.subscribe(
+            state => {
+                if (state.paymentStrategies.isInitialized(options.methodId)) {
+                    const checkout = state.checkout.getCheckout();
+                    const amount = checkout?.outstandingBalance || 0;
+                    this._isSupportedAmount = !this._outsideLimits(amount, paymentMethod);
+                }
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.outstandingBalance;
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.coupons;
+            }
+        );
+
         this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, countryCode);
 
         return this._store.getState();
@@ -51,6 +75,12 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (!this._isSupportedAmount) {
+            throw new InvalidArgumentError(
+                "Afterpay can't process your payment for this order, please try another payment method"
+            );
+        }
+
         if (!payload.payment) {
             throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
@@ -73,7 +103,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
-        const paymentMethod = await this._loadPaymentMethod(gatewayId, methodId, options);
+        state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
+        );
+
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
 
         await this._redirectToAfterpay(countryCode, paymentMethod);
 
@@ -124,26 +158,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return countryByCurrency[currencyCode] || 'AU';
     }
 
-    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<PaymentMethod> {
-        let paymentMethod;
-        try {
-            const state = await this._store.dispatch(
-                this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
-            );
+    private _outsideLimits(amount: number, paymentMethod?: PaymentMethod): boolean {
+        const $minimum = paymentMethod?.initializationData?.min || 0;
 
-            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
-        } catch (error) {
-            if (error instanceof RequestError && error?.body?.status === 404) {
-                throw new InvalidArgumentError(this._invalidAmountErrorMessage);
-            }
-
-            throw error;
-        }
-
-        if (!paymentMethod.clientToken) {
-            throw new InvalidArgumentError(this._invalidAmountErrorMessage);
-        }
-
-        return paymentMethod;
+        return amount < $minimum || amount > paymentMethod?.initializationData?.max;
     }
 }
