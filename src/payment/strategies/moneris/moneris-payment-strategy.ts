@@ -1,5 +1,6 @@
 import { map } from 'lodash';
 
+import { isHostedInstrumentLike } from '../../';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError , MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
@@ -8,7 +9,6 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
-import { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -79,17 +79,13 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
         }
 
-        try {
-            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-            if (payment.paymentData && isVaultedInstrument(payment.paymentData)) {
-                return await this._executeWithVaulted(payment);
-            }
-
-            return await this._executeWithCC(payment);
-        } catch (error) {
-            return Promise.reject(error);
+        if (payment.paymentData && isVaultedInstrument(payment.paymentData)) {
+            return await this._executeWithVaulted(payment);
         }
+
+        return await this._executeWithCC(payment);
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -116,7 +112,9 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
         const testMode = paymentMethod.config.testMode;
         const paymentData = payment.paymentData || {};
-        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } = paymentData as HostedInstrument;
+        const instrumentSettings = isHostedInstrumentLike(paymentData) ? paymentData : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = instrumentSettings;
 
         const nonce = await new Promise<string | undefined>((resolve, reject) => {
             if (!this._iframe) {
@@ -173,13 +171,13 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
         const paymentMethod = getPaymentMethodOrThrow(methodId);
 
-        return paymentMethod.config.isHostedFormEnabled === true;
+        return Boolean(paymentMethod.config.isHostedFormEnabled);
     }
 
     private _isHostedFieldAvailable(): boolean {
         const options = this._getInitializeOptions();
 
-        return !!options.form?.fields;
+        return Boolean(options.form?.fields);
     }
 
     private _getInitializeOptions(): MonerisPaymentInitializeOptions {
@@ -191,7 +189,6 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
     }
 
     private async _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
-        try {
             const { config } = this._store.getState();
             const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
 
@@ -204,9 +201,6 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             await form.attach();
 
             return form;
-        } catch (error) {
-            return error;
-        }
     }
 
     private _createIframe(containerId: string, initializationData: MonerisInitializationData, testMode: boolean, style?: MonerisStylingProps): HTMLIFrameElement {

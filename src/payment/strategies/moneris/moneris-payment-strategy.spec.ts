@@ -2,7 +2,6 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { EventEmitter } from 'events';
 import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -33,7 +32,6 @@ describe('MonerisPaymentStrategy', () => {
     let applyStoreCreditAction: Observable<Action>;
     let checkoutMock: Checkout;
     let container: HTMLDivElement;
-    let eventEmitter: EventEmitter;
     let formFactory: HostedFormFactory;
     let initializeOptions: PaymentInitializeOptions;
     let options: PaymentRequestOptions;
@@ -72,7 +70,6 @@ describe('MonerisPaymentStrategy', () => {
         );
 
         applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
-        eventEmitter = new EventEmitter();
         paymentMethodMock = getMoneris();
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
@@ -121,15 +118,9 @@ describe('MonerisPaymentStrategy', () => {
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
             .mockReturnValue(applyStoreCreditAction);
 
-        jest.spyOn(window, 'addEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.addListener(type, listener);
-            });
+        jest.spyOn(window, 'addEventListener');
 
-        jest.spyOn(window, 'removeEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.removeListener(type, listener);
-            });
+        jest.spyOn(window, 'removeEventListener');
 
         formFactory = new HostedFormFactory(store);
         strategy = new MonerisPaymentStrategy(
@@ -268,7 +259,14 @@ describe('MonerisPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            eventEmitter.emit('message', { data: '{\"responseCode\":[\"001\"],\"errorMessage\":null,\"dataKey\":\"ABC123\",\"bin\":\"1234\"}'});
+            const mockMonerisIframeMessage = {
+                responseCode: ['001'],
+                errorMessage: null,
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
 
             await promise;
 
@@ -288,13 +286,19 @@ describe('MonerisPaymentStrategy', () => {
             const vaultingPayload = merge(payload, { payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true }}});
 
             await strategy.initialize(initializeOptions);
-            const promise = strategy.execute(vaultingPayload, options);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            const pendingExecution = strategy.execute(vaultingPayload, options);
 
-            eventEmitter.emit('message', { data: '{\"responseCode\":[\"001\"],\"errorMessage\":null,\"dataKey\":\"ABC123\",\"bin\":\"1234\"}'});
+            const mockMonerisIframeMessage = {
+                responseCode: ['001'],
+                errorMessage: null,
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
 
-            await promise;
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+
+            await pendingExecution;
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
@@ -320,7 +324,14 @@ describe('MonerisPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            eventEmitter.emit('message', { data: '{\"responseCode\":[\"400\"],\"errorMessage\":\"expected error message\",\"dataKey\":\"ABC123\",\"bin\":\"1234\"}'});
+            const mockMonerisIframeMessage = {
+                responseCode: ['400'],
+                errorMessage: 'expected error message',
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
 
             await expect(promise).rejects.toThrow(new Error('expected error message'));
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -408,13 +419,9 @@ describe('MonerisPaymentStrategy', () => {
             jest.spyOn(form, 'validate')
                 .mockRejectedValue(new Error());
 
-            try {
-                await strategy.initialize(initializeOptions);
-                await strategy.execute(getOrderRequestBodyVaultedCC());
-            } catch (error) {
-                expect(form.submit)
-                    .not.toHaveBeenCalled();
-            }
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(getOrderRequestBodyVaultedCC())).rejects.toThrow();
+            expect(form.submit).not.toHaveBeenCalled();
         });
     });
 
@@ -425,7 +432,14 @@ describe('MonerisPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            eventEmitter.emit('message', { data: '{\"responseCode\":[\"400\"],\"errorMessage\":\"expected error message\",\"dataKey\":\"ABC123\",\"bin\":\"1234\"}'});
+            const mockMonerisIframeMessage = {
+                responseCode: ['400'],
+                errorMessage: 'expected error message',
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
 
             await expect(promise).rejects.toThrow(new Error('expected error message'));
 
