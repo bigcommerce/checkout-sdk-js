@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.172.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.171.0...v1.172.0) (2021-08-09)
+
+
+### Features
+
+* **payment:** BOLT-30 added some changes to bolt checkout execute method logic ([f08ecfa](https://github.com/bigcommerce/checkout-sdk-js/commit/f08ecfa8cef7127c2498363bce8a3048f69921de))
+
 ## [1.171.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.170.0...v1.171.0) (2021-08-05)
 
 
