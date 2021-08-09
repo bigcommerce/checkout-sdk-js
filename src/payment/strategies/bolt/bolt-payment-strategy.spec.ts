@@ -14,7 +14,7 @@ import { getBolt } from '../../../payment/payment-methods.mock';
 import { getBoltScriptMock } from '../../../payment/strategies/bolt/bolt.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -134,11 +134,6 @@ describe('BoltPaymentStrategy', () => {
             await expect(strategy.initialize(boltClientScriptInitializationOptions)).rejects.toThrow(MissingDataError);
             expect(boltScriptLoader.load).not.toHaveBeenCalled();
         });
-
-        it('successfully initializes the bolt strategy without loading the bolt client', async () => {
-            await expect(strategy.initialize(boltTakeOverInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.load).not.toHaveBeenCalled();
-        });
     });
 
     describe('#execute', () => {
@@ -184,11 +179,33 @@ describe('BoltPaymentStrategy', () => {
         });
 
         it('succesfully executes the bolt strategy with checkout takeover', async () => {
+            jest.spyOn(boltClient, 'getTransactionReference').mockResolvedValue('transactionReference');
+
             await strategy.initialize(boltTakeOverInitializationOptions);
             await strategy.execute(payload);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(boltClient.getTransactionReference).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+            expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
+            expect(boltClient.configure).not.toHaveBeenCalled();
+        });
+
+        it('fails to submit payment if no transaction reference returned from bolt client with checkout takeover', async () => {
+            jest.spyOn(boltClient, 'getTransactionReference').mockResolvedValue(undefined);
+
+            await strategy.initialize(boltTakeOverInitializationOptions);
+
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+            }
+
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(boltClient.getTransactionReference).toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalledWith(expectedPayment);
             expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
             expect(boltClient.configure).not.toHaveBeenCalled();
         });

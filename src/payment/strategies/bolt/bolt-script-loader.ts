@@ -11,6 +11,10 @@ export default class BoltScriptLoader {
     ) {}
 
     async load(publishableKey: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
+        if (this._window.BoltCheckout) {
+            return this._window.BoltCheckout;
+        }
+
         const options: LoadScriptOptions = {
             async: true,
             attributes: {
