@@ -118,8 +118,6 @@ describe('MonerisPaymentStrategy', () => {
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
             .mockReturnValue(applyStoreCreditAction);
 
-        jest.spyOn(window, 'addEventListener');
-
         jest.spyOn(window, 'removeEventListener');
 
         formFactory = new HostedFormFactory(store);
@@ -248,8 +246,8 @@ describe('MonerisPaymentStrategy', () => {
                 methodId: 'moneris',
                 paymentData: {
                     nonce: 'ABC123',
-                    shouldSaveInstrument: false,
-                    shouldSetAsDefaultInstrument: false,
+                    shouldSaveInstrument: undefined,
+                    shouldSetAsDefaultInstrument: undefined,
                 },
             };
             checkoutMock.isStoreCreditApplied = true;

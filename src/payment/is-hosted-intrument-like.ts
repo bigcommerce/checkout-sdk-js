@@ -1,8 +1,9 @@
-import { HostedInstrument, PaymentInstrument } from './payment';
+import { HostedInstrument } from './payment';
 
-export default function isHostedInstrument(instrument: PaymentInstrument): instrument is HostedInstrument {
-  const shouldSaveInstrument = Boolean((instrument as HostedInstrument).shouldSaveInstrument);
-  const shouldSetAsDefaultInstrument = Boolean((instrument as HostedInstrument).shouldSetAsDefaultInstrument);
-
-  return shouldSaveInstrument && shouldSetAsDefaultInstrument;
+export default function isHostedInstrumentLike(instrument: unknown): instrument is HostedInstrument {
+  return (
+    typeof instrument === 'object' && instrument !== null
+    && (typeof (instrument as HostedInstrument).shouldSaveInstrument === 'undefined' || typeof (instrument as HostedInstrument).shouldSaveInstrument === 'boolean')
+    && (typeof (instrument as HostedInstrument).shouldSetAsDefaultInstrument === 'undefined' || typeof (instrument as HostedInstrument).shouldSetAsDefaultInstrument === 'boolean')
+  );
 }
