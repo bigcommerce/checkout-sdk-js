@@ -10,7 +10,7 @@ import { getConsignments } from '../shipping/consignments.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
-import Payment, { CreditCardInstrument, HostedInstrument, VaultedInstrument } from './payment';
+import Payment, { CreditCardInstrument, VaultedInstrument } from './payment';
 import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
 import PaymentRequestBody from './payment-request-body';
 import PaymentResponseBody from './payment-response-body';
@@ -32,19 +32,6 @@ export function getCreditCardInstrument(): CreditCardInstrument {
         ccName: 'BigCommerce',
         ccNumber: '4111111111111111',
         ccCvv: '123',
-    };
-}
-
-export function getHostedInstrument(defaultSave?: boolean, defaultSet?: boolean): HostedInstrument {
-    return {
-        shouldSaveInstrument: defaultSave,
-        shouldSetAsDefaultInstrument: defaultSet,
-    };
-}
-
-export function getPartialHostedInstrument(): HostedInstrument {
-    return {
-        shouldSetAsDefaultInstrument: false,
     };
 }
 
