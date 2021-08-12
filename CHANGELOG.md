@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.173.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.172.0...v1.173.0) (2021-08-12)
+
+
+### Features
+
+* **payment:** INT-4592 Added 3DS handler to SquareV2 ([a47016a](https://github.com/bigcommerce/checkout-sdk-js/commit/a47016a9dacba4eb93699d5c2e2e223160db265a))
+* **payment:** INT-4686 remove disabledPaymentMethod interface for DR ([2738bb9](https://github.com/bigcommerce/checkout-sdk-js/commit/2738bb9bef86e8ba5d1218f9232b70d2099e26f9))
+
+
+### Bug Fixes
+
+* **payment:** INT-4222 Add tests for type guard ([7a3a8e2](https://github.com/bigcommerce/checkout-sdk-js/commit/7a3a8e274a942ffa53fbde6beb9ae73be5ec8ffd))
+* **payment:** INT-4222 Code and test cleanup ([39452e9](https://github.com/bigcommerce/checkout-sdk-js/commit/39452e916844d276bea4a7f5677806449c688c2b))
+* **payment:** INT-4222 Test Cleanup ([1c29d3d](https://github.com/bigcommerce/checkout-sdk-js/commit/1c29d3ddc406d65c0a5e5553366207a72aeba580))
+* **payment:** INT-4222 Use default interface to avoid build errors ([5b73379](https://github.com/bigcommerce/checkout-sdk-js/commit/5b733794a0c8738436839db704ab3c38b5d3e103))
+
 ## [1.172.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.171.0...v1.172.0) (2021-08-09)
 
 

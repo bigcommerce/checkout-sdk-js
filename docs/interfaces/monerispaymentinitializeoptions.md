@@ -33,6 +33,7 @@ service.initializePayment({
 ### Properties
 
 * [containerId](monerispaymentinitializeoptions.md#containerid)
+* [form](monerispaymentinitializeoptions.md#optional-form)
 * [style](monerispaymentinitializeoptions.md#optional-style)
 
 ## Properties
@@ -42,6 +43,14 @@ service.initializePayment({
 • **containerId**: *string*
 
 The ID of a container where the Moneris iframe component should be mounted
+
+___
+
+### `Optional` form
+
+• **form**? : *[HostedFormOptions](hostedformoptions.md)*
+
+Hosted Form Validation Options
 
 ___
 
