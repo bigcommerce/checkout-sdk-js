@@ -216,11 +216,6 @@ interface BaseElementOptions {
      * Set custom class names on the container DOM element when the Digital River element is in a particular state.
      */
     classes?: DigitalRiverElementClasses;
-
-    /**
-     * Remove specific payment methods when rendering drop-in.
-     */
-    disabledPaymentMethods?: string[];
 }
 
 /**
