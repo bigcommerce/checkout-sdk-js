@@ -11,10 +11,18 @@ describe('SquareScriptLoader', () => {
     });
 
     it('loads widget script', () => {
-        squareScriptLoader.load();
+        squareScriptLoader.load(false);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             '//js.squareup.com/v2/paymentform'
+        );
+    });
+
+    it('loads widget script', () => {
+        squareScriptLoader.load(true);
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//js.squareupsandbox.com/v2/paymentform'
         );
     });
 });

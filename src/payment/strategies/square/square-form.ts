@@ -1,10 +1,39 @@
+import { NonceInstrument } from '../../payment';
+
 export default interface SquarePaymentForm {
     build(): void;
     requestCardNonce(): void;
     setPostalCode(postalCode: string): void;
+    verifyBuyer(source?: string, verificationDetails?: VerificationDetails, callback?: VerifyBuyerResponse ): void;
+}
+
+export type VerifyBuyerResponse = (errors: SquareVerificationError, verificationResult: SquareVerificationResult) => void;
+
+export interface SquareVerificationError {
+    type: string;
+    message: string;
+}
+
+export interface SquareVerificationResult {
+    token: string;
+    userChallenged: boolean;
+}
+
+export enum SquareIntent {
+    CHARGE = 'CHARGE',
+    STORE = 'STORE',
+}
+
+export interface VerificationDetails {
+    intent: string;
+    amount?: string;
+    currencyCode?: string;
+    billingContact?: Contact;
 }
 
 export type SquarePaymentFormConstructor = new(options: SquareFormOptions) => SquarePaymentForm;
+
+export type SquareScriptCallBack = (options: SquareFormOptions) => SquarePaymentForm;
 
 export interface SquareFormOptions {
     applicationId: string;
@@ -110,3 +139,12 @@ export interface SquareFormCallbacks {
 }
 
 export type SquareFormFactory = (options: SquareFormOptions) => SquarePaymentForm;
+
+export interface DeferredPromise {
+    resolve(resolution?: SquareNonceInstrument): void;
+    reject(reason?: any): void;
+}
+
+export interface SquareNonceInstrument extends NonceInstrument {
+    token?: string;
+}
