@@ -1,43 +1,62 @@
 import { map } from 'lodash';
 
+import { isHostedInstrumentLike } from '../../';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError , MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
+import isVaultedInstrument from '../../is-vaulted-instrument';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import MonerisStylingProps,  { MoneriesHostedFieldsQueryParams, MonerisInitializationData, MonerisResponseData } from './moneris';
+import MonerisPaymentInitializeOptions from './moneris-payment-initialize-options';
 
 const IFRAME_NAME = 'moneris-payment-iframe';
 const RESPONSE_SUCCESS_CODE = '001';
 
 export default class MonerisPaymentStrategy implements PaymentStrategy {
     private _iframe?: HTMLIFrameElement;
+    private _initializeOptions?: MonerisPaymentInitializeOptions;
     private _windowEventListener?: (response: MessageEvent) => void;
 
+    private _hostedForm?: HostedForm;
+
     constructor(
+        private _hostedFormFactory: HostedFormFactory,
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
 
-        const { moneris: monerisOptions } = options;
-        const { config, initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const { moneris: monerisOptions, methodId } = options;
+
+        if (!methodId) {
+            throw new InvalidArgumentError('Unable to initialize payment because "methodId" argument is not provided.');
+        }
 
         if (!monerisOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.moneris" argument is not provided.');
         }
 
+        this._initializeOptions = monerisOptions;
+
+        const { config, initializationData } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+
         if (!initializationData?.profileId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        if (monerisOptions.form  && this._shouldShowTSVHostedForm(methodId)) {
+            this._hostedForm = await this._mountCardVerificationfields(monerisOptions.form);
         }
 
         if (!this._iframe) {
@@ -49,14 +68,10 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
     async execute(payload: OrderRequestBody, options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { payment , ...order } = payload;
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
-
-        const paymentMethod = getPaymentMethodOrThrow(payment.methodId);
-        const testMode = paymentMethod.config.testMode;
 
         const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
@@ -65,6 +80,41 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+        if (payment.paymentData && isVaultedInstrument(payment.paymentData)) {
+            return await this._executeWithVaulted(payment);
+        }
+
+        return await this._executeWithCC(payment);
+    }
+
+    finalize(): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._windowEventListener) {
+            window.removeEventListener('message', this._windowEventListener);
+            this._windowEventListener = undefined;
+        }
+
+        if (this._iframe && this._iframe.parentNode) {
+            this._iframe.parentNode.removeChild(this._iframe);
+            this._iframe = undefined;
+        }
+
+        return Promise.resolve(this._store.getState());
+    }
+
+    private async _executeWithCC(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(payment.methodId);
+
+        const testMode = paymentMethod.config.testMode;
+        const paymentData = payment.paymentData || {};
+        const instrumentSettings = isHostedInstrumentLike(paymentData) ? paymentData : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = instrumentSettings;
 
         const nonce = await new Promise<string | undefined>((resolve, reject) => {
             if (!this._iframe) {
@@ -89,29 +139,68 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
         if (nonce !== undefined) {
             return this._store.dispatch(this._paymentActionCreator.submitPayment({
                 methodId: payment.methodId,
-                paymentData: { nonce },
+                paymentData: { nonce, shouldSaveInstrument, shouldSetAsDefaultInstrument },
             }));
         }
 
         return this._store.getState();
     }
 
-    finalize(): Promise<InternalCheckoutSelectors> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
+    private async _executeWithVaulted(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        if (this._isHostedPaymentFormEnabled(payment.methodId)) {
+            const form = this._hostedForm;
+
+            if (!form) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            await form.validate();
+            await form.submit(payment);
+
+            return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
+        } else {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+        }
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._windowEventListener) {
-            window.removeEventListener('message', this._windowEventListener);
-            this._windowEventListener = undefined;
+    private _shouldShowTSVHostedForm(methodId: string): boolean {
+        return (this._isHostedPaymentFormEnabled(methodId) && this._isHostedFieldAvailable());
+    }
+
+    private _isHostedPaymentFormEnabled(methodId: string): boolean {
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(methodId);
+
+        return Boolean(paymentMethod.config.isHostedFormEnabled);
+    }
+
+    private _isHostedFieldAvailable(): boolean {
+        const options = this._getInitializeOptions();
+
+        return Boolean(options.form?.fields);
+    }
+
+    private _getInitializeOptions(): MonerisPaymentInitializeOptions {
+        if (!this._initializeOptions) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        if (this._iframe && this._iframe.parentNode) {
-            this._iframe.parentNode.removeChild(this._iframe);
-            this._iframe = undefined;
-        }
+        return this._initializeOptions;
+    }
 
-        return Promise.resolve(this._store.getState());
+    private async _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
+            const { config } = this._store.getState();
+            const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+            if (!bigpayBaseUrl) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+            }
+
+            const form = this._hostedFormFactory.create(bigpayBaseUrl, formOptions);
+
+            await form.attach();
+
+            return form;
     }
 
     private _createIframe(containerId: string, initializationData: MonerisInitializationData, testMode: boolean, style?: MonerisStylingProps): HTMLIFrameElement {

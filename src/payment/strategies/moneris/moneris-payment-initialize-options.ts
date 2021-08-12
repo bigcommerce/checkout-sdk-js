@@ -1,3 +1,5 @@
+import { HostedFormOptions } from '../../../hosted-form';
+
 import MonerisStylingProps from './moneris';
 
 /**
@@ -23,7 +25,6 @@ import MonerisStylingProps from './moneris';
  * });
  * ```
  */
-
 export default interface MonerisPaymentInitializeOptions {
     /**
      * The ID of a container where the Moneris iframe component should be mounted
@@ -34,4 +35,9 @@ export default interface MonerisPaymentInitializeOptions {
      * The styling props to apply to the iframe component
      */
     style?: MonerisStylingProps;
+
+    /**
+     * Hosted Form Validation Options
+     */
+    form?: HostedFormOptions;
 }

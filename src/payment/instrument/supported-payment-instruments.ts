@@ -105,6 +105,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'digitalriver',
         method: 'credit_card',
     },
+    moneris: {
+        provider: 'moneris',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
