@@ -49,16 +49,19 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gatewayId;
+        if (!payload.payment) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
+        }
+        const { gatewayId, methodId } = payload.payment;
 
-        if (!paymentId) {
-            throw new PaymentArgumentInvalidError(['payment.gatewayId']);
+        if (!gatewayId || !methodId) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
         let state = this._store.getState();
         const currencyCode = state.cart.getCart()?.currency.code || '';
         const countryCode = this._mapCurrencyToISO2(currencyCode);
-        const { useStoreCredit } = payload;
+        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
         if (useStoreCredit !== undefined) {
             state = await this._store.dispatch(
@@ -69,10 +72,10 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
         state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
+            this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
         );
 
-        await this._redirectToAfterpay(countryCode, state.paymentMethods.getPaymentMethod(paymentId));
+        await this._redirectToAfterpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
 
         // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise<never>(() => {});
