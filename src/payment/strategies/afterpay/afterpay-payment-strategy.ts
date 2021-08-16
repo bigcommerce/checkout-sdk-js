@@ -61,7 +61,8 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         let state = this._store.getState();
         const currencyCode = state.cart.getCart()?.currency.code || '';
         const countryCode = this._mapCurrencyToISO2(currencyCode);
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        let { useStoreCredit } = payload;
+        useStoreCredit = typeof useStoreCredit === 'undefined' ? this._store.getState().checkout.getCheckoutOrThrow().isStoreCreditApplied : useStoreCredit;
 
         if (useStoreCredit !== undefined) {
             state = await this._store.dispatch(
