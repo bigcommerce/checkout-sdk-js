@@ -30,6 +30,7 @@ const POLLING_MAX_TIME = 600000;
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
     private _isAPM?: boolean;
+    private _isPaylater?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -53,6 +54,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
+        this._isPaylater = methodId === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
 
         if (orderId) {
             this._orderId = orderId;
@@ -74,7 +76,14 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         const loadingIndicatorContainerId = container.split('#')[1];
 
-        const paramsScript = this._getOptionsScript(initializationData, currencyCode, this._isAPM ? methodId : undefined);
+        let initializationMethodId;
+        if (this._isAPM) {
+            initializationMethodId = methodId;
+        } else if (this._isPaylater) {
+            initializationMethodId = 'paylater';
+        }
+
+        const paramsScript = this._getOptionsScript(initializationData, currencyCode, initializationMethodId);
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
             onApprove: data => {
@@ -228,7 +237,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _getOptionsScript(
         initializationData: PaypalCommerceInitializationData,
         currencyCode: Cart['currency']['code'],
-        apmMehodId?: string
+        initializationMethodId?: string
     ): PaypalCommerceScriptParams {
         const { clientId, intent, merchantId } = initializationData;
 
@@ -239,7 +248,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             currency: currencyCode,
             intent,
             components: ['buttons', 'messages', 'fields', 'funding-eligibility'] as ComponentsScriptType,
-            ...(apmMehodId && { 'enable-funding': apmMehodId}),
+            ...(initializationMethodId && { 'enable-funding': initializationMethodId}),
         };
 
         return returnObject;

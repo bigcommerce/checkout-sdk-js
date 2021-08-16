@@ -133,7 +133,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             currency: 'USD',
             intent: 'capture',
             components: ['buttons', 'messages'],
-            'disable-funding': ['card', 'credit'],
+            'disable-funding': ['card', 'credit', 'paylater'],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
@@ -152,6 +152,10 @@ describe('PaypalCommerceButtonStrategy', () => {
                 intent: 'capture',
                 components: ['buttons', 'messages'],
                 'disable-funding': ['card'],
+                'enable-funding': [
+                    'credit',
+                    'paylater',
+                ],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
