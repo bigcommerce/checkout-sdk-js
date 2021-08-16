@@ -200,6 +200,29 @@ describe('PaypalCommercePaymentStrategy', () => {
             expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, 'paypalcommercealternativemethods');
         });
 
+        it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling pay later', async () => {
+            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+                .mockReturnValue('PAYLATER');
+
+            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: undefined, methodId: PaymentStrategyType.PAYPAL_COMMERCE_CREDIT });
+
+            const obj = {
+                'client-id': 'abc',
+                commit: true,
+                currency: 'USD',
+                intent: 'capture',
+                components: [
+                    'buttons',
+                    'messages',
+                    'fields',
+                    'funding-eligibility',
+                ],
+                'enable-funding': 'paylater',
+            };
+
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
+        });
+
         it('renders PayPal button if orderId is undefined', async () => {
             await paypalCommercePaymentStrategy.initialize(options);
 

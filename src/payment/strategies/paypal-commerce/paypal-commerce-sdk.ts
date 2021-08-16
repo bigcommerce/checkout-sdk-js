@@ -232,7 +232,8 @@ export interface PaypalCommerceInitializationData {
     attributionId?: string;
 }
 
-export type DisableFundingType = Array<'credit' | 'card'>;
+export type DisableFundingType = Array<'credit' | 'card' | 'paylater'>;
+export type EnableFundingType =  Array<'paypal' | 'credit' | 'paylater'> | string;
 
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'fields'>;
 
@@ -241,6 +242,7 @@ export interface PaypalCommerceScriptParams  {
     'merchant-id'?: string;
     'buyer-country'?: string;
     'disable-funding'?: DisableFundingType;
+    'enable-funding'?: EnableFundingType;
     'data-client-token'?: string;
     'data-partner-attribution-id'?: string;
     currency?: string;

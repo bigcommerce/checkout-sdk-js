@@ -3,7 +3,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, DisableFundingType, EnableFundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -75,10 +75,18 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptParams {
         const { clientId, intent, isPayPalCreditAvailable, merchantId, attributionId } = initializationData;
-        const disableFunding: DisableFundingType = [ 'card' ];
 
-        if (!isPayPalCreditAvailable) {
-            disableFunding.push('credit');
+        const disableFunding: DisableFundingType = [ 'card' ];
+        const enableFunding: EnableFundingType = [];
+
+        /**
+         *  The default value is different depending on the countries,
+         *  therefore there's a need to add credit, paylater to enable/disable funding explicitly
+         */
+        if (isPayPalCreditAvailable) {
+            enableFunding.push('credit', 'paylater');
+        } else {
+            disableFunding.push('credit', 'paylater');
         }
 
         return {
@@ -88,6 +96,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             currency: cart.currency.code,
             components: ['buttons', 'messages'],
             'disable-funding': disableFunding,
+            ...(enableFunding.length && {'enable-funding': enableFunding}),
             intent,
             'data-partner-attribution-id': attributionId,
         };
