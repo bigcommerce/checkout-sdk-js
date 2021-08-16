@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.174.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.173.0...v1.174.0) (2021-08-16)
+
+
+### Features
+
+* **checkout:** PAYPAL-1100 added paylater to enable-funding field on paypalcommerce checkout and buttons ([f021b81](https://github.com/bigcommerce/checkout-sdk-js/commit/f021b81befdc459db5963b3b1689e6bf4da86dfd))
+
+
+### Bug Fixes
+
+* **checkout:** DATA-7883 Fix Segment + GAEE issue ([0e490ef](https://github.com/bigcommerce/checkout-sdk-js/commit/0e490efe6326785bde5261772063510201b63e90))
+
 ## [1.173.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.172.0...v1.173.0) (2021-08-12)
 
 
