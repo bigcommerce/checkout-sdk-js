@@ -198,6 +198,7 @@ export interface PaypalCommerceSDKFunding {
     IDEAL: string;
     MYBANK: string;
     SOFORT: string;
+    SEPA: string;
     BLIK: string;
     TRUSTLY: string;
     VERKKOPANKKI: string;

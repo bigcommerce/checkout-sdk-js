@@ -32,6 +32,8 @@ export default class PaypalCommerceFundingKeyResolver {
                     return 'BLIK';
                 case 'trustly':
                     return 'TRUSTLY';
+                case 'sepa':
+                    return 'SEPA';
                 case 'venmo':
                     return 'VENMO';
             }
