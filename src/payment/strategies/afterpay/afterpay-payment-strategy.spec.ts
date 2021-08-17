@@ -7,8 +7,8 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
-import { getResponse } from '../../../common/http-request/responses.mock';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotCompletedError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -211,8 +211,25 @@ describe('AfterpayPaymentStrategy', () => {
             }
         });
 
+        it('throws InvalidArgumentError if loadPaymentMethod fails', async () => {
+            const errorResponse = merge(
+                getErrorResponse(), {
+                    body: {
+                        status: 422,
+                    },
+                });
+
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
+                throw new RequestError(errorResponse);
+            });
+
+            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
+        });
+
         it('loads payment client token', () => {
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway, undefined);
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(`${paymentMethod.gateway}?method=${paymentMethod.id}`, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
     });

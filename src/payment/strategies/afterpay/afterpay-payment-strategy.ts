@@ -1,5 +1,6 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotCompletedError } from '../../../order/errors';
 import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
@@ -52,10 +53,13 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gatewayId;
+        if (!payload.payment) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
+        }
+        const { gatewayId, methodId } = payload.payment;
 
-        if (!paymentId) {
-            throw new PaymentArgumentInvalidError(['payment.gatewayId']);
+        if (!gatewayId || !methodId) {
+            throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
         let state = this._store.getState();
@@ -71,11 +75,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
-        state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
-        );
+        state = await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        await this._redirectToAfterpay(countryCode, state.paymentMethods.getPaymentMethod(paymentId));
+        await this._redirectToAfterpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
 
         // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise<never>(() => {});
@@ -129,5 +131,19 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         };
 
         return countryByCurrency[currencyCode] || 'AU';
+    }
+
+    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
+        try {
+            return await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
+            );
+        } catch (error) {
+            if (error instanceof RequestError && error?.body?.status === 422) {
+                throw new InvalidArgumentError("Afterpay can't process your payment for this order, please try another payment method");
+            }
+
+            throw error;
+        }
     }
 }
