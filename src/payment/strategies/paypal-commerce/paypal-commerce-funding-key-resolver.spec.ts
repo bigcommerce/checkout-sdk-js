@@ -48,6 +48,10 @@ describe('paypalCommerceFundingKeyResolver', () => {
             expect(paypalCommerceFundingKeyResolver.resolve('trustly', 'paypalcommercealternativemethods')).toEqual('TRUSTLY');
         });
 
+        it('should return "SEPA"', () => {
+            expect(paypalCommerceFundingKeyResolver.resolve('sepa', 'paypalcommercealternativemethods')).toEqual('SEPA');
+        });
+
         it('should return "VENMO"', () => {
             expect(paypalCommerceFundingKeyResolver.resolve('venmo', 'paypalcommercealternativemethods')).toEqual('VENMO');
         });

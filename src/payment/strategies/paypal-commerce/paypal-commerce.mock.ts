@@ -21,6 +21,7 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
             MYBANK: 'mybank',
             SOFORT: 'sofort',
             TRUSTLY: 'trustly',
+            SEPA: 'sepa',
             VERKKOPANKKI: 'verkkopankki',
             VENMO: 'venmo',
         },
