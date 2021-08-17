@@ -33,7 +33,10 @@ describe('NonePaymentProcessor', () => {
 
             expect(requestSenderSpy).toBeCalledWith(
                 'https://some-domain.com/payments',
-                { body: { payment_method_id: 'some-id.some-method' } }
+                {
+                    body: { payment_method_id: 'some-id.some-method' },
+                    credentials: false,
+                }
             );
         });
 

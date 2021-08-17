@@ -14,7 +14,7 @@ export class NonePaymentProcessor implements PaymentProcessor {
         const paymentMethodId = `${paymentMethod.id}.${paymentMethod.method}`;
         const body = { payment_method_id: paymentMethodId };
 
-        return this._requestSender.post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, { body })
+        return this._requestSender.post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, { credentials: false, body })
             .then(response => this._stepHandler.handle(response));
     }
 }

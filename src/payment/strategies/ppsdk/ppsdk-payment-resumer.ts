@@ -15,7 +15,7 @@ export class PaymentResumer {
     ) {}
 
     resume({ paymentId, bigpayBaseUrl }: ResumeSettings): Promise<void> {
-        return this._requestSender.get<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments/${paymentId}`)
+        return this._requestSender.get<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments/${paymentId}`, { credentials: false })
             .then(response => this._stepHandler.handle(response));
     }
 }
