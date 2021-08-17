@@ -12,11 +12,20 @@
 
 ### Properties
 
+* [accessibilityLabel](braintreestoredcardfieldoptions.md#optional-accessibilitylabel)
 * [containerId](braintreestoredcardfieldoptions.md#containerid)
 * [instrumentId](braintreestoredcardfieldoptions.md#instrumentid)
 * [placeholder](braintreestoredcardfieldoptions.md#optional-placeholder)
 
 ## Properties
+
+### `Optional` accessibilityLabel
+
+• **accessibilityLabel**? : *undefined | string*
+
+*Inherited from [BraintreeFormFieldOptions](braintreeformfieldoptions.md).[accessibilityLabel](braintreeformfieldoptions.md#optional-accessibilitylabel)*
+
+___
 
 ###  containerId
 

@@ -692,6 +692,7 @@ declare interface BraintreeFormFieldKeyboardEventData {
 }
 
 declare interface BraintreeFormFieldOptions {
+    accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
 }

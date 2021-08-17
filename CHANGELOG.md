@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.175.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.174.0...v1.175.0) (2021-08-17)
+
+
+### Features
+
+* **payment:** CHECKOUT-5906 Payment step "Name on Card" of checkout requires label for screen readers ([72b98d0](https://github.com/bigcommerce/checkout-sdk-js/commit/72b98d05dc165911f593e11e51ecf47688e38406))
+* **payment:** INT-4456 Add CA/FR to klarna countries list ([e3e66a5](https://github.com/bigcommerce/checkout-sdk-js/commit/e3e66a5bd68f6ccaeb089242812b010810f7683a))
+
 ## [1.174.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.173.0...v1.174.0) (2021-08-16)
 
 
