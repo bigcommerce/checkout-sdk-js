@@ -148,6 +148,7 @@ export interface BraintreeStoredCardFieldsMap {
 }
 
 export interface BraintreeFormFieldOptions {
+    accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
 }

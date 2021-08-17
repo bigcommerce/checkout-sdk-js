@@ -20,6 +20,8 @@ export default class BraintreeRegularField {
         this._input.style.width = '100%';
         this._input.placeholder = this._options.placeholder || '';
 
+        this._input.setAttribute('aria-label', this._options.accessibilityLabel || '');
+
         this._input.addEventListener('blur', this._handleBlur);
         this._input.addEventListener('focus', this._handleFocus);
 
