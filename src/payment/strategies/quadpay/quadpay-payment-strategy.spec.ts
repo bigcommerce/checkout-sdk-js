@@ -6,12 +6,14 @@ import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -31,6 +33,7 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 import QuadpayPaymentStrategy from './quadpay-payment-strategy';
 
 describe('QuadpayPaymentStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let store: CheckoutStore;
     let requestSender: RequestSender;
     let orderActionCreator: OrderActionCreator;
@@ -73,8 +76,14 @@ describe('QuadpayPaymentStrategy', () => {
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(requestSender)
         );
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(requestSender)
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
         storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 

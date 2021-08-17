@@ -3,6 +3,10 @@ import { Action } from '@bigcommerce/data-store';
 import { AmazonPayRemoteCheckout } from './methods';
 
 export enum RemoteCheckoutActionType {
+    ForgetCheckoutRemoteCustomerRequested = 'FORGET_CHECKOUT_REMOTE_CUSTOMER_REQUESTED',
+    ForgetCheckoutRemoteCustomerSucceeded = 'FORGET_CHECKOUT_REMOTE_CUSTOMER_SUCCEEDED',
+    ForgetCheckoutRemoteCustomerFailed = 'FORGET_CHECKOUT_REMOTE_CUSTOMER_FAILED',
+
     InitializeRemoteBillingRequested = 'INITIALIZE_REMOTE_BILLING_REQUESTED',
     InitializeRemoteBillingSucceeded = 'INITIALIZE_REMOTE_BILLING_SUCCEEDED',
     InitializeRemoteBillingFailed = 'INITIALIZE_REMOTE_BILLING_FAILED',
@@ -26,12 +30,29 @@ export enum RemoteCheckoutActionType {
     UpdateRemoteCheckout = 'UPDATE_REMOTE_CHECKOUT',
 }
 
-export type RemoteCheckoutAction = InitializeRemoteBillingAction |
+export type RemoteCheckoutAction = ForgetCheckoutRemoteCustomerAction |
+    InitializeRemoteBillingAction |
     InitializeRemoteShippingAction |
     InitializeRemotePaymentAction |
     SignOutRemoteCustomerAction |
     LoadRemoteSettingsAction |
     UpdateRemoteCheckoutAction;
+
+export type ForgetCheckoutRemoteCustomerAction = ForgetCheckoutRemoteCustomerRequestedAction |
+    ForgetCheckoutRemoteCustomerSucceededAction |
+    ForgetCheckoutRemoteCustomerFailedAction;
+
+export interface ForgetCheckoutRemoteCustomerRequestedAction extends Action {
+    type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerRequested;
+}
+
+export interface ForgetCheckoutRemoteCustomerSucceededAction extends Action {
+    type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerSucceeded;
+}
+
+export interface ForgetCheckoutRemoteCustomerFailedAction extends Action {
+    type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerFailed;
+}
 
 export type InitializeRemoteBillingAction = InitializeRemoteBillingSucceededAction |
     InitializeRemoteBillingFailedAction |

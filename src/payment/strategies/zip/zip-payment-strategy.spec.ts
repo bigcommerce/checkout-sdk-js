@@ -5,12 +5,14 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -36,6 +38,7 @@ import ZipScriptLoader from './zip-script-loader';
 describe('ZipPaymentStrategy', () => {
 
     let applyStoreCreditAction: Observable<Action>;
+    let checkoutActionCreator: CheckoutActionCreator;
     let checkoutMock: Checkout;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
@@ -76,7 +79,7 @@ describe('ZipPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
@@ -84,10 +87,17 @@ describe('ZipPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(requestSender));
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
+        );
         storeCreditActionCreator = new StoreCreditActionCreator(
-            new StoreCreditRequestSender(createRequestSender())
+            new StoreCreditRequestSender(requestSender)
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));

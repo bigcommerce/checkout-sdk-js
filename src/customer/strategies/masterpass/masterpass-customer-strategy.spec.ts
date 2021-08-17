@@ -2,10 +2,12 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfig, getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
@@ -18,6 +20,7 @@ import CustomerStrategy from '../customer-strategy';
 import MasterpassCustomerStrategy from './masterpass-customer-strategy';
 
 describe('MasterpassCustomerStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
     let masterpass: Masterpass;
     let masterpassScriptLoader: MasterpassScriptLoader;
@@ -57,8 +60,15 @@ describe('MasterpassCustomerStrategy', () => {
 
         requestSender = createRequestSender();
 
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(requestSender)
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
 
         masterpass = getMasterpassScriptMock();

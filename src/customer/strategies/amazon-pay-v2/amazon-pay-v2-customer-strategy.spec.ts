@@ -1,10 +1,12 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
@@ -20,6 +22,7 @@ import AmazonPayV2CustomerStrategy from './amazon-pay-v2-customer-strategy';
 import { getAmazonPayV2CustomerInitializeOptions, Mode } from './amazon-pay-v2-customer.mock';
 
 describe('AmazonPayV2CustomerStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
     let customerInitializeOptions: CustomerInitializeOptions;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
@@ -41,13 +44,19 @@ describe('AmazonPayV2CustomerStrategy', () => {
         });
 
         requestSender = createRequestSender();
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender)
         );
 
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(requestSender)
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
 
         paymentProcessor = createAmazonPayV2PaymentProcessor();

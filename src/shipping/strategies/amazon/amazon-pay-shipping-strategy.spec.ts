@@ -1,13 +1,15 @@
 import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { of } from 'rxjs';
 
 import { ConsignmentRequestSender } from '../..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import { AmazonPayAddressBook, AmazonPayAddressBookOptions, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
@@ -26,6 +28,7 @@ describe('AmazonPayShippingStrategy', () => {
     let container: HTMLDivElement;
     let hostWindow: AmazonPayWindow;
     let orderReference: AmazonPayOrderReference;
+    let requestSender: RequestSender;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
@@ -63,17 +66,24 @@ describe('AmazonPayShippingStrategy', () => {
     }
 
     beforeEach(() => {
+        requestSender = createRequestSender();
         consignmentActionCreator = new ConsignmentActionCreator(
-            new ConsignmentRequestSender(createRequestSender()),
-            new CheckoutRequestSender(createRequestSender())
+            new ConsignmentRequestSender(requestSender),
+            new CheckoutRequestSender(requestSender)
         );
         addressBookSpy = jest.fn();
         container = document.createElement('div');
         hostWindow = window;
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(requestSender),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(requestSender),
+                new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+                new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            ));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {

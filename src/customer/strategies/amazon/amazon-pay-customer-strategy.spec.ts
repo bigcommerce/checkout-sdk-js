@@ -1,12 +1,14 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import { AmazonPayLogin, AmazonPayLoginButton, AmazonPayLoginButtonOptions, AmazonPayLoginOptions, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
@@ -19,12 +21,14 @@ import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 describe('AmazonPayCustomerStrategy', () => {
     let authorizeSpy: jest.Mock;
     let buttonConstructorSpy: jest.Mock;
+    let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
     let hostWindow: AmazonPayWindow;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
+    let requestSender: RequestSender;
     let scriptLoader: AmazonPayScriptLoader;
     let strategy: CustomerStrategy;
     let state: CheckoutStoreState;
@@ -61,12 +65,18 @@ describe('AmazonPayCustomerStrategy', () => {
     beforeEach(() => {
         authorizeSpy = jest.fn();
         buttonConstructorSpy = jest.fn();
+        requestSender = createRequestSender();
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         container = document.createElement('div');
         hostWindow = window;
         paymentMethod = getAmazonPay();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
-        remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
-        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());

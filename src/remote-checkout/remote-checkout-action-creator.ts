@@ -1,6 +1,9 @@
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
-import { Observable, Observer } from 'rxjs';
+import { concat, defer, of, Observable, Observer } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
+import { CheckoutActionCreator } from '../checkout';
+import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 
 import { RemoteCheckoutActionType } from './remote-checkout-actions';
@@ -13,7 +16,8 @@ import { RemoteCheckoutStateData } from './remote-checkout-state';
  */
 export default class RemoteCheckoutActionCreator {
     constructor(
-        private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender
+        private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
+        private _checkoutActionCreator: CheckoutActionCreator
     ) {}
 
     initializeBilling(methodId: string, params?: { referenceId: string }, options?: RequestOptions): Observable<Action> {
@@ -89,6 +93,20 @@ export default class RemoteCheckoutActionCreator {
                     observer.error(createErrorAction(RemoteCheckoutActionType.SignOutRemoteCustomerFailed, response, { methodId }));
                 });
         });
+    }
+
+    forgetCheckout(methodId: string, options?: RequestOptions): Observable<Action> {
+        return concat(
+            of(createAction(RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerRequested, undefined, {methodId})),
+            defer(async () => {
+                await this._remoteCheckoutRequestSender.forgetCheckout(options);
+                await this._checkoutActionCreator.loadCurrentCheckout();
+
+                return createAction(RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerSucceeded, undefined, {methodId});
+            })
+        ).pipe(
+            catchError(error => throwErrorAction(RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerFailed, error, { methodId }))
+        );
     }
 
     updateCheckout<K extends keyof RemoteCheckoutStateData>(methodId: K, data: Partial<RemoteCheckoutStateData[K]>): Action {

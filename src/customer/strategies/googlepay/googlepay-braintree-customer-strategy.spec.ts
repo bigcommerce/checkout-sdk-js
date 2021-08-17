@@ -3,10 +3,12 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCart, getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
@@ -20,6 +22,7 @@ import { getBraintreeCustomerInitializeOptions,  Mode } from './googlepay-custom
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
     let formPoster: FormPoster;
     let customerInitializeOptions: CustomerInitializeOptions;
@@ -41,8 +44,15 @@ describe('GooglePayCustomerStrategy', () => {
 
         requestSender = createRequestSender();
 
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(requestSender)
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
 
         paymentProcessor = createGooglePayPaymentProcessor(
@@ -172,7 +182,7 @@ describe('GooglePayCustomerStrategy', () => {
             jest.spyOn(store.getState().payment, 'getPaymentId')
                 .mockReturnValue(paymentId);
 
-            jest.spyOn(remoteCheckoutActionCreator, 'signOut')
+            jest.spyOn(remoteCheckoutActionCreator, 'forgetCheckout')
                 .mockReturnValue('data');
 
             const options = {
@@ -181,7 +191,7 @@ describe('GooglePayCustomerStrategy', () => {
 
             await strategy.signOut(options);
 
-            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('googlepaybraintree', options);
+            expect(remoteCheckoutActionCreator.forgetCheckout).toHaveBeenCalledWith('googlepaybraintree', options);
             expect(store.dispatch).toHaveBeenCalled();
         });
 
