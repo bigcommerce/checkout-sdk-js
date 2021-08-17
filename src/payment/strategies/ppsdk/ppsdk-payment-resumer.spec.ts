@@ -17,7 +17,7 @@ describe('PaymentResumer', () => {
 
             await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com' });
 
-            expect(requestSenderSpy).toBeCalledWith('https://some-domain.com/payments/some-id');
+            expect(requestSenderSpy).toBeCalledWith('https://some-domain.com/payments/some-id', { credentials: false});
         });
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
