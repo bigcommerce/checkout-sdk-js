@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.175.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.0...v1.175.1) (2021-08-17)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-7215 disable withCredentials on PPSDK xhr requests to BigPay ([#1212](https://github.com/bigcommerce/checkout-sdk-js/issues/1212)) ([e7ab9fd](https://github.com/bigcommerce/checkout-sdk-js/commit/e7ab9fd117f740f5800cbea51723f953515f8b81))
+
 ## [1.175.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.174.0...v1.175.0) (2021-08-17)
 
 
