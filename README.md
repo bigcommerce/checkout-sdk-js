@@ -58,14 +58,14 @@ The library also provides integrations with all the payment methods supported by
 * Klarna
 * AfterPay
 
-Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) of a custom checkout written in React to get you started. **Please note that this reference implementation is not production ready.**
+Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. With Bigcommerce's Open Checkout, we provide **Checkout JS** as our [reference implementation](https://github.com/bigcommerce/checkout-js) of a checkout written in React to get you started.
 
 
 ## Getting started
 
 The Checkout JS SDK is the easiest way to build a bespoke checkout into your store’s theme. We have created the following tutorials to help you get started.
-* [Checkout SDK Quickstart](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/checkout-sdk-quickstart) - This tutorial will walk through the first steps for building a custom checkout by installing the Checkout JS SDK and initial theme setup.
-* [Checkout SDK Tutorial](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/checkout-sdk-example) - This tutorial will take you through the steps to integrate the custom checkout provided by our reference implementation into the Cornerstone theme.
+* [Open Checkout Quick Start](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/open-checkout-quick-start) - In this quick start tutorial, we’ll configure our development environment and make a code change to a fork of BigCommerce’s Open Checkout.
+* [Installing Custom Checkouts](https://developer.bigcommerce.com/stencil-docs/customizing-checkout/installing-custom-checkouts) - This article will outline how to package a custom checkout file, and install a custom checkout via the control panel.
 
 
 ## Installation
@@ -450,7 +450,7 @@ The functions provided by the SDK are:
 
 ## See also
 
-* [Example app](https://github.com/bigcommerce/checkout-sdk-js-example) - A sample checkout app written in React.
+* [Checkout JS](https://github.com/bigcommerce/checkout-js) - This is our reference implementation of a checkout built using the Checkout JS SDK.
 * [Storefront APIs](https://developer.bigcommerce.com/api/v3/storefront.html) - The documentation for Storefront Checkout & Cart Web APIs.
 
 
