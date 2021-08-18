@@ -106,10 +106,6 @@ jobs:
       - run:
           name: Build artifact for CDN deployment
           command: npm run build-cdn
-      # The following step can be removed once previous releases are pushed to GCS bucket
-      - run:
-          name: "Copy files of previous releases for GCS deployment"
-          command: scripts/circleci/copy-previous-releases.sh
       - persist_to_workspace:
           root: ~/repo
           paths:
