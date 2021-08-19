@@ -7,9 +7,12 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotCompletedError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -21,6 +24,7 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getAfterpay } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 import AfterpayScriptLoader from './afterpay-script-loader';
@@ -35,6 +39,7 @@ describe('AfterpayPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
     let storeCreditActionCreator: StoreCreditActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let submitOrderAction: Observable<Action>;
@@ -52,6 +57,7 @@ describe('AfterpayPaymentStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         paymentActionCreator = new PaymentActionCreator(
@@ -70,6 +76,7 @@ describe('AfterpayPaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            remoteCheckoutRequestSender,
             storeCreditActionCreator,
             scriptLoader
         );
@@ -142,6 +149,7 @@ describe('AfterpayPaymentStrategy', () => {
                 orderActionCreator,
                 paymentActionCreator,
                 paymentMethodActionCreator,
+                remoteCheckoutRequestSender,
                 storeCreditActionCreator,
                 scriptLoader
             );
@@ -212,7 +220,7 @@ describe('AfterpayPaymentStrategy', () => {
     describe('#finalize()', () => {
         const nonce = 'bar';
 
-        it('submits the order and the payment', async () => {
+        beforeEach(() => {
             store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
                 config: {
                     data: {
@@ -238,12 +246,15 @@ describe('AfterpayPaymentStrategy', () => {
                 orderActionCreator,
                 paymentActionCreator,
                 paymentMethodActionCreator,
+                remoteCheckoutRequestSender,
                 storeCreditActionCreator,
                 scriptLoader
             );
 
             jest.spyOn(store, 'dispatch');
+        });
 
+        it('submits the order and the payment', async () => {
             await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
             await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
 
@@ -259,14 +270,57 @@ describe('AfterpayPaymentStrategy', () => {
                 methodId: paymentMethod.id,
                 paymentData: { nonce },
             });
+
+            jest.spyOn(remoteCheckoutRequestSender, 'forgetCheckout');
+
+            expect(remoteCheckoutRequestSender.forgetCheckout).not.toHaveBeenCalled();
         });
 
         it('throws error if unable to finalize order due to missing data', async () => {
-            try {
-                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            store = createCheckoutStore(getCheckoutStoreState());
+            strategy = new AfterpayPaymentStrategy(
+                store,
+                checkoutValidator,
+                orderActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                remoteCheckoutRequestSender,
+                storeCreditActionCreator,
+                scriptLoader
+            );
+
+            await expect(strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }))
+                .rejects
+                .toThrow(MissingDataError);
+        });
+
+        it('throws OrderFinalizationNotCompleted error if unable to finalize order', async () => {
+            const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
+            const paymentFailedErrorAction = of(createErrorAction(
+                PaymentActionType.SubmitPaymentFailed,
+                response)
+            );
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(paymentFailedErrorAction);
+            jest.spyOn(remoteCheckoutRequestSender, 'forgetCheckout')
+                .mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethods')
+                .mockReturnValue(of(createAction(
+                    PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                    [getAfterpay()]
+                )));
+
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await expect(strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }))
+                .rejects
+                .toThrow(OrderFinalizationNotCompletedError);
+
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(store.dispatch).toHaveBeenCalledWith(paymentFailedErrorAction);
+
+            expect(remoteCheckoutRequestSender.forgetCheckout).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalled();
         });
     });
 });
