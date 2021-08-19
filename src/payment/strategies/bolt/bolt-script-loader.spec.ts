@@ -71,7 +71,25 @@ describe('BoltScriptLoader', () => {
             expect(client).toBe(boltClient);
         });
 
+        it('returns the Bolt Client from the window if it is already exist without provided publishableKey', async () => {
+            await boltScriptLoader.load(publishableKey);
+
+            const client = await boltScriptLoader.load();
+
+            expect(client).toBe(boltClient);
+        });
+
         it('throws an error when window is not set', async () => {
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.BoltCheckout = undefined;
+
+                return Promise.resolve();
+            });
+
+            await expect(boltScriptLoader.load(publishableKey)).rejects.toThrow(PaymentMethodClientUnavailableError);
+        });
+
+        it('throws an error when window is not set and publishableKey is not provided', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.BoltCheckout = undefined;
 

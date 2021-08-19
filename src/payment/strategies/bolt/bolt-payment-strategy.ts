@@ -36,16 +36,22 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         this._useBoltClient = bolt?.useBigCommerceCheckout || false;
 
-        const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        if (this._useBoltClient) {
+            const state = this._store.getState();
+            const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-        if (!paymentMethod || !paymentMethod.initializationData.publishableKey) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            const { initializationData, config } = paymentMethod || {};
+            const { publishableKey, developerConfig } = initializationData || {};
+            const { testMode } = config || {};
+
+            if (!paymentMethod || !publishableKey) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            this._boltClient = await this._boltScriptLoader.load(publishableKey, testMode, developerConfig);
+        } else {
+            this._boltClient = await this._boltScriptLoader.load();
         }
-
-        const { developerConfig, publishableKey } = paymentMethod.initializationData;
-
-        this._boltClient = await this._boltScriptLoader.load(publishableKey, paymentMethod.config.testMode, developerConfig);
 
         return Promise.resolve(this._store.getState());
     }
