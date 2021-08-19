@@ -53,11 +53,12 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        const { paymentToken } = paymentMethod.initializationData;
+        const { paymentToken, region } = paymentMethod.initializationData;
         const buttonId = amazonpay.editAddressButtonId;
 
         if (paymentToken && buttonId) {
-            this._bindEditButton(buttonId, paymentToken, 'changeAddress');
+            const shouldShowLoadingSpinner = this._shouldShowLoadingSpinner(region);
+            this._bindEditButton(buttonId, paymentToken, 'changeAddress', shouldShowLoadingSpinner);
         }
 
         return this._store.getState();
@@ -69,29 +70,31 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType): void {
+    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, shouldShowLoadingSpinner: boolean ): void {
         const button = document.getElementById(id);
 
         if (!button || !button.parentNode) {
             return;
         }
 
-        const clone = button.cloneNode(true);
-        button.parentNode.replaceChild(clone, button);
+        if (shouldShowLoadingSpinner) {
+            const clone = button.cloneNode(true);
+            button.parentNode.replaceChild(clone, button);
 
-        clone.addEventListener('click', () => this._showLoadingSpinner(() => new Promise(noop)));
+            clone.addEventListener('click', () => this._showLoadingSpinner());
+        }
 
         this._amazonPayV2PaymentProcessor.bindButton(id, sessionId, changeAction);
     }
 
-    private _showLoadingSpinner(callback?: () => Promise<void> | Promise<never>): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._shippingStrategyActionCreator.widgetInteraction(() => {
+    private _showLoadingSpinner(): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._shippingStrategyActionCreator.widgetInteraction(() => new Promise(noop)),
+            { queueId: 'widgetInteraction' }
+        );
+    }
 
-            if (callback) {
-                return callback();
-            }
-
-            return Promise.reject();
-        }), { queueId: 'widgetInteraction' });
+    private _shouldShowLoadingSpinner(region: string) {
+        return region !== 'us';
     }
 }

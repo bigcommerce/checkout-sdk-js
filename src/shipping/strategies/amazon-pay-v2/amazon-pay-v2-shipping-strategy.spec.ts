@@ -113,7 +113,8 @@ describe('AmazonPayV2ShippingStrategy', () => {
             };
         });
 
-        it('dispatches update shipping when clicking previously binded buttons', async () => {
+        it('dispatches update shipping when clicking previously binded buttons if region not US', async () => {
+            paymentMethodMock.initializationData.region = 'de';
             jest.spyOn(shippingStrategyActionCreator, 'widgetInteraction');
             paymentMethodMock.initializationData.paymentToken = paymentToken;
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
@@ -126,6 +127,21 @@ describe('AmazonPayV2ShippingStrategy', () => {
             }
 
             expect(shippingStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
+        });
+
+        it('avoid dispatching update shipping when clicking previously binded buttons if US', async () => {
+            jest.spyOn(shippingStrategyActionCreator, 'widgetInteraction');
+            paymentMethodMock.initializationData.paymentToken = paymentToken;
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+
+            await strategy.initialize(initializeOptions);
+
+            const editButton = document.getElementById(shippingId);
+            if (editButton) {
+                editButton.click();
+            }
+
+            expect(shippingStrategyActionCreator.widgetInteraction).not.toHaveBeenCalled();
         });
 
         it('does not binds edit address button if no paymentToken is present on initializationData', async () => {

@@ -225,8 +225,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
         });
 
-        it('dispatches widgetInteraction when clicking previously binded edit method button', async () => {
+        it('dispatches widgetInteraction when clicking previously binded edit method button if region not US', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
+            paymentMethodMock.initializationData.region = 'uk';
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(paymentMethodMock);
 
@@ -239,6 +240,22 @@ describe('AmazonPayV2PaymentStrategy', () => {
             }
 
             expect(paymentStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
+        });
+
+        it('avoid dispatching widgetInteraction when clicking previously binded edit method button if region US', async () => {
+            paymentMethodMock.initializationData.paymentToken = paymentToken;
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethodMock);
+
+            await strategy.initialize(initializeOptions);
+
+            const editButton = document.getElementById(changeMethodId);
+
+            if (editButton) {
+                editButton.click();
+            }
+
+            expect(paymentStrategyActionCreator.widgetInteraction).not.toHaveBeenCalled();
         });
 
         it('does not initialize the paymentProcessor if no options.amazonpayv2 are provided', () => {
