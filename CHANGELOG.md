@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.175.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.1...v1.175.2) (2021-08-19)
+
+
+### Bug Fixes
+
+* **payment:** INT-4672 Forget checkout provider and reload payment methods - Afterpay ([de40a43](https://github.com/bigcommerce/checkout-sdk-js/commit/de40a43c3eb8f22bbcad27781da879c219aa7eab))
+
 ### [1.175.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.0...v1.175.1) (2021-08-17)
 
 
