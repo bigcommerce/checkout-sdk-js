@@ -1,5 +1,6 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -64,11 +65,9 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed because billing country is not supported.');
         }
 
-        state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`)
-        );
+        state = await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId));
+        await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise(() => {});
@@ -108,5 +107,19 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
 
     private _isCountrySupported( countryCode: string): boolean {
         return countryCode === 'GB';
+    }
+
+    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
+        try {
+            return await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
+            );
+        } catch (error) {
+            if (error instanceof RequestError && error?.body?.status === 422) {
+                throw new InvalidArgumentError("Clearpay can't process your payment for this order, please try another payment method");
+            }
+
+            throw error;
+        }
     }
 }
