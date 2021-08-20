@@ -3,7 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutPaymentSuccessPayload, VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import CustomerStrategy from '../customer-strategy';
 
@@ -90,6 +90,12 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options)
         );
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+        options?.continueWithCheckoutCallback?.();
+
+        return Promise.resolve(this._store.getState());
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {

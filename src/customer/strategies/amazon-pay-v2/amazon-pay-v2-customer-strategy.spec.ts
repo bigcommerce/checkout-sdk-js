@@ -219,4 +219,14 @@ describe('AmazonPayV2CustomerStrategy', () => {
             expect(store.getState).toHaveBeenCalledTimes(3);
         });
     });
+
+    describe('#executePaymentMethodCheckout', () => {
+        it('runs continue callback automatically on execute payment method checkout', async () => {
+            const mockCallback = jest.fn();
+
+            await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+
+            expect(mockCallback.mock.calls.length).toBe(1);
+        });
+    });
 });

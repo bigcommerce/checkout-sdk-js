@@ -99,6 +99,19 @@ function errorsReducer(
             signOutMethodId: action.meta && action.meta.methodId,
         });
 
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested:
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded:
+        return objectMerge(errors, {
+            executePaymentMethodCheckoutError: undefined,
+            executePaymentMethodCheckoutMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed:
+        return objectMerge(errors, {
+            executePaymentMethodCheckoutError: action.payload,
+            executePaymentMethodCheckoutMethodId: action.meta && action.meta.methodId,
+        });
+
     case CustomerStrategyActionType.WidgetInteractionStarted:
     case CustomerStrategyActionType.WidgetInteractionFinished:
         return objectMerge(errors, {
@@ -172,6 +185,19 @@ function statusesReducer(
         return objectMerge(statuses, {
             isSigningOut: false,
             signOutMethodId: undefined,
+        });
+
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested:
+        return objectMerge(statuses, {
+            isExecutingPaymentMethodCheckout: true,
+            executePaymentMethodCheckoutMethodId: action.meta && action.meta.methodId,
+        });
+
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed:
+    case CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded:
+        return objectMerge(statuses, {
+            isExecutingPaymentMethodCheckout: false,
+            executePaymentMethodCheckoutMethodId: undefined,
         });
 
     case CustomerStrategyActionType.WidgetInteractionStarted:

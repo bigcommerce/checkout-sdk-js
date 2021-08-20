@@ -194,6 +194,16 @@ describe('GooglePayCustomerStrategy', () => {
         });
     });
 
+    describe('#executePaymentMethodCheckout', () => {
+        it('runs continue callback automatically on execute payment method checkout', async () => {
+            const mockCallback = jest.fn();
+
+            await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+
+            expect(mockCallback.mock.calls.length).toBe(1);
+        });
+    });
+
     describe('#handleWalletButtonClick', () => {
         const googlePaymentDataMock = getGooglePaymentDataMock();
 

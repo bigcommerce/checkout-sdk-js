@@ -6,7 +6,7 @@ import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { getShippableItemsCount } from '../../../shipping';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
@@ -64,6 +64,12 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+        options?.continueWithCheckoutCallback?.();
+
+        return Promise.resolve(this._store.getState());
     }
 
     private _createSignInButton(containerId: string, buttonOptions: GooglePayCustomerInitializeOptions): HTMLElement {

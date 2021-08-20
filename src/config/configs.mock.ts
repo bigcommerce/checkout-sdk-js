@@ -40,6 +40,7 @@ export function getConfig(): Config {
                 orderTermsAndConditionsLink: '',
                 orderTermsAndConditionsType: '',
                 privacyPolicyUrl: '',
+                providerWithCustomCheckout: null,
                 shippingQuoteFailedMessage: 'Unfortunately one or more items in your cart can\'t be shipped to your location. Please choose a different delivery address.',
                 realtimeShippingProviders: [
                     'Fedex',

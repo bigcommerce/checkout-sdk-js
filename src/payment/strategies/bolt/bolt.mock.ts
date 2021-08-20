@@ -5,8 +5,10 @@ export function getBoltScriptMock(shouldSucced: boolean = false): BoltCheckout {
         configure: jest.fn((_cart: object, _hints: {}, callbacks?: BoltCallbacks) => {
             return getConfiguredBoltMock(shouldSucced, callbacks || { success: () => {}, close: () => {}});
         }),
-        setClientCustomCallbacks: jest.fn(),
         getTransactionReference: jest.fn(),
+        hasBoltAccount: jest.fn(),
+        openCheckout: jest.fn(),
+        setClientCustomCallbacks: jest.fn(),
     };
 }
 

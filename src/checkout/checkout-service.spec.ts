@@ -822,6 +822,23 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#executePaymentMethodCheckout()', () => {
+        it('dispatches action to execute payment method checkout', async () => {
+            const options = { methodId: getPaymentMethod().id, fallback: () => {} };
+            const action = of(createAction('EXECUTE_PAYMENT_METHOD_CHECKOUT'));
+
+            jest.spyOn(customerStrategyActionCreator, 'executePaymentMethodCheckout')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.executePaymentMethodCheckout(options);
+
+            expect(customerStrategyActionCreator.executePaymentMethodCheckout).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
+        });
+    });
+
     describe('#loadShippingOptions()', () => {
         it('loads shipping options', async () => {
             const state = await checkoutService.loadShippingOptions();

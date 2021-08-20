@@ -3,7 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 import AmazonPayCustomerInitializeOptions from './amazon-pay-customer-initialize-options';
@@ -79,6 +79,12 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+        options?.continueWithCheckoutCallback?.();
+
+        return Promise.resolve(this._store.getState());
     }
 
     private _createSignInButton(options: AmazonPayCustomerInitializeOptions): AmazonPayLoginButton {

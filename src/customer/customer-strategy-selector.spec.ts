@@ -53,6 +53,25 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#getExecutePaymentMethodCheckoutError()', () => {
+        it('returns error if unable to execute payment method checkout', () => {
+            const executePaymentMethodCheckoutError = getErrorResponse();
+
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { executePaymentMethodCheckoutError },
+            });
+
+            expect(selector.getExecutePaymentMethodCheckoutError()).toEqual(executePaymentMethodCheckoutError);
+        });
+
+        it('does not returns error if able to execute payment method checkout', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.getExecutePaymentMethodCheckoutError()).toBeUndefined();
+        });
+    });
+
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
             selector = createCustomerStrategySelector({
@@ -144,6 +163,23 @@ describe('CustomerStrategySelector', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.isSigningOut()).toEqual(false);
+        });
+    });
+
+    describe('#isExecutingPaymentMethodCheckout()', () => {
+        it('returns true if shopper executing payment method checkout', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { isExecutingPaymentMethodCheckout: true },
+            });
+
+            expect(selector.isExecutingPaymentMethodCheckout()).toEqual(true);
+        });
+
+        it('returns false if shopper has not executed payment method checkout', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.isExecutingPaymentMethodCheckout()).toEqual(false);
         });
     });
 

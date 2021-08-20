@@ -4,8 +4,14 @@ export interface BoltHostWindow extends Window {
 
 export interface BoltCheckout {
     configure(cart: BoltCart, hints: {}, callbacks?: BoltCallbacks): BoltClient;
-    setClientCustomCallbacks(callbacks: BoltCallbacks): void;
+    hasBoltAccount(email: string): boolean;
     getTransactionReference(): Promise<string | undefined>;
+    openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
+    setClientCustomCallbacks(callbacks: BoltCallbacks): void;
+}
+
+export interface BoltOpenCheckoutCallbacks {
+    close?(): void;
 }
 
 export interface BoltDeveloperModeParams {

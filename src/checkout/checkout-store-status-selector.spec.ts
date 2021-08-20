@@ -334,6 +334,28 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isExecutingPaymentMethodCheckout()', () => {
+        beforeEach(() => {
+            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(false);
+        });
+
+        it('returns true if executing payment method checkout', () => {
+            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isExecutingPaymentMethodCheckout()).toEqual(true);
+            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+        });
+
+        it('returns false if not executing payment method checkout', () => {
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isExecutingPaymentMethodCheckout()).toEqual(false);
+            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+        });
+    });
+
     describe('#isInitializingCustomer()', () => {
         it('returns true if initializing', () => {
             jest.spyOn(selectors.customerStrategies, 'isInitializing').mockReturnValue(true);
@@ -805,6 +827,24 @@ describe('CheckoutStoreStatusSelector', () => {
 
             expect(statuses.isCustomerStepPending()).toEqual(false);
             expect(selectors.customerStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns true if payment method checkout is executing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+        });
+
+        it('returns false if payment method checkout is not executing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
         });
 
         it('returns true if strategy is initializing', () => {
