@@ -1,5 +1,6 @@
 import { LoadScriptOptions, ScriptLoader } from '@bigcommerce/script-loader';
 
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { BoltCheckout, BoltDeveloperMode, BoltDeveloperModeParams, BoltHostWindow } from './bolt';
@@ -10,9 +11,13 @@ export default class BoltScriptLoader {
         public _window: BoltHostWindow = window
     ) {}
 
-    async load(publishableKey: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
+    async load(publishableKey?: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
         if (this._window.BoltCheckout) {
             return this._window.BoltCheckout;
+        }
+
+        if (!publishableKey) {
+            throw new InvalidArgumentError('Unable to initialize payment because "publishableKey" argument is not provided.');
         }
 
         const options: LoadScriptOptions = {

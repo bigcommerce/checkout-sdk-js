@@ -129,7 +129,23 @@ describe('BoltPaymentStrategy', () => {
             expect(boltScriptLoader.load).toHaveBeenCalledWith('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
         });
 
-        it('fails to initialize the bolt strategy if publishableKey is not provided', async () => {
+        it('successfully initializes the bolt strategy without publishable key if BoltCheckout SDK was initialized before', async () => {
+            await boltScriptLoader.load('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
+
+            const initializationOptions = {
+                ...boltTakeOverInitializationOptions,
+                bolt: {
+                    useBigCommerceCheckout: false,
+                },
+            };
+
+            paymentMethodMock.initializationData.publishableKey = null;
+
+            await expect(strategy.initialize(initializationOptions)).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.load).toHaveBeenCalledWith();
+        });
+
+        it('fails to initialize the bolt strategy if publishableKey is not provided when using Bigcommerce Checkout', async () => {
             paymentMethodMock.initializationData.publishableKey = null;
             await expect(strategy.initialize(boltClientScriptInitializationOptions)).rejects.toThrow(MissingDataError);
             expect(boltScriptLoader.load).not.toHaveBeenCalled();
