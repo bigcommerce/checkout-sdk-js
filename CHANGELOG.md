@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.175.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.3...v1.175.4) (2021-08-23)
+
+
+### Bug Fixes
+
+* **payment:** BOLT-47 fixed an issue of throwing payment method error on initialization for Bolt Full Checkout flow ([32ae1e1](https://github.com/bigcommerce/checkout-sdk-js/commit/32ae1e1e1a014ef8da5fe6e3cc7db70200181f3f))
+
 ### [1.175.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.2...v1.175.3) (2021-08-23)
 
 
