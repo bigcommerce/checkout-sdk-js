@@ -130,7 +130,7 @@ export function getPPSDK(): PaymentMethod {
         config: {},
         type: 'PAYMENT_TYPE_SDK',
         initializationStrategy: {
-            type: 'NONE',
+            type: 'none',
         },
     };
 }
