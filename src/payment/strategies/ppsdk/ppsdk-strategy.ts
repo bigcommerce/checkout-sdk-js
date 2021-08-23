@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -37,7 +37,14 @@ export class PPSDKStrategy implements PaymentStrategy {
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-        await paymentProcessor.process({ paymentMethod, payment, bigpayBaseUrl });
+
+        const token = this._store.getState().order.getOrderMeta()?.token;
+
+        if (!token) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrder);
+        }
+
+        await paymentProcessor.process({ paymentMethod, payment, bigpayBaseUrl, token });
 
         return this._store.getState();
     }
@@ -50,12 +57,13 @@ export class PPSDKStrategy implements PaymentStrategy {
         }
 
         const paymentId = this._store.getState().order.getPaymentId(options?.methodId);
+        const token = this._store.getState().order.getOrderMeta()?.token;
 
-        if (!paymentId) {
+        if (!paymentId || !token) {
             throw new OrderFinalizationNotRequiredError();
         }
 
-        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl });
+        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, token });
 
         return this._store.getState();
     }

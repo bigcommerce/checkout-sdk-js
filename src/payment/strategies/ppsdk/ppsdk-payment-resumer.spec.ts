@@ -15,16 +15,24 @@ describe('PaymentResumer', () => {
             const requestSenderSpy = jest.spyOn(requestSender, 'get').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com' });
+            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
-            expect(requestSenderSpy).toBeCalledWith('https://some-domain.com/payments/some-id', { credentials: false});
+            expect(requestSenderSpy).toBeCalledWith(
+                'https://some-domain.com/payments/some-id',
+                {
+                    credentials: false,
+                    headers: {
+                        authorization: 'some-token',
+                        'X-XSRF-TOKEN': null,
+                    },
+                });
         });
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
             jest.spyOn(requestSender, 'get').mockResolvedValue({ body: 'some-api-response' });
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com' });
+            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
             expect(stepHandlerSpy).toBeCalledWith({ body: 'some-api-response' });
         });
@@ -33,7 +41,7 @@ describe('PaymentResumer', () => {
             jest.spyOn(requestSender, 'get').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
-            await expect(paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com' }))
+            await expect(paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' }))
                 .resolves.toStrictEqual({ someValue: 12345 });
         });
     });

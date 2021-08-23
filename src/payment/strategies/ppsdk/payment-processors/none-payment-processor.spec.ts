@@ -29,13 +29,17 @@ describe('NonePaymentProcessor', () => {
             const requestSenderSpy = jest.spyOn(requestSender, 'post').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com' });
+            await nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
             expect(requestSenderSpy).toBeCalledWith(
                 'https://some-domain.com/payments',
                 {
                     body: { payment_method_id: 'some-id.some-method' },
                     credentials: false,
+                    headers: {
+                        authorization: 'some-token',
+                        'X-XSRF-TOKEN': null,
+                    },
                 }
             );
         });
@@ -44,7 +48,7 @@ describe('NonePaymentProcessor', () => {
             jest.spyOn(requestSender, 'post').mockResolvedValue({ body: 'some-api-response' });
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com' });
+            await nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
             expect(stepHandlerSpy).toBeCalledWith({ body: 'some-api-response' });
         });
@@ -53,7 +57,7 @@ describe('NonePaymentProcessor', () => {
             jest.spyOn(requestSender, 'post').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
-            await expect(nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com' }))
+            await expect(nonePaymentProcessor.process({ paymentMethod, bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' }))
                 .resolves.toStrictEqual({ someValue: 12345 });
         });
     });
