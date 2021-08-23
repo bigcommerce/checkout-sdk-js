@@ -335,6 +335,7 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(paymentFailedErrorAction);
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
 
             expect(remoteCheckoutRequestSender.forgetCheckout).toHaveBeenCalled();
             expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalled();

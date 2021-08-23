@@ -108,6 +108,10 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         } catch (error) {
             await this._remoteCheckoutRequestSender.forgetCheckout();
             await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
+            // Applying the status of store credit after the order was created and the payment was declined
+            const useStoreCredit = this._store.getState().checkout.getCheckoutOrThrow().isStoreCreditApplied;
+
+            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
 
             throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
         }
