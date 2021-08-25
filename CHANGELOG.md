@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.175.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.4...v1.175.5) (2021-08-25)
+
+
+### Bug Fixes
+
+* **payment:** INT-4594 [Afterpay] display correct error message when amount is out of limit ([434985c](https://github.com/bigcommerce/checkout-sdk-js/commit/434985c0e65a1eb6847a7d5d2179b4c88097f355))
+
 ### [1.175.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.3...v1.175.4) (2021-08-23)
 
 
