@@ -133,7 +133,11 @@ describe('PaypalCommerceButtonStrategy', () => {
             currency: 'USD',
             intent: 'capture',
             components: ['buttons', 'messages'],
-            'disable-funding': ['card', 'credit', 'paylater'],
+            'disable-funding': [
+                'card',
+                'credit',
+                'paylater',
+            ],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
@@ -151,8 +155,67 @@ describe('PaypalCommerceButtonStrategy', () => {
                 currency: 'USD',
                 intent: 'capture',
                 components: ['buttons', 'messages'],
-                'disable-funding': ['card'],
+                'disable-funding': [
+                    'card',
+                ],
                 'enable-funding': [
+                    'credit',
+                    'paylater',
+                ],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('initializes PaypalCommerce with enabled APMs', async () => {
+
+        paymentMethod.initializationData.availableAlternativePaymentMethods = ['sepa', 'venmo', 'sofort', 'mybank'];
+        paymentMethod.initializationData.enabledAlternativePaymentMethods = ['sofort', 'mybank'];
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+
+        const obj = {
+                'client-id': 'abc',
+                commit: false,
+                currency: 'USD',
+                intent: 'capture',
+                components: ['buttons', 'messages'],
+                'disable-funding': [
+                    'card',
+                    'sepa',
+                    'venmo',
+                    'credit',
+                    'paylater',
+                ],
+                'enable-funding': [
+                    'sofort',
+                    'mybank',
+                ],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('initializes PaypalCommerce with disabled APMs', async () => {
+        paymentMethod.initializationData.availableAlternativePaymentMethods = ['sepa', 'venmo', 'sofort', 'mybank'];
+        paymentMethod.initializationData.enabledAlternativePaymentMethods = [];
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+
+        const obj = {
+                'client-id': 'abc',
+                commit: false,
+                currency: 'USD',
+                intent: 'capture',
+                components: ['buttons', 'messages'],
+                'disable-funding': [
+                    'card',
+                    'sepa',
+                    'venmo',
+                    'sofort',
+                    'mybank',
                     'credit',
                     'paylater',
                 ],

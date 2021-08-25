@@ -221,6 +221,9 @@ export interface PaypalCommerceHostWindow extends Window {
     paypalLoadScript?(options: PaypalCommerceScriptParams): Promise<{ paypal: PaypalCommerceSDK }>;
 }
 
+export type FundingType = string[];
+export type EnableFundingType =  FundingType | string;
+
 export interface PaypalCommerceInitializationData {
     clientId: string;
     merchantId?: string;
@@ -228,13 +231,12 @@ export interface PaypalCommerceInitializationData {
     isDeveloperModeApplicable?: boolean;
     intent?: 'capture' | 'authorize';
     isPayPalCreditAvailable?: boolean;
+    availableAlternativePaymentMethods: FundingType;
+    enabledAlternativePaymentMethods: FundingType;
     isProgressiveOnboardingAvailable?: boolean;
     clientToken?: string;
     attributionId?: string;
 }
-
-export type DisableFundingType = Array<'credit' | 'card' | 'paylater'>;
-export type EnableFundingType =  Array<'paypal' | 'credit' | 'paylater'> | string;
 
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'fields'>;
 
@@ -242,7 +244,7 @@ export interface PaypalCommerceScriptParams  {
     'client-id': string;
     'merchant-id'?: string;
     'buyer-country'?: string;
-    'disable-funding'?: DisableFundingType;
+    'disable-funding'?: FundingType;
     'enable-funding'?: EnableFundingType;
     'data-client-token'?: string;
     'data-partner-attribution-id'?: string;
