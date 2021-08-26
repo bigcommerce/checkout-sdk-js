@@ -1,5 +1,6 @@
 export interface BoltHostWindow extends Window {
     BoltCheckout?: BoltCheckout;
+    Bolt?(publicKey: string): BoltEmbedded;
 }
 
 export interface BoltCheckout {
@@ -12,6 +13,15 @@ export interface BoltCheckout {
 
 export interface BoltOpenCheckoutCallbacks {
     close?(): void;
+}
+
+export interface BoltEmbedded {
+    create(name: string): BoltEmbededField;
+}
+
+export interface BoltEmbededField {
+    mount(element: string): void;
+    tokenize(): Promise<BoltEmbeddedTokenize | Error>;
 }
 
 export interface BoltDeveloperModeParams {
@@ -54,4 +64,13 @@ export interface BoltTransaction {
 export interface BoltAuthorization {
     status: string;
     reason: string;
+}
+
+export interface BoltEmbeddedTokenize {
+    bin: string;
+    expiration: string;
+    last4: string;
+    postal_code?: string;
+    token: string;
+    token_type: string;
 }
