@@ -1,7 +1,8 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
+import { CheckoutNotAvailableError } from '../checkout/errors';
 import { ContentType, INTERNAL_USE_ONLY } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import Config from './config';
 import ConfigRequestSender from './config-request-sender';
@@ -49,6 +50,26 @@ describe('ConfigRequestSender', () => {
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 },
             });
+        });
+
+        it('throws a CheckoutNotAvailable error when it encounters a client error(400–499)', async () => {
+            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
+
+            try {
+                await configRequestSender.loadConfig();
+            } catch (error) {
+                expect(error).toBeInstanceOf(CheckoutNotAvailableError);
+            }
+        });
+
+        it('throws a error when it encounters a server error(500–599)', async () => {
+            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 500));
+
+            try {
+                await configRequestSender.loadConfig();
+            } catch (error) {
+                expect(error).not.toBeInstanceOf(CheckoutNotAvailableError);
+            }
         });
     });
 });
