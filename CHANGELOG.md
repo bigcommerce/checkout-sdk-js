@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.175.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.5...v1.175.6) (2021-08-26)
+
+
+### Bug Fixes
+
+* **checkout:** JIRA-5757 Fix Sign Out Button Not Working on Checkout … ([b6aaaf3](https://github.com/bigcommerce/checkout-sdk-js/commit/b6aaaf3058d8778d627f071fdb873f476160c1dc))
+* **checkout:** JIRA-5757 Fix Sign Out Button Not Working on Checkout … ([aa44412](https://github.com/bigcommerce/checkout-sdk-js/commit/aa444126b284661a85d940aa1d858ceed3063586))
+* **checkout:** JIRA-5757 Fix Sign Out Button Not Working on Checkout … ([6e4c14a](https://github.com/bigcommerce/checkout-sdk-js/commit/6e4c14a504b4c520fc24773f4f4d322f26129ebe))
+
 ### [1.175.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.175.4...v1.175.5) (2021-08-25)
 
 
