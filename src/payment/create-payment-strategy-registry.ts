@@ -648,6 +648,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             new StripeScriptLoader(scriptLoader),
             storeCreditActionCreator,
+            hostedFormFactory,
             locale
         )
     );

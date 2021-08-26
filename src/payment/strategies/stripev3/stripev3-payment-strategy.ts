@@ -6,7 +6,8 @@ import { isBillingAddressLike, BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { Customer } from '../../../customer';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getShippableItemsCount } from '../../../shipping';
 import { StoreCreditActionCreator } from '../../../store-credit';
@@ -26,12 +27,17 @@ import StripeV3ScriptLoader from './stripev3-script-loader';
 const APM_REDIRECT = [StripeElementType.Alipay, StripeElementType.iDEAL];
 
 export default class StripeV3PaymentStrategy implements PaymentStrategy {
-    private _initializeOptions?: PaymentInitializeOptions;
+    private static isCreditCard(methodId: string): boolean {
+        return (methodId === StripePaymentMethodType.CreditCard);
+    }
+
+    private _initializeOptions?: StripeV3PaymentInitializeOptions;
     private _stripeV3Client?: StripeV3Client;
     private _stripeElements?: StripeElements;
     private _stripeElement?: StripeElement;
     private _stripeCardElements?: StripeCardElements;
     private _useIndividualCardFields?: boolean;
+    private _hostedForm?: HostedForm;
 
     constructor(
         private _store: CheckoutStore,
@@ -40,18 +46,34 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _stripeScriptLoader: StripeV3ScriptLoader,
         private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _hostedFormFactory: HostedFormFactory,
         private _locale: string
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        this._initializeOptions = options;
+        const { stripev3, methodId, gatewayId } = options;
 
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(this._getInitializeOptions().methodId);
+        if (!stripev3) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.stripev3" argument is not provided.');
+        }
+
+        if (!methodId || !gatewayId) {
+            throw new InvalidArgumentError('Unable to initialize payment because "methodId" and/or "gatewayId" argument is not provided.');
+        }
+
+        this._initializeOptions = stripev3;
+
+        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
         const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
 
         this._useIndividualCardFields = useIndividualCardFields;
-        this._stripeV3Client = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
-        this._stripeElement = await this._mountElement(this._getInitializeOptions().methodId);
+
+        if (StripeV3PaymentStrategy.isCreditCard(methodId) && stripev3.form && this.shouldShowTSVHostedForm(methodId, gatewayId)) {
+            this._hostedForm = await this._mountCardVerificationfields(stripev3.form);
+        } else {
+            this._stripeV3Client = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
+            this._stripeElement = await this._mountElement(methodId);
+        }
 
         return Promise.resolve(this._store.getState());
     }
@@ -75,20 +97,15 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
         }
 
-        if (isVaultedInstrument(paymentData)) {
-            // tslint:disable-next-line: variable-name
-            const { instrumentId: token, ccNumber: credit_card_number_confirmation, ccCvv: verification_value } = paymentData;
-
-            formattedPayload = {
-                bigpay_token: { token },
-                credit_card_number_confirmation,
-                verification_value,
-                confirm: false,
-            };
-        } else {
+        try {
             if (shouldSubmitOrderBeforeLoadingAPM) {
                 await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
             }
+
+            if (isVaultedInstrument(paymentData)) {
+                return await this._executeWithVaulted(payment);
+            }
+
             const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             const result = await this._confirmStripePayment(paymentMethod);
@@ -105,15 +122,13 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             if (method === StripeElementType.CreditCard) {
                 formattedPayload.client_token = clientToken;
             }
-        }
 
-        if (!shouldSubmitOrderBeforeLoadingAPM) {
-            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-        }
+            if (!shouldSubmitOrderBeforeLoadingAPM) {
+                await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+            }
 
-        const paymentPayload = this._buildPaymentPayload(methodId, formattedPayload, shouldSetAsDefaultInstrument);
+            const paymentPayload = this._buildPaymentPayload(methodId, formattedPayload, shouldSetAsDefaultInstrument);
 
-        try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
             return await this._processAdditionalAction(
@@ -202,6 +217,23 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return stripeError && (stripeError.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1);
     }
 
+    private shouldShowTSVHostedForm(methodId: string, gatewayId: string): boolean {
+        return (this._isHostedPaymentFormEnabled(methodId, gatewayId) && this._isHostedFieldAvailable());
+    }
+
+    private _isHostedFieldAvailable(): boolean {
+        const options = this._getInitializeOptions();
+
+        return !!options.form?.fields;
+    }
+
+    private _isHostedPaymentFormEnabled(methodId: string, gatewayId?: string): boolean {
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+
+        return paymentMethod.config.isHostedFormEnabled === true;
+    }
+
     private _handleEmptyPaymentIntentError(
         error: Error,
         stripeError: StripeError | undefined
@@ -261,7 +293,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _getInitializeOptions(): PaymentInitializeOptions {
+    private _getInitializeOptions(): StripeV3PaymentInitializeOptions {
         if (!this._initializeOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -269,14 +301,21 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this._initializeOptions;
     }
 
-    private _getStripeInitializeOptions(): StripeV3PaymentInitializeOptions {
-        const { stripev3 } = this._getInitializeOptions();
+    private async _executeWithVaulted(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
+        if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId)) {
+            const form = this._hostedForm;
 
-        if (!stripev3) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.stripev3" argument is not provided.');
+            if (!form) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            await form.validate();
+            await form.submit(payment);
+
+            return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
+        } else {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
         }
-
-        return stripev3;
     }
 
     private _getStripeElement(): StripeElement {
@@ -315,7 +354,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
     private _mountElement(methodId: string): Promise<StripeElement> {
         const stripeElementType = methodId as StripeElementType;
-        const { options, containerId } = this._getStripeInitializeOptions();
+        const { options, containerId } = this._getInitializeOptions();
 
         let stripeElement: StripeElement;
 
@@ -394,7 +433,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _mapStripeBillingDetails(billingAddress?: BillingAddress, customer?: Customer): StripeBillingDetails {
         const { firstName, lastName } = billingAddress || customer || { firstName: 'Guest', lastName: '' };
         const name = `${firstName} ${lastName}`.trim();
-        const { options } = this._getStripeInitializeOptions();
+        const { options } = this._getInitializeOptions();
 
         if (this._useIndividualCardFields && isIndividualCardElementOptions(options)) {
             const { zipCodeElementOptions } = options;
@@ -485,6 +524,27 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         return {...address, name};
+    }
+
+    private _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
+        return new Promise(async (resolve , reject) => {
+            try {
+                const { config } = this._store.getState();
+                const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+
+                if (!bigpayBaseUrl) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                const form = this._hostedFormFactory.create(bigpayBaseUrl, formOptions);
+
+                await form.attach();
+
+                resolve(form);
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
     private _unmountElement(): void {
