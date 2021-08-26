@@ -1,9 +1,9 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { CheckoutNotAvailableError } from '../checkout/errors';
 import { ContentType, INTERNAL_USE_ONLY, RequestOptions } from '../common/http-request';
 
 import Config from './config';
-import {CheckoutNotAvailableError} from "../checkout/errors";
 
 export default class ConfigRequestSender {
     constructor(
