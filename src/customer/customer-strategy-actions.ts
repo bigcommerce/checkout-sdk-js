@@ -7,6 +7,9 @@ export enum CustomerStrategyActionType {
     SignOutFailed = 'CUSTOMER_STRATEGY_SIGN_OUT_FAILED',
     SignOutRequested = 'CUSTOMER_STRATEGY_SIGN_OUT_REQUESTED',
     SignOutSucceeded = 'CUSTOMER_STRATEGY_SIGN_OUT_SUCCEEDED',
+    ExecutePaymentMethodCheckoutFailed = 'CUSTOMER_STRATEGY_EXECUTE_PAYMENT_METHOD_CHECKOUT_FAILED',
+    ExecutePaymentMethodCheckoutRequested = 'CUSTOMER_STRATEGY_EXECUTE_PAYMENT_METHOD_CHECKOUT_REQUESTED',
+    ExecutePaymentMethodCheckoutSucceeded = 'CUSTOMER_STRATEGY_EXECUTE_PAYMENT_METHOD_CHECKOUT_SUCCEEDED',
     InitializeFailed = 'CUSTOMER_STRATEGY_INITIALIZE_FAILED',
     InitializeRequested = 'CUSTOMER_STRATEGY_INITIALIZE_REQUESTED',
     InitializeSucceeded = 'CUSTOMER_STRATEGY_INITIALIZE_SUCCEEDED',
@@ -21,6 +24,7 @@ export enum CustomerStrategyActionType {
 export type CustomerStrategyAction =
     CustomerStrategySignInAction |
     CustomerStrategySignOutAction |
+    CustomerStrategyExecutePaymentMethodCheckoutAction |
     CustomerStrategyInitializeAction |
     CustomerStrategyDeinitializeAction |
     CustomerStrategyWidgetAction;
@@ -34,6 +38,11 @@ export type CustomerStrategySignOutAction =
     SignOutRequestedAction |
     SignOutSucceededAction |
     SignOutFailedAction;
+
+export type CustomerStrategyExecutePaymentMethodCheckoutAction =
+    ExecutePaymentMethodCheckoutRequestedAction |
+    ExecutePaymentMethodCheckoutSucceededAction |
+    ExecutePaymentMethodCheckoutFailedAction;
 
 export type CustomerStrategyInitializeAction =
     InitializeRequestedAction |
@@ -72,6 +81,18 @@ export interface SignOutSucceededAction extends Action {
 
 export interface SignOutFailedAction extends Action<Error> {
     type: CustomerStrategyActionType.SignOutFailed;
+}
+
+export interface ExecutePaymentMethodCheckoutRequestedAction extends Action {
+    type: CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested;
+}
+
+export interface ExecutePaymentMethodCheckoutSucceededAction extends Action {
+    type: CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded;
+}
+
+export interface ExecutePaymentMethodCheckoutFailedAction extends Action<Error> {
+    type: CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed;
 }
 
 export interface InitializeRequestedAction extends Action {

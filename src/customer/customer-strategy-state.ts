@@ -19,6 +19,8 @@ export interface CustomerStrategyErrorsState {
     signInMethodId?: string;
     signOutError?: Error;
     signOutMethodId?: string;
+    executePaymentMethodCheckoutError?: Error;
+    executePaymentMethodCheckoutMethodId?: string;
     widgetInteractionError?: Error;
     widgetInteractionMethodId?: string;
 }
@@ -32,6 +34,8 @@ export interface CustomerStrategyStatusesState {
     isSigningOut?: boolean;
     signInMethodId?: string;
     signOutMethodId?: string;
+    isExecutingPaymentMethodCheckout?: boolean;
+    executePaymentMethodCheckoutMethodId?: string;
     isWidgetInteracting?: boolean;
     widgetInteractionMethodId?: string;
 }

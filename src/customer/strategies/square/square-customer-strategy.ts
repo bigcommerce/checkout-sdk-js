@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotImplementedError } from '../../../common/error/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class SquareCustomerStrategy implements CustomerStrategy {
@@ -35,6 +35,12 @@ export default class SquareCustomerStrategy implements CustomerStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+        options?.continueWithCheckoutCallback?.();
+
         return Promise.resolve(this._store.getState());
     }
 }

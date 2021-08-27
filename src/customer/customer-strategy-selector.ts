@@ -7,10 +7,12 @@ import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state'
 export default interface CustomerStrategySelector {
     getSignInError(methodId?: string): Error | undefined;
     getSignOutError(methodId?: string): Error | undefined;
+    getExecutePaymentMethodCheckoutError(methodId?: string): Error | undefined;
     getInitializeError(methodId?: string): Error | undefined;
     getWidgetInteractionError(methodId?: string): Error | undefined;
     isSigningIn(methodId?: string): boolean;
     isSigningOut(methodId?: string): boolean;
+    isExecutingPaymentMethodCheckout(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
@@ -40,6 +42,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return signOutError;
+        }
+    );
+
+    const getExecutePaymentMethodCheckoutError = createSelector(
+        (state: CustomerStrategyState) => state.errors.executePaymentMethodCheckoutMethodId,
+        (state: CustomerStrategyState) => state.errors.executePaymentMethodCheckoutError,
+        (executePaymentMethodCheckoutMethodId, executePaymentMethodCheckoutError) => (methodId?: string) => {
+            if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
+                return;
+            }
+
+            return executePaymentMethodCheckoutError;
         }
     );
 
@@ -91,6 +105,18 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         }
     );
 
+    const isExecutingPaymentMethodCheckout = createSelector(
+        (state: CustomerStrategyState) => state.statuses.executePaymentMethodCheckoutMethodId,
+        (state: CustomerStrategyState) => state.statuses.isExecutingPaymentMethodCheckout,
+        (executePaymentMethodCheckoutMethodId, isExecutingPaymentMethodCheckout) => (methodId?: string) => {
+            if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isExecutingPaymentMethodCheckout;
+        }
+    );
+
     const isInitializing = createSelector(
         (state: CustomerStrategyState) => state.statuses.initializeMethodId,
         (state: CustomerStrategyState) => state.statuses.isInitializing,
@@ -131,10 +157,12 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         return {
             getSignInError: getSignInError(state),
             getSignOutError: getSignOutError(state),
+            getExecutePaymentMethodCheckoutError: getExecutePaymentMethodCheckoutError(state),
             getInitializeError: getInitializeError(state),
             getWidgetInteractionError: getWidgetInteractionError(state),
             isSigningIn: isSigningIn(state),
             isSigningOut: isSigningOut(state),
+            isExecutingPaymentMethodCheckout: isExecutingPaymentMethodCheckout(state),
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
             isWidgetInteracting: isWidgetInteracting(state),

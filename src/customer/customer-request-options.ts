@@ -2,6 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayCustomerInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
+import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
@@ -46,6 +47,12 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Bolt.
+     */
+    bolt?: BoltCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the Chasepay payment method.
@@ -100,4 +107,19 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
+}
+
+/**
+ * A set of options that are required to pass the customer step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific suggestion for customer to pass
+ * the customer step. For example, Bolt suggests the customer to use
+ * their custom checkout with prefilled form values. As a result, you
+ * may need to provide additional information, error handler or callback
+ * to execution method.
+ *
+ */
+export interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
+    continueWithCheckoutCallback?(): void;
 }

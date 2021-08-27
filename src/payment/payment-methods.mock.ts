@@ -673,6 +673,7 @@ export function getBolt(): PaymentMethod {
         type: 'PAYMENT_TYPE_API',
         initializationData: {
             publishableKey: 'publishableKey',
+            embeddedOneClickEnabled: false,
         },
         clientToken: 'clientToken',
     };

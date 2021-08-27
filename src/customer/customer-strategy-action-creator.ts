@@ -5,8 +5,8 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
 import CustomerCredentials from './customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from './customer-request-options';
-import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from './customer-request-options';
+import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyExecutePaymentMethodCheckoutAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
@@ -48,6 +48,25 @@ export default class CustomerStrategyActionCreator {
                 })
                 .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.SignOutFailed, error, meta));
+                });
+        });
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Observable<CustomerStrategyExecutePaymentMethodCheckoutAction> {
+        return Observable.create((observer: Observer<CustomerStrategyExecutePaymentMethodCheckoutAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested, undefined, meta));
+
+            this._strategyRegistry.get(methodId)
+                .executePaymentMethodCheckout(options)
+                .then(() => {
+                    observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded, undefined, meta));
+                    observer.complete();
+                })
+                .catch(error => {
+                    observer.error(createErrorAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed, error, meta));
                 });
         });
     }

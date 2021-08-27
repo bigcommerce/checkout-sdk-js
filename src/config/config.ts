@@ -109,6 +109,7 @@ export interface CheckoutSettings {
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
+    providerWithCustomCheckout: string | null;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;

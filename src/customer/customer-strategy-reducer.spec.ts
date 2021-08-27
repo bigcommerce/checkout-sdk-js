@@ -211,6 +211,49 @@ describe('customerStrategyReducer()', () => {
         });
     });
 
+    it('returns the pending flag as true if the customer executing payment method checkout', () => {
+        const action = createAction(
+            CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            executePaymentMethodCheckoutMethodId: 'foobar',
+            isExecutingPaymentMethodCheckout: true,
+        });
+    });
+
+    it('returns the pending flag as false if the customer has executed payment method checkout successfully', () => {
+        const action = createAction(
+            CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            executePaymentMethodCheckoutMethodId: undefined,
+            isExecutingPaymentMethodCheckout: false,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isExecutingPaymentMethodCheckout: false,
+        });
+    });
+
+    it('returns error if customer has failed to execute payment method checkout', () => {
+        const action = createErrorAction(
+            CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            executePaymentMethodCheckoutMethodId: 'foobar',
+            executePaymentMethodCheckoutError: action.payload,
+        });
+    });
+
     it('returns pending flag as true if interacting with widget', () => {
         const action = createAction(
             CustomerStrategyActionType.WidgetInteractionStarted,

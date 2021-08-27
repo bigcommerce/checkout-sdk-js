@@ -1,7 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';
-import { CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class DefaultCustomerStrategy implements CustomerStrategy {
@@ -20,6 +20,12 @@ export default class DefaultCustomerStrategy implements CustomerStrategy {
         return this._store.dispatch(
             this._customerActionCreator.signOutCustomer(options)
         );
+    }
+
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+        options?.continueWithCheckoutCallback?.();
+
+        return Promise.resolve(this._store.getState());
     }
 
     initialize(): Promise<InternalCheckoutSelectors> {

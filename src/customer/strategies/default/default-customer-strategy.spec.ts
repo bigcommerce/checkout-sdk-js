@@ -76,4 +76,13 @@ describe('DefaultCustomerStrategy', () => {
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
+
+    it('runs continue callback automatically on execute payment method checkout', async () => {
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
+        const mockCallback = jest.fn();
+
+        await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+
+        expect(mockCallback.mock.calls.length).toBe(1);
+    });
 });

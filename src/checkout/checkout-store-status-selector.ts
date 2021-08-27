@@ -150,6 +150,18 @@ export default interface CheckoutStoreStatusSelector {
     isInitializingCustomer(methodId?: string): boolean;
 
     /**
+     * Checks whether the current customer is executing payment method checkout.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * executing payment method checkout using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for continuing the
+     * current customer.
+     * @returns True if the customer is executing payment method checkout, otherwise false.
+     */
+    isExecutingPaymentMethodCheckout(methodId?: string): boolean;
+
+    /**
      * Checks whether shipping options are loading.
      *
      * @returns True if shipping options are loading, otherwise false.
@@ -377,12 +389,14 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isInitializing,
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningIn,
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningOut,
+        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isExecutingPaymentMethodCheckout,
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isWidgetInteracting,
-        (isInitializing, isSigningIn, isSigningOut, isWidgetInteracting) => (methodId?: string) => {
+        (isInitializing, isSigningIn, isSigningOut, isExecutingPaymentMethodCheckout,  isWidgetInteracting) => (methodId?: string) => {
             return (
                 isInitializing(methodId) ||
                 isSigningIn(methodId) ||
                 isSigningOut(methodId) ||
+                isExecutingPaymentMethodCheckout(methodId) ||
                 isWidgetInteracting(methodId)
             );
         }
@@ -447,6 +461,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,
+            isExecutingPaymentMethodCheckout: state.customerStrategies.isExecutingPaymentMethodCheckout,
             isInitializingCustomer: state.customerStrategies.isInitializing,
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),

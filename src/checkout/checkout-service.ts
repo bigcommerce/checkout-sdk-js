@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, ExecutePaymentMethodCheckoutOptions, GuestCredentials } from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -696,6 +696,29 @@ export default class CheckoutService {
      */
     signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.signOut(options);
+
+        return this._dispatch(action, { queueId: 'customerStrategy' });
+    }
+
+    /**
+     * Executes custom checkout of the priority payment method.
+     *
+     * Some payment methods, such as Bolt, can use their own checkout
+     * with autofilled customers data, to make checkout passing process
+     * easier and faster for customers with Bolt account.
+     *
+     * ```js
+     * await service.executePaymentMethodCheckout({
+     *     methodId: 'bolt',
+     *     fallback: () => {},
+     * });
+     * ```
+     *
+     * @param options - Options for executing payment method checkout.
+     * @returns A promise that resolves to the current state.
+     */
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.executePaymentMethodCheckout(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
     }
