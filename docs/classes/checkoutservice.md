@@ -30,6 +30,7 @@ retrieve the current checkout state and subscribe to its changes.
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
 * [deleteConsignment](checkoutservice.md#deleteconsignment)
 * [deleteInstrument](checkoutservice.md#deleteinstrument)
+* [executePaymentMethodCheckout](checkoutservice.md#executepaymentmethodcheckout)
 * [executeSpamCheck](checkoutservice.md#executespamcheck)
 * [finalizeOrderIfNeeded](checkoutservice.md#finalizeorderifneeded)
 * [getState](checkoutservice.md#getstate)
@@ -464,6 +465,35 @@ console.log(state.data.getInstruments());
 Name | Type | Description |
 ------ | ------ | ------ |
 `instrumentId` | string | The identifier of the payment instrument to delete. |
+
+**Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+A promise that resolves to the current state.
+
+___
+
+###  executePaymentMethodCheckout
+
+▸ **executePaymentMethodCheckout**(`options?`: [ExecutePaymentMethodCheckoutOptions](../interfaces/executepaymentmethodcheckoutoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+Executes custom checkout of the priority payment method.
+
+Some payment methods, such as Bolt, can use their own checkout
+with autofilled customers data, to make checkout passing process
+easier and faster for customers with Bolt account.
+
+```js
+await service.executePaymentMethodCheckout({
+    methodId: 'bolt',
+    fallback: () => {},
+});
+```
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`options?` | [ExecutePaymentMethodCheckoutOptions](../interfaces/executepaymentmethodcheckoutoptions.md) | Options for executing payment method checkout. |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
 

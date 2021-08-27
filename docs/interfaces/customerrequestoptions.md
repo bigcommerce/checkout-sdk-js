@@ -21,6 +21,8 @@ flow for signing in or out a customer. Otherwise, these options are not required
 
   ↳ [CustomerInitializeOptions](customerinitializeoptions.md)
 
+  ↳ [ExecutePaymentMethodCheckoutOptions](executepaymentmethodcheckoutoptions.md)
+
 ## Index
 
 ### Properties

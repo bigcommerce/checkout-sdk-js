@@ -31,6 +31,7 @@
 * [orderTermsAndConditionsLink](checkoutsettings.md#ordertermsandconditionslink)
 * [orderTermsAndConditionsType](checkoutsettings.md#ordertermsandconditionstype)
 * [privacyPolicyUrl](checkoutsettings.md#privacypolicyurl)
+* [providerWithCustomCheckout](checkoutsettings.md#providerwithcustomcheckout)
 * [realtimeShippingProviders](checkoutsettings.md#realtimeshippingproviders)
 * [remoteCheckoutProviders](checkoutsettings.md#remotecheckoutproviders)
 * [requiresMarketingConsent](checkoutsettings.md#requiresmarketingconsent)
@@ -165,6 +166,12 @@ ___
 ###  privacyPolicyUrl
 
 • **privacyPolicyUrl**: *string*
+
+___
+
+###  providerWithCustomCheckout
+
+• **providerWithCustomCheckout**: *string | null*
 
 ___
 

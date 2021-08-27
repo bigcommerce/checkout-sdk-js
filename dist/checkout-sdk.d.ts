@@ -657,6 +657,19 @@ declare interface BodyStyles {
     backgroundColor?: string;
 }
 
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout to support Bolt.
+ */
+declare interface BoltCustomerInitializeOptions {
+    /**
+     * A callback that gets called on initialize the strategy
+     *
+     * @param hasBoltAccount - The hasBoltAccount variable handle the result of checking user account availability on Bolt.
+     */
+    onInit?(hasBoltAccount: boolean): void;
+}
+
 declare interface BoltPaymentInitializeOptions {
     /**
      * When true, BigCommerce's checkout will be used
@@ -1946,6 +1959,24 @@ declare class CheckoutService {
      */
     signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Executes custom checkout of the priority payment method.
+     *
+     * Some payment methods, such as Bolt, can use their own checkout
+     * with autofilled customers data, to make checkout passing process
+     * easier and faster for customers with Bolt account.
+     *
+     * ```js
+     * await service.executePaymentMethodCheckout({
+     *     methodId: 'bolt',
+     *     fallback: () => {},
+     * });
+     * ```
+     *
+     * @param options - Options for executing payment method checkout.
+     * @returns A promise that resolves to the current state.
+     */
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<CheckoutSelectors>;
+    /**
      * Loads a list of shipping options available for checkout.
      *
      * Available shipping options can only be determined once a customer
@@ -2394,6 +2425,7 @@ declare interface CheckoutSettings {
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
+    providerWithCustomCheckout: string | null;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;
@@ -2992,6 +3024,17 @@ declare interface CheckoutStoreStatusSelector {
      */
     isInitializingCustomer(methodId?: string): boolean;
     /**
+     * Checks whether the current customer is executing payment method checkout.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * executing payment method checkout using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for continuing the
+     * current customer.
+     * @returns True if the customer is executing payment method checkout, otherwise false.
+     */
+    isExecutingPaymentMethodCheckout(methodId?: string): boolean;
+    /**
      * Checks whether shipping options are loading.
      *
      * @returns True if shipping options are loading, otherwise false.
@@ -3466,6 +3509,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Bolt.
+     */
+    bolt?: BoltCustomerInitializeOptions;
+    /**
      * The options that are required to initialize the Chasepay payment method.
      * They can be omitted unless you need to support Chasepay.
      */
@@ -3790,6 +3838,21 @@ declare interface EmbeddedCheckoutStyles {
 
 declare interface EmbeddedContentOptions {
     contentId?: string;
+}
+
+/**
+ * A set of options that are required to pass the customer step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific suggestion for customer to pass
+ * the customer step. For example, Bolt suggests the customer to use
+ * their custom checkout with prefilled form values. As a result, you
+ * may need to provide additional information, error handler or callback
+ * to execution method.
+ *
+ */
+declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
+    continueWithCheckoutCallback?(): void;
 }
 
 declare interface FlashMessage {

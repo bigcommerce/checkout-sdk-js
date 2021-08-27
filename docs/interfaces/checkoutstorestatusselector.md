@@ -27,6 +27,7 @@ order and waiting for the request to complete.
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
 * [isDeletingConsignment](checkoutstorestatusselector.md#isdeletingconsignment)
 * [isDeletingInstrument](checkoutstorestatusselector.md#isdeletinginstrument)
+* [isExecutingPaymentMethodCheckout](checkoutstorestatusselector.md#isexecutingpaymentmethodcheckout)
 * [isExecutingSpamCheck](checkoutstorestatusselector.md#isexecutingspamcheck)
 * [isFinalizingOrder](checkoutstorestatusselector.md#isfinalizingorder)
 * [isInitializingCustomer](checkoutstorestatusselector.md#isinitializingcustomer)
@@ -199,6 +200,27 @@ Name | Type |
 **Returns:** *boolean*
 
 True if deleting a payment instrument, otherwise false.
+
+___
+
+###  isExecutingPaymentMethodCheckout
+
+▸ **isExecutingPaymentMethodCheckout**(`methodId?`: undefined | string): *boolean*
+
+Checks whether the current customer is executing payment method checkout.
+
+If an ID is provided, the method also checks whether the customer is
+executing payment method checkout using a specific customer method with the same ID.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`methodId?` | undefined &#124; string | The identifier of the method used for continuing the current customer. |
+
+**Returns:** *boolean*
+
+True if the customer is executing payment method checkout, otherwise false.
 
 ___
 
