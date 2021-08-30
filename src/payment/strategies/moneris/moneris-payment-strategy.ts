@@ -217,11 +217,12 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             display_labels: 1,
             enable_exp: 1,
             enable_cvd: 1,
-            css_body: style?.cssBody || 'background:transparent;',
-            css_textbox: style?.cssTextbox || 'border-width:2px;',
-            css_textbox_pan: style?.cssTextboxCardNumber || 'width:140px;',
-            css_textbox_exp: style?.cssTextboxExpiryDate || 'width:40px;',
-            css_textbox_cvd: style?.cssTextboxCVV || 'width:40px',
+            css_body: style?.cssBody || 'font-family: Arial, Helvetica,sans-serif;background: transparent;',
+            css_textbox: style?.cssTextbox || 'border-radius:4px;border: 2px solid rgb(00,00,00);width: 100%;font-weight: 600;padding: 8px 8px;outline: 0;',
+            css_textbox_pan: style?.cssTextboxCardNumber || 'width: 240px;',
+            css_textbox_exp: style?.cssTextboxExpiryDate || 'margin-bottom: 0;width: calc(30% - 12px);',
+            css_textbox_cvd: style?.cssTextboxCVV || 'margin-bottom: 0;width: calc(30% - 12px);',
+            css_input_label: style?.cssInputLabel || 'font-size: 10px;position: relative;top: 8px;left: 6px;background: rgb(255,255,255);padding: 3px 2px;color: rgb(66,66,66);font-weight: 600;z-index: 2;',
             pan_label: initializationData?.creditCardLabel || 'Credit Card Number',
             exp_label: initializationData?.expiryDateLabel || 'Expiration',
             cvd_label: initializationData?.cvdLabel || 'CVD',
@@ -229,6 +230,8 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
         const queryString = map(monerisQueryParams, (value, key) => `${key}=${value}`).join('&');
 
+        iframe.width = '100%';
+        iframe.height = '100%';
         iframe.name = IFRAME_NAME;
         iframe.id = IFRAME_NAME;
         iframe.style.border = 'none';
