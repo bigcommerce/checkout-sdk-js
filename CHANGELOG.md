@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.178.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.177.1...v1.178.0) (2021-08-30)
+
+
+### Features
+
+* **checkout:** PAYPAL-1111 Added APM check to paypalcommerce button integration ([204e6a3](https://github.com/bigcommerce/checkout-sdk-js/commit/204e6a318c381ef4e6936f1f73ef56f956c02296))
+* **checkout:** PAYPAL-1111 added SEPA APM integration to paypal commerce ([630d6ed](https://github.com/bigcommerce/checkout-sdk-js/commit/630d6ed84f4c542192f580836dbfd3ae43eb7815))
+
 ### [1.177.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.177.0...v1.177.1) (2021-08-30)
 
 
