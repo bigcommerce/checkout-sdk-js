@@ -29,6 +29,7 @@ IE: 'background:white;width:40px;'
 ### Properties
 
 * [cssBody](monerisstylingprops.md#optional-cssbody)
+* [cssInputLabel](monerisstylingprops.md#optional-cssinputlabel)
 * [cssTextbox](monerisstylingprops.md#optional-csstextbox)
 * [cssTextboxCVV](monerisstylingprops.md#optional-csstextboxcvv)
 * [cssTextboxCardNumber](monerisstylingprops.md#optional-csstextboxcardnumber)
@@ -41,6 +42,14 @@ IE: 'background:white;width:40px;'
 • **cssBody**? : *undefined | string*
 
 Stringified CSS to apply to the body of the IFrame.
+
+___
+
+### `Optional` cssInputLabel
+
+• **cssInputLabel**? : *undefined | string*
+
+Stringified CSS to apply to input labels
 
 ___
 

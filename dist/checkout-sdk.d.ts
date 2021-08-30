@@ -4714,6 +4714,10 @@ declare interface MonerisStylingProps {
      * Stringified CSS to apply to the card's CVV field.
      */
     cssTextboxCVV?: string;
+    /**
+     * Stringified CSS to apply to input labels
+     */
+    cssInputLabel?: string;
 }
 
 declare interface NonceGenerationError {
