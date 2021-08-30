@@ -1,9 +1,9 @@
-import { map } from 'lodash';
+import { isEmpty, map, omitBy } from 'lodash';
 
 import { isHostedInstrumentLike } from '../../';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError , MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { HostedFieldValidationOptionsMap, HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
@@ -147,7 +147,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
     }
 
     private async _executeWithVaulted(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
-        if (this._isHostedPaymentFormEnabled(payment.methodId) && this._hostedForm) {
+        if (this._hostedForm) {
             const form = this._hostedForm;
 
             if (!form) {
@@ -176,17 +176,9 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
     private _isHostedFieldAvailable(): boolean {
         const options = this._getInitializeOptions();
+        const definedFields = omitBy(options.form?.fields, isEmpty);
 
-        const fields = options.form?.fields;
-
-        if (!fields) {
-            return false;
-        }
-
-        const { cardCodeVerification, cardNumberVerification } = fields as HostedFieldValidationOptionsMap;
-
-        return Boolean(cardCodeVerification) || Boolean(cardNumberVerification);
-
+        return !isEmpty(definedFields);
     }
 
     private _getInitializeOptions(): MonerisPaymentInitializeOptions {

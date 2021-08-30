@@ -19,8 +19,6 @@ export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
 export type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
 
-export type HostedFieldValidationOptionsMap = Required<HostedStoredCardFieldOptionsMap>;
-
 export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
     [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
