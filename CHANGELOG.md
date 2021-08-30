@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.177.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.177.0...v1.177.1) (2021-08-30)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-7221 add AUTHORIZATION and remove X-XSRF-TOKEN headers for PPSDK requests ([#1221](https://github.com/bigcommerce/checkout-sdk-js/issues/1221)) ([491150a](https://github.com/bigcommerce/checkout-sdk-js/commit/491150ae4800647292c0b093f202dbda07ebd69d))
+
 ## [1.177.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.176.0...v1.177.0) (2021-08-30)
 
 
