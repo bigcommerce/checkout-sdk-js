@@ -3,7 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { NotInitializedError } from '../../../common/error/errors';
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 
@@ -45,18 +45,41 @@ describe('PPSDKStrategy', () => {
         });
 
         describe('when the bigpayBaseUrl is correctly set within store config', () => {
-            describe('#execute', () => {
-                it('submits the order and calls the payment processor', async () => {
-                    const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+            describe('when an order token is set by the submitOrder call', () => {
+                describe('#execute', () => {
+                    it('submits the order and calls the payment processor', async () => {
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
 
-                    const mockPaymentProcessor = { process: jest.fn() };
-                    jest.spyOn(paymentProcessorRegistry, 'getByMethod').mockReturnValue(mockPaymentProcessor);
+                        const mockPaymentProcessor = { process: jest.fn() };
+                        jest.spyOn(paymentProcessorRegistry, 'getByMethod').mockReturnValue(mockPaymentProcessor);
+                        jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
 
-                    await strategy.initialize({ methodId: 'cabbagepay' });
-                    await strategy.execute({}, { methodId: 'cabbagepay' });
+                        await strategy.initialize({ methodId: 'cabbagepay' });
+                        await strategy.execute({}, { methodId: 'cabbagepay' });
 
-                    expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
-                    expect(mockPaymentProcessor.process).toHaveBeenCalled();
+                        expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
+                        expect(mockPaymentProcessor.process).toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe('when an order token is not set by the submitOrder call', () => {
+                describe('#execute', () => {
+                    it('throws a MissingDataError error, does not call the payment processor', async () => {
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+
+                        const mockPaymentProcessor = { process: jest.fn() };
+                        jest.spyOn(paymentProcessorRegistry, 'getByMethod').mockReturnValue(mockPaymentProcessor);
+                        jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
+
+                        await strategy.initialize({ methodId: 'cabbagepay' });
+
+                        await expect(strategy.execute({}, { methodId: 'cabbagepay' }))
+                            .rejects.toBeInstanceOf(MissingDataError);
+
+                        expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
+                        expect(mockPaymentProcessor.process).not.toHaveBeenCalled();
+                    });
                 });
             });
 
@@ -66,6 +89,7 @@ describe('PPSDKStrategy', () => {
                         const store = createCheckoutStore(getCheckoutStoreState());
 
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
+                        jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
@@ -84,6 +108,25 @@ describe('PPSDKStrategy', () => {
                         const store = createCheckoutStore(getCheckoutStoreState());
 
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue(undefined);
+
+                        const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
+
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+
+                        await expect(strategy.finalize({ methodId: 'cabbagepay' }))
+                            .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
+
+                        expect(resumerSpy).not.toHaveBeenCalled();
+                    });
+                });
+            });
+            describe('when there is an existing order, with a matching PPSDK Payment, but without an order token', () => {
+                describe('#finalize', () => {
+                    it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
+                        const store = createCheckoutStore(getCheckoutStoreState());
+
+                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
+                        jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
