@@ -10,19 +10,19 @@ import { MissingDataError, NotInitializedError } from '../../../common/error/err
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentMethod, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
-import { getBolt } from '../../../payment/payment-methods.mock';
-import { getBoltScriptMock } from '../../../payment/strategies/bolt/bolt.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { getBolt } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { BoltCheckout } from './bolt';
 import BoltPaymentStrategy from './bolt-payment-strategy';
 import BoltScriptLoader from './bolt-script-loader';
+import { getBoltScriptMock } from './bolt.mock';
 
 describe('BoltPaymentStrategy', () => {
     let applyStoreCreditAction: Observable<Action>;
@@ -273,18 +273,6 @@ describe('BoltPaymentStrategy', () => {
         it('fails to execute the strategy if no method id is provided with checkout takeover', async () => {
             payload.payment = {
                 methodId: '',
-            };
-
-            await strategy.initialize(boltTakeOverInitializationOptions);
-            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-            expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
-            expect(boltClient.configure).not.toHaveBeenCalled();
-        });
-
-        it('fails to execute the strategy if no nonce is provided with checkout takeover', async () => {
-            payload.payment = {
-                methodId: 'bolt',
-                paymentData: { },
             };
 
             await strategy.initialize(boltTakeOverInitializationOptions);

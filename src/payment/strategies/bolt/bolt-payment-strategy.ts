@@ -1,4 +1,3 @@
-import { isNonceLike } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -159,7 +158,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        if (!paymentData || !isNonceLike(paymentData)) {
+        if (!paymentData) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
