@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.179.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.178.0...v1.179.0) (2021-08-31)
+
+
+### Features
+
+* **payment:** BOLT-49 removed unnecessary payment data nonce check for Bolt Full Checkout ([d825f8b](https://github.com/bigcommerce/checkout-sdk-js/commit/d825f8b61d8376bbb97337b8799e40ac9061af16))
+
 ## [1.178.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.177.1...v1.178.0) (2021-08-30)
 
 
