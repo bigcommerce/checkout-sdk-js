@@ -1,4 +1,5 @@
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { HostedFieldType } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -55,6 +56,7 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
 export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElementType = StripeElementType.CreditCard): PaymentInitializeOptions {
     return {
         methodId: stripeElementType,
+        gatewayId: 'stripev3',
         stripev3: {
             containerId: `stripe-${stripeElementType}-component-field`,
             options: {
@@ -69,6 +71,7 @@ export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElemen
 export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: boolean = false): PaymentInitializeOptions {
     const paymentInitializeOptions: PaymentInitializeOptions = {
         methodId: 'card',
+        gatewayId: 'stripev3',
     };
 
     const stripeV3PaymentInitializeOptions: StripeV3PaymentInitializeOptions = {
@@ -140,6 +143,38 @@ export function getStripeV3OrderRequestBodyVaultMock(stripeElementType: StripeEl
             paymentData: {
                 instrumentId: 'token',
                 shouldSetAsDefaultInstrument,
+            },
+        },
+    };
+}
+
+export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
+    return {
+        methodId: 'card',
+        gatewayId: 'stripev3',
+        stripev3: {
+            containerId: 'stripe-element',
+            form: {
+                fields: {
+                    [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                    [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                    [HostedFieldType.CardName]: { containerId: 'card-name' },
+                },
+            },
+        },
+    };
+}
+
+export function getOrderRequestBodyVaultedCC(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'card',
+            gatewayId: 'stripev3',
+            paymentData: {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+                instrumentId: '1234',
             },
         },
     };

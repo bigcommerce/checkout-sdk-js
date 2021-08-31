@@ -166,6 +166,17 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.AMAZONPAYV2, () =>
+        new AmazonPayV2PaymentStrategy(
+            store,
+            paymentStrategyActionCreator,
+            paymentMethodActionCreator,
+            orderActionCreator,
+            paymentActionCreator,
+            createAmazonPayV2PaymentProcessor()
+        )
+    );
+
     registry.register(PaymentStrategyType.AUTHORIZENET_GOOGLE_PAY, () =>
         new GooglePayPaymentStrategy(
             store,
@@ -178,17 +189,6 @@ export default function createPaymentStrategyRegistry(
                 store,
                 new GooglePayAuthorizeNetInitializer()
             )
-        )
-    );
-
-    registry.register(PaymentStrategyType.AMAZONPAYV2, () =>
-        new AmazonPayV2PaymentStrategy(
-            store,
-            paymentStrategyActionCreator,
-            paymentMethodActionCreator,
-            orderActionCreator,
-            paymentActionCreator,
-            createAmazonPayV2PaymentProcessor()
         )
     );
 
@@ -214,22 +214,96 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.BRAINTREE, () =>
+        new BraintreeCreditCardPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor
+        )
+    );
+
+    registry.register(PaymentStrategyType.BRAINTREE_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBraintreeInitializer(
+                    new BraintreeSDKCreator(
+                        new BraintreeScriptLoader(scriptLoader)
+                    )
+                )
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL, () =>
+        new BraintreePaypalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor
+        )
+    );
+
+    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT, () =>
+        new BraintreePaypalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor,
+            true
+        )
+    );
+
+    registry.register(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT, () =>
+        new BraintreeVisaCheckoutPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
+            new VisaCheckoutScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.BOLT, () =>
+        new BoltPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            storeCreditActionCreator,
+            new BoltScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.CONVERGE, () =>
+        new ConvergePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            formPoster
+        )
+    );
+
     registry.register(PaymentStrategyType.CREDIT_CARD, () =>
         new CreditCardPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHECKOUTCOM, () =>
-        new CreditCardRedirectPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory,
-            formPoster
         )
     );
 
@@ -274,6 +348,96 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayCybersourceV2Initializer()
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM, () =>
+        new CreditCardRedirectPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            formPoster
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_APM, () =>
+        new CheckoutcomAPMPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_FAWRY, () =>
+        new CheckoutcomFawryPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayCheckoutcomInitializer(requestSender)
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_IDEAL, () =>
+        new CheckoutcomiDealPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHECKOUTCOM_SEPA, () =>
+        new CheckoutcomSEPAPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        )
+    );
+
+    registry.register(PaymentStrategyType.CHASE_PAY, () =>
+        new ChasePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            requestSender,
+            new ChasePayScriptLoader(scriptLoader),
+            new WepayRiskClient(scriptLoader)
+        )
+    );
+
     registry.register(PaymentStrategyType.DIGITALRIVER, () =>
         new DigitalRiverPaymentStrategy(
             store,
@@ -305,8 +469,54 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.LAYBUY, () =>
+        new ExternalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            formPoster
+        )
+    );
+
     registry.register(PaymentStrategyType.LEGACY, () =>
         new LegacyPaymentStrategy(
+            store,
+            orderActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.MASTERPASS, () =>
+        new MasterpassPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            new MasterpassScriptLoader(scriptLoader),
+            locale
+        )
+    );
+
+    registry.register(PaymentStrategyType.MOLLIE, () =>
+        new MolliePaymentStrategy(
+            hostedFormFactory,
+            store,
+            new MollieScriptLoader(scriptLoader),
+            orderActionCreator,
+            paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.MONERIS, () =>
+        new MonerisPaymentStrategy(
+            hostedFormFactory,
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            storeCreditActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED, () =>
+        new NoPaymentDataRequiredPaymentStrategy(
             store,
             orderActionCreator
         )
@@ -324,6 +534,21 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.ORBITAL_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayOrbitalInitializer()
+            )
         )
     );
 
@@ -350,24 +575,6 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT, () =>
-        new PaypalExpressPaymentStrategy(
-            store,
-            orderActionCreator,
-            new PaypalScriptLoader(scriptLoader)
-        )
-    );
-
-    registry.register(PaymentStrategyType.PAYPAL_COMMERCE_CREDIT_CARD, () =>
-        new PaypalCommerceCreditCardPaymentStrategy(
-            store,
-            paymentMethodActionCreator,
-            new PaypalCommerceHostedForm(createPaypalCommercePaymentProcessor(scriptLoader, requestSender)),
-            orderActionCreator,
-            paymentActionCreator
-        )
-    );
-
     registry.register(PaymentStrategyType.PAYPAL_COMMERCE, () =>
         new PaypalCommercePaymentStrategy(
             store,
@@ -389,6 +596,24 @@ export default function createPaymentStrategyRegistry(
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
             new LoadingIndicator({ styles: { backgroundColor: 'black' } })
+        )
+    );
+
+    registry.register(PaymentStrategyType.PAYPAL_COMMERCE_CREDIT_CARD, () =>
+        new PaypalCommerceCreditCardPaymentStrategy(
+            store,
+            paymentMethodActionCreator,
+            new PaypalCommerceHostedForm(createPaypalCommercePaymentProcessor(scriptLoader, requestSender)),
+            orderActionCreator,
+            paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT, () =>
+        new PaypalExpressPaymentStrategy(
+            store,
+            orderActionCreator,
+            new PaypalScriptLoader(scriptLoader)
         )
     );
 
@@ -436,110 +661,6 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED, () =>
-        new NoPaymentDataRequiredPaymentStrategy(
-            store,
-            orderActionCreator
-        )
-    );
-
-    registry.register(PaymentStrategyType.BRAINTREE, () =>
-        new BraintreeCreditCardPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            braintreePaymentProcessor
-        )
-    );
-
-    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL, () =>
-        new BraintreePaypalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            braintreePaymentProcessor
-        )
-    );
-
-    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT, () =>
-        new BraintreePaypalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            braintreePaymentProcessor,
-            true
-        )
-    );
-
-    registry.register(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT, () =>
-        new BraintreeVisaCheckoutPaymentStrategy(
-            store,
-            checkoutActionCreator,
-            paymentMethodActionCreator,
-            paymentStrategyActionCreator,
-            paymentActionCreator,
-            orderActionCreator,
-            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
-            new VisaCheckoutScriptLoader(scriptLoader)
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHASE_PAY, () =>
-        new ChasePayPaymentStrategy(
-            store,
-            checkoutActionCreator,
-            orderActionCreator,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            paymentStrategyActionCreator,
-            requestSender,
-            new ChasePayScriptLoader(scriptLoader),
-            new WepayRiskClient(scriptLoader)
-        )
-    );
-
-    registry.register(PaymentStrategyType.BRAINTREE_GOOGLE_PAY, () =>
-        new GooglePayPaymentStrategy(
-            store,
-            checkoutActionCreator,
-            paymentMethodActionCreator,
-            paymentStrategyActionCreator,
-            paymentActionCreator,
-            orderActionCreator,
-            createGooglePayPaymentProcessor(
-                store,
-                new GooglePayBraintreeInitializer(
-                    new BraintreeSDKCreator(
-                        new BraintreeScriptLoader(scriptLoader)
-                    )
-                )
-            )
-        )
-    );
-
-    registry.register(PaymentStrategyType.WE_PAY, () =>
-        new WepayPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory,
-            new WepayRiskClient(scriptLoader)
-        )
-    );
-
-    registry.register(PaymentStrategyType.MASTERPASS, () =>
-        new MasterpassPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            new MasterpassScriptLoader(scriptLoader),
-            locale
-        )
-    );
-
     registry.register(PaymentStrategyType.STRIPE_GOOGLE_PAY, () =>
         new GooglePayPaymentStrategy(
             store,
@@ -555,48 +676,35 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY, () =>
-        new GooglePayPaymentStrategy(
+    registry.register(PaymentStrategyType.STRIPEV3, () =>
+        new StripeV3PaymentStrategy(
             store,
-            checkoutActionCreator,
             paymentMethodActionCreator,
-            paymentStrategyActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            createGooglePayPaymentProcessor(
-                store,
-                new GooglePayCybersourceV2Initializer()
-            )
+            new StripeScriptLoader(scriptLoader),
+            storeCreditActionCreator,
+            hostedFormFactory,
+            locale
         )
     );
 
-    registry.register(PaymentStrategyType.ORBITAL_GOOGLE_PAY, () =>
-        new GooglePayPaymentStrategy(
+    registry.register(PaymentStrategyType.WE_PAY, () =>
+        new WepayPaymentStrategy(
             store,
-            checkoutActionCreator,
-            paymentMethodActionCreator,
-            paymentStrategyActionCreator,
-            paymentActionCreator,
             orderActionCreator,
-            createGooglePayPaymentProcessor(
-                store,
-                new GooglePayOrbitalInitializer()
-            )
+            paymentActionCreator,
+            hostedFormFactory,
+            new WepayRiskClient(scriptLoader)
         )
     );
 
-    registry.register(PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY, () =>
-        new GooglePayPaymentStrategy(
+    registry.register(PaymentStrategyType.SEZZLE, () =>
+        new ExternalPaymentStrategy(
             store,
-            checkoutActionCreator,
-            paymentMethodActionCreator,
-            paymentStrategyActionCreator,
-            paymentActionCreator,
             orderActionCreator,
-            createGooglePayPaymentProcessor(
-                store,
-                new GooglePayCheckoutcomInitializer(requestSender)
-            )
+            paymentActionCreator,
+            formPoster
         )
     );
 
@@ -610,113 +718,6 @@ export default function createPaymentStrategyRegistry(
             remoteCheckoutActionCreator,
             new ZipScriptLoader(scriptLoader),
             storefrontPaymentRequestSender
-        )
-    );
-
-    registry.register(PaymentStrategyType.CONVERGE, () =>
-        new ConvergePaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory,
-            formPoster
-        )
-    );
-
-    registry.register(PaymentStrategyType.LAYBUY, () =>
-        new ExternalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            formPoster
-        )
-    );
-
-    registry.register(PaymentStrategyType.SEZZLE, () =>
-        new ExternalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            formPoster
-        )
-    );
-
-    registry.register(PaymentStrategyType.STRIPEV3, () =>
-        new StripeV3PaymentStrategy(
-            store,
-            paymentMethodActionCreator,
-            paymentActionCreator,
-            orderActionCreator,
-            new StripeScriptLoader(scriptLoader),
-            storeCreditActionCreator,
-            locale
-        )
-    );
-
-    registry.register(PaymentStrategyType.BOLT, () =>
-        new BoltPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            storeCreditActionCreator,
-            new BoltScriptLoader(scriptLoader)
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHECKOUTCOM_APM, () =>
-        new CheckoutcomAPMPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.MOLLIE, () =>
-        new MolliePaymentStrategy(
-            hostedFormFactory,
-            store,
-            new MollieScriptLoader(scriptLoader),
-            orderActionCreator,
-            paymentActionCreator
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHECKOUTCOM_SEPA, () =>
-        new CheckoutcomSEPAPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHECKOUTCOM_IDEAL, () =>
-        new CheckoutcomiDealPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.CHECKOUTCOM_FAWRY, () =>
-        new CheckoutcomFawryPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.MONERIS, () =>
-        new MonerisPaymentStrategy(
-            hostedFormFactory,
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            storeCreditActionCreator
         )
     );
 
