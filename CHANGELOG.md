@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.179.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.179.0...v1.179.1) (2021-09-01)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-231 fixed adyen checkout form localization ([9f03081](https://github.com/bigcommerce/checkout-sdk-js/commit/9f03081580907046dd204c19f39c041905d2b54a))
+
 ## [1.179.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.178.0...v1.179.0) (2021-08-31)
 
 
