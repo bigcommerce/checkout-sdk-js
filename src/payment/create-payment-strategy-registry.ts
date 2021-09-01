@@ -108,7 +108,8 @@ export default function createPaymentStrategyRegistry(
             store,
             paymentActionCreator,
             orderActionCreator,
-            new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader())
+            new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()),
+            locale
         )
     );
 
