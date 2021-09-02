@@ -2,6 +2,8 @@ import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotCompletedError } from '../../../order/errors';
+import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -22,6 +24,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _clearpayScriptLoader: ClearpayScriptLoader
     ) {}
@@ -93,7 +96,14 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        } catch (error) {
+            await this._remoteCheckoutRequestSender.forgetCheckout();
+            await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
+
+            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+        }
     }
 
     private _redirectToClearpay(countryCode: string, paymentMethod?: PaymentMethod): void {
