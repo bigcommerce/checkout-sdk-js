@@ -97,7 +97,8 @@ export default function createCustomerStrategyRegistry(
             new CustomerStrategyActionCreator(registry),
             remoteCheckoutActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
-            new VisaCheckoutScriptLoader(scriptLoader)
+            new VisaCheckoutScriptLoader(scriptLoader),
+            formPoster
         )
     );
 
