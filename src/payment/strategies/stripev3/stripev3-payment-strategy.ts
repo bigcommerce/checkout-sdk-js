@@ -32,6 +32,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _stripeCardElements?: StripeCardElements;
     private _useIndividualCardFields?: boolean;
     private _hostedForm?: HostedForm;
+    private _reusePaymentIntent?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -54,10 +55,11 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         this._initializeOptions = stripev3;
 
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields, reusePaymentIntent } } = paymentMethod;
         const form = this._getInitializeOptions().form;
 
         this._useIndividualCardFields = useIndividualCardFields;
+        this._reusePaymentIntent = reusePaymentIntent;
 
         if (this._isCreditCard(methodId) && this._shouldShowTSVHostedForm(methodId, gatewayId) && form) {
             this._hostedForm = await this._mountCardVerificationFields(form);
@@ -113,7 +115,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 confirm: false,
             };
 
-            if (method === StripeElementType.CreditCard) {
+            if (method === StripeElementType.CreditCard && this._reusePaymentIntent === true) {
                 formattedPayload.client_token = clientToken;
             }
 
@@ -471,7 +473,16 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         if (isThreeDSecureRequiredError) {
             const clientSecret = error.body.three_ds_result.token;
-            const result = await this._getStripeJs().handleCardAction(clientSecret);
+            let result;
+            let needsConfirm = false;
+
+            if (this._reusePaymentIntent) {
+                result = await this._getStripeJs().confirmCardPayment(clientSecret);
+            } else {
+                result = await this._getStripeJs().handleCardAction(clientSecret);
+                needsConfirm = true;
+            }
+
             const { id: token } = result.paymentIntent || { id: '' };
 
             if (result.error) {
@@ -484,7 +495,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             const formattedPayload = {
                 credit_card_token: { token },
                 vault_payment_instrument: shouldSaveInstrument,
-                confirm: true,
+                confirm: needsConfirm,
             };
 
             const paymentPayload = this._buildPaymentPayload(methodId, formattedPayload, shouldSetAsDefaultInstrument);

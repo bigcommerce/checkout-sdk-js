@@ -399,6 +399,9 @@ describe('StripeV3PaymentStrategy', () => {
                 });
 
                 it('submit payment with credit card and passes back the client token', async () => {
+                    jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                        .mockReturnValue(getStripeV3('card', false, false, true));
+
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
@@ -868,7 +871,7 @@ describe('StripeV3PaymentStrategy', () => {
                     const errorResponse = new RequestError(getResponse({
                         ...getErrorPaymentResponseBody(),
                         errors: [
-                            { code: 'three_d_secure_required' },
+                            {code: 'three_d_secure_required'},
                         ],
                         three_ds_result: {
                             token: 'token',
@@ -891,7 +894,7 @@ describe('StripeV3PaymentStrategy', () => {
                     expect(stripeV3JsMock.handleCardAction).toHaveBeenCalled();
                 });
 
-                it('throws stripe error when call handleCardAction and then call confirmCardPayment to shopper auth and complete the payment', async () => {
+                it('call confirmCardPayment to shopper auth and complete the payment when reUsePaymentIntent is anabled', async () => {
                     const errorResponse = new RequestError(getResponse({
                         ...getErrorPaymentResponseBody(),
                         errors: [
@@ -902,14 +905,13 @@ describe('StripeV3PaymentStrategy', () => {
                         },
                         status: 'error',
                     }));
-                    const stripeErrorMessage = 'Stripe Exception';
+
+                    jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                        .mockReturnValue(getStripeV3('card', false, false, true));
 
                     jest.spyOn(paymentActionCreator, 'submitPayment')
                         .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
 
-                    stripeV3JsMock.handleCardAction = jest.fn(
-                        () => Promise.reject(new Error(stripeErrorMessage))
-                    );
                     stripeV3JsMock.confirmCardPayment = jest.fn(
                         () => Promise.resolve(getConfirmPaymentResponse())
                     );
@@ -926,7 +928,6 @@ describe('StripeV3PaymentStrategy', () => {
                             }),
                         }),
                     }));
-                    expect(stripeV3JsMock.handleCardAction).toHaveBeenCalled();
                     expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
                 });
 
