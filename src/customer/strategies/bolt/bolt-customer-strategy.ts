@@ -38,7 +38,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
 
         const { developerConfig, publishableKey } = paymentMethod.initializationData;
 
-        this._boltClient = await this._boltScriptLoader.load(publishableKey, paymentMethod.config.testMode, developerConfig);
+        this._boltClient = await this._boltScriptLoader.loadBoltClient(publishableKey, paymentMethod.config.testMode, developerConfig);
 
         if (onInit && typeof onInit === 'function') {
             const email = this._getCustomerEmail();

@@ -3,7 +3,7 @@ import { LoadScriptOptions, ScriptLoader } from '@bigcommerce/script-loader';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { BoltCheckout, BoltDeveloperMode, BoltDeveloperModeParams, BoltHostWindow } from './bolt';
+import { BoltCheckout, BoltDeveloperMode, BoltDeveloperModeParams, BoltEmbedded, BoltHostWindow } from './bolt';
 
 export default class BoltScriptLoader {
     constructor(
@@ -11,7 +11,7 @@ export default class BoltScriptLoader {
         public _window: BoltHostWindow = window
     ) {}
 
-    async load(publishableKey?: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
+    async loadBoltClient(publishableKey?: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltCheckout> {
         if (this._window.BoltCheckout) {
             return this._window.BoltCheckout;
         }
@@ -40,8 +40,24 @@ export default class BoltScriptLoader {
         return this._window.BoltCheckout;
     }
 
-    private getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
+    async loadBoltEmbedded(publishableKey: string, testMode?: boolean, developerModeParams?: BoltDeveloperModeParams): Promise<BoltEmbedded> {
+        const options: LoadScriptOptions = {
+            async: true,
+            attributes: {
+                id: 'bolt-embedded',
+            },
+        };
 
+        await this._scriptLoader.loadScript(`//${this.getDomainURL(!!testMode, developerModeParams)}/embed.js`, options);
+
+        if (!this._window.Bolt) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this._window.Bolt(publishableKey);
+    }
+
+    private getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
         if (!testMode) {
             return 'connect.bolt.com';
         }

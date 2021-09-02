@@ -18,7 +18,7 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
+    FormattedPayload<AdyenV2Instrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -139,6 +139,21 @@ export interface PaypalInstrument {
     paypal_account: {
         token: string;
         email: string | null;
+    };
+}
+
+interface BoltInstrument {
+    credit_card_token: {
+        token: string;
+        last_four_digits: number;
+        iin: number;
+        expiration_month: number;
+        expiration_year: number;
+        brand?: string;
+    };
+    provider_data: {
+        create_account: boolean;
+        embedded_checkout: boolean;
     };
 }
 

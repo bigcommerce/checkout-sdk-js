@@ -50,7 +50,7 @@ describe('BoltCustomerStrategy', () => {
         boltCheckout.hasBoltAccount = jest.fn();
 
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
-        boltScriptLoader.load = jest.fn(() => Promise.resolve(boltCheckout));
+        boltScriptLoader.loadBoltClient = jest.fn(() => Promise.resolve(boltCheckout));
 
         customerActionCreator = new CustomerActionCreator(
             new CustomerRequestSender(createRequestSender()),
@@ -104,7 +104,7 @@ describe('BoltCustomerStrategy', () => {
         it('loads bolt script loader', async () => {
             await strategy.initialize({ methodId: 'bolt' });
 
-            expect(boltScriptLoader.load).toHaveBeenCalled();
+            expect(boltScriptLoader.loadBoltClient).toHaveBeenCalled();
         });
     });
 

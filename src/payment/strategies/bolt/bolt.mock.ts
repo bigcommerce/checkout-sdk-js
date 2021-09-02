@@ -1,9 +1,9 @@
-import { BoltCallbacks, BoltCheckout, BoltClient, BoltTransaction } from './bolt';
+import { BoltCallbacks, BoltCheckout, BoltClient, BoltEmbedded, BoltTransaction } from './bolt';
 
-export function getBoltScriptMock(shouldSucced: boolean = false): BoltCheckout {
+export function getBoltClientScriptMock(shouldSucceed: boolean = false): BoltCheckout {
     return {
         configure: jest.fn((_cart: object, _hints: {}, callbacks?: BoltCallbacks) => {
-            return getConfiguredBoltMock(shouldSucced, callbacks || { success: () => {}, close: () => {}});
+            return getConfiguredBoltMock(shouldSucceed, callbacks || { success: () => {}, close: () => {}});
         }),
         getTransactionReference: jest.fn(),
         hasBoltAccount: jest.fn(),
@@ -12,7 +12,18 @@ export function getBoltScriptMock(shouldSucced: boolean = false): BoltCheckout {
     };
 }
 
-export function getConfiguredBoltMock(shouldSucced: boolean, callbacks: BoltCallbacks): BoltClient {
+export function getBoltEmbeddedScriptMock(): BoltEmbedded {
+    return {
+        create: jest.fn((_formName: string) => {
+            return {
+                mount: jest.fn(),
+                tokenize: jest.fn(),
+            };
+        }),
+    };
+}
+
+export function getConfiguredBoltMock(shouldSucceed: boolean, callbacks: BoltCallbacks): BoltClient {
     const mockTransaction: BoltTransaction = {
         reference: 'transactionReference',
         id: 'id',
@@ -28,7 +39,7 @@ export function getConfiguredBoltMock(shouldSucced: boolean, callbacks: BoltCall
 
     return {
         open: jest.fn(() => {
-            if (shouldSucced) {
+            if (shouldSucceed) {
                 callbacks.success(mockTransaction, jest.fn());
             } else {
                 if (callbacks.close) {
