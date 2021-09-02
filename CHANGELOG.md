@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.180.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.179.1...v1.180.0) (2021-09-02)
+
+
+### Features
+
+* **payment:** BOLT-23 embedded Bolt payment method ([8632cce](https://github.com/bigcommerce/checkout-sdk-js/commit/8632ccea1833dca7e64518562433ac64d089c32a))
+
 ### [1.179.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.179.0...v1.179.1) (2021-09-01)
 
 

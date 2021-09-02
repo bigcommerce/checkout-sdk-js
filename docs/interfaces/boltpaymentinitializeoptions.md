@@ -2,6 +2,54 @@
 
 # Interface: BoltPaymentInitializeOptions
 
+A set of options that are required to initialize the Bolt payment method with:
+
+1) Bolt Full Checkout:
+
+If the customer chooses to pay with Bolt, he will be asked to
+enter his payment details via Bolt Full Checkout.
+
+```js
+service.initializePayment({
+    methodId: 'bolt',
+});
+```
+
+2) Bolt Client:
+
+If the customer chooses to pay with Bolt in payment section of Checkout page,
+the Bolt Payment Modal will be shown, and the customer will be asked
+to enter payment details via Bolt Modal
+
+```js
+service.initializePayment({
+    methodId: 'bolt',
+    bolt: {
+        useBigCommerceCheckout: true,
+    }
+});
+```
+
+3) Bolt Embedded:
+
+A set of options that are required to initialize the Bolt payment method
+for presenting its credit card form.
+
+```html
+<!-- These containers are where the hosted (iframed) credit card field will be inserted -->
+<div id="bolt-embedded"></div>
+```
+
+```js
+service.initializePayment({
+    methodId: 'bolt',
+    bolt: {
+        useBigCommerceCheckout: true,
+        containerId: 'boltEmbeddedContainerId',
+    }
+});
+```
+
 ## Hierarchy
 
 * **BoltPaymentInitializeOptions**
@@ -10,19 +58,19 @@
 
 ### Properties
 
-* [useBigCommerceCheckout](boltpaymentinitializeoptions.md#optional-usebigcommercecheckout)
+* [containerId](boltpaymentinitializeoptions.md#optional-containerid)
+* [useBigCommerceCheckout](boltpaymentinitializeoptions.md#usebigcommercecheckout)
 
 ## Properties
 
-### `Optional` useBigCommerceCheckout
+### `Optional` containerId
 
-• **useBigCommerceCheckout**? : *undefined | false | true*
+• **containerId**? : *undefined | string*
 
-When true, BigCommerce's checkout will be used
-otherwise Bolt's full checkout take over will be assumed
+The CSS selector of a container where the Bolt Embedded payment field should be inserted into.
 
-```js
-service.initializePayment({
-    methodId: 'bolt',
-});
-```
+___
+
+###  useBigCommerceCheckout
+
+• **useBigCommerceCheckout**: *boolean*
