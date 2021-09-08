@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.180.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.180.0...v1.180.1) (2021-09-08)
+
+
+### Bug Fixes
+
+* **payment:** INT-4705 [Clearpay] display correct error message when amount is out of limits ([3b5ba0b](https://github.com/bigcommerce/checkout-sdk-js/commit/3b5ba0bcd17cbf9f28f148e414a49b5a0e086c68))
+* **payment:** PAYMENTS-7252 pass methodIds on to PPSDK endpoint without transformation ([#1233](https://github.com/bigcommerce/checkout-sdk-js/issues/1233)) ([c0b0d3a](https://github.com/bigcommerce/checkout-sdk-js/commit/c0b0d3ac877264e4d2a98890a849b3026b21e877))
+
 ## [1.180.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.179.1...v1.180.0) (2021-09-02)
 
 
