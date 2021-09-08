@@ -53,6 +53,7 @@ import { MonerisPaymentStrategy } from './strategies/moneris';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
+import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import { createPaypalCommercePaymentProcessor,
     PaypalCommerceCreditCardPaymentStrategy,
@@ -537,6 +538,12 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.OPY, () =>
+        new OpyPaymentStrategy(
+            store
         )
     );
 
