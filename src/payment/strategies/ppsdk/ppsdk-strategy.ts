@@ -27,11 +27,12 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
-        const { methodId } = options;
+        const paymentMethod = getPPSDKMethod(this._store, options.methodId);
+
         const { payment, ...order } = payload;
         const { _paymentProcessor: paymentProcessor } = this;
 
-        if (!paymentProcessor) {
+        if (!paymentProcessor || !paymentMethod) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -43,7 +44,7 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingOrder);
         }
 
-        await paymentProcessor.process({ methodId, payment, bigpayBaseUrl, token });
+        await paymentProcessor.process({ paymentMethod, payment, bigpayBaseUrl, token });
 
         return this._store.getState();
     }
