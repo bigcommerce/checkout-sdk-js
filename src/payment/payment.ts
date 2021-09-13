@@ -24,11 +24,16 @@ export type PaymentInstrument = (
     ThreeDSVaultedInstrument |
     VaultedInstrument |
     VaultedInstrument & WithHostedFormNonce |
-    VaultedInstrumentWithNonceVerification
+    VaultedInstrumentWithNonceVerification |
+    WithAccountCreation
 );
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
+}
+
+export interface WithAccountCreation {
+    shouldCreateAccount?: boolean;
 }
 
 export interface CreditCardInstrument {

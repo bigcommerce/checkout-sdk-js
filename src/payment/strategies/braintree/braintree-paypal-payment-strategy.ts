@@ -3,6 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
+import { isHostedInstrumentLike } from '../../index';
 import isVaultedInstrument, { isHostedVaultedInstrument } from '../../is-vaulted-instrument';
 import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -121,7 +122,13 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             return Promise.resolve(payment);
         }
 
-        if (paymentData.shouldSaveInstrument && !isVaultingEnabled) {
+        if (!isHostedInstrumentLike(paymentData)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = paymentData;
+
+        if (shouldSaveInstrument && !isVaultingEnabled) {
             throw new InvalidArgumentError('Vaulting is disabled but shouldSaveInstrument is set to true');
         }
 
@@ -136,7 +143,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 currency: currency.code,
                 offerCredit: this._credit,
                 shippingAddressOverride,
-                shouldSaveInstrument: paymentData.shouldSaveInstrument || false,
+                shouldSaveInstrument: shouldSaveInstrument || false,
             }),
             this._braintreePaymentProcessor.getSessionId(),
         ]).then(([
@@ -144,7 +151,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             sessionId,
         ]) => ({
             ...payment,
-            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, paymentData.shouldSaveInstrument, paymentData.shouldSetAsDefaultInstrument),
+            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, shouldSaveInstrument, shouldSetAsDefaultInstrument),
         }));
     }
 
