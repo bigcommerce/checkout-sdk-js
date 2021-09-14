@@ -61,6 +61,10 @@ service.initializePayment({
 * [containerId](boltpaymentinitializeoptions.md#optional-containerid)
 * [useBigCommerceCheckout](boltpaymentinitializeoptions.md#usebigcommercecheckout)
 
+### Methods
+
+* [onPaymentSelect](boltpaymentinitializeoptions.md#optional-onpaymentselect)
+
 ## Properties
 
 ### `Optional` containerId
@@ -74,3 +78,19 @@ ___
 ###  useBigCommerceCheckout
 
 • **useBigCommerceCheckout**: *boolean*
+
+## Methods
+
+### `Optional` onPaymentSelect
+
+▸ **onPaymentSelect**(`hasBoltAccount`: boolean): *void*
+
+A callback that gets called when the customer selects Bolt as payment option.
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`hasBoltAccount` | boolean |
+
+**Returns:** *void*

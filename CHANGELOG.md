@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.182.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.181.1...v1.182.0) (2021-09-14)
+
+
+### Features
+
+* **payment:** BOLT-24 added account creation flag for Bolt Embedded One Click execution ([b23ae4a](https://github.com/bigcommerce/checkout-sdk-js/commit/b23ae4a4e126be2058a70317e5dc40600a7725ce))
+
+
+### Bug Fixes
+
+* **payment:** INT-4810 Forget checkout provider and reload payment methods - Clearpay ([#1234](https://github.com/bigcommerce/checkout-sdk-js/issues/1234)) ([d8e982e](https://github.com/bigcommerce/checkout-sdk-js/commit/d8e982e005183822b0e11148f0393f7a9d3eb144))
+
 ### [1.181.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.181.0...v1.181.1) (2021-09-13)
 
 ## [1.181.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.180.1...v1.181.0) (2021-09-08)

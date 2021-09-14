@@ -725,6 +725,10 @@ declare interface BoltPaymentInitializeOptions {
      * The CSS selector of a container where the Bolt Embedded payment field should be inserted into.
      */
     containerId?: string;
+    /**
+     * A callback that gets called when the customer selects Bolt as payment option.
+     */
+    onPaymentSelect?(hasBoltAccount: boolean): void;
 }
 
 declare interface BraintreeError extends Error {
@@ -4870,7 +4874,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -6210,6 +6214,10 @@ declare interface WechatDataPaymentMethodState {
 
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+declare interface WithAccountCreation {
+    shouldCreateAccount?: boolean;
 }
 
 declare interface WithCheckoutcomFawryInstrument {
