@@ -126,6 +126,10 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
             frameref?.postMessage('tokenize', this._monerisURL(!!testMode));
 
             this._windowEventListener = (response: MessageEvent) => {
+                if (typeof response.data !== 'string') {
+                    return;
+                }
+
                 try {
                     resolve(this._handleMonerisResponse(response));
                 } catch (error) {

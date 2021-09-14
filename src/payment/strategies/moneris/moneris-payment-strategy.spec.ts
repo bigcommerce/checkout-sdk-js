@@ -277,6 +277,62 @@ describe('MonerisPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
+        it('submits payment with vaulted card', async () => {
+            const expectedPayment = {
+                methodId: 'moneris',
+                paymentData: {
+                    instrumentId: '1234',
+                    shouldSaveInstrument: true,
+                    shouldSetAsDefaultInstrument: true,
+                },
+            };
+
+            await strategy.initialize(initializeOptions);
+
+            const pendingExecution = strategy.execute(getOrderRequestBodyVaultedCC(), options);
+
+            const mockMonerisIframeMessage = {
+                responseCode: ['001'],
+                errorMessage: null,
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+
+            await pendingExecution;
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
+        it('Moneris returns an object instead of a stringify JSON', async () => {
+            const expectedPayment = {
+                methodId: 'moneris',
+                paymentData: {
+                    instrumentId: '1234',
+                    shouldSaveInstrument: true,
+                    shouldSetAsDefaultInstrument: true,
+                },
+            };
+
+            await strategy.initialize(initializeOptions);
+
+            const pendingExecution = strategy.execute(getOrderRequestBodyVaultedCC(), options);
+
+            const mockMonerisIframeMessage = {
+                responseCode: ['001'],
+                errorMessage: null,
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(mockMonerisIframeMessage, '*');
+
+            await pendingExecution;
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
         it('submits payment and sends shouldSaveInstrument and shouldSetAsDefaultInstrument if provided', async () => {
             const expectedPayment = {
                 methodId: 'moneris',
