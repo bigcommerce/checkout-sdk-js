@@ -240,6 +240,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            remoteCheckoutRequestSender,
             storeCreditActionCreator,
             new ClearpayScriptLoader(scriptLoader)
         )
