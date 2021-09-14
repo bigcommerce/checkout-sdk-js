@@ -9,6 +9,7 @@ export { default as createPaymentStrategyRegistry } from './create-payment-strat
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
 export { default as isNonceLike } from './is-nonce-like';
 export { default as isVaultedInstrument } from './is-vaulted-instrument';
+export { default as withAccountCreation } from './with-account-creation';
 export { default as PaymentActionCreator } from './payment-action-creator';
 export {
     default as Payment,
@@ -25,8 +26,9 @@ export {
     NonceInstrument,
     ThreeDSecure,
     ThreeDSecureToken,
+    WithAccountCreation,
     WithDocumentInstrument,
-    WithMollieIssuerInstrument
+    WithMollieIssuerInstrument,
 } from './payment';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';

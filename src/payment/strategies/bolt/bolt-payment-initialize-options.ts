@@ -54,4 +54,9 @@ export default interface BoltPaymentInitializeOptions {
      * The CSS selector of a container where the Bolt Embedded payment field should be inserted into.
      */
     containerId?: string;
+
+    /**
+     * A callback that gets called when the customer selects Bolt as payment option.
+     */
+    onPaymentSelect?(hasBoltAccount: boolean): void;
 }

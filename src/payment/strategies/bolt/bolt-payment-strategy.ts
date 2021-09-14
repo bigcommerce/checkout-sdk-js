@@ -4,6 +4,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { withAccountCreation } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -31,12 +32,13 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { bolt, methodId } = options;
+        const { containerId, onPaymentSelect, useBigCommerceCheckout } = bolt || {};
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }
 
-        if (bolt?.useBigCommerceCheckout) {
+        if (useBigCommerceCheckout) {
             const state = this._store.getState();
             const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
@@ -50,18 +52,27 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
             this._boltClient = await this._boltScriptLoader.loadBoltClient(publishableKey, testMode, developerConfig);
 
-            this._useBoltClient = bolt.useBigCommerceCheckout && !embeddedOneClickEnabled;
-            this._useBoltEmbedded = bolt.useBigCommerceCheckout && embeddedOneClickEnabled;
+            this._useBoltClient = useBigCommerceCheckout && !embeddedOneClickEnabled;
+            this._useBoltEmbedded = useBigCommerceCheckout && embeddedOneClickEnabled;
 
             if (this._useBoltEmbedded) {
-                if (!bolt.containerId) {
+                if (!containerId) {
                     throw new InvalidArgumentError('Unable to initialize payment because "options.bolt.containerId" argument is not provided.');
                 }
 
+                if (!onPaymentSelect) {
+                    throw new InvalidArgumentError('Unable to initialize payment because "options.bolt.onPaymentSelect" argument is not provided.');
+                }
+
                 this._boltEmbedded = await this._boltScriptLoader.loadBoltEmbedded(publishableKey, testMode, developerConfig);
-                this._mountBoltEmbeddedField(bolt.containerId);
+
+                this._mountBoltEmbeddedField(containerId);
+
+                const hasBoltAccount = await this._hasBoltAccount();
+                onPaymentSelect(hasBoltAccount);
             }
         } else {
+            // info: calling loadBoltClient method without providing any params is necessary for Bolt Full Checkout and Fraud Protection
             this._boltClient = await this._boltScriptLoader.loadBoltClient();
         }
 
@@ -164,9 +175,18 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
      */
     private async _executeWithBoltEmbedded(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
+        const { methodId, paymentData } = payment || {};
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        if (!methodId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        if (!paymentData || !withAccountCreation(paymentData)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
         const tokenizeResult = await this._embeddedField?.tokenize();
@@ -184,7 +204,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         const paymentPayload = {
-            methodId: payment.methodId,
+            methodId,
             paymentData: {
                 formattedPayload: {
                     credit_card_token: {
@@ -195,7 +215,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
                         expiration_year: +tokenizeResult.expiration.split('-')[0],
                     },
                     provider_data: {
-                        create_account: false,
+                        create_account: paymentData.shouldCreateAccount || false,
                         embedded_checkout: true,
                     },
                 },
@@ -265,6 +285,20 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         }
 
         return boltEmbedded;
+    }
+
+    private async _hasBoltAccount() {
+        const state = this._store.getState();
+        const customer = state.customer.getCustomer();
+        const billingAddress = state.billingAddress.getBillingAddress();
+        const email = customer?.email || billingAddress?.email || '';
+        const boltClient = this._getBoltClient();
+
+        try {
+            return await boltClient.hasBoltAccount(email);
+        } catch {
+            throw new PaymentMethodInvalidError();
+        }
     }
 
     private _mountBoltEmbeddedField(containerId: string) {

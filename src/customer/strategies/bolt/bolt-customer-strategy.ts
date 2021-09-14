@@ -3,7 +3,7 @@ import { noop } from 'rxjs';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { PaymentMethodFailedError } from '../../../payment/errors';
+import { PaymentMethodFailedError, PaymentMethodInvalidError } from '../../../payment/errors';
 import { BoltCheckout, BoltScriptLoader } from '../../../payment/strategies/bolt';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';
@@ -136,7 +136,11 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
     private async _hasBoltAccount(email: string) {
         const boltClient = this._getBoltClient();
 
-        return boltClient.hasBoltAccount(email);
+        try {
+            return await boltClient.hasBoltAccount(email);
+        } catch {
+            throw new PaymentMethodInvalidError();
+        }
     }
 
     private _getCustomerEmail() {
