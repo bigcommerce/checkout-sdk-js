@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.182.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.182.0...v1.182.1) (2021-09-15)
+
+
+### Bug Fixes
+
+* **checkout:** INT-4798 Fix Moneris Hosted Field Validation ([8f81ff5](https://github.com/bigcommerce/checkout-sdk-js/commit/8f81ff5844a451f6feae08f9896c3ea98b24ccdf))
+* **checkout:** INT-4798 Use Lodash utils to validate fields ([be50ef2](https://github.com/bigcommerce/checkout-sdk-js/commit/be50ef25f9a74df18a9f73f05846c50f57878fdd))
+* **payment:** INT-4802 Moneris validate response before resolve ([#1228](https://github.com/bigcommerce/checkout-sdk-js/issues/1228)) ([f643b4a](https://github.com/bigcommerce/checkout-sdk-js/commit/f643b4a3abe46b60c8732ad9b7968f213cc9e9c3))
+
 ## [1.182.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.181.1...v1.182.0) (2021-09-14)
 
 
