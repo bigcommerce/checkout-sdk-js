@@ -8,7 +8,7 @@ import { of, Observable } from 'rxjs';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory } from '../../../hosted-form';
+import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
 import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -480,6 +480,38 @@ describe('MonerisPaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
             await expect(strategy.execute(getOrderRequestBodyVaultedCC())).rejects.toThrow();
+            expect(form.submit).not.toHaveBeenCalled();
+        });
+
+        it('submits payment without hosted form if no fields are required', async () => {
+            const expectedPayment = {
+                methodId: 'moneris',
+                paymentData: {
+                    instrumentId: '1234',
+                    shouldSaveInstrument: true,
+                    shouldSetAsDefaultInstrument: true,
+                },
+            };
+
+            const noFieldPayload = {
+                methodId: 'moneris',
+                moneris: {
+                    containerId: 'moneris_iframe_container',
+                    form: {
+                        fields: {
+                            [HostedFieldType.CardCodeVerification]: undefined,
+                            [HostedFieldType.CardNumberVerification]: undefined,
+                        },
+                    },
+                },
+            };
+
+            const payload = getOrderRequestBodyVaultedCC();
+
+            await strategy.initialize(noFieldPayload);
+            await strategy.execute(payload);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             expect(form.submit).not.toHaveBeenCalled();
         });
     });

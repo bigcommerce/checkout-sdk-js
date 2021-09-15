@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import { isEmpty, map, omitBy } from 'lodash';
 
 import { isHostedInstrumentLike } from '../../';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -151,7 +151,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
     }
 
     private async _executeWithVaulted(payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
-        if (this._isHostedPaymentFormEnabled(payment.methodId)) {
+        if (this._hostedForm) {
             const form = this._hostedForm;
 
             if (!form) {
@@ -180,8 +180,9 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
 
     private _isHostedFieldAvailable(): boolean {
         const options = this._getInitializeOptions();
+        const definedFields = omitBy(options.form?.fields, isEmpty);
 
-        return Boolean(options.form?.fields);
+        return !isEmpty(definedFields);
     }
 
     private _getInitializeOptions(): MonerisPaymentInitializeOptions {
