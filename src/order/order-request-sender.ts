@@ -61,6 +61,6 @@ export default class OrderRequestSender {
     finalizeOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = `/internalapi/v1/checkout/order/${orderId}`;
 
-        return this._requestSender.post(url, { timeout });
+        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS });
     }
 }
