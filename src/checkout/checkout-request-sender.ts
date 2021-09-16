@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { joinOrMergeIncludes, ContentType, RequestOptions, SDK_HEADERS } from '../common/http-request';
+import { joinOrMergeIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
 import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
@@ -16,7 +16,7 @@ export default class CheckoutRequestSender {
         const url = `/api/storefront/checkout/${id}`;
         const headers = {
             Accept: ContentType.JsonV1,
-            ...SDK_HEADERS,
+            ...SDK_VERSION_HEADERS,
         };
 
         return this._requestSender.get<Checkout>(url, {
@@ -38,7 +38,7 @@ export default class CheckoutRequestSender {
         const url = `/api/storefront/checkout/${id}`;
         const headers = {
             Accept: ContentType.JsonV1,
-            ...SDK_HEADERS,
+            ...SDK_VERSION_HEADERS,
         };
 
         return this._requestSender.put(url, {

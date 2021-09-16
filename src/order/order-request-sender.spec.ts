@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import { InternalOrderResponseBody } from './internal-order-responses';
@@ -41,6 +41,7 @@ describe('OrderRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: { include },
                 timeout: undefined,
@@ -57,6 +58,7 @@ describe('OrderRequestSender', () => {
                 params: { include },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -67,6 +69,7 @@ describe('OrderRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: { include },
                 timeout: undefined,
@@ -83,6 +86,7 @@ describe('OrderRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: { include: expectedInclude },
                 timeout: undefined,
@@ -123,7 +127,10 @@ describe('OrderRequestSender', () => {
 
         it('submits order with checkout variant header and library version when variant is provided', async () => {
             const payload = {};
-            const headers = { checkoutVariant: 'default' };
+            const headers = {
+                checkoutVariant: 'default',
+                ...SDK_VERSION_HEADERS,
+            };
 
             await orderRequestSender.submitOrder(payload, { headers });
 

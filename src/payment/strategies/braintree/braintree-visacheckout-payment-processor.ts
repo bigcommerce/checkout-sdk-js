@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Address, LegacyAddress } from '../../../address';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -68,6 +69,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 payment_type: paymentData.type,

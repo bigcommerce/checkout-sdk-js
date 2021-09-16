@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
-import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
+import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class StoreCreditRequestSender {
     constructor(
@@ -10,7 +10,10 @@ export default class StoreCreditRequestSender {
 
     applyStoreCredit(checkoutId: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
 
         return this._requestSender.post(url, {
             headers,
@@ -23,7 +26,10 @@ export default class StoreCreditRequestSender {
 
     removeStoreCredit(checkoutId: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
 
         return this._requestSender.delete(url, {
             headers,

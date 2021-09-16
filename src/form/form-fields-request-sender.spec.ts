@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY, SDK_HEADERS } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import { FormFields } from './form-field';
@@ -33,7 +33,7 @@ describe('FormFieldsRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -48,7 +48,7 @@ describe('FormFieldsRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });

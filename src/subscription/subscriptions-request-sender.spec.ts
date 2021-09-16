@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import { Subscriptions } from './subscriptions';
 import SubscriptionsRequestSender from './subscriptions-request-sender';
@@ -31,7 +31,10 @@ describe('SubscriptionsRequestSender', () => {
                 '/api/storefront/subscriptions',
                 {
                     body: subscriptionsRequestBody,
-                    headers: { Accept: ContentType.JsonV1 },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                     timeout: undefined,
                 }
             );
@@ -46,7 +49,10 @@ describe('SubscriptionsRequestSender', () => {
                 {
                     ...options,
                     body: subscriptionsRequestBody,
-                    headers: { Accept: ContentType.JsonV1 },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 }
             );
         });

@@ -1,3 +1,4 @@
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { VisaCheckoutAddress, VisaCheckoutPaymentSuccessPayload, VisaCheckoutSDK, VisaCheckoutTokenizedPayload, VisaCheckoutUserData } from './visacheckout';
 
 export function getVisaCheckoutSDKMock(): VisaCheckoutSDK {
@@ -115,6 +116,7 @@ export function getVisaCheckoutRequestBody() {
         headers: {
             Accept: 'text/html',
             'Content-Type': 'application/x-www-form-urlencoded',
+            ...SDK_VERSION_HEADERS,
         },
     };
 }

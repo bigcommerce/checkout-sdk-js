@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
-import { SDK_HEADERS } from '../common/http-request';
 
+import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import { getCountriesResponseBody } from './countries.mock';
@@ -32,7 +32,7 @@ describe('CountryRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/store/countries', {
                 headers: {
                     'Accept-Language': 'en',
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -46,7 +46,7 @@ describe('CountryRequestSender', () => {
                 ...options,
                 headers: {
                     'Accept-Language': 'en',
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });

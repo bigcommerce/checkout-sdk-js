@@ -4,6 +4,7 @@ import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator, BillingAddressUpdateRequestBody } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import { ConsignmentActionCreator } from '../../../shipping';
 import { PaymentMethodInvalidError } from '../../errors';
@@ -212,6 +213,7 @@ export default class GooglePayPaymentProcessor {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 payment_type: postPaymentData.type,

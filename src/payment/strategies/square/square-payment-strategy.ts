@@ -3,6 +3,7 @@ import { isEmpty, noop, omit } from 'lodash';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { NonceInstrument } from '../../payment';
@@ -258,6 +259,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 nonce,

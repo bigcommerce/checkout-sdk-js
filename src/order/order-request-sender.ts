@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
-import { joinIncludes, ContentType, RequestOptions, SDK_HEADERS } from '../common/http-request';
+import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
@@ -21,7 +21,10 @@ export default class OrderRequestSender {
 
     loadOrder(orderId: number, { timeout, params }: RequestOptions<OrderParams> = {}): Promise<Response<Order>> {
         const url = `/api/storefront/orders/${orderId}`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
         const include = [
             'payments',
             'lineItems.physicalItems.socialMedia',
@@ -49,7 +52,7 @@ export default class OrderRequestSender {
             body,
             headers: omitBy({
                 'X-Checkout-Variant': headers && headers.checkoutVariant,
-                ...SDK_HEADERS,
+                ...SDK_VERSION_HEADERS,
             }, isNil),
             timeout,
         });

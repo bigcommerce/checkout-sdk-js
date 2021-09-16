@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
-import { ContentType, SDK_HEADERS } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
@@ -52,7 +52,7 @@ describe('Gift Certificate Request Sender', () => {
                 body: { giftCertificateCode },
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -75,7 +75,7 @@ describe('Gift Certificate Request Sender', () => {
                 body: { giftCertificateCode },
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -97,7 +97,7 @@ describe('Gift Certificate Request Sender', () => {
             expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -119,7 +119,7 @@ describe('Gift Certificate Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,

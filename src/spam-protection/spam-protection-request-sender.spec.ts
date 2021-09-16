@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCheckout } from '../checkout/checkouts.mock';
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import SpamProtectionRequestSender from './spam-protection-request-sender';
@@ -33,6 +33,7 @@ describe('SpamProtection Request Sender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/spam-protection', {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 body: {
                     token,
@@ -52,6 +53,7 @@ describe('SpamProtection Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 body: {
                     token,

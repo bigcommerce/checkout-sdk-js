@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
-import { joinIncludes, ContentType, RequestOptions, SDK_HEADERS } from '../common/http-request';
+import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class GiftCertificateRequestSender {
     constructor(
@@ -12,7 +12,7 @@ export default class GiftCertificateRequestSender {
         const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates`;
         const headers = {
             Accept: ContentType.JsonV1,
-            ...SDK_HEADERS,
+            ...SDK_VERSION_HEADERS,
         };
 
         return this._requestSender.post(url, {
@@ -29,7 +29,7 @@ export default class GiftCertificateRequestSender {
         const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates/${giftCertificateCode}`;
         const headers = {
             Accept: ContentType.JsonV1,
-            ...SDK_HEADERS,
+            ...SDK_VERSION_HEADERS,
         };
 
         return this._requestSender.delete(url, {

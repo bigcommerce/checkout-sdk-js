@@ -3,7 +3,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { SDK_HEADERS } from '../../../common/http-request';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { ChasePayScriptLoader, ChasePaySuccessPayload } from '../../../payment/strategies/chasepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -129,7 +129,7 @@ export default class ChasePayCustomerStrategy implements CustomerStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                ...SDK_HEADERS,
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 sessionToken: payload.sessionToken,
@@ -146,7 +146,7 @@ export default class ChasePayCustomerStrategy implements CustomerStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
-                ...SDK_HEADERS,
+                ...SDK_VERSION_HEADERS,
             },
             params: {
                 fromChasePay: true,

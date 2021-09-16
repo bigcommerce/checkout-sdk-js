@@ -1,6 +1,6 @@
 import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, SDK_HEADERS } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import Checkout from './checkout';
@@ -43,7 +43,7 @@ describe('CheckoutRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -62,7 +62,7 @@ describe('CheckoutRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes.concat(`,${CheckoutIncludes.AvailableShippingOptions}`),
@@ -112,7 +112,7 @@ describe('CheckoutRequestSender', () => {
             expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 body: {
                     customerMessage: 'foo',

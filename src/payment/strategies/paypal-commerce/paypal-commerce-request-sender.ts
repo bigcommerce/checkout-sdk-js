@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../../../common/http-request';
 
 import { OrderData, OrderStatus } from './paypal-commerce-sdk';
 
@@ -37,6 +37,7 @@ export default class PaypalCommerceRequestSender {
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
             'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
         };
 
         const res = await this._requestSender.post(url, { headers, body });
@@ -49,6 +50,7 @@ export default class PaypalCommerceRequestSender {
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
             'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
         };
 
         const res = await this._requestSender.get<OrderStatus>(url, {headers});

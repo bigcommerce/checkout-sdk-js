@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import SignInEmailRequestSender from './signin-email-request-sender';
 
@@ -29,7 +29,10 @@ describe('SignInEmailRequestSender', () => {
                         email: 'foo',
                         redirect_url: '/',
                     },
-                    headers: { Accept: ContentType.JsonV1 },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                     timeout: undefined,
                 }
             );
@@ -50,7 +53,10 @@ describe('SignInEmailRequestSender', () => {
                         email: 'foo',
                         redirect_url: 'foo.bar',
                     },
-                    headers: { Accept: ContentType.JsonV1 },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 }
             );
         });

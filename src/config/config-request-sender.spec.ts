@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutNotAvailableError } from '../checkout/errors';
-import { ContentType, INTERNAL_USE_ONLY, SDK_HEADERS } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import Config from './config';
@@ -34,7 +34,7 @@ describe('ConfigRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -49,7 +49,7 @@ describe('ConfigRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });

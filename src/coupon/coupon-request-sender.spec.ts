@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
-import { ContentType, SDK_HEADERS } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import CouponRequestSender from './coupon-request-sender';
@@ -46,7 +46,7 @@ describe('Coupon Request Sender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -67,7 +67,7 @@ describe('Coupon Request Sender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -84,7 +84,7 @@ describe('Coupon Request Sender', () => {
             expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -104,7 +104,7 @@ describe('Coupon Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    ...SDK_HEADERS,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
