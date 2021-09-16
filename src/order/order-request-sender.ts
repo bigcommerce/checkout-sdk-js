@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
-import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
+import { joinIncludes, ContentType, RequestOptions, SDK_HEADERS } from '../common/http-request';
 
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
@@ -49,7 +49,7 @@ export default class OrderRequestSender {
             body,
             headers: omitBy({
                 'X-Checkout-Variant': headers && headers.checkoutVariant,
-                'X-Checkout-SDK-Version': LIBRARY_VERSION,
+                ...SDK_HEADERS,
             }, isNil),
             timeout,
         });

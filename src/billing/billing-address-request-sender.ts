@@ -2,7 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody } from '../address';
 import { Checkout } from '../checkout';
-import { ContentType, RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions, SDK_HEADERS } from '../common/http-request';
 
 import { BillingAddressUpdateRequestBody } from './billing-address';
 
@@ -22,7 +22,10 @@ export default class BillingAddressRequestSender {
 
     createAddress(checkoutId: string, address: Partial<AddressRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_HEADERS,
+        };
 
         return this._requestSender.post(url, { body: address, params: DEFAULT_PARAMS, headers, timeout });
     }
@@ -30,7 +33,10 @@ export default class BillingAddressRequestSender {
     updateAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const { id, ...body } = address;
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_HEADERS,
+        };
 
         return this._requestSender.put(url, { params: DEFAULT_PARAMS, body, headers, timeout });
     }

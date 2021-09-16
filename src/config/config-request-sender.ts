@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutNotAvailableError } from '../checkout/errors';
-import { ContentType, INTERNAL_USE_ONLY, RequestOptions } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, RequestOptions, SDK_HEADERS } from '../common/http-request';
 
 import Config from './config';
 
@@ -18,6 +18,7 @@ export default class ConfigRequestSender {
             headers: {
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                ...SDK_HEADERS,
             },
         }).catch(error => {
             if (error.status >= 400 && error.status < 500) {

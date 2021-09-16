@@ -2,7 +2,7 @@ import { createRequestSender, createTimeout, RequestSender, Response } from '@bi
 
 import { Checkout } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import BillingAddressRequestSender from './billing-address-request-sender';
@@ -39,6 +39,7 @@ describe('BillingAddressRequestSender', () => {
                 body: address,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_HEADERS,
                 },
                 params: {
                     include,
@@ -59,6 +60,7 @@ describe('BillingAddressRequestSender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_HEADERS,
                 },
             });
         });
@@ -77,6 +79,7 @@ describe('BillingAddressRequestSender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_HEADERS,
                 },
             });
         });
@@ -94,6 +97,7 @@ describe('BillingAddressRequestSender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_HEADERS,
                 },
             });
         });
