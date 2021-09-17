@@ -1,4 +1,5 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
+import { SDK_VERSION_HEADERS } from '../common/http-request';
 
 import { getResponse } from '../common/http-request/responses.mock';
 
@@ -17,7 +18,7 @@ describe('RemoteCheckoutRequestSender', () => {
     it('sends request to initialize billing', async () => {
         const response = getResponse(getRemoteBillingResponseBody());
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
@@ -30,7 +31,7 @@ describe('RemoteCheckoutRequestSender', () => {
     it('sends request to initialize shipping', async () => {
         const response = getResponse(getRemoteShippingResponseBody());
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
@@ -43,7 +44,7 @@ describe('RemoteCheckoutRequestSender', () => {
     it('sends request to initialize payment', async () => {
         const response = getResponse(getRemotePaymentResponseBody());
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
@@ -55,7 +56,7 @@ describe('RemoteCheckoutRequestSender', () => {
 
     it('sends request to sign out from remote checkout provider', async () => {
         const response = getResponse({});
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
@@ -67,7 +68,7 @@ describe('RemoteCheckoutRequestSender', () => {
 
     it('sends request to generate token', async () => {
         const response = getResponse(getRemoteTokenResponseBody());
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
@@ -79,7 +80,7 @@ describe('RemoteCheckoutRequestSender', () => {
 
     it('sends request to track authorization event', async () => {
         const response = getResponse({});
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'post').mockReturnValue(response);
 
@@ -91,7 +92,7 @@ describe('RemoteCheckoutRequestSender', () => {
 
     it('sends request to forget the remote checkout provider', async () => {
         const response = getResponse({});
-        const options = { timeout: createTimeout() };
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
         jest.spyOn(requestSender, 'post').mockReturnValue(response);
 

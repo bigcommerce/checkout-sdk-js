@@ -173,6 +173,7 @@ describe('OrderRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', {
                 timeout: undefined,
+                headers: SDK_VERSION_HEADERS,
             });
         });
 
@@ -181,7 +182,10 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.finalizeOrder(295, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', options);
+            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', {
+                ...options,
+                headers: SDK_VERSION_HEADERS,
+            });
         });
     });
 });

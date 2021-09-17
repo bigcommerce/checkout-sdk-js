@@ -1,5 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
@@ -45,11 +46,12 @@ describe('CustomerRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer', {
                 body: customerAccount,
+                headers: SDK_VERSION_HEADERS,
             });
         });
 
         it('posts customer credentials with timeout', async () => {
-            const options = { timeout: createTimeout() };
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
             const output = await customerRequestSender.createAccount(customerAccount, options);
 
             expect(output).toEqual(response);
@@ -78,11 +80,12 @@ describe('CustomerRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/customer-address', {
                 body: customerAddress,
+                headers: SDK_VERSION_HEADERS,
             });
         });
 
         it('posts customer credentials with timeout', async () => {
-            const options = { timeout: createTimeout() };
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
             const output = await customerRequestSender.createAddress(customerAddress, options);
 
             expect(output).toEqual(response);
@@ -110,11 +113,12 @@ describe('CustomerRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 body: credentials,
+                headers: SDK_VERSION_HEADERS,
             });
         });
 
         it('posts customer credentials with timeout', async () => {
-            const options = { timeout: createTimeout() };
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
             const output = await customerRequestSender.signInCustomer(credentials, options);
 
             expect(output).toEqual(response);
@@ -138,11 +142,11 @@ describe('CustomerRequestSender', () => {
             const output = await customerRequestSender.signOutCustomer();
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', { timeout: undefined });
+            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', { timeout: undefined, headers: SDK_VERSION_HEADERS });
         });
 
         it('signs out customer with timeout', async () => {
-            const options = { timeout: createTimeout() };
+            const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
             const output = await customerRequestSender.signOutCustomer(options);
 
             expect(output).toEqual(response);
