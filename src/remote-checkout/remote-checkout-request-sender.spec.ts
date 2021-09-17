@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
-import { SDK_VERSION_HEADERS } from '../common/http-request';
 
+import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
