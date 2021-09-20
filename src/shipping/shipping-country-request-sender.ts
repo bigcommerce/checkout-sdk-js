@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { RequestOptions } from '../common/http-request';
+import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 import { CountryResponseBody } from '../geography';
 
 export default class ShippingCountryRequestSender {
@@ -13,6 +13,7 @@ export default class ShippingCountryRequestSender {
         const url = '/internalapi/v1/shipping/countries';
         const headers = {
             'Accept-Language': this._config.locale,
+            ...SDK_VERSION_HEADERS,
         };
 
         return this._requestSender.get(url, { headers, timeout });

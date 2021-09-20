@@ -1,6 +1,6 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../../../common/http-request';
 
 import { PaypalCommerceRequestSender } from './index';
 
@@ -30,6 +30,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommerce', expect.objectContaining({
@@ -44,6 +45,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecredit', expect.objectContaining({
@@ -58,6 +60,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecheckout', expect.objectContaining({
@@ -72,6 +75,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecreditcheckout', expect.objectContaining({
@@ -86,6 +90,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecreditcardscheckout', expect.objectContaining({
@@ -100,6 +105,7 @@ describe('PaypalCommerceRequestSender', () => {
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
             };
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercealternativemethodscheckout', expect.objectContaining({

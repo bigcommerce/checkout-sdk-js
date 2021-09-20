@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout } from '../checkout';
-import { ContentType, RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class SpamProtectionRequestSender {
     constructor(
@@ -10,7 +10,10 @@ export default class SpamProtectionRequestSender {
 
     validate(checkoutId: string, token: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/spam-protection`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
 
         return this._requestSender.post(url, { body: { token }, headers, timeout });
     }

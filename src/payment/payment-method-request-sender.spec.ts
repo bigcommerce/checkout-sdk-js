@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import PaymentMethod from './payment-method';
@@ -33,6 +33,7 @@ describe('PaymentMethodRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -49,6 +50,7 @@ describe('PaymentMethodRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -74,6 +76,7 @@ describe('PaymentMethodRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -90,6 +93,7 @@ describe('PaymentMethodRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });

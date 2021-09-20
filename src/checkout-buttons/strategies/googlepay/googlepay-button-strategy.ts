@@ -2,6 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getShippableItemsCount } from '../../../shipping';
@@ -127,6 +128,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
+                ...SDK_VERSION_HEADERS,
             },
         });
     }

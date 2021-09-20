@@ -2,6 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -142,6 +143,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
+                ...SDK_VERSION_HEADERS,
             },
         });
     }

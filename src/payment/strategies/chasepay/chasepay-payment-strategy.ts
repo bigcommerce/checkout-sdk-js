@@ -4,6 +4,7 @@ import { take } from 'rxjs/operators';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -179,6 +180,7 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 action: 'set_external_checkout',

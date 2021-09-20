@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class StorefrontPaymentRequestSender {
     constructor(
@@ -13,6 +13,7 @@ export default class StorefrontPaymentRequestSender {
             headers: {
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                ...SDK_VERSION_HEADERS,
             },
             body: {
                 externalId: token,

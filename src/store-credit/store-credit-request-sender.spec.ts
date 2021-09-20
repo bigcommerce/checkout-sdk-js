@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCheckout } from '../checkout/checkouts.mock';
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import StoreCreditRequestSender from './store-credit-request-sender';
@@ -43,6 +43,7 @@ describe('StoreCredit Request Sender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -62,6 +63,7 @@ describe('StoreCredit Request Sender', () => {
                 },
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
             });
         });
@@ -78,6 +80,7 @@ describe('StoreCredit Request Sender', () => {
             expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/store-credit', {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,
@@ -97,6 +100,7 @@ describe('StoreCredit Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: defaultIncludes,

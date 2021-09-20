@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout, CheckoutParams } from '../checkout';
-import { joinIncludes, joinOrMergeIncludes, ContentType, RequestOptions } from '../common/http-request';
+import { joinIncludes, joinOrMergeIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 
@@ -24,7 +24,10 @@ export default class ConsignmentRequestSender {
         { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {}
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/consignments`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
 
         return this._requestSender.post(url, {
             body: consignments,
@@ -43,7 +46,10 @@ export default class ConsignmentRequestSender {
     ): Promise<Response<Checkout>> {
         const { id, ...body } = consignment;
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${id}`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
 
         return this._requestSender.put(url, {
             body,
@@ -61,7 +67,10 @@ export default class ConsignmentRequestSender {
         { timeout }: RequestOptions = {}
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
-        const headers = { Accept: ContentType.JsonV1 };
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
         const include = joinIncludes(DEFAULT_INCLUDES);
 
         return this._requestSender.delete(url, { params: { include }, headers, timeout });

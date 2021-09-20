@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY, RequestOptions } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import { FormFields } from './form-field';
 
@@ -17,6 +17,7 @@ export default class FormFieldsRequestSender {
             headers: {
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                ...SDK_VERSION_HEADERS,
             },
         });
     }

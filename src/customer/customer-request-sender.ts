@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { RequestOptions } from '../common/http-request';
+import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import Customer from './customer';
 import { CustomerAccountInternalRequestBody, CustomerAddressRequestBody } from './customer-account';
@@ -15,24 +15,24 @@ export default class CustomerRequestSender {
     createAccount(customerAccount: CustomerAccountInternalRequestBody, { timeout }: RequestOptions = {}): Promise<Response<{}>> {
         const url = '/api/storefront/customer';
 
-        return this._requestSender.post(url, { timeout, body: customerAccount });
+        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS, body: customerAccount });
     }
 
     createAddress(customerAddress: CustomerAddressRequestBody, { timeout }: RequestOptions = {}): Promise<Response<Customer>> {
         const url = `/api/storefront/customer-address`;
 
-        return this._requestSender.post<Customer>(url, { timeout, body: customerAddress });
+        return this._requestSender.post<Customer>(url, { timeout, headers: SDK_VERSION_HEADERS, body: customerAddress });
     }
 
     signInCustomer(credentials: CustomerCredentials, { timeout }: RequestOptions = {}): Promise<Response<InternalCustomerResponseBody>> {
         const url = '/internalapi/v1/checkout/customer';
 
-        return this._requestSender.post(url, { timeout, body: credentials });
+        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS, body: credentials });
     }
 
     signOutCustomer({ timeout }: RequestOptions = {}): Promise<Response<InternalCustomerResponseBody>> {
         const url = '/internalapi/v1/checkout/customer';
 
-        return this._requestSender.delete(url, { timeout });
+        return this._requestSender.delete(url, { timeout, headers: SDK_VERSION_HEADERS });
     }
 }

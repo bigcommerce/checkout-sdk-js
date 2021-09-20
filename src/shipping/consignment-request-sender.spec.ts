@@ -1,7 +1,7 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 
 import { getCheckout } from '../checkout/checkouts.mock';
-import { ContentType } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
@@ -44,6 +44,7 @@ describe('ConsignmentRequestSender', () => {
                 body: consignments,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
@@ -59,6 +60,7 @@ describe('ConsignmentRequestSender', () => {
                 body: consignments,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
@@ -79,6 +81,7 @@ describe('ConsignmentRequestSender', () => {
                 body: consignments,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: baseInclude,
@@ -97,6 +100,7 @@ describe('ConsignmentRequestSender', () => {
                 body,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
@@ -112,6 +116,7 @@ describe('ConsignmentRequestSender', () => {
                 body,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
@@ -132,6 +137,7 @@ describe('ConsignmentRequestSender', () => {
                 body,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include: baseInclude,
@@ -147,6 +153,7 @@ describe('ConsignmentRequestSender', () => {
             expect(requestSender.delete).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${consignment.id}`, {
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
@@ -161,6 +168,7 @@ describe('ConsignmentRequestSender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
                 },
                 params: {
                     include,
