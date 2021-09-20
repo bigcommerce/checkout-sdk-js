@@ -93,10 +93,10 @@ export default function createPaymentStrategyRegistry(
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);

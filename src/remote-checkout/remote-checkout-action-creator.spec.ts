@@ -1,8 +1,11 @@
-import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { CheckoutActionCreator, CheckoutRequestSender } from '../checkout';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 
 import RemoteCheckoutActionCreator from './remote-checkout-action-creator';
 import { RemoteCheckoutActionType } from './remote-checkout-actions';
@@ -11,11 +14,19 @@ import { getRemoteBillingResponseBody, getRemotePaymentResponseBody, getRemoteSh
 
 describe('RemoteCheckoutActionCreator', () => {
     let actionCreator: RemoteCheckoutActionCreator;
+    let checkoutActionCreator: CheckoutActionCreator;
+    let checkoutRequestSender: RequestSender;
     let requestSender: RemoteCheckoutRequestSender;
 
     beforeEach(() => {
         requestSender = new RemoteCheckoutRequestSender(createRequestSender());
-        actionCreator = new RemoteCheckoutActionCreator(requestSender);
+        checkoutRequestSender = createRequestSender();
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(checkoutRequestSender),
+            new ConfigActionCreator(new ConfigRequestSender(checkoutRequestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(checkoutRequestSender))
+        );
+        actionCreator = new RemoteCheckoutActionCreator(requestSender, checkoutActionCreator);
     });
 
     it('initializes billing and emits actions to notify progress', async () => {
@@ -173,6 +184,45 @@ describe('RemoteCheckoutActionCreator', () => {
         expect(actions).toEqual([
             { type: RemoteCheckoutActionType.SignOutRemoteCustomerRequested, meta: { methodId: 'amazon' } },
             { type: RemoteCheckoutActionType.SignOutRemoteCustomerFailed, error: true, payload: response, meta: { methodId: 'amazon' } },
+        ]);
+    });
+
+    it('forgets checkout and emits actions to notify progress', async () => {
+        const response = getResponse({});
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'forgetCheckout')
+            .mockReturnValue(Promise.resolve(response));
+
+        const actions = await actionCreator.forgetCheckout('googlepaystripe', options)
+            .pipe(toArray())
+            .toPromise();
+
+        expect(requestSender.forgetCheckout).toHaveBeenCalledWith(options);
+        expect(actions).toEqual([
+            { type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerRequested, meta: { methodId: 'googlepaystripe' } },
+            { type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerSucceeded, meta: { methodId: 'googlepaystripe' } },
+        ]);
+    });
+
+    it('emits error action if unable to forget checkout', async () => {
+        const response = getErrorResponse();
+        const errorHandler = jest.fn(action => of(action));
+
+        jest.spyOn(requestSender, 'forgetCheckout')
+            .mockReturnValue(Promise.reject(response));
+
+        const actions = await actionCreator.forgetCheckout('googlepaystripe')
+            .pipe(
+                catchError(errorHandler),
+                toArray()
+            )
+            .toPromise();
+
+        expect(errorHandler).toHaveBeenCalled();
+        expect(actions).toEqual([
+            { type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerRequested, meta: { methodId: 'googlepaystripe' } },
+            { type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerFailed, error: true, payload: response, meta: { methodId: 'googlepaystripe' } },
         ]);
     });
 

@@ -1,9 +1,11 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
@@ -13,9 +15,11 @@ import CustomerStrategy from '../customer-strategy';
 import SquareCustomerStrategy from './square-customer-strategy';
 
 describe('SquareCustomerStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
     let paymentMethodMock: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let requestSender: RequestSender;
     let store: CheckoutStore;
     let strategy: CustomerStrategy;
 
@@ -36,8 +40,16 @@ describe('SquareCustomerStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
 
+        requestSender = createRequestSender();
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(createRequestSender())
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
 
         strategy = new SquareCustomerStrategy(

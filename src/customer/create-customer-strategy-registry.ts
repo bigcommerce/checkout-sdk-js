@@ -47,7 +47,7 @@ export default function createCustomerStrategyRegistry(
     const formPoster = createFormPoster();
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
         createSpamProtection(scriptLoader),
         new SpamProtectionRequestSender(requestSender)
@@ -124,7 +124,7 @@ export default function createCustomerStrategyRegistry(
     registry.register('squarev2', () =>
         new SquareCustomerStrategy(
             store,
-            new RemoteCheckoutActionCreator(remoteCheckoutRequestSender)
+            new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator)
         )
     );
 

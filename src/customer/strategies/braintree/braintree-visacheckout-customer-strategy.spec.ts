@@ -50,8 +50,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
 
-        const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
-        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
+        const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
 
         visaCheckoutSDK = {} as VisaCheckoutSDK;
         visaCheckoutSDK.init = jest.fn();
@@ -60,7 +60,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         visaCheckoutScriptLoader.load = jest.fn(() => Promise.resolve(visaCheckoutSDK));
 
-        const registry = createCustomerStrategyRegistry(store, createRequestSender(), '');
+        const registry = createCustomerStrategyRegistry(store, requestSender, '');
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -68,7 +68,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 
         strategy = new BraintreeVisaCheckoutCustomerStrategy(

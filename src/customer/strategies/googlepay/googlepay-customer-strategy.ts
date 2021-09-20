@@ -61,9 +61,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             return Promise.resolve(this._store.getState());
         }
 
-        return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
-        );
+        return this._store.dispatch(this._remoteCheckoutActionCreator.forgetCheckout(payment.providerId, options));
     }
 
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {

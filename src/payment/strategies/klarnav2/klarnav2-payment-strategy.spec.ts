@@ -1,12 +1,14 @@
 import { createAction, Action } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -24,6 +26,7 @@ import KlarnaV2ScriptLoader from './klarnav2-script-loader';
 import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getEUShippingAddress, getKlarnaV2UpdateSessionParams, getKlarnaV2UpdateSessionParamsForOC, getKlarnaV2UpdateSessionParamsPhone, getOCBillingAddress } from './klarnav2.mock';
 
 describe('KlarnaV2PaymentStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let initializePaymentAction: Observable<Action>;
     let klarnaPayments: KlarnaPayments;
     let loadPaymentMethodAction: Observable<Action>;
@@ -32,6 +35,7 @@ describe('KlarnaV2PaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let requestSender: RequestSender;
     let scriptLoader: KlarnaV2ScriptLoader;
     let submitOrderAction: Observable<Action>;
     let store: CheckoutStore;
@@ -47,13 +51,22 @@ describe('KlarnaV2PaymentStrategy', () => {
         jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(getEUBillingAddress());
         jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue( getEUShippingAddress() );
 
+        requestSender = createRequestSender();
+
         orderActionCreator = new OrderActionCreator(
-            new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new OrderRequestSender(requestSender),
+            new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(createRequestSender())
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
         scriptLoader = new KlarnaV2ScriptLoader(createScriptLoader());
         strategy = new KlarnaV2PaymentStrategy(
