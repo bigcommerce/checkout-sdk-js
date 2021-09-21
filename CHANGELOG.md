@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.183.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.182.1...v1.183.0) (2021-09-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-5777 Send SDK version as a header for all SDK API requests ([#1242](https://github.com/bigcommerce/checkout-sdk-js/issues/1242)) ([1372f33](https://github.com/bigcommerce/checkout-sdk-js/commit/1372f3392cc2789221db6688c8aa866cc6771f80))
+
+
+### Bug Fixes
+
+* **payment:** INT-4674 forgetting checkout instead of signing out when using google pay ([#1215](https://github.com/bigcommerce/checkout-sdk-js/issues/1215)) ([c74b4ba](https://github.com/bigcommerce/checkout-sdk-js/commit/c74b4ba874b6965afda3341c3a9f7683b36d1562))
+
 ### [1.182.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.182.0...v1.182.1) (2021-09-15)
 
 
