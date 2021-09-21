@@ -756,6 +756,39 @@ export function getMoneris(): PaymentMethod {
     };
 }
 
+export function getOpy(): PaymentMethod {
+    return {
+        clientToken: '3000000091451',
+        config: {
+            displayName: 'Openpay',
+            testMode: false,
+        },
+        id: 'opy',
+        initializationData: {
+            nextAction: {
+                formPost: {
+                    formFields: [
+                        {
+                            fieldName: 'TransactionToken',
+                            fieldValue: 'Al5dE65...%3D',
+                        },
+                        {
+                            fieldName: 'JamPlanID',
+                            fieldValue: '3000000091451',
+                        },
+                    ],
+                    formPostUrl: 'https://retailer.myopenpay.com.au/websalestraining/',
+                },
+                type: 'FormPost',
+            },
+        },
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'MC'],
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
@@ -778,13 +811,14 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePayOrbital(),
         getKlarna(),
         getMollie(),
-        getPaypalExpress(),
+        getMoneris(),
+        getOpy(),
         getPaypalCommerce(),
+        getPaypalExpress(),
+        getPPSDK(),
         getQuadpay(),
         getSquare(),
         getStripeV3(),
-        getMoneris(),
-        getPPSDK(),
         getUnsupportedPPSDK(),
         getApplePay(),
     ];

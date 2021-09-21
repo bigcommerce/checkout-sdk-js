@@ -543,7 +543,11 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.OPY, () =>
         new OpyPaymentStrategy(
-            store
+            store,
+            orderActionCreator,
+            paymentMethodActionCreator,
+            storefrontPaymentRequestSender,
+            paymentActionCreator
         )
     );
 
