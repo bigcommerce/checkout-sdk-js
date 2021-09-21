@@ -182,7 +182,6 @@ export default class GooglePayPaymentProcessor {
             countryCode,
             phone: paymentData.paymentMethodData.info.billingAddress.phoneNumber,
             customFields: [],
-            email: paymentData.email,
         };
     }
 
