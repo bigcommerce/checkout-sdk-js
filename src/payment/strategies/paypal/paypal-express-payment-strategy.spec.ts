@@ -53,6 +53,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 PAYPAL: 'paypal',
             },
             Buttons: jest.fn(),
+            Messages: jest.fn(),
         };
 
         scriptLoader = new PaypalScriptLoader(createScriptLoader());

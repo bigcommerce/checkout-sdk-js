@@ -17,5 +17,6 @@ export function getPaypalMock(): PaypalSDK {
             setup: jest.fn(),
         },
         Buttons: jest.fn(),
+        Messages: jest.fn(),
     };
 }
