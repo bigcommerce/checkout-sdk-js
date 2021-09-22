@@ -90,6 +90,7 @@ describe('PPSDKStrategy', () => {
 
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
+                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({ orderId: 'some-order-id' });
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 

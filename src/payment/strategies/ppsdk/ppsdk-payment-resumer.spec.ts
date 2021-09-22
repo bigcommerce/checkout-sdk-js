@@ -1,6 +1,9 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
+import { getErrorResponse } from '../../../common/http-request/responses.mock';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+
 import { PaymentResumer } from './ppsdk-payment-resumer';
 import { StepHandler } from './step-handler';
 import { ContinueHandler } from './step-handler/continue-handler';
@@ -11,11 +14,21 @@ describe('PaymentResumer', () => {
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
 
     describe('#resume', () => {
+        it('throws a OrderFinalizationNotRequiredError error if the payment token endpoint returns a 404', async () => {
+            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
+
+            await expect(
+                paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', orderId: 12345 })
+            ).rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
+        });
+
         it('requests the payment entity from the BigPay Payments endpoint', async () => {
-            const requestSenderSpy = jest.spyOn(requestSender, 'get').mockResolvedValue({});
+            const requestSenderSpy = jest.spyOn(requestSender, 'get')
+                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                .mockResolvedValueOnce({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
+            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', orderId: 12345 });
 
             expect(requestSenderSpy).toBeCalledWith(
                 'https://some-domain.com/payments/some-id',
@@ -29,19 +42,23 @@ describe('PaymentResumer', () => {
         });
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
-            jest.spyOn(requestSender, 'get').mockResolvedValue({ body: 'some-api-response' });
+            jest.spyOn(requestSender, 'get')
+                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                .mockResolvedValueOnce({ body: 'some-api-response' });
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
+            await paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', orderId: 12345 });
 
             expect(stepHandlerSpy).toBeCalledWith({ body: 'some-api-response' });
         });
 
         it('returns the final value from the stepHandler', async () => {
-            jest.spyOn(requestSender, 'get').mockResolvedValue({});
+            jest.spyOn(requestSender, 'get')
+                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                .mockResolvedValueOnce({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
-            await expect(paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' }))
+            await expect(paymentResumer.resume({ paymentId: 'some-id', bigpayBaseUrl: 'https://some-domain.com', orderId: 12345 }))
                 .resolves.toStrictEqual({ someValue: 12345 });
         });
     });
