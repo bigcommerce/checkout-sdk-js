@@ -1,10 +1,13 @@
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { HostedFieldType } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
 import { IndividualCardElementOptions, StripeV3PaymentInitializeOptions } from './index';
 import { PaymentMethodCreateParams, StripeBillingDetails, StripeConfirmCardPaymentData, StripeElementType, StripeShippingAddress, StripeV3Client } from './stripev3';
+
+const gatewayId = 'stripev3';
 
 export function getStripeV3JsMock(): StripeV3Client {
     return {
@@ -55,6 +58,7 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
 export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElementType = StripeElementType.CreditCard): PaymentInitializeOptions {
     return {
         methodId: stripeElementType,
+        gatewayId,
         stripev3: {
             containerId: `stripe-${stripeElementType}-component-field`,
             options: {
@@ -68,7 +72,8 @@ export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElemen
 
 export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: boolean = false): PaymentInitializeOptions {
     const paymentInitializeOptions: PaymentInitializeOptions = {
-        methodId: 'card',
+        methodId: StripeElementType.CreditCard,
+        gatewayId,
     };
 
     const stripeV3PaymentInitializeOptions: StripeV3PaymentInitializeOptions = {
@@ -145,6 +150,38 @@ export function getStripeV3OrderRequestBodyVaultMock(stripeElementType: StripeEl
     };
 }
 
+export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
+    return {
+        methodId: StripeElementType.CreditCard,
+        gatewayId,
+        stripev3: {
+            containerId: 'stripe-element',
+            form: {
+                fields: {
+                    [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                    [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                    [HostedFieldType.CardName]: { containerId: 'card-name' },
+                },
+            },
+        },
+    };
+}
+
+export function getOrderRequestBodyVaultedCC(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: StripeElementType.CreditCard,
+            gatewayId,
+            paymentData: {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+                instrumentId: '1234',
+            },
+        },
+    };
+}
+
 export function getConfirmPaymentResponse(): unknown {
     return {
         paymentIntent: {
@@ -206,20 +243,10 @@ export function getStripeBillingAddress(): StripeBillingDetails {
 }
 
 export function getStripeBillingAddressWithoutPhone(): StripeBillingDetails {
-    const billingAddress = getBillingAddress();
+    const billingAddress = getStripeBillingAddress();
+    delete billingAddress.phone;
 
-    return {
-        address: {
-            city: billingAddress.city,
-            country: billingAddress.countryCode,
-            line1: billingAddress.address1,
-            line2: billingAddress.address2,
-            postal_code: billingAddress.postalCode,
-            state: billingAddress.stateOrProvinceCode,
-        },
-        name: `${billingAddress.firstName} ${billingAddress.lastName}`,
-        email: billingAddress.email,
-    };
+    return billingAddress;
 }
 
 export function getStripeShippingAddressGuestUserWithoutAddress(): StripeConfirmCardPaymentData {
