@@ -1,5 +1,5 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
-import { isEmpty, noop, omit } from 'lodash';
+import { get, isEmpty, noop, omit } from 'lodash';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
@@ -14,7 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, NonceGenerationError, SquareFormElement, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
+import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, SquareFormElement, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
 import SquareScriptLoader from './square-script-loader';
 
@@ -131,29 +131,41 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             ...this._paymentMethod?.initializationData,
             callbacks: {
                 cardNonceResponseReceived: (errors, nonce, cardData, billingContact, shippingContact) => {
-                    if (cardData && cardData.digital_wallet_type !== DigitalWalletType.none) {
-                        this._handleWalletNonceResponse(errors, nonce, cardData, billingContact, shippingContact);
+                    const deferredRequest = this._getDeferredRequestNonce();
+                    const { onError = noop } = this._getInitializeOptions();
+
+                    if (!nonce) {
+                        onError(errors);
+
+                        return deferredRequest.reject(get(errors, '0', {}));
+                    }
+
+                    if (cardData && cardData.digital_wallet_type !== DigitalWalletType.none && nonce) {
+                        this._handleWalletNonceResponse(nonce, cardData, billingContact, shippingContact);
                     } else {
                         if (this._is3DSExperimentOn()) {
                             this._getPaymentForm().verifyBuyer(
                                 nonce,
                                 this._getVerificationDetails(),
                                 (error: SquareVerificationError, verificationResults: SquareVerificationResult) => {
+
                                     if (!isEmpty(error)) {
-                                        return this._getDeferredRequestNonce().reject(error);
+                                        onError(error);
+
+                                        return deferredRequest.reject(get(error, '0', {}));
                                     }
 
-                                    this._handleCardNonceResponse(errors, nonce, verificationResults.token);
+                                    deferredRequest.resolve({ nonce: JSON.stringify({ nonce, token: verificationResults.token }) });
                                 }
                             );
                         } else {
-                            this._handleCardNonceResponse(errors, nonce);
+                            deferredRequest.resolve({ nonce });
                         }
                     }
                 },
                 createPaymentRequest: this._paymentRequestPayload.bind(this),
                 methodsSupported: methods => {
-                    const { masterpass } = this._getInitializeOptions() ;
+                    const { masterpass } = this._getInitializeOptions();
 
                     if (masterpass) {
                         this._showPaymentMethods(methods, masterpass);
@@ -177,17 +189,14 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
     }
 
     private _handleWalletNonceResponse(
-        errors?: NonceGenerationError[],
         nonce?: string,
         cardData?: CardData,
         billingContact?: Contact,
         shippingContact?: Contact
     ): void {
-        const onError = this._squareOptions && this._squareOptions.onError || noop;
-        const onPaymentSelect = this._squareOptions && this._squareOptions.onPaymentSelect || noop;
-        if (errors) {
-            onError(errors);
-        } else if (nonce && this._paymentMethod) {
+        const { onError = noop, onPaymentSelect = noop } = this._getInitializeOptions();
+
+        if (nonce && this._paymentMethod) {
             this._paymentInstrumentSelected(
                 this._paymentMethod.id,
                 nonce,
@@ -198,21 +207,6 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
                 .then(onPaymentSelect)
                 .catch(onError);
         }
-    }
-
-    private _handleCardNonceResponse(errors?: NonceGenerationError[], nonce?: string, token?: string): void {
-        const deferredRequest = this._getDeferredRequestNonce();
-        if (nonce  && !errors) {
-            deferredRequest.resolve({ nonce, token });
-
-            return;
-        }
-
-        const onError = this._squareOptions?.onError || noop;
-
-        onError(errors);
-
-        deferredRequest.reject(errors);
     }
 
     private _paymentInstrumentSelected(
