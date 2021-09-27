@@ -4,9 +4,7 @@ import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 import { Tax } from '../tax';
 
-import { OrderMetaState } from './order-state';
-
-export default interface Order {
+export default interface RawOrder {
     baseAmount: number;
     billingAddress: BillingAddress;
     cartId: string;
@@ -25,7 +23,7 @@ export default interface Order {
     orderAmount: number;
     orderAmountAsInteger: number;
     orderId: number;
-    payments?: OrderPayments;
+    payments?: RawOrderPayments;
     giftWrappingCostTotal: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
@@ -35,29 +33,26 @@ export default interface Order {
     mandateUrl?: string;
 }
 
-export type OrderPayment = GatewayOrderPayment | GiftCertificateOrderPayment;
+export type RawOrderPayment = GatewayOrderPayment | GiftCertificateOrderPayment;
 
-export type OrderPayments = OrderPayment[];
-
-export type OrderMeta = OrderMetaState;
+type RawOrderPayments = RawOrderPayment[];
 
 interface BaseOrderPayment {
     providerId: string;
     gatewayId?: string;
-    method?: string;
     paymentId?: string;
     description: string;
     amount: number;
 }
 
-export interface GatewayOrderPayment extends BaseOrderPayment {
+interface GatewayOrderPayment extends BaseOrderPayment {
     detail: {
         step: string;
         instructions: string;
     };
 }
 
-export interface GiftCertificateOrderPayment extends BaseOrderPayment {
+interface GiftCertificateOrderPayment extends BaseOrderPayment {
     detail: {
         code: string;
         remaining: number;

@@ -1,5 +1,5 @@
 import { memoizeOne } from '@bigcommerce/memoize';
-import { find } from 'lodash';
+import { find, isEmpty, omitBy } from 'lodash';
 
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
@@ -12,7 +12,7 @@ import PaymentMethodState, { DEFAULT_STATE } from './payment-method-state';
 export default interface PaymentMethodSelector {
     getPaymentMethods(): PaymentMethod[] | undefined;
     getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
-    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getPaymentMethod(methodId: string, gatewayId?: string, method?: string): PaymentMethod | undefined;
     getPaymentMethodOrThrow(methodId: string, gatewayId ?: string): PaymentMethod;
     getLoadError(): Error | undefined;
     getLoadMethodError(methodId?: string): Error | undefined;
@@ -35,17 +35,23 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
 
     const getPaymentMethod = createSelector(
         (state: PaymentMethodState) => state.data,
-        paymentMethods => (methodId: string, gatewayId?: string) => {
-            return gatewayId ?
-                find(paymentMethods, { id: methodId, gateway: gatewayId }) :
-                find(paymentMethods, { id: methodId });
+        paymentMethods => (methodId: string, gatewayId?: string, method?: string) => {
+            const query: Partial<PaymentMethod> = omitBy(
+                { id: methodId, gateway: gatewayId, method },
+                isEmpty
+            );
+
+            return find(paymentMethods, query);
         }
     );
 
     const getPaymentMethodOrThrow = createSelector(
         getPaymentMethod,
-        getPaymentMethod => (methodId: string, gatewayId?: string) => {
-            return guard(getPaymentMethod(methodId, gatewayId), () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
+        getPaymentMethod => (methodId: string, gatewayId?: string, method?: string) => {
+            return guard(
+                getPaymentMethod(methodId, gatewayId, method),
+                () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod)
+            );
         }
     );
 

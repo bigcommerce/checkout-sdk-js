@@ -7,6 +7,8 @@ import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
 import OrderParams from './order-params';
+import { polyfillOrderResponse } from './polyfill-order-response';
+import RawOrder from './raw-order';
 
 export interface SubmitOrderRequestOptions extends RequestOptions {
     headers?: {
@@ -33,7 +35,7 @@ export default class OrderRequestSender {
             'lineItems.digitalItems.options',
         ];
 
-        return this._requestSender.get(url, {
+        return this._requestSender.get<RawOrder>(url, {
             params: {
                 include: joinIncludes([
                     ...include,
@@ -42,7 +44,7 @@ export default class OrderRequestSender {
             },
             headers,
             timeout,
-        });
+        }).then(polyfillOrderResponse);
     }
 
     submitOrder(body: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {

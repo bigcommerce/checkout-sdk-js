@@ -10,7 +10,7 @@ import { HOSTED } from './payment-method-types';
 import { ACKNOWLEDGE, FINALIZE } from './payment-status-types';
 
 export default interface PaymentSelector {
-    getPaymentId(): { providerId: string; gatewayId?: string } | undefined;
+    getPaymentId(): { providerId: string; gatewayId?: string; method?: string } | undefined;
     getPaymentStatus(): string | undefined;
     getPaymentToken(): string | undefined;
     getPaymentRedirectUrl(): string | undefined;
@@ -80,6 +80,7 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
                 return {
                     providerId: payment.providerId,
                     gatewayId: payment.gatewayId,
+                    method: payment.method,
                 };
             }
         }

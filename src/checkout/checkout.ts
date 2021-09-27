@@ -53,4 +53,5 @@ export interface CheckoutPayment {
     providerId: string;
     providerType: string;
     gatewayId?: string;
+    method?: string;
 }
