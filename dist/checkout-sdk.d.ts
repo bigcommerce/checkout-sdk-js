@@ -6088,6 +6088,10 @@ declare interface StripeV3PaymentInitializeOptions {
      */
     containerId: string;
     options?: StripeElementOptions | IndividualCardElementOptions;
+    /**
+     * Hosted Form Validation Options
+     */
+    form?: HostedFormOptions;
 }
 
 declare enum StyleButtonColor {

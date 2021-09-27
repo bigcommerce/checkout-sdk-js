@@ -54,6 +54,7 @@ service.initializePayment({
 ### Properties
 
 * [containerId](stripev3paymentinitializeoptions.md#containerid)
+* [form](stripev3paymentinitializeoptions.md#optional-form)
 * [options](stripev3paymentinitializeoptions.md#optional-options)
 
 ## Properties
@@ -63,6 +64,14 @@ service.initializePayment({
 • **containerId**: *string*
 
 The location to insert the credit card number form field.
+
+___
+
+### `Optional` form
+
+• **form**? : *[HostedFormOptions](hostedformoptions.md)*
+
+Hosted Form Validation Options
 
 ___
 

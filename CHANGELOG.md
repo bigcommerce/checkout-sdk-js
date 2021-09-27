@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.184.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.183.2...v1.184.0) (2021-09-27)
+
+
+### Features
+
+* **payment:** INT-4170 Do not use as keyword ([c749820](https://github.com/bigcommerce/checkout-sdk-js/commit/c749820a905852130ff0e5e325201f0f7dfdcf73))
+* **payment:** INT-4170 Mount hostedfields for TSV on StripeV3 ([fb635ea](https://github.com/bigcommerce/checkout-sdk-js/commit/fb635ea320a10f8979441cb93cdd87e15589e2a8))
+
 ### [1.183.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.183.1...v1.183.2) (2021-09-24)
 
 ### [1.183.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.183.0...v1.183.1) (2021-09-22)
