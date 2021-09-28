@@ -157,7 +157,7 @@ export default class GooglePayPaymentProcessor {
         return this._methodId;
     }
 
-    private _mapGooglePayAddressToBillingAddress(paymentData: GooglePaymentData, id: string): BillingAddressUpdateRequestBody {
+    private _mapGooglePayAddressToBillingAddress(paymentData: GooglePaymentData, id: string, customerEmail?: string): BillingAddressUpdateRequestBody {
         const fullName = paymentData.paymentMethodData.info.billingAddress.name;
         const [firstName, lastName] = getFirstAndLastName(fullName);
         const address1 =  paymentData.paymentMethodData.info.billingAddress.address1;
@@ -183,7 +183,7 @@ export default class GooglePayPaymentProcessor {
             countryCode,
             phone: paymentData.paymentMethodData.info.billingAddress.phoneNumber,
             customFields: [],
-            email: paymentData.email,
+            email: customerEmail || paymentData.email,
         };
     }
 
@@ -232,7 +232,7 @@ export default class GooglePayPaymentProcessor {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
-        const googlePayAddressMapped = this._mapGooglePayAddressToBillingAddress(paymentData, remoteBillingAddress.id);
+        const googlePayAddressMapped = this._mapGooglePayAddressToBillingAddress(paymentData, remoteBillingAddress.id, remoteBillingAddress.email);
 
         return this._store.dispatch(
             this._billingAddressActionCreator.updateAddress(googlePayAddressMapped)
