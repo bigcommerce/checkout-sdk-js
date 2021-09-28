@@ -1,3 +1,5 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
@@ -18,7 +20,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
-        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
+        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
+        private _formPoster: FormPoster
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -121,8 +124,20 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
                     state.shippingAddress.getShippingAddress(),
                     state.billingAddress.getBillingAddress()
                 )
-                .then(() => this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()));
+                .then(async () => {
+                    await this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
+                    this._onPaymentSelectComplete();
+                });
         }, { methodId }), { queueId: 'widgetInteraction' });
+    }
+
+    private _onPaymentSelectComplete(): void {
+        this._formPoster.postForm('/checkout.php', {
+            headers: {
+                Accept: 'text/html',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        });
     }
 
     private _createSignInButton(containerId: string, buttonClass: string): HTMLElement {

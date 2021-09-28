@@ -1,4 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -35,6 +36,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let strategy: CustomerStrategy;
     let visaCheckoutScriptLoader: VisaCheckoutScriptLoader;
     let visaCheckoutSDK: VisaCheckoutSDK;
+    let formPoster: FormPoster;
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
@@ -60,6 +62,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         visaCheckoutScriptLoader.load = jest.fn(() => Promise.resolve(visaCheckoutSDK));
 
+        formPoster = createFormPoster();
+
         const registry = createCustomerStrategyRegistry(store, requestSender, '');
 
         checkoutActionCreator = new CheckoutActionCreator(
@@ -78,7 +82,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             customerStrategyActionCreator,
             remoteCheckoutActionCreator,
             braintreeVisaCheckoutPaymentProcessor,
-            visaCheckoutScriptLoader
+            visaCheckoutScriptLoader,
+            formPoster
         );
 
         container = document.createElement('div');
