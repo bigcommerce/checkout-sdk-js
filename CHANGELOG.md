@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.185.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.184.0...v1.185.0) (2021-09-29)
+
+
+### Features
+
+* **payment:** PAYPAL-972 added 3ds check for googlepaybraintree ([#1240](https://github.com/bigcommerce/checkout-sdk-js/issues/1240)) ([deaf0c5](https://github.com/bigcommerce/checkout-sdk-js/commit/deaf0c5749545e204fb8ca4e51e21df766defce4))
+
+
+### Bug Fixes
+
+* **payment:** INT-4698 doing post to checkout after completing visa checkout payment information ([#1232](https://github.com/bigcommerce/checkout-sdk-js/issues/1232)) ([9e524af](https://github.com/bigcommerce/checkout-sdk-js/commit/9e524af55a3b9511d688a3892dee409aef150baa))
+
 ## [1.184.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.183.2...v1.184.0) (2021-09-27)
 
 
