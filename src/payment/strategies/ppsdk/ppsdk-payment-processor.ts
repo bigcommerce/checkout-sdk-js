@@ -1,9 +1,8 @@
 import { OrderPaymentRequestBody } from '../../../order';
-import { PPSDKPaymentMethod } from '../../ppsdk-payment-method';
 
 export interface ProcessorSettings {
     token: string;
-    paymentMethod: PPSDKPaymentMethod;
+    methodId: string;
     payment?: OrderPaymentRequestBody;
     bigpayBaseUrl: string;
 }

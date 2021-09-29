@@ -10,9 +10,8 @@ export class NonePaymentProcessor implements PaymentProcessor {
         private _stepHandler: StepHandler
     ) {}
 
-    process({ paymentMethod, bigpayBaseUrl, token }: ProcessorSettings) {
-        const paymentMethodId = `${paymentMethod.id}.${paymentMethod.method}`;
-        const body = { payment_method_id: paymentMethodId };
+    process({ methodId, bigpayBaseUrl, token }: ProcessorSettings) {
+        const body = { payment_method_id: methodId };
         const options = {
             credentials: false,
             body,
