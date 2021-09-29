@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.185.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.185.0...v1.185.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* **payment:** INT-4087 Add a flag to enable or disable the send back the client token ([2389370](https://github.com/bigcommerce/checkout-sdk-js/commit/238937068ad16526e6f58cf92b0b9497e2e1bd0f))
+* **payment:** INT-4087 Catch stripe exception to process 3ds when payment intent is updated on the banckend and confirm it ([5651c70](https://github.com/bigcommerce/checkout-sdk-js/commit/5651c70c85f753e600092412ee2aa409fe26d4cb))
+* **payment:** INT-4489 cko add supported method 'card' ([22f51fd](https://github.com/bigcommerce/checkout-sdk-js/commit/22f51fd32624d36ef0c6af3a2afdade00bdd8cb4))
+
 ## [1.185.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.184.0...v1.185.0) (2021-09-29)
 
 
