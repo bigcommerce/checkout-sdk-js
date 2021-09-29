@@ -1,6 +1,6 @@
 import { Checkout } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
-import { BraintreeModuleCreator, GooglePayBraintreeSDK } from '../braintree';
+import { BraintreeModuleCreator, BraintreeVerifyPayload, GooglePayBraintreeSDK } from '../braintree';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
@@ -16,6 +16,8 @@ export interface GooglePayCreator extends BraintreeModuleCreator<GooglePayBraint
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;
 }
+
+export type GooglePayVerifyPayload = BraintreeVerifyPayload | undefined;
 
 export interface GooglePayIsReadyToPayResponse {
     result: boolean;

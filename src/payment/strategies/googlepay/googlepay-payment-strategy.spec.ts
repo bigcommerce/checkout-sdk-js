@@ -11,6 +11,7 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrder } from '../../../order/orders.mock';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -38,6 +39,7 @@ describe('GooglePayPaymentStrategy', () => {
     let walletButton: HTMLAnchorElement;
     let paymentMethodMock: PaymentMethod;
     let googlePayAdyenV2PaymentProcessor: GooglePayAdyenV2PaymentProcessor;
+    let braintreeSDKCreator: BraintreeSDKCreator;
 
     beforeEach(() => {
         store = createCheckoutStore({
@@ -89,6 +91,7 @@ describe('GooglePayPaymentStrategy', () => {
         );
 
         googlePayAdyenV2PaymentProcessor = new GooglePayAdyenV2PaymentProcessor(store, paymentActionCreator, new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()));
+        braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(createScriptLoader()));
 
         strategy = new GooglePayPaymentStrategy(
             store,
@@ -98,7 +101,8 @@ describe('GooglePayPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             googlePayPaymentProcessor,
-            googlePayAdyenV2PaymentProcessor
+            googlePayAdyenV2PaymentProcessor,
+            braintreeSDKCreator
         );
 
         container = document.createElement('div');
@@ -112,6 +116,7 @@ describe('GooglePayPaymentStrategy', () => {
             initializationData: {
                 nonce: '',
                 card_information: 'card_info',
+                isThreeDSecureEnabled: true,
             },
         };
 
@@ -213,10 +218,12 @@ describe('GooglePayPaymentStrategy', () => {
 
     describe('#execute', () => {
         let googlePayOptions: PaymentInitializeOptions;
+        const order = getOrder();
 
         beforeEach(() => {
             jest.spyOn(walletButton, 'addEventListener');
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve()).mockReturnValue(store.getState());
+            jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(order);
             googlePayOptions = {
                 methodId: 'googlepaybraintree',
                 googlepaybraintree: {
@@ -235,8 +242,10 @@ describe('GooglePayPaymentStrategy', () => {
                         type: 'type',
                         number: 'number',
                     },
+                    isThreeDSecureEnabled: false,
                 },
             });
+
             await strategy.initialize(googlePayOptions);
 
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
@@ -268,6 +277,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'nonce',
                     card_information: undefined,
+                    isThreeDSecureEnabled: false,
                 },
             });
 
@@ -288,6 +298,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'nonce',
                     card_information: undefined,
+                    isThreeDSecureEnabled: false,
                 },
             });
 
@@ -307,6 +318,7 @@ describe('GooglePayPaymentStrategy', () => {
                         type: 'type',
                         number: 'number',
                     },
+                    isThreeDSecureEnabled: false,
                 },
             }).mockReturnValue({
                 initializationData: {
@@ -315,13 +327,14 @@ describe('GooglePayPaymentStrategy', () => {
                         type: 'type',
                         number: 'number',
                     },
+                    isThreeDSecureEnabled: false,
                 },
             });
 
             await strategy.initialize(googlePayOptions);
             await strategy.execute(getGoogleOrderRequestBody());
 
-            expect(store.getState().paymentMethods.getPaymentMethodOrThrow).toHaveBeenCalledTimes(3);
+            expect(store.getState().paymentMethods.getPaymentMethodOrThrow).toHaveBeenCalledTimes(4);
             expect(googlePayPaymentProcessor.displayWallet).toBeCalled();
         });
 
@@ -334,6 +347,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'nonce',
                     card_information: undefined,
+                    isThreeDSecureEnabled: true,
                 },
             });
 
@@ -352,6 +366,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: undefined,
                     card_information: undefined,
+                    isThreeDSecureEnabled: true,
                 },
             });
 
@@ -381,6 +396,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'token',
                     card_information: 'ci',
+                    isThreeDSecureEnabled: true,
                 },
             });
 
@@ -422,6 +438,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'token',
                     card_information: 'ci',
+                    isThreeDSecureEnabled: true,
                 },
             });
 
@@ -462,6 +479,7 @@ describe('GooglePayPaymentStrategy', () => {
                 initializationData: {
                     nonce: 'token',
                     card_information: 'ci',
+                    isThreeDSecureEnabled: true,
                 },
             });
 

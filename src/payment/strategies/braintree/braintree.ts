@@ -88,12 +88,23 @@ export interface BraintreeThreeDSecure extends BraintreeModule {
     cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
 }
 
+export interface BraintreeGooglePayThreeDSecure {
+    verifyCard(options: BraintreeGooglePayThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
+}
+
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
+    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
+}
+
+export interface BraintreeGooglePayThreeDSecureOptions {
+    nonce: string;
+    amount: number;
+    showLoader?: boolean;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
 
