@@ -6,6 +6,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrder } from '../../../order/orders.mock';
 
 import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
@@ -17,6 +18,8 @@ describe('PPSDKStrategy', () => {
     const requestSender = createRequestSender();
     const paymentProcessorRegistry = createPaymentProcessorRegistry(requestSender, stepHandler);
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
+    const completedOrder = getOrder();
+    const incompleteOrder = { ...completedOrder, isComplete: false };
     let store: ReturnType<typeof createCheckoutStore>;
     let orderActionCreator: InstanceType<typeof OrderActionCreator>;
     let submitSpy: jest.SpyInstance;
@@ -86,8 +89,7 @@ describe('PPSDKStrategy', () => {
             describe('when there is an existing order with a matching PPSDK Payment', () => {
                 describe('#finalize', () => {
                     it('calls the payment resumer', async () => {
-                        const store = createCheckoutStore(getCheckoutStoreState());
-
+                        jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
 
@@ -105,8 +107,7 @@ describe('PPSDKStrategy', () => {
             describe('when there is an existing order, but without a matching PPSDK Payment', () => {
                 describe('#finalize', () => {
                     it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
-                        const store = createCheckoutStore(getCheckoutStoreState());
-
+                        jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue(undefined);
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
@@ -123,8 +124,7 @@ describe('PPSDKStrategy', () => {
             describe('when there is an existing order, with a matching PPSDK Payment, but without an order token', () => {
                 describe('#finalize', () => {
                     it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
-                        const store = createCheckoutStore(getCheckoutStoreState());
-
+                        jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
 
@@ -136,6 +136,23 @@ describe('PPSDKStrategy', () => {
                             .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
 
                         expect(resumerSpy).not.toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe('when there is an existing order that is already completed', () => {
+                describe('#finalize', () => {
+                    it('resolves without needing to call any further endpoints', async () => {
+                        jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(completedOrder);
+                        const requestSenderGetSpy = jest.spyOn(requestSender, 'get');
+                        const requestSenderPostSpy = jest.spyOn(requestSender, 'post');
+
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+
+                        await expect(strategy.finalize({ methodId: 'cabbagepay' })).resolves.not.toThrow();
+
+                        expect(requestSenderGetSpy).not.toHaveBeenCalled();
+                        expect(requestSenderPostSpy).not.toHaveBeenCalled();
                     });
                 });
             });
