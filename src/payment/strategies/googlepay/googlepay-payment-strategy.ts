@@ -114,8 +114,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
         } catch (error) {
-            this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error);
-            throw error;
+            return this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
         }
     }
 
