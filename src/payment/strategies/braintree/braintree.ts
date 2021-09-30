@@ -5,6 +5,8 @@ import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK
 
 import { VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
 
+export const PAYPAL_COMPONENTS = ['buttons', 'messages'];
+
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;
     dataCollector?: BraintreeDataCollectorCreator;
@@ -369,6 +371,7 @@ export interface RenderButtonsData {
     paymentMethod: PaymentMethod;
     paypalOptions: BraintreePaypalButtonInitializeOptions;
     container: string;
+    messagingContainerId?: string;
 }
 
 export type RenderButtons = (instance: PaypalClientInstance) => void;
@@ -379,6 +382,10 @@ export interface PaypalClientInstance {
     createPayment(data: BraintreePaypalRequest): Promise<string>;
 }
 
-export interface Config {
-    currency?: string ;
+export interface BraintreeComponents {
+    components?: string;
+}
+
+export interface Config extends BraintreeComponents {
+    currency?: string;
 }

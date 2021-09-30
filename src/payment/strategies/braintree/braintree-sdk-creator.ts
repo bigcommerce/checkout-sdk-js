@@ -8,9 +8,11 @@ import { BraintreeClient,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
-    BraintreeVisaCheckout, Config,
+    BraintreeVisaCheckout,
+    Config,
     GooglePayBraintreeSDK,
     PaypalClientInstance,
+    PAYPAL_COMPONENTS,
     RenderButtons } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
@@ -71,6 +73,7 @@ export default class BraintreeSDKCreator {
                     this._paypalcheckoutInstance = instance;
                     instance.loadPayPalSDK({
                         currency: config.currency,
+                        components: PAYPAL_COMPONENTS.toString(),
                     }, () => {
                         renderButtonCallback(instance);
                     });

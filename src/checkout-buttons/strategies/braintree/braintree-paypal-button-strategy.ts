@@ -45,15 +45,17 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
         const container = `#${options.containerId}`;
+        const messagingContainerId = options.braintreepaypal?.messagingContainerId;
 
         this._renderButtonsData = {
             paymentMethod,
             paypalOptions,
             container,
+            messagingContainerId,
         };
 
         return Promise.all([
-            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code }, (paypalCheckoutInstance: PaypalClientInstance) => this.renderButtons(paypalCheckoutInstance)),
+            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code}, (paypalCheckoutInstance: PaypalClientInstance) => this.renderButtons(paypalCheckoutInstance)),
             this._braintreeSDKCreator.getPaypal(),
         ])
             .then(([paypalCheckout]) => {
@@ -64,9 +66,14 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     }
 
     renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
-        const { paypalOptions, paymentMethod, container } = this._renderButtonsData as RenderButtonsData;
+        const { paypalOptions, paymentMethod, container, messagingContainerId } = this._renderButtonsData as RenderButtonsData;
         const { paypal } = this._window;
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const storeConfig = state.config.getStoreConfigOrThrow();
         let updatedPaypalOptions: BraintreePaypalButtonInitializeOptions;
+        const isMessageContainerAvailable = Boolean(messagingContainerId && document.getElementById(messagingContainerId));
+        const ppsdkFeatureOn = storeConfig?.checkoutSettings.features['PAYPAL-1149.braintree-new-card-below-totals-banner-placement'];
 
         if (paypal) {
             const FUNDING_SOURCES = [];
@@ -81,7 +88,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             }
 
             if (paypalOptions) {
-                 updatedPaypalOptions = this._validateHeight(paypalOptions);
+                updatedPaypalOptions = this._validateHeight(paypalOptions);
             }
 
             FUNDING_SOURCES.forEach(source => {
@@ -102,6 +109,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     button.render(container);
                 }
             });
+            if (isMessageContainerAvailable && ppsdkFeatureOn && messagingContainerId) {
+                this._renderMessages(cart.cartAmount, messagingContainerId);
+            }
         }
     }
 
@@ -112,6 +122,18 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         this._braintreeSDKCreator.teardown();
 
         return Promise.resolve();
+    }
+
+    private _renderMessages(amount: number, containerId: string) {
+        const { paypal } = this._window;
+        if (!paypal?.Messages) {
+            return;
+        }
+
+        return paypal.Messages({
+            amount,
+            placement: 'cart',
+        }).render(`#${containerId}`);
     }
 
     private _validateHeight(paypalOptions: BraintreePaypalButtonInitializeOptions): BraintreePaypalButtonInitializeOptions {

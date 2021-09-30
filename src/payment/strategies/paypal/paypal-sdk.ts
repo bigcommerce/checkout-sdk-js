@@ -2,6 +2,7 @@ export interface PaypalSDK {
     Button: PaypalButton;
     checkout: PaypalExpressCheckout;
     FUNDING: PaypalFundingTypeList;
+    Messages(options: MessagingOptions): MessagingRender;
     Buttons(options: PaypalButtonOptions): PaypalButtonRender;
 }
 
@@ -18,6 +19,15 @@ export interface PaypalButton {
 export interface PaypalButtonRender {
     render(container: string): void;
     isEligible(): boolean;
+}
+
+export interface MessagingRender {
+    render(container: string): void;
+}
+
+export interface MessagingOptions {
+    amount: number;
+    placement: string;
 }
 
 export interface PaypalButtonOptions {
