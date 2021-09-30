@@ -120,6 +120,10 @@ declare interface BraintreeError extends Error {
 
 declare interface BraintreePaypalButtonInitializeOptions {
     /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;

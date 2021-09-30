@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.186.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.185.2...v1.186.0) (2021-09-30)
+
+
+### Features
+
+* **payment:** PAYPAL-1103 added paylater messaging for braintree on cart ([#1245](https://github.com/bigcommerce/checkout-sdk-js/issues/1245)) ([08b418a](https://github.com/bigcommerce/checkout-sdk-js/commit/08b418acec6d00feb34811f2c425a3bc1e7eb2e9))
+
 ### [1.185.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.185.1...v1.185.2) (2021-09-29)
 
 ### [1.185.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.185.0...v1.185.1) (2021-09-29)
