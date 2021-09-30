@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.186.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.186.0...v1.186.1) (2021-09-30)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-260 fixed googlepay updates billing info, removed update of customer email ([53222a7](https://github.com/bigcommerce/checkout-sdk-js/commit/53222a7a10789bcc6ffdcb685be753a71c1ee92e))
+
 ## [1.186.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.185.2...v1.186.0) (2021-09-30)
 
 
