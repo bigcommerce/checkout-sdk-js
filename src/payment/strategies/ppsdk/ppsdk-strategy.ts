@@ -49,6 +49,12 @@ export class PPSDKStrategy implements PaymentStrategy {
     }
 
     async finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const order = this._store.getState().order.getOrderOrThrow();
+
+        if (order.isComplete) {
+            return this._store.getState();
+        }
+
         const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
 
         if (!options?.methodId) {
