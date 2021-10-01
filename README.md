@@ -241,9 +241,9 @@ Then, you can ask the customer to select a shipping option from the list.
 ```js
 const address = state.data.getShippingAddress();
 const options = state.data.getShippingOptions();
-const newState = await service.selectShippingOption(options[address.id].id);
+const state = await service.selectShippingOption(options[address.id].id);
 
-console.log(newState.checkout.getSelectedShippingOption());
+console.log(state.data.getSelectedShippingOption());
 ```
 
 ### Set billing details
