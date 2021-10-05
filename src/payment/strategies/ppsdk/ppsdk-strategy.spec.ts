@@ -92,6 +92,7 @@ describe('PPSDKStrategy', () => {
                         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
+                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({ orderId: 'some-order-id' });
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
@@ -109,24 +110,6 @@ describe('PPSDKStrategy', () => {
                     it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
                         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
                         jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue(undefined);
-
-                        const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
-
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
-
-                        await expect(strategy.finalize({ methodId: 'cabbagepay' }))
-                            .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
-
-                        expect(resumerSpy).not.toHaveBeenCalled();
-                    });
-                });
-            });
-            describe('when there is an existing order, with a matching PPSDK Payment, but without an order token', () => {
-                describe('#finalize', () => {
-                    it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
-                        jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
-                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
-                        jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
