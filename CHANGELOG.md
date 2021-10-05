@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.188.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.188.0...v1.188.1) (2021-10-05)
+
+
+### Bug Fixes
+
+* **payment:** ADYEN-253 disabled showing error modal on Adyen GooglePay 3ds ([f504dff](https://github.com/bigcommerce/checkout-sdk-js/commit/f504dff130a748cae1c3400c5c67fed7d1ae023f))
+
 ## [1.188.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.187.1...v1.188.0) (2021-10-05)
 
 
