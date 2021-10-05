@@ -61,16 +61,14 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
 
-        const order = this._store.getState().order.getOrder();
         const paymentId = this._store.getState().order.getPaymentId(options?.methodId);
+        const token = this._store.getState().order.getOrderMeta()?.token;
 
-        if (!paymentId || !order) {
+        if (!paymentId || !token) {
             throw new OrderFinalizationNotRequiredError();
         }
 
-        const { orderId } = order;
-
-        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, orderId });
+        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, token });
 
         return this._store.getState();
     }
