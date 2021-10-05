@@ -122,6 +122,8 @@ describe('BraintreePaypalButtonStrategy', () => {
                 return Promise.resolve(paypalCheckout);
             });
 
+        jest.spyOn(braintreeSDKCreator, 'getVenmoCheckout').mockReturnValue(Promise.resolve());
+
         jest.spyOn(braintreeSDKCreator, 'getDataCollector')
             .mockReturnValue(Promise.resolve(dataCollector));
 
@@ -172,6 +174,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
+        expect(braintreeSDKCreator.getVenmoCheckout).toHaveBeenCalled();
         expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
     });
 
