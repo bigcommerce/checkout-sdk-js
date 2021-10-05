@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.188.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.187.1...v1.188.0) (2021-10-05)
+
+
+### Features
+
+* **payment:** PAYMENTS-7269 allow PPSDK payment methods to finalise in progress payments ([#1252](https://github.com/bigcommerce/checkout-sdk-js/issues/1252)) ([e6d02cc](https://github.com/bigcommerce/checkout-sdk-js/commit/e6d02ccc2b590763a8761237638c25166f3cf35f))
+* **payment:** PAYMENTS-7269 allow PPSDK payment methods to finalise in progress payments ([#1261](https://github.com/bigcommerce/checkout-sdk-js/issues/1261)) ([5d43fcc](https://github.com/bigcommerce/checkout-sdk-js/commit/5d43fcc1ba73d990c2a413f67adecf23cac4c7a2))
+
 ### [1.187.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.187.0...v1.187.1) (2021-10-01)
 
 ## [1.187.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.186.1...v1.187.0) (2021-09-30)
