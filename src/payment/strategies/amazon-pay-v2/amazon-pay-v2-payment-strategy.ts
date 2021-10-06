@@ -5,7 +5,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getShippableItemsCount } from '../../../shipping';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -40,11 +40,11 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        const { paymentToken } = paymentMethod.initializationData;
+        const { paymentToken, region } = paymentMethod.initializationData;
         const buttonId = amazonpay.editButtonId;
 
         if (paymentToken && buttonId) {
-            this._bindEditButton(buttonId, paymentToken, 'changePayment');
+            this._bindEditButton(buttonId, paymentToken, 'changePayment', this._isModalFlow(region));
         } else {
             this._walletButton = this._createSignInButton(paymentMethod);
         }
@@ -64,7 +64,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        const { paymentToken } = paymentMethod.initializationData;
+        const { paymentToken, region } = paymentMethod.initializationData;
 
         if (paymentToken) {
             const paymentPayload = {
@@ -93,6 +93,19 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
         this._walletButton.click();
 
+        // Focus of parent window used to try and detect the user cancelling the Amazon log in modal
+        // Should be refactored if/when Amazon add a modal close hook to their SDK
+        if (this._isModalFlow(region)) {
+            return new Promise((_, reject) => {
+                const onFocus = () => {
+                    window.removeEventListener('focus', onFocus);
+                    reject(new PaymentMethodCancelledError('Shopper needs to login to Amazonpay to continue'));
+                };
+
+                window.addEventListener('focus', onFocus);
+            });
+        }
+
         return new Promise<never>(noop);
     }
 
@@ -111,30 +124,32 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType): void {
+    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, isModalFlow: boolean): void {
         const button = document.getElementById(id);
 
         if (!button || !button.parentNode) {
             return;
         }
 
-        const clone = button.cloneNode(true);
-        button.parentNode.replaceChild(clone, button);
+        if (!isModalFlow) {
+            const clone = button.cloneNode(true);
+            button.parentNode.replaceChild(clone, button);
 
-        clone.addEventListener('click', () => this._showLoadingSpinner(() => new Promise(noop)));
+            clone.addEventListener('click', () => this._showLoadingSpinner());
+        }
 
         this._amazonPayV2PaymentProcessor.bindButton(id, sessionId, changeAction);
     }
 
-    private _showLoadingSpinner(callback?: () => Promise<void> | Promise<never>): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
+    private _isModalFlow(region: string) {
+        return region === 'us';
+    }
 
-            if (callback) {
-                return callback();
-            }
-
-            return Promise.reject();
-        }), { queueId: 'widgetInteraction' });
+    private _showLoadingSpinner(): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._paymentStrategyActionCreator.widgetInteraction(() => new Promise(noop)),
+            { queueId: 'widgetInteraction' }
+        );
     }
 
     private _createContainer(): HTMLDivElement {
