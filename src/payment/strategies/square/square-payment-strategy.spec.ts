@@ -70,6 +70,7 @@ describe('SquarePaymentStrategy', () => {
         cvv: { elementId: 'cvv' },
         expirationDate: { elementId: 'expirationDate' },
         postalCode: { elementId: 'postalCode' },
+        onError: jest.fn(),
     };
 
     beforeEach(() => {
@@ -317,14 +318,13 @@ describe('SquarePaymentStrategy', () => {
                 it('calls onError callback and throws', async () => {
                     squareForm.requestCardNonce.mockImplementationOnce(() => {
                         if (callbacks.cardNonceResponseReceived) {
-                            callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
+                            callbacks.cardNonceResponseReceived(getNonceGenerationErrors());
                         }
                     });
 
-                    await strategy.initialize(initOptions);
                     await strategy.execute(payload).catch(catchSpy);
                     // tslint:disable-next-line:no-non-null-assertion
-                    expect(initOptions.square!.onError).toHaveBeenCalled();
+                    expect(squareOptions.onError).toHaveBeenCalled();
                     expect(catchSpy).toHaveBeenCalled();
                 });
             });
@@ -348,7 +348,7 @@ describe('SquarePaymentStrategy', () => {
                         });
                         await strategy.execute(payload);
                     } catch (e) {
-                        expect(e).toEqual([{field: 'some-field', message: 'some-message', type: 'some-type'}]);
+                        expect(e).toEqual({field: 'some-field', message: 'some-message', type: 'some-type'});
                     }
                 });
             });
@@ -396,7 +396,7 @@ describe('SquarePaymentStrategy', () => {
 
                 it('rejects when veirfyBuyerFails', () => {
                     squareForm.verifyBuyer.mockImplementationOnce((_nonce, _verificationDetails, cb) => {
-                        cb({ message: 'an error', type: 'error' });
+                        cb([{ message: 'an error', type: 'error' }]);
                     });
 
                     return expect(strategy.execute(payload)).rejects.toEqual({ message: 'an error', type: 'error' });
@@ -409,8 +409,7 @@ describe('SquarePaymentStrategy', () => {
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                         methodId: 'square',
                         paymentData: {
-                            nonce: 'nonce',
-                            token: '1234',
+                            nonce: '{"nonce":"nonce","token":"1234"}',
                         },
                     });
                 });
