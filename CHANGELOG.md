@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.189.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.188.1...v1.189.0) (2021-10-06)
+
+
+### Features
+
+* **payment:** INT-4231 deleting spinner functionality in amazonpay ([#1219](https://github.com/bigcommerce/checkout-sdk-js/issues/1219)) ([30cc04e](https://github.com/bigcommerce/checkout-sdk-js/commit/30cc04ecdd65150a2b6ce41270614cadba49f8ea))
+
 ### [1.188.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.188.0...v1.188.1) (2021-10-05)
 
 
