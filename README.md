@@ -218,12 +218,13 @@ To set the shipping address, you can collate all the address fields and construc
 const address = {
     firstName: 'Test',
     lastName: 'Tester',
-    addressLine1: '12345 Testing Way',
+    address1: '12345 Testing Way',
     city: 'Some City',
-    provinceCode: 'CA',
-    postCode: '95555',
+    stateOrProvinceCode: 'CA',
+    postalCode: '95555',
     countryCode: 'US',
     phone: '555-555-5555',
+    email: 'test.tester@test.com'
 };
 
 const state = await service.updateShippingAddress(address);
