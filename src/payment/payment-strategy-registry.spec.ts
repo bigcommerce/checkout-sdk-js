@@ -1,5 +1,3 @@
-import { set } from 'lodash';
-
 import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
@@ -73,29 +71,8 @@ describe('PaymentStrategyRegistry', () => {
             registry.register(PaymentStrategyType.PPSDK, () => new PPSDKPaymentStrategy(store));
         });
 
-        describe('PAYMENTS-6806.enable_ppsdk_strategy feature flag is off', () => {
-            it('does not return ppsdk strategy if type is "PAYMENT_TYPE_SDK"', () => {
-                expect(registry.getByMethod(getPPSDK())).not.toBeInstanceOf(PPSDKPaymentStrategy);
-            });
-        });
-
-        describe('PAYMENTS-6806.enable_ppsdk_strategy feature flag is on', () => {
-            const featureFlagPath = 'data.storeConfig.checkoutSettings.features';
-            const flagValues = { 'PAYMENTS-6806.enable_ppsdk_strategy': true };
-
-            const store = createCheckoutStore({
-                config: set(getConfigState(), featureFlagPath, flagValues),
-                formFields: getFormFieldsState(),
-            });
-
-            const registry = new PaymentStrategyRegistry(store);
-
-            registry.register(PaymentStrategyType.LEGACY, () => new LegacyPaymentStrategy(store));
-            registry.register(PaymentStrategyType.PPSDK, () => new PPSDKPaymentStrategy(store));
-
-            it('returns ppsdk strategy if type is "PAYMENT_TYPE_SDK"', () => {
-                expect(registry.getByMethod(getPPSDK())).toBeInstanceOf(PPSDKPaymentStrategy);
-            });
+        it('returns ppsdk strategy if type is "PAYMENT_TYPE_SDK"', () => {
+            expect(registry.getByMethod(getPPSDK())).toBeInstanceOf(PPSDKPaymentStrategy);
         });
 
         it('returns strategy if registered with method name', () => {
