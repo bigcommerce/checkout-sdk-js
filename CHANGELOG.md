@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.190.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.189.0...v1.190.0) (2021-10-08)
+
+
+### Features
+
+* **payment:** INT-4593 handle squareForm errors ([f9baee6](https://github.com/bigcommerce/checkout-sdk-js/commit/f9baee6fd59584708a421983393ce969c7974b92))
+
 ## [1.189.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.188.1...v1.189.0) (2021-10-06)
 
 
