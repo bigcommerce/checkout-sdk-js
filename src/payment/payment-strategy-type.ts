@@ -22,6 +22,7 @@ enum PaymentStrategyType {
     CYBERSOURCEV2 = 'cybersourcev2',
     DIGITALRIVER = 'digitalriver',
     CYBERSOURCEV2_GOOGLE_PAY = 'googlepaycybersourcev2',
+    HUMM = 'humm',
     KLARNA = 'klarna',
     KLARNAV2 = 'klarnav2',
     LAYBUY = 'laybuy',

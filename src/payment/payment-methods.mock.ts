@@ -355,6 +355,19 @@ export function getClearpay(): PaymentMethod {
     };
 }
 
+export function getHumm(): PaymentMethod {
+    return {
+        id: 'humm',
+        logoUrl: '',
+        method: 'humm',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getStripe(): PaymentMethod {
     return {
         id: 'stripe',
@@ -812,6 +825,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePayAdyenV2(),
         getGooglePayCybersourceV2(),
         getGooglePayOrbital(),
+        getHumm(),
         getKlarna(),
         getMollie(),
         getMoneris(),
