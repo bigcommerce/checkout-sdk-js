@@ -43,12 +43,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
-        const ppsdkFeatureOn =
-            this._store.getState()
-                .config.getStoreConfig()
-                ?.checkoutSettings.features['PAYMENTS-6806.enable_ppsdk_strategy'];
-
-        if (ppsdkFeatureOn && isPPSDKPaymentMethod(paymentMethod)) {
+        if (isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
 
