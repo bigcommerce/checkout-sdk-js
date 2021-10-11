@@ -115,17 +115,28 @@ describe('DigitalRiverPaymentStrategy', () => {
     describe('#initialize()', () => {
         const digitalRiverLoadResponse = getDigitalRiverJSMock();
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
+        const digitalRiverElement = digitalRiverLoadResponse.createElement(expect.any(Object), expect.any(Object));
         const customer = getCustomer();
         let options: PaymentInitializeOptions;
         let onErrorCallback: (error: OnCancelOrErrorResponse) => {};
         let onSuccessCallback: (data?: OnSuccessResponse) => {};
+        let container: HTMLDivElement;
 
         beforeEach(() => {
             jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
             jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
+            jest.spyOn(digitalRiverLoadResponse, 'createElement').mockReturnValue(digitalRiverElement);
+
             options = getInitializeOptionsMock();
+            container = document.createElement('div');
+            container.setAttribute('id', 'compliance');
+            document.body.appendChild(container);
+        });
+
+        afterEach(() => {
+            document.body.removeChild(container);
         });
 
         it('loads DigitalRiver script', async () => {
@@ -197,6 +208,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('loads DigitalRiver when widget was updated ', async () => {
             jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
             jest.spyOn(document, 'getElementById').mockReturnValue('mock');
+            jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
             await strategy.initialize(options);
 

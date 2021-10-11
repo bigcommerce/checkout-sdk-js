@@ -12,6 +12,16 @@ export type DigitalRiverClass = new(apiKey: string, options?: DigitalRiverJSOpti
 export default interface DigitalRiverJS {
     createDropin(configuration: DigitalRiverDropInConfiguration): DigitalRiverDropIn;
     authenticateSource(data: DigitalRiverAuthenticateSourceRequest): Promise<DigitalRiverAuthenticateSourceResponse>;
+    createElement(type: string, options: DigitalRiverElementOptions): DigitalRiverElement;
+}
+
+export interface DigitalRiverElementOptions {
+    classes: {
+        base: string;
+    };
+    compliance: {
+        entity: string;
+    };
 }
 
 interface DigitalRiverAuthenticateSourceRequest {
@@ -211,6 +221,14 @@ export interface DigitalRiverDropIn {
     mount(dropInId: string): void;
 }
 
+interface DigitalRiverElement {
+    /**
+     * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/drop-in-integration-guide#step-7-place-drop-in-on-your-checkout-or-customer-page
+     * example "drop-in"
+     */
+    mount(dropInId: string): void;
+}
+
 interface BaseElementOptions {
     /**
      * Set custom class names on the container DOM element when the Digital River element is in a particular state.
@@ -258,5 +276,10 @@ export interface DigitalRiverElementClasses {
 
 export interface DigitalRiverInitializeToken {
     sessionId: string;
+    checkoutData: DigitalRiverCheckoutData;
+}
+
+interface DigitalRiverCheckoutData {
     checkoutId: string;
+    sellingEntity: string;
 }

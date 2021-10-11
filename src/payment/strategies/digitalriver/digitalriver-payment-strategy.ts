@@ -12,7 +12,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverElementOptions, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -109,7 +109,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         if (isVaultedInstrument(paymentData)) {
             try {
-                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutId, shouldSetAsDefaultInstrument, false);
+                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutData.checkoutId, shouldSetAsDefaultInstrument, false);
             } catch (error) {
                 if (!this._isAuthenticateSourceAction(error)) {
                     throw error;
@@ -117,7 +117,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
                 const confirm = await this._authenticateSource(error.body.provider_data);
 
-                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutId, shouldSetAsDefaultInstrument, confirm);
+                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutData.checkoutId, shouldSetAsDefaultInstrument, confirm);
             }
         } else {
             if (!this._loadSuccessResponse) {
@@ -130,7 +130,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     formattedPayload: {
                         credit_card_token: {
                             token: JSON.stringify({
-                                checkoutId: this._digitalRiverCheckoutData.checkoutId,
+                                checkoutId: this._digitalRiverCheckoutData.checkoutData.checkoutId,
                                 source: this._loadSuccessResponse,
                                 sessionId: this._digitalRiverCheckoutData.sessionId,
                             }),
@@ -224,6 +224,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        this._mountComplianceSection(this._digitalRiverCheckoutData.checkoutData.sellingEntity);
+
         this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
         const digitalRiverConfiguration = {
             sessionId: this._digitalRiverCheckoutData.sessionId,
@@ -302,5 +304,34 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         };
 
         return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+    }
+
+    private _mountComplianceSection(sellingEntity: string) {
+        const complianceDiv = document.getElementById('compliance');
+
+        const complianceOptions: DigitalRiverElementOptions = {
+            classes: {
+                base: 'DRElement',
+            },
+            compliance: {
+                entity: sellingEntity,
+            },
+        };
+
+        if (complianceDiv) {
+            complianceDiv.innerHTML = '';
+
+            const complianceElement = this._getDigitalRiverJs().createElement('compliance', complianceOptions);
+            complianceElement.mount('compliance');
+        } else {
+            const drfooter = document.createElement('div');
+            drfooter.setAttribute('id', 'compliance');
+            drfooter.style.cssText = 'min-height: 45px;';
+            drfooter.classList.add('layout');
+            document.body.appendChild(drfooter);
+
+            const complianceElement = this._getDigitalRiverJs().createElement('compliance', complianceOptions);
+            complianceElement.mount('compliance');
+        }
     }
 }

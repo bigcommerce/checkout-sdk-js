@@ -15,6 +15,11 @@ export function getDigitalRiverJSMock(): DigitalRiverJS {
             };
         }),
         authenticateSource: jest.fn(),
+        createElement: jest.fn(() => {
+            return {
+                mount: jest.fn(),
+            };
+        }),
     };
 }
 
@@ -54,7 +59,10 @@ export function getOrderRequestBodyWithVaultedInstrument(): OrderRequestBody {
 export function getClientMock(): DigitalRiverInitializeToken {
     return {
         sessionId: '1234',
-        checkoutId: '12345676543',
+        checkoutData: {
+            checkoutId: '12345676543',
+            sellingEntity: 'DR-Entity',
+        },
     };
 }
 
