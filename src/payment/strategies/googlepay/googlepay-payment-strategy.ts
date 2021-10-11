@@ -53,10 +53,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._braintreeSDKCreator?.initialize(this._paymentMethod.clientToken);
         }
 
-        if (this._paymentMethod.initializationData.nonce) {
-            return Promise.resolve(this._store.getState());
-        }
-
         await this._googlePayPaymentProcessor.initialize(methodId);
 
         if (!this._googlePayOptions.walletButton) {
@@ -265,13 +261,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         const state = this._store.getState();
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-
-        if (this._paymentMethod.initializationData.nonce) {
-            return await Promise.all([
-                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
-                this._store.getState(),
-            ]);
-        }
 
         return await Promise.all([
             this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
