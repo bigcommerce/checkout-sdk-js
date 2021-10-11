@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.190.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.190.1...v1.190.2) (2021-10-11)
+
+
+### Bug Fixes
+
+* **payment:** INT-4885 Fixed "select a different card" button on googlepay ([f514618](https://github.com/bigcommerce/checkout-sdk-js/commit/f51461890431ab36138c4e1fbf4772e7eb14de60))
+
 ### [1.190.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.190.0...v1.190.1) (2021-10-10)
 
 ## [1.190.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.189.0...v1.190.0) (2021-10-08)
