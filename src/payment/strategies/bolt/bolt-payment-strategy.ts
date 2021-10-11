@@ -252,6 +252,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
+        await this._setBoltOrderId();
+
         const transactionReference = await boltClient.getTransactionReference();
 
         if (!transactionReference) {
@@ -296,6 +298,18 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         try {
             return await boltClient.hasBoltAccount(email);
+        } catch {
+            throw new PaymentMethodInvalidError();
+        }
+    }
+
+    private async _setBoltOrderId() {
+        const state = this._store.getState();
+        const order = state.order.getOrderOrThrow();
+        const boltClient = this._getBoltClient();
+
+        try {
+            await boltClient.setOrderId(order.orderId);
         } catch {
             throw new PaymentMethodInvalidError();
         }

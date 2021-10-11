@@ -9,6 +9,7 @@ export function getBoltClientScriptMock(shouldSucceed: boolean = false): BoltChe
         hasBoltAccount: jest.fn(),
         openCheckout: jest.fn(),
         setClientCustomCallbacks: jest.fn(),
+        setOrderId: jest.fn(),
     };
 }
 

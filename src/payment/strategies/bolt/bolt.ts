@@ -9,6 +9,7 @@ export interface BoltCheckout {
     getTransactionReference(): Promise<string | undefined>;
     openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
+    setOrderId(orderId: number): void;
 }
 
 export interface BoltOpenCheckoutCallbacks {
