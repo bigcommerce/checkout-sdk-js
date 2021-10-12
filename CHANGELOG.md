@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.192.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.191.0...v1.192.0) (2021-10-12)
+
+
+### Features
+
+* **payment:** BOLT-73 send orderId during payment creation for Bolt Full Ckeckout ([c35d325](https://github.com/bigcommerce/checkout-sdk-js/commit/c35d32554993a763fcd9258fa37de374d5057f43))
+
 ## [1.191.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.190.2...v1.191.0) (2021-10-12)
 
 
