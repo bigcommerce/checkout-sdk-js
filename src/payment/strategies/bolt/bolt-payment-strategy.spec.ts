@@ -5,7 +5,7 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -53,7 +53,7 @@ describe('BoltPaymentStrategy', () => {
     let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
-        store = createCheckoutStore(getCheckoutStoreState());
+        store = createCheckoutStore(getCheckoutStoreStateWithOrder());
         paymentMethodMock = getBolt();
         scriptLoader = createScriptLoader();
         requestSender = createRequestSender();
@@ -284,6 +284,7 @@ describe('BoltPaymentStrategy', () => {
             await strategy.initialize(boltTakeOverInitializationOptions);
             await strategy.execute(payload);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(boltClient.setOrderId).toHaveBeenCalled();
             expect(boltClient.getTransactionReference).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
@@ -303,6 +304,7 @@ describe('BoltPaymentStrategy', () => {
             }
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(boltClient.setOrderId).toHaveBeenCalled();
             expect(boltClient.getTransactionReference).toHaveBeenCalled();
             expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalledWith(expectedPayment);
