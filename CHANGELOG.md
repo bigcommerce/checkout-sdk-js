@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.191.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.190.2...v1.191.0) (2021-10-12)
+
+
+### Features
+
+* **payment:** INT-4891 Add support to remount compliance section for Digital River ([d9858de](https://github.com/bigcommerce/checkout-sdk-js/commit/d9858de64c8b6d309f70352eb2ee3f87209d1566))
+
 ### [1.190.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.190.1...v1.190.2) (2021-10-11)
 
 
