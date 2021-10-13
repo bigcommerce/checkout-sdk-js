@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.192.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.192.0...v1.192.1) (2021-10-13)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1180 fixed paylater region issue ([#1269](https://github.com/bigcommerce/checkout-sdk-js/issues/1269)) ([6a8f6df](https://github.com/bigcommerce/checkout-sdk-js/commit/6a8f6df8652053cfe5d67f723872a8fee64cfe0a))
+
 ## [1.192.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.191.0...v1.192.0) (2021-10-12)
 
 
