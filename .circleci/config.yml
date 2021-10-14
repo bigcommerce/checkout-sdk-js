@@ -18,7 +18,7 @@ version: 2.1
 
 orbs:
   ci: bigcommerce/internal@volatile
-  node: bigcommerce/internal-node@volatile
+  node: bigcommerce/internal-node@dev:PR-147
 
 jobs:
   test:
