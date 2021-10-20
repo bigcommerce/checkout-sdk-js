@@ -47,6 +47,7 @@ describe('BoltCustomerStrategy', () => {
         boltCheckout.configure = jest.fn();
         boltCheckout.setClientCustomCallbacks = jest.fn();
         boltCheckout.openCheckout = jest.fn();
+        boltCheckout.reloadBigCommerceCart = jest.fn();
         boltCheckout.hasBoltAccount = jest.fn();
 
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
@@ -226,6 +227,7 @@ describe('BoltCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout(options);
 
             expect(boltCheckout.hasBoltAccount).toHaveBeenCalledWith('test@bigcommerce.com');
+            expect(boltCheckout.reloadBigCommerceCart).toHaveBeenCalled();
             expect(boltCheckout.openCheckout).toHaveBeenCalled();
         });
 
@@ -247,6 +249,7 @@ describe('BoltCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout(options);
 
             expect(boltCheckout.hasBoltAccount).toHaveBeenCalledWith('test@bigcommerce.com');
+            expect(boltCheckout.reloadBigCommerceCart).toHaveBeenCalled();
             expect(boltCheckout.openCheckout).toHaveBeenCalled();
             expect(mockCallback.mock.calls.length).toBe(1);
         });

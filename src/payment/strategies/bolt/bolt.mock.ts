@@ -10,6 +10,7 @@ export function getBoltClientScriptMock(shouldSucceed: boolean = false): BoltChe
         openCheckout: jest.fn(),
         setClientCustomCallbacks: jest.fn(),
         setOrderId: jest.fn(),
+        reloadBigCommerceCart: jest.fn(),
     };
 }
 

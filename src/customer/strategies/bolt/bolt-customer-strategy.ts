@@ -105,6 +105,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
                         },
                     };
 
+                    boltClient.reloadBigCommerceCart();
                     await boltClient.openCheckout(email, callbacks);
                 } else {
                     continueWithCheckoutCallback();
