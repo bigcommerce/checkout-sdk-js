@@ -10,7 +10,7 @@ export interface BoltCheckout {
     openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
     setOrderId(orderId: number): void;
-    reloadBigCommerceCart(): void;
+    reloadBigCommerceCart(): Promise<void>;
 }
 
 export interface BoltOpenCheckoutCallbacks {
