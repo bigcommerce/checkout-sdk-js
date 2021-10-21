@@ -16,8 +16,12 @@ export interface BoltOpenCheckoutCallbacks {
     close?(): void;
 }
 
+export interface BoltEmbeddedOptions {
+    styles: { backgroundColor: string };
+}
+
 export interface BoltEmbedded {
-    create(name: string): BoltEmbededField;
+    create(name: string, options?: BoltEmbeddedOptions): BoltEmbededField;
 }
 
 export interface BoltEmbededField {
