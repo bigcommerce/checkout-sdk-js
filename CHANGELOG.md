@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.194.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.193.0...v1.194.0) (2021-10-21)
+
+
+### Features
+
+* **payment:** BOLT-78 changed background color of mounted Bolt payment field ([90f5443](https://github.com/bigcommerce/checkout-sdk-js/commit/90f54433f31b22a3cd158c5990f426c203ada3da))
+
 ## [1.193.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.192.1...v1.193.0) (2021-10-21)
 
 
