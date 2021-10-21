@@ -148,12 +148,14 @@ export default class BraintreePaymentProcessor {
             return response;
         };
 
+        const roundedAmount = amount.toFixed(2);
+
         const verification = new CancellablePromise(
             threeDSecure.verifyCard({
                 addFrame: (error, iframe) => {
                     addFrame(error, iframe, cancelVerifyCard);
                 },
-                amount,
+                amount: Number(roundedAmount),
                 nonce,
                 removeFrame,
                 onLookupComplete: (_data, next) => {
