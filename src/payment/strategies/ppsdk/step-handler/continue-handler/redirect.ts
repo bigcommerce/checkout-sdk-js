@@ -33,7 +33,7 @@ export const handleRedirect = ({ url, formFields }: Parameters, formPoster: Form
     if (formFields) {
         formPoster.postForm(url, formFields);
     } else {
-        window.location.replace(url);
+        window.location.assign(url);
     }
 
     return new Promise(noop);
