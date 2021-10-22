@@ -226,7 +226,7 @@ describe('QuadpayPaymentStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue({ ...getQuadpay(), clientToken: 'm4lf0rm3d j50n' });
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(SyntaxError);
         });
 
         it('fails to execute if nonce is empty', async () => {
