@@ -9,7 +9,7 @@ describe('handleRedirect', () => {
         it('calls location assign with the url, never resolves or rejects', () => {
             const resolveMock = jest.fn();
             const rejectMock = jest.fn();
-            const assignSpy = jest.spyOn(window.location, 'replace').mockImplementation(jest.fn);
+            const assignSpy = jest.spyOn(window.location, 'assign').mockImplementation(jest.fn);
 
             const redirectContinueResponse = {
                 url: 'http://some-url.com',
