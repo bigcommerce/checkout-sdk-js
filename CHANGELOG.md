@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.194.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.194.0...v1.194.1) (2021-10-24)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-7390 use location.assign in PPSDK redirects to maintain correct browser history ([#1278](https://github.com/bigcommerce/checkout-sdk-js/issues/1278)) ([145b6d2](https://github.com/bigcommerce/checkout-sdk-js/commit/145b6d2ad8b10b0a2e0d464bfc552dfa3b455991))
+
 ## [1.194.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.193.0...v1.194.0) (2021-10-21)
 
 
