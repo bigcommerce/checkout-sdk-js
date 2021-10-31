@@ -2,7 +2,7 @@ import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
 import { isContinue, ContinueHandler } from './continue-handler';
 import { handleError, isError } from './error';
-import { handleFailed, isFailed } from './failed';
+import { handleFailed, isFailed } from './failure';
 import { handleServerError, isServerError } from './server-error';
 import { handleSuccess, isSuccess } from './success';
 import { handleUnsupported } from './unsupported';
