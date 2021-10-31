@@ -3,25 +3,25 @@ import { get, isString } from 'lodash';
 import { RequestError } from '../../../../common/error/errors';
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
-export interface FailedResponse extends PaymentsAPIResponse {
+export interface FailureResponse extends PaymentsAPIResponse {
     body: {
-        type: 'failed';
+        type: 'failure';
         code: string;
     };
 }
 
-export const isFailed = (response: PaymentsAPIResponse): response is FailedResponse =>
-    get(response.body, 'type') === 'failed' &&
+export const isFailure = (response: PaymentsAPIResponse): response is FailureResponse =>
+    get(response.body, 'type') === 'failure' &&
     isString(get(response.body, 'code'));
 
-const toRequestErrorFormat = (failedResponse: FailedResponse) => ({
-    ...failedResponse,
+const toRequestErrorFormat = (failureResponse: FailureResponse) => ({
+    ...failureResponse,
     body: {
         errors: [
-            { code: failedResponse.body.code },
+            { code: failureResponse.body.code },
         ],
     },
 });
 
-export const handleFailed = (response: FailedResponse): Promise<void> =>
+export const handleFailure = (response: FailureResponse): Promise<void> =>
     Promise.reject(new RequestError(toRequestErrorFormat(response)));

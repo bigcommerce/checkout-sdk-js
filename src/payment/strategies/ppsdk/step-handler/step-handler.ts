@@ -2,7 +2,7 @@ import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
 import { isContinue, ContinueHandler } from './continue-handler';
 import { handleError, isError } from './error';
-import { handleFailed, isFailed } from './failure';
+import { handleFailure, isFailure } from './failure';
 import { handleServerError, isServerError } from './server-error';
 import { handleSuccess, isSuccess } from './success';
 import { handleUnsupported } from './unsupported';
@@ -27,8 +27,8 @@ export class StepHandler {
             return this._continueHandler.handle(body);
         }
 
-        if (isFailed(response)) {
-            return handleFailed(response);
+        if (isFailure(response)) {
+            return handleFailure(response);
         }
 
         if (isError(response)) {
