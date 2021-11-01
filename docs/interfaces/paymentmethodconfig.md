@@ -20,6 +20,7 @@
 * [isVaultingCvvEnabled](paymentmethodconfig.md#optional-isvaultingcvvenabled)
 * [isVaultingEnabled](paymentmethodconfig.md#optional-isvaultingenabled)
 * [isVisaCheckoutEnabled](paymentmethodconfig.md#optional-isvisacheckoutenabled)
+* [logo](paymentmethodconfig.md#optional-logo)
 * [merchantId](paymentmethodconfig.md#optional-merchantid)
 * [redirectUrl](paymentmethodconfig.md#optional-redirecturl)
 * [requireCustomerCode](paymentmethodconfig.md#optional-requirecustomercode)
@@ -85,6 +86,12 @@ ___
 ### `Optional` isVisaCheckoutEnabled
 
 • **isVisaCheckoutEnabled**? : *undefined | false | true*
+
+___
+
+### `Optional` logo
+
+• **logo**? : *undefined | string*
 
 ___
 

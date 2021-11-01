@@ -5081,6 +5081,7 @@ declare interface PaymentMethodConfig {
     isVaultingCvvEnabled?: boolean;
     isVaultingEnabled?: boolean;
     isVisaCheckoutEnabled?: boolean;
+    logo?: string;
     merchantId?: string;
     redirectUrl?: string;
     requireCustomerCode?: boolean;

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.195.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.194.1...v1.195.0) (2021-11-01)
+
+
+### Features
+
+* **payment:** INT-4917 Add logo property to PaymentMethodConfig interface ([#1272](https://github.com/bigcommerce/checkout-sdk-js/issues/1272)) ([1f0a2a5](https://github.com/bigcommerce/checkout-sdk-js/commit/1f0a2a54c423b2b2148b1312281e0430478c0567))
+
 ### [1.194.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.194.0...v1.194.1) (2021-10-24)
 
 
