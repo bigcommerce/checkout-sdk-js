@@ -1,12 +1,12 @@
 import { RequestError } from '../../../../common/error/errors';
 
-import { handleFailed, isFailed, FailedResponse } from './failed';
+import { handleFailure, isFailure, FailureResponse } from './failure';
 
-describe('handleFailed', () => {
+describe('handleFailure', () => {
     it('rejects with RequestError', async () => {
-        const failedResponse: FailedResponse = {
+        const failureResponse: FailureResponse = {
             body: {
-                type: 'failed',
+                type: 'failure',
                 code: 'any-failure',
             },
             status: 200,
@@ -14,8 +14,8 @@ describe('handleFailed', () => {
             headers: [],
         };
 
-        await expect(handleFailed(failedResponse)).rejects.toBeInstanceOf(RequestError);
-        await expect(handleFailed(failedResponse)).rejects.toStrictEqual(
+        await expect(handleFailure(failureResponse)).rejects.toBeInstanceOf(RequestError);
+        await expect(handleFailure(failureResponse)).rejects.toStrictEqual(
             expect.objectContaining({
                 body: { errors: [{ code: 'any-failure' }] },
             })
@@ -23,11 +23,11 @@ describe('handleFailed', () => {
     });
 });
 
-describe('isFailed', () => {
+describe('isFailure', () => {
     it('returns true when passed a valid failure response', () => {
-        const failedResponse: FailedResponse = {
+        const failureResponse: FailureResponse = {
             body: {
-                type: 'failed',
+                type: 'failure',
                 code: 'any-failure',
             },
             status: 200,
@@ -35,7 +35,7 @@ describe('isFailed', () => {
             headers: [],
         };
 
-        expect(isFailed(failedResponse)).toBe(true);
+        expect(isFailure(failureResponse)).toBe(true);
     });
 
     it('returns false when passed an invalid failure response', () => {
@@ -48,6 +48,6 @@ describe('isFailed', () => {
             headers: [],
         };
 
-        expect(isFailed(invalidResponse)).toBe(false);
+        expect(isFailure(invalidResponse)).toBe(false);
     });
 });
