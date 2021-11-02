@@ -1,24 +1,30 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { BrowserStorage } from '../../../common/storage';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
+import { PPSDKCompletedPayments } from './ppsdk-completed-payments';
 import { PaymentProcessor } from './ppsdk-payment-processor';
 import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
 
 export class PPSDKStrategy implements PaymentStrategy {
     private _paymentProcessor?: PaymentProcessor;
+    private _completedPayments: PPSDKCompletedPayments;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentProcessorRegistry: PaymentProcessorRegistry,
-        private _paymentResumer: PaymentResumer
-    ) {}
+        private _paymentResumer: PaymentResumer,
+        browserStorage: BrowserStorage
+    ) {
+        this._completedPayments = new PPSDKCompletedPayments(browserStorage);
+    }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
@@ -63,13 +69,17 @@ export class PPSDKStrategy implements PaymentStrategy {
 
         const paymentId = this._store.getState().order.getPaymentId(options?.methodId);
 
-        if (!paymentId || !order) {
+        if (!paymentId || !order || this._completedPayments.isCompleted(paymentId)) {
             throw new OrderFinalizationNotRequiredError();
         }
 
         const { orderId } = order;
 
-        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, orderId });
+        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, orderId })
+            .catch(error => {
+                this._completedPayments.setCompleted(paymentId);
+                throw error;
+            });
 
         return this._store.getState();
     }

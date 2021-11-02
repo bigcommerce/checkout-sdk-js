@@ -4,6 +4,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { BrowserStorage } from '../../../common/storage';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
@@ -41,7 +42,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a valid PPSDK payment method', () => {
         describe('#initialize', () => {
             it('does not throw an error', async () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                 await expect(strategy.initialize({ methodId: 'cabbagepay' })).resolves.toBeTruthy();
             });
@@ -51,7 +52,7 @@ describe('PPSDKStrategy', () => {
             describe('when an order token is set by the submitOrder call', () => {
                 describe('#execute', () => {
                     it('submits the order and calls the payment processor', async () => {
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                         const mockPaymentProcessor = { process: jest.fn() };
                         jest.spyOn(paymentProcessorRegistry, 'getByMethod').mockReturnValue(mockPaymentProcessor);
@@ -69,7 +70,7 @@ describe('PPSDKStrategy', () => {
             describe('when an order token is not set by the submitOrder call', () => {
                 describe('#execute', () => {
                     it('throws a MissingDataError error, does not call the payment processor', async () => {
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                         const mockPaymentProcessor = { process: jest.fn() };
                         jest.spyOn(paymentProcessorRegistry, 'getByMethod').mockReturnValue(mockPaymentProcessor);
@@ -96,11 +97,37 @@ describe('PPSDKStrategy', () => {
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                         await strategy.finalize({ methodId: 'cabbagepay' });
 
                         expect(resumerSpy).toHaveBeenCalled();
+                    });
+
+                    describe('when the payment resumer throws an error', () => {
+                        it('rethrows the error once per unique paymentId, then throws OrderFinalizationNotRequiredError errors instead', async () => {
+                            jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
+                            jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('first-payment-id');
+                            jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
+                            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({ orderId: 'some-order-id' });
+                            jest.spyOn(paymentResumer, 'resume').mockRejectedValue(new Error());
+
+                            const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
+
+                            await expect(strategy.finalize({ methodId: 'cabbagepay' }))
+                                .rejects.toBeInstanceOf(Error);
+
+                            await expect(strategy.finalize({ methodId: 'cabbagepay' }))
+                                .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
+
+                            jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('second-payment-id');
+
+                            await expect(strategy.finalize({ methodId: 'cabbagepay' }))
+                                .rejects.toBeInstanceOf(Error);
+
+                            await expect(strategy.finalize({ methodId: 'cabbagepay' }))
+                                .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
+                        });
                     });
                 });
             });
@@ -113,7 +140,7 @@ describe('PPSDKStrategy', () => {
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                         await expect(strategy.finalize({ methodId: 'cabbagepay' }))
                             .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
@@ -130,7 +157,7 @@ describe('PPSDKStrategy', () => {
                         const requestSenderGetSpy = jest.spyOn(requestSender, 'get');
                         const requestSenderPostSpy = jest.spyOn(requestSender, 'post');
 
-                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                        const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                         await expect(strategy.finalize({ methodId: 'cabbagepay' })).resolves.not.toThrow();
 
@@ -145,7 +172,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a not yet supported PPSDK payment method', () => {
         describe('#initialize', () => {
             it('throws a NotInitializedError error', async () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                 await expect(strategy.initialize({ methodId: 'unsupported-cabbagepay' }))
                     .rejects.toBeInstanceOf(NotInitializedError);
@@ -156,7 +183,7 @@ describe('PPSDKStrategy', () => {
     describe('when initialized with a non PPSDK payment method', () => {
         describe('#initialize', () => {
             it('throws a NotInitializedError error', async () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                 await expect(strategy.initialize({ methodId: 'braintree' }))
                     .rejects.toBeInstanceOf(NotInitializedError);
@@ -167,7 +194,7 @@ describe('PPSDKStrategy', () => {
     describe('when not successfully initialized', () => {
         describe('#execute', () => {
             it('throws a NotInitializedError error', async () => {
-                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer);
+                const strategy = new PPSDKStrategy(store, orderActionCreator, paymentProcessorRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
                 await expect(strategy.execute({}, { methodId: '123' }))
                     .rejects.toBeInstanceOf(NotInitializedError);
