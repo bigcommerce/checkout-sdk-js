@@ -796,7 +796,7 @@ export function getApplePay() {
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [],
-        providesShippingAddress: true,
+        providesShippingAddress: false,
         config: {
             displayName: '',
             helpText: '',
