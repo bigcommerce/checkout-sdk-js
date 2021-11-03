@@ -7,6 +7,7 @@ import { RequestOptions } from '../common/http-request';
 import { PaymentMethod } from '.';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
+import { isApplePayWindow } from './strategies/apple-pay';
 
 const APPLEPAYID = 'applepay';
 
@@ -53,7 +54,7 @@ export default class PaymentMethodActionCreator {
 
     private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
         return methods.filter(method => {
-            if (method.id === APPLEPAYID && typeof window.ApplePaySession !== 'function') {
+            if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
                 return false;
             }
 
