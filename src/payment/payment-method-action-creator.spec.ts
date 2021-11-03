@@ -52,7 +52,7 @@ describe('PaymentMethodActionCreator', () => {
                 { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
                 {
                     type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
-                    payload: paymentMethodsResponse.body,
+                    payload: paymentMethodsResponse.body.filter(method => method.id !== 'applepay'),
                     meta: {
                         deviceSessionId: paymentMethodsResponse.headers['x-device-session-id'],
                         sessionHash: paymentMethodsResponse.headers['x-session-hash'],
