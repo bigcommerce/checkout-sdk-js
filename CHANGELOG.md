@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.196.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.195.0...v1.196.0) (2021-11-04)
+
+
+### Features
+
+* **payment:** CHECKOUT-6067 Filter applepay based on browser ([#1282](https://github.com/bigcommerce/checkout-sdk-js/issues/1282)) ([062d810](https://github.com/bigcommerce/checkout-sdk-js/commit/062d810f90593c64d1b5a3c849a6fbb401dc8dd2))
+
 ## [1.195.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.194.1...v1.195.0) (2021-11-01)
 
 
