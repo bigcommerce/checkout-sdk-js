@@ -5,6 +5,7 @@ import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigco
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { LoadingIndicator } from '../common/loading-indicator';
+import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
@@ -625,7 +626,8 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             createPaymentProcessorRegistry(requestSender, stepHandler),
-            new PaymentResumer(requestSender, stepHandler)
+            new PaymentResumer(requestSender, stepHandler),
+            new BrowserStorage('PPSDK')
         )
     );
 
