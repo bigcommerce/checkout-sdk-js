@@ -11,105 +11,90 @@ describe('StepHandler', () => {
     const handler = new StepHandler(continueHandler);
 
     describe('#handler', () => {
-        describe('when passed an non 200 range response', () => {
-            it('rejects with RequestError', async () => {
-                const response = {
-                    body: undefined,
-                    status: 500,
+        describe('with a success body', () => {
+            it('resolves to undefined', async () => {
+                const successResponse = {
+                    body: {
+                        type: 'success',
+                    },
+                    status: 200,
                     statusText: '',
                     headers: [],
                 };
 
-                await expect(handler.handle(response)).rejects.toBeInstanceOf(RequestError);
+                await expect(handler.handle(successResponse)).resolves.toBeUndefined();
             });
         });
 
-        describe('when passed a 200 range response', () => {
-            describe('with a success body', () => {
-                it('resolves to undefined', async () => {
-                    const successResponse = {
-                        body: {
-                            type: 'success',
-                        },
-                        status: 200,
-                        statusText: '',
-                        headers: [],
-                    };
+        describe('with a continue body', () => {
+            it('passes the body to the continueHandler', async () => {
+                const continueHandlerSpy = jest.spyOn(continueHandler, 'handle').mockImplementation(jest.fn);
 
-                    await expect(handler.handle(successResponse)).resolves.toBeUndefined();
-                });
+                const body = {
+                    type: 'continue',
+                    code: 'redirect',
+                    parameters: {
+                        url: 'http://some-url.com',
+                    },
+                };
+
+                const redirectContinueResponse = {
+                    body,
+                    status: 200,
+                    statusText: '',
+                    headers: [],
+                };
+
+                await handler.handle(redirectContinueResponse);
+
+                expect(continueHandlerSpy).toHaveBeenCalledWith(body);
             });
+        });
 
-            describe('with a continue body', () => {
-                it('passes the body to the continueHandler', async () => {
-                    const continueHandlerSpy = jest.spyOn(continueHandler, 'handle').mockImplementation(jest.fn);
+        describe('with a failed body', () => {
+            it('rejects with RequestError', async () => {
+                const failedResponse = {
+                    body: {
+                        type: 'failed',
+                        code: 'any-failure',
+                    },
+                    status: 200,
+                    statusText: '',
+                    headers: [],
+                };
 
-                    const body = {
+                await expect(handler.handle(failedResponse)).rejects.toBeInstanceOf(RequestError);
+            });
+        });
+
+        describe('with an error body', () => {
+            it('rejects with RequestError', async () => {
+                const errorResponse = {
+                    body: {
+                        type: 'error',
+                    },
+                    status: 200,
+                    statusText: '',
+                    headers: [],
+                };
+
+                await expect(handler.handle(errorResponse)).rejects.toBeInstanceOf(RequestError);
+            });
+        });
+
+        describe('with an unsupported body', () => {
+            it('rejects with RequestError', async () => {
+                const unsupportedResponse = {
+                    body: {
                         type: 'continue',
-                        code: 'redirect',
-                        parameters: {
-                            url: 'http://some-url.com',
-                        },
-                    };
+                        code: 'not-supported',
+                    },
+                    status: 200,
+                    statusText: '',
+                    headers: [],
+                };
 
-                    const redirectContinueResponse = {
-                        body,
-                        status: 200,
-                        statusText: '',
-                        headers: [],
-                    };
-
-                    await handler.handle(redirectContinueResponse);
-
-                    expect(continueHandlerSpy).toHaveBeenCalledWith(body);
-                });
-            });
-
-            describe('with a failed body', () => {
-                it('rejects with RequestError', async () => {
-                    const failedResponse = {
-                        body: {
-                            type: 'failed',
-                            code: 'any-failure',
-                        },
-                        status: 200,
-                        statusText: '',
-                        headers: [],
-                    };
-
-                    await expect(handler.handle(failedResponse)).rejects.toBeInstanceOf(RequestError);
-                });
-            });
-
-            describe('with an error body', () => {
-                it('rejects with RequestError', async () => {
-                    const errorResponse = {
-                        body: {
-                            type: 'error',
-                        },
-                        status: 200,
-                        statusText: '',
-                        headers: [],
-                    };
-
-                    await expect(handler.handle(errorResponse)).rejects.toBeInstanceOf(RequestError);
-                });
-            });
-
-            describe('with an unsupported body', () => {
-                it('rejects with RequestError', async () => {
-                    const unsupportedResponse = {
-                        body: {
-                            type: 'continue',
-                            code: 'not-supported',
-                        },
-                        status: 200,
-                        statusText: '',
-                        headers: [],
-                    };
-
-                    await expect(handler.handle(unsupportedResponse)).rejects.toBeInstanceOf(RequestError);
-                });
+                await expect(handler.handle(unsupportedResponse)).rejects.toBeInstanceOf(RequestError);
             });
         });
     });

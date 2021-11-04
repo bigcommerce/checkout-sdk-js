@@ -3,7 +3,6 @@ import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 import { isContinue, ContinueHandler } from './continue-handler';
 import { handleError, isError } from './error';
 import { handleFailure, isFailure } from './failure';
-import { handleServerError, isServerError } from './server-error';
 import { handleSuccess, isSuccess } from './success';
 import { handleUnsupported } from './unsupported';
 
@@ -13,11 +12,7 @@ export class StepHandler {
     ) {}
 
     handle(response: PaymentsAPIResponse): Promise<void> {
-        const { body, status } = response;
-
-        if (isServerError(status)) {
-            return handleServerError(response);
-        }
+        const { body } = response;
 
         if (isSuccess(body)) {
             return handleSuccess();
