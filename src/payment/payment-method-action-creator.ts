@@ -4,8 +4,12 @@ import { Observable, Observer } from 'rxjs';
 import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
+import { PaymentMethod } from '.';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
+import { isApplePayWindow } from './strategies/apple-pay';
+
+const APPLEPAYID = 'applepay';
 
 export default class PaymentMethodActionCreator {
     constructor(
@@ -23,7 +27,7 @@ export default class PaymentMethodActionCreator {
                         sessionHash: response.headers['x-session-hash'],
                     };
 
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, response.body, meta));
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, this._filterApplePay(response.body), meta));
                     observer.complete();
                 })
                 .catch(response => {
@@ -45,6 +49,16 @@ export default class PaymentMethodActionCreator {
                 .catch(response => {
                     observer.error(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, response, { methodId }));
                 });
+        });
+    }
+
+    private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
+        return methods.filter(method => {
+            if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
+                return false;
+            }
+
+            return true;
         });
     }
 }

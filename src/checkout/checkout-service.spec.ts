@@ -660,7 +660,7 @@ describe('CheckoutService', () => {
         it('returns payment methods', async () => {
             const state = await checkoutService.loadPaymentMethods();
 
-            expect(state.data.getPaymentMethods()).toEqual(getPaymentMethods());
+            expect(state.data.getPaymentMethods()).toEqual(getPaymentMethods().filter(method => method.id !== 'applepay'));
         });
 
         it('dispatches action with queue id', async () => {
