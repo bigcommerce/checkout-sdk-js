@@ -5,6 +5,7 @@ export default interface PaymentMethod {
     id: string;
     config: PaymentMethodConfig;
     method: string;
+    providesShippingAddress: boolean;
     supportedCards: string[];
     type: string;
     clientToken?: string;

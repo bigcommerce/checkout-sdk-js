@@ -98,7 +98,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,
-        new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+        new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale),
             orderActionCreator,

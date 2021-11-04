@@ -1,6 +1,7 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+import { CheckoutStore } from '../checkout';
 import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
@@ -13,6 +14,7 @@ const APPLEPAYID = 'applepay';
 
 export default class PaymentMethodActionCreator {
     constructor(
+        private _store: CheckoutStore,
         private _requestSender: PaymentMethodRequestSender
     ) {}
 
@@ -27,7 +29,7 @@ export default class PaymentMethodActionCreator {
                         sessionHash: response.headers['x-session-hash'],
                     };
 
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, this._filterApplePay(response.body), meta));
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, this._filterPaymentMethods(response.body), meta));
                     observer.complete();
                 })
                 .catch(response => {
@@ -52,9 +54,16 @@ export default class PaymentMethodActionCreator {
         });
     }
 
-    private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
+    private _filterPaymentMethods(methods: PaymentMethod[]): PaymentMethod[] {
         return methods.filter(method => {
+            // remove ApplePay in a non-Apple environment
             if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
+                return false;
+            }
+
+            // remove methods that cannot work with multi-address shipping when multiple consignments detected
+            const consignments = this._store.getState().consignments.getConsignments();
+            if (consignments && consignments.length > 1 && method.providesShippingAddress) {
                 return false;
             }
 
