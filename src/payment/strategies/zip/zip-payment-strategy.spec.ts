@@ -99,7 +99,7 @@ describe('ZipPaymentStrategy', () => {
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(requestSender)
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
         applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));

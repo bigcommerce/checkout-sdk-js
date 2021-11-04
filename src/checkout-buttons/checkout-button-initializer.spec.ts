@@ -23,7 +23,7 @@ describe('CheckoutButtonInitializer', () => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster(), 'en'),
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
+            new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()))
         );
 
         jest.spyOn(store, 'dispatch');

@@ -65,7 +65,7 @@ describe('BoltCustomerStrategy', () => {
             )
         );
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()));
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);

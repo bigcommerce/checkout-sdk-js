@@ -31,7 +31,7 @@ export default function createShippingStrategyRegistry(
         new AmazonPayShippingStrategy(
             store,
             consignmentActionCreator,
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+            new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender)),
             new RemoteCheckoutActionCreator(
                 new RemoteCheckoutRequestSender(requestSender),
                 new CheckoutActionCreator(
@@ -47,7 +47,7 @@ export default function createShippingStrategyRegistry(
         new AmazonPayV2ShippingStrategy(
             store,
             consignmentActionCreator,
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+            new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender)),
             createAmazonPayV2PaymentProcessor(),
             new ShippingStrategyActionCreator(registry)
         )

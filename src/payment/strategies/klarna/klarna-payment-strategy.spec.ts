@@ -55,7 +55,7 @@ describe('KlarnaPaymentStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),

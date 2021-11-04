@@ -19,6 +19,7 @@
 * [logoUrl](paymentmethod.md#optional-logourl)
 * [method](paymentmethod.md#method)
 * [nonce](paymentmethod.md#optional-nonce)
+* [providesShippingAddress](paymentmethod.md#optional-providesshippingaddress)
 * [returnUrl](paymentmethod.md#optional-returnurl)
 * [supportedCards](paymentmethod.md#supportedcards)
 * [type](paymentmethod.md#type)
@@ -76,6 +77,12 @@ ___
 ### `Optional` nonce
 
 • **nonce**? : *undefined | string*
+
+___
+
+### `Optional` providesShippingAddress
+
+• **providesShippingAddress**? : *undefined | false | true*
 
 ___
 

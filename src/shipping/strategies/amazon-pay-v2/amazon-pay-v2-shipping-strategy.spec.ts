@@ -43,7 +43,7 @@ describe('AmazonPayV2ShippingStrategy', () => {
         formPoster = createFormPoster();
 
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
         paymentMethodMock = getAmazonPayV2();
 
         container = document.createElement('div');

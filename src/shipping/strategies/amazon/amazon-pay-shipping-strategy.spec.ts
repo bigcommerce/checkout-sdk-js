@@ -83,7 +83,7 @@ describe('AmazonPayShippingStrategy', () => {
                 new ConfigActionCreator(new ConfigRequestSender(requestSender)),
                 new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
             ));
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {

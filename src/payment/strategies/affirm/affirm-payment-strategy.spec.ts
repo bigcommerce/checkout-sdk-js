@@ -77,7 +77,7 @@ describe('AffirmPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         affirmScriptLoader = new AffirmScriptLoader();
         strategy = new AffirmPaymentStrategy(
             store,

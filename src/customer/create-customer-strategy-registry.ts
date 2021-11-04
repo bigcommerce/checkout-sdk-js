@@ -45,7 +45,7 @@ export default function createCustomerStrategyRegistry(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const formPoster = createFormPoster();
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(

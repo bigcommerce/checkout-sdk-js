@@ -95,7 +95,7 @@ describe('ChasePayPaymentStrategy', () => {
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         const _requestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(_requestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, _requestSender);
         orderActionCreator = new OrderActionCreator(
             paymentClient,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))

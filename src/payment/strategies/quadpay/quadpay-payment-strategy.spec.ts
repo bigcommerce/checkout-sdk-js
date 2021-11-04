@@ -70,7 +70,7 @@ describe('QuadpayPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store,
             new PaymentMethodRequestSender(requestSender)
         );
         storeCreditActionCreator = new StoreCreditActionCreator(

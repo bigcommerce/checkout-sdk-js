@@ -48,7 +48,7 @@ describe('GooglePayPaymentProcessor', () => {
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
         });
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader);
         googlePayInitializer = new GooglePayBraintreeInitializer(
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)));

@@ -59,7 +59,7 @@ describe('ClearpayPaymentStrategy', () => {
             ...getCheckoutStoreState(),
             billingAddress: { data: getBillingAddress(), errors: {}, statuses: {} },
         });
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);

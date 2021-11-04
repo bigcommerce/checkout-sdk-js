@@ -78,7 +78,7 @@ describe('MasterpassCustomerStrategy', () => {
         jest.spyOn(masterpassScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(masterpass));
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store,
             new PaymentMethodRequestSender(requestSender)
         );
         strategy = new MasterpassCustomerStrategy(

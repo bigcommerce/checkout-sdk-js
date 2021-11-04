@@ -69,7 +69,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()));
 
         order = getOrder();
         submitOrderAction = from([

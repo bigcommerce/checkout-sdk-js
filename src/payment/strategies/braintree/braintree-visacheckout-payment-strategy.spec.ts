@@ -84,7 +84,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             new OrderRequestSender(createRequestSender()),
             checkoutValidator
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()));
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             orderActionCreator,

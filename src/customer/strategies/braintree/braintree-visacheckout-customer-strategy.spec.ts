@@ -72,7 +72,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 
         strategy = new BraintreeVisaCheckoutCustomerStrategy(

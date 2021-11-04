@@ -18,7 +18,7 @@ export default function createGooglePayPaymentProcessor(store: CheckoutStore, in
 
     return new GooglePayPaymentProcessor(
         store,
-        new PaymentMethodActionCreator(
+        new PaymentMethodActionCreator(store,
             new PaymentMethodRequestSender(requestSender)
         ),
         new GooglePayScriptLoader(scriptLoader),

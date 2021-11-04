@@ -44,7 +44,7 @@ export default function createCheckoutButtonInitializer(
         store,
         new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, requestSender, formPoster, locale, host),
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender))
+            new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender))
         )
     );
 }

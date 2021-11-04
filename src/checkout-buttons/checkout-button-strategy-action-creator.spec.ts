@@ -35,7 +35,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
     beforeEach(() => {
         registry = new Registry<CheckoutButtonStrategy>();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(createRequestSender()));
         strategy = new MockButtonStrategy();
         store = createCheckoutStore();
 

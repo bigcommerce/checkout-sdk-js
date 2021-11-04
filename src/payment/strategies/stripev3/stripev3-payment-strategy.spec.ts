@@ -55,7 +55,7 @@ describe('StripeV3PaymentStrategy', () => {
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const scriptLoader = createScriptLoader();
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
 
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(

@@ -50,7 +50,7 @@ describe('AmazonPayV2CustomerStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store,
             new PaymentMethodRequestSender(requestSender)
         );
 

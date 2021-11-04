@@ -72,7 +72,7 @@ describe('ChasePayCustomerStrategy', () => {
         jest.spyOn(chasePayScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(JPMC));
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         formPoster = createFormPoster();
         strategy = new ChasePayCustomerStrategy(
             store,

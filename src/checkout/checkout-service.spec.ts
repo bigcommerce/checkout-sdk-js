@@ -235,7 +235,7 @@ describe('CheckoutService', () => {
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,

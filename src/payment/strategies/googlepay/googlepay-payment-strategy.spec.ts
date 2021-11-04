@@ -62,7 +62,7 @@ describe('GooglePayPaymentStrategy', () => {
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             orderActionCreator,

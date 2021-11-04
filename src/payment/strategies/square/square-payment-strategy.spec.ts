@@ -101,7 +101,7 @@ describe('SquarePaymentStrategy', () => {
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
         initOptions = getSquarePaymentInitializeOptions();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store,
             new PaymentMethodRequestSender(requestSender));
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,

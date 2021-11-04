@@ -45,7 +45,7 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, new PaymentMethodRequestSender(requestSender));
         paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(paypalScriptLoader, new PaypalCommerceRequestSender(requestSender));
         paypalCommerceHostedForm = new PaypalCommerceHostedForm(paypalCommercePaymentProcessor);
 

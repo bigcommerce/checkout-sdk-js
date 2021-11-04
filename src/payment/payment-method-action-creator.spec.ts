@@ -1,9 +1,12 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 import { merge, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
+import { createCheckoutStore } from '../checkout';
 
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { getConfigState } from '../config/configs.mock';
+import { getFormFieldsState } from '../form/form.mock';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -19,6 +22,11 @@ describe('PaymentMethodActionCreator', () => {
     let paymentMethodsResponse: Response<PaymentMethod[]>;
 
     beforeEach(() => {
+        const store = createCheckoutStore({
+            config: getConfigState(),
+            formFields: getFormFieldsState(),
+        });
+
         errorResponse = getErrorResponse();
         paymentMethodResponse = getResponse(getPaymentMethod());
         paymentMethodsResponse = getResponse(getPaymentMethods(), {
@@ -27,7 +35,7 @@ describe('PaymentMethodActionCreator', () => {
         });
 
         paymentMethodRequestSender = new PaymentMethodRequestSender(createRequestSender());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
 
         jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
             .mockReturnValue(Promise.resolve(paymentMethodResponse));
