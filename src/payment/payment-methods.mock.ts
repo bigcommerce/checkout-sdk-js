@@ -23,6 +23,7 @@ export function getBraintree(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -37,6 +38,7 @@ export function getBraintreePaypal(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -51,6 +53,7 @@ export function getBraintreePaypalCredit(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -65,6 +68,7 @@ export function getBraintreeVisaCheckout(): PaymentMethod {
             isVisaCheckoutEnabled: true,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -79,6 +83,7 @@ export function getPaypalExpress(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -104,6 +109,7 @@ export function getPaypalCommerce(): PaymentMethod {
             isPayPalCreditAvailable: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -119,6 +125,7 @@ export function getPaypal(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -132,6 +139,7 @@ export function getPPSDK(): PaymentMethod {
         initializationStrategy: {
             type: 'none',
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -145,6 +153,7 @@ export function getUnsupportedPPSDK(): PaymentMethod {
         initializationStrategy: {
             type: 'SOMETHING_UNSUPPORTED',
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -160,6 +169,7 @@ export function getAdyenAmex(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_HOSTED',
+        providesShippingAddress: true,
     };
 }
 
@@ -174,6 +184,7 @@ export function getAuthorizenet(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -189,6 +200,7 @@ export function getBlueSnapV2(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_HOSTED',
+        providesShippingAddress: true,
     };
 }
 
@@ -205,6 +217,7 @@ export function getCybersource(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'cyberToken',
+        providesShippingAddress: true,
     };
 }
 
@@ -221,6 +234,7 @@ export function getBarclays(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'barclaysToken',
+        providesShippingAddress: true,
     };
 }
 
@@ -236,6 +250,7 @@ export function getBankDeposit(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_OFFLINE',
+        providesShippingAddress: true,
     };
 }
 
@@ -252,6 +267,7 @@ export function getKlarna(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -269,6 +285,7 @@ export function getAfterpay(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -283,6 +300,7 @@ export function getAffirm(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -305,7 +323,6 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
             ledgerCurrency: 'USD',
             region,
         },
-        providesShippingAddress: true,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [
@@ -314,6 +331,7 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
             'MC',
         ],
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -329,7 +347,6 @@ export function getAmazonPay(): PaymentMethod {
             merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
             testMode: false,
         },
-        providesShippingAddress: true,
         type: 'PAYMENT_TYPE_API',
         initializationData: {
             clientId: '087eccf4-7f68-4384-b0a9-5f2fd6b0d344',
@@ -337,6 +354,7 @@ export function getAmazonPay(): PaymentMethod {
             redirectUrl: '/remote-checkout/amazon/redirect',
             tokenPrefix: 'ABCD|',
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -354,6 +372,7 @@ export function getClearpay(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        providesShippingAddress: true,
     };
 }
 
@@ -379,6 +398,7 @@ export function getStripe(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -412,6 +432,7 @@ export function getSquare(): PaymentMethod {
                 nonce: undefined,
             },
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -429,6 +450,7 @@ export function getChasePay(): PaymentMethod {
         initializationData: {
             digitalSessionId: 'digitalSessionId',
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -447,6 +469,7 @@ export function getMasterpass(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -471,6 +494,7 @@ export function getWepay(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -498,6 +522,7 @@ export function getGooglePay(): PaymentMethod {
                 number: '4111',
             },
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -527,6 +552,7 @@ export function getGooglePayAdyenV2(): PaymentMethod {
                 number: '4111',
             },
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -556,6 +582,7 @@ export function getGooglePayCybersourceV2(): PaymentMethod {
                 number: '4111',
             },
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -585,6 +612,7 @@ export function getGooglePayOrbital(): PaymentMethod {
                 number: '4111',
             },
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -600,6 +628,7 @@ export function getZip(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: '{"id":"checkout_id"}',
+        providesShippingAddress: true,
     };
 }
 
@@ -618,6 +647,7 @@ export function getQuadpay(): PaymentMethod {
         initializationData: {
             redirectUrl: 'http://some-url',
         },
+        providesShippingAddress: true,
     };
 }
 
@@ -641,6 +671,7 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
         returnUrl: 'http://www.example.com',
+        providesShippingAddress: true,
     };
 }
 
@@ -661,6 +692,7 @@ export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        providesShippingAddress: true,
     };
 }
 
@@ -680,6 +712,7 @@ export function getBolt(): PaymentMethod {
             embeddedOneClickEnabled: false,
         },
         clientToken: 'clientToken',
+        providesShippingAddress: true,
     };
 }
 
@@ -703,6 +736,7 @@ export function getCheckoutcom(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
+        providesShippingAddress: true,
     };
 }
 
@@ -733,6 +767,7 @@ export function getMollie(): PaymentMethod {
         },
         initializationData: null,
         type: 'PAYMENT_TYPE_API',
+        providesShippingAddress: true,
     };
 }
 
@@ -755,6 +790,7 @@ export function getMoneris(): PaymentMethod {
             expiryDateLabel: 'Expiration Date',
             cvdLabel: 'CVV',
         },
+        providesShippingAddress: true,
     };
 }
 
