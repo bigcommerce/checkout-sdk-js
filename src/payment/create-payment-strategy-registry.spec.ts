@@ -31,6 +31,7 @@ import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
+import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
 import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
 import { PPSDKStrategy } from './strategies/ppsdk';
@@ -195,6 +196,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate offsite', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.OFFSITE);
         expect(paymentStrategy).toBeInstanceOf(OffsitePaymentStrategy);
+    });
+
+    it('can instantiate openpay', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.OPY);
+        expect(paymentStrategy).toBeInstanceOf(OpyPaymentStrategy);
     });
 
     it('can instantiate paypal', () => {
