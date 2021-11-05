@@ -10,6 +10,7 @@ describe('isPPSDKPaymentMethod', () => {
             type: 'some-type',
             config: {},
             supportedCards: [],
+            providesShippingAddress: false,
         };
 
         expect(isPPSDKPaymentMethod(paymentMethod)).toBe(false);
@@ -25,6 +26,7 @@ describe('isPPSDKPaymentMethod', () => {
             initializationStrategy: {
                 type: 'some-strategy',
             },
+            providesShippingAddress: false,
         };
 
         expect(isPPSDKPaymentMethod(paymentMethod)).toBe(true);

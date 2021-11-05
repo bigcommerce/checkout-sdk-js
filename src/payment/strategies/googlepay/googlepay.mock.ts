@@ -69,6 +69,7 @@ export function getPaymentMethodMock(): PaymentMethod {
             googleMerchantName: 'name',
             paymentGatewayId: '7654321',
         },
+        providesShippingAddress: false,
     };
 }
 

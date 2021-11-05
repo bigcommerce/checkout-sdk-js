@@ -19,7 +19,7 @@
 * [logoUrl](paymentmethod.md#optional-logourl)
 * [method](paymentmethod.md#method)
 * [nonce](paymentmethod.md#optional-nonce)
-* [providesShippingAddress](paymentmethod.md#optional-providesshippingaddress)
+* [providesShippingAddress](paymentmethod.md#providesshippingaddress)
 * [returnUrl](paymentmethod.md#optional-returnurl)
 * [supportedCards](paymentmethod.md#supportedcards)
 * [type](paymentmethod.md#type)
@@ -80,9 +80,9 @@ ___
 
 ___
 
-### `Optional` providesShippingAddress
+###  providesShippingAddress
 
-• **providesShippingAddress**? : *undefined | false | true*
+• **providesShippingAddress**: *boolean*
 
 ___
 
