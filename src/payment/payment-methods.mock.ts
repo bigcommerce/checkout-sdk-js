@@ -305,6 +305,7 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
             ledgerCurrency: 'USD',
             region,
         },
+        providesShippingAddress: true,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [
@@ -328,6 +329,7 @@ export function getAmazonPay(): PaymentMethod {
             merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
             testMode: false,
         },
+        providesShippingAddress: true,
         type: 'PAYMENT_TYPE_API',
         initializationData: {
             clientId: '087eccf4-7f68-4384-b0a9-5f2fd6b0d344',

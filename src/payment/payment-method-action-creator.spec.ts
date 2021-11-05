@@ -1,12 +1,13 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 import { merge, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
-import { createCheckoutStore } from '../checkout';
 
+import { createCheckoutStore } from '../checkout';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
+import { getConsignmentsState } from '../shipping/consignments.mock';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -86,6 +87,32 @@ describe('PaymentMethodActionCreator', () => {
                 { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
                 { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: errorResponse, error: true },
             ]);
+        });
+
+        it('hide payment methods that cannot work with multiple consignments', async () => {
+            const store = createCheckoutStore({
+                config: getConfigState(),
+                formFields: getFormFieldsState(),
+                consignments: getConsignmentsState(),
+            });
+            paymentMethodActionCreator = new PaymentMethodActionCreator(store, paymentMethodRequestSender);
+
+            const actions = await paymentMethodActionCreator.loadPaymentMethods()
+                .pipe(toArray())
+                .toPromise();
+
+            // Apple Pay is always not available in tests
+            expect(actions.length).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                    payload: paymentMethodsResponse.body.filter(method => (method.providesShippingAddress === false && method.id !== 'applepay')),
+                    meta: {
+                        deviceSessionId: paymentMethodsResponse.headers['x-device-session-id'],
+                        sessionHash: paymentMethodsResponse.headers['x-session-hash'],
+                    },
+                },
+            ].length);
         });
     });
 
