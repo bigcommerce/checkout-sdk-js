@@ -207,59 +207,65 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadWidget(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
-        const billing = state.billingAddress.getBillingAddressOrThrow();
-        const customer = state.customer.getCustomerOrThrow();
-        const { paymentMethodConfiguration } = this._getDigitalRiverInitializeOptions().configuration;
-        const { containerId, configuration } = this._getDigitalRiverInitializeOptions();
-        const { clientToken } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId)).then(async state => {
+            const billing = state.billingAddress.getBillingAddressOrThrow();
+            const customer = state.customer.getCustomerOrThrow();
+            const {paymentMethodConfiguration} = this._getDigitalRiverInitializeOptions().configuration;
+            const {containerId, configuration} = this._getDigitalRiverInitializeOptions();
+            const {clientToken} = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
-        if (!clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+            if (!clientToken) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
 
-        this._digitalRiverCheckoutData = JSON.parse(clientToken);
+            this._digitalRiverCheckoutData = JSON.parse(clientToken);
 
-        if (!this._digitalRiverCheckoutData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+            if (!this._digitalRiverCheckoutData) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
 
-        this._mountComplianceSection(this._digitalRiverCheckoutData.checkoutData.sellingEntity);
+            this._mountComplianceSection(this._digitalRiverCheckoutData.checkoutData.sellingEntity);
 
-        this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
-        const digitalRiverConfiguration = {
-            sessionId: this._digitalRiverCheckoutData.sessionId,
-            options: { ...configuration, showSavePaymentAgreement: Boolean(customer.email) && configuration.showSavePaymentAgreement },
-            billingAddress: {
-                firstName: billing.firstName,
-                lastName: billing.lastName,
-                email: billing.email || customer.email,
-                phoneNumber: billing.phone,
-                address: {
-                    line1: billing.address1,
-                    line2: billing.address2,
-                    city: billing.city,
-                    state: billing.stateOrProvinceCode,
-                    postalCode: billing.postalCode,
-                    country: billing.countryCode,
+            this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
+            const digitalRiverConfiguration = {
+                sessionId: this._digitalRiverCheckoutData.sessionId,
+                options: {
+                    ...configuration,
+                    showSavePaymentAgreement: Boolean(customer.email) && configuration.showSavePaymentAgreement,
                 },
-            },
-            paymentMethodConfiguration,
-            onSuccess: (data?: OnSuccessResponse) => {
-                this._onSuccessResponse(data);
-            },
-            onReady: (data?: OnReadyResponse) => {
-                this._onReadyResponse(data);
-            },
-            onError: (error: OnCancelOrErrorResponse) => {
-                const descriptiveError = new Error(this._getErrorMessage(error));
-                this._getDigitalRiverInitializeOptions().onError?.(descriptiveError);
-            },
-        };
-        this._digitalRiverDropComponent = await this._getDigitalRiverJs().createDropin(digitalRiverConfiguration);
-        this._digitalRiverDropComponent.mount(containerId);
+                billingAddress: {
+                    firstName: billing.firstName,
+                    lastName: billing.lastName,
+                    email: billing.email || customer.email,
+                    phoneNumber: billing.phone,
+                    address: {
+                        line1: billing.address1,
+                        line2: billing.address2,
+                        city: billing.city,
+                        state: billing.stateOrProvinceCode,
+                        postalCode: billing.postalCode,
+                        country: billing.countryCode,
+                    },
+                },
+                paymentMethodConfiguration,
+                onSuccess: (data?: OnSuccessResponse) => {
+                    this._onSuccessResponse(data);
+                },
+                onReady: (data?: OnReadyResponse) => {
+                    this._onReadyResponse(data);
+                },
+                onError: (error: OnCancelOrErrorResponse) => {
+                    const descriptiveError = new Error(this._getErrorMessage(error));
+                    this._getDigitalRiverInitializeOptions().onError?.(descriptiveError);
+                },
+            };
+            this._digitalRiverDropComponent = await this._getDigitalRiverJs().createDropin(digitalRiverConfiguration);
+            this._digitalRiverDropComponent.mount(containerId);
 
-        return state;
+            return state;
+        }).catch(() => {
+            throw new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service');
+        });
     }
 
     private _isAuthenticateSourceAction(error: unknown): boolean {
