@@ -1,7 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { get, isObject, isString, isUndefined, noop } from 'lodash';
 
-import { PaymentsAPIResponse } from '../../ppsdk-payments-api-response';
+import { PaymentsAPIResponse } from '../../../ppsdk-payments-api-response';
 
 interface Parameters {
     url: string;
