@@ -1,7 +1,10 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { get, isObject, isString, isUndefined, noop } from 'lodash';
 
+import { PaymentMethodCancelledError } from '../../../../../errors';
 import { PaymentsAPIResponse } from '../../../ppsdk-payments-api-response';
+
+import { RedirectionState } from './RedirectionState';
 
 interface Parameters {
     url: string;
@@ -30,6 +33,16 @@ export const isRedirect = (body: PaymentsAPIResponse['body']): body is Redirect 
 );
 
 export const handleRedirect = ({ url, formFields }: Parameters, formPoster: FormPoster): Promise<never> => {
+    const redirectionState = new RedirectionState();
+
+    if (redirectionState.isRedirecting) {
+        redirectionState.isRedirecting = false;
+
+        return Promise.reject(new PaymentMethodCancelledError());
+    }
+
+    redirectionState.isRedirecting = true;
+
     if (formFields) {
         formPoster.postForm(url, formFields);
     } else {
