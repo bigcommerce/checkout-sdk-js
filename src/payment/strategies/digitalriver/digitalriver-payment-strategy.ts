@@ -264,7 +264,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
             return state;
         }).catch(() => {
-            throw new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service');
+            throw new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
         });
     }
 

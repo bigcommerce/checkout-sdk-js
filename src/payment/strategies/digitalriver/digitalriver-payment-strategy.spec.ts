@@ -269,7 +269,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when load response is empty or not provided', () => {
-            const error = 'There was a problem with your checkout, please check your details and try again or contact customer service';
+            const error = 'There was a problem with your checkout, please check your details and try again or contact customer service.';
 
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
@@ -288,7 +288,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver clientToken is not provided', () => {
-            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service');
+            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: ''};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
@@ -298,7 +298,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver clientToken is not receiving correct data ', () => {
-            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service');
+            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: 'ok'};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
