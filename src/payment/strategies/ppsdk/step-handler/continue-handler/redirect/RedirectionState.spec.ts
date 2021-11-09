@@ -22,11 +22,11 @@ describe('RedirectionState', () => {
             });
 
             it('returns false', () => {
-                expect(redirectionState.isRedirecting).toBe(false);
+                expect(redirectionState.isRedirecting()).toBe(false);
             });
 
             it('sets a "redirecting" url param when set to true', () => {
-                redirectionState.isRedirecting = true;
+                redirectionState.setRedirecting(true);
 
                 expect(new URL(window.location.href).searchParams.has(PENDING_REDIRECT_PARAM)).toBe(true);
             });
@@ -41,11 +41,11 @@ describe('RedirectionState', () => {
             });
 
             it('returns true', () => {
-                expect(redirectionState.isRedirecting).toBe(true);
+                expect(redirectionState.isRedirecting()).toBe(true);
             });
 
             it('removes the "redirecting" url param when set to false', () => {
-                redirectionState.isRedirecting = false;
+                redirectionState.setRedirecting(false);
 
                 expect(new URL(window.location.href).searchParams.has(PENDING_REDIRECT_PARAM)).toBe(false);
             });

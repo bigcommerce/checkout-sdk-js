@@ -7,6 +7,20 @@ export class RedirectionState {
         this._isRedirecting = this.getCurrentUrl().searchParams.has(PENDING_REDIRECT_PARAM);
     }
 
+    isRedirecting() {
+        return this._isRedirecting;
+    }
+
+    setRedirecting(value: boolean) {
+        if (value) {
+            this.setRedirectingParamOnUrl();
+        } else {
+            this.removeRedirectingParamFromUrl();
+        }
+
+        this._isRedirecting = value;
+    }
+
     private getCurrentUrl(): URL {
         return new URL(window.location.href);
     }
@@ -25,19 +39,5 @@ export class RedirectionState {
         const url = this.getCurrentUrl();
         url.searchParams.delete(PENDING_REDIRECT_PARAM);
         this.replaceCurrentUrl(url);
-    }
-
-    get isRedirecting() {
-        return this._isRedirecting;
-    }
-
-    set isRedirecting(value: boolean) {
-        if (value) {
-            this.setRedirectingParamOnUrl();
-        } else {
-            this.removeRedirectingParamFromUrl();
-        }
-
-        this._isRedirecting = value;
     }
 }
