@@ -1,3 +1,5 @@
+import { parseUrl } from '../../../../../../common/url';
+
 import { PENDING_REDIRECT_PARAM, RedirectionState } from './RedirectionState';
 
 describe('RedirectionState', () => {
@@ -15,9 +17,7 @@ describe('RedirectionState', () => {
     describe('#isRedirecting', () => {
         describe('when the page loads with no "redirecting" url param', () => {
             beforeAll(() => {
-                const url = new URL(initialUrl);
-                url.searchParams.delete(PENDING_REDIRECT_PARAM);
-                window.history.replaceState(null, '', url.href);
+                window.history.replaceState(null, '', initialUrl);
                 redirectionState = new RedirectionState();
             });
 
@@ -28,15 +28,13 @@ describe('RedirectionState', () => {
             it('sets a "redirecting" url param when set to true', () => {
                 redirectionState.setRedirecting(true);
 
-                expect(new URL(window.location.href).searchParams.has(PENDING_REDIRECT_PARAM)).toBe(true);
+                expect(parseUrl(window.location.href).search).toContain(PENDING_REDIRECT_PARAM);
             });
         });
 
         describe('when the page loads with the "redirecting" url param', () => {
             beforeAll(() => {
-                const url = new URL(initialUrl);
-                url.searchParams.set(PENDING_REDIRECT_PARAM, 'true');
-                window.history.replaceState(null, '', url.href);
+                window.history.replaceState(null, '', `${initialUrl}?${PENDING_REDIRECT_PARAM}`);
                 redirectionState = new RedirectionState();
             });
 
@@ -47,7 +45,7 @@ describe('RedirectionState', () => {
             it('removes the "redirecting" url param when set to false', () => {
                 redirectionState.setRedirecting(false);
 
-                expect(new URL(window.location.href).searchParams.has(PENDING_REDIRECT_PARAM)).toBe(false);
+                expect(parseUrl(window.location.href).search).not.toContain(PENDING_REDIRECT_PARAM);
             });
         });
     });
