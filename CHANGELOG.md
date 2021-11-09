@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.197.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.196.1...v1.197.0) (2021-11-09)
+
+
+### Features
+
+* **payment:** INT-4646 Add Openpay payment strategy ([#1237](https://github.com/bigcommerce/checkout-sdk-js/issues/1237)) ([087976d](https://github.com/bigcommerce/checkout-sdk-js/commit/087976def11dc3d0c161b72e0b378972102a4c69))
+
 ### [1.196.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.196.0...v1.196.1) (2021-11-04)
 
 
