@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.198.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.197.0...v1.198.0) (2021-11-11)
+
+
+### Features
+
+* **payment:** INT-4909 Zip: Delete experiment INT-3824.zip_force_redirect_flow ([#1267](https://github.com/bigcommerce/checkout-sdk-js/issues/1267)) ([e70805e](https://github.com/bigcommerce/checkout-sdk-js/commit/e70805e8ba6174d70f9934f79b801eb3722f6aa9))
+
 ## [1.197.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.196.1...v1.197.0) (2021-11-09)
 
 
