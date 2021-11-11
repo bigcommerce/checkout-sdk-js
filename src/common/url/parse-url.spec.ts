@@ -5,7 +5,7 @@ import parseUrl from './parse-url';
 describe('parseUrl()', () => {
     it('parses URL string', () => {
         expect(parseUrl('https://foobar.com:8080/hello/world?foo=1&bar=2#heading'))
-            .toEqual({
+            .toEqual(expect.objectContaining({
                 hash: '#heading',
                 hostname: 'foobar.com',
                 href: 'https://foobar.com:8080/hello/world?foo=1&bar=2#heading',
@@ -14,7 +14,7 @@ describe('parseUrl()', () => {
                 port: '8080',
                 protocol: 'https:',
                 search: '?foo=1&bar=2',
-            });
+            }));
     });
 
     it('throws error if URL is not absolute', () => {
