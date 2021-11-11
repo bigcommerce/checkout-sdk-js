@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.199.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.198.0...v1.199.0) (2021-11-11)
+
+
+### Features
+
+* **payment:** INT-4909 Quadpay: Homologate with Zip's strategy ([#1279](https://github.com/bigcommerce/checkout-sdk-js/issues/1279)) ([a605b5d](https://github.com/bigcommerce/checkout-sdk-js/commit/a605b5d34b7cd9124c36da3ff600474e8ed4856e))
+
 ## [1.198.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.197.0...v1.198.0) (2021-11-11)
 
 
