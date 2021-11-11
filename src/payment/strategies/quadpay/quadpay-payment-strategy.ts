@@ -35,23 +35,20 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        let nonce: string;
         const { methodId } = payment;
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
-        const { clientToken = '', initializationData: { redirectUrl } = {} } = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
+        const { clientToken, initializationData: { redirectUrl } = {} } = getPaymentMethodOrThrow(methodId);
 
-        try {
-            ({ id: nonce } = JSON.parse(clientToken));
-        } catch (error) {
+        if (!clientToken || !redirectUrl) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+
+        const { id: nonce } = JSON.parse(clientToken);
 
         if (!nonce) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
-        }
-
-        if (!redirectUrl) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paymentPayload = {
