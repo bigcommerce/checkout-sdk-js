@@ -739,11 +739,10 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.APPLEPAY, () =>
         new ApplePayPaymentStrategy(
-            store
+            store,
+            paymentMethodActionCreator
         )
     );
-
-    console.log('registries: ', registry);
 
     return registry;
 }
