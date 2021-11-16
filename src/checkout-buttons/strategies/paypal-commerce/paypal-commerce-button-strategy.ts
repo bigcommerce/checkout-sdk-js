@@ -4,6 +4,9 @@ import { includes } from 'lodash';
 import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import { OrderActionCreator } from '../../../order';
+// eslint-disable-next-line import/no-internal-modules
+import PaymentActionCreator from '../../../payment/payment-action-creator';
 import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, FundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -15,7 +18,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _formPoster: FormPoster,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
+        private _orderActionCreator?: OrderActionCreator,
+        private _paymentActionCreator?: PaymentActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -61,9 +66,27 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         this._isCredit = fundingSource === 'credit' || fundingSource === 'paylater';
     }
 
-    private _tokenizePayment({ orderID }: ApproveDataOptions) {
+    private async _tokenizePayment({ orderID }: ApproveDataOptions) {
         if (!orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        if (this._orderActionCreator && this._paymentActionCreator) {
+            const paymentData =  {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    device_info: null,
+                    method_id: 'paypalcommerce',
+                    paypal_account: {
+                        order_id: orderID,
+                    },
+                },
+            };
+            // @ts-ignore
+            await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce', gatewayId: undefined}));
+
+            this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', paymentData: {shouldCreateAccount: true, shouldSaveInstrument: false, terms: false}}, paymentData }));
         }
 
         return this._formPoster.postForm('/checkout.php', {
