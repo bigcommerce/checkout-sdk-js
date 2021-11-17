@@ -1,15 +1,19 @@
-import { PaymentStrategy } from "..";
-import { PaymentMethodActionCreator, PaymentRequestOptions } from "../..";
-import { CheckoutStore, InternalCheckoutSelectors } from "../../../checkout";
-import { OrderRequestBody } from "../../../order";
-import { OrderFinalizationNotRequiredError } from "../../../order/errors";
-import { PaymentArgumentInvalidError } from "../../errors";
-import { assertApplePayWindow } from "./is-apple-pay-window";
+import { RequestSender } from '@bigcommerce/request-sender';
+
+import { PaymentStrategy } from '..';
+import { Payment, PaymentMethod, PaymentMethodActionCreator, PaymentRequestOptions } from '../..';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Order, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { PaymentArgumentInvalidError } from '../../errors';
+
+import { assertApplePayWindow } from './is-apple-pay-window';
 
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
     constructor(
         private _store: CheckoutStore,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _requestSender: RequestSender,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator
     ) { }
 
     initialize(): Promise<InternalCheckoutSelectors> {
@@ -19,10 +23,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = payload;
         const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
-
-        const request = this._getBaseRequest(cart);
-
+        const order = state.order.getOrderOrThrow();
+        const request = this._getBaseRequest(order);
         const applePaySession = new ApplePaySession(1, request);
 
         if (!payment) {
@@ -39,10 +41,9 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         assertApplePayWindow(window);
 
-        console.log(paymentMethod, payload);
-        this._handleApplePayEvents(applePaySession);
+        this._handleApplePayEvents(applePaySession, paymentMethod, order);
 
-        applePaySession.begin()
+        applePaySession.begin();
 
         // Applepay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise<never>(() => {});
@@ -56,45 +57,120 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _getBaseRequest(cart: any): ApplePayJS.ApplePayPaymentRequest {
+    private _getBaseRequest(order: Order): ApplePayJS.ApplePayPaymentRequest {
+        console.log(order);
+
         return {
             countryCode: 'US',
-            currencyCode: cart.currency.code,
+            currencyCode: 'USD',
             merchantCapabilities: ['supports3DS'],
             supportedNetworks: [
-                "visa",
-                "masterCard",
-                "amex",
-                'discover',
+                'visa',
+                'masterCard',
+                'amex',
+                'discover'
             ],
             lineItems: [
                 {
-                    label: "Sales Tax",
-                    amount: "0.00"
+                    label: order.taxes[0].name,
+                    amount: `${order.taxes[0].amount}`,
                 },
                 {
-                    label: "Shipping",
-                    amount: "0.00"
-                }
+                    label: 'Shipping',
+                    amount: `${order.shippingCostTotal}`,
+                },
             ],
             total: {
-                label: "Total",
-                amount: cart.cartAmount,
-                type: "final"
+                label: 'Total',
+                amount: `${order.orderAmount}`,
+                type: 'final',
             },
+        };
+    }
+
+    private async _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, order: Order) {
+        applePaySession.onvalidatemerchant = async () => {
+            try {
+                const { body: merchantSession } = await this._onValidateMerchant(paymentMethod);
+                console.log(merchantSession);
+                applePaySession.completeMerchantValidation(merchantSession);
+            } catch (err) {
+                throw new Error('Merchant validation failed');
+            }
+        };
+
+        applePaySession.oncancel = () => {
+            console.log('pay session cancelled');
+
+            return new Promise<never>(() => {});
+        };
+
+        // Implement callback onpaymentmethodselected
+        // Figure out how to select different card
+
+
+        applePaySession.onpaymentauthorized = async (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) => {
+            this._onPaymentAuthorized(event, order, paymentMethod)
         }
     }
 
-    private _handleApplePayEvents(applePaySession: any) {
-        console.log('applePaySession is: ', applePaySession);
+    private async _onValidateMerchant(paymentData: PaymentMethod) {
+        const endpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
+        const appleValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
+        const body = [
+            `validationUrl=${appleValidationUrl}`,
+            `merchantIdentifier=${paymentData.initializationData.merchantId}`,
+            `displayName=${paymentData.initializationData.storeName}`,
+            `domainName=${window.location.hostname}`,
+        ].join('&');
 
-        // Implement callback handler for onvalidatemerchant
+        return this._requestSender.post(endpoint, {
+            credentials: false,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-XSRF-TOKEN': null,
+            },
+            body,
+        });
+    }
 
-        // Implement callback handler for onshippingcontactselected
-        // this is when we dont pass shipping address to applepay
+    private async _onPaymentAuthorized(event: ApplePayJS.ApplePayPaymentAuthorizedEvent, order: Order, paymentMethod: PaymentMethod) { 
+        console.log('in payment authorized', event, paymentMethod, order);
+        const { token } = event.payment;
+        const payment: Payment = {
+            gatewayId: paymentMethod.initializationData.gateway,
+            methodId: paymentMethod.id,
+            // apple_pay_token: {
+            //     payment_data: token.paymentData,
+            //     payment_method: token.paymentMethod,
+            //     transaction_id: token.transactionIdentifier
+            // },
+        }
+        // const bigpayPaymentURL = `https://bigpay.service.bcdev/api/public/v1/orders/payments`;
+        console.log(payment.additionalAction, token);
 
-        // Implement callback handler for onpaymentauthorized
+        // var payload = {
+        //     useStoreCredit: false,
+        //     payment: {
+        //         name: ApplePay.settings.gateway,
+        //         paymentData: {
+        //             applePayToken: e.payment.token
+        //         }
+        //     },
+        // };
 
-        return;
+        // ApplePay.request('POST', ApplePay.LEGACY_CHECKOUT_ENDPOINT + '/order', payload).then(function () {
+        //     session.completePayment(ApplePaySession.STATUS_SUCCESS);
+        //     window.location = ApplePay.settings.confirmationLink;
+        // }, function (err) {
+        //     var safePayment = e.payment;
+        //     safePayment.token = 'redacted';
+        //     ApplePay.log('error', 'order creation and payment failed', {
+        //         payment: safePayment,
+        //         response: err
+        //     });
+        //     session.completePayment(ApplePay.appleStatusForFailedResponse(err));
+        // });
     }
 }
