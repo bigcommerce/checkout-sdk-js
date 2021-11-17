@@ -8,9 +8,9 @@ import PaymentStrategy from '../payment-strategy';
 
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PPSDKCompletedPayments } from './ppsdk-completed-payments';
-import { PaymentProcessor } from './ppsdk-payment-processor';
-import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
+import { PaymentProcessor } from './ppsdk-sub-strategy';
+import { PaymentProcessorRegistry } from './ppsdk-sub-strategy-registry';
 
 export class PPSDKStrategy implements PaymentStrategy {
     private _paymentProcessor?: PaymentProcessor;

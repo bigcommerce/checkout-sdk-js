@@ -9,7 +9,7 @@ import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
 
-import { createPaymentProcessorRegistry } from './create-ppsdk-payment-processor-registry';
+import { createPaymentProcessorRegistry } from './create-ppsdk-sub-strategy-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
 import { PPSDKStrategy } from './ppsdk-strategy';
 import { createStepHandler } from './step-handler';

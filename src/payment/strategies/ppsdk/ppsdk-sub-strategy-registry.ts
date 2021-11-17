@@ -4,8 +4,8 @@ import { Registry } from '../../../common/registry';
 import { PPSDKPaymentMethod } from '../../ppsdk-payment-method';
 
 import { isNone } from './initialization-strategies';
-import { PaymentProcessor } from './ppsdk-payment-processor';
-import { PaymentProcessorType } from './ppsdk-payment-processor-type';
+import { PaymentProcessor } from './ppsdk-sub-strategy';
+import { PaymentProcessorType } from './ppsdk-sub-strategy-type';
 
 const getToken = cond([
     [isNone, constant(PaymentProcessorType.NONE)],

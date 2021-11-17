@@ -4,7 +4,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { StepHandler } from '../step-handler';
 import { ContinueHandler } from '../step-handler/continue-handler';
 
-import { NonePaymentProcessor } from './none-payment-processor';
+import { NonePaymentProcessor } from './none-sub-strategy';
 
 describe('NonePaymentProcessor', () => {
     const requestSender = createRequestSender();

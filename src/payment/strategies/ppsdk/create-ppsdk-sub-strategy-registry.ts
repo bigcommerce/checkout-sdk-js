@@ -1,9 +1,9 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { NonePaymentProcessor } from './payment-processors';
-import { PaymentProcessorRegistry } from './ppsdk-payment-processor-registry';
-import { PaymentProcessorType } from './ppsdk-payment-processor-type';
+import { PaymentProcessorRegistry } from './ppsdk-sub-strategy-registry';
+import { PaymentProcessorType } from './ppsdk-sub-strategy-type';
 import { StepHandler } from './step-handler';
+import { NonePaymentProcessor } from './sub-strategies';
 
 export const createPaymentProcessorRegistry = (requestSender: RequestSender, stepHandler: StepHandler) => {
     const registry = new PaymentProcessorRegistry();

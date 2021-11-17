@@ -1,7 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { PaymentProcessor, ProcessorSettings } from '../ppsdk-payment-processor';
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
+import { PaymentProcessor, ProcessorSettings } from '../ppsdk-sub-strategy';
 import { StepHandler } from '../step-handler';
 
 export class NonePaymentProcessor implements PaymentProcessor {
