@@ -9,17 +9,17 @@ import PaymentStrategy from '../payment-strategy';
 import { getPPSDKMethod } from './get-ppsdk-payment-method';
 import { PPSDKCompletedPayments } from './ppsdk-completed-payments';
 import { PaymentResumer } from './ppsdk-payment-resumer';
-import { PaymentProcessor } from './ppsdk-sub-strategy';
-import { PaymentProcessorRegistry } from './ppsdk-sub-strategy-registry';
+import { SubStrategy } from './ppsdk-sub-strategy';
+import { SubStrategyRegistry } from './ppsdk-sub-strategy-registry';
 
 export class PPSDKStrategy implements PaymentStrategy {
-    private _paymentProcessor?: PaymentProcessor;
+    private _subStrategy?: SubStrategy;
     private _completedPayments: PPSDKCompletedPayments;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentProcessorRegistry: PaymentProcessorRegistry,
+        private _subStrategyRegistry: SubStrategyRegistry,
         private _paymentResumer: PaymentResumer,
         browserStorage: BrowserStorage
     ) {
@@ -35,9 +35,9 @@ export class PPSDKStrategy implements PaymentStrategy {
 
         const { methodId } = options;
         const { payment, ...order } = payload;
-        const { _paymentProcessor: paymentProcessor } = this;
+        const { _subStrategy: subStrategy } = this;
 
-        if (!paymentProcessor) {
+        if (!subStrategy) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -49,7 +49,7 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingOrder);
         }
 
-        await paymentProcessor.process({ methodId, payment, bigpayBaseUrl, token });
+        await subStrategy.process({ methodId, payment, bigpayBaseUrl, token });
 
         return this._store.getState();
     }
@@ -95,9 +95,9 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        this._paymentProcessor = this._paymentProcessorRegistry.getByMethod(paymentMethod);
+        this._subStrategy = this._subStrategyRegistry.getByMethod(paymentMethod);
 
-        if (!this._paymentProcessor) {
+        if (!this._subStrategy) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 

@@ -1,1 +1,1 @@
-export { NonePaymentProcessor } from './none-sub-strategy';
+export { NoneSubStrategy } from './none-sub-strategy';
