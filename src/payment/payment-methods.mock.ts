@@ -645,6 +645,29 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
     };
 }
 
+export function getStripeUPE(method: string = 'card', shouldUseIndividualCardFields: boolean = false, isHostedFormEnabled: boolean = false, shouldReusePaymentIntent: boolean = false): PaymentMethod {
+    return {
+        id: method,
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Stripe',
+            merchantId: '',
+            testMode: true,
+            isHostedFormEnabled,
+        },
+        initializationData: {
+            stripePublishableKey: 'key',
+            useIndividualCardFields: shouldUseIndividualCardFields,
+            reusePaymentIntent: shouldReusePaymentIntent,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        returnUrl: 'http://www.example.com',
+    };
+}
+
 export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     return {
         id: 'adyenv2',
@@ -822,6 +845,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getQuadpay(),
         getSquare(),
         getStripeV3(),
+        getStripeUPE(),
         getUnsupportedPPSDK(),
         getApplePay(),
         getZip(),

@@ -18,7 +18,7 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
+    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | StripeUPEIntent | WithMollieIssuerInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -184,6 +184,13 @@ interface AdyenV2Card {
 }
 
 interface StripeV3Intent {
+    credit_card_token: {
+        token: string;
+    };
+    confirm: boolean;
+}
+
+interface StripeUPEIntent {
     credit_card_token: {
         token: string;
     };

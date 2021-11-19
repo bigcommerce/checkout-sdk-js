@@ -19,6 +19,7 @@ import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
+import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 
 /**
@@ -202,6 +203,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeV3.
      */
     stripev3?: StripeV3PaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the StripeUPE payment method.
+     * They can be omitted unless you need to support StripeUPE.
+     */
+    stripeupe?: StripeUPEPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Mollie payment method.
