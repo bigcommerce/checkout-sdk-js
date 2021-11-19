@@ -1,15 +1,15 @@
 import BoltError from './bolt-error';
 
-describe('Bolt errors', () => {
+describe.only('Bolt errors', () => {
     it('Get Bolt error', () => {
         const error = new BoltError('1000');
 
-        expect(error.message).toBe('Your card details could not be verified. Please double check them and try again.');
+        expect(error.body).toEqual({errors: [{ code: 'invalid_number' }]});
     });
 
     it('default error is exist', () => {
         const error = new BoltError('incorrect error code');
 
-        expect(error.message).toBeTruthy();
+        expect(error.body).toEqual({errors: [{ code: 'general_error' }]});
     });
 });
