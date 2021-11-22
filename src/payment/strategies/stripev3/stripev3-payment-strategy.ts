@@ -32,7 +32,6 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _stripeCardElements?: StripeCardElements;
     private _useIndividualCardFields?: boolean;
     private _hostedForm?: HostedForm;
-    private _reusePaymentIntent?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -55,11 +54,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         this._initializeOptions = stripev3;
 
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields, reusePaymentIntent } } = paymentMethod;
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
         const form = this._getInitializeOptions().form;
 
         this._useIndividualCardFields = useIndividualCardFields;
-        this._reusePaymentIntent = reusePaymentIntent;
 
         if (this._isCreditCard(methodId) && this._shouldShowTSVHostedForm(methodId, gatewayId) && form) {
             this._hostedForm = await this._mountCardVerificationFields(form);
@@ -115,7 +113,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 confirm: false,
             };
 
-            if (method === StripeElementType.CreditCard && this._reusePaymentIntent === true) {
+            if (method === StripeElementType.CreditCard) {
                 formattedPayload.client_token = clientToken;
             }
 
@@ -474,14 +472,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         if (isThreeDSecureRequiredError) {
             const clientSecret = error.body.three_ds_result.token;
             let result;
-            let needsConfirm = false;
+            const needsConfirm = false;
 
-            if (this._reusePaymentIntent) {
-                result = await this._getStripeJs().confirmCardPayment(clientSecret);
-            } else {
-                result = await this._getStripeJs().handleCardAction(clientSecret);
-                needsConfirm = true;
-            }
+            result = await this._getStripeJs().confirmCardPayment(clientSecret);
 
             const { id: token } = result.paymentIntent || { id: '' };
 
