@@ -741,7 +741,9 @@ export default function createPaymentStrategyRegistry(
         new ApplePayPaymentStrategy(
             store,
             requestSender,
-            paymentMethodActionCreator
+            orderActionCreator,
+            paymentMethodActionCreator,
+            paymentActionCreator
         )
     );
 

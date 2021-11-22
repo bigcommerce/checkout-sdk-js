@@ -42,6 +42,7 @@ export default class PaymentActionCreator {
                         this._paymentRequestTransformer.transform(payment, store.getState())
                     );
                 } catch (error) {
+                    console.log('error is', error);
                     const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
 
                     return await this._paymentRequestSender.submitPayment(
