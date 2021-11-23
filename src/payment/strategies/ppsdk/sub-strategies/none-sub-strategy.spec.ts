@@ -4,19 +4,19 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { StepHandler } from '../step-handler';
 import { ContinueHandler } from '../step-handler/continue-handler';
 
-import { NonePaymentProcessor } from './none-payment-processor';
+import { NoneSubStrategy } from './none-sub-strategy';
 
-describe('NonePaymentProcessor', () => {
+describe('NoneSubStrategy', () => {
     const requestSender = createRequestSender();
     const stepHandler = new StepHandler(new ContinueHandler(new FormPoster()));
-    const nonePaymentProcessor = new NonePaymentProcessor(requestSender, stepHandler);
+    const noneSubStrategy = new NoneSubStrategy(requestSender, stepHandler);
 
     describe('#process', () => {
         it('posts the Payment Method ID to the BigPay Payments endpoint', async () => {
             const requestSenderSpy = jest.spyOn(requestSender, 'post').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await nonePaymentProcessor.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
+            await noneSubStrategy.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
             expect(requestSenderSpy).toBeCalledWith(
                 'https://some-domain.com/payments',
@@ -35,7 +35,7 @@ describe('NonePaymentProcessor', () => {
             jest.spyOn(requestSender, 'post').mockResolvedValue({ body: 'some-api-response' });
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
-            await nonePaymentProcessor.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
+            await noneSubStrategy.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' });
 
             expect(stepHandlerSpy).toBeCalledWith({ body: 'some-api-response' });
         });
@@ -44,7 +44,7 @@ describe('NonePaymentProcessor', () => {
             jest.spyOn(requestSender, 'post').mockResolvedValue({});
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
-            await expect(nonePaymentProcessor.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' }))
+            await expect(noneSubStrategy.process({ methodId: 'some-id.some-method', bigpayBaseUrl: 'https://some-domain.com', token: 'some-token' }))
                 .resolves.toStrictEqual({ someValue: 12345 });
         });
     });

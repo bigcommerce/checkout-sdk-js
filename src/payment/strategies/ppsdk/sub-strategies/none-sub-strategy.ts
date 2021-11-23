@@ -1,16 +1,16 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { PaymentProcessor, ProcessorSettings } from '../ppsdk-payment-processor';
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
+import { SubStrategy, SubStrategySettings } from '../ppsdk-sub-strategy';
 import { StepHandler } from '../step-handler';
 
-export class NonePaymentProcessor implements PaymentProcessor {
+export class NoneSubStrategy implements SubStrategy {
     constructor(
         private _requestSender: RequestSender,
         private _stepHandler: StepHandler
     ) {}
 
-    process({ methodId, bigpayBaseUrl, token }: ProcessorSettings) {
+    process({ methodId, bigpayBaseUrl, token }: SubStrategySettings) {
         const body = { payment_method_id: methodId };
         const options = {
             credentials: false,

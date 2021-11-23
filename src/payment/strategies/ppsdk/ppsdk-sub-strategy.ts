@@ -1,12 +1,12 @@
 import { OrderPaymentRequestBody } from '../../../order';
 
-export interface ProcessorSettings {
+export interface SubStrategySettings {
     token: string;
     methodId: string;
     payment?: OrderPaymentRequestBody;
     bigpayBaseUrl: string;
 }
 
-export interface PaymentProcessor {
-    process(settings: ProcessorSettings): Promise<void>;
+export interface SubStrategy {
+    process(settings: SubStrategySettings): Promise<void>;
 }
