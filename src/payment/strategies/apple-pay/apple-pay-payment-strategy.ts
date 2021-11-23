@@ -8,8 +8,13 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 ​
 import { assertApplePayWindow } from './is-apple-pay-window';
+
+export const validationEndpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
+const appleValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
 ​
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
+    applePaySession!: ApplePaySession;
+
     constructor(
         private _store: CheckoutStore,
         private _requestSender: RequestSender,
@@ -27,7 +32,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const state = this._store.getState();
         const order = state.order.getOrderOrThrow();
         const request = this._getBaseRequest(order);
-        const applePaySession = new ApplePaySession(1, request);
+        this.applePaySession = new ApplePaySession(1, request);
 ​
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -44,13 +49,12 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 ​
         assertApplePayWindow(window);
-
 ​
-        applePaySession.begin();
+        this.applePaySession.begin();
 ​
         // Applepay will handle the rest of the flow so return a promise that doesn't really resolve
-        return new Promise((_, reject) => {
-            this._handleApplePayEvents(applePaySession, paymentMethod, order, reject);
+        return new Promise((resolve, reject) => {
+            this._handleApplePayEvents(paymentMethod, order, reject, resolve);
         });
     }
 ​
@@ -91,32 +95,26 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         };
     }
 ​
-    private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, order: Order, reject: any) {
-        applePaySession.onvalidatemerchant = async () => {
+    private _handleApplePayEvents(paymentMethod: PaymentMethod, order: Order, reject: any, resolve: any) {
+        this.applePaySession.onvalidatemerchant = async () => {
             try {
                 const { body: merchantSession } = await this._onValidateMerchant(paymentMethod);
-                applePaySession.completeMerchantValidation(merchantSession);
+                this.applePaySession.completeMerchantValidation(merchantSession);
             } catch (err) {
                 throw new Error('Merchant validation failed');
             }
         };
 ​
-        applePaySession.oncancel = async () => {
+        this.applePaySession.oncancel = async () => {
             reject(new PaymentMethodCancelledError('Continue with applepay'));
         };
 ​
-        // Implement callback onpaymentmethodselected
-        // Figure out how to select different card
-​
-​
-        applePaySession.onpaymentauthorized = async (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) => {
-            this._onPaymentAuthorized(applePaySession, event, order, paymentMethod);
+        this.applePaySession.onpaymentauthorized = async (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) => {
+            this._onPaymentAuthorized(event, paymentMethod, resolve);
         };
     }
 ​
     private async _onValidateMerchant(paymentData: PaymentMethod) {
-        const endpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
-        const appleValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
         const body = [
             `validationUrl=${appleValidationUrl}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,
@@ -124,7 +122,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             `domainName=${window.location.hostname}`,
         ].join('&');
 ​
-        return this._requestSender.post(endpoint, {
+        return this._requestSender.post(validationEndpoint, {
             credentials: false,
             headers: {
                 'Accept': 'application/json',
@@ -135,11 +133,15 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         });
     }
 ​
-    private async _onPaymentAuthorized(applePaySession: ApplePaySession, event: ApplePayJS.ApplePayPaymentAuthorizedEvent, order: Order, paymentMethod: PaymentMethod) {
-        console.log('in payment authorized', event, paymentMethod, order);
+    private async _onPaymentAuthorized(
+        event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
+        paymentMethod: PaymentMethod,
+        resolve: any,
+    ) {
+        console.log('in payment authorized', event, paymentMethod);
         const { token } = event.payment;
         const payment: Payment = {
-            methodId: paymentMethod.id,
+            methodId: 'nonce',
             paymentData: {
                 formattedPayload: {
                     apple_pay_token: {
@@ -159,34 +161,13 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 ​
         if ( true ) {
             // payment sheet will be hidden
-            applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
+            this.applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
             // window.location.replace(redirectUrl);
         } else {
             // payment sheet will be hidden even if failure
-            applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+            this.applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
         }
-​
-        // var payload = {
-        //     useStoreCredit: false,
-        //     payment: {
-        //         name: ApplePay.settings.gateway,
-        //         paymentData: {
-        //             applePayToken: e.payment.token
-        //         }
-        //     },
-        // };
-​
-        // ApplePay.request('POST', ApplePay.LEGACY_CHECKOUT_ENDPOINT + '/order', payload).then(function () {
-        //     session.completePayment(ApplePaySession.STATUS_SUCCESS);
-        //     window.location = ApplePay.settings.confirmationLink;
-        // }, function (err) {
-        //     var safePayment = e.payment;
-        //     safePayment.token = 'redacted';
-        //     ApplePay.log('error', 'order creation and payment failed', {
-        //         payment: safePayment,
-        //         response: err
-        //     });
-        //     session.completePayment(ApplePay.appleStatusForFailedResponse(err));
-        // });
+
+        resolve(this._store.getState());
     }
 }
