@@ -44,10 +44,7 @@ export default class PaymentRequestTransformer {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
-        console.log('payment method is:', paymentMethod);
-        console.log('payment methods:', checkoutState.paymentMethods.getPaymentMethods())
-
-        const abc = {
+        return {
             additionalAction: payment.additionalAction,
             authToken,
             customer: internalCustomer,
@@ -73,9 +70,6 @@ export default class PaymentRequestTransformer {
                 'storeName',
             ]),
         };
-        console.log('payload is: ', abc);
-
-        return abc;
     }
 
     transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): PaymentRequestBody {
@@ -113,7 +107,6 @@ export default class PaymentRequestTransformer {
     }
 
     private _transformPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod {
-        console.log('payment method', paymentMethod);
         if (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) {
             return { ...paymentMethod, gateway: paymentMethod.id };
         }

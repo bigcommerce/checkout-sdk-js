@@ -15,7 +15,6 @@ export default class PaymentRequestSender {
     ) {}
 
     submitPayment(payload: PaymentRequestBody): Promise<Response<any>> {
-        console.log('final', payload);
         return new Promise((resolve, reject) => {
             this._client.submitPayment(payload, (error: any, response: any) => {
                 if (error) {

@@ -30,6 +30,7 @@ import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afte
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import ApplePayPaymentStrategy from './strategies/apple-pay/apple-pay-payment-strategy';
+import ApplePaySessionFactory from './strategies/apple-pay/apple-pay-session-factory';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
@@ -743,7 +744,8 @@ export default function createPaymentStrategyRegistry(
             requestSender,
             orderActionCreator,
             paymentMethodActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
+            new ApplePaySessionFactory()
         )
     );
 

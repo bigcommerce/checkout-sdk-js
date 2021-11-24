@@ -1,18 +1,23 @@
-export function getMockApplePaySession() {
-    class MockApplePaySession {
-        static supportsVersion: () => boolean;
-        static canMakePayments: () => boolean;
 
-        completePayment = jest.fn();
+export class MockApplePaySession {
+    static supportsVersion: () => boolean;
+    static canMakePayments: () => boolean;
 
-        completeMerchantValidation() {
-            return true;
-        }
+    completePayment = jest.fn();
 
-        begin() {
-            console.log('it begins');
-        }
+    completeMerchantValidation() {
+        return true;
     }
-  
-    return MockApplePaySession;
-  };
+
+    onvalidatemerchant() { }
+
+    onpaymentauthorized(event?: ApplePayJS.ApplePayPaymentAuthorizedEvent) {
+        return event;
+    }
+
+    oncancel() { }
+
+    begin() {
+        return true;
+    }
+}
