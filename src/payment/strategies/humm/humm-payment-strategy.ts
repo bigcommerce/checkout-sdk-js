@@ -3,9 +3,11 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { PaymentStrategy } from '..';
 import { PaymentActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 export default class HummPaymentStrategy implements PaymentStrategy {
@@ -13,7 +15,8 @@ export default class HummPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator
     ) { }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -21,6 +24,12 @@ export default class HummPaymentStrategy implements PaymentStrategy {
 
         if (!payment?.methodId) {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
+        }
+
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(payment.methodId);
+        if (!paymentMethod.initializationData?.processable) {
+            throw new InvalidArgumentError('Humm cannot process your payment for this order, please select another payment method');
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
