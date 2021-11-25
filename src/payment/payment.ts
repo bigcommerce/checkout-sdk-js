@@ -164,10 +164,10 @@ interface BoltInstrument {
 
 interface AppleInstrument {
     apple_pay_token: {
-        payment_data: any,
-        payment_method: ApplePayJS.ApplePayPaymentMethod,
-        transaction_id: string;
-    }
+        payment_data: ApplePayJS.ApplePayPaymentToken['paymentData'];
+        payment_method: ApplePayJS.ApplePayPaymentToken['paymentMethod'];
+        transaction_id: ApplePayJS.ApplePayPaymentToken['transactionIdentifier'];
+    };
 }
 
 interface AdyenV2Token extends FormattedVaultedInstrument {

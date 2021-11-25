@@ -1,14 +1,18 @@
 import { RequestSender } from '@bigcommerce/request-sender';
-​
-import { PaymentStrategy } from '..';
-import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator, PaymentRequestOptions } from '../..';
-import { Cart } from '../../../cart';
+
+import { Cart } from '../../../cart';​
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
+import Payment from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
+
 import ApplePaySessionFactory from './apple-pay-session-factory';
-​
 import { assertApplePayWindow } from './is-apple-pay-window';
 
 export const validationEndpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
@@ -82,7 +86,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 'visa',
                 'masterCard',
                 'amex',
-                'discover'
+                'discover',
             ],
             lineItems: [],
             total: {
@@ -106,9 +110,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         applePaySession.oncancel = async () =>
             promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
 ​
-        applePaySession.onpaymentauthorized = async (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) => {
+        applePaySession.onpaymentauthorized = (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) =>
             this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise.resolve);
-        };
     }
 ​
     private async _onValidateMerchant(paymentData: PaymentMethod) {
@@ -122,7 +125,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         return this._requestSender.post(validationEndpoint, {
             credentials: false,
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-XSRF-TOKEN': null,
             },
@@ -144,7 +147,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                     apple_pay_token: {
                         payment_data: token.paymentData,
                         payment_method: token.paymentMethod,
-                        transaction_id: token.transactionIdentifier
+                        transaction_id: token.transactionIdentifier,
                     },
                 },
             },
