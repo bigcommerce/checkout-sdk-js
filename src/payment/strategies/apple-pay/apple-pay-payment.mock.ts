@@ -5,6 +5,8 @@ export class MockApplePaySession {
 
     completePayment = jest.fn();
 
+    begin = jest.fn();
+
     completeMerchantValidation() {
         return true;
     }
@@ -16,8 +18,4 @@ export class MockApplePaySession {
     }
 
     oncancel() { }
-
-    begin() {
-        return true;
-    }
 }

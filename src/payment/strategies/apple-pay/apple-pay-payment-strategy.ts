@@ -13,6 +13,11 @@ import { assertApplePayWindow } from './is-apple-pay-window';
 
 export const validationEndpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
 const appleValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
+
+interface ApplePayPromise {
+    resolve(value: InternalCheckoutSelectors | PromiseLike<InternalCheckoutSelectors>): void;
+    reject(reason?: Error): void;
+}
 ​
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
     constructor(
@@ -88,7 +93,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         };
     }
 ​
-    private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, promise: any) {
+    private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, promise: ApplePayPromise) {
         applePaySession.onvalidatemerchant = async () => {
             try {
                 const { body: merchantSession } = await this._onValidateMerchant(paymentMethod);
@@ -98,9 +103,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             }
         };
 ​
-        applePaySession.oncancel = async () => {
+        applePaySession.oncancel = async () =>
             promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
-        };
 ​
         applePaySession.onpaymentauthorized = async (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) => {
             this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise.resolve);
@@ -130,7 +134,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        promise: any
+        resolve: ApplePayPromise['resolve']
     ) {
         const { token } = event.payment;
         const payment: Payment = {
@@ -146,18 +150,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             },
         };
 
-        console.log(applePaySession, promise);
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            .then(() => {
+                applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-        return promise.resolve(this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
-            // .then(() => {
-            //     console.log('this is fired');
-            //     applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
-            //     return promise.resolve(this._store.getState());
-            // })
-            // .catch(error => {
-            //     applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
-                
-            //     return promise.reject(error);
-            // })
+                return resolve(this._store.getState());
+            })
+            .catch(() => {
+                applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+            });
     }
 }
