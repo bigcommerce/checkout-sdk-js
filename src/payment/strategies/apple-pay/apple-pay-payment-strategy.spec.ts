@@ -149,7 +149,7 @@ describe('ApplePayPaymentStrategy', () => {
             }
         });
 
-        it('throws error when apple payment sheet is cancelled', async () => {
+        it('throws error when Apple Pay payment sheet is cancelled', async () => {
             jest.spyOn(requestSender, 'post')
                 .mockRejectedValue(false);
 
@@ -163,7 +163,7 @@ describe('ApplePayPaymentStrategy', () => {
             expect(promise).rejects.toThrow(new PaymentMethodCancelledError('Continue with applepay'));
         });
 
-        it('submits payment when shopper authorized', async () => {
+        it('submits payment when shopper authorises', async () => {
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
