@@ -124,8 +124,12 @@ describe('ApplePayPaymentStrategy', () => {
             });
             strategy.execute(payload);
 
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
+
             await new Promise(resolve => process.nextTick(resolve));
-            await applePaySession.onvalidatemerchant({});
+            await applePaySession.onvalidatemerchant(validateEvent);
 
             expect(applePaySession.begin).toHaveBeenCalled();
             expect(requestSender.post).toHaveBeenCalled();

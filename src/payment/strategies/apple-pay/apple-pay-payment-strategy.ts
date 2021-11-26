@@ -57,7 +57,11 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = getPaymentMethodOrThrow(methodId);
 
-        await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
+        await this._store.dispatch(this._orderActionCreator.submitOrder(
+            {
+                useStoreCredit: payload.useStoreCredit,
+            }, options)
+        );
 ​
         applePaySession.begin();
 ​
