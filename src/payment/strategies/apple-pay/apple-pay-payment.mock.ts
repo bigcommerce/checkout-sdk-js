@@ -11,7 +11,9 @@ export class MockApplePaySession {
         return true;
     }
 
-    onvalidatemerchant() { }
+    onvalidatemerchant(event: ApplePayJS.ApplePayValidateMerchantEvent) {
+        return event;
+    }
 
     onpaymentauthorized(event?: ApplePayJS.ApplePayPaymentAuthorizedEvent) {
         return event;

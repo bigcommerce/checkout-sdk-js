@@ -15,8 +15,7 @@ import PaymentStrategy from '../payment-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import { assertApplePayWindow } from './is-apple-pay-window';
 
-export const validationEndpoint = 'https://bigpay.service.bcdev/api/public/v1/payments/applepay/validate_merchant';
-const appleValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
+export const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
 interface ApplePayPromise {
     resolve(value: InternalCheckoutSelectors | PromiseLike<InternalCheckoutSelectors>): void;
@@ -46,6 +45,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         }
 
         const request = this._getBaseRequest(cart);
+        assertApplePayWindow(window);
         const applePaySession = this._sessionFactory.create(request);
 ​
         const { methodId } = payment;
@@ -59,11 +59,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 ​
-        assertApplePayWindow(window);
-​
         applePaySession.begin();
 ​
-        // Applepay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise((resolve, reject) => {
             this._handleApplePayEvents(applePaySession, paymentMethod, { resolve, reject });
         });
@@ -98,9 +95,9 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     }
 ​
     private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, promise: ApplePayPromise) {
-        applePaySession.onvalidatemerchant = async () => {
+        applePaySession.onvalidatemerchant = async event => {
             try {
-                const { body: merchantSession } = await this._onValidateMerchant(paymentMethod);
+                const { body: merchantSession } = await this._onValidateMerchant(paymentMethod, event);
                 applePaySession.completeMerchantValidation(merchantSession);
             } catch (err) {
                 throw new Error('Merchant validation failed');
@@ -111,18 +108,18 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
 ​
         applePaySession.onpaymentauthorized = (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) =>
-            this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise.resolve);
+            this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise);
     }
 ​
-    private async _onValidateMerchant(paymentData: PaymentMethod) {
+    private async _onValidateMerchant(paymentData: PaymentMethod, event: ApplePayJS.ApplePayValidateMerchantEvent) {
         const body = [
-            `validationUrl=${appleValidationUrl}`,
+            `validationUrl=${event.validationURL}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,
             `displayName=${paymentData.initializationData.storeName}`,
             `domainName=${window.location.hostname}`,
         ].join('&');
 ​
-        return this._requestSender.post(validationEndpoint, {
+        return this._requestSender.post(validationEndpoint(paymentData.initializationData.paymentsUrl), {
             credentials: false,
             headers: {
                 Accept: 'application/json',
@@ -137,7 +134,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        resolve: ApplePayPromise['resolve']
+        promise: ApplePayPromise
     ) {
         const { token } = event.payment;
         const payment: Payment = {
@@ -153,14 +150,15 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             },
         };
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
-            .then(() => {
-                applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
+        try {
+            await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+            applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-                return resolve(this._store.getState());
-            })
-            .catch(() => {
-                applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
-            });
+            return promise.resolve(this._store.getState());;
+        } catch(error) {
+            applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+
+            return promise.reject(new Error('Payment failed'));
+        }
     }
 }

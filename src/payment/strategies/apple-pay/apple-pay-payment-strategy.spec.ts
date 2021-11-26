@@ -125,7 +125,7 @@ describe('ApplePayPaymentStrategy', () => {
             strategy.execute(payload);
 
             await new Promise(resolve => process.nextTick(resolve));
-            await applePaySession.onvalidatemerchant();
+            await applePaySession.onvalidatemerchant({});
 
             expect(applePaySession.begin).toHaveBeenCalled();
             expect(requestSender.post).toHaveBeenCalled();
@@ -142,8 +142,12 @@ describe('ApplePayPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
+            const validateEvent = {
+                validationURL: 'test',
+            } as ApplePayJS.ApplePayValidateMerchantEvent;
+
             try {
-                await applePaySession.onvalidatemerchant();
+                await applePaySession.onvalidatemerchant(validateEvent);
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
             }
