@@ -93,7 +93,7 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         it('initializes the strategy successfully', async () => {
-            await expect(strategy.initialize()).resolves.toEqual(store.getState());
+            await expect(strategy.initialize({methodId: ''})).resolves.toEqual(store.getState());
         });
     });
 

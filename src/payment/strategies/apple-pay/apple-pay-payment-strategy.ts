@@ -2,6 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Cart } from '../../../cart';​
 import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { StoreConfig } from '../../../config';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -10,7 +11,7 @@ import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import ApplePaySessionFactory from './apple-pay-session-factory';
@@ -24,6 +25,9 @@ interface ApplePayPromise {
 }
 ​
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
+    private _shippingLabel = '';
+    private _subTotalLabel = '';
+
     constructor(
         private _store: CheckoutStore,
         private _requestSender: RequestSender,
@@ -33,7 +37,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _sessionFactory: ApplePaySessionFactory
     ) { }
 ​
-    initialize(): Promise<InternalCheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        this._shippingLabel = options?.applepay?.shippingLabel || '';
+        this._subTotalLabel = options?.applepay?.subtotalLabel || '';
+
         return Promise.resolve(this._store.getState());
     }
 ​
@@ -84,14 +91,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 ​
     private _getBaseRequest(cart: Cart, checkout: Checkout, config: StoreConfig): ApplePayJS.ApplePayPaymentRequest {
         const { storeProfile: { storeCountryCode, storeName } } = config;
-        let lineItems: ApplePayJS.ApplePayLineItem[] = [
-            { label: 'Sub total', amount: `${checkout.subtotal.toFixed(cart.currency.decimalPlaces)}`},
+        const lineItems: ApplePayJS.ApplePayLineItem[] = [
+            { label: this._subTotalLabel, amount: `${checkout.subtotal.toFixed(cart.currency.decimalPlaces)}`},
         ];
 
         checkout.taxes.forEach(tax =>
             lineItems.push({ label: tax.name, amount: `${tax.amount}` }));
 
-        lineItems.push({ label: 'Shipping', amount: `${checkout.shippingCostTotal}`});
+        lineItems.push({ label: this._shippingLabel, amount: `${checkout.shippingCostTotal}`});
 
         return {
             countryCode: storeCountryCode,
@@ -172,11 +179,11 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-            return promise.resolve(this._store.getState());;
-        } catch(error) {
+            return promise.resolve(this._store.getState());
+        } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
-            return promise.reject(new Error('Payment failed'));
+            return promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
         }
     }
 }
