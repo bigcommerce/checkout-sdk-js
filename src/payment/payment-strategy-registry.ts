@@ -59,6 +59,10 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
             return PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         }
 
+        if (paymentMethod.gateway === PaymentStrategyType.ADYENV3) {
+            return PaymentStrategyType.ADYENV2;
+        }
+
         if (paymentMethod.gateway === PaymentStrategyType.CHECKOUTCOM) {
             return paymentMethod.id in checkoutcomStrategies
                 ? checkoutcomStrategies[paymentMethod.id]

@@ -12,9 +12,11 @@ export default class AdyenV2ScriptLoader {
     ) { }
 
     async load(configuration: AdyenConfiguration): Promise<AdyenClient> {
+        const adyenSdkVersion = configuration.hasOwnProperty('clientKey') ? '4.7.4' : '3.10.1';
+
         await Promise.all([
-            this._stylesheetLoader.loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css`),
-            this._scriptLoader.loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js`),
+            this._stylesheetLoader.loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/${adyenSdkVersion}/adyen.css`),
+            this._scriptLoader.loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/${adyenSdkVersion}/adyen.js`),
         ]);
 
         if (!this._window.AdyenCheckout) {

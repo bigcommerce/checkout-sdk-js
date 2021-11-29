@@ -23,8 +23,10 @@ describe('AdyenV2ScriptLoader', () => {
         const adyenClient = getAdyenClient();
         const configuration = getAdyenConfiguration();
         const configurationWithClientKey = getAdyenConfiguration(false);
-        const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js';
-        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css';
+        const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/4.7.4/adyen.js';
+        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/4.7.4/adyen.css';
+        const legacyJsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js';
+        const legacyCssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css';
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
@@ -45,18 +47,22 @@ describe('AdyenV2ScriptLoader', () => {
         it('loads the JS and CSS', async () => {
             await adyenV2ScriptLoader.load(configuration);
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
-            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(legacyJsUrl);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(legacyCssUrl);
         });
 
         it('returns the JS from the window using originKey', async () => {
             const adyenJs = await adyenV2ScriptLoader.load(configuration);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(legacyJsUrl);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(legacyCssUrl);
 
             expect(adyenJs).toBe(adyenClient);
         });
 
         it('returns the JS from the window using clientKey', async () => {
             const adyenJs = await adyenV2ScriptLoader.load(configurationWithClientKey);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
 
             expect(adyenJs).toBe(adyenClient);
         });
