@@ -43,6 +43,7 @@ export interface StoreProfile {
     orderEmail: string;
     shopPath: string;
     storeCountry: string;
+    storeCountryCode: string;
     storeHash: string;
     storeId: string;
     storeName: string;

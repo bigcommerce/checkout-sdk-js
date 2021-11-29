@@ -108,6 +108,7 @@ export function getConfig(): Config {
                 orderEmail: 's1504098821@example.com',
                 shopPath: 'https://store-k1drp8k8.bcapp.dev',
                 storeCountry: 'United States',
+                storeCountryCode: 'US',
                 storeHash: 'k1drp8k8',
                 storeId: '1504098821',
                 storeName: 's1504098821',

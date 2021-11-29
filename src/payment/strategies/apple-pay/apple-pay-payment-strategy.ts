@@ -1,7 +1,8 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Cart } from '../../../cart';​
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { StoreConfig } from '../../../config';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -15,7 +16,7 @@ import PaymentStrategy from '../payment-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import { assertApplePayWindow } from './is-apple-pay-window';
 
-export const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
+const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
 interface ApplePayPromise {
     resolve(value: InternalCheckoutSelectors | PromiseLike<InternalCheckoutSelectors>): void;
@@ -39,12 +40,15 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = payload;
         const state = this._store.getState();
+        const checkout = state.checkout.getCheckoutOrThrow();
         const cart = state.cart.getCartOrThrow();
+        const config = state.config.getStoreConfigOrThrow();
+
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const request = this._getBaseRequest(cart);
+        const request = this._getBaseRequest(cart, checkout, config);
         assertApplePayWindow(window);
         const applePaySession = this._sessionFactory.create(request);
 ​
@@ -78,9 +82,19 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 ​
-    private _getBaseRequest(cart: Cart): ApplePayJS.ApplePayPaymentRequest {
+    private _getBaseRequest(cart: Cart, checkout: Checkout, config: StoreConfig): ApplePayJS.ApplePayPaymentRequest {
+        const { storeProfile: { storeCountryCode, storeName } } = config;
+        let lineItems: ApplePayJS.ApplePayLineItem[] = [
+            { label: 'Sub total', amount: `${checkout.subtotal.toFixed(cart.currency.decimalPlaces)}`},
+        ];
+
+        checkout.taxes.forEach(tax =>
+            lineItems.push({ label: tax.name, amount: `${tax.amount}` }));
+
+        lineItems.push({ label: 'Shipping', amount: `${checkout.shippingCostTotal}`});
+
         return {
-            countryCode: 'US',
+            countryCode: storeCountryCode,
             currencyCode: cart.currency.code,
             merchantCapabilities: ['supports3DS'],
             supportedNetworks: [
@@ -89,10 +103,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 'amex',
                 'discover',
             ],
-            lineItems: [],
+            lineItems,
             total: {
-                label: 'Total',
-                amount: `${cart.cartAmount.toFixed(cart.currency.decimalPlaces)}`,
+                label: storeName,
+                amount: `${checkout.grandTotal.toFixed(cart.currency.decimalPlaces)}`,
                 type: 'final',
             },
         };
