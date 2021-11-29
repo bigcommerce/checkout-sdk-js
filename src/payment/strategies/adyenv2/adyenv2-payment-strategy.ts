@@ -146,6 +146,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._componentState = undefined;
+
         if (this._paymentComponent) {
             this._paymentComponent.unmount();
             this._paymentComponent = undefined;
