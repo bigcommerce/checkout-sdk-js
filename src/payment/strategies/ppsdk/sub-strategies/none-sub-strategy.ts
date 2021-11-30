@@ -10,7 +10,7 @@ export class NoneSubStrategy implements SubStrategy {
         private _stepHandler: StepHandler
     ) {}
 
-    process({ methodId, bigpayBaseUrl, token }: SubStrategySettings) {
+    execute({ methodId, bigpayBaseUrl, token }: SubStrategySettings) {
         const body = { payment_method_id: methodId };
         const options = {
             credentials: false,

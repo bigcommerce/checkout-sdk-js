@@ -54,7 +54,7 @@ describe('PPSDKStrategy', () => {
                     it('submits the order and calls the sub-strategy', async () => {
                         const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
-                        const mockSubStrategy = { process: jest.fn() };
+                        const mockSubStrategy = { execute: jest.fn() };
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
 
@@ -62,7 +62,7 @@ describe('PPSDKStrategy', () => {
                         await strategy.execute({}, { methodId: 'cabbagepay' });
 
                         expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
-                        expect(mockSubStrategy.process).toHaveBeenCalled();
+                        expect(mockSubStrategy.execute).toHaveBeenCalled();
                     });
                 });
             });
@@ -72,7 +72,7 @@ describe('PPSDKStrategy', () => {
                     it('throws a MissingDataError error, does not call the sub-strategy', async () => {
                         const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
-                        const mockSubStrategy = { process: jest.fn() };
+                        const mockSubStrategy = { execute: jest.fn() };
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
 
@@ -82,7 +82,7 @@ describe('PPSDKStrategy', () => {
                             .rejects.toBeInstanceOf(MissingDataError);
 
                         expect(store.dispatch).toBeCalledWith(submitSpy.mock.results[0].value);
-                        expect(mockSubStrategy.process).not.toHaveBeenCalled();
+                        expect(mockSubStrategy.execute).not.toHaveBeenCalled();
                     });
                 });
             });
