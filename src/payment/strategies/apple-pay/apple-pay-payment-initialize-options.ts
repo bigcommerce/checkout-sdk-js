@@ -23,14 +23,4 @@
      * Sub total label to be passed to apple sheet.
      */
      subtotalLabel: string;
-
-     /**
-     * The payment capabilities supported by the merchant.
-     */
-     merchantCapabilities?: ApplePayJS.ApplePayMerchantCapability[];
-     
-     /**
-      * The payment networks supported by the merchant.
-      */
-     supportedNetworks?: string[];
 }

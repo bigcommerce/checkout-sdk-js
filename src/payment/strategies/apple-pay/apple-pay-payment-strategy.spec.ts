@@ -94,6 +94,7 @@ describe('ApplePayPaymentStrategy', () => {
     describe('#initialize()', () => {
         it('initializes the strategy successfully', async () => {
             await expect(strategy.initialize({methodId: ''})).resolves.toEqual(store.getState());
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
         });
     });
 
@@ -105,17 +106,6 @@ describe('ApplePayPaymentStrategy', () => {
 
         it('throws error when payment data is empty', async () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
-        });
-
-        it('loads payment method', async () => {
-            const payload = merge({}, getOrderRequestBody(), {
-                payment: { methodId: paymentMethod.id },
-            });
-            strategy.execute(payload);
-
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
         });
 
         it('validates merchant', async () => {
