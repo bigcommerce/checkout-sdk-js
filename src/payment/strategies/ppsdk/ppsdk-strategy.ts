@@ -49,7 +49,7 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingOrder);
         }
 
-        await subStrategy.process({ methodId, payment, bigpayBaseUrl, token });
+        await subStrategy.execute({ methodId, payment, bigpayBaseUrl, token });
 
         return this._store.getState();
     }

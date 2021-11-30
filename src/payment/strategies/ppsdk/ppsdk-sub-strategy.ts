@@ -8,5 +8,5 @@ export interface SubStrategySettings {
 }
 
 export interface SubStrategy {
-    process(settings: SubStrategySettings): Promise<void>;
+    execute(settings: SubStrategySettings): Promise<void>;
 }
