@@ -2,7 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Cart } from '../../../cart';​
 import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { StoreConfig } from '../../../config';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -24,13 +24,13 @@ interface ApplePayPromise {
 }
 
 enum DefaultLabels {
-    SHIPPING = 'Shipping',
-    SUBTOTAL = 'Subtotal',
+    Shipping = 'Shipping',
+    Subtotal = 'Subtotal',
 }
 ​
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
-    private _shippingLabel: string = DefaultLabels.SHIPPING;
-    private _subTotalLabel: string = DefaultLabels.SUBTOTAL;
+    private _shippingLabel: string = DefaultLabels.Shipping;
+    private _subTotalLabel: string = DefaultLabels.Subtotal;
 
     constructor(
         private _store: CheckoutStore,
@@ -41,13 +41,16 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _sessionFactory: ApplePaySessionFactory
     ) { }
 ​
-    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (!options?.methodId) {
+            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+        }
         const { methodId } = options;
-        this._shippingLabel = options?.applepay?.shippingLabel || DefaultLabels.SHIPPING;
-        this._subTotalLabel = options?.applepay?.subtotalLabel || DefaultLabels.SUBTOTAL;
+        this._shippingLabel = options?.applepay?.shippingLabel || DefaultLabels.Shipping;
+        this._subTotalLabel = options?.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
 
-        return Promise.resolve(this._store.getState());
+        return this._store.getState();
     }
 ​
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

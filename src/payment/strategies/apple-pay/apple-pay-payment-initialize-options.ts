@@ -22,5 +22,5 @@
     /**
      * Sub total label to be passed to apple sheet.
      */
-     subtotalLabel: string;
+     subtotalLabel?: string;
 }

@@ -14,6 +14,7 @@ import { createPaymentClient,
 import { getCart } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -92,8 +93,14 @@ describe('ApplePayPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        it('throws invalid argument error if no method id', async () => {
+            // await strategy.initialize();
+            await expect(strategy.initialize())
+                .rejects.toBeInstanceOf(InvalidArgumentError);
+        });
+
         it('initializes the strategy successfully', async () => {
-            await expect(strategy.initialize({methodId: ''})).resolves.toEqual(store.getState());
+            await strategy.initialize({ methodId: 'applepay' });
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
         });
     });
