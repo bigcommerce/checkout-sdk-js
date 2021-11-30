@@ -1,4 +1,4 @@
-import { assertApplePayWindow } from "./is-apple-pay-window";
+import { assertApplePayWindow } from './is-apple-pay-window';
 
 export default class ApplePaySessionFactory {
     create(request: ApplePayJS.ApplePayPaymentRequest): ApplePaySession {

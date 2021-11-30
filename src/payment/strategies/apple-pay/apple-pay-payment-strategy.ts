@@ -22,10 +22,15 @@ interface ApplePayPromise {
     resolve(value: InternalCheckoutSelectors | PromiseLike<InternalCheckoutSelectors>): void;
     reject(reason?: Error): void;
 }
+
+enum DefaultLabels {
+    SHIPPING = 'Shipping',
+    SUBTOTAL = 'Subtotal',
+}
 ​
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
-    private _shippingLabel: string = '';
-    private _subTotalLabel: string = '';
+    private _shippingLabel: string = DefaultLabels.SHIPPING;
+    private _subTotalLabel: string = DefaultLabels.SUBTOTAL;
 
     constructor(
         private _store: CheckoutStore,
@@ -38,8 +43,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 ​
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
-        this._shippingLabel = options?.applepay?.shippingLabel || '';
-        this._subTotalLabel = options?.applepay?.subtotalLabel || '';
+        this._shippingLabel = options?.applepay?.shippingLabel || DefaultLabels.SHIPPING;
+        this._subTotalLabel = options?.applepay?.subtotalLabel || DefaultLabels.SUBTOTAL;
         await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
 
         return Promise.resolve(this._store.getState());
@@ -87,7 +92,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         checkout: Checkout,
         config: StoreConfig,
         paymentMethod: PaymentMethod
-    ): ApplePayJS.ApplePayPaymentRequest{
+    ): ApplePayJS.ApplePayPaymentRequest {
         const { storeProfile: { storeCountryCode, storeName } } = config;
         const { currency : { decimalPlaces } } = cart;
         const { initializationData : { merchantCapabilities, supportedNetworks } } = paymentMethod;
@@ -174,7 +179,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-            return promise.resolve(this._store.getState())
+            return promise.resolve(this._store.getState());
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
