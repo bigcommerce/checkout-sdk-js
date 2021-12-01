@@ -13,6 +13,7 @@
 * [orderEmail](storeprofile.md#orderemail)
 * [shopPath](storeprofile.md#shoppath)
 * [storeCountry](storeprofile.md#storecountry)
+* [storeCountryCode](storeprofile.md#storecountrycode)
 * [storeHash](storeprofile.md#storehash)
 * [storeId](storeprofile.md#storeid)
 * [storeLanguage](storeprofile.md#storelanguage)
@@ -36,6 +37,12 @@ ___
 ###  storeCountry
 
 • **storeCountry**: *string*
+
+___
+
+###  storeCountryCode
+
+• **storeCountryCode**: *string*
 
 ___
 

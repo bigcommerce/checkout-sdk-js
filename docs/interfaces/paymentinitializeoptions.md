@@ -22,6 +22,7 @@ current checkout flow.
 * [adyenv2](paymentinitializeoptions.md#optional-adyenv2)
 * [amazon](paymentinitializeoptions.md#optional-amazon)
 * [amazonpay](paymentinitializeoptions.md#optional-amazonpay)
+* [applepay](paymentinitializeoptions.md#optional-applepay)
 * [bluesnapv2](paymentinitializeoptions.md#optional-bluesnapv2)
 * [bolt](paymentinitializeoptions.md#optional-bolt)
 * [braintree](paymentinitializeoptions.md#optional-braintree)
@@ -76,6 +77,15 @@ ___
 
 The options that are required to initialize the AmazonPayV2 payment
 method. They can be omitted unless you need to support AmazonPayV2.
+
+___
+
+### `Optional` applepay
+
+• **applepay**? : *[ApplePayPaymentInitializeOptions](applepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the Apple Pay payment
+method. They can be omitted unless you need to support AmazonPay.
 
 ___
 

@@ -1,3 +1,4 @@
+/// <reference types="applepayjs" />
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
@@ -526,6 +527,32 @@ declare interface AmazonPayWidgetError extends Error {
 }
 
 declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
+
+/**
+ * A set of options that are required to initialize the Applepay payment method with:
+ *
+ * 1) ApplePay:
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'applepay',
+ *     applepay: {
+ *         shippingLabel: 'Shipping',
+ *         subtotalLabel: 'Sub total',
+ *     }
+ * });
+ * ```
+ */
+declare interface ApplePayPaymentInitializeOptions {
+    /**
+     * Shipping label to be passed to apple sheet.
+     */
+    shippingLabel?: string;
+    /**
+     * Sub total label to be passed to apple sheet.
+     */
+    subtotalLabel?: string;
+}
 
 declare interface BankInstrument extends BaseAccountInstrument {
     accountNumber: string;
@@ -4936,6 +4963,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     amazon?: AmazonPayPaymentInitializeOptions;
     /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support AmazonPay.
+     */
+    applepay?: ApplePayPaymentInitializeOptions;
+    /**
      * The options that are required to initialize the AmazonPayV2 payment
      * method. They can be omitted unless you need to support AmazonPayV2.
      */
@@ -5889,6 +5921,7 @@ declare interface StoreProfile {
     orderEmail: string;
     shopPath: string;
     storeCountry: string;
+    storeCountryCode: string;
     storeHash: string;
     storeId: string;
     storeName: string;
