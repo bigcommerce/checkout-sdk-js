@@ -18,7 +18,7 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
+    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | WithMollieIssuerInstrument> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -159,6 +159,14 @@ interface BoltInstrument {
     provider_data: {
         create_account: boolean;
         embedded_checkout: boolean;
+    };
+}
+
+interface AppleInstrument {
+    apple_pay_token: {
+        payment_data: ApplePayJS.ApplePayPaymentToken['paymentData'];
+        payment_method: ApplePayJS.ApplePayPaymentToken['paymentMethod'];
+        transaction_id: ApplePayJS.ApplePayPaymentToken['transactionIdentifier'];
     };
 }
 
