@@ -7,6 +7,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
+import { createPaymentClient } from '../payment';
 // eslint-disable-next-line import/no-internal-modules
 import PaymentActionCreator from '../payment/payment-action-creator';
 // eslint-disable-next-line import/no-internal-modules
@@ -43,10 +44,11 @@ export default function createCheckoutButtonRegistry(
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
+    const paymentClient = createPaymentClient(store);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
     const paymentRequestTransformer = new PaymentRequestTransformer();
-    const paymentRequestSender = new PaymentRequestSender({});
+    const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);

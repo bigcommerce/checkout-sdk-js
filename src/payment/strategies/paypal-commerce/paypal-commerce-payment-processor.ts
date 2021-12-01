@@ -135,6 +135,10 @@ export default class PaypalCommercePaymentProcessor {
         return this._orderId;
     }
 
+    getShippingOptions(cartId: any, payload: any) {
+        return this._paypalCommerceRequestSender.getShippingOptions(cartId, payload);
+    }
+
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
         if (!this._paypal || !this._paypal.Messages) {
             throw new PaymentMethodClientUnavailableError();

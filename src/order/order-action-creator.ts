@@ -62,7 +62,7 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions, shippingChangeData?: any): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
             defer(() => {
@@ -70,7 +70,32 @@ export default class OrderActionCreator {
                 const externalSource = state.config.getExternalSource();
                 const variantIdentificationToken = state.config.getVariantIdentificationToken();
                 const checkout = state.checkout.getCheckout();
+                // tslint:disable-next-line:no-console
+                console.log(checkout);
+                if (checkout && shippingChangeData) {
+                    const bill = {
+                        address1: 'dffsf',
+                        address2: 'dsfsd',
+                        city: 'sdfsd',
+                        company: 'BigCom',
+                        country: 'United States',
+                        countryCode: 'US',
+                        customFields: [],
+                        email: 'andrii.vitvitskyi@bigcommerce.com',
+                        firstName: 'Andrii',
+                        lastName: 'Vit',
+                        phone: '',
+                        id: '619e4f218d0cd',
+                        shouldSaveAddress: true,
+                        stateOrProvince: 'Arizona',
+                        stateOrProvinceCode: 'AZ',
+                    };
 
+                    checkout.billingAddress = {...shippingChangeData.shipping_address, ...bill};
+                    // tslint:disable-next-line:no-console
+                    console.log(checkout);
+                    // checkout.consignments[0].shippingAddress = shippingChangeData.shipping_address;
+                }
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }

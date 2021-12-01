@@ -61,6 +61,7 @@ export interface ButtonsOptions {
     fundingSource?: string;
     createOrder?(): Promise<string>;
     onApprove?(data: ApproveDataOptions): void;
+    onShippingChange?(data: any): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;

@@ -57,4 +57,11 @@ export default class PaypalCommerceRequestSender {
 
         return res.body;
     }
+
+    async getShippingOptions(cartId: any, payload: any) {
+        const url = `/internalapi/internalapi/v1/checkout/checkouts/${cartId}/consignments?include=consignments.availableShippingOptions`;
+        // @ts-ignore
+        const res  = await this._requestSender.get(url, {payload});
+        return res.body;
+    }
 }

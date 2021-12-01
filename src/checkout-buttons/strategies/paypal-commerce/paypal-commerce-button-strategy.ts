@@ -5,6 +5,7 @@ import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
+import { PaymentRequestOptions } from '../../../payment';
 // eslint-disable-next-line import/no-internal-modules
 import PaymentActionCreator from '../../../payment/payment-action-creator';
 import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, FundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
@@ -13,6 +14,7 @@ import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _isCredit?: boolean;
+    private _onShippingChangeData?: any;
 
     constructor(
         private _store: CheckoutStore,
@@ -27,6 +29,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         let state = this._store.getState();
         const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
+        console.log('Options', options, state);
+
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
         }
@@ -36,6 +40,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const buttonParams: ButtonsOptions = {
             onApprove: data => this._tokenizePayment(data),
             onClick: data => this._handleClickButtonProvider(data),
+            onShippingChange: data => this._onShippingChangeData = data,
         };
 
         if (options.paypalCommerce && options.paypalCommerce.style) {
@@ -45,7 +50,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
 
-        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart));
+        const paypal = await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart));
+        console.log('PAYPAL', paypal);
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 
@@ -83,10 +89,24 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 },
             };
-            // @ts-ignore
-            await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce', gatewayId: undefined}));
+            this._onShippingChangeData.orderId = orderID;
+            const options = {
+                methodId: 'paypalcommerce',
+            };
 
-            this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', paymentData: {shouldCreateAccount: true, shouldSaveInstrument: false, terms: false}}, paymentData }));
+            // const checkout = await PayPalCheckout.request(
+            //     'POST',
+            //     PayPalCheckout.CHECKOUT_ENDPOINT + '/checkouts/' + PayPalCheckout.cart.id + '/consignments?include=consignments.availableShippingOptions',
+            //     payload
+            // );
+
+            // this._paypalCommercePaymentProcessor.getShippingOptions()
+
+            await this._store.dispatch(this._orderActionCreator.submitOrder({}, options as PaymentRequestOptions, this._onShippingChangeData));
+
+            await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', paymentData: {shouldCreateAccount: true, shouldSaveInstrument: false, terms: false}}, paymentData }));
+
+            return;
         }
 
         return this._formPoster.postForm('/checkout.php', {
