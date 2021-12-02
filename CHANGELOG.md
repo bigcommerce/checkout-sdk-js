@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.201.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.0...v1.201.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6066 Remove 0 space characters ([#1300](https://github.com/bigcommerce/checkout-sdk-js/issues/1300)) ([83d7cc9](https://github.com/bigcommerce/checkout-sdk-js/commit/83d7cc9fae26dce7d515fbf66c2ef1f1a428587a))
+
 ## [1.201.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.200.0...v1.201.0) (2021-12-02)
 
 
