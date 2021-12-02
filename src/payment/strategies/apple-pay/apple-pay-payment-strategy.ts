@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { Cart } from '../../../cart';​
+import { Cart } from '../../../cart';
 import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { StoreConfig } from '../../../config';
@@ -27,7 +27,7 @@ enum DefaultLabels {
     Shipping = 'Shipping',
     Subtotal = 'Subtotal',
 }
-​
+
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -40,7 +40,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _sessionFactory: ApplePaySessionFactory
     ) { }
-​
+
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (!options?.methodId) {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
@@ -52,7 +52,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         return this._store.getState();
     }
-​
+
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = payload;
         const state = this._store.getState();
@@ -74,22 +74,22 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 useStoreCredit: payload.useStoreCredit,
             }, options)
         );
-​
+
         applePaySession.begin();
-​
+
         return new Promise((resolve, reject) => {
             this._handleApplePayEvents(applePaySession, paymentMethod, { resolve, reject });
         });
     }
-​
+
     finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
-​
+
     deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
-​
+
     private _getBaseRequest(
         cart: Cart,
         checkout: Checkout,
@@ -121,7 +121,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             },
         };
     }
-​
+
     private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, promise: ApplePayPromise) {
         applePaySession.onvalidatemerchant = async event => {
             try {
@@ -131,14 +131,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 throw new Error('Merchant validation failed');
             }
         };
-​
+
         applePaySession.oncancel = async () =>
             promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
-​
+
         applePaySession.onpaymentauthorized = (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) =>
             this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise);
     }
-​
+
     private async _onValidateMerchant(paymentData: PaymentMethod, event: ApplePayJS.ApplePayValidateMerchantEvent) {
         const body = [
             `validationUrl=${event.validationURL}`,
@@ -146,7 +146,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             `displayName=${paymentData.initializationData.storeName}`,
             `domainName=${window.location.hostname}`,
         ].join('&');
-​
+
         return this._requestSender.post(validationEndpoint(paymentData.initializationData.paymentsUrl), {
             credentials: false,
             headers: {
@@ -157,7 +157,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             body,
         });
     }
-​
+
     private async _onPaymentAuthorized(
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
