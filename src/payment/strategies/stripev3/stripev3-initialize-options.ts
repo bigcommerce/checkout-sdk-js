@@ -36,7 +36,7 @@ import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
  *             },
  *             iban: {
  *                 classes: { base: 'form-input' },
- *                 supportedCountries: ['SEPA],
+ *                 supportedCountries: ['SEPA'],
  *             },
  *             idealBank: {
  *                 classes: { base: 'form-input' },

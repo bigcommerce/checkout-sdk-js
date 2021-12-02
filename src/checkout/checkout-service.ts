@@ -586,7 +586,7 @@ export default class CheckoutService {
      *   address1: '55 Market St',
      *   stateOrProvinceCode: 'CA',
      *   countryCode: 'US',
-     *   postalCode: '90110'
+     *   postalCode: '90110',
      *   customFields: [],
      * });
      * ```
