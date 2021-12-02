@@ -46,6 +46,7 @@ import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { ExternalPaymentStrategy } from './strategies/external';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
 import { LegacyPaymentStrategy } from './strategies/legacy';
@@ -472,6 +473,15 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             new KlarnaV2ScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.HUMM, () =>
+        new HummPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            formPoster
         )
     );
 

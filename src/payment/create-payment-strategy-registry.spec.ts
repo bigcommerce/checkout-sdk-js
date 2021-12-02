@@ -26,6 +26,7 @@ import { CyberSourcePaymentStrategy } from './strategies/cybersource';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
+import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
@@ -182,6 +183,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate googlepayorbital', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.ORBITAL_GOOGLE_PAY);
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
+    it('can instantiate humm', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.HUMM);
+        expect(paymentStrategy).toBeInstanceOf(HummPaymentStrategy);
     });
 
     it('can instantiate klarna', () => {
