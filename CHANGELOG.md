@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.201.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.200.0...v1.201.0) (2021-12-02)
+
+
+### Features
+
+* **payment:** INT-4897 Humm - Add Humm strategy as external payment ([#1266](https://github.com/bigcommerce/checkout-sdk-js/issues/1266)) ([e13dc61](https://github.com/bigcommerce/checkout-sdk-js/commit/e13dc614ad61e3e54a41013d78363e288cc7cea8))
+
 ## [1.200.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.199.1...v1.200.0) (2021-12-01)
 
 
