@@ -28,6 +28,7 @@ import { getVaultedInstrument } from '../../payments.mock';
 import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock';
 
 import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -269,13 +270,11 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when load response is empty or not provided', () => {
-            const error = 'There was a problem with your checkout, please check your details and try again or contact customer service.';
-
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when DigitalRiver options is not provided', () => {
@@ -288,23 +287,21 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver clientToken is not provided', () => {
-            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: ''};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when DigitalRiver clientToken is not receiving correct data ', () => {
-            const error = new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: 'ok'};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when data on onSuccess event is not provided', async () => {

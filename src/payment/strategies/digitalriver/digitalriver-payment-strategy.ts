@@ -13,6 +13,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverElementOptions, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -264,7 +265,10 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
             return state;
         }).catch(() => {
-            throw new InvalidArgumentError('There was a problem with your checkout, please check your details and try again or contact customer service.');
+            throw new DigitalRiverError(
+                'payment.digitalriver_checkout_error',
+                'digitalRiverCheckoutError'
+            );
         });
     }
 
