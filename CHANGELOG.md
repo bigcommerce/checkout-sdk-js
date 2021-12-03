@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.201.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.1...v1.201.2) (2021-12-03)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-320 reset adyen component state on deinitialize ([e484781](https://github.com/bigcommerce/checkout-sdk-js/commit/e484781f8b1b5951e1d7fa7231f8e9177533aa1a))
+
 ### [1.201.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.0...v1.201.1) (2021-12-02)
 
 
