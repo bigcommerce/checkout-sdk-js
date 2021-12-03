@@ -208,7 +208,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadWidget(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId)).then(async state => {
+        try {
+            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
             const billing = state.billingAddress.getBillingAddressOrThrow();
             const customer = state.customer.getCustomerOrThrow();
             const {paymentMethodConfiguration} = this._getDigitalRiverInitializeOptions().configuration;
@@ -264,12 +265,12 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             this._digitalRiverDropComponent.mount(containerId);
 
             return state;
-        }).catch(() => {
+        } catch {
             throw new DigitalRiverError(
                 'payment.digitalriver_checkout_error',
                 'digitalRiverCheckoutError'
             );
-        });
+        }
     }
 
     private _isAuthenticateSourceAction(error: unknown): boolean {
