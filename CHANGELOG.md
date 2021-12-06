@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.202.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.2...v1.202.0) (2021-12-06)
+
+
+### Features
+
+* **payment:** INT-5000 Throw error when payment method isn't available ([#1286](https://github.com/bigcommerce/checkout-sdk-js/issues/1286)) ([893f1fc](https://github.com/bigcommerce/checkout-sdk-js/commit/893f1fca9e86a257be23b3803fdec91f291d884c))
+
 ### [1.201.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.1...v1.201.2) (2021-12-03)
 
 
