@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.203.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.202.0...v1.203.0) (2021-12-08)
+
+
+### Features
+
+* **payment:** BOLT-100 add error codes for Bolt fields ([cf9b5ec](https://github.com/bigcommerce/checkout-sdk-js/commit/cf9b5ec8e5a4103e1493b6267c407cc67c0b1285))
+* **payment:** BOLT-100 add error mesages for Bolt fields ([1090565](https://github.com/bigcommerce/checkout-sdk-js/commit/109056578c7943f4922b472cd761b0073c850060))
+
 ## [1.202.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.2...v1.202.0) (2021-12-06)
 
 
