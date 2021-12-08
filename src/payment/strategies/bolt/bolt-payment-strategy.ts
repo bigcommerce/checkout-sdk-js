@@ -12,6 +12,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import { BoltCheckout, BoltEmbedded, BoltEmbeddedTokenize, BoltEmbededField, BoltTransaction } from './bolt';
+import BoltError from './bolt-error';
 import BoltScriptLoader from './bolt-script-loader';
 
 export default class BoltPaymentStrategy implements PaymentStrategy {
@@ -196,7 +197,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         }
 
         if (tokenizeResult instanceof Error) {
-            throw tokenizeResult;
+            throw new BoltError(tokenizeResult.message);
         }
 
         this._validateTokenizeResult(tokenizeResult);
