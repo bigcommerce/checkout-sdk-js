@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.195.1-alpha.9d28d46ac1ad86fa61946ec6310e89ae78ca3b32](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.180.0...v1.195.1-alpha.9d28d46ac1ad86fa61946ec6310e89ae78ca3b32) (2021-12-09)
+
+
+### Features
+
+* **checkout:** CHECKOUT-5777 Send SDK version as a header for all SDK API requests ([#1242](https://github.com/bigcommerce/checkout-sdk-js/issues/1242)) ([1372f33](https://github.com/bigcommerce/checkout-sdk-js/commit/1372f3392cc2789221db6688c8aa866cc6771f80))
+* **payment:** BOLT-24 added account creation flag for Bolt Embedded One Click execution ([b23ae4a](https://github.com/bigcommerce/checkout-sdk-js/commit/b23ae4a4e126be2058a70317e5dc40600a7725ce))
+* **payment:** BOLT-73 send orderId during payment creation for Bolt Full Ckeckout ([c35d325](https://github.com/bigcommerce/checkout-sdk-js/commit/c35d32554993a763fcd9258fa37de374d5057f43))
+* **payment:** BOLT-78 changed background color of mounted Bolt payment field ([90f5443](https://github.com/bigcommerce/checkout-sdk-js/commit/90f54433f31b22a3cd158c5990f426c203ada3da))
+* **payment:** INT-4170 Do not use as keyword ([c749820](https://github.com/bigcommerce/checkout-sdk-js/commit/c749820a905852130ff0e5e325201f0f7dfdcf73))
+* **payment:** INT-4170 Mount hostedfields for TSV on StripeV3 ([fb635ea](https://github.com/bigcommerce/checkout-sdk-js/commit/fb635ea320a10f8979441cb93cdd87e15589e2a8))
+* **payment:** INT-4231 deleting spinner functionality in amazonpay ([#1219](https://github.com/bigcommerce/checkout-sdk-js/issues/1219)) ([30cc04e](https://github.com/bigcommerce/checkout-sdk-js/commit/30cc04ecdd65150a2b6ce41270614cadba49f8ea))
+* **payment:** INT-4593 handle squareForm errors ([f9baee6](https://github.com/bigcommerce/checkout-sdk-js/commit/f9baee6fd59584708a421983393ce969c7974b92))
+* **payment:** INT-4891 Add support to remount compliance section for Digital River ([d9858de](https://github.com/bigcommerce/checkout-sdk-js/commit/d9858de64c8b6d309f70352eb2ee3f87209d1566))
+* **payment:** INT-4917 Add logo property to PaymentMethodConfig interface ([#1272](https://github.com/bigcommerce/checkout-sdk-js/issues/1272)) ([1f0a2a5](https://github.com/bigcommerce/checkout-sdk-js/commit/1f0a2a54c423b2b2148b1312281e0430478c0567))
+* **payment:** PAYMENTS-7269 allow PPSDK payment methods to finalise in progress payments ([#1252](https://github.com/bigcommerce/checkout-sdk-js/issues/1252)) ([e6d02cc](https://github.com/bigcommerce/checkout-sdk-js/commit/e6d02ccc2b590763a8761237638c25166f3cf35f))
+* **payment:** PAYMENTS-7269 allow PPSDK payment methods to finalise in progress payments ([#1261](https://github.com/bigcommerce/checkout-sdk-js/issues/1261)) ([5d43fcc](https://github.com/bigcommerce/checkout-sdk-js/commit/5d43fcc1ba73d990c2a413f67adecf23cac4c7a2))
+* **payment:** PAYMENTS-7270 skip PPSDK finalization when order is marked complete ([#1256](https://github.com/bigcommerce/checkout-sdk-js/issues/1256)) ([67c1a90](https://github.com/bigcommerce/checkout-sdk-js/commit/67c1a905447ce4283bbb1c38a27dab19ee7a30f4))
+* **payment:** PAYPAL-1103 added paylater messaging for braintree on cart ([#1245](https://github.com/bigcommerce/checkout-sdk-js/issues/1245)) ([08b418a](https://github.com/bigcommerce/checkout-sdk-js/commit/08b418acec6d00feb34811f2c425a3bc1e7eb2e9))
+* **payment:** PAYPAL-1123 rounded amount on braintree ([#1271](https://github.com/bigcommerce/checkout-sdk-js/issues/1271)) ([d04c732](https://github.com/bigcommerce/checkout-sdk-js/commit/d04c732ea10d3f6356c312b4c5957d40ff9906b5))
+* **payment:** PAYPAL-1151 integrated venmo for braintree ([9d28d46](https://github.com/bigcommerce/checkout-sdk-js/commit/9d28d46ac1ad86fa61946ec6310e89ae78ca3b32))
+* **payment:** PAYPAL-954 Update Braintree web SDK version ([#1231](https://github.com/bigcommerce/checkout-sdk-js/issues/1231)) ([041828d](https://github.com/bigcommerce/checkout-sdk-js/commit/041828dd147023ea7665bc4e843c4fb9ff55e30e))
+* **payment:** PAYPAL-972 added 3ds check for googlepaybraintree ([#1240](https://github.com/bigcommerce/checkout-sdk-js/issues/1240)) ([deaf0c5](https://github.com/bigcommerce/checkout-sdk-js/commit/deaf0c5749545e204fb8ca4e51e21df766defce4))
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-260 fixed googlepay updates billing info, removed update of customer email ([53222a7](https://github.com/bigcommerce/checkout-sdk-js/commit/53222a7a10789bcc6ffdcb685be753a71c1ee92e))
+* **checkout:** ADYEN-260 fixed googlepay updates billing info, removed update of customer email ([efb29b4](https://github.com/bigcommerce/checkout-sdk-js/commit/efb29b449a308a3224ab252f38ed43c3b070fa3f))
+* **checkout:** INT-4798 Fix Moneris Hosted Field Validation ([8f81ff5](https://github.com/bigcommerce/checkout-sdk-js/commit/8f81ff5844a451f6feae08f9896c3ea98b24ccdf))
+* **checkout:** INT-4798 Use Lodash utils to validate fields ([be50ef2](https://github.com/bigcommerce/checkout-sdk-js/commit/be50ef25f9a74df18a9f73f05846c50f57878fdd))
+* **payment:** ADYEN-253 disabled showing error modal on Adyen GooglePay 3ds ([f504dff](https://github.com/bigcommerce/checkout-sdk-js/commit/f504dff130a748cae1c3400c5c67fed7d1ae023f))
+* **payment:** INT-4087 Add a flag to enable or disable the send back the client token ([2389370](https://github.com/bigcommerce/checkout-sdk-js/commit/238937068ad16526e6f58cf92b0b9497e2e1bd0f))
+* **payment:** INT-4087 Catch stripe exception to process 3ds when payment intent is updated on the banckend and confirm it ([5651c70](https://github.com/bigcommerce/checkout-sdk-js/commit/5651c70c85f753e600092412ee2aa409fe26d4cb))
+* **payment:** INT-4489 cko add supported method 'card' ([22f51fd](https://github.com/bigcommerce/checkout-sdk-js/commit/22f51fd32624d36ef0c6af3a2afdade00bdd8cb4))
+* **payment:** INT-4674 forgetting checkout instead of signing out when using google pay ([#1215](https://github.com/bigcommerce/checkout-sdk-js/issues/1215)) ([c74b4ba](https://github.com/bigcommerce/checkout-sdk-js/commit/c74b4ba874b6965afda3341c3a9f7683b36d1562))
+* **payment:** INT-4698 doing post to checkout after completing visa checkout payment information ([#1232](https://github.com/bigcommerce/checkout-sdk-js/issues/1232)) ([9e524af](https://github.com/bigcommerce/checkout-sdk-js/commit/9e524af55a3b9511d688a3892dee409aef150baa))
+* **payment:** INT-4705 [Clearpay] display correct error message when amount is out of limits ([3b5ba0b](https://github.com/bigcommerce/checkout-sdk-js/commit/3b5ba0bcd17cbf9f28f148e414a49b5a0e086c68))
+* **payment:** INT-4802 Moneris validate response before resolve ([#1228](https://github.com/bigcommerce/checkout-sdk-js/issues/1228)) ([f643b4a](https://github.com/bigcommerce/checkout-sdk-js/commit/f643b4a3abe46b60c8732ad9b7968f213cc9e9c3))
+* **payment:** INT-4810 Forget checkout provider and reload payment methods - Clearpay ([#1234](https://github.com/bigcommerce/checkout-sdk-js/issues/1234)) ([d8e982e](https://github.com/bigcommerce/checkout-sdk-js/commit/d8e982e005183822b0e11148f0393f7a9d3eb144))
+* **payment:** INT-4885 Fixed "select a different card" button on googlepay ([f514618](https://github.com/bigcommerce/checkout-sdk-js/commit/f51461890431ab36138c4e1fbf4772e7eb14de60))
+* **payment:** PAYMENTS-7252 pass methodIds on to PPSDK endpoint without transformation ([#1233](https://github.com/bigcommerce/checkout-sdk-js/issues/1233)) ([c0b0d3a](https://github.com/bigcommerce/checkout-sdk-js/commit/c0b0d3ac877264e4d2a98890a849b3026b21e877))
+* **payment:** PAYMENTS-7390 use location.assign in PPSDK redirects to maintain correct browser history ([#1278](https://github.com/bigcommerce/checkout-sdk-js/issues/1278)) ([145b6d2](https://github.com/bigcommerce/checkout-sdk-js/commit/145b6d2ad8b10b0a2e0d464bfc552dfa3b455991))
+* **payment:** PAYPAL-1180 fixed paylater region issue ([#1269](https://github.com/bigcommerce/checkout-sdk-js/issues/1269)) ([6a8f6df](https://github.com/bigcommerce/checkout-sdk-js/commit/6a8f6df8652053cfe5d67f723872a8fee64cfe0a))
+
 ## [1.195.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.194.1...v1.195.0) (2021-11-01)
 
 
