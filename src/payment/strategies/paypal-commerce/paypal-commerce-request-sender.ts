@@ -59,9 +59,37 @@ export default class PaypalCommerceRequestSender {
     }
 
     async getShippingOptions(cartId: any, payload: any) {
-        const url = `/internalapi/internalapi/v1/checkout/checkouts/${cartId}/consignments?include=consignments.availableShippingOptions`;
-        // @ts-ignore
-        const res  = await this._requestSender.get(url, {payload});
+        const url = `/api/storefront/checkouts/${cartId}/consignments?include=consignments.availableShippingOptions`;
+        const res  = await this._requestSender.post(url, {body: payload});
+
+        return res.body;
+    }
+
+    async getStoreCountries() {
+        const url = '/internalapi/v1/store/countries';
+        const res  = await this._requestSender.get(url);
+
+        return res.body;
+    }
+
+    async getConsignments(cartId: any, payload: any) {
+        const url = `/api/storefront/checkouts/${cartId}/consignments`;
+        const res  = await this._requestSender.post(url, {body: payload});
+
+        return res.body;
+    }
+
+    async getBillingAddress(cartId: any, payload: any) {
+        const url = `/api/storefront/checkouts/${cartId}/billing-address`;
+        const res  = await this._requestSender.post(url, {body: payload});
+
+        return res.body;
+    }
+
+    async putConsignments(checkoutId: any, consignmentId: any, payload: any) {
+        const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
+        const res  = await this._requestSender.put(url, {body: payload});
+
         return res.body;
     }
 }

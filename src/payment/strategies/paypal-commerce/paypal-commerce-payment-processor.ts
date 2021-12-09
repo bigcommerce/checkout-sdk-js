@@ -135,9 +135,25 @@ export default class PaypalCommercePaymentProcessor {
         return this._orderId;
     }
 
-    getShippingOptions(cartId: any, payload: any) {
-        return this._paypalCommerceRequestSender.getShippingOptions(cartId, payload);
+ async getShippingOptions(cartId: any, payload: any) {
+        return  await this._paypalCommerceRequestSender.getShippingOptions(cartId, payload);
     }
+
+async getStoreCountries() {
+    return  await this._paypalCommerceRequestSender.getStoreCountries();
+}
+
+async getConsignments(cartId: any, payload: any) {
+        return await this._paypalCommerceRequestSender.getConsignments(cartId, payload);
+}
+
+async getBillingAddress(cartId: any, payload: any) {
+    return await this._paypalCommerceRequestSender.getBillingAddress(cartId, payload);
+}
+
+async putConsignments(checkoutId: any, consignmentId: any, payload: any) {
+        return await this._paypalCommerceRequestSender.putConsignments(checkoutId, consignmentId, payload);
+}
 
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
         if (!this._paypal || !this._paypal.Messages) {

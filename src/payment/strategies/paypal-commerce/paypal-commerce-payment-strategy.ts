@@ -163,8 +163,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 },
             },
         };
-        // tslint:disable-next-line:no-console
-        console.log('ORDER', order, options, { ...payment, paymentData });
+
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));

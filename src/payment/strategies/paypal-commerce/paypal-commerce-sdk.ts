@@ -60,8 +60,8 @@ export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string>;
-    onApprove?(data: ApproveDataOptions): void;
-    onShippingChange?(data: any): void;
+    onApprove?(data: ApproveDataOptions, actions: any): void;
+    onShippingChange?(data: any, actions: any): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;

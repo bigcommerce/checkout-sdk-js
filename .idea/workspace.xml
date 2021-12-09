@@ -2,29 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/dist/checkout-button.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-button.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-button.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-button.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-button.umd.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-button.umd.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-button.umd.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-button.umd.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-sdk.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-sdk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-sdk.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-sdk.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-sdk.umd.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-sdk.umd.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/checkout-sdk.umd.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/checkout-sdk.umd.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/embedded-checkout.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/embedded-checkout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/embedded-checkout.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/embedded-checkout.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/embedded-checkout.umd.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/embedded-checkout.umd.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/embedded-checkout.umd.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/embedded-checkout.umd.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/hosted-form.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/hosted-form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/hosted-form.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/hosted-form.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/hosted-form.umd.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/hosted-form.umd.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/hosted-form.umd.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/hosted-form.umd.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/internal-mappers.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/internal-mappers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/internal-mappers.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/internal-mappers.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/internal-mappers.umd.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/internal-mappers.umd.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/internal-mappers.umd.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/dist/internal-mappers.umd.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/order/order-action-creator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/order/order-action-creator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.spec.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-strategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" afterDir="false" />
@@ -137,6 +118,7 @@
       <workItem from="1637848814436" duration="14986000" />
       <workItem from="1638174187684" duration="2545000" />
       <workItem from="1638349722014" duration="348000" />
+      <workItem from="1638953606054" duration="5837000" />
     </task>
     <servers />
   </component>
