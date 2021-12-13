@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.204.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.203.0...v1.204.0) (2021-12-13)
+
+
+### Features
+
+* **payment:** BOLT-109 added extra check for transaction reference what comes from Bolt ([fccb9e7](https://github.com/bigcommerce/checkout-sdk-js/commit/fccb9e79e7ffc87c8323fe67721a4fe5e5a35cbd))
+
 ## [1.203.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.202.0...v1.203.0) (2021-12-08)
 
 
