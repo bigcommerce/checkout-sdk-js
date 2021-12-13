@@ -1,9 +1,9 @@
 import { BoltCallbacks, BoltCheckout, BoltClient, BoltEmbedded, BoltTransaction } from './bolt';
 
-export function getBoltClientScriptMock(shouldSucceed: boolean = false): BoltCheckout {
+export function getBoltClientScriptMock(shouldSucceed: boolean = false, isValidTransactionReference: boolean = true): BoltCheckout {
     return {
         configure: jest.fn((_cart: object, _hints: {}, callbacks?: BoltCallbacks) => {
-            return getConfiguredBoltMock(shouldSucceed, callbacks || { success: () => {}, close: () => {}});
+            return getConfiguredBoltMock(shouldSucceed, isValidTransactionReference, callbacks || { success: () => {}, close: () => {}});
         }),
         getTransactionReference: jest.fn(),
         hasBoltAccount: jest.fn(),
@@ -24,9 +24,9 @@ export function getBoltEmbeddedScriptMock(): BoltEmbedded {
     };
 }
 
-export function getConfiguredBoltMock(shouldSucceed: boolean, callbacks: BoltCallbacks): BoltClient {
+export function getConfiguredBoltMock(shouldSucceed: boolean, isValidTransactionReference: boolean, callbacks: BoltCallbacks): BoltClient {
     const mockTransaction: BoltTransaction = {
-        reference: 'transactionReference',
+        reference: isValidTransactionReference ? 'transactionReference' : '',
         id: 'id',
         status: 'complete',
         type: 'authorization',
