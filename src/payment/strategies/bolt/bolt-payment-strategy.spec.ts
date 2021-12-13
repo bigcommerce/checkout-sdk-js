@@ -12,7 +12,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentMethod, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -339,10 +339,18 @@ describe('BoltPaymentStrategy', () => {
 
         it('does not submit payment if the payment is cancelled when using bolt client', async () => {
             boltClient = getBoltClientScriptMock(false);
-            jest.spyOn(boltScriptLoader, 'loadBoltClient')
-                .mockResolvedValue(boltClient);
+            jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(boltClient);
             await strategy.initialize(boltClientScriptInitializationOptions);
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
+            expect(boltClient.configure).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
+
+        it('does not submit payment if the payment is cancelled because of invalid transaction reference when using bolt client', async () => {
+            boltClient = getBoltClientScriptMock(true, false);
+            jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(boltClient);
+            await strategy.initialize(boltClientScriptInitializationOptions);
+            await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodFailedError);
             expect(boltClient.configure).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });

@@ -3,7 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
 import { withAccountCreation } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -137,7 +137,12 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         const transaction: BoltTransaction = await new Promise((resolve, reject) => {
             const onSuccess = (transaction: BoltTransaction,  callback: () => void) => {
-                resolve(transaction);
+                if (!transaction.reference) {
+                    reject(new PaymentMethodFailedError('Unable to proceed because transaction reference is unavailable. Please try again later.'));
+                } else {
+                    resolve(transaction);
+                }
+
                 callback();
             };
 
