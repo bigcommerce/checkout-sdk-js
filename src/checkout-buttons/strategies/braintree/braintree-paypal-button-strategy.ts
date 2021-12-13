@@ -160,12 +160,11 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     }
 
     private _handleSuccess(payload: any) {
-        console.log('%c HANDLE SUCCESS VENMO', 'color: green', payload);
         Promise.all([
             this._braintreeSDKCreator.getDataCollector(),
         ]).then(([{deviceData}]) => {
             this._formPoster.postForm('/checkout.php', {
-                payment_type: 'braintree',
+                payment_type: 'paypal',
                 provider: 'braintreevenmo',
                 action: true ? 'process_payment' : 'set_external_checkout',
                 nonce: payload.nonce,

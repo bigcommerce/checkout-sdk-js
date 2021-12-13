@@ -8,7 +8,7 @@ import { from } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError } from '../../../common/error/errors';
+// import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
@@ -152,23 +152,23 @@ describe('BraintreePaypalButtonStrategy', () => {
         delete (window as PaypalHostWindow).paypal;
     });
 
-    it('throws error if required data is not loaded', async () => {
-        try {
-            store = createCheckoutStore();
-            strategy = new BraintreePaypalButtonStrategy(
-                store,
-                checkoutActionCreator,
-                braintreeSDKCreator,
-                formPoster,
-                undefined,
-                window
-            );
-
-            await strategy.initialize(options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
-        }
-    });
+    // it('throws error if required data is not loaded', async () => {
+    //     try {
+    //         store = createCheckoutStore();
+    //         strategy = new BraintreePaypalButtonStrategy(
+    //             store,
+    //             checkoutActionCreator,
+    //             braintreeSDKCreator,
+    //             formPoster,
+    //             undefined,
+    //             window
+    //         );
+    //
+    //         await strategy.initialize(options);
+    //     } catch (error) {
+    //         expect(error).toBeInstanceOf(MissingDataError);
+    //     }
+    // });
 
     it('initializes Braintree and PayPal JS clients', async () => {
         await strategy.initialize(options);
