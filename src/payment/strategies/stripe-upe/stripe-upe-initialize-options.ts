@@ -1,7 +1,3 @@
-import { HostedFormOptions } from '../../../hosted-form';
-
-import { IndividualCardElementOptions, StripeUPEElementOptions } from './stripe-upe';
-
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -22,29 +18,6 @@ import { IndividualCardElementOptions, StripeUPEElementOptions } from './stripe-
  *     },
  * });
  * ```
- *
- * Additional options can be passed in to customize the fields.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'stripeupe',
- *     stripeupe: {
- *         containerId: 'container',
- *         options: {
- *             card: {
- *                 classes: { base: 'form-input' },
- *             },
- *             iban: {
- *                 classes: { base: 'form-input' },
- *                 supportedCountries: ['SEPA],
- *             },
- *             idealBank: {
- *                 classes: { base: 'form-input' },
- *             },
- *         },
- *     },
- * });
- * ```
  */
 
 export default interface StripeUPEPaymentInitializeOptions {
@@ -52,11 +25,4 @@ export default interface StripeUPEPaymentInitializeOptions {
      * The location to insert the credit card number form field.
      */
     containerId: string;
-
-    options?: StripeUPEElementOptions | IndividualCardElementOptions;
-
-    /**
-     * Hosted Form Validation Options
-     */
-    form?: HostedFormOptions;
 }

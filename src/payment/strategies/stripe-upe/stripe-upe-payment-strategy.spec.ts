@@ -5,15 +5,13 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
-import { HostedForm, HostedFormFactory } from '../../../hosted-form';
-import { FinalizeOrderAction, LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrder } from '../../../order/orders.mock';
 import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -27,10 +25,10 @@ import { getStripeUPE } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { StripeElement, StripeElements, StripeElementType, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
+import { StripeElement, StripeElements, StripeElementsOptions, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getHostedFormInitializeOptions, getOrderRequestBodyVaultedCC, getPaymentMethodResponse, getStripeBillingAddress, getStripeBillingAddressWithoutPhone, getStripePaymentMethodOptionsWithGuestUserWithoutAddress, getStripeUPEInitializeOptionsMock, getStripeUPEInitializeOptionsMockSingleElements, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
+import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getStripeUPEInitializeOptionsMock, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
 
 describe('StripeUPEPaymentStrategy', () => {
     let checkoutMock: Checkout;
@@ -47,7 +45,6 @@ describe('StripeUPEPaymentStrategy', () => {
     let stripeScriptLoader: StripeUPEScriptLoader;
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
-    let formFactory: HostedFormFactory;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -104,8 +101,6 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
             .mockReturnValue(checkoutMock);
 
-        formFactory = new HostedFormFactory(store);
-
         strategy = new StripeUPEPaymentStrategy(
             store,
             paymentMethodActionCreator,
@@ -113,13 +108,13 @@ describe('StripeUPEPaymentStrategy', () => {
             orderActionCreator,
             stripeScriptLoader,
             storeCreditActionCreator,
-            formFactory,
             'en_US'
         );
     });
 
     describe('#initialize()', () => {
         let options: PaymentInitializeOptions;
+        let elementsOptions: StripeElementsOptions;
         let stripeUPEJsMock: StripeUPEClient;
 
         beforeEach(() => {
@@ -181,26 +176,14 @@ describe('StripeUPEPaymentStrategy', () => {
         describe('mounts single payment element', () => {
             beforeEach(() => {
                 options = getStripeUPEInitializeOptionsMock();
+                elementsOptions = {clientSecret: 'myToken'};
 
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getStripeUPE());
             });
 
-            it('does not mount a stripe alipay element', async () => {
-                const { create, getElement } = stripeUPEJsMock.elements();
-                stripeUPEJsMock.elements = jest.fn()
-                    .mockReturnValue({ create, getElement });
-
-                jest.spyOn(stripeScriptLoader, 'load')
-                    .mockReturnValue(Promise.resolve(stripeUPEJsMock));
-
-                await strategy.initialize(getStripeUPEInitializeOptionsMock((StripeElementType.Alipay)));
-
-                expect(create).not.toHaveBeenCalledWith('alipay');
-            });
-
             it('mounts a previously created stripe element', async () => {
-                const { create: getElement, getElement: create } = stripeUPEJsMock.elements();
+                const { create: getElement, getElement: create } = stripeUPEJsMock.elements(elementsOptions);
                 stripeUPEJsMock.elements = jest.fn()
                     .mockReturnValue({ create, getElement });
 
@@ -209,13 +192,13 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 await strategy.initialize(options);
 
-                expect(getElement).toHaveBeenCalledWith('card');
+                expect(getElement).toHaveBeenCalledWith('payment');
                 expect(create).not.toHaveBeenCalled();
             });
 
-            it('fails mounting a stripe card element', async () => {
+            it('fails mounting a stripe payment element', async () => {
                 stripeUPEJsMock = getFailingStripeUPEJsMock();
-                const { create, getElement } = stripeUPEJsMock.elements();
+                const { create, getElement } = stripeUPEJsMock.elements(elementsOptions);
                 stripeUPEJsMock.elements = jest.fn()
                     .mockReturnValue({ create, getElement });
 
@@ -225,37 +208,6 @@ describe('StripeUPEPaymentStrategy', () => {
                 await expect(strategy.initialize(options))
                     .rejects.toThrow(InvalidArgumentError);
             });
-
-            it('fails mounting a stripe sepa element', async () => {
-                stripeUPEJsMock = getFailingStripeUPEJsMock();
-                const { create, getElement } = stripeUPEJsMock.elements();
-                stripeUPEJsMock.elements = jest.fn()
-                    .mockReturnValue({ create, getElement });
-
-                jest.spyOn(stripeScriptLoader, 'load')
-                    .mockReturnValue(Promise.resolve(stripeUPEJsMock));
-
-                options = getStripeUPEInitializeOptionsMock(StripeElementType.Sepa);
-                await expect(strategy.initialize(options))
-                    .rejects.toThrow(InvalidArgumentError);
-            });
-        });
-
-        it('fails mounting individual payment elements', async () => {
-            options = getStripeUPEInitializeOptionsMockSingleElements();
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getStripeUPE('card', true));
-
-            stripeUPEJsMock = getFailingStripeUPEJsMock();
-            const { create, getElement } = stripeUPEJsMock.elements();
-            stripeUPEJsMock.elements = jest.fn()
-                .mockReturnValue({ create, getElement });
-
-            jest.spyOn(stripeScriptLoader, 'load')
-                .mockReturnValue(Promise.resolve(stripeUPEJsMock));
-
-            await expect(strategy.initialize(options))
-                .rejects.toThrow(InvalidArgumentError);
         });
     });
 
@@ -280,19 +232,20 @@ describe('StripeUPEPaymentStrategy', () => {
             it('with a stored instrument passing on the "make default" flag', async () => {
                 await strategy.initialize(options);
 
-                stripeUPEJsMock.confirmCardPayment = jest.fn(
+                stripeUPEJsMock.confirmPayment = jest.fn(
                     () => Promise.resolve(getConfirmPaymentResponse())
                 );
 
-                await strategy.execute(getStripeUPEOrderRequestBodyVaultMock(StripeElementType.CreditCard, true));
+                await strategy.execute(getStripeUPEOrderRequestBodyVaultMock(StripePaymentMethodType.CreditCard, true));
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({methodId: 'card',
                     paymentData: {
                         formattedPayload: {
-                            bigpay_token: {
-                                token: 'token',
+                            credit_card_token: {
+                                token: 'pi_1234',
                             },
                             confirm: false,
+                            vault_payment_instrument: undefined,
                         },
                         shouldSetAsDefaultInstrument: true,
                     }}
@@ -302,22 +255,19 @@ describe('StripeUPEPaymentStrategy', () => {
             describe('with card', () => {
                 let elements: StripeElements;
                 let cardElement: StripeElement;
+                const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
 
                 beforeEach(() => {
-                    elements = stripeUPEJsMock.elements();
-                    cardElement = elements.create(StripeElementType.CreditCard, {});
+                    elements = stripeUPEJsMock.elements(elementsOptions);
+                    cardElement = elements.create('payment');
 
-                    stripeUPEJsMock.confirmCardPayment = jest.fn(
+                    stripeUPEJsMock.confirmPayment = jest.fn(
                         () => Promise.resolve(getConfirmPaymentResponse())
-                    );
-
-                    stripeUPEJsMock.createPaymentMethod = jest.fn(
-                        () => Promise.resolve(getPaymentMethodResponse())
                     );
 
                     jest.spyOn(stripeUPEJsMock, 'elements')
                         .mockReturnValue(elements);
-                    jest.spyOn(stripeUPEJsMock.elements(), 'create')
+                    jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'create')
                         .mockReturnValue(cardElement);
                 });
 
@@ -333,13 +283,6 @@ describe('StripeUPEPaymentStrategy', () => {
                         await strategy.initialize(options);
                         const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                        expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                            {
-                                type: StripePaymentMethodType.CreditCard,
-                                card: cardElement,
-                                billing_details: getStripeBillingAddress(),
-                            }
-                        );
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -353,13 +296,6 @@ describe('StripeUPEPaymentStrategy', () => {
                         await strategy.initialize(options);
                         const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                        expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                            {
-                                type: StripePaymentMethodType.CreditCard,
-                                card: cardElement,
-                                billing_details: getStripeBillingAddress(),
-                            }
-                        );
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -376,22 +312,14 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
                     expect(promise).toBe(store.getState());
                 });
 
                 it('passing on the "save card" flag', async () => {
                     await strategy.initialize(options);
-                    const response = await strategy.execute(getStripeUPEOrderRequestBodyMock(StripeElementType.CreditCard, true));
+                    const response = await strategy.execute(getStripeUPEOrderRequestBodyMock(StripePaymentMethodType.CreditCard, true));
 
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                        {
-                            type: StripePaymentMethodType.CreditCard,
-                            card: cardElement,
-                            billing_details: getStripeBillingAddress(),
-                        }
-                    );
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -409,14 +337,13 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect.objectContaining({
                             methodId: 'card',
                             paymentData: expect.objectContaining({
-                                formattedPayload: {
-                                    credit_card_token: {
-                                        token: 'pm_1234',
-                                    },
+                                formattedPayload: expect.objectContaining({
                                     confirm: false,
-                                    client_token: 'myToken',
+                                    credit_card_token: {
+                                        token: 'pi_1234',
+                                    },
                                     vault_payment_instrument: false,
-                                },
+                                }),
                             }),
                         })
                     );
@@ -438,13 +365,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                        {
-                            type: StripePaymentMethodType.CreditCard,
-                            card: cardElement,
-                            billing_details: getStripeBillingAddressWithoutPhone(),
-                        }
-                    );
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -463,13 +383,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                        {
-                            type: StripePaymentMethodType.CreditCard,
-                            card: cardElement,
-                            billing_details: getStripeBillingAddressWithoutPhone(),
-                        }
-                    );
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -486,13 +399,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                        {
-                            type: StripePaymentMethodType.CreditCard,
-                            card: cardElement,
-                            billing_details: getStripeBillingAddress(),
-                        }
-                    );
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
@@ -510,48 +416,10 @@ describe('StripeUPEPaymentStrategy', () => {
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalledWith(
-                        {
-                            type: StripePaymentMethodType.CreditCard,
-                            card: cardElement,
-                            ...getStripePaymentMethodOptionsWithGuestUserWithoutAddress(),
-                        }
-                    );
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
                     expect(response).toBe(store.getState());
-                });
-
-                it('fires additional action outside of bigcommerce', async () => {
-                    const errorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'additional_action_required' },
-                        ],
-                        additional_action_required: {
-                            type: 'redirect_to_url',
-                            data: {
-                                redirect_url: 'https://redirect-url.com',
-                            },
-                        },
-                        status: 'error',
-                    }));
-
-                    window.location.replace = jest.fn();
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
-
-                    await strategy.initialize(options);
-
-                    strategy.execute(getStripeUPEOrderRequestBodyMock());
-                    await new Promise(resolve => process.nextTick(resolve));
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
-                    expect(window.location.replace).toBeCalledWith('https://redirect-url.com');
                 });
 
                 it('do not fire additional action because of missing url', async () => {
@@ -579,7 +447,6 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
                     expect(window.location.replace).not.toHaveBeenCalled();
                 });
 
@@ -605,7 +472,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     } catch (error) {
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                        expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
                     }
                 });
 
@@ -621,22 +487,15 @@ describe('StripeUPEPaymentStrategy', () => {
                     jest.spyOn(paymentActionCreator, 'submitPayment')
                         .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requiredFieldErrorResponse)));
 
-                    stripeUPEJsMock.createPaymentMethod = jest.fn(() => Promise.resolve({ error: { message: stripeErrorMessage }}));
+                    stripeUPEJsMock.confirmPayment = jest.fn(() => Promise.resolve({ error: { type: 'invalid_request_error', message: stripeErrorMessage }}));
 
                     await strategy.initialize(options);
 
                     await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(stripeErrorMessage);
 
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: '' },
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
+                    expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                    expect(paymentActionCreator.submitPayment).not.toHaveBeenCalledTimes(1);
+                    expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
                 });
 
                 it('throws unknown error', async () => {
@@ -662,7 +521,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     } catch (error) {
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                        expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
                         expect(error.message).toEqual(unexpectedError && unexpectedError.message);
                     }
                 });
@@ -679,7 +537,6 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
                 });
 
                 it('throws stripe error when auth fails', async () => {
@@ -704,231 +561,14 @@ describe('StripeUPEPaymentStrategy', () => {
                         .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
                         .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requiredFieldErrorResponse)));
 
-                    stripeUPEJsMock.handleCardAction = jest.fn(() => Promise.resolve({ error: { payment_intent: { last_payment_error: { message : stripeErrorMessage } }, message: stripeErrorMessage } }));
+                    stripeUPEJsMock.confirmPayment = jest.fn(() => Promise.resolve({ error: { type: 'card_error', payment_intent: { last_payment_error: { message : stripeErrorMessage } }, message: stripeErrorMessage } }));
 
                     await strategy.initialize(options);
 
                     await expect(strategy.execute(getStripeUPEOrderRequestBodyVaultMock())).rejects.toThrow(stripeErrorMessage);
 
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                bigpay_token: { token: 'token' },
-                            }),
-                        }),
-                    }));
-                    expect(paymentActionCreator.submitPayment).not.toHaveBeenNthCalledWith(2, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: '' },
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.handleCardAction).toHaveBeenCalled();
-                });
-
-                it('throws stripe error when user closes the auth modal', async () => {
-                    const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'three_d_secure_required' },
-                        ],
-                        three_ds_result: {
-                            token: 'token',
-                        },
-                    }));
-                    const requiredFieldErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'required_field' },
-                        ],
-                    }));
-                    const stripeErrorMessage = 'canceled';
-                    const errorMessage = 'Payment process was cancelled.';
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requiredFieldErrorResponse)));
-
-                    stripeUPEJsMock.handleCardAction = jest.fn(() => Promise.resolve({ error: { payment_intent: { last_payment_error: { message : stripeErrorMessage } } } }));
-
-                    await strategy.initialize(options);
-
-                    await expect(strategy.execute(getStripeUPEOrderRequestBodyVaultMock())).rejects.toThrow(errorMessage);
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                bigpay_token: { token: 'token' },
-                            }),
-                        }),
-                    }));
-                    expect(paymentActionCreator.submitPayment).not.toHaveBeenNthCalledWith(2, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: '' },
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.handleCardAction).toHaveBeenCalled();
-                });
-
-                it('throws unknown stripe error when user closes the auth modal', async () => {
-                    const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'three_d_secure_required' },
-                        ],
-                        three_ds_result: {
-                            token: 'token',
-                        },
-                    }));
-                    const requiredFieldErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'required_field' },
-                        ],
-                    }));
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requiredFieldErrorResponse)));
-
-                    stripeUPEJsMock.handleCardAction = jest.fn(() => Promise.resolve({ error: { payment_intent: { last_payment_error: undefined } } }));
-
-                    await strategy.initialize(options);
-
-                    await expect(strategy.execute(getStripeUPEOrderRequestBodyVaultMock())).rejects.toThrow();
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                bigpay_token: { token: 'token' },
-                            }),
-                        }),
-                    }));
-                    expect(paymentActionCreator.submitPayment).not.toHaveBeenNthCalledWith(2, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: '' },
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.handleCardAction).toHaveBeenCalled();
-                });
-
-                it('throws request error when payment fails after auth modal succeed', async () => {
-                    const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'three_d_secure_required' },
-                        ],
-                        three_ds_result: {
-                            token: 'token',
-                        },
-                    }));
-                    const serverSideErrorMessage = 'Something went wrong server side!';
-                    const serverSideError = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'unknown_error' },
-                        ],
-                    }), { message: serverSideErrorMessage });
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, serverSideError)));
-
-                    stripeUPEJsMock.handleCardAction = jest.fn(() => Promise.resolve(getConfirmPaymentResponse()));
-
-                    await strategy.initialize(options);
-
-                    await expect(strategy.execute(getStripeUPEOrderRequestBodyVaultMock())).rejects.toThrow(serverSideErrorMessage);
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                bigpay_token: { token: 'token' },
-                            }),
-                        }),
-                    }));
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                credit_card_token: { token: 'pi_1234' },
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.handleCardAction).toHaveBeenCalled();
-                });
-
-                it('throws when stored instrument requires SCA and then shopper successfully authenticates', async () => {
-                    const errorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            {code: 'three_d_secure_required'},
-                        ],
-                        three_ds_result: {
-                            token: 'token',
-                        },
-                        status: 'error',
-                    }));
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
-
-                    stripeUPEJsMock.handleCardAction = jest.fn(
-                        () => Promise.resolve(getConfirmPaymentResponse())
-                    );
-
-                    await strategy.initialize(options);
-                    await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
-                    expect(stripeUPEJsMock.handleCardAction).toHaveBeenCalled();
-                });
-
-                it('call confirmCardPayment to shopper auth and complete the payment when reUsePaymentIntent is anabled', async () => {
-                    const errorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'three_d_secure_required' },
-                        ],
-                        three_ds_result: {
-                            token: 'token',
-                        },
-                        status: 'error',
-                    }));
-
-                    jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                        .mockReturnValue(getStripeUPE('card', false, false, true));
-
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
-
-                    stripeUPEJsMock.confirmCardPayment = jest.fn(
-                        () => Promise.resolve(getConfirmPaymentResponse())
-                    );
-
-                    await strategy.initialize(options);
-                    await strategy.execute(getStripeUPEOrderRequestBodyMock());
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
-                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({
-                        paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                confirm: false,
-                            }),
-                        }),
-                    }));
-                    expect(stripeUPEJsMock.confirmCardPayment).toHaveBeenCalled();
+                    expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                    expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
                 });
 
                 it('throws unknown error when using stored instrument', async () => {
@@ -944,140 +584,8 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(stripeUPEJsMock.confirmCardPayment).not.toHaveBeenCalled();
+                    expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
                 });
-
-                describe('with individual payment elements', () => {
-                    beforeEach(() => {
-                        options = getStripeUPEInitializeOptionsMockSingleElements(true);
-                        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                            .mockReturnValue(getStripeUPE('card', true));
-                        jest.spyOn(stripeScriptLoader, 'load')
-                            .mockReturnValue(Promise.resolve(stripeUPEJsMock));
-                    });
-
-                    it('without zipcode', async () => {
-                        options = getStripeUPEInitializeOptionsMockSingleElements();
-
-                        await strategy.initialize(options);
-                        const promise = await strategy.execute(getStripeUPEOrderRequestBodyMock());
-
-                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                        expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                        expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
-                        expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                        expect(promise).toBe(store.getState());
-                    });
-
-                    describe('with zipcode', () => {
-                        beforeEach(() => {
-                            options = getStripeUPEInitializeOptionsMockSingleElements(true);
-                            jest.spyOn(store.getState().billingAddress, 'getBillingAddress')
-                                .mockReturnValue(getBillingAddress());
-                        });
-
-                        it('with valid input field', async () => {
-                            let container: HTMLDivElement;
-                            container = document.createElement('input');
-                            container.setAttribute('id', 'stripe-postal-code-component-field');
-                            container.setAttribute('value', '90210');
-                            document.body.appendChild(container);
-
-                            await strategy.initialize(options);
-                            const promise = await strategy.execute(getStripeUPEOrderRequestBodyMock());
-
-                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                            expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
-                            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                            expect(promise).toBe(store.getState());
-                            document.body.removeChild(container);
-                        });
-
-                        it('with invalid container', async () => {
-                            await strategy.initialize(options);
-                            const promise = await strategy.execute(getStripeUPEOrderRequestBodyMock());
-
-                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                            expect(stripeUPEJsMock.createPaymentMethod).toHaveBeenCalled();
-                            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                            expect(promise).toBe(store.getState());
-                        });
-                    });
-                });
-            });
-
-            it('with alipay', async () => {
-                paymentMethodMock = { ...getStripeUPE(StripeElementType.Alipay), clientToken: 'myToken' };
-                loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));
-                jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-                    .mockReturnValue(loadPaymentMethodAction);
-
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getStripeUPE(StripeElementType.Alipay));
-
-                options = getStripeUPEInitializeOptionsMock(StripeElementType.Alipay);
-                stripeUPEJsMock.confirmAlipayPayment = jest.fn(
-                    () => Promise.resolve(getConfirmPaymentResponse())
-                );
-
-                await strategy.initialize(options);
-                const response = await strategy.execute(getStripeUPEOrderRequestBodyMock(StripeElementType.Alipay));
-
-                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                expect(stripeUPEJsMock.confirmAlipayPayment).toHaveBeenCalled();
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                expect(response).toBe(store.getState());
-            });
-
-            it('with ideal', async () => {
-                paymentMethodMock = { ...getStripeUPE(StripeElementType.iDEAL), clientToken: 'myToken' };
-                loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));
-                jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-                    .mockReturnValue(loadPaymentMethodAction);
-
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getStripeUPE(StripeElementType.iDEAL));
-
-                options = getStripeUPEInitializeOptionsMock(StripeElementType.iDEAL);
-                stripeUPEJsMock.confirmIdealPayment = jest.fn(
-                    () => Promise.resolve(getConfirmPaymentResponse())
-                );
-
-                await strategy.initialize(options);
-                const response = await strategy.execute(getStripeUPEOrderRequestBodyMock(StripeElementType.iDEAL));
-
-                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                expect(stripeUPEJsMock.confirmIdealPayment).toHaveBeenCalled();
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                expect(response).toBe(store.getState());
-            });
-
-            it('with SEPA', async () => {
-                paymentMethodMock = { ...getStripeUPE(StripeElementType.Sepa), clientToken: 'myToken' };
-                loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));
-                jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-                    .mockReturnValue(loadPaymentMethodAction);
-
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getStripeUPE(StripeElementType.iDEAL));
-
-                options = getStripeUPEInitializeOptionsMock(StripeElementType.Sepa);
-                stripeUPEJsMock.confirmSepaDebitPayment = jest.fn(
-                    () => Promise.resolve(getConfirmPaymentResponse())
-                );
-
-                await strategy.initialize(options);
-                const response = await strategy.execute(getStripeUPEOrderRequestBodyMock(StripeElementType.Sepa));
-
-                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                expect(stripeUPEJsMock.confirmSepaDebitPayment).toHaveBeenCalled();
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                expect(response).toBe(store.getState());
             });
 
             it('throws error when clientToken is undefined', async () => {
@@ -1088,7 +596,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 await expect(promise).rejects.toThrow(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
 
-                expect(stripeUPEJsMock.confirmCardPayment).not.toHaveBeenCalled();
+                expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
             });
         });
@@ -1113,88 +621,6 @@ describe('StripeUPEPaymentStrategy', () => {
         });
     });
 
-    describe('When Hosted Form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
-        let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
-        let state: InternalCheckoutSelectors;
-
-        beforeEach(() => {
-            form = {
-                attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
-                validate: jest.fn(() => Promise.resolve()),
-            };
-            initializeOptions = getHostedFormInitializeOptions();
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            state = store.getState();
-
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getStripeUPE(StripePaymentMethodType.CreditCard, false, true));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
-
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
-        });
-
-        it('creates hosted form', async () => {
-            await strategy.initialize(initializeOptions);
-
-            expect(formFactory.create)
-                .toHaveBeenCalledWith(
-                    'https://bigpay.integration.zone',
-                    initializeOptions.stripeupe?.form
-                );
-        });
-
-        it('fails creating hosted form', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue(undefined);
-
-            return expect(strategy.initialize(initializeOptions)).rejects.toBeInstanceOf(MissingDataError);
-        });
-
-        it('attaches hosted form to container', async () => {
-            await strategy.initialize(initializeOptions);
-
-            expect(form.attach)
-                .toHaveBeenCalled();
-        });
-
-        it('submits payment data with hosted form', async () => {
-            const payload = getOrderRequestBodyVaultedCC();
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(form.submit)
-                .toHaveBeenCalledWith(payload.payment);
-        });
-
-        it('validates user input before submitting data', async () => {
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(getOrderRequestBodyVaultedCC());
-
-            expect(form.validate)
-                .toHaveBeenCalled();
-        });
-
-        it('does not submit payment data with hosted form if validation fails', async () => {
-            jest.spyOn(form, 'validate')
-                .mockRejectedValue(new Error());
-
-            try {
-                await strategy.initialize(initializeOptions);
-                await strategy.execute(getOrderRequestBodyVaultedCC());
-            } catch (error) {
-                expect(form.submit)
-                    .not.toHaveBeenCalled();
-            }
-        });
-    });
-
     describe('#finalize()', () => {
         it('throws an error to inform that order finalization is not required', async () => {
             const promise = strategy.finalize();
@@ -1205,11 +631,12 @@ describe('StripeUPEPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         let cardElement: StripeElement;
+        const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
 
         beforeEach(() => {
             const stripeUPEJsMock = getStripeUPEJsMock();
-            const elements = stripeUPEJsMock.elements();
-            cardElement = elements.create(StripeElementType.CreditCard, {});
+            const elements = stripeUPEJsMock.elements(elementsOptions);
+            cardElement = elements.create('payment');
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(getStripeUPE());
@@ -1217,7 +644,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 .mockReturnValue(Promise.resolve(stripeUPEJsMock));
             jest.spyOn(stripeUPEJsMock, 'elements')
                 .mockReturnValue(elements);
-            jest.spyOn(stripeUPEJsMock.elements(), 'create')
+            jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'create')
                 .mockReturnValue(cardElement);
 
         });

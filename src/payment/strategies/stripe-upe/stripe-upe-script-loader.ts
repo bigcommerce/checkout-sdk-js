@@ -21,7 +21,7 @@ export default class StripeUPEScriptLoader {
                 return this._window.Stripe(stripePublishableKey, {
                     stripeAccount,
                     locale,
-                    betas: ['payment_intent_beta_3', 'alipay_pm_beta_1'],
+                    betas: ['payment_element_beta_2', 'alipay_pm_beta_1'],
                     apiVersion: '2020-03-02;alipay_beta=v1',
                 });
             });
