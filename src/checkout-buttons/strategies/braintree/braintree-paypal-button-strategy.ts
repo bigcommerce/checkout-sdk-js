@@ -262,7 +262,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
         }
 
-        const methodId = this._paymentMethod.id;
+        // const methodId = this._paymentMethod.id;
 
         return Promise.all([
             paypalCheckoutInstance.tokenizePayment(data),
@@ -271,7 +271,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             .then(([payload, { deviceData }]) => {
                 this._formPoster.postForm('/checkout.php', {
                     payment_type: 'paypal',
-                    provider: methodId,
+                    provider: 'braintreevenmo',
                     action: shouldProcessPayment ? 'process_payment' : 'set_external_checkout',
                     nonce: payload.nonce,
                     device_data: deviceData,
