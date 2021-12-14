@@ -228,6 +228,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 } else {
                     if (option.isRecommended) {
                         shippingAmount = parseFloat(option.cost).toFixed(2);
+                        shippingAmount+=shippingAmount;
+                        console.log('SHIPPING AMOUNT', shippingAmount);
                         isSelected = true;
                     }
                 }

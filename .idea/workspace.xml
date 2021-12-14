@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-strategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-sdk.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-sdk.ts" afterDir="false" />
-    </list>
+    <list default="true" id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +27,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../cloud-dev-vm/bcappvm/codebases/bigcommerce" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
@@ -118,7 +109,8 @@
       <workItem from="1637848814436" duration="14986000" />
       <workItem from="1638174187684" duration="2545000" />
       <workItem from="1638349722014" duration="348000" />
-      <workItem from="1638953606054" duration="5837000" />
+      <workItem from="1638953606054" duration="6197000" />
+      <workItem from="1639065514147" duration="8611000" />
     </task>
     <servers />
   </component>
