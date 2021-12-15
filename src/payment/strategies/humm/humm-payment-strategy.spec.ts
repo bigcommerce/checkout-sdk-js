@@ -8,12 +8,12 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, RequestError } from '../../../common/error/errors';
+import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentExecuteError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -132,11 +132,11 @@ describe('HummPaymentStrategy', () => {
             expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {data: 'data'});
         });
 
-        it('throws InvalidArgumentError when not processable', async () => {
+        it('throws PaymentExecuteError when not processable', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue({ ...getHumm(), initializationData: { processable: false }});
 
-            await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
+            await expect(strategy.execute(payload)).rejects.toThrow(PaymentExecuteError);
         });
 
         it('reject payment when error is different to additional_action_required', async () => {

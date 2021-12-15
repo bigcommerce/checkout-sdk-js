@@ -6,3 +6,4 @@ export { default as PaymentMethodDeclinedError } from './payment-method-declined
 export { default as PaymentMethodInvalidError } from './payment-method-invalid-error';
 export { default as PaymentInstrumentNotValidError } from './payment-instrument-not-valid-error';
 export { default as PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from './payment-invalid-form-error';
+export { default as PaymentExecuteError } from './payment-execute-error';
