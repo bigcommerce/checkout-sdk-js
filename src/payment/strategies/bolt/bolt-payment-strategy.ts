@@ -3,7 +3,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
 import { withAccountCreation } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -12,6 +12,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import { BoltCheckout, BoltEmbedded, BoltEmbeddedTokenize, BoltEmbededField, BoltTransaction } from './bolt';
+import BoltError from './bolt-error';
 import BoltScriptLoader from './bolt-script-loader';
 
 export default class BoltPaymentStrategy implements PaymentStrategy {
@@ -136,7 +137,12 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         const transaction: BoltTransaction = await new Promise((resolve, reject) => {
             const onSuccess = (transaction: BoltTransaction,  callback: () => void) => {
-                resolve(transaction);
+                if (!transaction.reference) {
+                    reject(new PaymentMethodFailedError('Unable to proceed because transaction reference is unavailable. Please try again later.'));
+                } else {
+                    resolve(transaction);
+                }
+
                 callback();
             };
 
@@ -196,7 +202,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         }
 
         if (tokenizeResult instanceof Error) {
-            throw tokenizeResult;
+            throw new BoltError(tokenizeResult.message);
         }
 
         this._validateTokenizeResult(tokenizeResult);

@@ -8,7 +8,7 @@ import { of, Observable } from 'rxjs';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { getCustomer } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -28,6 +28,7 @@ import { getVaultedInstrument } from '../../payments.mock';
 import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock';
 
 import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 
@@ -269,13 +270,11 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when load response is empty or not provided', () => {
-            const error = 'Unable to proceed because the payment step of checkout has not been initialized.';
-
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when DigitalRiver options is not provided', () => {
@@ -288,23 +287,21 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver clientToken is not provided', () => {
-            const error = new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: ''};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when DigitalRiver clientToken is not receiving correct data ', () => {
-            const error = new Error('Unexpected token o in JSON at position 0');
             paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: 'ok'};
             loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            return expect(promise).rejects.toThrowError(DigitalRiverError);
         });
 
         it('throws an error when data on onSuccess event is not provided', async () => {

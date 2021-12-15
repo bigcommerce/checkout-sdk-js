@@ -355,6 +355,19 @@ export function getClearpay(): PaymentMethod {
     };
 }
 
+export function getHumm(): PaymentMethod {
+    return {
+        id: 'humm',
+        logoUrl: '',
+        method: 'humm',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getStripe(): PaymentMethod {
     return {
         id: 'stripe',
@@ -645,7 +658,7 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
     };
 }
 
-export function getStripeUPE(method: string = 'card', shouldUseIndividualCardFields: boolean = false, isHostedFormEnabled: boolean = false, shouldReusePaymentIntent: boolean = false): PaymentMethod {
+export function getStripeUPE(method: string = 'card'): PaymentMethod {
     return {
         id: method,
         logoUrl: '',
@@ -655,12 +668,9 @@ export function getStripeUPE(method: string = 'card', shouldUseIndividualCardFie
             displayName: 'Stripe',
             merchantId: '',
             testMode: true,
-            isHostedFormEnabled,
         },
         initializationData: {
             stripePublishableKey: 'key',
-            useIndividualCardFields: shouldUseIndividualCardFields,
-            reusePaymentIntent: shouldReusePaymentIntent,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
@@ -835,6 +845,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getGooglePayAdyenV2(),
         getGooglePayCybersourceV2(),
         getGooglePayOrbital(),
+        getHumm(),
         getKlarna(),
         getMollie(),
         getMoneris(),

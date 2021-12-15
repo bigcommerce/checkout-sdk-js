@@ -328,7 +328,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 it('submit payment with credit card and passes back the client token', async () => {
                     jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                        .mockReturnValue(getStripeUPE('card', false, false, true));
+                        .mockReturnValue(getStripeUPE('card'));
 
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());

@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.204.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.203.0...v1.204.0) (2021-12-13)
+
+
+### Features
+
+* **payment:** BOLT-109 added extra check for transaction reference what comes from Bolt ([fccb9e7](https://github.com/bigcommerce/checkout-sdk-js/commit/fccb9e79e7ffc87c8323fe67721a4fe5e5a35cbd))
+
+## [1.203.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.202.0...v1.203.0) (2021-12-08)
+
+
+### Features
+
+* **payment:** BOLT-100 add error codes for Bolt fields ([cf9b5ec](https://github.com/bigcommerce/checkout-sdk-js/commit/cf9b5ec8e5a4103e1493b6267c407cc67c0b1285))
+* **payment:** BOLT-100 add error mesages for Bolt fields ([1090565](https://github.com/bigcommerce/checkout-sdk-js/commit/109056578c7943f4922b472cd761b0073c850060))
+
+## [1.202.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.2...v1.202.0) (2021-12-06)
+
+
+### Features
+
+* **payment:** INT-5000 Throw error when payment method isn't available ([#1286](https://github.com/bigcommerce/checkout-sdk-js/issues/1286)) ([893f1fc](https://github.com/bigcommerce/checkout-sdk-js/commit/893f1fca9e86a257be23b3803fdec91f291d884c))
+
+### [1.201.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.1...v1.201.2) (2021-12-03)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-320 reset adyen component state on deinitialize ([e484781](https://github.com/bigcommerce/checkout-sdk-js/commit/e484781f8b1b5951e1d7fa7231f8e9177533aa1a))
+
+### [1.201.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.201.0...v1.201.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6066 Remove 0 space characters ([#1300](https://github.com/bigcommerce/checkout-sdk-js/issues/1300)) ([83d7cc9](https://github.com/bigcommerce/checkout-sdk-js/commit/83d7cc9fae26dce7d515fbf66c2ef1f1a428587a))
+
+## [1.201.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.200.0...v1.201.0) (2021-12-02)
+
+
+### Features
+
+* **payment:** INT-4897 Humm - Add Humm strategy as external payment ([#1266](https://github.com/bigcommerce/checkout-sdk-js/issues/1266)) ([e13dc61](https://github.com/bigcommerce/checkout-sdk-js/commit/e13dc614ad61e3e54a41013d78363e288cc7cea8))
+
 ## [1.200.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.199.1...v1.200.0) (2021-12-01)
 
 
