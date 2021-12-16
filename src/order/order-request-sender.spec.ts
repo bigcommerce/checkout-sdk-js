@@ -1,8 +1,9 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { OrderTaxProviderUnavailableError } from './errors';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
@@ -111,6 +112,22 @@ describe('OrderRequestSender', () => {
                 body: payload,
                 headers: expect.anything(),
             }));
+        });
+
+        it('throws OrderTaxProviderUnavailableError if request status is 500 and type is tax_provider_unavailable', async () => {
+            const error = getErrorResponse({
+                status: 500,
+                title: 'The tax provider is unavailable.',
+                type: 'tax_provider_unavailable',
+            }, undefined, 500);
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            try {
+                const payload = { useStoreCredit: false };
+                await orderRequestSender.submitOrder(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderTaxProviderUnavailableError);
+            }
         });
 
         it('submits order and returns response with timeout', async () => {
