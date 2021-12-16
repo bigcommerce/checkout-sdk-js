@@ -1,4 +1,4 @@
-import { isHostedInstrumentLike, Payment } from '../..';
+import { isHostedInstrumentLike } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -51,7 +51,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
-        let formattedPayload: { [key: string]: unknown };
 
         if (!payment || !payment.paymentData) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -86,17 +85,19 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 throw new RequestError();
             }
 
-            const { id: token } = paymentIntent ??  { id: '' };
-
-            formattedPayload = {
-                credit_card_token: { token },
-                vault_payment_instrument: shouldSaveInstrument,
-                confirm: false,
-            };
-
             await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-            const paymentPayload = this._buildPaymentPayload(methodId, formattedPayload, shouldSetAsDefaultInstrument);
+            const paymentPayload = {
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: { token: paymentIntent ? paymentIntent.id : '' },
+                        vault_payment_instrument: shouldSaveInstrument,
+                        confirm: false,
+                    },
+                    shouldSetAsDefaultInstrument,
+                },
+            };
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
@@ -112,14 +113,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         this._unmountElement();
 
         return Promise.resolve(this._store.getState());
-    }
-
-    private _buildPaymentPayload(methodId: string, formattedPayload: { [key: string]: unknown }, shouldSetAsDefaultInstrument: boolean | undefined): Payment {
-        const paymentData = shouldSetAsDefaultInstrument
-            ? { formattedPayload, shouldSetAsDefaultInstrument }
-            : { formattedPayload };
-
-        return { methodId, paymentData };
     }
 
     private _getInitializeOptions(): StripeUPEPaymentInitializeOptions {
