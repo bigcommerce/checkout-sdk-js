@@ -12,12 +12,14 @@ import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getHumm } from '../../../payment/payment-methods.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentExecuteError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import PaymentMethodRequestSender from '../../payment-method-request-sender';
+import { getHumm } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
@@ -32,6 +34,7 @@ describe('HummPaymentStrategy', () => {
     let payload: OrderRequestBody;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
     let store: CheckoutStore;
@@ -50,6 +53,7 @@ describe('HummPaymentStrategy', () => {
             new PaymentRequestTransformer(),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
 
         paymentMethod = getHumm();
         payload = merge({}, getOrderRequestBody(), {
@@ -75,11 +79,18 @@ describe('HummPaymentStrategy', () => {
         jest.spyOn(formPoster, 'postForm')
             .mockReturnValue(Promise.resolve());
 
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockResolvedValue(store.getState());
+
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+            .mockReturnValue({ ...getHumm(), initializationData: { processable: true }});
+
         strategy = new HummPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
-            formPoster
+            formPoster,
+            paymentMethodActionCreator
         );
 
     });
@@ -119,6 +130,13 @@ describe('HummPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
             expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {data: 'data'});
+        });
+
+        it('throws PaymentExecuteError when not processable', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue({ ...getHumm(), initializationData: { processable: false }});
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PaymentExecuteError);
         });
 
         it('reject payment when error is different to additional_action_required', async () => {

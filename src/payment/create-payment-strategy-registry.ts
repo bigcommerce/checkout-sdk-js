@@ -481,7 +481,8 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            formPoster
+            formPoster,
+            paymentMethodActionCreator
         )
     );
 
