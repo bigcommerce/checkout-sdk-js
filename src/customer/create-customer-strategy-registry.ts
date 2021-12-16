@@ -16,6 +16,7 @@ import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 
 import CustomerActionCreator from './customer-action-creator';
@@ -220,8 +221,13 @@ export default function createCustomerStrategyRegistry(
     registry.register('applepay', () => 
         new ApplePayCustomerStrategy(
             store,
+            requestSender,
             remoteCheckoutActionCreator,
             paymentMethodActionCreator,
+            new ConsignmentActionCreator(
+                new ConsignmentRequestSender(requestSender),
+                new CheckoutRequestSender(requestSender)
+            ),
             new ApplePaySessionFactory(),
         )
     );
