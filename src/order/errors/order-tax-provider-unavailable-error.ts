@@ -1,4 +1,4 @@
-import {StandardError} from '../../common/error/errors';
+import { StandardError } from '../../common/error/errors';
 
 /**
  * Checkout prevents consumers from placing their orders when a merchant wishes
