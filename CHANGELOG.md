@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.205.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.204.0...v1.205.0) (2021-12-16)
+
+
+### Features
+
+* **payment:** INT-4893 Add translations for errors from execute step ([afa9698](https://github.com/bigcommerce/checkout-sdk-js/commit/afa9698afe63fdd6b09e7cb97abc6a37ae4ed8e1))
+* **payment:** INT-4893 Retrieve initialization data from Humm ([b78a57d](https://github.com/bigcommerce/checkout-sdk-js/commit/b78a57d7e26963f5bb252f42e09b09bdf1e26ec4))
+
 ## [1.204.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.203.0...v1.204.0) (2021-12-13)
 
 
