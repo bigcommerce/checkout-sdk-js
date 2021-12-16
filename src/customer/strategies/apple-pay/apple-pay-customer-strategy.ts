@@ -147,7 +147,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         };
     }
 
-    private _handleApplePayEvents(applePaySession: ApplePaySession, paymentMethod: PaymentMethod, config: StoreConfig) {
+    private _handleApplePayEvents(
+        applePaySession: ApplePaySession,
+        paymentMethod: PaymentMethod,
+        config: StoreConfig
+    ) {
         applePaySession.onvalidatemerchant = async event => {
             try {
                 const { body: merchantSession } = await this._onValidateMerchant(paymentMethod, event);
@@ -157,72 +161,84 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             }
         };
 
-        applePaySession.onshippingcontactselected = async event => {
-            const shippingAddress = this._transformContactToAddress(event.shippingContact);
-            await this._store.dispatch(
-                this._consignmentActionCreator.updateAddress(shippingAddress)
+        applePaySession.onshippingcontactselected = async event =>
+            this._handleShippingContactSelected(applePaySession, config, event);
+
+        applePaySession.onshippingmethodselected = async event =>
+            this._handleShippingMethodSelected(applePaySession, config, event);
+
+        applePaySession.oncancel = () => {
+            throw new PaymentMethodCancelledError('Continue with applepay');
+        }
+    }
+
+    private async _handleShippingContactSelected(
+        applePaySession: ApplePaySession,
+        config: StoreConfig,
+        event: ApplePayJS.ApplePayShippingContactSelectedEvent
+    ) {
+        const shippingAddress = this._transformContactToAddress(event.shippingContact);
+        await this._store.dispatch(
+            this._consignmentActionCreator.updateAddress(shippingAddress)
+        );
+        const { storeProfile: { storeName } } = config;
+        let state = this._store.getState();
+        const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
+        let checkout = state.checkout.getCheckoutOrThrow();
+        const availableOptions = checkout.consignments[0].availableShippingOptions;
+        const shippingOptions = availableOptions?.map(option => ({
+            label: option.description,
+            amount: `${option.cost.toFixed(decimalPlaces)}`,
+            detail: option.additionalDescription,
+            identifier: option.id,
+        }));
+
+        if (!isShippingOptions(availableOptions)) {
+            throw new Error('Shipping options not available.');
+        } else {
+            const recommendedOption = availableOptions.find(
+                option => option.isRecommended
             );
-            const { storeProfile: { storeName } } = config;
-            let state = this._store.getState();
-            const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
-            let checkout = state.checkout.getCheckoutOrThrow();
-            const availableOptions = checkout.consignments[0].availableShippingOptions;
-            const shippingOptions = availableOptions?.map(option => ({
-                label: option.description,
-                amount: `${option.cost.toFixed(decimalPlaces)}`,
-                detail: option.additionalDescription,
-                identifier: option.id,
-            }));
 
-            if (!isShippingOptions(availableOptions)) {
-                throw new Error('Shipping options not available.');
-            } else {
-                const recommendedOption = availableOptions.find(
-                    option => option.isRecommended
-                );
-    
-                let optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
-                await this._updateShippingOption(optionId);
-            }
-
-            state = this._store.getState();
-            checkout = state.checkout.getCheckoutOrThrow();
-
-            applePaySession.completeShippingContactSelection({
-                newShippingMethods: shippingOptions,
-                newTotal: {
-                    type: 'final',
-                    label: storeName,
-                    amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                },
-                newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
-            });
-        };
-
-        applePaySession.onshippingmethodselected = async event => {
-            const { storeProfile: { storeName } } = config;
-            const { shippingMethod: { identifier: optionId } } = event;
+            let optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
             await this._updateShippingOption(optionId);
+        }
 
-            const state = this._store.getState();
-            const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
-            console.log('cart', state.cart.getCartOrThrow());
-            const checkout = state.checkout.getCheckoutOrThrow();
+        state = this._store.getState();
+        checkout = state.checkout.getCheckoutOrThrow();
 
-            console.log('cart', checkout);
+        applePaySession.completeShippingContactSelection({
+            newShippingMethods: shippingOptions,
+            newTotal: {
+                type: 'final',
+                label: storeName,
+                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+            },
+            newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
+        });
+    }
 
-            applePaySession.completeShippingMethodSelection({
-                newTotal: {
-                    type: 'final',
-                    label: storeName,
-                    amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                },
-                newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
-            });
-        };
+    private async _handleShippingMethodSelected(
+        applePaySession: ApplePaySession,
+        config: StoreConfig,
+        event: ApplePayJS.ApplePayShippingMethodSelectedEvent
+    ) {
+        const { storeProfile: { storeName } } = config;
+        const { shippingMethod: { identifier: optionId } } = event;
+        await this._updateShippingOption(optionId);
 
-        applePaySession.oncancel = async () =>
-            Promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
+        const state = this._store.getState();
+        const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
+        const checkout = state.checkout.getCheckoutOrThrow();
+
+        applePaySession.completeShippingMethodSelection({
+            newTotal: {
+                type: 'final',
+                label: storeName,
+                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+            },
+            newLineItems: this._getUpdatedLineItems(checkout, decimalPlaces),
+        });
     }
 
     private _getUpdatedLineItems(checkout: Checkout, decimalPlaces: number): ApplePayJS.ApplePayLineItem[] {
