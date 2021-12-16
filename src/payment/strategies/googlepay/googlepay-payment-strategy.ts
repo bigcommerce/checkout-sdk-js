@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
@@ -103,8 +105,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         if (!payment.paymentData.nonce || !payment.paymentData.cardInformation) {
             const {
-                onError = () => {},
-                onPaymentSelect = () => {},
+                onError,
+                onPaymentSelect,
             } = this._googlePayOptions;
             await this._displayWallet(methodId, onPaymentSelect, onError);
             payment = await this._getPayment(methodId, true);
@@ -117,6 +119,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         try {
             const state = await this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: payload.useStoreCredit }, options));
             let verification;
+
             if (this._is3dsEnabled) {
                 const {
                     order: { getOrderOrThrow },
@@ -124,6 +127,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                 verification = await this._verifyCard(methodId, getOrderOrThrow().orderAmount, payment);
             }
+
             const newPayment = {
                 ...payment,
                 paymentData: {
@@ -134,6 +138,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(newPayment));
         } catch (error) {
+
             return this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
         }
     }
@@ -146,6 +151,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         if (methodId === PaymentStrategyType.BRAINTREE_GOOGLE_PAY) {
             const { nonce } = payment.paymentData;
             const threeDSecure = await this._braintreeSDKCreator?.get3DS();
+
             if (!nonce || !threeDSecure) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
@@ -278,8 +284,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             }
 
             const {
-                onError = () => {},
-                onPaymentSelect = () => {},
+                onError,
+                onPaymentSelect,
             } = this._googlePayOptions;
 
             return this._store.dispatch(
@@ -292,7 +298,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private async _displayWallet(methodId: string, onPaymentSelect: () => void, onError: (onError: Error) => void ): Promise<void> {
+    private async _displayWallet(methodId: string, onPaymentSelect = noop, onError = noop ): Promise<void> {
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
             await this._paymentInstrumentSelected(paymentData, methodId);

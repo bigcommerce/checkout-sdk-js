@@ -49,12 +49,7 @@ export default class GooglePayAdyenV2PaymentProcessor {
         const payment = await this._handleAction(error.body.provider_data);
 
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment({
-                ...payment,
-                paymentData: {
-                    ...payment.paymentData,
-                },
-            }));
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
         } catch (error) {
             return this.processAdditionalAction(error);
         }
