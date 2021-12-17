@@ -57,7 +57,7 @@ export default class OrderRequestSender {
             }, isNil),
             timeout,
         }).catch(error => {
-            if (error.status === 500 && error.body.type === 'tax_provider_unavailable') {
+            if (error.body.type === 'tax_provider_unavailable') {
                 throw new OrderTaxProviderUnavailableError();
             }
 
