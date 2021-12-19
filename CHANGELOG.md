@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.205.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.205.0...v1.205.1) (2021-12-19)
+
+
+### Bug Fixes
+
+* **payment:** INT-5166 CKO mapping for vaulted instrument ([fc02041](https://github.com/bigcommerce/checkout-sdk-js/commit/fc02041c785330cc02bba611cc42ef9673c12486))
+
 ## [1.205.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.204.0...v1.205.0) (2021-12-16)
 
 
