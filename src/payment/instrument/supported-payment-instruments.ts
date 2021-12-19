@@ -63,7 +63,7 @@ const supportedInstruments: SupportedInstruments = {
     },
     'checkoutcom.card': {
         provider: 'checkoutcom',
-        method: 'credit_card',
+        method: 'card',
     },
     stripe: {
         provider: 'stripe',
