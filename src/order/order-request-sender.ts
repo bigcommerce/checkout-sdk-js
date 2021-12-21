@@ -3,6 +3,7 @@ import { isNil, omitBy } from 'lodash';
 
 import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
+import { OrderTaxProviderUnavailableError } from './errors';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
@@ -48,13 +49,19 @@ export default class OrderRequestSender {
     submitOrder(body: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
-        return this._requestSender.post(url, {
+        return this._requestSender.post<InternalOrderResponseBody>(url, {
             body,
             headers: omitBy({
                 'X-Checkout-Variant': headers && headers.checkoutVariant,
                 ...SDK_VERSION_HEADERS,
             }, isNil),
             timeout,
+        }).catch(error => {
+            if (error.body.type === 'tax_provider_unavailable') {
+                throw new OrderTaxProviderUnavailableError();
+            }
+
+            throw error;
         });
     }
 
