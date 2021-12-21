@@ -1,5 +1,5 @@
-import { createAction } from '@bigcommerce/data-store';
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';

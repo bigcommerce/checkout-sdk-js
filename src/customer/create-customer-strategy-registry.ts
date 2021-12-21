@@ -1,14 +1,13 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
-import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import { OrderRequestSender } from '../order';
-import OrderActionCreator from '../order/order-action-creator';
+import { OrderActionCreator, OrderRequestSender } from '../order';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
@@ -223,7 +222,7 @@ export default function createCustomerStrategyRegistry(
         )
     );
 
-    registry.register('applepay', () => 
+    registry.register('applepay', () =>
         new ApplePayCustomerStrategy(
             store,
             requestSender,
@@ -243,7 +242,7 @@ export default function createCustomerStrategyRegistry(
                 new PaymentRequestSender(paymentClient),
                 new OrderActionCreator(
                     new OrderRequestSender(requestSender),
-                    new CheckoutValidator(checkoutRequestSender),
+                    new CheckoutValidator(checkoutRequestSender)
                 ),
                 new PaymentRequestTransformer(),
                 new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
@@ -252,7 +251,7 @@ export default function createCustomerStrategyRegistry(
                 new OrderRequestSender(requestSender),
                 new CheckoutValidator(checkoutRequestSender)
             ),
-            new ApplePaySessionFactory(),
+            new ApplePaySessionFactory()
         )
     );
 

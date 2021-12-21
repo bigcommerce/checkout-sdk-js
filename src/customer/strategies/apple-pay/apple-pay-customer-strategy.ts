@@ -1,22 +1,21 @@
-import { bindDecorator as bind } from '../../../common/utility';
-import { Cart } from "../../../cart";
-import { Checkout, CheckoutStore } from "../../../checkout";
-import InternalCheckoutSelectors from "../../../checkout/internal-checkout-selectors";
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from "../../../common/error/errors";
-import { StoreConfig } from "../../../config";
-import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from "../../../payment";
-import { ApplePaySessionFactory } from "../../../payment/strategies/apple-pay";
-import { RemoteCheckoutActionCreator } from "../../../remote-checkout";
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from "../../customer-request-options";
-import CustomerStrategy from "../customer-strategy";
-import { PaymentMethodCancelledError } from '../../../payment/errors';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { AddressRequestBody } from '../../../address';
-import { assertApplePayWindow } from '../../../payment/strategies/apple-pay/is-apple-pay-window';
-import { BillingAddressActionCreator } from '../../../billing';
-import { OrderActionCreator } from '../../../order';
 import { noop } from 'lodash';
+
+import { AddressRequestBody } from '../../../address';
+import { BillingAddressActionCreator } from '../../../billing';
+import { Cart } from '../../../cart';
+import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import { bindDecorator as bind } from '../../../common/utility';
+import { StoreConfig } from '../../../config';
+import { OrderActionCreator } from '../../../order';
+import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { PaymentMethodCancelledError } from '../../../payment/errors';
+import { assertApplePayWindow, ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import CustomerStrategy from '../customer-strategy';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
@@ -25,7 +24,7 @@ enum DefaultLabels {
     Shipping = 'Shipping',
 }
 
-function isShippingOptions(options: ShippingOption[]|undefined): options is ShippingOption[] {
+function isShippingOptions(options: ShippingOption[] | undefined): options is ShippingOption[] {
     return options instanceof Array;
 }
 
@@ -120,7 +119,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         button.style.height = '40px';
         button.style.width = '75px';
         container.appendChild(button);
-        
+
         return button;
     }
 
@@ -143,11 +142,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _getBaseRequest(
         cart: Cart,
         config: StoreConfig,
-        paymentMethod: PaymentMethod,
+        paymentMethod: PaymentMethod
     ): ApplePayJS.ApplePayPaymentRequest {
         const { storeProfile: { storeCountryCode, storeName } } = config;
         const { currency: { code } } = cart;
-        
+
         const { initializationData : { merchantCapabilities, supportedNetworks } } = paymentMethod;
 
         return {
@@ -188,7 +187,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         applePaySession.oncancel = () => {
             throw new PaymentMethodCancelledError('Continue with applepay');
-        }
+        };
 
         applePaySession.onpaymentauthorized = async event =>
             this._onPaymentAuthorized(event, applePaySession, paymentMethod);
@@ -228,7 +227,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 option => option.isRecommended
             );
 
-            let optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
+            const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
             try {
                 await this._updateShippingOption(optionId);
             } catch (error) {
@@ -317,7 +316,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private async _onPaymentAuthorized(
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
-        paymentMethod: PaymentMethod,
+        paymentMethod: PaymentMethod
     ) {
         const { token, billingContact, shippingContact } = event.payment;
         const payment: Payment = {
@@ -346,7 +345,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 this._consignmentActionCreator.updateAddress(transformedShippingAddress)
             );
 
-        
             await this._store.dispatch(this._orderActionCreator.submitOrder(
                 {
                     useStoreCredit: false,
@@ -363,7 +361,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         }
     }
 
-    private _transformContactToAddress (contact?: ApplePayJS.ApplePayPaymentContact): AddressRequestBody {
+    private _transformContactToAddress(contact?: ApplePayJS.ApplePayPaymentContact): AddressRequestBody {
         return {
             firstName: contact?.givenName || '',
             lastName: contact?.familyName || '',
@@ -377,6 +375,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             stateOrProvince: contact?.administrativeArea || '',
             stateOrProvinceCode: contact?.administrativeArea || '',
             customFields: [],
-        }
+        };
     }
 }
