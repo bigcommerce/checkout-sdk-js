@@ -123,10 +123,83 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     //     shippingAddress,
                     //     lineItems,
                     // }];
-                    // const checkoutWithShippingAddress = await this._paypalCommercePaymentProcessor.getConsignments(cart.id, consignmentPayload);
                     const checkoutWithBillingAddress = await this._paypalCommercePaymentProcessor.getBillingAddress(cart.id, shippingAddress);
+                    console.log('checkoutWithBillingAddress', checkoutWithBillingAddress);
                     // @ts-ignore
-                    await this._paypalCommercePaymentProcessor.putConsignments(cart.id, checkoutWithBillingAddress.consignments[0].id, {shippingOptionId: this._shippingOptionId});
+                    const checkoutObj = await this._paypalCommercePaymentProcessor.putConsignments(cart.id, checkoutWithBillingAddress.consignments[0].id, {shippingOptionId: this._shippingOptionId});
+                    console.log('Consignment', checkoutObj);
+                    // const checkoutWithShippingAddress = await this._paypalCommercePaymentProcessor.getConsignments(cart.id, consignmentPayload);
+                    // const shipMock = {
+                    //     address1: 'dffsf',
+                    //     address2: 'dsfsd',
+                    //     city: 'sdfsd',
+                    //     company: 'BigCom',
+                    //     country: 'United States',
+                    //     countryCode: 'US',
+                    //     customFields: [],
+                    //     email: 'andrii.vitvitskyi@bigcommerce.com',
+                    //     firstName: 'Andrii',
+                    //     lastName: 'Vit',
+                    //     phone: '',
+                    //     id: '619e4f218d0cd',
+                    //     shouldSaveAddress: true,
+                    //     stateOrProvince: 'Arizona',
+                    //     stateOrProvinceCode: 'AZ',
+                    // };
+                    // address1: "dffsf"
+                    // address2: "dsfsd"
+                    // city: "sdfsd"
+                    // company: "BigCom"
+                    // country: "United States"
+                    // countryCode: "US"
+                    // customFields: []
+                    // email: ""
+                    // firstName: "Andrii"
+                    // lastName: "Vit"
+                    // phone: ""
+                    // postalCode: "08145"
+                    // shouldSaveAddress: true
+                    // stateOrProvince: "Arizona"
+                    // stateOrProvinceCode: "AZ"
+
+                    // @ts-ignore
+                    const checoutObj1Copy = { ...checkoutObj, consignments: [{...checkoutObj.consignments[0], shippingAddress: {
+                                address1: 'dffsf',
+                                address2: 'dsfsd',
+                                city: 'sdfsd',
+                                company: 'BigCom',
+                                country: 'United States',
+                                countryCode: 'US',
+                                customFields: [],
+                                email: 'andrii.vitvitskyi@bigcommerce.com',
+                                firstName: 'Andrii',
+                                lastName: 'Vit',
+                                phone: '',
+                                postalCode: '08145',
+                                shouldSaveAddress: true,
+                                stateOrProvince: 'Arizona',
+                                stateOrProvinceCode: 'AZ',
+                            }}]};
+                    const paymentData =  {
+                        formattedPayload: {
+                            vault_payment_instrument: null,
+                            set_as_default_stored_instrument: null,
+                            device_info: null,
+                            method_id: 'paypalcommerce',
+                            paypal_account: {
+                                order_id: _data.orderId,
+                            },
+                        },
+                    };
+                    if (this._orderActionCreator && this._paymentActionCreator) {
+
+                        // @ts-ignore
+                        // @ts-ignore
+                        await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'}, checoutObj1Copy));
+
+                        // @ts-ignore
+                        this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', gatewayId: undefined}, paymentData }));
+                    }
                 }
                 // const payload = {
                 //     useStoreCredit: false,
@@ -149,24 +222,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 //     console.error(err);
                 // });
             });
-        // const paymentData =  {
-        //     formattedPayload: {
-        //         vault_payment_instrument: null,
-        //         set_as_default_stored_instrument: null,
-        //         device_info: null,
-        //         method_id: 'paypalcommerce',
-        //         paypal_account: {
-        //             order_id: data.orderId,
-        //         },
-        //     },
-        // };
-        // if (this._orderActionCreator && this._paymentActionCreator) {
-        //
-        //     // @ts-ignore
-        //     await this._store.dispatch(this._orderActionCreator.submitOrder(orderCapture, {methodId: 'paypalcommerce'}, this._onShippingChangeData));
-        //
-        //     this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', gatewayId: undefined}, paymentData }));
-        // }
 
         return orderCapture;
     }
@@ -190,8 +245,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         // @ts-ignore
         const shippingRequired = checkout.cart.lineItems.physicalItems.length > 0;
         if (!shippingRequired) {
-            console.log('SHIPPING IS NOT REQUIRED', shippingRequired);
-
             return actions.order.patch([
                 {
                     op: 'replace',
@@ -228,8 +281,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 } else {
                     if (option.isRecommended) {
                         shippingAmount = parseFloat(option.cost).toFixed(2);
-                        shippingAmount+=shippingAmount;
-                        console.log('SHIPPING AMOUNT', shippingAmount);
                         isSelected = true;
                     }
                 }
@@ -254,9 +305,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 // @ts-ignore
                 this._shippingOptionId = shippingOptions[0].id;
             }
-            const shippingOperation = this._addShipping ? 'add' : 'replace';
             this._addShipping = false;
+            const shippingOperation = this._addShipping ? 'add' : 'replace';
             this._submittedShippingAddress = this._currentShippingAddress;
+            console.log(shippingOperation);
 
             actions.order.patch([
                 {
@@ -278,7 +330,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 },
                 {
-                    op: shippingOperation,
+                    op: 'add',
                     path: '/purchase_units/@reference_id==\'default\'/shipping/options',
                     // @ts-ignore
                     value: shippingOptions,
