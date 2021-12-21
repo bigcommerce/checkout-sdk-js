@@ -163,7 +163,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 this._stripeElements = this._getStripeJs().elements(elementOptions);
             }
 
-            stripeElement = this._stripeElements.getElement('payment') || this._stripeElements.create('payment');
+            stripeElement = this._stripeElements.getElement('payment') || this._stripeElements.create('payment',
+            {
+                wallets: {
+                    applePay: 'never',
+                    googlePay: 'never',
+                },
+            });
             try {
                 stripeElement.mount(`#${containerId}`);
             } catch (error) {

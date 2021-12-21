@@ -53,11 +53,23 @@ export interface StripeConfirmPaymentData {
     redirect?: 'always' | 'if_required';
 }
 
+export interface WalletOptions {
+    applePay?: 'auto' | 'never';
+    googlePay?: 'auto' | 'never';
+}
+
+/**
+ * All available options are herehttps://stripe.com/docs/js/elements_object/create_payment_element
+ */
+export interface StripeElementsCreateOptions {
+    wallets?: WalletOptions;
+}
+
 export interface StripeElements {
     /**
      * Creates a `payment` element.
      */
-    create(elementType: 'payment'): StripeElement;
+    create(elementType: 'payment', options?: StripeElementsCreateOptions): StripeElement;
 
     /**
      * Looks up a previously created `payment` element.
