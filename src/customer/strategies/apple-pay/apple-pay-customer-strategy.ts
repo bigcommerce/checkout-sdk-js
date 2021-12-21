@@ -33,6 +33,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
     private _onAuthorizeCallback = noop;
+    private _onError = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
 
@@ -57,11 +58,18 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { container, shippingLabel, subtotalLabel, onPaymentAuthorize } = applepay;
+        const {
+            container,
+            shippingLabel,
+            subtotalLabel,
+            onError = () => {},
+            onPaymentAuthorize,
+        } = applepay;
 
         this._shippingLabel = shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = subtotalLabel || DefaultLabels.Subtotal;
         this._onAuthorizeCallback = onPaymentAuthorize;
+        this._onError = onError;
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -168,7 +176,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 const { body: merchantSession } = await this._onValidateMerchant(paymentMethod, event);
                 applePaySession.completeMerchantValidation(merchantSession);
             } catch (err) {
-                throw new Error('Merchant validation failed');
+                this._onError(err);
             }
         };
 
@@ -192,9 +200,15 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         event: ApplePayJS.ApplePayShippingContactSelectedEvent
     ) {
         const shippingAddress = this._transformContactToAddress(event.shippingContact);
-        await this._store.dispatch(
-            this._consignmentActionCreator.updateAddress(shippingAddress)
-        );
+
+        try {
+            await this._store.dispatch(
+                this._consignmentActionCreator.updateAddress(shippingAddress)
+            );
+        } catch (error) {
+            this._onError(error);
+        }
+
         const { storeProfile: { storeName } } = config;
         let state = this._store.getState();
         const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
@@ -215,7 +229,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             );
 
             let optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
-            await this._updateShippingOption(optionId);
+            try {
+                await this._updateShippingOption(optionId);
+            } catch (error) {
+                this._onError(error);
+            }
         }
 
         state = this._store.getState();
@@ -239,7 +257,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     ) {
         const { storeProfile: { storeName } } = config;
         const { shippingMethod: { identifier: optionId } } = event;
-        await this._updateShippingOption(optionId);
+        try {
+            await this._updateShippingOption(optionId);
+        } catch (error) {
+            this._onError(error);
+        }
 
         const state = this._store.getState();
         const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
@@ -315,15 +337,16 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         const transformedShippingAddress = this._transformContactToAddress(shippingContact);
         const emailAddress = shippingContact?.emailAddress;
 
-        await this._store.dispatch(
-            this._billingAddressActionCreator.updateAddress({ ...transformedBillingAddress, email: emailAddress })
-        );
-
-        await this._store.dispatch(
-            this._consignmentActionCreator.updateAddress(transformedShippingAddress)
-        );
-
         try {
+            await this._store.dispatch(
+                this._billingAddressActionCreator.updateAddress({ ...transformedBillingAddress, email: emailAddress })
+            );
+
+            await this._store.dispatch(
+                this._consignmentActionCreator.updateAddress(transformedShippingAddress)
+            );
+
+        
             await this._store.dispatch(this._orderActionCreator.submitOrder(
                 {
                     useStoreCredit: false,
@@ -332,13 +355,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-            // return window.location.reload();
-            // return this.executePaymentMethodCheckout();
             return this._onAuthorizeCallback();
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
-            return Promise.reject(error);
+            return this._onError(error);
         }
     }
 
