@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.206.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.205.1...v1.206.0) (2021-12-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6248 Throw Custom Error When Tax Service Unavailable ([#1306](https://github.com/bigcommerce/checkout-sdk-js/issues/1306)) ([1e2455e](https://github.com/bigcommerce/checkout-sdk-js/commit/1e2455eb5fe91d876e99c458320e75158017bcdb))
+
 ### [1.205.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.205.0...v1.205.1) (2021-12-19)
 
 
