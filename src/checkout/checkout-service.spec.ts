@@ -223,7 +223,7 @@ describe('CheckoutService', () => {
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, requestSender, locale)
+            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale)
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);

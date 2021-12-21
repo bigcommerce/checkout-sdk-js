@@ -4,7 +4,7 @@ import { Checkout, CheckoutStore } from "../../../checkout";
 import InternalCheckoutSelectors from "../../../checkout/internal-checkout-selectors";
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from "../../../common/error/errors";
 import { StoreConfig } from "../../../config";
-import { PaymentMethod, PaymentMethodActionCreator } from "../../../payment";
+import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from "../../../payment";
 import { ApplePaySessionFactory } from "../../../payment/strategies/apple-pay";
 import { RemoteCheckoutActionCreator } from "../../../remote-checkout";
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from "../../customer-request-options";
@@ -14,6 +14,9 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
 import { AddressRequestBody } from '../../../address';
 import { assertApplePayWindow } from '../../../payment/strategies/apple-pay/is-apple-pay-window';
+import { BillingAddressActionCreator } from '../../../billing';
+import { OrderActionCreator } from '../../../order';
+import { noop } from 'lodash';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
@@ -29,6 +32,7 @@ function isShippingOptions(options: ShippingOption[]|undefined): options is Ship
 export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
 
@@ -38,6 +42,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _orderActionCreator: OrderActionCreator,
         private _sessionFactory: ApplePaySessionFactory
     ) {}
 
@@ -50,7 +57,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { container } = applepay;
+        const { container, shippingLabel, subtotalLabel, onPaymentAuthorize } = applepay;
+
+        this._shippingLabel = shippingLabel || DefaultLabels.Shipping;
+        this._subTotalLabel = subtotalLabel || DefaultLabels.Subtotal;
+        this._onAuthorizeCallback = onPaymentAuthorize;
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -170,6 +181,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         applePaySession.oncancel = () => {
             throw new PaymentMethodCancelledError('Continue with applepay');
         }
+
+        applePaySession.onpaymentauthorized = async event =>
+            this._onPaymentAuthorized(event, applePaySession, paymentMethod);
     }
 
     private async _handleShippingContactSelected(
@@ -248,10 +262,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         checkout.taxes.forEach(tax =>
             lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }));
-
         lineItems.push({ label: this._shippingLabel, amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`});
 
-        console.log('line items are', lineItems);
         return lineItems;
     }
 
@@ -280,19 +292,69 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         });
     }
 
-    private _transformContactToAddress (contact: ApplePayJS.ApplePayPaymentContact): AddressRequestBody {
+    private async _onPaymentAuthorized(
+        event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
+        applePaySession: ApplePaySession,
+        paymentMethod: PaymentMethod,
+    ) {
+        const { token, billingContact, shippingContact } = event.payment;
+        const payment: Payment = {
+            methodId: paymentMethod.id,
+            paymentData: {
+                formattedPayload: {
+                    apple_pay_token: {
+                        payment_data: token.paymentData,
+                        payment_method: token.paymentMethod,
+                        transaction_id: token.transactionIdentifier,
+                    },
+                },
+            },
+        };
+
+        const transformedBillingAddress = this._transformContactToAddress(billingContact);
+        const transformedShippingAddress = this._transformContactToAddress(shippingContact);
+        const emailAddress = shippingContact?.emailAddress;
+
+        await this._store.dispatch(
+            this._billingAddressActionCreator.updateAddress({ ...transformedBillingAddress, email: emailAddress })
+        );
+
+        await this._store.dispatch(
+            this._consignmentActionCreator.updateAddress(transformedShippingAddress)
+        );
+
+        try {
+            await this._store.dispatch(this._orderActionCreator.submitOrder(
+                {
+                    useStoreCredit: false,
+                })
+            );
+            await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+            applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
+
+            // return window.location.reload();
+            // return this.executePaymentMethodCheckout();
+            return this._onAuthorizeCallback();
+        } catch (error) {
+            applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+
+            return Promise.reject(error);
+        }
+    }
+
+    private _transformContactToAddress (contact?: ApplePayJS.ApplePayPaymentContact): AddressRequestBody {
         return {
-            firstName: contact.givenName || '',
-            lastName: contact.familyName || '',
-            city: contact.locality || '',
+            firstName: contact?.givenName || '',
+            lastName: contact?.familyName || '',
+            city: contact?.locality || '',
             company: '',
-            address1: contact.addressLines && contact.addressLines[0] || '',
-            address2: contact.addressLines && contact.addressLines[1] || '',
-            postalCode: contact.postalCode || '',
-            countryCode: contact.countryCode || '',
-            phone: contact.phoneNumber || '',
-            stateOrProvince: contact.administrativeArea || '',
-            stateOrProvinceCode: contact.administrativeArea || '',
+            address1: contact?.addressLines && contact?.addressLines[0] || '',
+            address2: contact?.addressLines && contact?.addressLines[1] || '',
+            postalCode: contact?.postalCode || '',
+            countryCode: contact?.countryCode || '',
+            phone: contact?.phoneNumber || '',
+            stateOrProvince: contact?.administrativeArea || '',
+            stateOrProvinceCode: contact?.administrativeArea || '',
             customFields: [],
         }
     }

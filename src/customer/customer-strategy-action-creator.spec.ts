@@ -1,3 +1,4 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -25,6 +26,7 @@ describe('CustomerStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: DefaultCustomerStrategy;
+    let paymentClient: any;
 
     beforeEach(() => {
         const requestSender = createRequestSender();
@@ -33,6 +35,7 @@ describe('CustomerStrategyActionCreator', () => {
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
+        paymentClient = createPaymentClient();
 
         const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
         const scriptLoader = new ScriptLoader();
@@ -42,7 +45,7 @@ describe('CustomerStrategyActionCreator', () => {
 
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        registry = createCustomerStrategyRegistry(store, createRequestSender(), 'en');
+        registry = createCustomerStrategyRegistry(store, paymentClient, createRequestSender(), 'en');
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

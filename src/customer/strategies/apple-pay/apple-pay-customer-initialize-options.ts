@@ -10,4 +10,19 @@
      * The ID of a container which the sign-in button should insert into.
      */
     container: string;
+
+    /**
+     * Shipping label to be passed to apple sheet.
+     */
+     shippingLabel?: string;
+
+    /**
+     * Sub total label to be passed to apple sheet.
+     */
+     subtotalLabel?: string;
+
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void
 }

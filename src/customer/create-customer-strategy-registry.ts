@@ -1,12 +1,15 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import { OrderRequestSender } from '../order';
+import OrderActionCreator from '../order/order-action-creator';
+import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
@@ -17,7 +20,8 @@ import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePay
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
+import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
@@ -36,6 +40,7 @@ import { SquareCustomerStrategy } from './strategies/square';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
+    paymentClient: any,
     requestSender: RequestSender,
     locale: string
 ): Registry<CustomerStrategy> {
@@ -227,6 +232,25 @@ export default function createCustomerStrategyRegistry(
             new ConsignmentActionCreator(
                 new ConsignmentRequestSender(requestSender),
                 new CheckoutRequestSender(requestSender)
+            ),
+            new BillingAddressActionCreator(
+                new BillingAddressRequestSender(requestSender),
+                new SubscriptionsActionCreator(
+                    new SubscriptionsRequestSender(requestSender)
+                )
+            ),
+            new PaymentActionCreator(
+                new PaymentRequestSender(paymentClient),
+                new OrderActionCreator(
+                    new OrderRequestSender(requestSender),
+                    new CheckoutValidator(checkoutRequestSender),
+                ),
+                new PaymentRequestTransformer(),
+                new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            ),
+            new OrderActionCreator(
+                new OrderRequestSender(requestSender),
+                new CheckoutValidator(checkoutRequestSender)
             ),
             new ApplePaySessionFactory(),
         )

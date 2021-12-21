@@ -1,4 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -28,6 +29,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor;
     let checkoutActionCreator: CheckoutActionCreator;
     let container: HTMLDivElement;
+    let paymentClient: any;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -41,6 +43,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
         const requestSender = createRequestSender();
+        paymentClient = createPaymentClient();
         braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender);
         braintreeVisaCheckoutPaymentProcessor.initialize = jest.fn(() => Promise.resolve());
         braintreeVisaCheckoutPaymentProcessor.handleSuccess = jest.fn(() => Promise.resolve());
@@ -64,7 +67,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
         formPoster = createFormPoster();
 
-        const registry = createCustomerStrategyRegistry(store, requestSender, '');
+        const registry = createCustomerStrategyRegistry(store, paymentClient, requestSender, '');
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
