@@ -205,7 +205,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 this._consignmentActionCreator.updateAddress(shippingAddress)
             );
         } catch (error) {
-            this._onError(error);
+            applePaySession.abort();
+
+            return this._onError(error);
         }
 
         const { storeProfile: { storeName } } = config;
@@ -259,7 +261,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         try {
             await this._updateShippingOption(optionId);
         } catch (error) {
-            this._onError(error);
+            applePaySession.abort();
+
+            return this._onError(error);
         }
 
         const state = this._store.getState();
