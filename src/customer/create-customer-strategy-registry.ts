@@ -226,7 +226,6 @@ export default function createCustomerStrategyRegistry(
         new ApplePayCustomerStrategy(
             store,
             requestSender,
-            remoteCheckoutActionCreator,
             paymentMethodActionCreator,
             new ConsignmentActionCreator(
                 new ConsignmentRequestSender(requestSender),

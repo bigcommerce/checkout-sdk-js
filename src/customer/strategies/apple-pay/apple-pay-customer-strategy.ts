@@ -12,9 +12,8 @@ import { OrderActionCreator } from '../../../order';
 import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { PaymentMethodCancelledError } from '../../../payment/errors';
 import { assertApplePayWindow, ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
-import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -39,7 +38,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     constructor(
         private _store: CheckoutStore,
         private _requestSender: RequestSender,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
@@ -89,15 +87,10 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const payment = state.payment.getPaymentId();
-
-        if (!payment) {
-            return Promise.resolve(this._store.getState());
-        }
-
-        return this._store.dispatch(this._remoteCheckoutActionCreator.forgetCheckout(payment.providerId, options));
+    signOut(): Promise<InternalCheckoutSelectors> {
+        throw new NotImplementedError(
+            'Need to do signout via apple.'
+        );
     }
 
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
