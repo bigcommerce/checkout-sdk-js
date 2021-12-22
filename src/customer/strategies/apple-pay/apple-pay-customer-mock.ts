@@ -2,6 +2,7 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 
 export function getApplePayCustomerInitializationOptions(): CustomerInitializeOptions {
     return {
+        methodId: 'applepay',
         applepay: {
             container: 'applePayCheckoutButton',
             shippingLabel: 'Shipping',
@@ -9,5 +10,22 @@ export function getApplePayCustomerInitializationOptions(): CustomerInitializeOp
             onPaymentAuthorize: jest.fn(),
             onError: jest.fn(),
         },
+    };
+}
+
+export function getContactAddress() {
+    return {
+        administrativeArea: 'CA',
+        country: 'United States',
+        countryCode: 'US',
+        emailAddress: 'test@test.com',
+        familyName: '',
+        givenName: '',
+        locality: 'San Francisco',
+        phoneticFamilyName: '',
+        phoneticGivenName: '',
+        postalCode: '94114',
+        subAdministrativeArea: '',
+        subLocality: '',
     };
 }

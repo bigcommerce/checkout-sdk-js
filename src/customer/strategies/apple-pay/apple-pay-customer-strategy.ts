@@ -226,7 +226,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             try {
                 await this._updateShippingOption(optionId);
             } catch (error) {
-                this._onError(error);
+                return this._onError(error);
             }
         }
 

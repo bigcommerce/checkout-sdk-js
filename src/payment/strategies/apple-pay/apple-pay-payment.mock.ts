@@ -7,6 +7,12 @@ export class MockApplePaySession {
 
     begin = jest.fn();
 
+    completeShippingContactSelection = jest.fn();
+
+    completeShippingMethodSelection = jest.fn();
+
+    abort = jest.fn();
+
     completeMerchantValidation() {
         return true;
     }
@@ -16,6 +22,14 @@ export class MockApplePaySession {
     }
 
     onpaymentauthorized(event?: ApplePayJS.ApplePayPaymentAuthorizedEvent) {
+        return event;
+    }
+
+    onshippingcontactselected(event?: ApplePayJS.ApplePayShippingContactSelectedEvent) {
+        return event;
+    }
+
+    onshippingmethodselected(event?: ApplePayJS.ApplePayShippingMethodSelectedEvent) {
         return event;
     }
 
