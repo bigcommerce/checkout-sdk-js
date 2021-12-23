@@ -14,6 +14,7 @@ import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
+    private _StoreUrl?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -29,6 +30,13 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
+        if (paymentMethod && paymentMethod.initializationData) {
+            this._StoreUrl = paymentMethod?.initializationData.storeUrl || null;
         }
 
         return this._googlePayPaymentProcessor.initialize(methodId)
@@ -139,7 +147,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _onPaymentSelectComplete(): void {
-        this._formPoster.postForm('/checkout.php', {
+        this._formPoster.postForm(`${this._StoreUrl}/checkout`, {
             headers: {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
