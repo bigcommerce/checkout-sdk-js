@@ -11,7 +11,7 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestS
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentInvalidFormError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { getAdyenV2 } from '../../payment-methods.mock';
@@ -264,6 +264,28 @@ describe('AdyenV2PaymentStrategy', () => {
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(0);
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+            });
+
+            it('throws an error when card fields invalid',  async () => {
+                const adyenInvalidPaymentComponent = {
+                    mount: jest.fn(),
+                    unmount: jest.fn(),
+                    componentRef: {
+                        showValidation: jest.fn(),
+                    },
+                    state: {
+                        isValid: false,
+                    },
+                };
+                jest.spyOn(adyenCheckout, 'create')
+                    .mockReturnValue(adyenInvalidPaymentComponent);
+
+                await strategy.initialize(options);
+
+                await expect(() => strategy.execute(getOrderRequestBody())).toThrow(PaymentInvalidFormError);
+                expect(adyenInvalidPaymentComponent.componentRef.showValidation).toHaveBeenCalledTimes(1);
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(0);
             });
 
             it('calls submitPayment when paying with vaulted instrument', async () => {
@@ -566,6 +588,7 @@ describe('AdyenV2PaymentStrategy', () => {
                                 func('Cancel');
                             }),
                         },
+                        validateCardFields: jest.fn(),
                     },
                 };
 
