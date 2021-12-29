@@ -1,6 +1,6 @@
-import { AdyenComponentState } from '.';
 import { Omit } from '../../../common/types';
 
+import { AdyenComponentState } from '.';
 import { AdyenAdditionalActionOptions, AdyenCreditCardComponentOptions, AdyenIdealComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 
 /**
