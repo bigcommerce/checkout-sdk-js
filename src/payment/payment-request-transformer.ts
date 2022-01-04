@@ -55,7 +55,7 @@ export default class PaymentRequestTransformer {
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
-            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
+            paymentMethod: paymentMethod && (paymentMethod.id === 'braintreevenmo' ? {...this._transformPaymentMethod(paymentMethod), id: 'braintreepaypal'} : {...this._transformPaymentMethod(paymentMethod), id: 'braintreepaypal'}),
             quoteMeta: {
                 request: {
                     ...paymentMeta,

@@ -38,6 +38,7 @@ export default class PaymentActionCreator {
             of(createAction(PaymentActionType.SubmitPaymentRequested)),
             defer(async () => {
                 try {
+
                     return await this._paymentRequestSender.submitPayment(
                         this._paymentRequestTransformer.transform(payment, store.getState())
                     );

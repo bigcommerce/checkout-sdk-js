@@ -9,11 +9,14 @@ import { BraintreeClient,
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
-    Config,
+    GetVenmoConfig,
     GooglePayBraintreeSDK,
     PaypalClientInstance,
     PAYPAL_COMPONENTS,
-    RenderButtons } from './braintree';
+    RenderButtons,
+    RenderVenmoButtons,
+    VenmoCheckout,
+    VenmoInstance } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -29,6 +32,8 @@ export default class BraintreeSDKCreator {
     } = {};
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
     private _paypalcheckoutInstance?: PaypalClientInstance;
+    private _venmoCheckoutInstance?: VenmoInstance;
+    private _venmoCheckout?: VenmoCheckout;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -63,7 +68,7 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    getPaypalCheckout(config: Config, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(config: GetVenmoConfig, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
@@ -83,6 +88,35 @@ export default class BraintreeSDKCreator {
         }
 
         return this._paypalCheckout;
+    }
+
+    getVenmoCheckout(config: GetVenmoConfig, getVenmoInstance: RenderVenmoButtons) {
+        if (config.currency === 'USD' && config.storeCountry === 'UNITED STATES') {
+            return Promise.resolve();
+        }
+        this._venmoCheckout = Promise.all([
+            this.getClient(),
+            this._braintreeScriptLoader.loadVenmoCheckout(),
+        ])
+            .then(([client, venmoCheckout]) => venmoCheckout.create({
+                    client, allowDesktop: true,
+                    paymentMethodUsage: 'multi_use',
+                },
+                (venmoErr: string, venmoInstance: VenmoInstance) =>  {
+                    this._venmoCheckoutInstance = venmoInstance;
+                    getVenmoInstance(this._venmoCheckoutInstance);
+                    if (venmoErr) {
+
+                        return;
+                    }
+
+                    if (!venmoInstance.isBrowserSupported()) {
+
+                        return;
+                    }
+                }));
+
+        return this._venmoCheckout;
     }
 
     get3DS(): Promise<BraintreeThreeDSecure> {

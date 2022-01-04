@@ -13,6 +13,7 @@ export interface BraintreeSDK {
     hostedFields?: BraintreeHostedFieldsCreator;
     paypal?: BraintreePaypalCreator;
     paypalCheckout?: BraintreePaypalCheckoutCreator;
+    venmo?: VenmoInstance;
     threeDSecure?: BraintreeThreeDSecureCreator;
     visaCheckout?: BraintreeVisaCheckoutCreator;
     googlePayment?: GooglePayCreator;
@@ -299,6 +300,32 @@ export interface BraintreeShippingAddress extends BraintreeAddress {
     recipientName: string;
 }
 
+export interface VenmoError {
+    code: string;
+    details: string;
+    message: string;
+    type: string;
+    name: string;
+}
+
+export interface VenmoInstance {
+    tokenize?(callback: Tokenize): void;
+    isBrowserSupported(): boolean;
+    create(arg0: VenmoConfig, arg1: VenmoCreateCallback ): void;
+}
+
+export type VenmoCheckout = Promise<void>;
+
+interface VenmoConfig {
+    client: BraintreeClient;
+    allowDesktop: boolean;
+    paymentMethodUsage: string;
+}
+
+type VenmoCreateCallback = (venmoErr: string, venmoInstance: VenmoInstance) => void;
+
+type Tokenize = (tokenizeError: VenmoError, payload: any) => void;
+
 export interface BraintreeTokenizePayload {
     nonce: string;
     type: 'PaypalAccount';
@@ -371,10 +398,12 @@ export interface RenderButtonsData {
     paymentMethod: PaymentMethod;
     paypalOptions: BraintreePaypalButtonInitializeOptions;
     container: string;
+    venmoParentContainer: string;
     messagingContainerId?: string;
 }
 
 export type RenderButtons = (instance: PaypalClientInstance) => void;
+export type RenderVenmoButtons = (venmoInstance: VenmoInstance) => void;
 
 export interface PaypalClientInstance {
     loadPayPalSDK(config: Config, callback: RenderButtons): void;
@@ -388,4 +417,9 @@ export interface BraintreeComponents {
 
 export interface Config extends BraintreeComponents {
     currency?: string;
+}
+
+export interface GetVenmoConfig {
+    currency?: string;
+    storeCountry?: string;
 }

@@ -49,6 +49,7 @@ enum PaymentStrategyType {
     STRIPEV3 = 'stripev3',
     BRAINTREE = 'braintree',
     BRAINTREE_PAYPAL = 'braintreepaypal',
+    BRAINTREE_VENMO = 'braintreevenmo',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
     BRAINTREE_VISA_CHECKOUT = 'braintreevisacheckout',
     BRAINTREE_GOOGLE_PAY = 'googlepaybraintree',
