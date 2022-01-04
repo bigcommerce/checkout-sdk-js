@@ -106,6 +106,7 @@
 * [CardNumberElementOptions](interfaces/cardnumberelementoptions.md)
 * [CardPaymentMethodState](interfaces/cardpaymentmethodstate.md)
 * [CardState](interfaces/cardstate.md)
+* [CardStateErrors](interfaces/cardstateerrors.md)
 * [Cart](interfaces/cart.md)
 * [ChasePayCustomerInitializeOptions](interfaces/chasepaycustomerinitializeoptions.md)
 * [ChasePayInitializeOptions](interfaces/chasepayinitializeoptions.md)

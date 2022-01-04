@@ -16,7 +16,7 @@
 * [encryptedExpiryMonth](cardpaymentmethodstate.md#encryptedexpirymonth)
 * [encryptedExpiryYear](cardpaymentmethodstate.md#encryptedexpiryyear)
 * [encryptedSecurityCode](cardpaymentmethodstate.md#encryptedsecuritycode)
-* [holderName](cardpaymentmethodstate.md#optional-holdername)
+* [holderName](cardpaymentmethodstate.md#holdername)
 * [type](cardpaymentmethodstate.md#type)
 
 ## Properties
@@ -45,9 +45,9 @@ ___
 
 ___
 
-### `Optional` holderName
+###  holderName
 
-• **holderName**? : *undefined | string*
+• **holderName**: *string*
 
 ___
 

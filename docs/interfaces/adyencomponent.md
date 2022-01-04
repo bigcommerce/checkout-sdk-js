@@ -8,10 +8,27 @@
 
 ## Index
 
+### Properties
+
+* [componentRef](adyencomponent.md#optional-componentref)
+* [state](adyencomponent.md#optional-state)
+
 ### Methods
 
 * [mount](adyencomponent.md#mount)
 * [unmount](adyencomponent.md#unmount)
+
+## Properties
+
+### `Optional` componentRef
+
+• **componentRef**? : *undefined | object*
+
+___
+
+### `Optional` state
+
+• **state**? : *[CardState](cardstate.md)*
 
 ## Methods
 

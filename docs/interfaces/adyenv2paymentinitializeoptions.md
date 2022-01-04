@@ -76,8 +76,13 @@ service.initializePayment({
 * [containerId](adyenv2paymentinitializeoptions.md#containerid)
 * [hasVaultedInstruments](adyenv2paymentinitializeoptions.md#optional-hasvaultedinstruments)
 * [options](adyenv2paymentinitializeoptions.md#optional-options)
+* [shouldShowNumberField](adyenv2paymentinitializeoptions.md#optional-shouldshownumberfield)
 * [threeDS2ContainerId](adyenv2paymentinitializeoptions.md#threeds2containerid)
 * [threeDS2Options](adyenv2paymentinitializeoptions.md#threeds2options)
+
+### Methods
+
+* [validateCardFields](adyenv2paymentinitializeoptions.md#validatecardfields)
 
 ## Properties
 
@@ -121,6 +126,12 @@ Optional. Overwriting the default options
 
 ___
 
+### `Optional` shouldShowNumberField
+
+• **shouldShowNumberField**? : *undefined | false | true*
+
+___
+
 ###  threeDS2ContainerId
 
 • **threeDS2ContainerId**: *string*
@@ -136,3 +147,17 @@ ___
 
 **`deprecated`** 
 Use additionalActionOptions instead as this property will be removed in the future
+
+## Methods
+
+###  validateCardFields
+
+▸ **validateCardFields**(`componentState`: [AdyenComponentState](../README.md#adyencomponentstate)): *void*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`componentState` | [AdyenComponentState](../README.md#adyencomponentstate) |
+
+**Returns:** *void*

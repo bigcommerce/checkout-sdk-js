@@ -68,6 +68,10 @@ declare interface AdyenBaseCardComponentOptions {
 }
 
 declare interface AdyenComponent {
+    componentRef?: {
+        showValidation(): void;
+    };
+    state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
 }
@@ -83,6 +87,7 @@ declare interface AdyenComponentEvents {
      *  incomplete field. Called again when errors are cleared.
      */
     onError?(state: AdyenComponentState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenComponentState, component: AdyenComponent): void;
 }
 
 declare type AdyenComponentState = (CardState | WechatState);
@@ -252,6 +257,8 @@ declare interface AdyenV2PaymentInitializeOptions {
      * Optional. Overwriting the default options
      */
     options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
+    shouldShowNumberField?: boolean;
+    validateCardFields(componentState: AdyenComponentState): void;
 }
 
 /**
@@ -1133,12 +1140,20 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
     encryptedExpiryMonth: string;
     encryptedExpiryYear: string;
     encryptedSecurityCode: string;
-    holderName?: string;
+    holderName: string;
 }
 
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    valid?: {
+        [key: string]: boolean;
+    };
+    errors?: CardStateErrors;
+}
+
+declare interface CardStateErrors {
+    [key: string]: string;
 }
 
 declare interface Cart {

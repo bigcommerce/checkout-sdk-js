@@ -11,7 +11,9 @@
 ### Properties
 
 * [data](cardstate.md#data)
+* [errors](cardstate.md#optional-errors)
 * [isValid](cardstate.md#optional-isvalid)
+* [valid](cardstate.md#optional-valid)
 
 ## Properties
 
@@ -21,6 +23,18 @@
 
 ___
 
+### `Optional` errors
+
+• **errors**? : *[CardStateErrors](cardstateerrors.md)*
+
+___
+
 ### `Optional` isValid
 
 • **isValid**? : *undefined | false | true*
+
+___
+
+### `Optional` valid
+
+• **valid**? : *undefined | object*

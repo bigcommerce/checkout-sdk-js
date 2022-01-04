@@ -14,6 +14,7 @@
 
 * [onChange](adyencomponentevents.md#optional-onchange)
 * [onError](adyencomponentevents.md#optional-onerror)
+* [onFieldValid](adyencomponentevents.md#optional-onfieldvalid)
 
 ## Methods
 
@@ -41,6 +42,21 @@ ___
 
 Called in case of an invalid card number, invalid expiry date, or
  incomplete field. Called again when errors are cleared.
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`state` | [AdyenComponentState](../README.md#adyencomponentstate) |
+`component` | [AdyenComponent](adyencomponent.md) |
+
+**Returns:** *void*
+
+___
+
+### `Optional` onFieldValid
+
+▸ **onFieldValid**(`state`: [AdyenComponentState](../README.md#adyencomponentstate), `component`: [AdyenComponent](adyencomponent.md)): *void*
 
 **Parameters:**
 

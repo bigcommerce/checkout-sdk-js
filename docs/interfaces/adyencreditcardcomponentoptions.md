@@ -28,6 +28,7 @@
 
 * [onChange](adyencreditcardcomponentoptions.md#optional-onchange)
 * [onError](adyencreditcardcomponentoptions.md#optional-onerror)
+* [onFieldValid](adyencreditcardcomponentoptions.md#optional-onfieldvalid)
 
 ## Properties
 
@@ -140,6 +141,23 @@ ___
 
 Called in case of an invalid card number, invalid expiry date, or
  incomplete field. Called again when errors are cleared.
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`state` | [AdyenComponentState](../README.md#adyencomponentstate) |
+`component` | [AdyenComponent](adyencomponent.md) |
+
+**Returns:** *void*
+
+___
+
+### `Optional` onFieldValid
+
+▸ **onFieldValid**(`state`: [AdyenComponentState](../README.md#adyencomponentstate), `component`: [AdyenComponent](adyencomponent.md)): *void*
+
+*Inherited from [AdyenComponentEvents](adyencomponentevents.md).[onFieldValid](adyencomponentevents.md#optional-onfieldvalid)*
 
 **Parameters:**
 
