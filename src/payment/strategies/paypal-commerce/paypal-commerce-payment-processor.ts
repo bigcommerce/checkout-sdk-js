@@ -102,7 +102,7 @@ export default class PaypalCommercePaymentProcessor {
         fullName,
         email,
     }: RenderApmFieldsParams): PaypalCommerceFields {
-        if (!this._paypal || !this._paypal.Fields) {
+        if (!this._paypal || !this._paypal.PaymentFields) {
             throw new PaymentMethodClientUnavailableError();
         }
 
@@ -119,7 +119,7 @@ export default class PaypalCommercePaymentProcessor {
             },
         };
 
-        this._paypalFields = this._paypal.Fields(fieldsParams);
+        this._paypalFields = this._paypal.PaymentFields(fieldsParams);
 
         const fieldContainerElement = document.querySelector(apmFieldsContainer);
         if (fieldContainerElement) {

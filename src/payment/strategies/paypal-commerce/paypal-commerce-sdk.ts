@@ -212,7 +212,7 @@ export interface PaypalCommerceSDK {
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
     Buttons(params: ButtonsOptions): PaypalCommerceButtons;
-    Fields(params: FieldsOptions): PaypalCommerceFields;
+    PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
 
@@ -238,7 +238,7 @@ export interface PaypalCommerceInitializationData {
     attributionId?: string;
 }
 
-export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'fields'>;
+export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'payment-fields'>;
 
 export interface PaypalCommerceScriptParams  {
     'client-id': string;
