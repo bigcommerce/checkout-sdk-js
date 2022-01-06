@@ -10,20 +10,19 @@ export default class StripeUPEScriptLoader {
         private _window: StripeHostWindow = window
     ) {}
 
-    load(stripePublishableKey: string, stripeAccount: string, locale?: string): Promise<StripeUPEClient> {
-        return this._scriptLoader
-            .loadScript('https://js.stripe.com/v3/')
-            .then(() => {
-                if (!this._window.Stripe) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
+    async load(stripePublishableKey: string, stripeAccount: string, locale?: string): Promise<StripeUPEClient> {
+        await this._scriptLoader.loadScript('https://js.stripe.com/v3/');
 
-                return this._window.Stripe(stripePublishableKey, {
-                    stripeAccount,
-                    locale,
-                    betas: ['payment_element_beta_2', 'alipay_pm_beta_1'],
-                    apiVersion: '2020-03-02;alipay_beta=v1',
-                });
-            });
+        if (!this._window.Stripe) {
+          throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this._window.Stripe(stripePublishableKey, {
+          stripeAccount,
+          locale,
+          betas: ['payment_element_beta_2', 'alipay_pm_beta_1'],
+          apiVersion: '2020-03-02;alipay_beta=v1',
+        });
     }
+
 }

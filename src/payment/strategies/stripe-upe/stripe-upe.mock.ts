@@ -7,36 +7,28 @@ const gatewayId = 'stripeupe';
 
 export function getStripeUPEJsMock(): StripeUPEClient {
     return {
-        elements: jest.fn(() => {
-            return {
-                create: jest.fn(() => {
-                    return {
-                        mount: jest.fn(),
-                        unmount: jest.fn(),
-                    };
-                }),
-                getElement: jest.fn().mockReturnValue(null),
-            };
-        }),
+        elements: jest.fn(() => ({
+            create: jest.fn(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+            })),
+            getElement: jest.fn().mockReturnValue(null),
+        })),
         confirmPayment: jest.fn(),
     };
 }
 
 export function getFailingStripeUPEJsMock(): StripeUPEClient {
     return {
-        elements: jest.fn(() => {
-            return {
-                create: jest.fn(() => {
-                    return {
-                        mount: jest.fn(() => {
-                            throw new Error();
-                        }),
-                        unmount: jest.fn(),
-                    };
+        elements: jest.fn(() => ({
+            create: jest.fn(() => ({
+                mount: jest.fn(() => {
+                    throw new Error();
                 }),
-                getElement: jest.fn().mockReturnValue(null),
-            };
-        }),
+                unmount: jest.fn(),
+            })),
+            getElement: jest.fn().mockReturnValue(null),
+        })),
         confirmPayment: jest.fn(),
     };
 }

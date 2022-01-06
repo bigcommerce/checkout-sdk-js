@@ -159,7 +159,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(NotInitializedError);
+            return expect(promise).rejects.toThrow(TypeError);
         });
 
         it('does not load stripeUPE if gatewayId is not provided', () => {
@@ -245,7 +245,7 @@ describe('StripeUPEPaymentStrategy', () => {
                                 token: 'pi_1234',
                             },
                             confirm: false,
-                            vault_payment_instrument: undefined,
+                            vault_payment_instrument: false,
                         },
                         shouldSetAsDefaultInstrument: true,
                     }}
@@ -591,8 +591,7 @@ describe('StripeUPEPaymentStrategy', () => {
             it('throws error when clientToken is undefined', async () => {
                 paymentMethodMock.clientToken = undefined;
 
-                await strategy.initialize(options);
-                const promise = strategy.execute(getStripeUPEOrderRequestBodyMock());
+                const promise =  strategy.initialize(options);
 
                 await expect(promise).rejects.toThrow(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
 
@@ -632,9 +631,9 @@ describe('StripeUPEPaymentStrategy', () => {
     describe('#deinitialize()', () => {
         let cardElement: StripeElement;
         const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
+        const stripeUPEJsMock = getStripeUPEJsMock();
 
         beforeEach(() => {
-            const stripeUPEJsMock = getStripeUPEJsMock();
             const elements = stripeUPEJsMock.elements(elementsOptions);
             cardElement = elements.create('payment');
 
@@ -650,6 +649,8 @@ describe('StripeUPEPaymentStrategy', () => {
         });
 
         it('deinitializes stripe payment strategy', async () => {
+            jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'getElement')
+                .mockReturnValue(cardElement);
             await strategy.initialize(getStripeUPEInitializeOptionsMock());
             const promise = strategy.deinitialize();
 
@@ -658,7 +659,10 @@ describe('StripeUPEPaymentStrategy', () => {
             expect(cardElement.unmount).toHaveBeenCalledTimes(1);
         });
 
-        it('validates is stripe element still exists before trying to unmount it', async () => {
+        it('validates if stripe element still exists before trying to unmount it', async () => {
+            jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'getElement')
+                .mockReturnValue(undefined)
+                .mockReturnValueOnce(cardElement);
             await strategy.initialize(getStripeUPEInitializeOptionsMock());
             await strategy.deinitialize();
             const promise = strategy.deinitialize();

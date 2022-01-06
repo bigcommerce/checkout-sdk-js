@@ -53,14 +53,11 @@ describe('StripeUPEPayScriptLoader', () => {
                 return Promise.resolve();
             });
 
-            try {
-                await stripeUPEScriptLoader.load(
-                    'STRIPE_PUBLIC_KEY',
-                    'STRIPE_CONNECTED_ACCOUNT'
-                );
-            } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
-            }
+            const result = stripeUPEScriptLoader.load(
+                'STRIPE_PUBLIC_KEY',
+                'STRIPE_CONNECTED_ACCOUNT'
+            );
+            await expect(result).rejects.toBeInstanceOf(StandardError);
         });
     });
 });
