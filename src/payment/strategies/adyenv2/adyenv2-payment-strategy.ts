@@ -6,7 +6,7 @@ import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment, { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -14,7 +14,7 @@ import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { isAccountState, isCardState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenError, AdyenPaymentMethodType, AdyenPlaceholderData, CardStateErrors } from './adyenv2';
+import { isAccountState, isCardState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenError, AdyenPaymentMethodType, AdyenPlaceholderData } from './adyenv2';
 import AdyenV2PaymentInitializeOptions from './adyenv2-initialize-options';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
@@ -82,8 +82,6 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
-
-        this._validateCardData();
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() => {
@@ -268,20 +266,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             if (adyenv2.cardVerificationContainerId) {
                 cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
                     ...adyenv2.options,
-                    styles: {
-                        error: {
-                            color: 'red',
-                        },
-                        validated: {
-                            color: 'green',
-                        },
-                    },
                     onChange: componentState => this._updateComponentState(componentState),
-                    onError: componentState => {
-                        this._updateComponentState(componentState);
-                        adyenv2.validateCardFields(componentState);
-                    },
-                    onFieldValid: componentState => adyenv2.validateCardFields(componentState),
+                    onError: componentState => this._updateComponentState(componentState),
                 });
 
                 try {
@@ -390,57 +376,5 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
     private _updateComponentState(componentState: AdyenComponentState) {
         this._componentState = componentState;
-    }
-
-    private _validateCardData(): void {
-        const adyenv2 = this._getPaymentInitializeOptions();
-        const cardComponent = adyenv2.hasVaultedInstruments ? this._cardVerificationComponent : this._paymentComponent;
-
-        if (!cardComponent?.componentRef?.showValidation || !cardComponent?.state) {
-            return;
-        }
-
-        adyenv2.hasVaultedInstruments ?
-            adyenv2.validateCardFields(cardComponent.state) :
-            cardComponent.componentRef.showValidation();
-
-        if ( Object.keys(cardComponent.state).length === 0 || !this._isFieldsValid(cardComponent, adyenv2) ) {
-            throw new PaymentInvalidFormError( this._mapCardErrors(cardComponent?.state?.errors) );
-        }
-    }
-
-    private _isFieldsValid(cardComponent: AdyenComponent, adyenv2: AdyenV2PaymentInitializeOptions): boolean {
-        return adyenv2.hasVaultedInstruments ? this._isInstrumentValid(cardComponent, adyenv2) : !!cardComponent.state?.isValid;
-    }
-
-    private _isInstrumentValid(cardComponent: AdyenComponent, adyenv2: AdyenV2PaymentInitializeOptions): boolean {
-        if (!!adyenv2.shouldShowNumberField) {
-            return !!cardComponent.state?.isValid;
-        }
-
-        let isValid = true;
-        const fieldsValidationState = cardComponent?.state?.valid || {};
-
-        for (const fieldKey in fieldsValidationState) {
-            if (fieldKey !== 'encryptedCardNumber' && !fieldsValidationState[fieldKey]) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
-    }
-
-    private _mapCardErrors(cardStateErrors: CardStateErrors = {}): PaymentInvalidFormErrorDetails {
-        const errors: PaymentInvalidFormErrorDetails = {};
-
-        Object.keys(cardStateErrors).forEach(key => {
-            errors[key] = [{
-                message: cardStateErrors[key],
-                type: key,
-            }];
-        });
-
-        return errors;
     }
 }

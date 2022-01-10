@@ -74,7 +74,7 @@ interface CardPaymentMethodState extends AdyenPaymentMethodState {
     encryptedExpiryMonth: string;
     encryptedExpiryYear: string;
     encryptedSecurityCode: string;
-    holderName: string;
+    holderName?: string;
 }
 
 export interface AdyenAction {
@@ -171,8 +171,6 @@ export interface AdyenComponentEvents {
      *  incomplete field. Called again when errors are cleared.
      */
     onError?(state: AdyenComponentState, component: AdyenComponent): void;
-
-    onFieldValid?(state: AdyenComponentState, component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
@@ -182,10 +180,6 @@ export interface AdyenClient {
 }
 
 export interface AdyenComponent {
-    componentRef?: {
-        showValidation(): void;
-    };
-    state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
 }
@@ -492,12 +486,6 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: {[key: string]: boolean};
-    errors?: CardStateErrors;
-}
-
-export interface CardStateErrors {
-    [key: string]: string;
 }
 
 export interface WechatState {

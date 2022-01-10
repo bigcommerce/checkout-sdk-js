@@ -136,7 +136,6 @@ export function getInitializeOptions(hasVaultedInstruments = false): PaymentInit
                 onComplete: jest.fn(),
                 onLoad: jest.fn(),
             },
-            validateCardFields: jest.fn(),
         },
     };
 }
@@ -159,7 +158,6 @@ export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions 
             additionalActionOptions: {
                 containerId: 'adyen-scheme-additional-action-component-field',
             },
-            validateCardFields: jest.fn(),
         },
     };
 }
@@ -187,7 +185,6 @@ export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitialize
                 onComplete: jest.fn(),
                 onLoad: jest.fn(),
             },
-            validateCardFields: jest.fn(),
         },
     };
 }

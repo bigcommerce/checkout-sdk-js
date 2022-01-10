@@ -1,6 +1,5 @@
 import { Omit } from '../../../common/types';
 
-import { AdyenComponentState } from '.';
 import { AdyenAdditionalActionOptions, AdyenCreditCardComponentOptions, AdyenIdealComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 
 /**
@@ -102,8 +101,4 @@ export default interface AdyenV2PaymentInitializeOptions {
      * Optional. Overwriting the default options
      */
     options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
-
-    shouldShowNumberField?: boolean;
-
-    validateCardFields(componentState: AdyenComponentState): void;
 }
