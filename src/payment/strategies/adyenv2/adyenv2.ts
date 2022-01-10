@@ -185,6 +185,9 @@ export interface AdyenComponent {
     componentRef?: {
         showValidation(): void;
     };
+    props?: {
+        type?: string;
+    };
     state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
