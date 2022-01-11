@@ -396,7 +396,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const adyenv2 = this._getPaymentInitializeOptions();
         const cardComponent = adyenv2.hasVaultedInstruments ? this._cardVerificationComponent : this._paymentComponent;
 
-        if (!cardComponent?.componentRef?.showValidation || !cardComponent?.state) {
+        if (cardComponent?.props?.type === 'ideal' || !cardComponent?.componentRef?.showValidation || !cardComponent?.state) {
             return;
         }
 

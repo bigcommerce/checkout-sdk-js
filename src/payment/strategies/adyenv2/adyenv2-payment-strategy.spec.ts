@@ -266,6 +266,32 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
             });
 
+            it('skip fields validation if payment type is "ideal"',  async () => {
+                const adyenInvalidPaymentComponent = {
+                    mount: jest.fn(),
+                    unmount: jest.fn(),
+                    componentRef: {
+                        showValidation: jest.fn(),
+                    },
+                    state: {
+                        isValid: false,
+                    },
+                    props: {
+                        type: 'ideal',
+                    },
+                };
+                jest.spyOn(adyenCheckout, 'create')
+                    .mockReturnValue(adyenInvalidPaymentComponent);
+                jest.spyOn(orderActionCreator, 'submitOrder')
+                    .mockReturnValue(submitOrderAction);
+
+                await strategy.initialize(options);
+                await expect(() => strategy.execute(getOrderRequestBody())).not.toThrow(PaymentInvalidFormError);
+
+                expect(adyenInvalidPaymentComponent.componentRef.showValidation).toHaveBeenCalledTimes(0);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(1);
+            });
+
             it('throws an error when card fields invalid',  async () => {
                 const adyenInvalidPaymentComponent = {
                     mount: jest.fn(),
@@ -275,6 +301,9 @@ describe('AdyenV2PaymentStrategy', () => {
                     },
                     state: {
                         isValid: false,
+                    },
+                    props: {
+                        type: 'card',
                     },
                 };
                 jest.spyOn(adyenCheckout, 'create')
