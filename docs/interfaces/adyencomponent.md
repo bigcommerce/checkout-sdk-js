@@ -11,6 +11,7 @@
 ### Properties
 
 * [componentRef](adyencomponent.md#optional-componentref)
+* [props](adyencomponent.md#optional-props)
 * [state](adyencomponent.md#optional-state)
 
 ### Methods
@@ -23,6 +24,12 @@
 ### `Optional` componentRef
 
 • **componentRef**? : *undefined | object*
+
+___
+
+### `Optional` props
+
+• **props**? : *undefined | object*
 
 ___
 
