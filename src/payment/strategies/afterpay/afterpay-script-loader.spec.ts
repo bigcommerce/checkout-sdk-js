@@ -62,7 +62,7 @@ describe('AfterpayScriptLoader', () => {
         afterpayScriptLoader.load(method, 'US');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.us-sandbox.afterpay.com/afterpay-async.js'
+            '//portal.sandbox.afterpay.com/afterpay-async.js'
         );
     });
 });
