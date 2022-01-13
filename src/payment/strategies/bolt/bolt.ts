@@ -18,6 +18,7 @@ export interface BoltOpenCheckoutCallbacks {
 
 export interface BoltEmbeddedOptions {
     styles: { backgroundColor: string };
+    renderSeparateFields?: boolean;
 }
 
 export interface BoltEmbedded {
