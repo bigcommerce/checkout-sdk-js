@@ -73,6 +73,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'stripev3',
         method: 'card',
     },
+    'stripeupe.card': {
+        provider: 'stripeupe',
+        method: 'card',
+    },
     cybersource: {
         provider: 'cybersource',
         method: 'credit_card',

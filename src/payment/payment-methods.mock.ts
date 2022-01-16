@@ -658,6 +658,27 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
     };
 }
 
+export function getStripeUPE(method: string = 'card'): PaymentMethod {
+    return {
+        id: method,
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Stripe',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            stripePublishableKey: 'key',
+            stripeConnectedAccount: 'key',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        returnUrl: 'http://www.example.com',
+    };
+}
+
 export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     return {
         id: 'adyenv2',
@@ -836,6 +857,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getQuadpay(),
         getSquare(),
         getStripeV3(),
+        getStripeUPE(),
         getUnsupportedPPSDK(),
         getApplePay(),
         getZip(),

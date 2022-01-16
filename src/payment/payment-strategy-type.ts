@@ -47,6 +47,7 @@ enum PaymentStrategyType {
     SAGE_PAY = 'sagepay',
     SQUARE = 'squarev2',
     STRIPEV3 = 'stripev3',
+    STRIPE_UPE = 'stripeupe',
     BRAINTREE = 'braintree',
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',

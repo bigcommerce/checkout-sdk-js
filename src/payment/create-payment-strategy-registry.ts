@@ -68,7 +68,8 @@ import { createStepHandler, createSubStrategyRegistry, PaymentResumer, PPSDKStra
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
-import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
+import { StripeScriptLoader as StripeUPEScriptLoader, StripeUPEPaymentStrategy } from './strategies/stripe-upe';
+import { StripeScriptLoader as StripeV3ScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { ZipPaymentStrategy } from './strategies/zip';
 
@@ -710,9 +711,21 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            new StripeScriptLoader(scriptLoader),
+            new StripeV3ScriptLoader(scriptLoader),
             storeCreditActionCreator,
             hostedFormFactory,
+            locale
+        )
+    );
+
+    registry.register(PaymentStrategyType.STRIPE_UPE, () =>
+        new StripeUPEPaymentStrategy(
+            store,
+            paymentMethodActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            new StripeUPEScriptLoader(scriptLoader),
+            storeCreditActionCreator,
             locale
         )
     );
