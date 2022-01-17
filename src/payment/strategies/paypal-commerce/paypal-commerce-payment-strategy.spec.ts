@@ -169,7 +169,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 components: [
                     'buttons',
                     'messages',
-                    'fields',
+                    'payment-fields',
                     'funding-eligibility',
                 ],
             };
@@ -191,7 +191,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 components: [
                     'buttons',
                     'messages',
-                    'fields',
+                    'payment-fields',
                     'funding-eligibility',
                 ],
                 'enable-funding': 'p24',
@@ -214,7 +214,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 components: [
                     'buttons',
                     'messages',
-                    'fields',
+                    'payment-fields',
                     'funding-eligibility',
                 ],
                 'enable-funding': 'paylater',

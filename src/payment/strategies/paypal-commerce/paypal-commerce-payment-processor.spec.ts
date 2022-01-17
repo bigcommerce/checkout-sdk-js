@@ -75,7 +75,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({ body: orderID })));
 
         renderApmFields = jest.fn();
-        jest.spyOn(paypal, 'Fields')
+        jest.spyOn(paypal, 'PaymentFields')
             .mockImplementation(jest.fn().mockReturnValue({ render: renderApmFields }));
 
         render = jest.fn();
@@ -261,7 +261,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             await paypalCommercePaymentProcessor.initialize(initOptions);
             await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
 
-            expect(paypal.Fields).toHaveBeenCalledWith({
+            expect(paypal.PaymentFields).toHaveBeenCalledWith({
                 fundingSource: 'p24',
                 style: undefined,
                 fields: {
@@ -284,7 +284,7 @@ describe('PaypalCommercePaymentProcessor', () => {
 
         it('throws error if unable to set PayPalCommerce fields', async () => {
             /* tslint:disable-next-line */
-            paypal.Fields = undefined!;
+            paypal.PaymentFields = undefined!;
 
             const expectedError = new PaymentMethodClientUnavailableError();
 

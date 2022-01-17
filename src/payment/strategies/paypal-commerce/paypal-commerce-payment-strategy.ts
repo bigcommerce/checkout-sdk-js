@@ -247,7 +247,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             commit: true,
             currency: currencyCode,
             intent,
-            components: ['buttons', 'messages', 'fields', 'funding-eligibility'] as ComponentsScriptType,
+            components: ['buttons', 'messages', 'payment-fields', 'funding-eligibility'] as ComponentsScriptType,
             ...(initializationMethodId && { 'enable-funding': initializationMethodId}),
         };
 
