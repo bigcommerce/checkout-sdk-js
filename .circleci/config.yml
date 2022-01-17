@@ -2,7 +2,7 @@ aliases:
   - &node_executor
       executor:
         name: node/node
-        node-version: "10-buster"
+        node-version: "10.24"
 
   - &release_filter
       branches:
