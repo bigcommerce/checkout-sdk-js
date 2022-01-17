@@ -277,6 +277,7 @@
 * [StripeElementClasses](interfaces/stripeelementclasses.md)
 * [StripeElementStyle](interfaces/stripeelementstyle.md)
 * [StripeElementStyleVariant](interfaces/stripeelementstylevariant.md)
+* [StripeUPEPaymentInitializeOptions](interfaces/stripeupepaymentinitializeoptions.md)
 * [StripeV3PaymentInitializeOptions](interfaces/stripev3paymentinitializeoptions.md)
 * [StyleOptions](interfaces/styleoptions.md)
 * [SubInputDetail](interfaces/subinputdetail.md)

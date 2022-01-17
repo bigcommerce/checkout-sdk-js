@@ -48,6 +48,7 @@ current checkout flow.
 * [paypalcommerce](paymentinitializeoptions.md#optional-paypalcommerce)
 * [paypalexpress](paymentinitializeoptions.md#optional-paypalexpress)
 * [square](paymentinitializeoptions.md#optional-square)
+* [stripeupe](paymentinitializeoptions.md#optional-stripeupe)
 * [stripev3](paymentinitializeoptions.md#optional-stripev3)
 * [timeout](paymentinitializeoptions.md#optional-timeout)
 
@@ -319,6 +320,15 @@ ___
 
 The options that are required to initialize the Square payment method.
 They can be omitted unless you need to support Square.
+
+___
+
+### `Optional` stripeupe
+
+• **stripeupe**? : *[StripeUPEPaymentInitializeOptions](stripeupepaymentinitializeoptions.md)*
+
+The options that are required to initialize the StripeUPE payment method.
+They can be omitted unless you need to support StripeUPE.
 
 ___
 
