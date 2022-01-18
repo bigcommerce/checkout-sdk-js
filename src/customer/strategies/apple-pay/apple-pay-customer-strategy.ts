@@ -4,14 +4,14 @@ import { noop } from 'lodash';
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { Cart } from '../../../cart';
-import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Checkout, CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { StoreConfig } from '../../../config';
 import { OrderActionCreator } from '../../../order';
 import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { PaymentMethodCancelledError } from '../../../payment/errors';
 import { assertApplePayWindow, ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
 import { CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
@@ -37,11 +37,13 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
     constructor(
         private _store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _requestSender: RequestSender,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _sessionFactory: ApplePaySessionFactory
     ) {}
@@ -178,8 +180,10 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         applePaySession.onshippingmethodselected = async event =>
             this._handleShippingMethodSelected(applePaySession, config, event);
 
-        applePaySession.oncancel = () => {
-            throw new PaymentMethodCancelledError('Continue with applepay');
+        applePaySession.oncancel = async () => {
+            await this._store.dispatch(this._remoteCheckoutActionCreator.signOut(paymentMethod.id));
+
+            return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
         };
 
         applePaySession.onpaymentauthorized = async event =>

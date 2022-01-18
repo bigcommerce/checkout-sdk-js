@@ -5,16 +5,18 @@ import { of } from 'rxjs/internal/observable/of';
 import { Observable } from 'rxjs/internal/Observable';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { createPaymentClient, PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../../../payment';
-import { PaymentMethodCancelledError } from '../../../payment/errors';
 // eslint-disable-next-line import/no-internal-modules
 import { PaymentActionType, SubmitPaymentAction } from '../../../payment/payment-actions';
 import { ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
 import { MockApplePaySession } from '../../../payment/strategies/apple-pay/apple-pay-payment.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
@@ -38,6 +40,8 @@ describe('ApplePayCustomerStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let applePayFactory: ApplePaySessionFactory;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let checkoutActionCreator: CheckoutActionCreator;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -56,6 +60,17 @@ describe('ApplePayCustomerStrategy', () => {
         consignmentActionCreator = new ConsignmentActionCreator(
             new ConsignmentRequestSender(requestSender),
             new CheckoutRequestSender(requestSender)
+        );
+
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
         );
 
         billingAddressActionCreator = new BillingAddressActionCreator(
@@ -97,14 +112,20 @@ describe('ApplePayCustomerStrategy', () => {
             .mockReturnValue(true);
         jest.spyOn(applePayFactory, 'create')
             .mockReturnValue(applePaySession);
+        jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
+            .mockReturnValue(true);
+        jest.spyOn(remoteCheckoutActionCreator, 'signOut')
+            .mockReturnValue(true);
 
         strategy = new ApplePayCustomerStrategy(
             store,
+            checkoutActionCreator,
             requestSender,
             paymentMethodActionCreator,
             consignmentActionCreator,
             billingAddressActionCreator,
             paymentActionCreator,
+            remoteCheckoutActionCreator,
             orderActionCreator,
             applePayFactory
         );
@@ -155,7 +176,10 @@ describe('ApplePayCustomerStrategy', () => {
                     button.click();
 
                     expect(applePaySession.begin).toHaveBeenCalled();
-                    expect(() => applePaySession.oncancel()).toThrow(PaymentMethodCancelledError);
+                    await applePaySession.oncancel();
+
+                    expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalled();
+                    expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalled();
                 }
             }
         });
@@ -238,7 +262,7 @@ describe('ApplePayCustomerStrategy', () => {
 
                     await applePaySession.onshippingcontactselected(event);
 
-                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled()
+                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
                 }
             }
         });

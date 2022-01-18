@@ -225,6 +225,7 @@ export default function createCustomerStrategyRegistry(
     registry.register('applepay', () =>
         new ApplePayCustomerStrategy(
             store,
+            checkoutActionCreator,
             requestSender,
             paymentMethodActionCreator,
             new ConsignmentActionCreator(
@@ -246,6 +247,7 @@ export default function createCustomerStrategyRegistry(
                 new PaymentRequestTransformer(),
                 new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
             ),
+            remoteCheckoutActionCreator,
             new OrderActionCreator(
                 new OrderRequestSender(requestSender),
                 new CheckoutValidator(checkoutRequestSender)
