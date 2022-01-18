@@ -325,7 +325,10 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         const boltEmbedded = this._getBoltEmbedded();
 
         const styles = { backgroundColor: '#fff' };
-        const embeddedField = boltEmbedded.create('payment_field', { styles });
+        const embeddedField = boltEmbedded.create('payment_field', {
+            styles,
+            renderSeparateFields: true,
+        });
         embeddedField.mount(`#${containerId}`);
 
         this._embeddedField = embeddedField;
