@@ -10,6 +10,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
@@ -31,6 +32,8 @@ describe('GooglePayPaymentProcessor', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
     let clientMock: GooglePayClient;
     let requestSender: RequestSender;
+    let consignmentActionCreator: ConsignmentActionCreator;
+    const googlePaySDK = getGooglePaySDKMock();
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
@@ -53,6 +56,14 @@ describe('GooglePayPaymentProcessor', () => {
         googlePayInitializer = new GooglePayBraintreeInitializer(
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)));
         requestSender = createRequestSender();
+        googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
+
+        jest.spyOn(googlePayScriptLoader, 'load').mockReturnValue(Promise.resolve(googlePaySDK));
+        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
+
+        consignmentActionCreator = new ConsignmentActionCreator(
+            new ConsignmentRequestSender(requestSender),
+            new CheckoutRequestSender(requestSender));
 
         processor =  new GooglePayPaymentProcessor(
             store,
@@ -60,9 +71,7 @@ describe('GooglePayPaymentProcessor', () => {
             googlePayScriptLoader,
             googlePayInitializer,
             billingAddressActionCreator,
-            new ConsignmentActionCreator(
-                new ConsignmentRequestSender(requestSender),
-                new CheckoutRequestSender(requestSender)),
+            consignmentActionCreator,
             requestSender
         );
     });
@@ -77,20 +86,17 @@ describe('GooglePayPaymentProcessor', () => {
                 result: true,
             };
             const googlePaymentDataMock = getGooglePaymentDataMock();
-            const googlePaySDK = getGooglePaySDKMock();
+
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
                 loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
             };
-            googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 
-            jest.spyOn(googlePayScriptLoader, 'load').mockReturnValue(Promise.resolve(googlePaySDK));
             jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
         });
 
         it('initializes processor successfully', async () => {
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
 
@@ -100,7 +106,6 @@ describe('GooglePayPaymentProcessor', () => {
         });
 
         it('initializes processor without paymentMethod', async () => {
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
 
@@ -113,7 +118,6 @@ describe('GooglePayPaymentProcessor', () => {
         });
 
         it('initializes processor without checkout', async () => {
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
             jest.spyOn(store.getState().checkout, 'getCheckout').mockReturnValue(undefined);
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
@@ -129,7 +133,6 @@ describe('GooglePayPaymentProcessor', () => {
         it('initializes processor without testMode', async () => {
             const googlePayMethod: PaymentMethod = getGooglePay();
             googlePayMethod.config.testMode = undefined;
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(googlePayMethod);
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
 
@@ -138,6 +141,23 @@ describe('GooglePayPaymentProcessor', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
+        });
+
+        it('throws when response.result is not defined', async () => {
+            const googlePayError: GooglePaymentsError = {
+                statusCode: 'Error loading payment data',
+            };
+            clientMock = {
+                isReadyToPay: jest.fn(() => Promise.resolve({ result: undefined})),
+                loadPaymentData: jest.fn(() => Promise.reject(googlePayError)),
+                createButton: jest.fn(() => Promise.resolve()),
+            };
+
+            jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
+
+            await expect(processor.initialize('googlepay'))
+                .rejects
+                .toBeInstanceOf(PaymentMethodInvalidError);
         });
     });
 
@@ -157,17 +177,13 @@ describe('GooglePayPaymentProcessor', () => {
                 result: true,
             };
             const googlePaymentDataMock = getGooglePaymentDataMock();
-            const googlePaySDK = getGooglePaySDKMock();
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
                 loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
-            googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 
-            jest.spyOn(googlePayScriptLoader, 'load').mockReturnValue(Promise.resolve(googlePaySDK));
             jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
         });
@@ -209,17 +225,14 @@ describe('GooglePayPaymentProcessor', () => {
                 result: true,
             };
             const googlePaymentDataMock = getGooglePaymentDataMock();
-            const googlePaySDK = getGooglePaySDKMock();
+
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
                 loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
             };
-            googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 
-            jest.spyOn(googlePayScriptLoader, 'load').mockReturnValue(Promise.resolve(googlePaySDK));
             jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
         });
@@ -285,15 +298,12 @@ describe('GooglePayPaymentProcessor', () => {
     describe('#displayWallet', () => {
         let googlePayIsReadyToPayResponse: GooglePayIsReadyToPayResponse;
         const googlePaymentDataMock = getGooglePaymentDataMock();
-        const googlePaySDK = getGooglePaySDKMock();
 
         beforeEach(() => {
             googlePayIsReadyToPayResponse = {
                 result: true,
             };
 
-            jest.spyOn(googlePayScriptLoader, 'load').mockReturnValue(Promise.resolve(googlePaySDK));
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
         });
@@ -304,7 +314,6 @@ describe('GooglePayPaymentProcessor', () => {
                 loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
-            googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 
             jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
 
@@ -333,7 +342,6 @@ describe('GooglePayPaymentProcessor', () => {
                 loadPaymentData: jest.fn(() => Promise.reject(googlePayError)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
-            googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 
             jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
 
@@ -344,6 +352,45 @@ describe('GooglePayPaymentProcessor', () => {
             } catch (error) {
                 expect(error).toEqual({ statusCode: googlePayError.statusCode });
             }
+        });
+    });
+
+    describe('#updateShippingAddress', () => {
+        const shippingAddress = {
+            address1: '1260 28th',
+            address2: '',
+            address3: '',
+            administrativeArea: '',
+            companyName: '',
+            countryCode: 'US',
+            locality: 'FL',
+            name: 'ShippingAddress',
+            postalCode: '32960',
+            sortingCode: '',
+            phoneNumber: '',
+        };
+
+        beforeEach(() => {
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockResolvedValue({});
+        });
+
+        it('should call consigmentActionCreate UpdateAddress', async () => {
+            await processor.updateShippingAddress(shippingAddress);
+
+            expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith({
+                address1: '1260 28th',
+                address2: '',
+                city: 'FL',
+                company: '',
+                countryCode: 'US',
+                customFields: [],
+                firstName: 'ShippingAddress',
+                lastName: '',
+                phone: '',
+                postalCode: '32960',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+            });
         });
     });
 });
