@@ -206,9 +206,13 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             this._handleShippingMethodSelected(applePaySession, config, event);
 
         applePaySession.oncancel = async () => {
-            await this._store.dispatch(this._remoteCheckoutActionCreator.signOut(paymentMethod.id));
+            try {
+                await this._store.dispatch(this._remoteCheckoutActionCreator.signOut(paymentMethod.id));
 
-            return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
+                return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
+            } catch (error) {
+                return this._onError(error);
+            }
         };
 
         applePaySession.onpaymentauthorized = async event =>
