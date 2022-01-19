@@ -124,10 +124,12 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const config = state.config.getStoreConfigOrThrow();
+        const checkout = state.checkout.getCheckoutOrThrow();
+
         if (!this._paymentMethod || !this._paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-        const request = this._getBaseRequest(cart, config, this._paymentMethod);
+        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
         const applePaySession = this._sessionFactory.create(request);
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
@@ -136,28 +138,51 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
     private _getBaseRequest(
         cart: Cart,
+        checkout: Checkout,
         config: StoreConfig,
         paymentMethod: PaymentMethod
     ): ApplePayJS.ApplePayPaymentRequest {
         const { storeProfile: { storeCountryCode, storeName } } = config;
-        const { currency: { code } } = cart;
+        const { currency: { code, decimalPlaces} } = cart;
 
         const { initializationData : { merchantCapabilities, supportedNetworks } } = paymentMethod;
 
-        return {
+        const requiresShipping = cart.lineItems.physicalItems.length > 0;
+        const total: ApplePayJS.ApplePayLineItem = requiresShipping ? {
+            label: storeName,
+            amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+            type: 'pending',
+        } : {
+            label: storeName,
+            amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+            type: 'final',
+        };
+
+        const request: ApplePayJS.ApplePayPaymentRequest = {
             requiredBillingContactFields: ['postalAddress'],
-            requiredShippingContactFields: ['email', 'phone', 'postalAddress'],
+            requiredShippingContactFields: ['email', 'phone'],
             countryCode: storeCountryCode,
             currencyCode: code,
             merchantCapabilities,
             supportedNetworks,
             lineItems: [],
-            total: {
-                label: storeName,
-                amount: '0.01',
-                type: 'pending',
-            },
+            total,
         };
+
+        if (requiresShipping) {
+            request.requiredShippingContactFields?.push('postalAddress');
+        } else {
+            const lineItems: ApplePayJS.ApplePayLineItem[] = [
+                { label: this._subTotalLabel, amount: `${checkout.subtotal.toFixed(decimalPlaces)}`},
+            ];
+
+            checkout.taxes.forEach(tax =>
+                lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }));
+
+            request.lineItems = lineItems;
+        }
+
+        return request;
     }
 
     private _handleApplePayEvents(
@@ -320,6 +345,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         paymentMethod: PaymentMethod
     ) {
         const { token, billingContact, shippingContact } = event.payment;
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const requiresShipping = cart.lineItems.physicalItems.length > 0;
         const payment: Payment = {
             methodId: paymentMethod.id,
             paymentData: {
@@ -342,9 +370,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 this._billingAddressActionCreator.updateAddress({ ...transformedBillingAddress, email: emailAddress })
             );
 
-            await this._store.dispatch(
-                this._consignmentActionCreator.updateAddress(transformedShippingAddress)
-            );
+            if (requiresShipping) {
+                await this._store.dispatch(
+                    this._consignmentActionCreator.updateAddress(transformedShippingAddress)
+                );
+            }
 
             await this._store.dispatch(this._orderActionCreator.submitOrder(
                 {
