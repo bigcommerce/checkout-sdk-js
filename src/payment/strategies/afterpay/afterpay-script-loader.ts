@@ -17,7 +17,7 @@ const SCRIPTS_DEFAULT: AfterpayScripts = {
 
 const SCRIPTS_US: AfterpayScripts = {
     PROD: '//portal.afterpay.com/afterpay-async.js',
-    SANDBOX: '//portal.us-sandbox.afterpay.com/afterpay-async.js',
+    SANDBOX: '//portal.sandbox.afterpay.com/afterpay-async.js',
 };
 
 /** Class responsible for loading the Afterpay SDK */
