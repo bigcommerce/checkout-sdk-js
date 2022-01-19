@@ -635,7 +635,7 @@ export function getQuadpay(): PaymentMethod {
     };
 }
 
-export function getStripeV3(method: string = 'card', shouldUseIndividualCardFields: boolean = false, isHostedFormEnabled: boolean = false, shouldReusePaymentIntent: boolean = false): PaymentMethod {
+export function getStripeV3(method: string = 'card', shouldUseIndividualCardFields: boolean = false, isHostedFormEnabled: boolean = false): PaymentMethod {
     return {
         id: method,
         logoUrl: '',
@@ -650,7 +650,6 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
         initializationData: {
             stripePublishableKey: 'key',
             useIndividualCardFields: shouldUseIndividualCardFields,
-            reusePaymentIntent: shouldReusePaymentIntent,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',
