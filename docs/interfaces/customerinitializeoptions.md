@@ -26,6 +26,7 @@ information in order to initialize the customer step of checkout.
 
 * [amazon](customerinitializeoptions.md#optional-amazon)
 * [amazonpay](customerinitializeoptions.md#optional-amazonpay)
+* [applepay](customerinitializeoptions.md#optional-applepay)
 * [bolt](customerinitializeoptions.md#optional-bolt)
 * [braintreevisacheckout](customerinitializeoptions.md#optional-braintreevisacheckout)
 * [chasepay](customerinitializeoptions.md#optional-chasepay)
@@ -58,6 +59,15 @@ ___
 
 The options that are required to initialize the customer step of checkout
 when using AmazonPayV2.
+
+___
+
+### `Optional` applepay
+
+• **applepay**? : *[ApplePayCustomerInitializeOptions](applepaycustomerinitializeoptions.md)*
+
+The options that are required to initialize the customer step of checkout
+when using ApplePay.
 
 ___
 

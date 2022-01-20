@@ -63,6 +63,7 @@
 * [AmazonPayV2PaymentInitializeOptions](interfaces/amazonpayv2paymentinitializeoptions.md)
 * [AmazonPayV2ShippingInitializeOptions](interfaces/amazonpayv2shippinginitializeoptions.md)
 * [AmazonPayWidgetError](interfaces/amazonpaywidgeterror.md)
+* [ApplePayCustomerInitializeOptions](interfaces/applepaycustomerinitializeoptions.md)
 * [ApplePayPaymentInitializeOptions](interfaces/applepaypaymentinitializeoptions.md)
 * [BankInstrument](interfaces/bankinstrument.md)
 * [Banner](interfaces/banner.md)
