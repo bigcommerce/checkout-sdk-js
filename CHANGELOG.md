@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.210.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.209.0...v1.210.0) (2022-01-20)
+
+
+### Features
+
+* **payment:** INT-5150 Delete experiment StripeV3 enable_reuse_payment_intent experiment ([678291b](https://github.com/bigcommerce/checkout-sdk-js/commit/678291b2e78982fb9e65b35bd7b8080d6b3f6645))
+
+
+### Bug Fixes
+
+* **payment:** INT-5402 Afterpay - Change the SDK URL to the newest one ([5f826da](https://github.com/bigcommerce/checkout-sdk-js/commit/5f826da38b7c900c518e8b00351ba8cdb212d70f))
+
 ## [1.209.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.208.0...v1.209.0) (2022-01-18)
 
 
