@@ -10,6 +10,7 @@ import { bindDecorator as bind } from '../../../common/utility';
 import { StoreConfig } from '../../../config';
 import { OrderActionCreator } from '../../../order';
 import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { PaymentMethodCancelledError } from '../../../payment/errors';
 import { assertApplePayWindow, ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
@@ -211,7 +212,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
                 return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
             } catch (error) {
-                return this._onError(error);
+                return this._onError(new PaymentMethodCancelledError());
             }
         };
 
