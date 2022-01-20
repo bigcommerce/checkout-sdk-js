@@ -2,6 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayCustomerInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
+import { ApplePayCustomerInitializeOptions } from './strategies/apple-pay';
 import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
@@ -41,6 +42,12 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using ApplePay.
+     */
+     applepay?: ApplePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout

@@ -93,7 +93,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
-        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, requestSender, locale)),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, paymentClient, requestSender, locale)),
         new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
