@@ -57,7 +57,7 @@
     "@types/lodash": "^4.14.139",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.1",
-    "@types/yup": "^0.26.24",
+    "@types/yup": "^0.29.13",
     "card-validator": "^6.2.0",
     "core-js": "^3.1.2",
     "current-script-polyfill": "^1.0.0",
