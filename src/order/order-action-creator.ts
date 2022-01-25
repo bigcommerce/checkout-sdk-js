@@ -62,7 +62,8 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions, shippingChangeData?: any): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
+
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
             defer(() => {
@@ -70,27 +71,20 @@ export default class OrderActionCreator {
                 const externalSource = state.config.getExternalSource();
                 const variantIdentificationToken = state.config.getVariantIdentificationToken();
                 const checkout = state.checkout.getCheckout();
-                let checkoutCopy: any;
-                // tslint:disable-next-line:no-console
-                console.log('PAYLOAD', payload, options);
-                if (checkout && shippingChangeData) {
-                    checkoutCopy = shippingChangeData;
-                }
-                if (!checkoutCopy) {
+                if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
-                if (checkoutCopy.shouldExecuteSpamCheck) {
+                if (checkout.shouldExecuteSpamCheck) {
                     throw new SpamProtectionNotCompletedError();
                 }
 
                 return from(
-                    this._checkoutValidator.validate(checkoutCopy, options)
+                    this._checkoutValidator.validate(checkout, options)
                         .then(() => this._orderRequestSender.submitOrder(
                             this._mapToOrderRequestBody(
                                 payload,
-                                // @ts-ignore
-                                checkoutCopy.customerMessage,
+                                checkout.customerMessage,
                                 externalSource
                             ),
                             {

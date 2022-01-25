@@ -95,7 +95,13 @@ describe('PaypalCommercePaymentProcessor', () => {
 
                 eventEmitter.on('approve', () => {
                     if (options.onApprove) {
-                        options.onApprove({orderID}, {});
+                        // @ts-ignore
+                        options.onApprove({orderID}, {order: {
+                            capture: jest.fn(),
+                            authorize: jest.fn(),
+                            get: jest.fn(),
+                            patch: jest.fn(),
+                            }});
                     }
                 });
 

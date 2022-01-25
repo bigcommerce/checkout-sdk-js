@@ -1,35 +1,53 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { includes } from 'lodash';
 
-import { Cart } from '../../../cart';
+import { Cart, LineItem } from '../../../cart';
+// eslint-disable-next-line import/no-internal-modules
+import { CollectedLineItem } from '../../../cart/line-item';
+// eslint-disable-next-line import/no-internal-modules
+import LineItemMap from '../../../cart/line-item-map';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
+// eslint-disable-next-line import/no-internal-modules
+import CheckoutStoreState from '../../../checkout/checkout-store-state';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+// eslint-disable-next-line import/no-internal-modules
+import Country, { GetCoutryResponse, Region } from '../../../geography/country';
 import { OrderActionCreator } from '../../../order';
+import { PaymentRequestOptions } from '../../../payment';
 // eslint-disable-next-line import/no-internal-modules
 import PaymentActionCreator from '../../../payment/payment-action-creator';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, FundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
+import PaymentStrategyActionCreator from '../../../payment/payment-strategy-action-creator';
+import { ApproveActions,
+    ApproveDataOptions, AvaliableShippingOption,
+    ButtonsOptions,
+    ClickDataOptions,
+    FundingType,
+    PayerDetails,
+    PaypalCommerceInitializationData,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceScriptParams,
+    ShippingAddress,
+    ShippingChangeData,
+    ShippingOptions } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _isCredit?: boolean;
-    // private _onShippingChangeData?: any;
-    // private _onShippingChangeActions?: any;
     private _cache?: any;
     private _submittedShippingAddress?: any;
     private _currentShippingAddress?: any;
-    private _shippingOptionId?: any;
-    private _addShipping?: any;
+    private _shippingOptionId?: string;
+    private _addShipping?: boolean;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _formPoster: FormPoster,
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
-        // @ts-ignore
         private _orderActionCreator?: OrderActionCreator,
-        // @ts-ignore
-        private _paymentActionCreator?: PaymentActionCreator
+        private _paymentActionCreator?: PaymentActionCreator,
+        private _paymentStrategyActionCreator?: PaymentStrategyActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -44,9 +62,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCartOrThrow();
         const buttonParams: ButtonsOptions = {
-            // @ts-ignore
-            createOrder: (data: any, actions: any) => this._createOrder(data, actions),
-            onApprove: (data: any, actions: any) => isHosted ? this._onApproveHandler( data, actions, cart) : this._tokenizePayment(data),
+            onApprove: (data: ApproveDataOptions, actions: ApproveActions) => isHosted ? this._onApproveHandler( data, actions, cart) : this._tokenizePayment(data),
             onClick: data => this._handleClickButtonProvider(data),
             onShippingChange: (data, actions) => this._onShippingChangeHandler(data, actions, cart),
         };
@@ -75,13 +91,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return Promise.resolve();
     }
 
-    private _createOrder(data: any, actions: any) {
-        console.log('ACTIONS', actions);
-        console.log('DATA', data);
-
-        return actions.order.create();
-    }
-
     private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
         this._isCredit = fundingSource === 'credit' || fundingSource === 'paylater';
     }
@@ -99,7 +108,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         });
     }
 
-    private _transformContactToAddress(details: any, address: any) {
+    private _transformContactToAddress(details: PayerDetails, address: PayerDetails) {
         const contact = {
             firstName: details.payer.name.given_name,
             lastName: details.payer.name.surname,
@@ -113,73 +122,24 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         };
     }
 
-    private async _onApproveHandler(_data: any, actions: any, cart: any) {
-        const orderCapture = actions.order.capture()
-            .then(async (details: any) => {
+    private async _onApproveHandler(data: ApproveDataOptions, actions: ApproveActions, cart: Cart) {
+        return actions.order.capture()
+            .then(async (details: PayerDetails) => {
                 if (this._currentShippingAddress) {
-                    const shippingAddress = this._transformContactToAddress(details, this._currentShippingAddress);
-                    // const lineItems = this._collectLineItems(cart.lineItems);
-                    // const consignmentPayload = [{
-                    //     shippingAddress,
-                    //     lineItems,
-                    // }];
+
+                    const shippingAddress = this._transformContactToAddress(details, {...this._currentShippingAddress});
+                    const lineItems = this._collectLineItems(cart.lineItems);
+
+                    const consignmentPayload = [{
+                        shippingAddress,
+                        lineItems,
+                    }];
+                    await this._paypalCommercePaymentProcessor.getConsignments(cart.id, consignmentPayload);
                     const checkoutWithBillingAddress = await this._paypalCommercePaymentProcessor.getBillingAddress(cart.id, shippingAddress);
-                    console.log('checkoutWithBillingAddress', checkoutWithBillingAddress);
-                    // @ts-ignore
-                    const checkoutObj = await this._paypalCommercePaymentProcessor.putConsignments(cart.id, checkoutWithBillingAddress.consignments[0].id, {shippingOptionId: this._shippingOptionId});
-                    console.log('Consignment', checkoutObj);
-                    // const checkoutWithShippingAddress = await this._paypalCommercePaymentProcessor.getConsignments(cart.id, consignmentPayload);
-                    // const shipMock = {
-                    //     address1: 'dffsf',
-                    //     address2: 'dsfsd',
-                    //     city: 'sdfsd',
-                    //     company: 'BigCom',
-                    //     country: 'United States',
-                    //     countryCode: 'US',
-                    //     customFields: [],
-                    //     email: 'andrii.vitvitskyi@bigcommerce.com',
-                    //     firstName: 'Andrii',
-                    //     lastName: 'Vit',
-                    //     phone: '',
-                    //     id: '619e4f218d0cd',
-                    //     shouldSaveAddress: true,
-                    //     stateOrProvince: 'Arizona',
-                    //     stateOrProvinceCode: 'AZ',
-                    // };
-                    // address1: "dffsf"
-                    // address2: "dsfsd"
-                    // city: "sdfsd"
-                    // company: "BigCom"
-                    // country: "United States"
-                    // countryCode: "US"
-                    // customFields: []
-                    // email: ""
-                    // firstName: "Andrii"
-                    // lastName: "Vit"
-                    // phone: ""
-                    // postalCode: "08145"
-                    // shouldSaveAddress: true
-                    // stateOrProvince: "Arizona"
-                    // stateOrProvinceCode: "AZ"
 
                     // @ts-ignore
-                    const checoutObj1Copy = { ...checkoutObj, consignments: [{...checkoutObj.consignments[0], shippingAddress: {
-                                address1: 'dffsf',
-                                address2: 'dsfsd',
-                                city: 'sdfsd',
-                                company: 'BigCom',
-                                country: 'United States',
-                                countryCode: 'US',
-                                customFields: [],
-                                email: 'andrii.vitvitskyi@bigcommerce.com',
-                                firstName: 'Andrii',
-                                lastName: 'Vit',
-                                phone: '',
-                                postalCode: '08145',
-                                shouldSaveAddress: true,
-                                stateOrProvince: 'Arizona',
-                                stateOrProvinceCode: 'AZ',
-                            }}]};
+                    await this._paypalCommercePaymentProcessor.putConsignments(cart.id, (checkoutWithBillingAddress as CheckoutStoreState).consignments[0].id, {shippingOptionId: this._shippingOptionId });
+
                     const paymentData =  {
                         formattedPayload: {
                             vault_payment_instrument: null,
@@ -187,50 +147,44 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                             device_info: null,
                             method_id: 'paypalcommerce',
                             paypal_account: {
-                                order_id: _data.orderId,
+                                order_id: data.orderID,
                             },
                         },
                     };
-                    if (this._orderActionCreator && this._paymentActionCreator) {
 
-                        // @ts-ignore
-                        // @ts-ignore
-                        await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'}, checoutObj1Copy));
+                    const paymentObject = {
+                        payment: {
+                            gatewayId: undefined,
+                            methodId: 'paypalcommerce',
+                            paymentData: {
+                                shouldCreateAccount: true,
+                                shouldSaveInstrument: false,
+                                terms: false,
+                            },
+                        },
+                    };
+                    // const paymentOptions = {
+                    //     gatewayId: undefined,
+                    //     methodId: 'paypalcommerce',
+                    // };
 
-                        // @ts-ignore
-                        this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', gatewayId: undefined}, paymentData }));
+                    if (this._orderActionCreator && this._paymentActionCreator && this._paymentStrategyActionCreator) {
+                        const executePaymentStrategy = this._paymentStrategyActionCreator.execute(paymentObject);
+                        console.log(executePaymentStrategy);
+                        await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'} as PaymentRequestOptions));
+
+                        return  await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', gatewayId: undefined, paymentData: {
+                                    shouldCreateAccount: true,
+                                    shouldSaveInstrument: false,
+                                    terms: false,
+                                }}, paymentData }));
                     }
                 }
-                // const payload = {
-                //     useStoreCredit: false,
-                //     customerMessage: 'test message',
-                //     payment: {
-                //         name: 'paypalcommerce',
-                //         paymentData: {
-                //             additionalData: {
-                //                 paypalOrderId: details.id,
-                //                 status: details.status,
-                //             },
-                //         },
-                //     },
-                // };
-                // PayPalCheckout.request('POST', PayPalCheckout.LEGACY_CHECKOUT_ENDPOINT + '/order', payload).then(function (details) {
-                //     // alert('Order created with details:');
-                //     console.log(details);
-                //     window.location = '{{confirmationLink|raw}}';
-                // }, function (err) {
-                //     console.error(err);
-                // });
             });
-
-        return orderCapture;
     }
 
-    private async _onShippingChangeHandler(data: any, actions: any, cart: any) {
-        // this._onShippingChangeData = data;
-        // this._onShippingChangeActions = actions;
+    private async _onShippingChangeHandler(data: ShippingChangeData, actions: ApproveActions, cart: Cart) {
         const baseOrderAmount = cart.baseAmount;
-        // @ts-ignore
         let shippingAmount = '0.00';
         this._currentShippingAddress = await this._transformToAddress(data.shipping_address);
         const lineItems = this._collectLineItems(cart.lineItems);
@@ -265,10 +219,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         } else if (shippingRequired && availableShippingOptions.length === 0) {
             return actions.reject();
         } else {
-            // @ts-ignore
-            const shippingOptions = [];
-            availableShippingOptions.forEach((option: any) => {
-                // @ts-ignore
+            const shippingOptions: ShippingOptions[] = [];
+            availableShippingOptions.forEach((option: AvaliableShippingOption) => {
                 let isSelected = false;
                 // Buyer has chosen shipping option on PP list and address the same
                 if (data.selected_shipping_option && this._isAddressSame(
@@ -280,7 +232,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     }
                 } else {
                     if (option.isRecommended) {
-                        shippingAmount = parseFloat(option.cost).toFixed(2);
+                        shippingAmount = parseFloat(String(option.cost)).toFixed(2);
                         isSelected = true;
                     }
                 }
@@ -290,25 +242,22 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     label: option.description,
                     selected: isSelected,
                     amount: {
-                        value: parseFloat(option.cost).toFixed(2),
+                        value: parseFloat(String(option.cost)).toFixed(2),
                         currency_code: 'USD',
                     },
                 });
             });
-            // `selected` should be always first element of shippingOptions array
-            // @ts-ignore
+
             shippingOptions.sort( (a, b) => {
+                // @ts-ignore
                 return b.selected - a.selected;
             });
-            // @ts-ignore
             if (shippingOptions && shippingOptions[0].id) {
-                // @ts-ignore
                 this._shippingOptionId = shippingOptions[0].id;
             }
             this._addShipping = false;
-            const shippingOperation = this._addShipping ? 'add' : 'replace';
+            const shippingOperation = this._addShipping ? 'replace' : 'add';
             this._submittedShippingAddress = this._currentShippingAddress;
-            console.log(shippingOperation);
 
             actions.order.patch([
                 {
@@ -316,7 +265,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     path: '/purchase_units/@reference_id==\'default\'/amount',
                     value: {
                         currency_code: 'USD',
-                        value: (parseFloat(baseOrderAmount) + parseFloat(shippingAmount)).toFixed(2),
+                        value: (parseFloat(String(baseOrderAmount)) + parseFloat(shippingAmount)).toFixed(2),
                         breakdown: {
                             item_total: {
                                 currency_code: 'USD',
@@ -330,9 +279,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 },
                 {
-                    op: 'add',
+                    op: shippingOperation,
                     path: '/purchase_units/@reference_id==\'default\'/shipping/options',
-                    // @ts-ignore
                     value: shippingOptions,
                 },
             ]);
@@ -341,42 +289,42 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private _isAddressSame(address1: any, address2: any) {
+    private _isAddressSame(address1: ShippingChangeData, address2: ShippingChangeData) {
         return JSON.stringify(address1) === JSON.stringify(address2);
     }
 
-    private async _transformToAddress(contact: any) {
+    private async _transformToAddress(contact: ShippingAddress) {
         return (this._cache.countries ? Promise.resolve(this._cache.countries) : this._paypalCommercePaymentProcessor.getStoreCountries())
-            .then((response: any) => {
+            .then((response: GetCoutryResponse ) => {
                 this._cache.countries = response;
                 const address = {
                     city: contact.city,
                     postalCode: contact.postal_code,
                     countryCode: contact.country_code,
                 };
-                const country = response.data.find((country: any) => {
+                const country = response.data.find((country: Country) => {
                     return country.code === (contact.country_code || '').toUpperCase();
                 });
-                const state = country && country.subdivisions.find((state: any) => {
+                const state = country && country.subdivisions.find((state: Region) => {
                     return state.code === (contact.state || '').toUpperCase();
                 });
 
                 if (state) {
                     address.postalCode = state.code;
                 } else {
-                   console.log('Address Error');
+                  throw new Error('Address Error');
                 }
 
                 return address;
             });
     }
 
-    private _collectLineItems(lineItems: any) {
-        const items: any[] = [];
-        lineItems.physicalItems.forEach((item: any) => {
+    private _collectLineItems(lineItems: LineItemMap) {
+        const items: CollectedLineItem[] = [];
+        lineItems.physicalItems.forEach((item: LineItem) => {
             items.push({itemId: item.id, quantity: item.quantity});
         });
-        lineItems.digitalItems.forEach((item: any) => {
+        lineItems.digitalItems.forEach((item: LineItem) => {
             items.push({itemId: item.id, quantity: item.quantity});
         });
 

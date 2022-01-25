@@ -74,6 +74,11 @@ export interface LineItemOption {
     valueId: number | null;
 }
 
+export interface CollectedLineItem {
+    itemId: string | number;
+    quantity: number;
+}
+
 export interface LineItemSocialData {
     channel: string;
     code: string;

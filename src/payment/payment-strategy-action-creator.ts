@@ -30,13 +30,14 @@ export default class PaymentStrategyActionCreator {
         return store => {
             const { checkout } = store.getState();
             const { shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
+            console.log('STORE');
 
             return concat(
                 shouldExecuteSpamCheck ? this._spamProtectionActionCreator.verifyCheckoutSpamProtection()(store) : empty(),
                 of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
                 defer(() => {
                     const state = store.getState();
-
+                    console.log('CONCAT');
                     let strategy: PaymentStrategy;
 
                     if (state.payment.isPaymentDataRequired(useStoreCredit)) {
