@@ -6,12 +6,12 @@ import { joinIncludes, joinOrMergeIncludes, ContentType, RequestOptions, SDK_VER
 import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 
 const DEFAULT_INCLUDES = [
-        'consignments.availableShippingOptions',
-        'cart.lineItems.physicalItems.options',
-        'cart.lineItems.digitalItems.options',
-        'customer',
-        'promotions.banners',
-    ];
+    'consignments.availableShippingOptions',
+    'cart.lineItems.physicalItems.options',
+    'cart.lineItems.digitalItems.options',
+    'customer',
+    'promotions.banners',
+];
 
 export default class ConsignmentRequestSender {
     constructor(
