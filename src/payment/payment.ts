@@ -49,6 +49,7 @@ export interface CreditCardInstrument {
     shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+    browser_info?: BrowserInfo;
 }
 
 export interface WithDocumentInstrument {

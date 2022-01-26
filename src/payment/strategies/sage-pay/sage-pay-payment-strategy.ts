@@ -1,8 +1,9 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { some } from 'lodash';
+import { isUndefined, some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { RequestError } from '../../../common/error/errors';
+import { getBrowserInfo } from '../../../common/browser-info';
+import { NotInitializedError, NotInitializedErrorType, RequestError  } from '../../../common/error/errors';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -22,6 +23,17 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (isUndefined(payload.payment)) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        if (this._isThreeDSTwoExperimentOn()) {
+            payload.payment.paymentData = {
+                ...(payload.payment.paymentData),
+                browser_info: getBrowserInfo(),
+            };
+        }
+
         return super.execute(payload, options)
             .catch((error: Error) => {
                 if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
@@ -29,11 +41,21 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
                 }
 
                 return new Promise(() => {
-                    this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                        PaReq: error.body.three_ds_result.payer_auth_request,
-                        TermUrl: error.body.three_ds_result.callback_url,
-                        MD: error.body.three_ds_result.merchant_data,
-                    }, undefined, '_top');
+                    let payload;
+
+                    if (this._isThreeDSTwoExperimentOn()) {
+                        payload = {
+                            creq: error.body.three_ds_result.payer_auth_request,
+                        };
+                    } else {
+                        payload = {
+                            PaReq: error.body.three_ds_result.payer_auth_request,
+                            TermUrl: error.body.three_ds_result.callback_url,
+                            MD: error.body.three_ds_result.merchant_data,
+                        };
+                    }
+
+                    this._formPoster.postForm(error.body.three_ds_result.acs_url, payload, undefined, '_top');
                 });
             });
     }
@@ -47,5 +69,12 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
         }
 
         return super.finalize(options);
+    }
+
+    private _isThreeDSTwoExperimentOn(): boolean {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+
+        return storeConfig.checkoutSettings.features['INT-4994.Opayo_3DS2'] === true;
     }
 }
