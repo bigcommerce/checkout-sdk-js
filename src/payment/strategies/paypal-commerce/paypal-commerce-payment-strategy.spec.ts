@@ -66,7 +66,7 @@ describe('PaypalCommercePaymentStrategy', () => {
             container: '#container',
             clientId: '123',
             apmFieldsContainer: '#fieldsContainer',
-            apmFieldsStyles: { base: {backgroundColor: 'white'} },
+            apmFieldsStyles: { variables: {colorBackground: 'white'} },
             submitForm,
             onRenderButton: jest.fn(),
             onValidate: jest.fn((resolve, _) => {
