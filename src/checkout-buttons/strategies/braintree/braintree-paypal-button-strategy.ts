@@ -174,6 +174,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             });
         });
 
+        console.log('%c PAYLOAD', 'color: green', payload);
+
         return payload;
     }
 
