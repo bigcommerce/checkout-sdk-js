@@ -1,5 +1,5 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { isUndefined, some } from 'lodash';
+import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
@@ -23,13 +23,13 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (isUndefined(payload.payment)) {
+        if (!payload.payment) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (this._isThreeDSTwoExperimentOn()) {
             payload.payment.paymentData = {
-                ...(payload.payment.paymentData),
+                ...payload.payment.paymentData,
                 browser_info: getBrowserInfo(),
             };
         }
@@ -43,7 +43,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
                 return new Promise(() => {
                     let payload;
 
-                    if (this._isThreeDSTwoExperimentOn()) {
+                    if (this._isThreeDSTwoExperimentOn() && !error.body.three_ds_result.merchant_data) {
                         payload = {
                             creq: error.body.three_ds_result.payer_auth_request,
                         };
@@ -72,9 +72,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     private _isThreeDSTwoExperimentOn(): boolean {
-        const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfigOrThrow();
-
-        return storeConfig.checkoutSettings.features['INT-4994.Opayo_3DS2'] === true;
+        return this._store.getState().config.getStoreConfigOrThrow()
+        .checkoutSettings.features['INT-4994.Opayo_3DS2'] === true;
     }
 }
