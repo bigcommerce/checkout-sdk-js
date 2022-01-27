@@ -1,20 +1,33 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { OrderActionCreator, OrderRequestSender } from '../order';
+import { PaymentActionCreator,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+    PaymentRequestSender,
+    PaymentRequestTransformer } from '../payment';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
+import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 import { createPaypalCommercePaymentProcessor } from '../payment/strategies/paypal-commerce';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
+import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
@@ -23,6 +36,7 @@ import { PaypalCommerceButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
+    paymentClient: any,
     requestSender: RequestSender,
     formPoster: FormPoster,
     locale: string,
@@ -35,7 +49,45 @@ export default function createCheckoutButtonRegistry(
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+    const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
+
+    registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
+        new ApplePayButtonStrategy(
+            store,
+            checkoutActionCreator,
+            requestSender,
+            paymentMethodActionCreator,
+            new ConsignmentActionCreator(
+                new ConsignmentRequestSender(requestSender),
+                new CheckoutRequestSender(requestSender)
+            ),
+            new BillingAddressActionCreator(
+                new BillingAddressRequestSender(requestSender),
+                new SubscriptionsActionCreator(
+                    new SubscriptionsRequestSender(requestSender)
+                )
+            ),
+            new PaymentActionCreator(
+                new PaymentRequestSender(paymentClient),
+                new OrderActionCreator(
+                    new OrderRequestSender(requestSender),
+                    new CheckoutValidator(checkoutRequestSender)
+                ),
+                new PaymentRequestTransformer(),
+                new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            ),
+            remoteCheckoutActionCreator,
+            new OrderActionCreator(
+                new OrderRequestSender(requestSender),
+                new CheckoutValidator(checkoutRequestSender)
+            ),
+            new ApplePaySessionFactory()
+        )
+    );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
