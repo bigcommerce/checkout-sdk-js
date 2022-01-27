@@ -12,11 +12,8 @@ import CheckoutStoreState from '../../../checkout/checkout-store-state';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 // eslint-disable-next-line import/no-internal-modules
 import Country, { GetCoutryResponse, Region } from '../../../geography/country';
-import { OrderActionCreator } from '../../../order';
-import { PaymentRequestOptions } from '../../../payment';
-// eslint-disable-next-line import/no-internal-modules
-import PaymentActionCreator from '../../../payment/payment-action-creator';
-import PaymentStrategyActionCreator from '../../../payment/payment-strategy-action-creator';
+// import { OrderActionCreator } from '../../../order';
+// import { PaymentRequestOptions } from '../../../payment';
 import { ApproveActions,
     ApproveDataOptions, AvaliableShippingOption,
     ButtonsOptions,
@@ -44,10 +41,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _formPoster: FormPoster,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
-        private _orderActionCreator?: OrderActionCreator,
-        private _paymentActionCreator?: PaymentActionCreator,
-        private _paymentStrategyActionCreator?: PaymentStrategyActionCreator
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
+        // private _orderActionCreator?: OrderActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -122,7 +117,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         };
     }
 
-    private async _onApproveHandler(data: ApproveDataOptions, actions: ApproveActions, cart: Cart) {
+    private async _onApproveHandler(_data: ApproveDataOptions, actions: ApproveActions, cart: Cart) {
         return actions.order.capture()
             .then(async (details: PayerDetails) => {
                 if (this._currentShippingAddress) {
@@ -140,45 +135,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     // @ts-ignore
                     await this._paypalCommercePaymentProcessor.putConsignments(cart.id, (checkoutWithBillingAddress as CheckoutStoreState).consignments[0].id, {shippingOptionId: this._shippingOptionId });
 
-                    const paymentData =  {
-                        formattedPayload: {
-                            vault_payment_instrument: null,
-                            set_as_default_stored_instrument: null,
-                            device_info: null,
-                            method_id: 'paypalcommerce',
-                            paypal_account: {
-                                order_id: data.orderID,
-                            },
-                        },
-                    };
-
-                    const paymentObject = {
-                        payment: {
-                            gatewayId: undefined,
-                            methodId: 'paypalcommerce',
-                            paymentData: {
-                                shouldCreateAccount: true,
-                                shouldSaveInstrument: false,
-                                terms: false,
-                            },
-                        },
-                    };
-                    // const paymentOptions = {
-                    //     gatewayId: undefined,
-                    //     methodId: 'paypalcommerce',
-                    // };
-
-                    if (this._orderActionCreator && this._paymentActionCreator && this._paymentStrategyActionCreator) {
-                        const executePaymentStrategy = this._paymentStrategyActionCreator.execute(paymentObject);
-                        console.log(executePaymentStrategy);
-                        await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'} as PaymentRequestOptions));
-
-                        return  await this._store.dispatch(this._paymentActionCreator.submitPayment({ ...{methodId: 'paypalcommerce', gatewayId: undefined, paymentData: {
-                                    shouldCreateAccount: true,
-                                    shouldSaveInstrument: false,
-                                    terms: false,
-                                }}, paymentData }));
-                    }
+                    // if (this._orderActionCreator) {
+                    //     await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'} as PaymentRequestOptions));
+                    // }
                 }
             });
     }
