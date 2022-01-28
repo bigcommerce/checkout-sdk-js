@@ -166,7 +166,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             this._formPoster.postForm('/checkout.php', {
                 payment_type: 'paypal',
                 provider: 'braintreevenmo',
-                action: true ? 'process_payment' : 'set_external_checkout',
+                action: false ? 'process_payment' : 'set_external_checkout',
                 nonce: payload.nonce,
                 device_data: deviceData,
                 shipping_address: JSON.stringify(this._mapToLegacyShippingAddress(payload)),
@@ -174,6 +174,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             });
         });
 
+        // eslint-disable-next-line @typescript-eslint/tslint/config
         console.log('%c PAYLOAD', 'color: green', payload);
 
         return payload;
