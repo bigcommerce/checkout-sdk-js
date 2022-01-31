@@ -92,4 +92,11 @@ export default class PaypalCommerceRequestSender {
 
         return res.body;
     }
+
+    async deleteCart(cartId: string) {
+        const url = `/carts/${cartId}`;
+        const res = await this._requestSender.delete(url);
+
+        return res.body;
+    }
 }

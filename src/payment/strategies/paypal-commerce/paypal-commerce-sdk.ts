@@ -69,7 +69,7 @@ export interface ButtonsOptions {
 export interface ApproveActions {
     order: {
         capture(): Promise<any>;
-        authorize(): void;
+        authorize(): Promise<any>;
         get(): void;
         patch(data: PatchArgument[]): void;
     };

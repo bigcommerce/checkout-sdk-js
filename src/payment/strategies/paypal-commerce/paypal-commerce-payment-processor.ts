@@ -176,6 +176,10 @@ async putConsignments(checkoutId: string, consignmentId: string, payload: {shipp
         return await this._paypalCommerceRequestSender.putConsignments(checkoutId, consignmentId, payload);
 }
 
+async deleteCart(cartId: string) {
+        return await this._paypalCommerceRequestSender.deleteCart(cartId);
+}
+
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
         if (!this._paypal || !this._paypal.Messages) {
             throw new PaymentMethodClientUnavailableError();

@@ -63,7 +63,6 @@ export default class OrderActionCreator {
     }
 
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
-
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
             defer(() => {

@@ -6,6 +6,7 @@ import Cart from './cart';
 
 export default class CartComparator {
     isEqual(cartA: Cart, cartB: Cart): boolean {
+
         return isEqual(
             this._normalize(cartA),
             this._normalize(cartB)

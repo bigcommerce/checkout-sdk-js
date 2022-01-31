@@ -3,8 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cart/cart-comparator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/cart/cart-comparator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/create-checkout-button-registry.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/order/order-action-creator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/order/order-action-creator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-payment-processor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-request-sender.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-sdk.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-sdk.ts" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -116,6 +121,9 @@
       <workItem from="1638953606054" duration="6197000" />
       <workItem from="1639065514147" duration="19125000" />
       <workItem from="1639729417695" duration="5758000" />
+      <workItem from="1642505630973" duration="136000" />
+      <workItem from="1642591403011" duration="10611000" />
+      <workItem from="1643034682676" duration="51467000" />
     </task>
     <servers />
   </component>
@@ -142,11 +150,6 @@
           <url>file://$PROJECT_DIR$/src/payment/strategies/moneris/moneris-payment-strategy.spec.ts</url>
           <line>510</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/payment/strategies/paypal-commerce/paypal-commerce-sdk.ts</url>
-          <line>49</line>
-          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

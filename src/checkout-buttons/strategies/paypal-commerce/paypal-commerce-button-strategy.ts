@@ -12,8 +12,8 @@ import CheckoutStoreState from '../../../checkout/checkout-store-state';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 // eslint-disable-next-line import/no-internal-modules
 import Country, { GetCoutryResponse, Region } from '../../../geography/country';
-// import { OrderActionCreator } from '../../../order';
-// import { PaymentRequestOptions } from '../../../payment';
+// eslint-disable-next-line import/no-internal-modules
+import OrderActionCreator from '../../../order/order-action-creator';
 import { ApproveActions,
     ApproveDataOptions, AvaliableShippingOption,
     ButtonsOptions,
@@ -36,18 +36,20 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _currentShippingAddress?: any;
     private _shippingOptionId?: string;
     private _addShipping?: boolean;
+    private _intent?: string;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _formPoster: FormPoster,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
-        // private _orderActionCreator?: OrderActionCreator
+        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor,
+        private _orderActionCreator?: OrderActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         let state = this._store.getState();
         const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        this._intent = initializationData.intent;
         const isHosted = true;
         this._cache = {};
         if (!initializationData.clientId) {
@@ -118,8 +120,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private async _onApproveHandler(_data: ApproveDataOptions, actions: ApproveActions, cart: Cart) {
-        return actions.order.capture()
-            .then(async (details: PayerDetails) => {
+        const order = this._intent === 'capture' ? actions.order.capture : actions.order.authorize;
+
+        return order().then(async (details: PayerDetails) => {
                 if (this._currentShippingAddress) {
 
                     const shippingAddress = this._transformContactToAddress(details, {...this._currentShippingAddress});
@@ -134,10 +137,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
                     // @ts-ignore
                     await this._paypalCommercePaymentProcessor.putConsignments(cart.id, (checkoutWithBillingAddress as CheckoutStoreState).consignments[0].id, {shippingOptionId: this._shippingOptionId });
-
-                    // if (this._orderActionCreator) {
-                    //     await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce'} as PaymentRequestOptions));
-                    // }
+                    if (this._orderActionCreator) {
+                        // @ts-ignore
+                        await this._store.dispatch(this._orderActionCreator.submitOrder({}, {methodId: 'paypalcommerce', gatewayId: undefined}));
+                    }
+                    // @ts-ignore
+                    await this._paypalCommercePaymentProcessor.deleteCart(checkoutWithBillingAddress.cart.id);
+                    window.location.assign('/checkout/order-confirmation');
                 }
             });
     }
