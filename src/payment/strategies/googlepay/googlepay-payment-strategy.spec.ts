@@ -493,6 +493,45 @@ describe('GooglePayPaymentStrategy', () => {
                 });
             });
 
+            it('submits json encoded nonce for stripe UPE', async () => {
+                googlePayOptions = {
+                    methodId: 'googlepaystripeupe',
+                    googlepaystripeupe: {
+                        walletButton: 'mockButton',
+                        onError: () => {},
+                        onPaymentSelect: () => {},
+                    },
+                };
+
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                    initializationData: {
+                        nonce: 'token',
+                        card_information: 'ci',
+                        isThreeDSecureEnabled: true,
+                    },
+                });
+
+                await strategy.initialize({
+                    methodId: 'googlepaystripeupe',
+                    googlepaystripeupe: googlePayOptions.googlepaystripeupe,
+                });
+
+                await strategy.execute({
+                    ...getGoogleOrderRequestBody(),
+                    payment: { methodId: 'googlepaystripeupe' },
+                });
+
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    methodId: 'googlepaystripeupe',
+                    paymentData: {
+                        nonce: 'token',
+                        method: 'googlepaystripeupe',
+                        cardInformation: 'ci',
+                    },
+                });
+            });
+
             it('should verify card on 3DS', async () => {
                 await strategy.initialize({
                     methodId: 'googlepaybraintree',

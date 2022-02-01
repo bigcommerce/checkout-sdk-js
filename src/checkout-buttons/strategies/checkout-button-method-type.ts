@@ -9,6 +9,7 @@ enum CheckoutButtonMethodType {
     GOOGLEPAY_CYBERSOURCEV2 = 'googlepaycybersourcev2',
     GOOGLEPAY_ORBITAL = 'googlepayorbital',
     GOOGLEPAY_STRIPE = 'googlepaystripe',
+    GOOGLEPAY_STRIPEUPE = 'googlepaystripeupe',
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
     PAYPALCOMMERCE = 'paypalcommerce',

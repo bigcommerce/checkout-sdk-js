@@ -170,3 +170,27 @@ export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): Cust
         }
      }
 }
+
+export function getStripeUPECustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepaystripeupe' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayStripeUPE = { googlepaystripeupe: { ...container } };
+    const googlepayStripeUPEWithInvalidContainer = { googlepaystripeupe: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete: {
+            return { ...methodId };
+        }
+        case Mode.UndefinedMethodId: {
+            return { ...undefinedMethodId, ...googlepayStripeUPE };
+        }
+        case Mode.InvalidContainer: {
+            return { ...methodId, ...googlepayStripeUPEWithInvalidContainer };
+        }
+        default: {
+            return { ...methodId, ...googlepayStripeUPE };
+        }
+     }
+}

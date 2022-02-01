@@ -266,6 +266,11 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 
+    it('can instantiate googlepaystripeupe', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
     it('can instantiate stripev3', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.STRIPEV3);
         expect(paymentStrategy).toBeInstanceOf(StripeV3PaymentStrategy);

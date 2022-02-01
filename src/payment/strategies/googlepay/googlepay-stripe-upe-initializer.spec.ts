@@ -13,7 +13,7 @@ describe('GooglePayStripeUPEInitializer', () => {
     });
 
     describe('#initialize', () => {
-        it('initializes the google pay configuration for Stripe', async () => {
+        it('initializes the google pay configuration for Stripe UPE', async () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getStripePaymentMethodMock(),
