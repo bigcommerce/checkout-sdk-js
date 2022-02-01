@@ -94,7 +94,7 @@ export default class PaypalCommerceRequestSender {
     }
 
     async deleteCart(cartId: string) {
-        const url = `/carts/${cartId}`;
+        const url = `/api/storefront/cart/${cartId}`;
         const res = await this._requestSender.delete(url);
 
         return res.body;
