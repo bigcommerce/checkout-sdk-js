@@ -1,5 +1,5 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { RequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
@@ -54,6 +54,11 @@ export default function createCheckoutButtonRegistry(
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
+    const orderRequestSender = new OrderRequestSender(createRequestSender());
+    const orderActionCreator = new OrderActionCreator(
+        orderRequestSender,
+        new CheckoutValidator(new CheckoutRequestSender(requestSender))
+    );
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(
@@ -246,7 +251,8 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             formPoster,
-            paypalCommercePaymentProcessor
+            paypalCommercePaymentProcessor,
+            orderActionCreator
         )
     );
 

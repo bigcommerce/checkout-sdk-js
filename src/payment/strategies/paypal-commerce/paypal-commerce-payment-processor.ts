@@ -4,7 +4,28 @@ import { NotImplementedError, NotInitializedError, NotInitializedErrorType } fro
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, FieldsOptions, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions,
+    FieldsOptions,
+    ParamsForProvider, PayerDetails,
+    PaypalButtonStyleOptions,
+    PaypalCommerceButtons,
+    PaypalCommerceFields,
+    PaypalCommerceHostedFields,
+    PaypalCommerceHostedFieldsApprove,
+    PaypalCommerceHostedFieldsRenderOptions,
+    PaypalCommerceHostedFieldsState,
+    PaypalCommerceHostedFieldsSubmitOptions,
+    PaypalCommerceMessages,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceScriptParams,
+    PaypalCommerceSDK,
+    PaypalCommerceSDKFunding,
+    PaypalFieldsStyleOptions,
+    StyleButtonColor,
+    StyleButtonLabel,
+    StyleButtonLayout,
+    StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -96,12 +117,12 @@ export default class PaypalCommercePaymentProcessor {
     }
 
     renderFields({
-        apmFieldsContainer,
-        fundingKey,
-        apmFieldsStyles,
-        fullName,
-        email,
-    }: RenderApmFieldsParams): PaypalCommerceFields {
+                     apmFieldsContainer,
+                     fundingKey,
+                     apmFieldsStyles,
+                     fullName,
+                     email,
+                 }: RenderApmFieldsParams): PaypalCommerceFields {
         if (!this._paypal || !this._paypal.PaymentFields) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -133,6 +154,30 @@ export default class PaypalCommercePaymentProcessor {
 
     getOrderId() {
         return this._orderId;
+    }
+
+    async getShippingOptions(cartId: string, payload: {}) {
+        return  await this._paypalCommerceRequestSender.getShippingOptions(cartId, payload);
+    }
+
+    async getStoreCountries() {
+        return  await this._paypalCommerceRequestSender.getStoreCountries();
+    }
+
+    async getConsignments(cartId: string, payload: {}) {
+        return await this._paypalCommerceRequestSender.getConsignments(cartId, payload);
+    }
+
+    async getBillingAddress(cartId: string, payload: PayerDetails) {
+        return await this._paypalCommerceRequestSender.getBillingAddress(cartId, payload);
+    }
+
+    async putConsignments(checkoutId: string, consignmentId: string, payload: {shippingOptionId: string}) {
+        return await this._paypalCommerceRequestSender.putConsignments(checkoutId, consignmentId, payload);
+    }
+
+    async deleteCart(cartId: string) {
+        return await this._paypalCommerceRequestSender.deleteCart(cartId);
     }
 
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
