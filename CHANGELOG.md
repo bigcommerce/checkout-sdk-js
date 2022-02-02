@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.212.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.211.0...v1.212.0) (2022-02-02)
+
+
+### Features
+
+* **shipping:** CHECKOUT-6004 Add pickup options to consignment interfaces ([#1332](https://github.com/bigcommerce/checkout-sdk-js/issues/1332)) ([d201e5d](https://github.com/bigcommerce/checkout-sdk-js/commit/d201e5dc2ef3c1612097ee4a60182aa92ae695d0))
+
 ## [1.211.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.210.0...v1.211.0) (2022-01-20)
 
 

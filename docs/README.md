@@ -253,6 +253,7 @@
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
 * [PaypalFieldsStyleOptions](interfaces/paypalfieldsstyleoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)
+* [PickupOption](interfaces/pickupoption.md)
 * [Promotion](interfaces/promotion.md)
 * [Region](interfaces/region.md)
 * [RequestOptions](interfaces/requestoptions.md)

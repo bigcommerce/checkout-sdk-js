@@ -12,6 +12,7 @@
 
 * [id](consignmentupdaterequestbody.md#id)
 * [lineItems](consignmentupdaterequestbody.md#optional-lineitems)
+* [pickupOption](consignmentupdaterequestbody.md#optional-pickupoption)
 * [shippingAddress](consignmentupdaterequestbody.md#optional-shippingaddress)
 
 ## Properties
@@ -25,6 +26,12 @@ ___
 ### `Optional` lineItems
 
 • **lineItems**? : *[ConsignmentLineItem](consignmentlineitem.md)[]*
+
+___
+
+### `Optional` pickupOption
+
+• **pickupOption**? : *[PickupOption](pickupoption.md)*
 
 ___
 

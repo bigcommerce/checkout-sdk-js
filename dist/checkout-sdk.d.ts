@@ -3353,17 +3353,20 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
+    selectedPickupOption?: PickupOption;
     lineItemIds: string[];
 }
 
 declare interface ConsignmentAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare interface ConsignmentCreateRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare interface ConsignmentLineItem {
@@ -3375,6 +3378,7 @@ declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
@@ -5646,6 +5650,10 @@ declare interface PhysicalItem extends LineItem {
         message: string;
         amount: number;
     };
+}
+
+declare interface PickupOption {
+    pickupMethodId: number;
 }
 
 declare interface Promotion {
