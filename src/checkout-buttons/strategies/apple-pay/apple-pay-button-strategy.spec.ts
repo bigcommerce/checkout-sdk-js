@@ -181,8 +181,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -199,8 +198,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -221,8 +219,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -240,8 +237,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -262,8 +258,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -282,8 +277,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -308,8 +302,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
 
@@ -344,8 +337,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
@@ -374,8 +366,7 @@ describe('ApplePayButtonStrategy', () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             await strategy.initialize(CheckoutButtonInitializeOptions);
             if (CheckoutButtonInitializeOptions.applepay) {
-                const buttonContainer = document.getElementById(CheckoutButtonInitializeOptions?.applepay.container);
-                const button = buttonContainer?.firstChild as HTMLElement;
+                const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);

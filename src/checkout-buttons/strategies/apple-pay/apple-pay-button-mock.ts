@@ -6,9 +6,6 @@ export function getApplePayButtonInitializationOptions(): CheckoutButtonInitiali
         containerId: 'applePayCheckoutButton',
         methodId: CheckoutButtonMethodType.APPLEPAY,
         applepay: {
-            container: 'applePayCheckoutButton',
-            shippingLabel: 'Shipping',
-            subtotalLabel: 'Subtotal',
             onPaymentAuthorize: jest.fn(),
             onError: jest.fn(),
         },

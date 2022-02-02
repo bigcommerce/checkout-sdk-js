@@ -4,7 +4,7 @@ import { noop } from 'lodash';
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { Cart } from '../../../cart';
-import { Checkout, CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Checkout, CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { StoreConfig } from '../../../config';
@@ -49,7 +49,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         private _sessionFactory: ApplePaySessionFactory
     ) {}
 
-    async initialize(options: CheckoutButtonInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
 
         const { methodId, containerId , applepay}  = options;
 
@@ -61,14 +61,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const {
             buttonClassName,
-            shippingLabel,
-            subtotalLabel,
             onError = () => {},
             onPaymentAuthorize,
         } = applepay;
 
-        this._shippingLabel = shippingLabel || DefaultLabels.Shipping;
-        this._subTotalLabel = subtotalLabel || DefaultLabels.Subtotal;
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
 
@@ -78,11 +74,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         this._applePayButton = this._createButton(containerId, buttonClassName);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick);
 
-        return this._store.getState();
+        return Promise.resolve();
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    deinitialize(): Promise<void> {
+        return Promise.resolve();
     }
 
     private _createButton(containerId: string, buttonClassName: string = 'apple-pay-checkout-button'): HTMLElement {
