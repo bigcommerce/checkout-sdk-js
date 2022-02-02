@@ -84,3 +84,8 @@ export interface LineItemSocialData {
 export interface LineItemCategory {
     name: string;
 }
+
+export interface CollectedLineItem {
+    itemId: string | number;
+    quantity: number;
+}
