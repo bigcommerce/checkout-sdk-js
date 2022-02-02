@@ -14,7 +14,15 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 
-import { ButtonsOptions, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK } from './index';
+import { ButtonsOptions,
+    ParamsRenderHostedFields,
+    PaypalCommerceHostedFields,
+    PaypalCommerceHostedFieldsApprove,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceScriptParams,
+    PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
 describe('PaypalCommercePaymentProcessor', () => {
@@ -107,7 +115,14 @@ describe('PaypalCommercePaymentProcessor', () => {
 
                 eventEmitter.on('approve', () => {
                     if (options.onApprove) {
-                        options.onApprove({orderID});
+                        options.onApprove({orderID}, {order: {
+                                capture: jest.fn(),
+                                authorize: jest.fn(),
+                                get: jest.fn(),
+                                patch: jest.fn(),
+                            },
+                            resolve: jest.fn(),
+                            reject: jest.fn()});
                     }
                 });
 
@@ -255,16 +270,77 @@ describe('PaypalCommercePaymentProcessor', () => {
                 .toHaveBeenCalledWith(cart.id, { isCredit: true, isAPM: false , isVenmo: false });
         });
 
-        it('call onApprove when PayPalCommerce payment details are tokenized', async () => {
-            const onApprove = jest.fn();
-            await paypalCommercePaymentProcessor.initialize(initOptions);
-            await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container', { onApprove });
+        it('call shipping options', async () => {
+            const getShippingOptions = paypalCommerceRequestSender.getShippingOptions = jest.fn();
+            await paypalCommercePaymentProcessor.getShippingOptions('1', {});
+            expect(getShippingOptions).toHaveBeenCalled();
+        });
 
-            eventEmitter.emit('approve');
+        it('call getStoreCountries', async () => {
+            const getCountries = paypalCommerceRequestSender.getStoreCountries = jest.fn();
+            await paypalCommercePaymentProcessor.getStoreCountries();
+            expect(getCountries).toHaveBeenCalled();
+        });
 
-            await new Promise(resolve => process.nextTick(resolve));
+        it('call getConsignments', async () => {
+            const getConsignments = paypalCommerceRequestSender.getConsignments = jest.fn();
+            await paypalCommercePaymentProcessor.getConsignments('1', {});
+            expect(getConsignments).toHaveBeenCalled();
+        });
 
-            expect(onApprove).toHaveBeenCalledWith({ orderID });
+        it('call putConsignments', async () => {
+            const putConsignments = paypalCommerceRequestSender.putConsignments = jest.fn();
+            await paypalCommercePaymentProcessor.putConsignments('1', '2', {shippingOptionId: '3'});
+            expect(putConsignments).toHaveBeenCalled();
+        });
+
+        it('call deleteCart', async () => {
+            const deleteCart = paypalCommerceRequestSender.deleteCart = jest.fn();
+            await paypalCommercePaymentProcessor.deleteCart('1');
+            expect(deleteCart).toHaveBeenCalled();
+        });
+
+        it('call getBillingAddress', async () => {
+            const payer = {
+                name: {
+                    given_name: '1',
+                    surname: 'adsds',
+                },
+                email_address: 'test@bigcommerce.com',
+                payer_id: '2',
+            address: {
+                country_code: 'US',
+            },
+            };
+
+            const purchaseUnits = [
+                {
+                reference_id: '1',
+                amount: {
+                currency_code: 'USD',
+                 value: '100',
+                 },
+            payee: {
+                email_address: 'test@bigcommerce.com',
+                merchant_id: '2',
+            },
+            shipping: {
+                address: {
+                    address_line_1: 'sdsd',
+                    address_area_1: 'ccsd',
+                    address_area2: 'sdwwdw',
+                    country_code: 'csc',
+                    postal_code: 'csdcs',
+                },
+                name: {
+                    full_name: 'ssdsd dsdsd',
+                },
+            },
+            }];
+
+            const getBillingAddress = paypalCommerceRequestSender.getBillingAddress = jest.fn();
+            await paypalCommercePaymentProcessor.getBillingAddress('1', {payer, purchase_units: purchaseUnits });
+            expect(getBillingAddress).toHaveBeenCalled();
         });
 
         it('throw error if button is not eligible', async () => {
