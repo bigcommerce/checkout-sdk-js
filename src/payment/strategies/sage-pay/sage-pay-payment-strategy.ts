@@ -11,6 +11,8 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { CreditCardPaymentStrategy } from '../credit-card';
 
+import { SagePayPayload } from './sagepay';
+
 export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
         store: CheckoutStore,
@@ -41,7 +43,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
                 }
 
                 return new Promise(() => {
-                    let payload;
+                    let payload: SagePayPayload;
 
                     if (this._isThreeDSTwoExperimentOn() && !error.body.three_ds_result.merchant_data) {
                         payload = {
@@ -72,7 +74,6 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     private _isThreeDSTwoExperimentOn(): boolean {
-        return this._store.getState().config.getStoreConfigOrThrow()
-        .checkoutSettings.features['INT-4994.Opayo_3DS2'] === true;
+        return this._store.getState().config.getStoreConfigOrThrow().checkoutSettings.features['INT-4994.Opayo_3DS2'] === true;
     }
 }
