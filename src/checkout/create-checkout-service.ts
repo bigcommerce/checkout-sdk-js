@@ -13,7 +13,7 @@ import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator, PickupOptionActionCreator, PickupOptionRequestSender } from '../shipping';
 import { SignInEmailActionCreator, SignInEmailRequestSender } from '../signin-email';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
@@ -104,6 +104,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             orderActionCreator,
             spamProtectionActionCreator
         ),
+        new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
         new SignInEmailActionCreator(new SignInEmailRequestSender(requestSender)),

@@ -26,16 +26,16 @@ interface PickupMethod {
     collection_time_description: string;
 }
 
-interface Options {
+interface Option {
     pickup_method: PickupMethod;
     item_quantities: Item;
 }
 
 export interface PickupOption {
-    options: Options[];
+    options: Option[];
 }
 
-export interface PickupOptionRequestPayload {
+export interface PickupOptionRequestBody {
     search_area: SearchArea;
     items: Item[];
 }

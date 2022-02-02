@@ -2,7 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
-import { PickupOptionRequestPayload, PickupOptionResponse } from './pickup-option';
+import { PickupOptionRequestBody, PickupOptionResponse } from './pickup-option';
 
 const url = '/api/storefront/pickup-options';
 
@@ -11,7 +11,7 @@ export default class PickupOptionRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    fetchPickupOptions(query: PickupOptionRequestPayload): Promise<Response<PickupOptionResponse>> {
+    fetchPickupOptions(query: PickupOptionRequestBody): Promise<Response<PickupOptionResponse>> {
         return this._requestSender.post(url, {
             headers: { Accept: ContentType.Json, ...SDK_VERSION_HEADERS },
             body: query,

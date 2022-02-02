@@ -11,7 +11,7 @@ import { createOrderSelectorFactory } from '../order';
 import { createPaymentMethodSelectorFactory, createPaymentSelectorFactory, createPaymentStrategySelectorFactory } from '../payment';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
-import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
+import { createConsignmentSelectorFactory, createPickupOptionSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
 import { createSignInEmailSelectorFactory } from '../signin-email';
 import { createStoreCreditSelectorFactory } from '../store-credit';
 import { createSubscriptionsSelectorFactory } from '../subscription';
@@ -40,6 +40,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createFormSelector = createFormSelectorFactory();
     const createPaymentMethodSelector = createPaymentMethodSelectorFactory();
     const createPaymentStrategySelector = createPaymentStrategySelectorFactory();
+    const createPickupOptionSelector = createPickupOptionSelectorFactory();
     const createRemoteCheckoutSelector = createRemoteCheckoutSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -65,6 +66,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const instruments = createInstrumentSelector(state.instruments);
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = createPaymentStrategySelector(state.paymentStrategies);
+        const pickupOptions = createPickupOptionSelector(state.pickupOptions);
         const remoteCheckout = createRemoteCheckoutSelector(state.remoteCheckout);
         const shippingAddress = createShippingAddressSelector(state.consignments);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
@@ -98,6 +100,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             payment,
             paymentMethods,
             paymentStrategies,
+            pickupOptions,
             remoteCheckout,
             shippingAddress,
             shippingCountries,

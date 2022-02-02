@@ -25,7 +25,7 @@ function dataReducer(
     action: LoadPickupOptionsAction
 ): PickupOption[] | undefined {
     switch (action.type) {
-        case PickupOptionActionType.LoadPickupOptionSucceeded:
+        case PickupOptionActionType.LoadPickupOptionsSucceeded:
             return arrayReplace(data, action.payload);
 
         default:
@@ -39,7 +39,7 @@ function errorsReducer(
 ) {
     switch (action.type) {
         case PickupOptionActionType.LoadPickupOptionsRequested:
-        case PickupOptionActionType.LoadPickupOptionSucceeded:
+        case PickupOptionActionType.LoadPickupOptionsSucceeded:
             return objectSet(errors, 'loadError', undefined);
 
         case PickupOptionActionType.LoadPickupOptionsFailed:
@@ -57,7 +57,7 @@ function statusesReducer(
     switch (action.type) {
         case PickupOptionActionType.LoadPickupOptionsRequested:
             return objectSet(statuses, 'isLoading', true);
-        case PickupOptionActionType.LoadPickupOptionSucceeded:
+        case PickupOptionActionType.LoadPickupOptionsSucceeded:
         case PickupOptionActionType.LoadPickupOptionsFailed:
             return objectSet(statuses, 'isLoading', false);
 

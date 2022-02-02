@@ -10,6 +10,13 @@ export { default as consignmentReducer } from './consignment-reducer';
 export { default as ConsignmentActionCreator } from './consignment-action-creator';
 export { default as ConsignmentRequestSender } from './consignment-request-sender';
 
+export { PickupOptionRequestBody } from './pickup-option';
+export { default as PickupOptionActionCreator } from './pickup-option-action-creator';
+export { default as PickupOptionRequestSender } from './pickup-option-request-sender';
+export { default as PickupOptionSelector, PickupOptionSelectorFactory, createPickupOptionSelectorFactory } from './pickup-option-selector';
+export { default as PickupOptionState } from './pickup-option-state';
+export { default as pickupOptionReducer } from './pickup-option-reducer';
+
 export { default as ShippingAddressSelector, ShippingAddressSelectorFactory, createShippingAddressSelectorFactory } from './shipping-address-selector';
 
 export { default as ShippingCountryActionCreator } from './shipping-country-action-creator';

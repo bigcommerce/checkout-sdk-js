@@ -15,6 +15,7 @@ import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-met
 import { getPaymentState } from '../payment/payments.mock';
 import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment, getConsignmentsState } from '../shipping/consignments.mock';
+import { getPickupOptionsState } from '../shipping/pickup-option.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 
 import Checkout, { CheckoutPayment } from './checkout';
@@ -134,6 +135,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
         paymentStrategies: { data: {}, errors: {}, statuses: {} },
+        pickupOptions: getPickupOptionsState(),
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
         shippingStrategies: { data: {}, errors: {}, statuses: {} },
