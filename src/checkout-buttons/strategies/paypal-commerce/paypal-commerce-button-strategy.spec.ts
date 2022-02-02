@@ -231,6 +231,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             onApprove: expect.any(Function),
             onClick: expect.any(Function),
             style: paypalOptions.style,
+            onShippingChange: expect.any(Function),
         };
 
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);

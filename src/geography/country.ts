@@ -9,4 +9,9 @@ export default interface Country {
 export interface Region {
     code: string;
     name: string;
+    id?: number;
+}
+
+export interface GetCountryResponse {
+    data: Country[];
 }

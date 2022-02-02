@@ -1,3 +1,4 @@
+import { Consignment } from '../../../shipping/';
 
 export interface ApproveDataOptions {
     orderID?: string;
@@ -60,10 +61,138 @@ export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string>;
-    onApprove?(data: ApproveDataOptions): void;
+    onApprove?(data: ApproveDataOptions, actions: ApproveActions): void;
+    onShippingChange?(data: any, actions: any): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;
+}
+
+export interface ApproveActions {
+    order: {
+        capture(): Promise<any>;
+        authorize(): Promise<any>;
+        get(): void;
+        patch(data: PatchArgument[]): void;
+    };
+    resolve(): void;
+    reject(): void;
+}
+
+export interface CheckoutWithBillingAddress {
+    consignments: Consignment[];
+    cart: {
+        id: string;
+        lineItems: {
+            physicalItems: PhysicalItem[];
+        };
+    };
+}
+
+interface PhysicalItem {
+    id: string;
+    imageUrl: string;
+}
+
+interface PatchArgument {
+    op: string;
+    path: string;
+    value: PatchValue | ShippingOptions[];
+}
+
+interface PatchValue {
+    currency_code: string;
+    value: string | number;
+    breakdown: {
+        item_total: {
+            value: number | string;
+            currency_code: string;
+        };
+        shipping?: ItemTotal;
+    };
+}
+
+export interface AvaliableShippingOption {
+    additionalDescription: string;
+    cost: number;
+    id: string;
+    isRecommended: boolean;
+    description: string;
+}
+
+export interface PayerDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        };
+        email_address: string;
+        payer_id: string;
+        address: {
+            country_code: string;
+        };
+    };
+    purchase_units: PurchaseUnits[];
+}
+
+export interface ShippingChangeData {
+    amount: {
+        breakdown: {
+            item_total: ItemTotal;
+            shipping: ItemTotal;
+            tax_total: ItemTotal;
+        };
+        currency_code: string;
+        value: string;
+    };
+    orderID: string;
+    payment_token: string;
+    shipping_address: ShippingAddress;
+    selected_shipping_option: {
+        id: string;
+        amount: ItemTotal;
+    };
+}
+
+export interface ShippingAddress {
+    city: string;
+    postal_code: string;
+    country_code: string;
+    state: string;
+}
+
+interface ItemTotal {
+    currency_code: string;
+    value: string;
+}
+
+export interface ShippingOptions {
+    id: string;
+    type: string;
+    label: string;
+    selected: boolean;
+    amount: ItemTotal;
+}
+
+export interface PurchaseUnits {
+    reference_id: string;
+    amount: ItemTotal;
+    payee: {
+        email_address: string;
+        merchant_id: string;
+    };
+    shipping: {
+        address: {
+            address_line_1: string;
+            address_area_1: string;
+            address_area2: string;
+            country_code: string;
+            postal_code: string;
+        };
+        name: {
+            full_name: string;
+        };
+    };
 }
 
 export interface PaypalFieldsStyleOptions {
@@ -238,7 +367,7 @@ export interface PaypalCommerceInitializationData {
     attributionId?: string;
 }
 
-export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'payment-fields'>;
+export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'fields'>;
 
 export interface PaypalCommerceScriptParams  {
     'client-id': string;

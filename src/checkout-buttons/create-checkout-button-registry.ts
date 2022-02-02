@@ -1,11 +1,12 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { RequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
@@ -36,6 +37,11 @@ export default function createCheckoutButtonRegistry(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
+    const orderRequestSender = new OrderRequestSender(createRequestSender());
+    const orderActionCreator = new OrderActionCreator(
+        orderRequestSender,
+        new CheckoutValidator(new CheckoutRequestSender(requestSender))
+    );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
@@ -170,7 +176,8 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             formPoster,
-            paypalCommercePaymentProcessor
+            paypalCommercePaymentProcessor,
+            orderActionCreator
         )
     );
 

@@ -95,7 +95,14 @@ describe('PaypalCommercePaymentProcessor', () => {
 
                 eventEmitter.on('approve', () => {
                     if (options.onApprove) {
-                        options.onApprove({orderID});
+                        options.onApprove({orderID}, {order: {
+                                capture: jest.fn(),
+                                authorize: jest.fn(),
+                                get: jest.fn(),
+                                patch: jest.fn(),
+                            },
+                            resolve: jest.fn(),
+                            reject: jest.fn()});
                     }
                 });
 
@@ -239,7 +246,14 @@ describe('PaypalCommercePaymentProcessor', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            expect(onApprove).toHaveBeenCalledWith({ orderID });
+            expect(onApprove).toHaveBeenCalledWith({ orderID }, {order: {
+                capture: jest.fn().mockReturnValue(Promise.resolve()),
+                authorize: jest.fn().mockReturnValue(Promise.resolve()),
+                patch: jest.fn().mockReturnValue(Promise.resolve()),
+                get: jest.fn().mockReturnValue(Promise.resolve()),
+                },
+                resolve: jest.fn().mockReturnValue(Promise.resolve()),
+                reject: jest.fn().mockReturnValue(Promise.reject())});
         });
 
         it('throw error if button is not eligible', async () => {
