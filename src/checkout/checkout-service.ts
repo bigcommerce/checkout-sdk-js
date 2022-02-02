@@ -444,7 +444,22 @@ export default class CheckoutService {
      * Loads a list of pickup options for a given criteria.
      *
      * ```js
-     * const state = await service.loadPickupOptions(query);
+     * const state = await service.loadPickupOptions({
+     *     search_area: {
+     *         radius: {
+     *             value: 1.4,
+     *             unit: 0
+     *         },
+     *         coordinates: {
+     *             latitude: 1.4,
+     *             longitude: 0
+     *         },
+     *     },
+     *     items: [{
+     *         variantId: 1,
+     *         quantity: 1
+     *     }]
+     * });
      *
      * console.log(state.data.getPickupOptions());
      * ```
