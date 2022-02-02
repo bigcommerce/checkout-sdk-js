@@ -20,7 +20,7 @@ describe('PickupOptionSelector', () => {
     });
 
     describe('#getPickupOptions()', () => {
-        it.only('returns a list of pickup options', () => {
+        it('returns a list of pickup options', () => {
             pickupOptionSelector = createPickupOptionSelector(state.pickupOptions);
             const flattenedQuery = objectFlatten(query);
             const sortedFlattenedQuery = objectWithSortedKeys(flattenedQuery);

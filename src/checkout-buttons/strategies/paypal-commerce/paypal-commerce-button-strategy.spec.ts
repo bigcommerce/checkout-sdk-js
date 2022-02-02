@@ -167,6 +167,41 @@ describe('PaypalCommerceButtonStrategy', () => {
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
     });
 
+    it('authorize', async () => {
+        paymentMethod.initializationData.isPayPalCreditAvailable = true;
+        paymentMethod.initializationData.intent = 'authorize';
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+
+        const obj = {
+            'client-id': 'abc',
+            commit: false,
+            currency: 'USD',
+            intent: 'authorize',
+            components: ['buttons', 'messages'],
+            'disable-funding': [
+                'card',
+            ],
+            'enable-funding': [
+                'credit',
+                'paylater',
+            ],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('isHosted', async () => {
+        paymentMethod.initializationData.isHosted = true;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+        eventEmitter.emit('onApprove');
+
+        expect(formPoster.postForm).toHaveBeenCalledTimes(0);
+    });
+
     it('initializes PaypalCommerce with enabled APMs', async () => {
 
         paymentMethod.initializationData.availableAlternativePaymentMethods = ['sepa', 'venmo', 'sofort', 'mybank'];
@@ -195,6 +230,12 @@ describe('PaypalCommerceButtonStrategy', () => {
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+    });
+
+    it('no messages', async () => {
+        await strategy.initialize({...options, paypalCommerce: {messagingContainer: undefined}});
+
+        expect(paypalCommercePaymentProcessor.renderMessages).toHaveBeenCalledTimes(0);
     });
 
     it('initializes PaypalCommerce with disabled APMs', async () => {
@@ -231,6 +272,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             onApprove: expect.any(Function),
             onClick: expect.any(Function),
             style: paypalOptions.style,
+            onShippingChange: expect.any(Function),
         };
 
         expect(paypalCommercePaymentProcessor.renderButtons).toHaveBeenCalledWith(cart.id, `#${options.containerId}`, buttonOption);
