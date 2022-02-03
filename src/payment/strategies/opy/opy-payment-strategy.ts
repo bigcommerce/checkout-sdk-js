@@ -10,6 +10,7 @@ import StorefrontPaymentRequestSender from '../../storefront-payment-request-sen
 import PaymentStrategy from '../payment-strategy';
 
 import { isOpyPaymentMethod, ActionTypes } from './opy';
+import OpyError from './opy-payment-error';
 
 export default class OpyPaymentStrategy implements PaymentStrategy {
     constructor(
@@ -40,7 +41,7 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         const paymentMethod = getPaymentMethodOrThrow(methodId);
 
         if (!isOpyPaymentMethod(paymentMethod)) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            throw new OpyError('payment.opy_invalid_cart_error', 'opyInvalidCartError');
         }
 
         const {

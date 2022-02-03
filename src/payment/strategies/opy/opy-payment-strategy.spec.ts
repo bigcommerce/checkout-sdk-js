@@ -29,6 +29,7 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 import StorefrontPaymentRequestSender from '../../storefront-payment-request-sender';
 
 import { ActionTypes, OpyPaymentMethod } from './opy';
+import OpyError from './opy-payment-error';
 import OpyPaymentStrategy from './opy-payment-strategy';
 
 describe('OpyPaymentStrategy', () => {
@@ -166,7 +167,7 @@ describe('OpyPaymentStrategy', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValueOnce({ ...getOpy(), initializationData: undefined });
 
-                await expect(strategy.execute(payload, options)).rejects.toThrow(MissingDataError);
+                await expect(strategy.execute(payload, options)).rejects.toThrow(OpyError);
             });
 
             it('nonce is empty', async () => {
