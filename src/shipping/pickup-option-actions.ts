@@ -1,6 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { PickupOption } from './pickup-option';
+import { PickupOptionResult } from './pickup-option';
 
 export enum PickupOptionActionType {
     LoadPickupOptionsRequested = 'LOAD_PICKUP_OPTIONS_REQUESTED',
@@ -17,7 +17,7 @@ export interface PickupOptionRequestedAction extends Action {
     type: PickupOptionActionType.LoadPickupOptionsRequested;
 }
 
-export interface LoadPickupOptionsSucceededAction extends Action<PickupOption[]> {
+export interface LoadPickupOptionsSucceededAction extends Action<PickupOptionResult[]> {
     type: PickupOptionActionType.LoadPickupOptionsSucceeded;
 }
 

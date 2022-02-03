@@ -3,7 +3,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 
-import { PickupOption } from './pickup-option';
+import { PickupOptionResult } from './pickup-option';
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import PickupOptionState, { DEFAULT_STATE, PickupOptionErrorsState, PickupOptionStatusesState } from './pickup-option-state';
 
@@ -21,9 +21,9 @@ export default function pickupOptionReducer(
 }
 
 function dataReducer(
-    data: PickupOption[] | undefined,
+    data: PickupOptionResult[] | undefined,
     action: LoadPickupOptionsAction
-): PickupOption[] | undefined {
+): PickupOptionResult[] | undefined {
     switch (action.type) {
         case PickupOptionActionType.LoadPickupOptionsSucceeded:
             return arrayReplace(data, action.payload);

@@ -1,7 +1,7 @@
-import { PickupOption } from './pickup-option';
+import { PickupOptionResult } from './pickup-option';
 
 export default interface PickupOptionState {
-    data?: PickupOption[];
+    data?: PickupOptionResult[];
     errors: PickupOptionErrorsState;
     statuses: PickupOptionStatusesState;
 }

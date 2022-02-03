@@ -1,5 +1,5 @@
 import { PickupOptionState } from '.';
-import { PickupOption, PickupOptionRequestBody, PickupOptionResponse } from './pickup-option';
+import { PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult } from './pickup-option';
 
 export function getQueryForPickupOptions(): PickupOptionRequestBody {
     return {
@@ -20,7 +20,7 @@ export function getQueryForPickupOptions(): PickupOptionRequestBody {
     };
 }
 
-export function getPickupOptions(): PickupOption {
+export function getPickupOptions(): PickupOptionResult {
     return {
         options: [
             {

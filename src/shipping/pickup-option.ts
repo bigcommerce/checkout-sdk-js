@@ -31,7 +31,7 @@ interface Option {
     item_quantities: Item;
 }
 
-export interface PickupOption {
+export interface PickupOptionResult {
     options: Option[];
 }
 
@@ -45,5 +45,5 @@ export interface ConsignmentPickupOption {
 }
 
 export interface PickupOptionResponse {
-    results: PickupOption[];
+    results: PickupOptionResult[];
 }

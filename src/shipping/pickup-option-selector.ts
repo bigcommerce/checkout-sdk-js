@@ -2,11 +2,11 @@ import { memoizeOne } from '@bigcommerce/memoize';
 
 import { createSelector } from '../common/selector';
 
-import { PickupOption } from './pickup-option';
+import { PickupOptionResult } from './pickup-option';
 import PickupOptionState, { DEFAULT_STATE } from './pickup-option-state';
 
 export default interface PickupOptionSelector {
-    getPickupOptions(): PickupOption[] | undefined;
+    getPickupOptions(): PickupOptionResult[] | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
