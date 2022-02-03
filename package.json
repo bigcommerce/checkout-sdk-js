@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
-    "prepare": "check-node-version --node '>=6' --npm '>=6'",
+    "prepare": "npm run snyk-protect && check-node-version --node '>=6' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts && npm run docs",
     "prebuild-server": "rm -rf dist-server",
     "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
@@ -41,7 +41,8 @@
     "test": "jest --config jest-config.js",
     "test:coverage": "npm run test -- --coverage",
     "test:series": "npm run test -- --runInBand",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
@@ -70,7 +71,8 @@
     "rxjs": "^6.5.3",
     "shallowequal": "^1.1.0",
     "tslib": "^1.10.0",
-    "yup": "^0.27.0"
+    "yup": "^0.27.0",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
@@ -110,5 +112,6 @@
     "scripts": {
       "prebump": "./scripts/standard-version/prebump.js"
     }
-  }
+  },
+  "snyk": true
 }
