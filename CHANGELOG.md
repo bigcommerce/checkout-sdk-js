@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.213.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.212.0...v1.213.0) (2022-02-03)
+
+
+### Features
+
+* **payment:** INT-4969 Bump bigpay-client dependency to add browser info for Opayo ([972e1bf](https://github.com/bigcommerce/checkout-sdk-js/commit/972e1bf4d267717a6323531b103e08a6c2791422))
+
+
+### Bug Fixes
+
+* **checkout:** INT-5409 Change error message when payment data is unavailable ([94cfe42](https://github.com/bigcommerce/checkout-sdk-js/commit/94cfe423d03ea9e454e15a2ffcc5a4abc3e08b61))
+
 ## [1.212.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.211.0...v1.212.0) (2022-02-02)
 
 
