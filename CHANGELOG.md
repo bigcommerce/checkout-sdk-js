@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.213.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.213.0...v1.213.1) (2022-02-03)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6070 Update style of apple pay customer step button ([#1341](https://github.com/bigcommerce/checkout-sdk-js/issues/1341)) ([d4a3fd4](https://github.com/bigcommerce/checkout-sdk-js/commit/d4a3fd4a6569e8039c1b9bb1f71ba27a6ca71624))
+
 ## [1.213.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.212.0...v1.213.0) (2022-02-03)
 
 
