@@ -1,6 +1,6 @@
 import { CustomFont, PaymentIntent, StripeConfigurationOptions, StripeElement } from '../stripev3';
 
-export { StripeElement } from '../stripev3';
+export { StripeAdditionalAction, StripeElement } from '../stripev3';
 
 export interface StripeError {
     /**
@@ -125,4 +125,5 @@ export interface StripeHostWindow extends Window {
 
 export enum StripePaymentMethodType {
     CreditCard = 'card',
+    SOFORT = 'sofort',
 }
