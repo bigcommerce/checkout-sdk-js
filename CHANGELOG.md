@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.214.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.213.1...v1.214.0) (2022-02-04)
+
+
+### Features
+
+* **payment:** INT-4969 add browser_info for Opayo ([b85353f](https://github.com/bigcommerce/checkout-sdk-js/commit/b85353fa4e84ef9ec1be66f10915b162958352da))
+* **payment:** INT-4969 add SagePayPayload type ([647e87f](https://github.com/bigcommerce/checkout-sdk-js/commit/647e87f3852ee778a8dd6bded84dbab68b3d5b88))
+* **payment:** INT-4969 add SagePayPayload type ([046e28d](https://github.com/bigcommerce/checkout-sdk-js/commit/046e28da021a1322c7f04c9fc63c2aeec746980c))
+* **payment:** INT-4969 add Unit Tests ([ddfa5a7](https://github.com/bigcommerce/checkout-sdk-js/commit/ddfa5a75958c99aa443fbfb5b1f56d43af52621a))
+* **payment:** INT-4969 remove SagePayPayload type ([c93499c](https://github.com/bigcommerce/checkout-sdk-js/commit/c93499cb858f6ba1116e3ac53a2fefbe046ad8d4))
+
 ### [1.213.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.213.0...v1.213.1) (2022-02-03)
 
 

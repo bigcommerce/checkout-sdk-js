@@ -1095,6 +1095,15 @@ declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
+declare interface BrowserInfo {
+    color_depth: number;
+    java_enabled: boolean;
+    language: string;
+    screen_height: number;
+    screen_width: number;
+    time_zone_offset: string;
+}
+
 declare enum ButtonColor {
     Default = "default",
     Black = "black",
@@ -3412,6 +3421,7 @@ declare interface CreditCardInstrument {
     shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+    browser_info?: BrowserInfo;
 }
 
 /**

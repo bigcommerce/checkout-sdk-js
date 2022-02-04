@@ -97,6 +97,7 @@
 * [BraintreeVerifyPayload](interfaces/braintreeverifypayload.md)
 * [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/braintreevisacheckoutcustomerinitializeoptions.md)
 * [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/braintreevisacheckoutpaymentinitializeoptions.md)
+* [BrowserInfo](interfaces/browserinfo.md)
 * [ButtonResponse](interfaces/buttonresponse.md)
 * [ButtonStyles](interfaces/buttonstyles.md)
 * [CardCvcElementOptions](interfaces/cardcvcelementoptions.md)
