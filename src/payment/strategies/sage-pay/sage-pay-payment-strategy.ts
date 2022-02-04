@@ -3,15 +3,13 @@ import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getBrowserInfo } from '../../../common/browser-info';
-import { NotInitializedError, NotInitializedErrorType, RequestError  } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { CreditCardPaymentStrategy } from '../credit-card';
-
-import { SagePayPayload } from './sagepay';
 
 export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
@@ -25,15 +23,26 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!payload.payment) {
+        const { payment } = payload;
+        if (!payment) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        const { paymentData } = payment;
+
+        if (!paymentData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
         if (this._isThreeDSTwoExperimentOn()) {
-            payload.payment.paymentData = {
-                ...payload.payment.paymentData,
+            const newPaymentData = {
+                ...paymentData,
                 browser_info: getBrowserInfo(),
             };
+
+            if ( payload.payment ) {
+                payload.payment.paymentData = newPaymentData;
+            }
         }
 
         return super.execute(payload, options)
@@ -43,7 +52,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
                 }
 
                 return new Promise(() => {
-                    let payload: SagePayPayload;
+                    let payload;
 
                     if (this._isThreeDSTwoExperimentOn() && !error.body.three_ds_result.merchant_data) {
                         payload = {
