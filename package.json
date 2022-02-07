@@ -54,7 +54,7 @@
     "@braintree/browser-detection": "^1.11.0",
     "@types/card-validator": "^4.1.0",
     "@types/iframe-resizer": "^3.5.6",
-    "@types/lodash": "^4.14.139",
+    "@types/lodash": "^4.14.178",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.1",
     "@types/yup": "^0.26.24",
