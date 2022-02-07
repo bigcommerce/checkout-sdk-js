@@ -59,7 +59,7 @@
     "@types/shallowequal": "^1.1.1",
     "@types/yup": "^0.26.24",
     "card-validator": "^6.2.0",
-    "core-js": "^3.1.2",
+    "core-js": "^3.20.1",
     "current-script-polyfill": "^1.0.0",
     "iframe-resizer": "^3.6.2",
     "local-storage-fallback": "^4.1.1",
