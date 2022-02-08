@@ -1,5 +1,7 @@
 import PaymentMethod from '../../payment-method';
 
+import { OpyWidgetConfig } from './opy-library';
+
 export enum ActionTypes {
     FORM_POST = 'FormPost',
     WAIT_FOR_CUSTOMER = 'WaitForCustomer',
@@ -22,10 +24,11 @@ interface WaitForCustomer {
 
 export interface OpyPaymentMethod extends PaymentMethod {
     initializationData: {
-        nextAction: FormPost | WaitForCustomer;
+        nextAction?: FormPost | WaitForCustomer;
+        widgetConfig: OpyWidgetConfig;
     };
 }
 
 export function isOpyPaymentMethod(paymentMethod: PaymentMethod): paymentMethod is OpyPaymentMethod {
-    return !!paymentMethod.initializationData?.nextAction;
+    return !!paymentMethod.initializationData?.widgetConfig;
 }

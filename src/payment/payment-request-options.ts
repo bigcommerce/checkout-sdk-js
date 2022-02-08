@@ -16,6 +16,7 @@ import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { MolliePaymentInitializeOptions } from './strategies/mollie';
 import { MonerisPaymentInitializeOptions } from './strategies/moneris';
+import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
@@ -131,6 +132,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Moneris.
      */
     moneris?: MonerisPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Opy payment
+     * method. They can be omitted unless you need to support Opy.
+     */
+    opy?: OpyPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the PayPal Express payment method.
