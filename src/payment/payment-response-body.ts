@@ -39,6 +39,7 @@ export interface AdditionalActionRequired {
 
 export interface AdditionalRedirectData {
     redirect_url: string;
+    transaction_id?: string;
 }
 
 export enum AdditionalActionType {
