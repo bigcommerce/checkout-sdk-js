@@ -7,6 +7,7 @@
 ### Enumeration members
 
 * [AMAZON_PAY_V2](checkoutbuttonmethodtype.md#amazon_pay_v2)
+* [APPLEPAY](checkoutbuttonmethodtype.md#applepay)
 * [BRAINTREE_PAYPAL](checkoutbuttonmethodtype.md#braintree_paypal)
 * [BRAINTREE_PAYPAL_CREDIT](checkoutbuttonmethodtype.md#braintree_paypal_credit)
 * [GOOGLEPAY_ADYENV2](checkoutbuttonmethodtype.md#googlepay_adyenv2)
@@ -25,6 +26,12 @@
 ###  AMAZON_PAY_V2
 
 • **AMAZON_PAY_V2**: = "amazonpay"
+
+___
+
+###  APPLEPAY
+
+• **APPLEPAY**: = "applepay"
 
 ___
 
