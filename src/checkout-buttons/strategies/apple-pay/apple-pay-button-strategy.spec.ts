@@ -227,8 +227,11 @@ describe('ApplePayButtonStrategy', () => {
                         validationURL: 'test',
                     } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-                    await applePaySession.onvalidatemerchant(validateEvent);
-                    expect(CheckoutButtonInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    try {
+                        await applePaySession.onvalidatemerchant(validateEvent);
+                    } catch (error) {
+                        expect(error).toBeInstanceOf(Error);
+                    }
                 }
             }
         });
@@ -266,9 +269,11 @@ describe('ApplePayButtonStrategy', () => {
                         shippingContact: getContactAddress(),
                     } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
-                    await applePaySession.onshippingcontactselected(event);
-
-                    expect(CheckoutButtonInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    try {
+                        await applePaySession.onshippingcontactselected(event);
+                    } catch (error) {
+                        expect(error).toBeInstanceOf(Error);
+                    }
                 }
             }
         });
@@ -315,9 +320,11 @@ describe('ApplePayButtonStrategy', () => {
                         },
                     } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
 
-                    await applePaySession.onshippingmethodselected(event);
-
-                    expect(CheckoutButtonInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    try {
+                        await applePaySession.onshippingmethodselected(event);
+                    } catch (error) {
+                        expect(error).toBeInstanceOf(Error);
+                    }
                 }
             }
         });
@@ -369,11 +376,14 @@ describe('ApplePayButtonStrategy', () => {
                 const button = container.firstChild as HTMLElement;
                 if (button) {
                     button.click();
-                    await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                    expect(applePaySession.completePayment).toHaveBeenCalled();
-                    expect(CheckoutButtonInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    try {
+                        await applePaySession.onpaymentauthorized(authEvent);
+                    } catch (error) {
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+                        expect(applePaySession.completePayment).toHaveBeenCalled();
+                        expect(error).toBeInstanceOf(Error);
+                    }
                 }
             }
         });

@@ -32,7 +32,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
     private _onAuthorizeCallback = noop;
-    private _onError = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
 
@@ -61,12 +60,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const {
             buttonClassName,
-            onError = () => {},
             onPaymentAuthorize,
         } = applepay;
 
         this._onAuthorizeCallback = onPaymentAuthorize;
-        this._onError = onError;
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -172,8 +169,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             try {
                 const { body: merchantSession } = await this._onValidateMerchant(paymentMethod, event);
                 applePaySession.completeMerchantValidation(merchantSession);
-            } catch (err) {
-                this._onError(err);
+            } catch (error) {
+                throw new Error('Merchant validation failed');
             }
         };
 
@@ -189,7 +186,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
                 return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
             } catch (error) {
-                return this._onError(new PaymentMethodCancelledError());
+                throw new PaymentMethodCancelledError();
             }
         };
 
@@ -211,7 +208,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         } catch (error) {
             applePaySession.abort();
 
-            return this._onError(error);
+            throw new Error('Shipping address update failed');
         }
 
         const { storeProfile: { storeName } } = config;
@@ -237,7 +234,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             try {
                 await this._updateShippingOption(optionId);
             } catch (error) {
-                return this._onError(error);
+                throw new Error('Shipping options update failed');
             }
         }
 
@@ -267,7 +264,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         } catch (error) {
             applePaySession.abort();
 
-            return this._onError(error);
+            throw new Error('Shipping option selection update failed.');
         }
 
         const state = this._store.getState();
@@ -370,7 +367,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
-            return this._onError(error);
+            throw new Error('Payment cannot complete');
         }
     }
 

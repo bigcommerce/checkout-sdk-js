@@ -7,7 +7,6 @@ export function getApplePayButtonInitializationOptions(): CheckoutButtonInitiali
         methodId: CheckoutButtonMethodType.APPLEPAY,
         applepay: {
             onPaymentAuthorize: jest.fn(),
-            onError: jest.fn(),
         },
     };
 }
