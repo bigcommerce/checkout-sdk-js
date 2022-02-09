@@ -104,7 +104,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;
-        const { nonce, config: { isVaultingEnabled } } = this._paymentMethod;
+        const {nonce, config: { isVaultingEnabled } } = this._paymentMethod;
         const { methodId, paymentData = {} } = payment;
 
         if (nonce) {
@@ -156,6 +156,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean, shouldSetAsDefaultInstrument?: boolean): FormattedPayload<PaypalInstrument> {
+
         return {
             formattedPayload: {
                 vault_payment_instrument: vaultPaymentInstrument || null,
