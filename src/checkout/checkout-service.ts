@@ -440,7 +440,6 @@ export default class CheckoutService {
     }
 
     /**
-     * This is still in beta.
      * Loads a list of pickup options for a given criteria.
      *
      * ```js
@@ -461,6 +460,7 @@ export default class CheckoutService {
      * console.log(state.data.getPickupOptions());
      * ```
      *
+     * @alpha
      * @param options - Options for loading the available shipping countries.
      * @returns A promise that resolves to the current state.
      */

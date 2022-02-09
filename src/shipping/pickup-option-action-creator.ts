@@ -24,8 +24,8 @@ export default class PickupOptionActionCreator {
                 .then(response => {
                     observer.next(createAction(PickupOptionActionType.LoadPickupOptionsSucceeded, response.body.results));
                     observer.complete();
-                }).
-                catch(response => {
+                })
+                .catch(response => {
                     observer.error(createErrorAction(PickupOptionActionType.LoadPickupOptionsFailed, response));
                 });
         });
