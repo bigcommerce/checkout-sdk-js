@@ -455,10 +455,7 @@ export default class CheckoutService {
      *             longitude: 0
      *         },
      *     },
-     *     items: [{
-     *         variantId: 1,
-     *         quantity: 1
-     *     }]
+     *     consignmentId: 1,
      * });
      *
      * console.log(state.data.getPickupOptions());

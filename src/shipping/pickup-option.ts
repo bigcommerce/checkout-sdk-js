@@ -1,5 +1,5 @@
 interface Item {
-    variant_id: number;
+    variantId: number;
     quantity: number;
 }
 
@@ -20,15 +20,15 @@ interface SearchArea {
 
 interface PickupMethod {
     id: number;
-    location_id: number;
-    display_name: string;
-    collection_instructions: string;
-    collection_time_description: string;
+    locationId: number;
+    displayName: string;
+    collectionUnstructions: string;
+    collectionTimeDescription: string;
 }
 
 interface Option {
-    pickup_method: PickupMethod;
-    item_quantities: Item;
+    pickupMethod: PickupMethod;
+    itemQuantities: Item;
 }
 
 export interface PickupOptionResult {
@@ -36,7 +36,12 @@ export interface PickupOptionResult {
 }
 
 export interface PickupOptionRequestBody {
-    search_area: SearchArea;
+    searchArea: SearchArea;
+    consignmentId: string;
+}
+
+export interface PickupOptionAPIRequestBody {
+    searchArea: SearchArea;
     items: Item[];
 }
 
