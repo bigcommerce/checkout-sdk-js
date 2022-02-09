@@ -5,7 +5,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 
 import { PickupOptionResponse } from './pickup-option';
 import PickupOptionRequestSender from './pickup-option-request-sender';
-import { getPickupOptionsResponseBody, getQueryForPickupOptions } from './pickup-option.mock';
+import { getApiQueryForPickupOptions, getPickupOptionsResponseBody } from './pickup-option.mock';
 
 describe('PickupOptionRequestSender', () => {
     let pickupOptionRequestSender: PickupOptionRequestSender;
@@ -25,7 +25,7 @@ describe('PickupOptionRequestSender', () => {
         });
 
         it('fetches pickup options', async () => {
-            const query = getQueryForPickupOptions();
+            const query = getApiQueryForPickupOptions();
             const output = await pickupOptionRequestSender.fetchPickupOptions(query);
 
             expect(output).toEqual(response);

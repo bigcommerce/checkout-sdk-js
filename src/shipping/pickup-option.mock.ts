@@ -1,9 +1,9 @@
 import { PickupOptionState } from '.';
-import { PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult } from './pickup-option';
+import { PickupOptionAPIRequestBody, PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult } from './pickup-option';
 
-export function getQueryForPickupOptions(): PickupOptionRequestBody {
+export function getApiQueryForPickupOptions(): PickupOptionAPIRequestBody {
     return {
-        search_area: {
+        searchArea: {
             radius: {
                 value: 1.4,
                 unit: 0,
@@ -14,9 +14,25 @@ export function getQueryForPickupOptions(): PickupOptionRequestBody {
             },
         },
         items: [{
-            variant_id: 1,
+            variantId: 71,
             quantity: 1,
         }],
+    };
+}
+
+export function getQueryForPickupOptions(): PickupOptionRequestBody {
+    return {
+        searchArea: {
+            radius: {
+                value: 1.4,
+                unit: 0,
+            },
+            coordinates: {
+                latitude: 1.4,
+                longitude: 1.4,
+            },
+        },
+        consignmentId: '55c96cda6f04c',
     };
 }
 
@@ -24,15 +40,15 @@ export function getPickupOptions(): PickupOptionResult {
     return {
         options: [
             {
-                pickup_method: {
+                pickupMethod: {
                     id: 1,
-                    location_id: 1,
-                    display_name: 'test',
-                    collection_instructions: 'none',
-                    collection_time_description: 'desc',
+                    locationId: 1,
+                    displayName: 'test',
+                    collectionInstructions: 'none',
+                    collectionTimeDescription: 'desc',
                 },
-                item_quantities: {
-                    variant_id: 1,
+                itemQuantities: {
+                    variantId: 1,
                     quantity: 1,
                 },
             },

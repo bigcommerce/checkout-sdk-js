@@ -22,7 +22,7 @@ interface PickupMethod {
     id: number;
     locationId: number;
     displayName: string;
-    collectionUnstructions: string;
+    collectionInstructions: string;
     collectionTimeDescription: string;
 }
 
