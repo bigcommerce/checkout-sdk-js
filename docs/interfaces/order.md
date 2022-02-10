@@ -13,6 +13,7 @@
 * [baseAmount](order.md#baseamount)
 * [billingAddress](order.md#billingaddress)
 * [cartId](order.md#cartid)
+* [consignments](order.md#consignments)
 * [coupons](order.md#coupons)
 * [currency](order.md#currency)
 * [customerCanBeCreated](order.md#customercanbecreated)
@@ -54,6 +55,12 @@ ___
 ###  cartId
 
 • **cartId**: *string*
+
+___
+
+###  consignments
+
+• **consignments**: *[OrderConsignment](orderconsignment.md)[]*
 
 ___
 

@@ -4949,6 +4949,7 @@ declare interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
+    consignments: OrderConsignment[];
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -4971,6 +4972,10 @@ declare interface Order {
     taxes: Tax[];
     taxTotal: number;
     mandateUrl?: string;
+}
+
+declare interface OrderConsignment {
+    shipping: OrderShippingConsignment[];
 }
 
 declare interface OrderPayment {
@@ -5020,6 +5025,44 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
+}
+
+declare interface OrderShippingConsignment {
+    lineItems: Array<{
+        id: number;
+    }>;
+    shippingAddressId: number;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    postalCode: string;
+    country: string;
+    countryCode: string;
+    email: string;
+    phone: string;
+    itemsTotal: number;
+    itemsShipped: number;
+    shippingMethod: string;
+    baseCost: number;
+    costExTax: number;
+    costIncTax: number;
+    costTax: number;
+    costTaxClassId: number;
+    baseHandlingCost: number;
+    handlingCostExTax: number;
+    handlingCostIncTax: number;
+    handlingCostTax: number;
+    handlingCostTaxClassId: number;
+    shippingZoneId: number;
+    shippingZoneName: string;
+    customFields: Array<{
+        name: string;
+        value: string | null;
+    }>;
 }
 
 declare interface PasswordRequirements {

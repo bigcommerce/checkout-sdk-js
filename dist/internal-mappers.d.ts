@@ -562,6 +562,7 @@ declare interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
+    consignments: OrderConsignment[];
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -586,6 +587,10 @@ declare interface Order {
     mandateUrl?: string;
 }
 
+declare interface OrderConsignment {
+    shipping: OrderShippingConsignment[];
+}
+
 declare interface OrderMetaState extends InternalOrderMeta {
     token?: string;
     orderToken?: string;
@@ -602,6 +607,44 @@ declare interface OrderPayment {
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
+
+declare interface OrderShippingConsignment {
+    lineItems: Array<{
+        id: number;
+    }>;
+    shippingAddressId: number;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    postalCode: string;
+    country: string;
+    countryCode: string;
+    email: string;
+    phone: string;
+    itemsTotal: number;
+    itemsShipped: number;
+    shippingMethod: string;
+    baseCost: number;
+    costExTax: number;
+    costIncTax: number;
+    costTax: number;
+    costTaxClassId: number;
+    baseHandlingCost: number;
+    handlingCostExTax: number;
+    handlingCostIncTax: number;
+    handlingCostTax: number;
+    handlingCostTaxClassId: number;
+    shippingZoneId: number;
+    shippingZoneName: string;
+    customFields: Array<{
+        name: string;
+        value: string | null;
+    }>;
+}
 
 declare interface PhysicalItem extends LineItem {
     isShippingRequired: boolean;
