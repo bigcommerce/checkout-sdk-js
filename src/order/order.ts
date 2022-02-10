@@ -11,6 +11,7 @@ export default interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
+    consignments: OrderConsignment[];
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -59,4 +60,46 @@ export interface GiftCertificateOrderPayment extends OrderPayment {
         code: string;
         remaining: number;
     };
+}
+
+export interface OrderConsignment {
+    shipping: OrderShippingConsignment[];
+}
+
+export interface OrderShippingConsignment {
+    lineItems: Array<{
+        id: number;
+    }>;
+    shippingAddressId: number;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    postalCode: string;
+    country: string;
+    countryCode: string;
+    email: string;
+    phone: string;
+    itemsTotal: number;
+    itemsShipped: number;
+    shippingMethod: string;
+    baseCost: number;
+    costExTax: number;
+    costIncTax: number;
+    costTax: number;
+    costTaxClassId: number;
+    baseHandlingCost: number;
+    handlingCostExTax: number;
+    handlingCostIncTax: number;
+    handlingCostTax: number;
+    handlingCostTaxClassId: number;
+    shippingZoneId: number;
+    shippingZoneName: string;
+    customFields: Array<{
+        name: string;
+        value: string | null;
+    }>;
 }

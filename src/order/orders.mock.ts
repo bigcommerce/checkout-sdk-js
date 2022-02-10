@@ -5,7 +5,7 @@ import { getCurrency } from '../currency/currencies.mock';
 
 import { getAwaitingOrder, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
-import Order, { GatewayOrderPayment, GiftCertificateOrderPayment } from './order';
+import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderConsignment, OrderShippingConsignment } from './order';
 import OrderState, { OrderMetaState } from './order-state';
 
 export function getOrder(): Order {
@@ -13,6 +13,7 @@ export function getOrder(): Order {
         baseAmount: 200,
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        consignments: [getOrderConsignment()],
         coupons: [
             getCoupon(),
             getShippingCoupon(),
@@ -104,5 +105,55 @@ export function getOrderState(): OrderState {
         meta: getOrderMeta(),
         errors: {},
         statuses: {},
+    };
+}
+
+export function getOrderConsignment(): OrderConsignment {
+    return {
+      shipping: [getOrderShippingConsignment()],
+    };
+}
+
+export function getOrderShippingConsignment(): OrderShippingConsignment {
+    return {
+        lineItems: [
+            {
+                id: 123,
+            },
+        ],
+        shippingAddressId: 1,
+        firstName: 'firstName',
+        lastName: 'lastName',
+        company: 'companyName',
+        address1: '2802 Skyway Cir',
+        address2: 'Balcony',
+        city: 'Austin',
+        stateOrProvince: 'Texas',
+        postalCode: '78704',
+        country: 'United States',
+        countryCode: 'US',
+        email: 'test@bigcommerce.com',
+        phone: '0410123452',
+        itemsTotal: 1,
+        itemsShipped: 0,
+        shippingMethod: 'Flat Rate',
+        baseCost: 15.5,
+        costExTax: 15.5,
+        costIncTax: 16.7,
+        costTax: 1.2,
+        costTaxClassId: 2,
+        baseHandlingCost: 0,
+        handlingCostExTax: 0,
+        handlingCostIncTax: 0,
+        handlingCostTax: 0,
+        handlingCostTaxClassId: 2,
+        shippingZoneId: 1,
+        shippingZoneName: 'United States',
+        customFields: [
+            {
+                name: 'customerMessage',
+                value: 'foobar',
+            },
+        ],
     };
 }
