@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.216.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.215.1...v1.216.0) (2022-02-10)
+
+
+### Features
+
+* **order:** INT-4776 Create a new field for the mandate reference ID ([#1220](https://github.com/bigcommerce/checkout-sdk-js/issues/1220)) ([e9005f5](https://github.com/bigcommerce/checkout-sdk-js/commit/e9005f56af5adb37322f19325e527f3b7b9e1500))
+
 ### [1.215.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.215.0...v1.215.1) (2022-02-10)
 
 ## [1.215.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.214.1...v1.215.0) (2022-02-08)

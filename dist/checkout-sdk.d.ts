@@ -4078,6 +4078,10 @@ declare interface GatewayOrderPayment extends OrderPayment {
         step: string;
         instructions: string;
     };
+    mandate?: {
+        id: string;
+        url?: string;
+    };
 }
 
 declare interface GiftCertificate {
@@ -4971,7 +4975,6 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandateUrl?: string;
 }
 
 declare interface OrderConsignment {
@@ -4981,6 +4984,7 @@ declare interface OrderConsignment {
 declare interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    methodId?: string;
     paymentId?: string;
     description: string;
     amount: number;
