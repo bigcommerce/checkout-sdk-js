@@ -33,7 +33,6 @@ export default interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandateUrl?: string;
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -43,6 +42,7 @@ export type OrderMeta = OrderMetaState;
 export interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    methodId?: string;
     paymentId?: string;
     description: string;
     amount: number;
@@ -52,6 +52,10 @@ export interface GatewayOrderPayment extends OrderPayment {
     detail: {
         step: string;
         instructions: string;
+    };
+    mandate?: {
+        id: string;
+        url?: string;
     };
 }
 
