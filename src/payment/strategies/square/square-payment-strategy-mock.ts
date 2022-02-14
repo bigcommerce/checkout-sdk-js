@@ -23,7 +23,7 @@ export function getCardData(): CardData {
         exp_month: 1,
         exp_year: 2020,
         billing_postal_code: '12345',
-        digital_wallet_type: DigitalWalletType.masterpass,
+        digital_wallet_type: DigitalWalletType.applePay,
     };
 }
 
@@ -74,9 +74,6 @@ export function getSquarePaymentInitializeOptions(): PaymentInitializeOptions {
             },
             onError: jest.fn(),
             onPaymentSelect: () => { },
-            masterpass: {
-                elementId: 'sq-masterpass',
-            },
         },
     };
 }

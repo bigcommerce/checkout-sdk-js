@@ -14,7 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, SquareFormElement, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
+import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
 import SquareScriptLoader from './square-script-loader';
 
@@ -164,13 +164,6 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
                     }
                 },
                 createPaymentRequest: this._paymentRequestPayload.bind(this),
-                methodsSupported: methods => {
-                    const { masterpass } = this._getInitializeOptions();
-
-                    if (masterpass) {
-                        this._showPaymentMethods(methods, masterpass);
-                    }
-                },
                 paymentFormLoaded: () => {
                     deferred.resolve();
                     this._setPostalCode();
@@ -272,14 +265,6 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
 
         if (billingAddress && billingAddress.postalCode) {
             this._getPaymentForm().setPostalCode(billingAddress.postalCode);
-        }
-    }
-
-    private _showPaymentMethods(methods: { [key: string]: boolean }, element: SquareFormElement): void {
-        const masterpassBtn = document.getElementById(element.elementId);
-
-        if (masterpassBtn && methods.masterpass) {
-            masterpassBtn.style.display = 'inline-block';
         }
     }
 
