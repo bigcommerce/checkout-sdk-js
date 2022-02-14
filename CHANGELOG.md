@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.217.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.216.0...v1.217.0) (2022-02-14)
+
+
+### Features
+
+* **payment:** INT-4282 removing masterpass logic for square ([8118522](https://github.com/bigcommerce/checkout-sdk-js/commit/8118522d5dd008d38a3f5f58468fe59c3b0bc8d0))
+
 ## [1.216.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.215.1...v1.216.0) (2022-02-10)
 
 
