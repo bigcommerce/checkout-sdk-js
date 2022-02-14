@@ -1,7 +1,7 @@
-import { PickupOptionResult } from './pickup-option';
+import { PickupOptionQueryMap } from './pickup-option';
 
 export default interface PickupOptionState {
-    data?: PickupOptionResult[];
+    data?: PickupOptionQueryMap;
     errors: PickupOptionErrorsState;
     statuses: PickupOptionStatusesState;
 }

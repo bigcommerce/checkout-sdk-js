@@ -2,11 +2,11 @@ import { memoizeOne } from '@bigcommerce/memoize';
 
 import { createSelector } from '../common/selector';
 
-import { PickupOptionResult } from './pickup-option';
+import { PickupOptionResult, SearchArea } from './pickup-option';
 import PickupOptionState, { DEFAULT_STATE } from './pickup-option-state';
 
 export default interface PickupOptionSelector {
-    getPickupOptions(): PickupOptionResult[] | undefined;
+    getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -16,7 +16,14 @@ export type PickupOptionSelectorFactory = (state: PickupOptionState) => PickupOp
 export function createPickupOptionSelectorFactory(): PickupOptionSelectorFactory {
     const getPickupOptions = createSelector(
         (state: PickupOptionState) => state.data,
-        pickupOptions => () => pickupOptions
+        pickupOptions => (consignmentId: string, searchArea: SearchArea) => {
+            if (!pickupOptions) {
+                return;
+            }
+            const keyString = btoa(`${consignmentId}-${JSON.stringify(searchArea)}`);
+
+            return pickupOptions[keyString];
+        }
     );
 
     const getLoadError = createSelector(

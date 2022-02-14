@@ -1,9 +1,9 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
-import { arrayReplace, objectSet } from '../common/utility';
+import { objectSet } from '../common/utility';
 
-import { PickupOptionResult } from './pickup-option';
+import { PickupOptionQueryMap, PickupOptionResult } from './pickup-option';
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import PickupOptionState, { DEFAULT_STATE, PickupOptionErrorsState, PickupOptionStatusesState } from './pickup-option-state';
 
@@ -21,12 +21,16 @@ export default function pickupOptionReducer(
 }
 
 function dataReducer(
-    data: PickupOptionResult[] | undefined,
+    data: PickupOptionQueryMap | undefined,
     action: LoadPickupOptionsAction
-): PickupOptionResult[] | undefined {
+): PickupOptionQueryMap | undefined {
     switch (action.type) {
         case PickupOptionActionType.LoadPickupOptionsSucceeded:
-            return arrayReplace(data, action.payload);
+            if (action.meta) {
+                const keyString = btoa(`${action.meta.consignmentId}-${JSON.stringify(action.meta.searchArea)}`);
+
+                return objectSet(data, keyString , action.payload);
+            }
 
         default:
             return data;

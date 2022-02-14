@@ -13,7 +13,7 @@ interface Coordinates {
     longitude: number;
 }
 
-interface SearchArea {
+export interface SearchArea {
     radius: Radius;
     coordinates: Coordinates;
 }
@@ -51,4 +51,10 @@ export interface ConsignmentPickupOption {
 
 export interface PickupOptionResponse {
     results: PickupOptionResult[];
+}
+
+export type PickupOptionMeta = PickupOptionRequestBody;
+
+export interface PickupOptionQueryMap {
+    [index: string]: PickupOptionResult[] | undefined;
 }

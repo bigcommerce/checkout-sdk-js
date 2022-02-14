@@ -22,7 +22,7 @@ export default class PickupOptionActionCreator {
 
             this._pickupOptionRequestSender.fetchPickupOptions(apiQuery)
                 .then(response => {
-                    observer.next(createAction(PickupOptionActionType.LoadPickupOptionsSucceeded, response.body.results));
+                    observer.next(createAction(PickupOptionActionType.LoadPickupOptionsSucceeded, response.body.results, query));
                     observer.complete();
                 })
                 .catch(response => {
