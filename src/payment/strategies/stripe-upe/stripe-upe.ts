@@ -127,4 +127,5 @@ export enum StripePaymentMethodType {
     CreditCard = 'card',
     SOFORT = 'sofort',
     EPS = 'eps',
+    GRABPAY = 'grabpay',
 }
