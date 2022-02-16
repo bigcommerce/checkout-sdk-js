@@ -22,6 +22,7 @@ export function getApiQueryForPickupOptions(): PickupOptionAPIRequestBody {
 
 export function getQueryForPickupOptions(): PickupOptionRequestBody {
     return {
+        consignmentId: '55c96cda6f04c',
         searchArea: {
             radius: {
                 value: 1.4,
@@ -32,7 +33,6 @@ export function getQueryForPickupOptions(): PickupOptionRequestBody {
                 longitude: 1.4,
             },
         },
-        consignmentId: '55c96cda6f04c',
     };
 }
 
@@ -62,9 +62,14 @@ export function getPickupOptionsResponseBody(): PickupOptionResponse {
     };
 }
 
+const query = getQueryForPickupOptions();
+const keyString = btoa(`${query.consignmentId}-${JSON.stringify(query.searchArea)}`);
+
 export function getPickupOptionsState(): PickupOptionState {
     return {
-        data: [getPickupOptions()],
+        data: {
+            [keyString]: [getPickupOptions()],
+        },
         errors: {},
         statuses: {},
     };

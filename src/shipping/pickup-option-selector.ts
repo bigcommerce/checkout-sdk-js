@@ -20,7 +20,7 @@ export function createPickupOptionSelectorFactory(): PickupOptionSelectorFactory
             if (!pickupOptions) {
                 return;
             }
-            const keyString = btoa(`${consignmentId}-${JSON.stringify(searchArea)}`);
+            const keyString = btoa(`${consignmentId}-${JSON.stringify({ searchArea })}`);
 
             return pickupOptions[keyString];
         }

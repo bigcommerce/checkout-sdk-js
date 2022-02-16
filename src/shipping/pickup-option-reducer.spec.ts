@@ -1,7 +1,7 @@
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import pickupOptionReducer from './pickup-option-reducer';
 import PickupOptionState from './pickup-option-state';
-import { getPickupOptions } from './pickup-option.mock';
+import { getPickupOptions, getQueryForPickupOptions } from './pickup-option.mock';
 
 describe('pickupOptionReducer()', () => {
     let initialState: PickupOptionState;
@@ -25,14 +25,20 @@ describe('pickupOptionReducer()', () => {
         });
     });
 
-    it('returns a new state when pickup options are fetched', () => {
+    it.only('returns a new state when pickup options are fetched', () => {
+        const query = getQueryForPickupOptions();
         const action: LoadPickupOptionsAction = {
             type: PickupOptionActionType.LoadPickupOptionsSucceeded,
+            meta: query,
             payload: [getPickupOptions()],
         };
 
+        const codedKey = btoa(`${query.consignmentId}-${JSON.stringify(query.searchArea)}`);
+
         expect(pickupOptionReducer(initialState, action)).toEqual({
-            data: action.payload,
+            data: {
+                [codedKey]: action.payload,
+            },
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });

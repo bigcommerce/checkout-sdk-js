@@ -41,7 +41,8 @@ describe('PickupOptionActionCreator', () => {
         const id = getCart().lineItems.physicalItems[0].id;
         consignment.lineItemIds.push(id.toString());
         jest.spyOn(store.getState().consignments, 'getConsignmentById').mockReturnValue(consignment);
-        const actions = await from(pickupOptionActionCreator.loadPickupOptions(getQueryForPickupOptions())(store))
+        const query = getQueryForPickupOptions();
+        const actions = await from(pickupOptionActionCreator.loadPickupOptions(query)(store))
             .pipe(toArray())
             .toPromise();
 
@@ -49,7 +50,7 @@ describe('PickupOptionActionCreator', () => {
 
         expect(actions).toEqual([
             { type: PickupOptionActionType.LoadPickupOptionsRequested },
-            { type: PickupOptionActionType.LoadPickupOptionsSucceeded, payload: response.body.results },
+            { type: PickupOptionActionType.LoadPickupOptionsSucceeded, payload: response.body.results, meta: query },
         ]);
     });
 
@@ -81,7 +82,8 @@ describe('PickupOptionActionCreator', () => {
         const id = getCart().lineItems.physicalItems[0].id;
         consignment.lineItemIds.push(id.toString());
         jest.spyOn(store.getState().consignments, 'getConsignmentById').mockReturnValue(consignment);
-        const actions = await from(pickupOptionActionCreator.loadPickupOptions(getQueryForPickupOptions())(store))
+        const query = getQueryForPickupOptions();
+        const actions = await from(pickupOptionActionCreator.loadPickupOptions(query)(store))
             .pipe(toArray())
             .toPromise();
 
@@ -89,7 +91,7 @@ describe('PickupOptionActionCreator', () => {
 
         expect(actions).toEqual([
             { type: PickupOptionActionType.LoadPickupOptionsRequested },
-            { type: PickupOptionActionType.LoadPickupOptionsSucceeded, payload: response.body.results },
+            { type: PickupOptionActionType.LoadPickupOptionsSucceeded, payload: response.body.results, meta: query },
         ]);
     });
 

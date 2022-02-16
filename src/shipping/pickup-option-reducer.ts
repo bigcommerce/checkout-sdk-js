@@ -3,7 +3,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { clearErrorReducer } from '../common/error';
 import { objectSet } from '../common/utility';
 
-import { PickupOptionQueryMap, PickupOptionResult } from './pickup-option';
+import { PickupOptionQueryMap } from './pickup-option';
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import PickupOptionState, { DEFAULT_STATE, PickupOptionErrorsState, PickupOptionStatusesState } from './pickup-option-state';
 

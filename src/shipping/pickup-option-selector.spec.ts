@@ -1,32 +1,40 @@
+
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
+import { PickupOptionRequestBody } from '.';
 import PickupOptionSelector, { createPickupOptionSelectorFactory, PickupOptionSelectorFactory } from './pickup-option-selector';
+import { getQueryForPickupOptions } from './pickup-option.mock';
 
 describe('PickupOptionSelector', () => {
     let pickupOptionSelector: PickupOptionSelector;
     let createPickupOptionSelector: PickupOptionSelectorFactory;
     let state: CheckoutStoreState;
+    let query: PickupOptionRequestBody;
 
     beforeEach(() => {
         createPickupOptionSelector = createPickupOptionSelectorFactory();
         state = getCheckoutStoreState();
+        query = getQueryForPickupOptions();
     });
 
     describe('#getPickupOptions()', () => {
-        it('returns a list of pickup options', () => {
+        it.only('returns a list of pickup options', () => {
             pickupOptionSelector = createPickupOptionSelector(state.pickupOptions);
+            const result = state.pickupOptions.data && state.pickupOptions.data[btoa(JSON.stringify(query))];
 
-            expect(pickupOptionSelector.getPickupOptions()).toEqual(state.pickupOptions.data);
+            expect(pickupOptionSelector.getPickupOptions(
+                query.consignmentId, query.searchArea
+            )).toEqual(result);
         });
 
         it('returns an empty array if there are no pickup options', () => {
             pickupOptionSelector = createPickupOptionSelector({
                 ...state.pickupOptions,
-                data: [],
+                data: {},
             });
 
-            expect(pickupOptionSelector.getPickupOptions()).toEqual([]);
+            expect(pickupOptionSelector.getPickupOptions(query.consignmentId, query.searchArea)).toEqual(undefined);
         });
     });
 
