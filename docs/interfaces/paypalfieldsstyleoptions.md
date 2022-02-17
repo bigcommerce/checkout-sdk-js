@@ -10,31 +10,17 @@
 
 ### Properties
 
-* [active](paypalfieldsstyleoptions.md#optional-active)
-* [base](paypalfieldsstyleoptions.md#optional-base)
-* [input](paypalfieldsstyleoptions.md#optional-input)
-* [invalid](paypalfieldsstyleoptions.md#optional-invalid)
+* [rules](paypalfieldsstyleoptions.md#optional-rules)
+* [variables](paypalfieldsstyleoptions.md#optional-variables)
 
 ## Properties
 
-### `Optional` active
+### `Optional` rules
 
-• **active**? : *undefined | object*
-
-___
-
-### `Optional` base
-
-• **base**? : *undefined | object*
+• **rules**? : *undefined | object*
 
 ___
 
-### `Optional` input
+### `Optional` variables
 
-• **input**? : *undefined | object*
-
-___
-
-### `Optional` invalid
-
-• **invalid**? : *undefined | object*
+• **variables**? : *undefined | object*

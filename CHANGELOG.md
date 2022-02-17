@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.219.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.218.0...v1.219.0) (2022-02-17)
+
+
+### Features
+
+* **payment:** PAYPAL-1282 New style object for PayPal APMs ([#1330](https://github.com/bigcommerce/checkout-sdk-js/issues/1330)) ([89ecb3f](https://github.com/bigcommerce/checkout-sdk-js/commit/89ecb3f86019be9ddeadfa5b0e9d256fc4a88418))
+
 ## [1.218.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.217.0...v1.218.0) (2022-02-17)
 
 
