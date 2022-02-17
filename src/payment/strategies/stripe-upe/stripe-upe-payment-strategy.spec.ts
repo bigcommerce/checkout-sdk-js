@@ -107,8 +107,7 @@ describe('StripeUPEPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             stripeScriptLoader,
-            storeCreditActionCreator,
-            'en_US'
+            storeCreditActionCreator
         );
     });
 
