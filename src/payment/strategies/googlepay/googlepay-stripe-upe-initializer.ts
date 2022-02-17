@@ -2,6 +2,7 @@ import { round } from 'lodash';
 
 import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { PaymentMethodFailedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 
 import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
@@ -24,20 +25,25 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
     }
 
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
+        let payload;
         try {
-            const payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
-
-            return Promise.resolve({
-                nonce: payload.id,
-                type: payload.type,
-                details: {
-                    cardType: payload.card.brand,
-                    lastFour: payload.card.last4,
-                },
-            });
+            payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
         } catch (err) {
             throw new InvalidArgumentError('Unable to parse response from Google Pay.');
         }
+
+        if (!payload.id || !payload.type || !payload.card || !payload.card.brand || !payload.card.last4) {
+            throw new PaymentMethodFailedError('Unable to parse response from Google Pay.');
+        }
+
+        return Promise.resolve({
+            nonce: payload.id,
+            type: payload.type,
+            details: {
+                cardType: payload.card.brand,
+                lastFour: payload.card.last4,
+            },
+        });
     }
 
     private _getGooglePayPaymentDataRequest(
@@ -48,7 +54,7 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
         const {
             outstandingBalance,
             cart: {
-                currency: { code: currencyCode },
+                currency: { code: currencyCode, decimalPlaces: decimalPlaces },
             },
         } = checkout;
 
@@ -95,7 +101,7 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
             transactionInfo: {
                 currencyCode,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(outstandingBalance, 2).toFixed(2),
+                totalPrice: round(outstandingBalance, decimalPlaces).toFixed(decimalPlaces),
             },
             emailRequired: true,
             shippingAddressRequired: !hasShippingAddress,

@@ -11,6 +11,7 @@ import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethod
 import CustomerStrategy from '../customer-strategy';
 
 import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
+import { default as MethodType } from './googlepay-customer-method-type';
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
@@ -87,35 +88,35 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _getGooglePayOptions(options: CustomerInitializeOptions): GooglePayCustomerInitializeOptions {
-        if (options.methodId === 'googlepayadyenv2' && options.googlepayadyenv2) {
+        if (options.methodId === MethodType.GOOGLEPAY_ADYENV2 && options.googlepayadyenv2) {
             return options.googlepayadyenv2;
         }
 
-        if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
+        if (options.methodId === MethodType.GOOGLEPAY_AUTHORIZENET && options.googlepayauthorizenet) {
             return options.googlepayauthorizenet;
         }
 
-        if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
+        if (options.methodId === MethodType.GOOGLEPAY_BRAINTREE && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }
 
-        if (options.methodId === 'googlepaycheckoutcom' && options.googlepaycheckoutcom) {
+        if (options.methodId === MethodType.GOOGLEPAY_CHECKOUTCOM && options.googlepaycheckoutcom) {
             return options.googlepaycheckoutcom;
         }
 
-        if (options.methodId === 'googlepaycybersourcev2' && options.googlepaycybersourcev2) {
+        if (options.methodId === MethodType.GOOGLEPAY_CYBERSOURCEV2 && options.googlepaycybersourcev2) {
             return options.googlepaycybersourcev2;
         }
 
-        if (options.methodId === 'googlepayorbital' && options.googlepayorbital) {
+        if (options.methodId === MethodType.GOOGLEPAY_ORBITAL && options.googlepayorbital) {
             return options.googlepayorbital;
         }
 
-        if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
+        if (options.methodId === MethodType.GOOGLEPAY_STRIPE && options.googlepaystripe) {
             return options.googlepaystripe;
         }
 
-        if (options.methodId === 'googlepaystripeupe' && options.googlepaystripeupe) {
+        if (options.methodId === MethodType.GOOGLEPAY_STRIPEUPE && options.googlepaystripeupe) {
             return options.googlepaystripeupe;
         }
 
