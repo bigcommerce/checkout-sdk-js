@@ -67,28 +67,25 @@ export interface ButtonsOptions {
 }
 
 export interface PaypalFieldsStyleOptions {
-    base?: {
-        backgroundColor?: string;
-        color?: string;
-        fontSize?: string;
+    variables?: {
         fontFamily?: string;
-        lineHeight?: string;
-        letterSpacing?: string;
-    };
-    input?: {
-        backgroundColor?: string;
-        fontSize?: string;
-        color?: string;
-        borderColor?: string;
+        fontSizeBase?: string;
+        fontSizeSm?: string;
+        fontSizeM?: string;
+        fontSizeLg?: string;
+        textColor?: string;
+        colorTextPlaceholder?: string;
+        colorBackground?: string;
+        colorInfo?: string;
+        colorDanger?: string;
         borderRadius?: string;
+        borderColor?: string;
         borderWidth?: string;
-        padding?: string;
+        borderFocusColor?: string;
+        spacingUnit?: string;
     };
-    invalid?: {
-        color?: string;
-    };
-    active?: {
-        color?: string;
+    rules?: {
+        [key: string]: any;
     };
 }
 
