@@ -1,7 +1,7 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
 import { createSelector } from '../common/selector';
-import { objectFlatten } from '../common/utility';
+import { objectFlatten, objectWithSortedKeys } from '../common/utility';
 
 import { PickupOptionResult, SearchArea } from './pickup-option';
 import PickupOptionState, { DEFAULT_STATE } from './pickup-option-state';
@@ -22,7 +22,8 @@ export function createPickupOptionSelectorFactory(): PickupOptionSelectorFactory
                 return;
             }
             const flattenedParams = objectFlatten({ consignmentId, searchArea });
-            const keyString = btoa(`${JSON.stringify(flattenedParams)}`);
+            const sortedFlattenedParams = objectWithSortedKeys(flattenedParams);
+            const keyString = btoa(`${JSON.stringify(sortedFlattenedParams)}`);
 
             return pickupOptions[keyString];
         }

@@ -17,6 +17,7 @@ export { default as omitPrivate } from './omit-private';
 export { default as objectFlatten } from './object-flatten';
 export { default as objectMerge } from './object-merge';
 export { default as objectSet } from './object-set';
+export { default as objectWithSortedKeys } from './object-with-sorted-keys';
 export { default as replace } from './replace';
 export { default as setPrototypeOf } from './set-prototype-of';
 export { default as toSingleLine } from './to-single-line';

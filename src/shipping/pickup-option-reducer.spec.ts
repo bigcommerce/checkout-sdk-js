@@ -1,4 +1,4 @@
-import { objectFlatten } from '../common/utility';
+import { objectFlatten, objectWithSortedKeys } from '../common/utility';
 
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import pickupOptionReducer from './pickup-option-reducer';
@@ -35,7 +35,7 @@ describe('pickupOptionReducer()', () => {
             payload: [getPickupOptions()],
         };
 
-        const codedKey = btoa(`${JSON.stringify(objectFlatten(query))}`);
+        const codedKey = btoa(`${JSON.stringify(objectWithSortedKeys(objectFlatten(query)))}`);
 
         expect(pickupOptionReducer(initialState, action)).toEqual({
             data: {

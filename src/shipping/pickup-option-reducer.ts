@@ -1,7 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
-import { objectFlatten, objectSet } from '../common/utility';
+import { objectFlatten, objectSet, objectWithSortedKeys } from '../common/utility';
 
 import { PickupOptionQueryMap } from './pickup-option';
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
@@ -28,7 +28,8 @@ function dataReducer(
         case PickupOptionActionType.LoadPickupOptionsSucceeded:
             if (action.meta) {
                 const flattenedMeta = objectFlatten(action.meta);
-                const keyString = btoa(`${JSON.stringify(flattenedMeta)}`);
+                const sortedflattenedMeta = objectWithSortedKeys(flattenedMeta);
+                const keyString = btoa(`${JSON.stringify(sortedflattenedMeta)}`);
 
                 return objectSet(data, keyString , action.payload);
             }
