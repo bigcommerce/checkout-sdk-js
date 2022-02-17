@@ -13,6 +13,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'adyenv2',
         method: 'scheme',
     },
+    'adyenv3.scheme': {
+        provider: 'adyenv3',
+        method: 'scheme',
+    },
     'adyenv2.bcmc': {
         provider: 'adyenv2',
         method: 'bcmc',
