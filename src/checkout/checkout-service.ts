@@ -15,7 +15,7 @@ import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
-import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, PickupOptionActionCreator, PickupOptionRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
 import { SignInEmailActionCreator, SignInEmailRequestBody } from '../signin-email';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
@@ -61,6 +61,7 @@ export default class CheckoutService {
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
+        private _pickupOptionActionCreator: PickupOptionActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
         private _signInEmailActionCreator: SignInEmailActionCreator,
@@ -436,6 +437,37 @@ export default class CheckoutService {
         const action = this._shippingCountryActionCreator.loadCountries(options);
 
         return this._dispatch(action, { queueId: 'shippingCountries' });
+    }
+
+    /**
+     * Loads a list of pickup options for a given criteria.
+     *
+     * ```js
+     * const state = await service.loadPickupOptions({
+     *     search_area: {
+     *         radius: {
+     *             value: 1.4,
+     *             unit: 0
+     *         },
+     *         coordinates: {
+     *             latitude: 1.4,
+     *             longitude: 0
+     *         },
+     *     },
+     *     consignmentId: 1,
+     * });
+     *
+     * console.log(state.data.getPickupOptions());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the available shipping countries.
+     * @returns A promise that resolves to the current state.
+     */
+    loadPickupOptions(query: PickupOptionRequestBody): Promise<CheckoutSelectors> {
+        const action = this._pickupOptionActionCreator.loadPickupOptions(query);
+
+        return this._dispatch(action, { queueId: 'pickupOptions' });
     }
 
     /**

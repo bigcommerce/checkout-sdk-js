@@ -26,7 +26,7 @@ import { getAuthorizenet, getPaymentMethod, getPaymentMethods } from '../payment
 import { PaymentStrategy } from '../payment/strategies';
 import { NoPaymentDataRequiredPaymentStrategy } from '../payment/strategies/no-payment';
 import { OfflinePaymentStrategy } from '../payment/strategies/offline';
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, PickupOptionActionCreator, PickupOptionRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { SignInEmailActionCreator, SignInEmailRequestSender } from '../signin-email';
@@ -272,6 +272,9 @@ describe('CheckoutService', () => {
             orderActionCreator,
             paymentMethodActionCreator,
             paymentStrategyActionCreator,
+            new PickupOptionActionCreator(
+                new PickupOptionRequestSender(requestSender)
+            ),
             new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator,
             signInEmailActionCreator,

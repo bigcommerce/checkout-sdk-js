@@ -12,7 +12,7 @@ import { orderReducer } from '../order';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
 import { instrumentReducer } from '../payment/instrument';
 import { remoteCheckoutReducer } from '../remote-checkout';
-import { consignmentReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
+import { consignmentReducer, pickupOptionReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
 import { signInEmailReducer } from '../signin-email';
 import { storeCreditReducer } from '../store-credit';
 import { subscriptionsReducer } from '../subscription';
@@ -39,6 +39,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
         paymentStrategies: paymentStrategyReducer,
+        pickupOptions: pickupOptionReducer,
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
         shippingStrategies: shippingStrategyReducer,

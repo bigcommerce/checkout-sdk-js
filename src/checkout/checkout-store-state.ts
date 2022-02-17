@@ -10,7 +10,7 @@ import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { InstrumentState } from '../payment/instrument';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ConsignmentState, ShippingCountryState, ShippingStrategyState } from '../shipping';
+import { ConsignmentState, PickupOptionState, ShippingCountryState, ShippingStrategyState } from '../shipping';
 import { SignInEmailState } from '../signin-email';
 import { StoreCreditState } from '../store-credit';
 import { SubscriptionsState } from '../subscription';
@@ -35,6 +35,7 @@ export default interface CheckoutStoreState {
     payment: PaymentState;
     paymentMethods: PaymentMethodState;
     paymentStrategies: PaymentStrategyState;
+    pickupOptions: PickupOptionState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
     shippingStrategies: ShippingStrategyState;

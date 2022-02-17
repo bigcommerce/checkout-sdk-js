@@ -1,6 +1,6 @@
 import { Address, AddressRequestBody } from '../address';
 
-import PickupOption from './pickup-option';
+import { ConsignmentPickupOption } from './pickup-option';
 import ShippingOption from './shipping-option';
 
 export default interface Consignment {
@@ -10,7 +10,7 @@ export default interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
-    selectedPickupOption?: PickupOption;
+    selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
 }
 
@@ -22,20 +22,20 @@ export type ConsignmentRequestBody =
 export interface ConsignmentCreateRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 export interface ConsignmentAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 export interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 export interface ConsignmentMeta {
