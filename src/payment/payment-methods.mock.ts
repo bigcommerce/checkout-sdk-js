@@ -699,6 +699,25 @@ export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     };
 }
 
+export function getAdyenV3(method: string = 'scheme'): PaymentMethod {
+    return {
+        id: 'adyenv3',
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Adyen',
+            merchantId: 'YOUR_MERCHANT_ID',
+            testMode: true,
+        },
+        initializationData: {
+            clientKey: 'YOUR_CLIENT_KEY',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
+}
+
 export function getBolt(): PaymentMethod {
     return {
         id: 'bolt',

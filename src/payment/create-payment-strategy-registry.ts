@@ -25,6 +25,7 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
 import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv2';
+import { AdyenV3PaymentStrategy, AdyenV3ScriptLoader } from './strategies/adyenv3';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
@@ -135,6 +136,16 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader())
             )
+        )
+    );
+
+    registry.register(PaymentStrategyType.ADYENV3, () =>
+        new AdyenV3PaymentStrategy(
+            store,
+            paymentActionCreator,
+            orderActionCreator,
+            new AdyenV3ScriptLoader(scriptLoader, getStylesheetLoader()),
+            locale
         )
     );
 
