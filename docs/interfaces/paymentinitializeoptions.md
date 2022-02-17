@@ -44,6 +44,7 @@ current checkout flow.
 * [methodId](paymentinitializeoptions.md#methodid)
 * [mollie](paymentinitializeoptions.md#optional-mollie)
 * [moneris](paymentinitializeoptions.md#optional-moneris)
+* [opy](paymentinitializeoptions.md#optional-opy)
 * [params](paymentinitializeoptions.md#optional-params)
 * [paypalcommerce](paymentinitializeoptions.md#optional-paypalcommerce)
 * [paypalexpress](paymentinitializeoptions.md#optional-paypalexpress)
@@ -283,6 +284,15 @@ ___
 
 The options that are required to initialize the Moneris payment method.
 They can be omitted unless you need to support Moneris.
+
+___
+
+### `Optional` opy
+
+• **opy**? : *[OpyPaymentInitializeOptions](opypaymentinitializeoptions.md)*
+
+The options that are required to initialize the Opy payment
+method. They can be omitted unless you need to support Opy.
 
 ___
 

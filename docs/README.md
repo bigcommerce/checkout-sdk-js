@@ -225,6 +225,7 @@
 * [NonceGenerationError](interfaces/noncegenerationerror.md)
 * [NonceInstrument](interfaces/nonceinstrument.md)
 * [OptionsResponse](interfaces/optionsresponse.md)
+* [OpyPaymentInitializeOptions](interfaces/opypaymentinitializeoptions.md)
 * [Order](interfaces/order.md)
 * [OrderConsignment](interfaces/orderconsignment.md)
 * [OrderPayment](interfaces/orderpayment.md)

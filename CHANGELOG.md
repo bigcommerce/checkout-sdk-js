@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.218.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.217.0...v1.218.0) (2022-02-17)
+
+
+### Features
+
+* **payment:** INT-5384 Openpay: Add the learn more button widget ([6990849](https://github.com/bigcommerce/checkout-sdk-js/commit/69908496e5692611b12a60dae0b43b45591a4dc7))
+
 ## [1.217.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.216.0...v1.217.0) (2022-02-14)
 
 
