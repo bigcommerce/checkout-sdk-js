@@ -1,6 +1,7 @@
 
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { objectFlatten } from '../common/utility';
 
 import { PickupOptionRequestBody } from '.';
 import PickupOptionSelector, { createPickupOptionSelectorFactory, PickupOptionSelectorFactory } from './pickup-option-selector';
@@ -21,7 +22,8 @@ describe('PickupOptionSelector', () => {
     describe('#getPickupOptions()', () => {
         it.only('returns a list of pickup options', () => {
             pickupOptionSelector = createPickupOptionSelector(state.pickupOptions);
-            const result = state.pickupOptions.data && state.pickupOptions.data[btoa(JSON.stringify(query))];
+            const flattenedQuery = objectFlatten(query);
+            const result = state.pickupOptions.data && state.pickupOptions.data[btoa(JSON.stringify(flattenedQuery))];
 
             expect(pickupOptionSelector.getPickupOptions(
                 query.consignmentId, query.searchArea

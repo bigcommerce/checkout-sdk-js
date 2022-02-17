@@ -14,6 +14,7 @@ export { default as isPrivate } from './is-private';
 export { default as mergeOrPush } from './merge-or-push';
 export { default as omitDeep } from './omit-deep';
 export { default as omitPrivate } from './omit-private';
+export { default as objectFlatten } from './object-flatten';
 export { default as objectMerge } from './object-merge';
 export { default as objectSet } from './object-set';
 export { default as replace } from './replace';

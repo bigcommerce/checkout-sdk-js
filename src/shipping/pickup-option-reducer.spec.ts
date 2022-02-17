@@ -1,3 +1,5 @@
+import { objectFlatten } from '../common/utility';
+
 import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option-actions';
 import pickupOptionReducer from './pickup-option-reducer';
 import PickupOptionState from './pickup-option-state';
@@ -25,7 +27,7 @@ describe('pickupOptionReducer()', () => {
         });
     });
 
-    it.only('returns a new state when pickup options are fetched', () => {
+    it('returns a new state when pickup options are fetched', () => {
         const query = getQueryForPickupOptions();
         const action: LoadPickupOptionsAction = {
             type: PickupOptionActionType.LoadPickupOptionsSucceeded,
@@ -33,7 +35,7 @@ describe('pickupOptionReducer()', () => {
             payload: [getPickupOptions()],
         };
 
-        const codedKey = btoa(`${query.consignmentId}-${JSON.stringify(query.searchArea)}`);
+        const codedKey = btoa(`${JSON.stringify(objectFlatten(query))}`);
 
         expect(pickupOptionReducer(initialState, action)).toEqual({
             data: {
