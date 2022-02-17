@@ -44,6 +44,7 @@ retrieve the current checkout state and subscribe to its changes.
 * [loadInstruments](checkoutservice.md#loadinstruments)
 * [loadOrder](checkoutservice.md#loadorder)
 * [loadPaymentMethods](checkoutservice.md#loadpaymentmethods)
+* [loadPickupOptions](checkoutservice.md#loadpickupoptions)
 * [loadShippingAddressFields](checkoutservice.md#loadshippingaddressfields)
 * [loadShippingCountries](checkoutservice.md#loadshippingcountries)
 * [loadShippingOptions](checkoutservice.md#loadshippingoptions)
@@ -886,6 +887,44 @@ console.log(state.data.getPaymentMethods());
 Name | Type | Description |
 ------ | ------ | ------ |
 `options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for loading the payment methods that are available to the current customer. |
+
+**Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+A promise that resolves to the current state.
+
+___
+
+###  loadPickupOptions
+
+▸ **loadPickupOptions**(`query`: [PickupOptionRequestBody](../interfaces/pickupoptionrequestbody.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+
+Loads a list of pickup options for a given criteria.
+
+```js
+const state = await service.loadPickupOptions({
+    search_area: {
+        radius: {
+            value: 1.4,
+            unit: 0
+        },
+        coordinates: {
+            latitude: 1.4,
+            longitude: 0
+        },
+    },
+    consignmentId: 1,
+});
+
+console.log(state.data.getPickupOptions());
+```
+
+**`alpha`** 
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`query` | [PickupOptionRequestBody](../interfaces/pickupoptionrequestbody.md) |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.220.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.219.0...v1.220.0) (2022-02-17)
+
+
+### Features
+
+* **shipping:** CHECKOUT-6003 Add method to fetch available shipping options ([#1337](https://github.com/bigcommerce/checkout-sdk-js/issues/1337)) ([2405886](https://github.com/bigcommerce/checkout-sdk-js/commit/2405886003e928596e43b91d1f51a43875984a10))
+
 ## [1.219.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.218.0...v1.219.0) (2022-02-17)
 
 

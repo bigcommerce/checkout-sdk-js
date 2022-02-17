@@ -47,7 +47,7 @@ ___
 
 ### `Optional` selectedPickupOption
 
-• **selectedPickupOption**? : *[PickupOption](pickupoption.md)*
+• **selectedPickupOption**? : *[ConsignmentPickupOption](consignmentpickupoption.md)*
 
 ___
 

@@ -119,8 +119,12 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
-    selectedPickupOption?: PickupOption;
+    selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
+}
+
+declare interface ConsignmentPickupOption {
+    pickupMethodId: number;
 }
 
 declare interface Coupon {
@@ -657,10 +661,6 @@ declare interface PhysicalItem extends LineItem {
         message: string;
         amount: number;
     };
-}
-
-declare interface PickupOption {
-    pickupMethodId: number;
 }
 
 declare interface Promotion {

@@ -1622,6 +1622,7 @@ declare class CheckoutService {
     private _orderActionCreator;
     private _paymentMethodActionCreator;
     private _paymentStrategyActionCreator;
+    private _pickupOptionActionCreator;
     private _shippingCountryActionCreator;
     private _shippingStrategyActionCreator;
     private _signInEmailActionCreator;
@@ -1908,6 +1909,32 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Loads a list of pickup options for a given criteria.
+     *
+     * ```js
+     * const state = await service.loadPickupOptions({
+     *     search_area: {
+     *         radius: {
+     *             value: 1.4,
+     *             unit: 0
+     *         },
+     *         coordinates: {
+     *             latitude: 1.4,
+     *             longitude: 0
+     *         },
+     *     },
+     *     consignmentId: 1,
+     * });
+     *
+     * console.log(state.data.getPickupOptions());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the available shipping countries.
+     * @returns A promise that resolves to the current state.
+     */
+    loadPickupOptions(query: PickupOptionRequestBody): Promise<CheckoutSelectors>;
     /**
      * Loads a set of form fields that should be presented to customers in order
      * to capture their billing address.
@@ -3385,20 +3412,20 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
-    selectedPickupOption?: PickupOption;
+    selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
 }
 
 declare interface ConsignmentAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 declare interface ConsignmentCreateRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 declare interface ConsignmentLineItem {
@@ -3406,14 +3433,23 @@ declare interface ConsignmentLineItem {
     quantity: number;
 }
 
+declare interface ConsignmentPickupOption {
+    pickupMethodId: number;
+}
+
 declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
-    pickupOption?: PickupOption;
+    pickupOption?: ConsignmentPickupOption;
 }
 
 declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
+
+declare interface Coordinates {
+    latitude: number;
+    longitude: number;
+}
 
 declare interface Country {
     code: string;
@@ -5765,12 +5801,18 @@ declare interface PhysicalItem extends LineItem {
     };
 }
 
-declare interface PickupOption {
-    pickupMethodId: number;
+declare interface PickupOptionRequestBody {
+    searchArea: SearchArea;
+    consignmentId: string;
 }
 
 declare interface Promotion {
     banners: Banner[];
+}
+
+declare interface Radius {
+    value: number;
+    unit: number;
 }
 
 declare interface Region {
@@ -5815,6 +5857,11 @@ declare interface RequestOptions<TParams = {}> {
      * The parameters of the request, if required.
      */
     params?: TParams;
+}
+
+declare interface SearchArea {
+    radius: Radius;
+    coordinates: Coordinates;
 }
 
 declare interface SepaPlaceHolder {
