@@ -65,6 +65,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'checkoutcom',
         method: 'card',
     },
+    sagepay: {
+        provider: 'sagepay',
+        method: 'credit_card',
+    },
     stripe: {
         provider: 'stripe',
         method: 'credit_card',
