@@ -10,6 +10,9 @@ import StorefrontPaymentRequestSender from '../../storefront-payment-request-sen
 import PaymentStrategy from '../payment-strategy';
 
 import { isOpyPaymentMethod, ActionTypes } from './opy';
+import { OpyWidgetConfig } from './opy-library';
+import OpyError from './opy-payment-error';
+import OpyScriptLoader from './opy-script-loader';
 
 export default class OpyPaymentStrategy implements PaymentStrategy {
     constructor(
@@ -17,10 +20,25 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
+        private _scriptLoader: OpyScriptLoader
     ) { }
 
-    initialize(_options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (options?.opy?.containerId) {
+            const { methodId, opy: { containerId } } = options;
+
+            const paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
+
+            if (paymentMethod && isOpyPaymentMethod(paymentMethod)) {
+                const {
+                    initializationData: { widgetConfig },
+                } = paymentMethod;
+
+                await this._installWidget(containerId, widgetConfig);
+            }
+        }
+
         return Promise.resolve(this._store.getState());
     }
 
@@ -45,8 +63,12 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
 
         const {
             clientToken: nonce,
-            initializationData: { nextAction, nextAction: { type } },
+            initializationData: { nextAction },
         } = paymentMethod;
+
+        if (!nextAction) {
+            throw new OpyError('payment.opy_invalid_cart_error', 'opyInvalidCartError');
+        }
 
         if (!nonce) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
@@ -60,7 +82,7 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         } catch (error) {
             if (error instanceof RequestError && error.body.status === 'additional_action_required') {
                 if (nextAction.type === ActionTypes.FORM_POST) {
-                    const { formPost: { formPostUrl, formFields } } = nextAction;
+                    const { formPostUrl, formFields } = nextAction.formPost;
 
                     const url = new URL(formPostUrl.replace(/\/$/, ''));
 
@@ -71,7 +93,7 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
                     return new Promise(() => window.location.assign(decodeURI(url.href)));
                 }
 
-                throw new NotImplementedError(`Unsupported action type: ${type}`);
+                throw new NotImplementedError(`Unsupported action type: ${nextAction.type}`);
             }
 
             throw error;
@@ -84,5 +106,22 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
 
     deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
+    }
+
+    private async _installWidget(containerId: string, config: OpyWidgetConfig): Promise<void> {
+        const widgetContainer = document.getElementById(containerId);
+
+        if (widgetContainer) {
+            try {
+                const widget = await this._scriptLoader.loadOpyWidget(config.region);
+                widget.Config(config);
+            } catch (error) {
+                return;
+            }
+
+            widgetContainer.appendChild(
+                document.createElement('opy-learn-more-button')
+            );
+        }
     }
 }

@@ -13,6 +13,7 @@
 * [baseAmount](order.md#baseamount)
 * [billingAddress](order.md#billingaddress)
 * [cartId](order.md#cartid)
+* [consignments](order.md#consignments)
 * [coupons](order.md#coupons)
 * [currency](order.md#currency)
 * [customerCanBeCreated](order.md#customercanbecreated)
@@ -26,7 +27,6 @@
 * [isDownloadable](order.md#isdownloadable)
 * [isTaxIncluded](order.md#istaxincluded)
 * [lineItems](order.md#lineitems)
-* [mandateUrl](order.md#optional-mandateurl)
 * [orderAmount](order.md#orderamount)
 * [orderAmountAsInteger](order.md#orderamountasinteger)
 * [orderId](order.md#orderid)
@@ -54,6 +54,12 @@ ___
 ###  cartId
 
 • **cartId**: *string*
+
+___
+
+###  consignments
+
+• **consignments**: *[OrderConsignment](orderconsignment.md)[]*
 
 ___
 
@@ -132,12 +138,6 @@ ___
 ###  lineItems
 
 • **lineItems**: *[LineItemMap](lineitemmap.md)*
-
-___
-
-### `Optional` mandateUrl
-
-• **mandateUrl**? : *undefined | string*
 
 ___
 

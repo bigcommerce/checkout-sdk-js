@@ -46,7 +46,6 @@ export interface SquareFormOptions {
     cvv: SquareFormElement;
     expirationDate: SquareFormElement;
     postalCode: SquareFormElement;
-    masterpass: SquareFormElement;
 }
 export interface LineItem {
     label: string;
@@ -106,7 +105,6 @@ export enum CardBrand {
 
 export enum DigitalWalletType {
     applePay = 'APPLEPAY',
-    masterpass = 'MASTERPASS',
     none = 'NONE',
 }
 

@@ -16,6 +16,8 @@
 * [description](gatewayorderpayment.md#description)
 * [detail](gatewayorderpayment.md#detail)
 * [gatewayId](gatewayorderpayment.md#optional-gatewayid)
+* [mandate](gatewayorderpayment.md#optional-mandate)
+* [methodId](gatewayorderpayment.md#optional-methodid)
 * [paymentId](gatewayorderpayment.md#optional-paymentid)
 * [providerId](gatewayorderpayment.md#providerid)
 
@@ -54,6 +56,20 @@ ___
 • **gatewayId**? : *undefined | string*
 
 *Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[gatewayId](gatewayorderpayment.md#optional-gatewayid)*
+
+___
+
+### `Optional` mandate
+
+• **mandate**? : *undefined | object*
+
+___
+
+### `Optional` methodId
+
+• **methodId**? : *undefined | string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[methodId](gatewayorderpayment.md#optional-methodid)*
 
 ___
 

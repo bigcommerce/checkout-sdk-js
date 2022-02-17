@@ -165,21 +165,6 @@ describe('SquarePaymentStrategy', () => {
                 }
             });
 
-            it('Shows the masterpass button', async () => {
-                await strategy.initialize(initOptions);
-
-                let container: HTMLDivElement;
-                container = document.createElement('div');
-                container.id = 'sq-masterpass';
-                document.body.appendChild(container);
-
-                if (callbacks.methodsSupported) {
-                    callbacks.methodsSupported({ masterpass: true });
-                }
-
-                expect(scriptLoader.load).toHaveBeenCalledTimes(1);
-            });
-
             describe('Payment Request callback fired', () => {
 
                 beforeEach(async () => {
@@ -356,7 +341,7 @@ describe('SquarePaymentStrategy', () => {
             describe('when the nonce is received', () => {
                 const payloadVaulted = getPayloadVaulted();
 
-                it('calls submit order with the order request information for masterpass', async () => {
+                it('calls submit order with the order request information for applepay', async () => {
                     await strategy.initialize(initOptions);
                     cardData.digital_wallet_type = DigitalWalletType.none;
 

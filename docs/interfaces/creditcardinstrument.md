@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [browser_info](creditcardinstrument.md#optional-browser_info)
 * [ccCustomerCode](creditcardinstrument.md#optional-cccustomercode)
 * [ccCvv](creditcardinstrument.md#optional-cccvv)
 * [ccExpiry](creditcardinstrument.md#ccexpiry)
@@ -21,6 +22,12 @@
 * [threeDSecure](creditcardinstrument.md#optional-threedsecure)
 
 ## Properties
+
+### `Optional` browser_info
+
+• **browser_info**? : *[BrowserInfo](browserinfo.md)*
+
+___
 
 ### `Optional` ccCustomerCode
 

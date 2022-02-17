@@ -34,45 +34,6 @@ import { NonceGenerationError, SquareFormElement } from './square-form';
  *     },
  * });
  * ```
- *
- * Additional options can be passed in to enable Masterpass (if configured for
- * the account) and customize the fields.
- *
- * ```html
- * <!-- This container is where Masterpass button will be inserted -->
- * <div id="masterpass"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'squarev2',
- *     square: {
- *         cardNumber: {
- *             elementId: 'card-number',
- *         },
- *         cvv: {
- *             elementId: 'card-code',
- *         },
- *         expirationDate: {
- *             elementId: 'card-expiry',
- *         },
- *         postalCode: {
- *             elementId: 'card-code',
- *         },
- *         inputClass: 'form-input',
- *         inputStyles: [
- *             {
- *                 color: '#333',
- *                 fontSize: '13px',
- *                 lineHeight: '20px',
- *             },
- *         ],
- *         masterpass: {
- *             elementId: 'masterpass',
- *         },
- *     },
- * });
- * ```
  */
 export default interface SquarePaymentInitializeOptions {
     /**
@@ -104,11 +65,6 @@ export default interface SquarePaymentInitializeOptions {
      * The set of CSS styles to apply to all form fields.
      */
     inputStyles?: Array<{ [key: string]: string }>;
-
-    /**
-     * Initialize Masterpass placeholder ID
-     */
-    masterpass?: SquareFormElement;
 
     /**
      * A callback that gets called when the customer selects a payment option.

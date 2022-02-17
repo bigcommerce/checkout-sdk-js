@@ -14,6 +14,7 @@
 * [handlingCost](consignment.md#handlingcost)
 * [id](consignment.md#id)
 * [lineItemIds](consignment.md#lineitemids)
+* [selectedPickupOption](consignment.md#optional-selectedpickupoption)
 * [selectedShippingOption](consignment.md#optional-selectedshippingoption)
 * [shippingAddress](consignment.md#shippingaddress)
 * [shippingCost](consignment.md#shippingcost)
@@ -41,6 +42,12 @@ ___
 ###  lineItemIds
 
 • **lineItemIds**: *string[]*
+
+___
+
+### `Optional` selectedPickupOption
+
+• **selectedPickupOption**? : *[PickupOption](pickupoption.md)*
 
 ___
 

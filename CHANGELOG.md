@@ -2,6 +2,89 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.219.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.218.0...v1.219.0) (2022-02-17)
+
+
+### Features
+
+* **payment:** PAYPAL-1282 New style object for PayPal APMs ([#1330](https://github.com/bigcommerce/checkout-sdk-js/issues/1330)) ([89ecb3f](https://github.com/bigcommerce/checkout-sdk-js/commit/89ecb3f86019be9ddeadfa5b0e9d256fc4a88418))
+
+## [1.218.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.217.0...v1.218.0) (2022-02-17)
+
+
+### Features
+
+* **payment:** INT-5384 Openpay: Add the learn more button widget ([6990849](https://github.com/bigcommerce/checkout-sdk-js/commit/69908496e5692611b12a60dae0b43b45591a4dc7))
+
+## [1.217.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.216.0...v1.217.0) (2022-02-14)
+
+
+### Features
+
+* **payment:** INT-4282 removing masterpass logic for square ([8118522](https://github.com/bigcommerce/checkout-sdk-js/commit/8118522d5dd008d38a3f5f58468fe59c3b0bc8d0))
+
+## [1.216.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.215.1...v1.216.0) (2022-02-10)
+
+
+### Features
+
+* **order:** INT-4776 Create a new field for the mandate reference ID ([#1220](https://github.com/bigcommerce/checkout-sdk-js/issues/1220)) ([e9005f5](https://github.com/bigcommerce/checkout-sdk-js/commit/e9005f56af5adb37322f19325e527f3b7b9e1500))
+
+### [1.215.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.215.0...v1.215.1) (2022-02-10)
+
+## [1.215.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.214.1...v1.215.0) (2022-02-08)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6071 Update Apple Pay in Cart ([#1334](https://github.com/bigcommerce/checkout-sdk-js/issues/1334)) ([1dd8b0f](https://github.com/bigcommerce/checkout-sdk-js/commit/1dd8b0fc6e30459b1644a2a5f5e6bc323508a00e))
+
+### [1.214.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.214.0...v1.214.1) (2022-02-07)
+
+
+### Bug Fixes
+
+* **common:**  CHECKOUT-0000 upgrade core-js from 3.1.2 to 3.20.1 ([#1323](https://github.com/bigcommerce/checkout-sdk-js/issues/1323)) ([4d1e4cd](https://github.com/bigcommerce/checkout-sdk-js/commit/4d1e4cde447e9046876e2c04acbc34fa96d84268))
+* **common:** CHECKOUT-0000 upgrade @types/lodash from 4.14.139 to 4.14.178 ([#1324](https://github.com/bigcommerce/checkout-sdk-js/issues/1324)) ([78a3b65](https://github.com/bigcommerce/checkout-sdk-js/commit/78a3b652b3801dd9ffd0589db6f1d0f78ad00fb6))
+* **common:** CHECKOUT-0000 upgrade reselect from 4.0.0 to 4.1.5 ([#1327](https://github.com/bigcommerce/checkout-sdk-js/issues/1327)) ([c6df17f](https://github.com/bigcommerce/checkout-sdk-js/commit/c6df17fa06d8136263f021ee406a7be7df1536f8))
+
+## [1.214.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.213.1...v1.214.0) (2022-02-04)
+
+
+### Features
+
+* **payment:** INT-4969 add browser_info for Opayo ([b85353f](https://github.com/bigcommerce/checkout-sdk-js/commit/b85353fa4e84ef9ec1be66f10915b162958352da))
+* **payment:** INT-4969 add SagePayPayload type ([647e87f](https://github.com/bigcommerce/checkout-sdk-js/commit/647e87f3852ee778a8dd6bded84dbab68b3d5b88))
+* **payment:** INT-4969 add SagePayPayload type ([046e28d](https://github.com/bigcommerce/checkout-sdk-js/commit/046e28da021a1322c7f04c9fc63c2aeec746980c))
+* **payment:** INT-4969 add Unit Tests ([ddfa5a7](https://github.com/bigcommerce/checkout-sdk-js/commit/ddfa5a75958c99aa443fbfb5b1f56d43af52621a))
+* **payment:** INT-4969 remove SagePayPayload type ([c93499c](https://github.com/bigcommerce/checkout-sdk-js/commit/c93499cb858f6ba1116e3ac53a2fefbe046ad8d4))
+
+### [1.213.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.213.0...v1.213.1) (2022-02-03)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6070 Update style of apple pay customer step button ([#1341](https://github.com/bigcommerce/checkout-sdk-js/issues/1341)) ([d4a3fd4](https://github.com/bigcommerce/checkout-sdk-js/commit/d4a3fd4a6569e8039c1b9bb1f71ba27a6ca71624))
+
+## [1.213.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.212.0...v1.213.0) (2022-02-03)
+
+
+### Features
+
+* **payment:** INT-4969 Bump bigpay-client dependency to add browser info for Opayo ([972e1bf](https://github.com/bigcommerce/checkout-sdk-js/commit/972e1bf4d267717a6323531b103e08a6c2791422))
+
+
+### Bug Fixes
+
+* **checkout:** INT-5409 Change error message when payment data is unavailable ([94cfe42](https://github.com/bigcommerce/checkout-sdk-js/commit/94cfe423d03ea9e454e15a2ffcc5a4abc3e08b61))
+
+## [1.212.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.211.0...v1.212.0) (2022-02-02)
+
+
+### Features
+
+* **shipping:** CHECKOUT-6004 Add pickup options to consignment interfaces ([#1332](https://github.com/bigcommerce/checkout-sdk-js/issues/1332)) ([d201e5d](https://github.com/bigcommerce/checkout-sdk-js/commit/d201e5dc2ef3c1612097ee4a60182aa92ae695d0))
+
 ## [1.211.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.210.0...v1.211.0) (2022-01-20)
 
 

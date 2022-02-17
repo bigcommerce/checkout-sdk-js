@@ -119,6 +119,7 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
+    selectedPickupOption?: PickupOption;
     lineItemIds: string[];
 }
 
@@ -199,6 +200,10 @@ declare interface GatewayOrderPayment extends OrderPayment {
     detail: {
         step: string;
         instructions: string;
+    };
+    mandate?: {
+        id: string;
+        url?: string;
     };
 }
 
@@ -561,6 +566,7 @@ declare interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
+    consignments: OrderConsignment[];
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -582,7 +588,10 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandateUrl?: string;
+}
+
+declare interface OrderConsignment {
+    shipping: OrderShippingConsignment[];
 }
 
 declare interface OrderMetaState extends InternalOrderMeta {
@@ -595,12 +604,51 @@ declare interface OrderMetaState extends InternalOrderMeta {
 declare interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    methodId?: string;
     paymentId?: string;
     description: string;
     amount: number;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
+
+declare interface OrderShippingConsignment {
+    lineItems: Array<{
+        id: number;
+    }>;
+    shippingAddressId: number;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    postalCode: string;
+    country: string;
+    countryCode: string;
+    email: string;
+    phone: string;
+    itemsTotal: number;
+    itemsShipped: number;
+    shippingMethod: string;
+    baseCost: number;
+    costExTax: number;
+    costIncTax: number;
+    costTax: number;
+    costTaxClassId: number;
+    baseHandlingCost: number;
+    handlingCostExTax: number;
+    handlingCostIncTax: number;
+    handlingCostTax: number;
+    handlingCostTaxClassId: number;
+    shippingZoneId: number;
+    shippingZoneName: string;
+    customFields: Array<{
+        name: string;
+        value: string | null;
+    }>;
+}
 
 declare interface PhysicalItem extends LineItem {
     isShippingRequired: boolean;
@@ -609,6 +657,10 @@ declare interface PhysicalItem extends LineItem {
         message: string;
         amount: number;
     };
+}
+
+declare interface PickupOption {
+    pickupMethodId: number;
 }
 
 declare interface Promotion {

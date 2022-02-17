@@ -539,6 +539,23 @@ declare interface AmazonPayWidgetError extends Error {
 declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
 
 /**
+ * A set of options that are required to initialize ApplePay in cart.
+ *
+ * When ApplePay is initialized, an ApplePay button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface ApplePayButtonInitializeOptions {
+    /**
+     * The class name of the ApplePay button style.
+     */
+    buttonClassName?: string;
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void;
+}
+
+/**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support ApplePay.
  *
@@ -1095,6 +1112,15 @@ declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
+declare interface BrowserInfo {
+    color_depth: number;
+    java_enabled: boolean;
+    language: string;
+    screen_height: number;
+    screen_width: number;
+    time_zone_offset: string;
+}
+
 declare enum ButtonColor {
     Default = "default",
     Black = "black",
@@ -1342,6 +1368,11 @@ declare class CheckoutButtonErrorSelector {
 
 declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     /**
+     * The options that are required to initialize the ApplePay payment method.
+     * They can be omitted unless you need to support ApplePay in cart.
+     */
+    applepay?: ApplePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
      */
@@ -1498,6 +1529,7 @@ declare interface CheckoutButtonInitializerOptions {
 }
 
 declare enum CheckoutButtonMethodType {
+    APPLEPAY = "applepay",
     AMAZON_PAY_V2 = "amazonpay",
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
@@ -3353,17 +3385,20 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
+    selectedPickupOption?: PickupOption;
     lineItemIds: string[];
 }
 
 declare interface ConsignmentAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare interface ConsignmentCreateRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare interface ConsignmentLineItem {
@@ -3375,6 +3410,7 @@ declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
+    pickupOption?: PickupOption;
 }
 
 declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
@@ -3408,6 +3444,7 @@ declare interface CreditCardInstrument {
     shouldSetAsDefaultInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+    browser_info?: BrowserInfo;
 }
 
 /**
@@ -4040,6 +4077,10 @@ declare interface GatewayOrderPayment extends OrderPayment {
     detail: {
         step: string;
         instructions: string;
+    };
+    mandate?: {
+        id: string;
+        url?: string;
     };
 }
 
@@ -4907,11 +4948,43 @@ declare interface OptionsResponse {
     paymentMethodConfiguration?: BaseElementOptions;
 }
 
+/**
+ * A set of options that are required to initialize the payment step of
+ * checkout in order to support Opy.
+ *
+ * When Opy is initialized, a widget will be inserted into the DOM. The
+ * widget will open a modal that will show more information about Opy when
+ * clicking it.
+ *
+ * @example
+ *
+ * ```html
+ * <!-- This is where the Opy widget will be inserted -->
+ * <div id="opy-widget"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'opy',
+ *     opy: {
+ *         containerId: 'opy-widget',
+ *     },
+ * });
+ * ```
+ */
+declare interface OpyPaymentInitializeOptions {
+    /**
+     * The ID of a container which the payment widget should insert into.
+     */
+    containerId: string;
+}
+
 declare interface Order {
     baseAmount: number;
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
+    consignments: OrderConsignment[];
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -4933,12 +5006,16 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
-    mandateUrl?: string;
+}
+
+declare interface OrderConsignment {
+    shipping: OrderShippingConsignment[];
 }
 
 declare interface OrderPayment {
     providerId: string;
     gatewayId?: string;
+    methodId?: string;
     paymentId?: string;
     description: string;
     amount: number;
@@ -4983,6 +5060,44 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
+}
+
+declare interface OrderShippingConsignment {
+    lineItems: Array<{
+        id: number;
+    }>;
+    shippingAddressId: number;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    postalCode: string;
+    country: string;
+    countryCode: string;
+    email: string;
+    phone: string;
+    itemsTotal: number;
+    itemsShipped: number;
+    shippingMethod: string;
+    baseCost: number;
+    costExTax: number;
+    costIncTax: number;
+    costTax: number;
+    costTaxClassId: number;
+    baseHandlingCost: number;
+    handlingCostExTax: number;
+    handlingCostIncTax: number;
+    handlingCostTax: number;
+    handlingCostTaxClassId: number;
+    shippingZoneId: number;
+    shippingZoneName: string;
+    customFields: Array<{
+        name: string;
+        value: string | null;
+    }>;
 }
 
 declare interface PasswordRequirements {
@@ -5074,6 +5189,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Moneris.
      */
     moneris?: MonerisPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Opy payment
+     * method. They can be omitted unless you need to support Opy.
+     */
+    opy?: OpyPaymentInitializeOptions;
     /**
      * The options that are required to initialize the PayPal Express payment method.
      * They can be omitted unless you need to support PayPal Express.
@@ -5614,28 +5734,25 @@ declare interface PaypalExpressPaymentInitializeOptions {
 }
 
 declare interface PaypalFieldsStyleOptions {
-    base?: {
-        backgroundColor?: string;
-        color?: string;
-        fontSize?: string;
+    variables?: {
         fontFamily?: string;
-        lineHeight?: string;
-        letterSpacing?: string;
-    };
-    input?: {
-        backgroundColor?: string;
-        fontSize?: string;
-        color?: string;
-        borderColor?: string;
+        fontSizeBase?: string;
+        fontSizeSm?: string;
+        fontSizeM?: string;
+        fontSizeLg?: string;
+        textColor?: string;
+        colorTextPlaceholder?: string;
+        colorBackground?: string;
+        colorInfo?: string;
+        colorDanger?: string;
         borderRadius?: string;
+        borderColor?: string;
         borderWidth?: string;
-        padding?: string;
+        borderFocusColor?: string;
+        spacingUnit?: string;
     };
-    invalid?: {
-        color?: string;
-    };
-    active?: {
-        color?: string;
+    rules?: {
+        [key: string]: any;
     };
 }
 
@@ -5646,6 +5763,10 @@ declare interface PhysicalItem extends LineItem {
         message: string;
         amount: number;
     };
+}
+
+declare interface PickupOption {
+    pickupMethodId: number;
 }
 
 declare interface Promotion {
@@ -5827,45 +5948,6 @@ declare interface SquareFormElement {
  *     },
  * });
  * ```
- *
- * Additional options can be passed in to enable Masterpass (if configured for
- * the account) and customize the fields.
- *
- * ```html
- * <!-- This container is where Masterpass button will be inserted -->
- * <div id="masterpass"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'squarev2',
- *     square: {
- *         cardNumber: {
- *             elementId: 'card-number',
- *         },
- *         cvv: {
- *             elementId: 'card-code',
- *         },
- *         expirationDate: {
- *             elementId: 'card-expiry',
- *         },
- *         postalCode: {
- *             elementId: 'card-code',
- *         },
- *         inputClass: 'form-input',
- *         inputStyles: [
- *             {
- *                 color: '#333',
- *                 fontSize: '13px',
- *                 lineHeight: '20px',
- *             },
- *         ],
- *         masterpass: {
- *             elementId: 'masterpass',
- *         },
- *     },
- * });
- * ```
  */
 declare interface SquarePaymentInitializeOptions {
     /**
@@ -5894,10 +5976,6 @@ declare interface SquarePaymentInitializeOptions {
     inputStyles?: Array<{
         [key: string]: string;
     }>;
-    /**
-     * Initialize Masterpass placeholder ID
-     */
-    masterpass?: SquareFormElement;
     /**
      * A callback that gets called when the customer selects a payment option.
      */

@@ -16,6 +16,7 @@
 * [description](giftcertificateorderpayment.md#description)
 * [detail](giftcertificateorderpayment.md#detail)
 * [gatewayId](giftcertificateorderpayment.md#optional-gatewayid)
+* [methodId](giftcertificateorderpayment.md#optional-methodid)
 * [paymentId](giftcertificateorderpayment.md#optional-paymentid)
 * [providerId](giftcertificateorderpayment.md#providerid)
 
@@ -54,6 +55,14 @@ ___
 • **gatewayId**? : *undefined | string*
 
 *Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[gatewayId](gatewayorderpayment.md#optional-gatewayid)*
+
+___
+
+### `Optional` methodId
+
+• **methodId**? : *undefined | string*
+
+*Inherited from [GatewayOrderPayment](gatewayorderpayment.md).[methodId](gatewayorderpayment.md#optional-methodid)*
 
 ___
 

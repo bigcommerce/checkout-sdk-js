@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { getConfig } from '../../../config/configs.mock';
 import { HostedFormFactory } from '../../../hosted-form';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -212,5 +213,68 @@ describe('SagePayPaymentStrategy', () => {
     it('is special type of credit card strategy', () => {
         expect(strategy)
             .toBeInstanceOf(CreditCardPaymentStrategy);
+    });
+
+    describe('#Execute with 3DS2 experiment on', () => {
+        beforeEach(() => {
+            const config = getConfig();
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'INT-4994.Opayo_3DS2': true,
+                        },
+                    },
+                });
+        });
+
+        it('submit payment with browser_info', async () => {
+            const payload = getOrderRequestBody();
+            const options = { methodId: 'sagepay' };
+
+            await strategy.execute(payload, options);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                ...payload.payment,
+                paymentData: {
+                    ...payload.payment?.paymentData,
+                    browser_info: {
+                        color_depth: expect.any(Number),
+                        java_enabled: expect.any(Boolean),
+                        language: expect.any(String),
+                        screen_height: expect.any(Number),
+                        screen_width: expect.any(Number),
+                        time_zone_offset: expect.any(String),
+                    },
+                },
+            });
+        });
+
+        it('posts 3ds data to Sage if 3ds is enabled', async () => {
+            const error = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    acs_url: 'https://acs/url',
+                    payer_auth_request: 'c_request',
+                },
+                status: 'error',
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+
+            strategy.execute(getOrderRequestBody());
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
+                creq: 'c_request',
+            }, undefined, '_top');
+        });
     });
 });
