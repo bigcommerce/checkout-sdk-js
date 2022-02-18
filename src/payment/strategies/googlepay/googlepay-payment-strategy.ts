@@ -214,6 +214,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepaystripe;
         }
 
+        if (options.methodId === PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY && options.googlepaystripeupe) {
+            return options.googlepaystripeupe;
+        }
+
         throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
     }
 

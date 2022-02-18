@@ -45,7 +45,7 @@ import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { ExternalPaymentStrategy } from './strategies/external';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
@@ -702,6 +702,21 @@ export default function createPaymentStrategyRegistry(
             createGooglePayPaymentProcessor(
                 store,
                 new GooglePayStripeInitializer()
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayStripeUPEInitializer()
             )
         )
     );

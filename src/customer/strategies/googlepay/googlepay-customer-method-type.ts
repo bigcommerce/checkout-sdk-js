@@ -1,8 +1,4 @@
-enum CheckoutButtonMethodType {
-    APPLEPAY = 'applepay',
-    AMAZON_PAY_V2 = 'amazonpay',
-    BRAINTREE_PAYPAL = 'braintreepaypal',
-    BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
+enum GooglePayCustomerMethodType {
     GOOGLEPAY_ADYENV2 = 'googlepayadyenv2',
     GOOGLEPAY_AUTHORIZENET = 'googlepayauthorizenet',
     GOOGLEPAY_BRAINTREE = 'googlepaybraintree',
@@ -11,9 +7,6 @@ enum CheckoutButtonMethodType {
     GOOGLEPAY_ORBITAL = 'googlepayorbital',
     GOOGLEPAY_STRIPE = 'googlepaystripe',
     GOOGLEPAY_STRIPEUPE = 'googlepaystripeupe',
-    MASTERPASS = 'masterpass',
-    PAYPALEXPRESS = 'paypalexpress',
-    PAYPALCOMMERCE = 'paypalcommerce',
 }
 
-export default CheckoutButtonMethodType;
+export default GooglePayCustomerMethodType;

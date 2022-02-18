@@ -57,6 +57,10 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 
+    it('returns registry with GooglePay on StripeUPE Credit registered', () => {
+        expect(registry.get('googlepaystripeupe')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
     it('returns registry with AmazonPayV2 registered', () => {
         expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
     });

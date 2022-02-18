@@ -1,5 +1,6 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
+import { CheckoutButtonMethodType } from '../';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
@@ -72,32 +73,36 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
     private _getGooglePayOptions(options: CheckoutButtonInitializeOptions): GooglePayButtonInitializeOptions {
 
-        if (options.methodId === 'googlepayadyenv2' && options.googlepayadyenv2) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV2 && options.googlepayadyenv2) {
             return options.googlepayadyenv2;
         }
 
-        if (options.methodId === 'googlepayauthorizenet' && options.googlepayauthorizenet) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET && options.googlepayauthorizenet) {
             return options.googlepayauthorizenet;
         }
 
-        if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }
 
-        if (options.methodId === 'googlepaycheckoutcom' && options.googlepaycheckoutcom) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM && options.googlepaycheckoutcom) {
             return options.googlepaycheckoutcom;
         }
 
-        if (options.methodId === 'googlepaycybersourcev2' && options.googlepaycybersourcev2) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2 && options.googlepaycybersourcev2) {
             return options.googlepaycybersourcev2;
         }
 
-        if (options.methodId === 'googlepayorbital' && options.googlepayorbital) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ORBITAL && options.googlepayorbital) {
             return options.googlepayorbital;
         }
 
-        if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPE && options.googlepaystripe) {
             return options.googlepaystripe;
+        }
+
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE && options.googlepaystripeupe) {
+            return options.googlepaystripeupe;
         }
 
         throw new InvalidArgumentError();

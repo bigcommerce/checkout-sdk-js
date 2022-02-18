@@ -29,6 +29,7 @@ export function getCheckoutMock(): Checkout {
         cart: {
             currency: {
                 code: 'USD',
+                decimalPlaces: 2,
             },
         } as Cart,
         customer: {} as Customer,

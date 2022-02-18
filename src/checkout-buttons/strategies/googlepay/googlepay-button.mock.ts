@@ -25,6 +25,7 @@ export enum Mode {
     GooglePayCybersourceV2,
     GooglePayOrbital,
     GooglePayStripe,
+    GooglePayStripeUPE,
 }
 
 export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
@@ -38,6 +39,7 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
     const googlepaycybersourcev2 = { googlepaycybersourcev2: { buttonType: ButtonType.Short } };
     const googlepayorbital = { googlepayorbital: { buttonType: ButtonType.Short } };
     const googlepaystripe = { googlepaystripe: { buttonType: ButtonType.Short } };
+    const googlepaystripeupe = { googlepaystripeupe: { buttonType: ButtonType.Short } };
 
     switch (mode) {
         case Mode.UndefinedContainer: {
@@ -66,6 +68,9 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
         }
         case Mode.GooglePayStripe: {
             return { methodId, containerId, ...googlepaystripe };
+        }
+        case Mode.GooglePayStripeUPE: {
+            return { methodId, containerId, ...googlepaystripeupe };
         }
         default: {
             return { methodId, containerId };
