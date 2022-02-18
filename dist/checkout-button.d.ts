@@ -250,6 +250,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Stripe GooglePay. They can be
+     * omitted unless you need to support Stripe GooglePay.
+     */
+    googlepaystripeupe?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Authorize.Net GooglePay.
      * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
@@ -358,6 +363,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",
     GOOGLEPAY_ORBITAL = "googlepayorbital",
     GOOGLEPAY_STRIPE = "googlepaystripe",
+    GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
     PAYPALCOMMERCE = "paypalcommerce"

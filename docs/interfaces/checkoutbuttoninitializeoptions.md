@@ -28,6 +28,7 @@
 * [googlepaycybersourcev2](checkoutbuttoninitializeoptions.md#optional-googlepaycybersourcev2)
 * [googlepayorbital](checkoutbuttoninitializeoptions.md#optional-googlepayorbital)
 * [googlepaystripe](checkoutbuttoninitializeoptions.md#optional-googlepaystripe)
+* [googlepaystripeupe](checkoutbuttoninitializeoptions.md#optional-googlepaystripeupe)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#optional-params)
 * [paypal](checkoutbuttoninitializeoptions.md#optional-paypal)
@@ -137,6 +138,15 @@ ___
 ### `Optional` googlepaystripe
 
 • **googlepaystripe**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to facilitate Stripe GooglePay. They can be
+omitted unless you need to support Stripe GooglePay.
+
+___
+
+### `Optional` googlepaystripeupe
+
+• **googlepaystripeupe**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
 
 The options that are required to facilitate Stripe GooglePay. They can be
 omitted unless you need to support Stripe GooglePay.

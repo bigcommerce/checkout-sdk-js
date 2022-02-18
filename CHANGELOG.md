@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.221.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.220.0...v1.221.0) (2022-02-18)
+
+
+### Features
+
+* **payment:** INT-5467 Stripe UPE GooglePay ([a821b71](https://github.com/bigcommerce/checkout-sdk-js/commit/a821b718ef3bc15a3e5703e9aa6b1012bcc98df4))
+* **payment:** INT-5467 Stripe UPE GooglePay Checkout button and customer strategy ([a8ea005](https://github.com/bigcommerce/checkout-sdk-js/commit/a8ea005bd0f0632679cc4f499886d59cbd4e8256))
+* **payment:** INT-5467 Stripe UPE GooglePay PR feedback ([6eed391](https://github.com/bigcommerce/checkout-sdk-js/commit/6eed3918247a0c0683c232c34040ae91257b4907))
+
 ## [1.220.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.219.0...v1.220.0) (2022-02-17)
 
 

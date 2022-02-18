@@ -17,6 +17,7 @@
 * [GOOGLEPAY_CYBERSOURCEV2](checkoutbuttonmethodtype.md#googlepay_cybersourcev2)
 * [GOOGLEPAY_ORBITAL](checkoutbuttonmethodtype.md#googlepay_orbital)
 * [GOOGLEPAY_STRIPE](checkoutbuttonmethodtype.md#googlepay_stripe)
+* [GOOGLEPAY_STRIPEUPE](checkoutbuttonmethodtype.md#googlepay_stripeupe)
 * [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
 * [PAYPALCOMMERCE](checkoutbuttonmethodtype.md#paypalcommerce)
 * [PAYPALEXPRESS](checkoutbuttonmethodtype.md#paypalexpress)
@@ -86,6 +87,12 @@ ___
 ###  GOOGLEPAY_STRIPE
 
 • **GOOGLEPAY_STRIPE**: = "googlepaystripe"
+
+___
+
+###  GOOGLEPAY_STRIPEUPE
+
+• **GOOGLEPAY_STRIPEUPE**: = "googlepaystripeupe"
 
 ___
 

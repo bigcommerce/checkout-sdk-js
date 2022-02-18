@@ -1432,6 +1432,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepaystripe?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Stripe GooglePay. They can be
+     * omitted unless you need to support Stripe GooglePay.
+     */
+    googlepaystripeupe?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Authorize.Net GooglePay.
      * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
@@ -1540,6 +1545,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",
     GOOGLEPAY_ORBITAL = "googlepayorbital",
     GOOGLEPAY_STRIPE = "googlepaystripe",
+    GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
     PAYPALCOMMERCE = "paypalcommerce"
@@ -3765,6 +3771,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripe?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripeupe?: GooglePayCustomerInitializeOptions;
 }
 
 declare interface CustomerPasswordRequirements {
@@ -5285,6 +5296,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripe?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Stripe payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripeupe?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the Stripe payment method.
      * They can be omitted unless you need to support StripeV3.
