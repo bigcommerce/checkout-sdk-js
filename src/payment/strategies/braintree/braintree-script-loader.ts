@@ -87,6 +87,18 @@ export default class BraintreeScriptLoader {
             });
     }
 
+    loadVenmoCheckout() {
+        return this._scriptLoader
+            .loadScript(`//js.braintreegateway.com/web/${version}/js/venmo.min.js`)
+            .then(() => {
+                if (!this._window.braintree || !this._window.braintree.venmo) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+
+                return this._window.braintree.venmo;
+            });
+    }
+
     loadGooglePayment(): Promise<GooglePayCreator> {
         return this._scriptLoader
             .loadScript(`//js.braintreegateway.com/web/${version}/js/google-payment.min.js`)

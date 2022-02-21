@@ -105,7 +105,7 @@ describe('PaymentRequestTransformer', () => {
     it('returns paymentMethod format when contains initializationData', () => {
         const paymentMethod = getAuthorizenet();
         paymentMethod.initializationData = {
-            gateway: 'authnet',
+            gateway: 'authorizenet',
         };
 
         jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')

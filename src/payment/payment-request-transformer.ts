@@ -3,6 +3,7 @@ import { pick } from 'lodash';
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
+import { CheckoutButtonMethodType } from '../checkout-buttons/strategies';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { HostedFormOrderData } from '../hosted-form';
@@ -113,6 +114,10 @@ export default class PaymentRequestTransformer {
 
         if (paymentMethod.initializationData && paymentMethod.initializationData.gateway) {
             return { ...paymentMethod, id: paymentMethod.initializationData.gateway };
+        }
+
+        if (paymentMethod.id === CheckoutButtonMethodType.BRAINTREE_VENMO) {
+            return { ...paymentMethod, id: CheckoutButtonMethodType.BRAINTREE_PAYPAL };
         }
 
         return paymentMethod;

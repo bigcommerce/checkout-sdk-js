@@ -11,10 +11,13 @@ import { BraintreeError,
     BraintreeSDKCreator,
     BraintreeTokenizePayload,
     PaypalClientInstance,
-    RenderButtonsData } from '../../../payment/strategies/braintree';
+    RenderButtonsData,
+    VenmoError,
+    VenmoInstance } from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalButtonStyleOptions, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+import { CheckoutButtonMethodType } from '../index';
 
 import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
 
@@ -36,6 +39,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const paypalOptions = (this._offerCredit ? options.braintreepaypalcredit : options.braintreepaypal) || {};
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
+        const isVenmoEnabled = paymentMethod?.initializationData?.isBraintreeVenmoEnabled;
         const storeState = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = storeState.config.getStoreConfig()?.shopperCurrency;
 
@@ -46,16 +50,19 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
         const container = `#${options.containerId}`;
         const messagingContainerId = options.braintreepaypal?.messagingContainerId;
+        const venmoParentContainer = options.containerId;
 
         this._renderButtonsData = {
             paymentMethod,
             paypalOptions,
             container,
             messagingContainerId,
+            venmoParentContainer,
         };
 
         return Promise.all([
-            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code}, (paypalCheckoutInstance: PaypalClientInstance) => this.renderButtons(paypalCheckoutInstance)),
+            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code}, (paypalCheckoutInstance: PaypalClientInstance) => this._renderButtons(paypalCheckoutInstance)),
+            this._braintreeSDKCreator.getVenmoCheckout({isBraintreeVenmoEnabled: !!isVenmoEnabled}, (venmoCheckoutInstance: VenmoInstance): Promise<VenmoInstance> | void => this._renderVenmoButton(venmoCheckoutInstance)),
             this._braintreeSDKCreator.getPaypal(),
         ])
             .then(([paypalCheckout]) => {
@@ -65,7 +72,16 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             });
     }
 
-    renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
+    deinitialize(): Promise<void> {
+        this._paymentMethod = undefined;
+        this._paypalCheckout = undefined;
+
+        this._braintreeSDKCreator.teardown();
+
+        return Promise.resolve();
+    }
+
+    private _renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
         const { paypalOptions, paymentMethod, container, messagingContainerId } = this._renderButtonsData as RenderButtonsData;
         const { paypal } = this._window;
         const state = this._store.getState();
@@ -115,13 +131,49 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         }
     }
 
-    deinitialize(): Promise<void> {
-        this._paymentMethod = undefined;
-        this._paypalCheckout = undefined;
+    private _renderVenmoButton(venmoInstance: VenmoInstance) {
+        const venmoContainer = this._renderButtonsData?.venmoParentContainer;
+        const venmoButton = document.createElement('div');
+        if (venmoContainer) {
+            const buttonContainer = document.getElementById(venmoContainer);
+            buttonContainer?.appendChild(venmoButton);
+            venmoButton.setAttribute('id', 'venmo-button');
+            venmoButton.addEventListener('click', () =>  {
+                venmoButton.setAttribute('disabled', 'true');
+                if (venmoInstance.tokenize) {
+                    venmoInstance.tokenize((tokenizeErr: VenmoError, payload: BraintreeTokenizePayload) => {
+                        venmoButton.removeAttribute('disabled');
+                        if (tokenizeErr) {
+                            return  this._handleVenmoError(tokenizeErr);
+                        }
 
-        this._braintreeSDKCreator.teardown();
+                        return  this._handleSuccess(payload);
+                    });
+                }
+            });
+        }
+    }
 
-        return Promise.resolve();
+    private _handleSuccess(payload: BraintreeTokenizePayload) {
+        Promise.all([
+            this._braintreeSDKCreator.getDataCollector(),
+        ]).then(([{ deviceData }]) => {
+            this._formPoster.postForm('/checkout.php', {
+                payment_type: 'paypal',
+                provider: CheckoutButtonMethodType.BRAINTREE_VENMO,
+                action: false ? 'process_payment' : 'set_external_checkout',
+                nonce: payload.nonce,
+                device_data: deviceData,
+                shipping_address: JSON.stringify(this._mapToLegacyShippingAddress(payload)),
+                billing_address: JSON.stringify(this._mapToLegacyBillingAddress(payload)),
+            });
+        });
+
+        return payload;
+    }
+
+    private _handleVenmoError(err: any) {
+        throw new Error(err.message);
     }
 
     private _renderMessages(amount: number, containerId: string) {

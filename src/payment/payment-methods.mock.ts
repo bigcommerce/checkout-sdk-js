@@ -37,6 +37,9 @@ export function getBraintreePaypal(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        initializationData: {
+            isBrainteeVenmoEnabled: false,
+        },
     };
 }
 
@@ -51,6 +54,9 @@ export function getBraintreePaypalCredit(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
+        initializationData: {
+            isBraintreeVenmoEnabled: false,
+        },
     };
 }
 
