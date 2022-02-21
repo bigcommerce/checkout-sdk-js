@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.222.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.221.0...v1.222.0) (2022-02-21)
+
+
+### Features
+
+* **payment:** PAYPAL-1151 braintree venmo spb integration ([#1346](https://github.com/bigcommerce/checkout-sdk-js/issues/1346)) ([dbca991](https://github.com/bigcommerce/checkout-sdk-js/commit/dbca9919143260ae7a9626b124604b3412cdac23))
+
 ## [1.221.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.220.0...v1.221.0) (2022-02-18)
 
 
