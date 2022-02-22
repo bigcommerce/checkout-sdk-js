@@ -218,13 +218,25 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         let state = this._store.getState();
         const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
         let checkout = state.checkout.getCheckoutOrThrow();
+        const selectionShippingOptionId = checkout.consignments[0].selectedShippingOption?.id;
         const availableOptions = checkout.consignments[0].availableShippingOptions;
-        const shippingOptions = availableOptions?.map(option => ({
-            label: option.description,
-            amount: `${option.cost.toFixed(decimalPlaces)}`,
-            detail: option.additionalDescription,
-            identifier: option.id,
-        }));
+        const selectedOption = availableOptions?.find(({id}) => id === selectionShippingOptionId);
+        const unselectedOptions = availableOptions?.filter(option => option.id !== selectionShippingOptionId);
+        let shippingOptions: ApplePayJS.ApplePayShippingMethod[];
+        shippingOptions = selectedOption ? [{
+            label: selectedOption.description,
+            amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
+            detail: selectedOption.additionalDescription,
+            identifier: selectedOption.id,
+        }] : [];
+        unselectedOptions?.forEach(option => shippingOptions.push(
+            {
+                label: option.description,
+                amount: `${option.cost.toFixed(decimalPlaces)}`,
+                detail: option.additionalDescription,
+                identifier: option.id,
+            }
+        ));
 
         if (!isShippingOptions(availableOptions)) {
             throw new Error('Shipping options not available.');
@@ -250,8 +262,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         );
 
         const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
+        const selectedOptionId = selectedOption ? selectedOption.id : optionId;
         try {
-            await this._updateShippingOption(optionId);
+            await this._updateShippingOption(selectedOptionId);
         } catch (error) {
             throw new Error('Shipping options update failed');
         }
