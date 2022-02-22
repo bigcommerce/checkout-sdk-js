@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
@@ -19,6 +19,8 @@ import { ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
 import { MockApplePaySession } from '../../../payment/strategies/apple-pay/apple-pay-payment.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
+import { getConsignment } from '../../../shipping/consignments.mock';
+import { getShippingOption } from '../../../shipping/shipping-options.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -297,6 +299,64 @@ describe('ApplePayButtonStrategy', () => {
                     await applePaySession.onshippingmethodselected(event);
 
                     expect(applePaySession.completeShippingMethodSelection).toHaveBeenCalled();
+                }
+            }
+        });
+
+        it('gets shipping contact selected successfully with a selected shipping option', async () => {
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+            const newCheckout = {
+                ...getCheckout(),
+                consignments: [
+                    {
+                        ...getConsignment(),
+                        selectedShippingOption: {
+                            ...getShippingOption(),
+                            description: 'Free Shipping',
+                            additionalDescription: 'Free shipping to your order',
+                            id: '0:61d4bb52f746477e1d4fb41127361823',
+                        },
+                        availableShippingOptions: [
+                            getShippingOption(),
+                            {
+                                ...getShippingOption(),
+                                description: 'Free Shipping',
+                                additionalDescription: 'Free shipping to your order',
+                                id: '0:61d4bb52f746477e1d4fb41127361823',
+                            },
+                        ],
+                    },
+                ],
+            };
+            const availableShippingMethods = newCheckout.consignments[0].availableShippingOptions.reverse().map(option => ({
+                label: option.description,
+                amount: option.cost.toFixed(2),
+                detail: option.additionalDescription,
+                identifier: option.id,
+            }));
+
+            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
+                .mockReturnValue(newCheckout);
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    await applePaySession.onshippingcontactselected(event);
+
+                    expect(consignmentActionCreator.selectShippingOption)
+                        .toHaveBeenCalledWith('0:61d4bb52f746477e1d4fb41127361823');
+                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith({
+                        newShippingMethods: availableShippingMethods,
+                        newTotal: expect.anything(),
+                        newLineItems: expect.anything(),
+                    });
                 }
             }
         });
