@@ -19,6 +19,57 @@ export interface StripeError {
 }
 
 /**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface AddressOptions {
+    city?: string;
+    country?: string;
+    state?: string;
+    postal_code?: string;
+    line1?: string;
+    line2?: string;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface AddressProperties {
+    city?: 'auto' | 'never';
+    country?: 'auto' | 'never';
+    state?: 'auto' | 'never';
+    postalCode?: 'auto' | 'never';
+    line1?: 'auto' | 'never';
+    line2?: 'auto' | 'never';
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface BillingDetailsOptions {
+    name?: string;
+    email?: string;
+    address?: AddressOptions;
+    phone?: string;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface BillingDetailsProperties {
+    name?: 'auto' | 'never';
+    email?: 'auto' | 'never';
+    address?: 'auto' | 'never' | AddressProperties;
+    phone?: 'auto' | 'never';
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface PaymentMethodDataOptions {
+    billing_details: BillingDetailsOptions;
+}
+
+/**
  * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
  */
 export interface StripeUPEConfirmParams {
@@ -29,6 +80,7 @@ export interface StripeUPEConfirmParams {
      * @recommended
      */
     return_url?: string;
+    payment_method_data?: PaymentMethodDataOptions;
 }
 
 /**
@@ -44,13 +96,17 @@ export interface StripeConfirmPaymentData {
     /**
      * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
      */
-     confirmParams?: StripeUPEConfirmParams;
+    confirmParams?: StripeUPEConfirmParams;
 
     /**
      * By default, confirmPayment will always redirect to your return_url after a successful confirmation.
      * If you set redirect: "if_required", then confirmPayment will only redirect if your user chooses a redirect-based payment method.
      */
     redirect?: 'always' | 'if_required';
+}
+
+export interface FieldsOptions {
+    billingDetails?: 'auto' | 'never' | BillingDetailsProperties;
 }
 
 export interface WalletOptions {
@@ -62,6 +118,7 @@ export interface WalletOptions {
  * All available options are herehttps://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface StripeElementsCreateOptions {
+    fields?: FieldsOptions;
     wallets?: WalletOptions;
 }
 

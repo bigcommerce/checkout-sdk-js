@@ -410,12 +410,11 @@ describe('StripeUPEPaymentStrategy', () => {
                         .mockReturnValue(undefined);
 
                     await strategy.initialize(options);
-                    const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                    await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toBeInstanceOf(MissingDataError);
 
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-                    expect(response).toBe(store.getState());
+                    expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                    expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 });
 
                 it('fires additional action outside of bigcommerce', async () => {

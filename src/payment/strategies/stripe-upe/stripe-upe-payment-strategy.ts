@@ -1,6 +1,7 @@
 import { includes, some } from 'lodash';
 
 import { isHostedInstrumentLike } from '../..';
+import { Address } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -13,7 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import formatLocale from './format-locale';
-import { StripeElement, StripeElements, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
+import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const APM_REDIRECT = [
@@ -61,6 +62,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         const stripeElement: StripeElement = this._stripeElements.getElement('payment') || this._stripeElements.create('payment',
         {
+            fields: {
+                billingDetails: {
+                    email: 'never',
+                    address: {
+                        country: 'never',
+                        postalCode: 'never',
+                        state: 'never',
+                        city: 'never',
+                    },
+                },
+            },
             wallets: {
                 applePay: 'never',
                 googlePay: 'never',
@@ -83,7 +95,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
-        if (!this._stripeUPEClient || !this._stripeElements) {
+        if (!this._stripeUPEClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -114,10 +126,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
             }
 
-            const { paymentIntent, error } = await this._stripeUPEClient.confirmPayment({
-                elements: this._stripeElements,
-                redirect: 'if_required',
-            });
+            const { paymentIntent, error } = await this._stripeUPEClient.confirmPayment(this._mapStripePaymentData());
 
             if (error || !paymentIntent) {
                 if (error && includes(['card_error', 'invalid_request_error', 'validation_error'], error.type)) {
@@ -187,6 +196,47 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         throw error;
+    }
+
+    private _mapStripeAddress(address?: Address): AddressOptions {
+        if (address) {
+            const {
+                city,
+                countryCode: country,
+                postalCode,
+                stateOrProvince: state,
+            } = address;
+
+            return { city, country, postal_code: postalCode, state };
+        }
+
+        throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+    }
+
+    private _mapStripePaymentData(): StripeConfirmPaymentData {
+        const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+        const address = {
+            address:  this._mapStripeAddress(billingAddress),
+        };
+
+        const email = billingAddress?.email;
+
+        if (!this._stripeElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return {
+            elements: this._stripeElements,
+            redirect: 'if_required',
+            confirmParams: {
+                payment_method_data: {
+                    billing_details: {
+                        email,
+                        ...address,
+                    },
+                },
+            },
+        };
     }
 
     private async _loadStripeJs(stripePublishableKey: string, stripeConnectedAccount: string): Promise<StripeUPEClient> {
