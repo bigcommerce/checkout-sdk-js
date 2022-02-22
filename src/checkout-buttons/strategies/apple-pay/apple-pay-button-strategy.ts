@@ -16,6 +16,7 @@ import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+import ApplePayShippingMethod = ApplePayJS.ApplePayShippingMethod;
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
@@ -216,12 +217,25 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
         let checkout = state.checkout.getCheckoutOrThrow();
         const availableOptions = checkout.consignments[0].availableShippingOptions;
-        const shippingOptions = availableOptions?.map(option => ({
+        const selectedOption = availableOptions?.filter(option => option.id === checkout.consignments[0].selectedShippingOption?.id);
+        const unSelectedOptions = availableOptions?.filter(option => option.id !== checkout.consignments[0].selectedShippingOption?.id);
+        const firstShippingOption = selectedOption?.map(option => ({
             label: option.description,
-            amount: `${option.cost.toFixed(decimalPlaces)}`,
+            amount: option.cost.toFixed(decimalPlaces),
             detail: option.additionalDescription,
             identifier: option.id,
         }));
+        const nonSelectedShippingOptions = unSelectedOptions?.map(option => ({
+            label: option.description,
+            amount: option.cost.toFixed(decimalPlaces),
+            detail: option.additionalDescription,
+            identifier: option.id,
+        }));
+        let shippingOptions: ApplePayShippingMethod[] = [];
+
+        if (firstShippingOption && nonSelectedShippingOptions) {
+            shippingOptions = firstShippingOption.concat(nonSelectedShippingOptions);
+        }
 
         if (!isShippingOptions(availableOptions)) {
             throw new Error('Shipping options not available.');
@@ -230,9 +244,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 option => option.isRecommended
             );
 
-            const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
+            const optionID = recommendedOption ? recommendedOption.id : availableOptions[0].id;
+            const selectedOptionId = firstShippingOption && firstShippingOption.length > 0 ? firstShippingOption[0].identifier : optionID;
             try {
-                await this._updateShippingOption(optionId);
+                await this._updateShippingOption(selectedOptionId);
             } catch (error) {
                 throw new Error('Shipping options update failed');
             }
