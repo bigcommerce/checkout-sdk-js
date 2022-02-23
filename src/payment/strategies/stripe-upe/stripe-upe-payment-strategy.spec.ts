@@ -25,7 +25,7 @@ import { getStripeUPE } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { StripeElement, StripeElements, StripeElementsOptions, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
+import { StripeElement, StripeElements, StripeElementsOptions, StripePaymentMethodType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getStripeUPEInitializeOptionsMock, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
@@ -258,7 +258,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 beforeEach(() => {
                     elements = stripeUPEJsMock.elements(elementsOptions);
-                    cardElement = elements.create('payment');
+                    cardElement = elements.create(StripeStringConstants.PAYMENT);
 
                     stripeUPEJsMock.confirmPayment = jest.fn(
                         () => Promise.resolve(getConfirmPaymentResponse())
@@ -635,7 +635,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 beforeEach(() => {
                     elements = stripeUPEJsMock.elements(elementsOptions);
-                    element = elements.create('payment');
+                    element = elements.create(StripeStringConstants.PAYMENT);
                     options = getStripeUPEInitializeOptionsMock(method);
                     paymentMethodMock = { ...getStripeUPE(method), clientToken: 'myToken' };
                     loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripeupe?method=${paymentMethodMock.id }`}));
@@ -767,7 +767,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
         beforeEach(() => {
             const elements = stripeUPEJsMock.elements(elementsOptions);
-            cardElement = elements.create('payment');
+            cardElement = elements.create(StripeStringConstants.PAYMENT);
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(getStripeUPE());

@@ -14,7 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import formatLocale from './format-locale';
-import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
+import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripePaymentMethodType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const APM_REDIRECT = [
@@ -60,22 +60,22 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             locale: formatLocale(shopperLanguage),
         });
 
-        const stripeElement: StripeElement = this._stripeElements.getElement('payment') || this._stripeElements.create('payment',
+        const stripeElement: StripeElement = this._stripeElements.getElement(StripeStringConstants.PAYMENT) || this._stripeElements.create(StripeStringConstants.PAYMENT,
         {
             fields: {
                 billingDetails: {
-                    email: 'never',
+                    email: StripeStringConstants.NEVER,
                     address: {
-                        country: 'never',
-                        postalCode: 'never',
-                        state: 'never',
-                        city: 'never',
+                        country: StripeStringConstants.NEVER,
+                        postalCode: StripeStringConstants.NEVER,
+                        state: StripeStringConstants.NEVER,
+                        city: StripeStringConstants.NEVER,
                     },
                 },
             },
             wallets: {
-                applePay: 'never',
-                googlePay: 'never',
+                applePay: StripeStringConstants.NEVER,
+                googlePay: StripeStringConstants.NEVER,
             },
         });
 
@@ -160,7 +160,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._stripeElements?.getElement('payment')?.unmount();
+        this._stripeElements?.getElement(StripeStringConstants.PAYMENT)?.unmount();
 
         return Promise.resolve(this._store.getState());
     }
@@ -180,7 +180,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             if (action && action.type === 'redirect_to_url' && action.data.redirect_url) {
                 const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmPayment({
                     elements: this._stripeElements,
-                    redirect: 'if_required',
+                    redirect: StripeStringConstants.IF_REQUIRED,
                     confirmParams: {
                         return_url: action.data.redirect_url,
                     },
@@ -215,9 +215,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private _mapStripePaymentData(): StripeConfirmPaymentData {
         const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-        const address = {
-            address:  this._mapStripeAddress(billingAddress),
-        };
+        const address = this._mapStripeAddress(billingAddress);
 
         const email = billingAddress?.email;
 
@@ -225,14 +223,18 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        if (!email || !address || !address.city || !address.country || !address.postal_code || !address.state) {
+            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+        }
+
         return {
             elements: this._stripeElements,
-            redirect: 'if_required',
+            redirect: StripeStringConstants.IF_REQUIRED,
             confirmParams: {
                 payment_method_data: {
                     billing_details: {
                         email,
-                        ...address,
+                        address,
                     },
                 },
             },

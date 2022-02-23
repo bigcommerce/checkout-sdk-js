@@ -34,12 +34,12 @@ export interface AddressOptions {
  * Object definition for part of the data sent to confirm the PaymentIntent.
  */
 export interface AddressProperties {
-    city?: 'auto' | 'never';
-    country?: 'auto' | 'never';
-    state?: 'auto' | 'never';
-    postalCode?: 'auto' | 'never';
-    line1?: 'auto' | 'never';
-    line2?: 'auto' | 'never';
+    city?: AutoOrNever;
+    country?: AutoOrNever;
+    state?: AutoOrNever;
+    postalCode?: AutoOrNever;
+    line1?: AutoOrNever;
+    line2?: AutoOrNever;
 }
 
 /**
@@ -56,10 +56,10 @@ export interface BillingDetailsOptions {
  * Object definition for part of the data sent to confirm the PaymentIntent.
  */
 export interface BillingDetailsProperties {
-    name?: 'auto' | 'never';
-    email?: 'auto' | 'never';
-    address?: 'auto' | 'never' | AddressProperties;
-    phone?: 'auto' | 'never';
+    name?: AutoOrNever;
+    email?: AutoOrNever;
+    address?: AutoOrNever | AddressProperties;
+    phone?: AutoOrNever;
 }
 
 /**
@@ -102,16 +102,16 @@ export interface StripeConfirmPaymentData {
      * By default, confirmPayment will always redirect to your return_url after a successful confirmation.
      * If you set redirect: "if_required", then confirmPayment will only redirect if your user chooses a redirect-based payment method.
      */
-    redirect?: 'always' | 'if_required';
+    redirect?: StripeStringConstants.ALWAYS | StripeStringConstants.IF_REQUIRED;
 }
 
 export interface FieldsOptions {
-    billingDetails?: 'auto' | 'never' | BillingDetailsProperties;
+    billingDetails?: AutoOrNever | BillingDetailsProperties;
 }
 
 export interface WalletOptions {
-    applePay?: 'auto' | 'never';
-    googlePay?: 'auto' | 'never';
+    applePay?: AutoOrNever;
+    googlePay?: AutoOrNever;
 }
 
 /**
@@ -126,12 +126,12 @@ export interface StripeElements {
     /**
      * Creates a `payment` element.
      */
-    create(elementType: 'payment', options?: StripeElementsCreateOptions): StripeElement;
+    create(elementType: StripeStringConstants.PAYMENT, options?: StripeElementsCreateOptions): StripeElement;
 
     /**
      * Looks up a previously created `payment` element.
      */
-    getElement(elementType: 'payment'): StripeElement | null;
+    getElement(elementType: StripeStringConstants.PAYMENT): StripeElement | null;
 }
 
 export interface StripeElementsOptions {
@@ -184,4 +184,14 @@ export enum StripePaymentMethodType {
     CreditCard = 'card',
     SOFORT = 'sofort',
     EPS = 'eps',
+}
+
+type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
+
+export enum StripeStringConstants {
+    NEVER = 'never',
+    AUTO = 'auto',
+    ALWAYS = 'always',
+    PAYMENT = 'payment',
+    IF_REQUIRED = 'if_required',
 }
