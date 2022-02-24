@@ -76,7 +76,7 @@ describe('StripeUPEPaymentStrategy', () => {
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripev3?method=${paymentMethodMock.id }`}));
+        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripeupe?method=${paymentMethodMock.id }`}));
         checkoutMock = getCheckout();
 
         jest.useFakeTimers();
@@ -327,9 +327,6 @@ describe('StripeUPEPaymentStrategy', () => {
                 });
 
                 it('submit payment with credit card and passes back the client token', async () => {
-                    jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                        .mockReturnValue(getStripeUPE('card'));
-
                     await strategy.initialize(options);
                     const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
@@ -422,6 +419,49 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect(response).toBe(store.getState());
                 });
 
+                it('fires additional action outside of bigcommerce', async () => {
+                    const errorResponse = new RequestError(getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [
+                            { code: 'additional_action_required' },
+                        ],
+                        additional_action_required: {
+                            type: 'redirect_to_url',
+                            data: {
+                                redirect_url: 'https://redirect-url.com',
+                            },
+                        },
+                        status: 'error',
+                    }));
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+                    await strategy.initialize(options);
+
+                    try {
+                        await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                    } catch (error) {
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(2);
+                        expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenNthCalledWith(1,
+                            expect.objectContaining({
+                                confirmParams: {
+                                    return_url: 'https://redirect-url.com',
+                                },
+                            })
+                        );
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenNthCalledWith(2,
+                            expect.objectContaining({
+                                confirmParams: {
+                                    return_url: 'https://redirect-url.com',
+                                },
+                            })
+                        );
+                    }
+                });
+
                 it('do not fire additional action because of missing url', async () => {
                     const errorResponse = new RequestError(getResponse({
                         ...getErrorPaymentResponseBody(),
@@ -442,12 +482,13 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     await strategy.initialize(options);
 
-                    strategy.execute(getStripeUPEOrderRequestBodyMock());
-                    await new Promise(resolve => process.nextTick(resolve));
-
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                    expect(window.location.replace).not.toHaveBeenCalled();
+                    try {
+                        await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                    } catch (error) {
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
+                    }
                 });
 
                 it('fires unknown additional action', async () => {
@@ -585,6 +626,99 @@ describe('StripeUPEPaymentStrategy', () => {
                     expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                     expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
+                });
+            });
+
+            describe('with SOFORT', () => {
+                let elements: StripeElements;
+                let element: StripeElement;
+                const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
+                const method = StripePaymentMethodType.SOFORT;
+
+                beforeEach(() => {
+                    elements = stripeUPEJsMock.elements(elementsOptions);
+                    element = elements.create('payment');
+                    options = getStripeUPEInitializeOptionsMock(method);
+                    paymentMethodMock = { ...getStripeUPE(method), clientToken: 'myToken' };
+                    loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripeupe?method=${paymentMethodMock.id }`}));
+
+                    stripeUPEJsMock.confirmPayment = jest.fn(
+                        () => Promise.resolve(getConfirmPaymentResponse())
+                    );
+
+                    jest.spyOn(stripeUPEJsMock, 'elements')
+                        .mockReturnValue(elements);
+                    jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'create')
+                        .mockReturnValue(element);
+                    jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+                        .mockReturnValue(loadPaymentMethodAction);
+                    jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                        .mockReturnValue(getStripeUPE(method));
+                });
+
+                it('fires additional action outside of bigcommerce', async () => {
+                    const errorResponse = new RequestError(getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [
+                            { code: 'additional_action_required' },
+                        ],
+                        additional_action_required: {
+                            type: 'redirect_to_url',
+                            data: {
+                                redirect_url: 'https://redirect-url.com',
+                            },
+                        },
+                        status: 'error',
+                    }));
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+                    await strategy.initialize(options);
+
+                    try {
+                        await strategy.execute(getStripeUPEOrderRequestBodyMock(method));
+                    } catch (error) {
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledWith(
+                            expect.objectContaining({
+                                confirmParams: {
+                                    return_url: 'https://redirect-url.com',
+                                },
+                            })
+                        );
+                    }
+                });
+
+                it('do not fire additional action because of missing url', async () => {
+                    const errorResponse = new RequestError(getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [
+                            { code: 'additional_action_required' },
+                        ],
+                        additional_action_required: {
+                            type: 'redirect_to_url',
+                            data: {},
+                        },
+                        status: 'error',
+                    }));
+
+                    window.location.replace = jest.fn();
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+                    await strategy.initialize(options);
+
+                    try {
+                        await strategy.execute(getStripeUPEOrderRequestBodyMock(method));
+                    } catch (error) {
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
+                    }
                 });
             });
 
