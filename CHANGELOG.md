@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.223.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.222.0...v1.223.0) (2022-02-24)
+
+
+### Features
+
+* **payment:** INT-5090 Stripe UPE add handler for redirect methods ([693ab4e](https://github.com/bigcommerce/checkout-sdk-js/commit/693ab4e357f9e885b3b1cd21970a4e5010457c13))
+* **payment:** INT-5090 Stripe UPE SOFORT support ([4236bc1](https://github.com/bigcommerce/checkout-sdk-js/commit/4236bc1458fb74ec650bc24d9c065cd472df6aa5))
+* **payment:** INT-5156 Klarna add support for poland, portugal, ireland ([#1351](https://github.com/bigcommerce/checkout-sdk-js/issues/1351)) ([1045e27](https://github.com/bigcommerce/checkout-sdk-js/commit/1045e271fc40f95982fa9172576bc35448fce219))
+
 ## [1.222.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.221.0...v1.222.0) (2022-02-21)
 
 
