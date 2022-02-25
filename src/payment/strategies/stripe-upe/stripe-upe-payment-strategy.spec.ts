@@ -5,14 +5,17 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getCustomer } from '../../../customer/customers.mock';
+import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
@@ -31,6 +34,7 @@ import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getStripeUPEInitializeOptionsMock, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
 
 describe('StripeUPEPaymentStrategy', () => {
+    let checkoutActionCreator: CheckoutActionCreator;
     let checkoutMock: Checkout;
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
@@ -39,6 +43,7 @@ describe('StripeUPEPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let store: CheckoutStore;
     let storeCreditActionCreator: StoreCreditActionCreator;
     let strategy: StripeUPEPaymentStrategy;
@@ -70,6 +75,18 @@ describe('StripeUPEPaymentStrategy', () => {
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(requestSender)
         );
+
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+        );
+
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(requestSender),
+            checkoutActionCreator
+        );
+
         paymentMethodMock = { ...getStripeUPE(), clientToken: 'myToken' };
 
         stripeScriptLoader = new StripeUPEScriptLoader(scriptLoader);
@@ -107,7 +124,8 @@ describe('StripeUPEPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             stripeScriptLoader,
-            storeCreditActionCreator
+            storeCreditActionCreator,
+            remoteCheckoutActionCreator
         );
     });
 

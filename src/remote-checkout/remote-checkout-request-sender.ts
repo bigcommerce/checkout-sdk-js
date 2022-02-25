@@ -57,6 +57,12 @@ export default class RemoteCheckoutRequestSender {
 
         return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS });
     }
+
+    cancelToken(provider: string, token: string, { timeout }: RequestOptions = {}): Promise<Response<any>> {
+        const url = `/remote-checkout/${provider}/${token}/cancel`;
+
+        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS });
+    }
 }
 
 export interface InitializePaymentOptions {

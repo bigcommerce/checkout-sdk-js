@@ -112,4 +112,17 @@ export default class RemoteCheckoutActionCreator {
     updateCheckout<K extends keyof RemoteCheckoutStateData>(methodId: K, data: Partial<RemoteCheckoutStateData[K]>): Action {
         return createAction(RemoteCheckoutActionType.UpdateRemoteCheckout, data, { methodId });
     }
+
+    cancelToken(provider: string, token: string, methodId: string, options?: RequestOptions): Observable<Action> {
+        return concat(
+            of(createAction(RemoteCheckoutActionType.CancelTokenRequested, undefined, {methodId})),
+            defer(async () => {
+                await this._remoteCheckoutRequestSender.cancelToken(provider, token, options);
+
+                return createAction(RemoteCheckoutActionType.CancelTokenSucceeded, undefined, {methodId});
+            })
+        ).pipe(
+            catchError(error => throwErrorAction(RemoteCheckoutActionType.CancelTokenFailed, error, { methodId }))
+        );
+    }
 }

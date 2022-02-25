@@ -28,6 +28,10 @@ export enum RemoteCheckoutActionType {
     SignOutRemoteCustomerFailed = 'SIGN_OUT_REMOTE_CUSTOMER_FAILED',
 
     UpdateRemoteCheckout = 'UPDATE_REMOTE_CHECKOUT',
+
+    CancelTokenRequested = 'CANCEL_TOKEN_REQUESTED',
+    CancelTokenSucceeded = 'CANCEL_TOKEN_SUCCEEDED',
+    CancelTokenFailed = 'CANCEL_TOKEN_FAILED',
 }
 
 export type RemoteCheckoutAction = ForgetCheckoutRemoteCustomerAction |
@@ -36,7 +40,8 @@ export type RemoteCheckoutAction = ForgetCheckoutRemoteCustomerAction |
     InitializeRemotePaymentAction |
     SignOutRemoteCustomerAction |
     LoadRemoteSettingsAction |
-    UpdateRemoteCheckoutAction;
+    UpdateRemoteCheckoutAction |
+    CancelTokenAction;
 
 export type ForgetCheckoutRemoteCustomerAction = ForgetCheckoutRemoteCustomerRequestedAction |
     ForgetCheckoutRemoteCustomerSucceededAction |
@@ -136,4 +141,20 @@ export interface LoadRemoteSettingsFailedAction extends Action {
 
 export interface UpdateRemoteCheckoutAction extends Action {
     type: RemoteCheckoutActionType.UpdateRemoteCheckout;
+}
+
+export type CancelTokenAction = CancelTokenSuccededAction |
+    CancelTokenFailedAction |
+    CancelTokenRequestedAction;
+
+export interface CancelTokenSuccededAction extends Action {
+    type: RemoteCheckoutActionType.CancelTokenSucceeded;
+}
+
+export interface CancelTokenFailedAction extends Action {
+    type: RemoteCheckoutActionType.CancelTokenFailed;
+}
+
+export interface CancelTokenRequestedAction extends Action {
+    type: RemoteCheckoutActionType.CancelTokenRequested;
 }
