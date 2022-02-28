@@ -20,6 +20,7 @@
 * [HostedInputEventType](enums/hostedinputeventtype.md)
 * [IconStyle](enums/iconstyle.md)
 * [PaypalCommerceFormFieldType](enums/paypalcommerceformfieldtype.md)
+* [RadiusUnit](enums/radiusunit.md)
 * [StyleButtonColor](enums/stylebuttoncolor.md)
 * [StyleButtonLabel](enums/stylebuttonlabel.md)
 * [StyleButtonLayout](enums/stylebuttonlayout.md)

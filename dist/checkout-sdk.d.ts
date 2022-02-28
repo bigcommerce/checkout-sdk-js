@@ -1924,7 +1924,7 @@ declare class CheckoutService {
      *     search_area: {
      *         radius: {
      *             value: 1.4,
-     *             unit: 0
+     *             unit: 'KM'
      *         },
      *         coordinates: {
      *             latitude: 1.4,
@@ -5829,7 +5829,12 @@ declare interface Promotion {
 
 declare interface Radius {
     value: number;
-    unit: number;
+    unit: RadiusUnit;
+}
+
+declare enum RadiusUnit {
+    KM = "KM",
+    MI = "MI"
 }
 
 declare interface Region {

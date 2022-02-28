@@ -905,7 +905,7 @@ const state = await service.loadPickupOptions({
     search_area: {
         radius: {
             value: 1.4,
-            unit: 0
+            unit: 'KM'
         },
         coordinates: {
             latitude: 1.4,

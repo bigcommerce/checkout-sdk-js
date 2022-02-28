@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.224.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.223.1...v1.224.0) (2022-02-28)
+
+
+### Features
+
+* **shipping:** CHECKOUT-6003 Add radius unit type and update interface ([#1354](https://github.com/bigcommerce/checkout-sdk-js/issues/1354)) ([d67049a](https://github.com/bigcommerce/checkout-sdk-js/commit/d67049a6bfc37e9483b36a23154ed0ab9edf01eb))
+
 ### [1.223.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.223.0...v1.223.1) (2022-02-28)
 
 ## [1.223.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.222.0...v1.223.0) (2022-02-24)

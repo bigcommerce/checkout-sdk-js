@@ -17,7 +17,7 @@
 
 ###  unit
 
-• **unit**: *number*
+• **unit**: *[RadiusUnit](../enums/radiusunit.md)*
 
 ___
 
