@@ -1,12 +1,12 @@
 import { PickupOptionState } from '.';
-import { PickupOptionAPIRequestBody, PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult } from './pickup-option';
+import { PickupOptionAPIRequestBody, PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult, RadiusUnit } from './pickup-option';
 
 export function getApiQueryForPickupOptions(): PickupOptionAPIRequestBody {
     return {
         searchArea: {
             radius: {
                 value: 1.4,
-                unit: 0,
+                unit: RadiusUnit.KM,
             },
             coordinates: {
                 latitude: 1.4,
@@ -26,7 +26,7 @@ export function getQueryForPickupOptions(): PickupOptionRequestBody {
         searchArea: {
             radius: {
                 value: 1.4,
-                unit: 0,
+                unit: RadiusUnit.KM,
             },
             coordinates: {
                 latitude: 1.4,

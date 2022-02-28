@@ -3,9 +3,14 @@ interface Item {
     quantity: number;
 }
 
+export enum RadiusUnit {
+    KM = 'KM',
+    MI = 'MI',
+}
+
 interface Radius {
     value: number;
-    unit: number;
+    unit: RadiusUnit;
 }
 
 interface Coordinates {
