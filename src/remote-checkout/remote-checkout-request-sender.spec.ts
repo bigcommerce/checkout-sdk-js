@@ -101,4 +101,16 @@ describe('RemoteCheckoutRequestSender', () => {
         expect(output).toEqual(response);
         expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/forget-checkout', options);
     });
+
+    it('sends request to cancel a token', async () => {
+        const response = getResponse({});
+        const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
+
+        jest.spyOn(requestSender, 'post').mockReturnValue(response);
+
+        const output = await remoteCheckoutRequestSender.cancelToken('stripeupe', 'pi_12345', options);
+
+        expect(output).toEqual(response);
+        expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/stripeupe/cancel-client-token/pi_12345', options);
+    });
 });

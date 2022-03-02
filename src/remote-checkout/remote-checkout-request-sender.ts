@@ -59,7 +59,7 @@ export default class RemoteCheckoutRequestSender {
     }
 
     cancelToken(provider: string, token: string, { timeout }: RequestOptions = {}): Promise<Response<any>> {
-        const url = `/remote-checkout/${provider}/${token}/cancel`;
+        const url = `/remote-checkout/${provider}/cancel-client-token/${token}`;
 
         return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS });
     }

@@ -5,7 +5,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -33,7 +33,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _stripeScriptLoader: StripeUPEScriptLoader,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
+        private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -152,12 +152,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    async deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         this._stripeElements?.getElement('payment')?.unmount();
-        if (_options && _options.methodId) {
+        this._stripeElements = undefined;
+
+        if (options && options.methodId) {
             const state = this._store.getState();
-            const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(_options.methodId);
-            await this._remoteCheckoutActionCreator.cancelToken(paymentMethod?.gateway ?? '', paymentMethod?.clientToken ?? '', _options.methodId);
+            const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+            await this._remoteCheckoutRequestSender.cancelToken(paymentMethod?.gateway ?? '', paymentMethod?.clientToken ?? '');
         }
 
         return Promise.resolve(this._store.getState());

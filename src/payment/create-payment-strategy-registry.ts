@@ -763,7 +763,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             new StripeUPEScriptLoader(scriptLoader),
             storeCreditActionCreator,
-            remoteCheckoutActionCreator
+            remoteCheckoutRequestSender
         )
     );
 
