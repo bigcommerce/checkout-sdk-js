@@ -4,16 +4,6 @@ aliases:
         name: node/node
         node-version: "10.24"
 
-  - &release_filter
-      branches:
-        only:
-          - master
-
-  - &pull_request_filter
-      branches:
-        ignore:
-          - master
-
 version: 2.1
 
 orbs:
@@ -50,7 +40,7 @@ jobs:
             - dist
             - docs
 
-  release:
+  npm_release:
     <<: *node_executor
     steps:
       - ci/pre-setup
@@ -73,30 +63,10 @@ jobs:
           command: |
             git push --follow-tags origin $CIRCLE_BRANCH
       - run:
-          name: "Export release version to file"
-          command: echo "export RELEASE_VERSION=$(git describe --abbrev=0)" > /tmp/release_version.txt
-      - persist_to_workspace:
-          root: /tmp
-          paths:
-            - release_version.txt
-      - run:
           name: "Publish release to NPM"
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
             npm publish
-
-  update_server:
-    <<: *node_executor
-    steps:
-      - ci/pre-setup
-      - node/npm-install
-      - attach_workspace:
-          at: /tmp
-      - run:
-          name: "Build and push distribution files to static server repository"
-          command: |
-            source /tmp/release_version.txt
-            scripts/circleci/update-server.sh
 
   build_cdn:
     <<: *node_executor
@@ -115,40 +85,21 @@ jobs:
 workflows:
   version: 2
 
-  pull_request:
+  default:
     jobs:
-      - test:
-          filters:
-            <<: *pull_request_filter
-      - build:
-          filters:
-            <<: *pull_request_filter
-      - ci/validate-commits:
-          filters:
-            <<: *pull_request_filter
+      - test
+      - build
+      - ci/validate-commits
 
-  release:
-    jobs:
-      - test:
+      # Only build and push CDN artifact when commits are merged to canonical repo
+      - build_cdn:
           filters:
-            <<: *release_filter
-      - build:
-          filters:
-            <<: *release_filter
-      - approve:
-          type: approval
+            branches:
+              ignore: /pull\/[0-9]+/
           requires:
             - test
             - build
-      - release:
-          requires:
-            - approve
-      - update_server:
-          requires:
-            - release
-      - build_cdn:
-          requires:
-            - release
+            - ci/validate-commits
       - ci/build-js-artifact:
           context: "Artifact Bucket Access"
           dist_directory: dist-cdn
@@ -160,3 +111,17 @@ workflows:
       - ci/notify-success:
           requires:
             - ci/build-js-artifact
+
+      # Only release to NPM registry when commits are merged to master and new version is approved
+      - approve_npm_release:
+          type: approval
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
+            - build
+            - ci/validate-commits
+      - npm_release:
+          requires:
+            - approve_npm_release
