@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.225.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.224.0...v1.225.0) (2022-03-03)
+
+
+### Features
+
+* **payment:** INT-4970 bump bigpay-client for Opayo stored cards ([3619ab2](https://github.com/bigcommerce/checkout-sdk-js/commit/3619ab21e76ff0bee5b2cd2fc2e7ee0ba1b56491))
+
 ## [1.224.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.223.1...v1.224.0) (2022-02-28)
 
 
