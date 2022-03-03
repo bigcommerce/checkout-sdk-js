@@ -8,7 +8,7 @@ export function getInstrumentsMeta(): InstrumentMeta {
 
 export function getVaultAccessToken(): VaultAccessToken {
     return {
-        vaultAccessToken: 'VAT f4k3v4ul74cc3sst0k3n',
+        vaultAccessToken: 'vault-token',
         vaultAccessExpiry: 1516097476098,
     };
 }
@@ -124,7 +124,7 @@ export function getErrorInstrumentResponseBody(): InstrumentErrorResponseBody {
 export function getVaultAccessTokenResponseBody(): InternalVaultAccessTokenResponseBody {
     return {
         data: {
-            token: 'VAT f4k3v4ul74cc3sst0k3n',
+            token: 'vault-token',
             expires_at: 1516097476098,
         },
     };
