@@ -22,8 +22,6 @@
   "scripts": {
     "prepare": "check-node-version --node '>=6' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts && npm run docs",
-    "prebuild-server": "rm -rf dist-server",
-    "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
     "prebuild-cdn": "rm -rf dist-cdn",
     "build-cdn": "webpack --config webpack-cdn.config.js --config-name umd && webpack --config webpack-cdn.config.js --config-name umd-loader",
     "prebundle": "rm -rf dist",
