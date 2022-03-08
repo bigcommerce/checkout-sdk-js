@@ -10,7 +10,7 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector, PickupOptionSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
 import { SignInEmailSelector } from '../signin-email';
 import { StoreCreditSelector } from '../store-credit';
 import { SubscriptionsSelector } from '../subscription';
@@ -35,6 +35,7 @@ export default interface InternalCheckoutSelectors {
     payment: PaymentSelector;
     paymentMethods: PaymentMethodSelector;
     paymentStrategies: PaymentStrategySelector;
+    pickupOptions: PickupOptionSelector;
     remoteCheckout: RemoteCheckoutSelector;
     shippingAddress: ShippingAddressSelector;
     shippingCountries: ShippingCountrySelector;

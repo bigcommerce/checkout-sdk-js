@@ -443,21 +443,20 @@ export default class CheckoutService {
      * Loads a list of pickup options for a given criteria.
      *
      * ```js
-     * const state = await service.loadPickupOptions({
-     *     search_area: {
-     *         radius: {
-     *             value: 1.4,
-     *             unit: 'KM'
-     *         },
-     *         coordinates: {
-     *             latitude: 1.4,
-     *             longitude: 0
-     *         },
+     * const consignmentId = '1';
+     * const searchArea = {
+     *     radius: {
+     *         value: 1.4,
+     *         unit: 'KM'
      *     },
-     *     consignmentId: 1,
-     * });
+     *     coordinates: {
+     *         latitude: 1.4,
+     *         longitude: 0
+     *     },
+     * };
+     * const state = await service.loadPickupOptions({ consignmentId, searchArea });
      *
-     * console.log(state.data.getPickupOptions());
+     * console.log(state.data.getPickupOptions(consignmentId, searchArea));
      * ```
      *
      * @alpha

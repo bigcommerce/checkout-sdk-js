@@ -361,6 +361,13 @@ export default interface CheckoutStoreStatusSelector {
      * @returns True if creating, otherwise false.
      */
     isCreatingCustomerAddress(): boolean;
+
+    /**
+     * Checks whether pickup options are loading.
+     *
+     * @returns True if pickup options are loading, otherwise false.
+     */
+     isLoadingPickupOptions(): boolean;
 }
 
 export type CheckoutStoreStatusSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreStatusSelector;
@@ -487,6 +494,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isCustomerStepPending: isCustomerStepPending(state),
             isShippingStepPending: isShippingStepPending(state),
             isPaymentStepPending: isPaymentStepPending(state),
+            isLoadingPickupOptions: state.pickupOptions.isLoading,
         };
 
         return {

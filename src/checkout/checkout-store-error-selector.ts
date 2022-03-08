@@ -292,6 +292,13 @@ export default interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to create address, otherwise undefined.
      */
     getCreateCustomerAddressError(): Error | undefined;
+
+    /**
+     * Returns an error if unable to fetch pickup options.
+     *
+     * @returns The error object if unable to fetch pickup options, otherwise undefined.
+     */
+     getPickupOptionsError(): Error | undefined;
 }
 
 export type CheckoutStoreErrorSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreErrorSelector;
@@ -360,6 +367,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getSignInEmailError: state.signInEmail.getSendError,
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
             getCreateCustomerAddressError: state.customer.getCreateAddressError,
+            getPickupOptionsError: state.pickupOptions.getLoadError,
         };
 
         return {
