@@ -30,7 +30,7 @@ import StorefrontPaymentRequestSender from '../../storefront-payment-request-sen
 
 import { ActionTypes, OpyPaymentMethod } from './opy';
 import { OpyWidget } from './opy-library';
-import OpyError from './opy-payment-error';
+import OpyError, { OpyErrorType } from './opy-payment-error';
 import OpyPaymentStrategy from './opy-payment-strategy';
 import OpyScriptLoader from './opy-script-loader';
 
@@ -287,7 +287,9 @@ describe('OpyPaymentStrategy', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValueOnce(opy);
 
-                await expect(strategy.execute(payload, options)).rejects.toThrow(OpyError);
+                await expect(strategy.execute(payload, options)).rejects.toThrow(
+                    new OpyError(OpyErrorType.InvalidCart, 'Openpay')
+                );
             });
 
             it('nonce is empty', async () => {
