@@ -85,6 +85,7 @@ describe('MolliePaymentStrategy', () => {
 
         jest.spyOn(mollieClient, 'createComponent')
             .mockReturnValue(mollieElement);
+        jest.spyOn(document, 'querySelectorAll');
 
         formFactory = new HostedFormFactory(store);
         strategy = new MolliePaymentStrategy(
@@ -124,6 +125,7 @@ describe('MolliePaymentStrategy', () => {
                 jest.runAllTimers();
                 expect(mollieClient.createComponent).toBeCalledTimes(4);
                 expect(mollieElement.mount).toBeCalledTimes(4);
+                expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-components-controller');
             });
 
             it('does initialize without containerId', async () => {
@@ -325,6 +327,7 @@ describe('MolliePaymentStrategy', () => {
 
     describe('#deinitialize', () => {
         let options: PaymentInitializeOptions;
+        const initializeOptions = { methodId: 'credit_card', gatewayId: 'mollie' };
 
         beforeEach(() => {
             options = getInitializeOptions();
@@ -334,8 +337,6 @@ describe('MolliePaymentStrategy', () => {
 
             jest.spyOn(store.getState().config, 'getStoreConfig')
                 .mockReturnValue({ storeProfile: { storeLanguage:  'en_US' } });
-
-            jest.spyOn(document, 'querySelectorAll');
         });
 
         it('deinitialize mollie payment strategy', async () => {
@@ -344,12 +345,11 @@ describe('MolliePaymentStrategy', () => {
             jest.runAllTimers();
             expect(mollieClient.createComponent).toBeCalledTimes(4);
             expect(mollieElement.mount).toBeCalledTimes(4);
+            jest.spyOn(document, 'getElementById');
+            const promise = strategy.deinitialize(initializeOptions);
 
-            const promise = strategy.deinitialize();
-
-            expect(document.querySelectorAll).toBeCalledTimes(2);
-            expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-component');
-            expect(document.querySelectorAll).toHaveBeenNthCalledWith(2, '.mollie-components-controller');
+            expect(document.getElementById).toHaveBeenNthCalledWith(1, `${options.gatewayId}-${options.methodId}`);
+            expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-components-controller');
 
             return expect(promise).resolves.toBe(store.getState());
         });

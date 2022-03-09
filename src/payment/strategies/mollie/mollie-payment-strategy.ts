@@ -49,6 +49,10 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "methodId" and/or "gatewayId" argument is not provided.');
         }
 
+        const controllers = document.querySelectorAll('.mollie-components-controller');
+
+        each(controllers, controller => controller.remove());
+
         const state = this._store.getState();
         const storeConfig = state.config.getStoreConfig();
 
@@ -106,10 +110,16 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         this._mollieClient = undefined;
 
-        this.removeMollieComponents();
+        if (options && options.methodId && options.gatewayId) {
+            const element = document.getElementById(`${options.gatewayId}-${options.methodId}`);
+
+            if (element) {
+                element.remove();
+            }
+        }
 
         return Promise.resolve(this._store.getState());
     }
@@ -212,16 +222,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         const options = this._getInitializeOptions();
 
         return !!options.form?.fields;
-    }
-
-    private removeMollieComponents(): void {
-        const mollieComponents = document.querySelectorAll('.mollie-component');
-
-        each(mollieComponents, component => component.remove());
-
-        const controllers = document.querySelectorAll('.mollie-components-controller');
-
-        each(controllers, controller => controller.remove());
     }
 
     private _processAdditionalAction(error: any): Promise<InternalCheckoutSelectors> {
