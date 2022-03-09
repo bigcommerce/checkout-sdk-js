@@ -128,6 +128,37 @@ export default class HostedField {
         }
     }
 
+    async submitPpsdkForm(
+        fields: HostedFieldType[],
+        data: HostedFormOrderData
+    ): Promise<void> {
+        try {
+            const promise = this._eventPoster.post({
+                type: HostedFieldEventType.PpsdkSubmitRequested,
+                payload: { fields, data },
+            }, {
+                successType: HostedInputEventType.SubmitSucceeded,
+                errorType: HostedInputEventType.SubmitFailed,
+            });
+
+            await this._detachmentObserver.ensurePresence([this._iframe], promise);
+        } catch (event) {
+            if (this._isSubmitErrorEvent(event)) {
+                if (event.payload.error.code === 'hosted_form_error') {
+                    throw new InvalidHostedFormError(event.payload.error.message);
+                }
+
+                if (event.payload.response) {
+                    throw mapFromPaymentErrorResponse(event.payload.response);
+                }
+
+                throw new Error(event.payload.error.message);
+            }
+
+            throw event;
+        }
+    }
+
     async validateForm(): Promise<void> {
         const promise = this._eventPoster.post<HostedInputValidateEvent>({
             type: HostedFieldEventType.ValidateRequested,

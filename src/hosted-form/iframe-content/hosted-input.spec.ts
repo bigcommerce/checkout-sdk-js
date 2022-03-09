@@ -11,6 +11,7 @@ import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
+import PpsdkHostedInputPaymentHandler from './ppsdk-hosted-input-payment-handler';
 
 describe('HostedInput', () => {
     let container: HTMLFormElement;
@@ -91,7 +92,8 @@ describe('HostedInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler
+            paymentHandler as HostedInputPaymentHandler,
+            paymentHandler as unknown as PpsdkHostedInputPaymentHandler
         );
     });
 

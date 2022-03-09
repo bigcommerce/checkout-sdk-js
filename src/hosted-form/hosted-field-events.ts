@@ -6,18 +6,21 @@ import HostedFormOrderData from './hosted-form-order-data';
 
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
+    PpsdkSubmitRequested = 'HOSTED_FIELD:PPSDK_SUBMIT_REQUESTED',
     SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
     ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
+    [HostedFieldEventType.PpsdkSubmitRequested]: HostedFieldPpsdkSubmitRequestEvent;
     [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
 }
 
 export type HostedFieldEvent = (
     HostedFieldAttachEvent |
+    HostedFieldPpsdkSubmitRequestEvent |
     HostedFieldSubmitRequestEvent |
     HostedFieldValidateRequestEvent
 );
@@ -37,6 +40,15 @@ export interface HostedFieldAttachEvent {
 
 export interface HostedFieldSubmitRequestEvent {
     type: HostedFieldEventType.SubmitRequested;
+    payload: {
+        data: HostedFormOrderData;
+        fields: HostedFieldType[];
+    };
+}
+
+// Different PPSDK-related payload can be defined here
+export interface HostedFieldPpsdkSubmitRequestEvent {
+    type: HostedFieldEventType.PpsdkSubmitRequested;
     payload: {
         data: HostedFormOrderData;
         fields: HostedFieldType[];

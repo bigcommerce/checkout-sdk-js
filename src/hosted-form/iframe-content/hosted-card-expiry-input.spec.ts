@@ -9,6 +9,7 @@ import { HostedInputEvent } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import PpsdkHostedInputPaymentHandler from './ppsdk-hosted-input-payment-handler';
 
 describe('HostedCardExpiryInput', () => {
     let container: HTMLFormElement;
@@ -57,6 +58,7 @@ describe('HostedCardExpiryInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
+            paymentHandler as unknown as PpsdkHostedInputPaymentHandler,
             expiryFormatter as CardExpiryFormatter
         );
     });

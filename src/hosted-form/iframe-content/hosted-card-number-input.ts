@@ -13,6 +13,7 @@ import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import PpsdkHostedInputPaymentHandler from './ppsdk-hosted-input-payment-handler';
 
 export default class HostedCardNumberInput extends HostedInput {
     /**
@@ -31,6 +32,7 @@ export default class HostedCardNumberInput extends HostedInput {
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
         paymentHandler: HostedInputPaymentHandler,
+        ppsdkPaymentHandler: PpsdkHostedInputPaymentHandler,
         private _autocompleteFieldset: HostedAutocompleteFieldset,
         private _formatter: CardNumberFormatter
     ) {
@@ -46,7 +48,8 @@ export default class HostedCardNumberInput extends HostedInput {
             eventPoster,
             inputAggregator,
             inputValidator,
-            paymentHandler
+            paymentHandler,
+            ppsdkPaymentHandler
         );
     }
 

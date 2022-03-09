@@ -11,6 +11,7 @@ import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import HostedInputStyles, { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputWindow from './hosted-input-window';
+import PpsdkHostedInputPaymentHandler from './ppsdk-hosted-input-payment-handler';
 
 export default class HostedInput {
     protected _input: HTMLInputElement;
@@ -33,7 +34,8 @@ export default class HostedInput {
         protected _eventPoster: IframeEventPoster<HostedInputEvent>,
         protected _inputAggregator: HostedInputAggregator,
         protected _inputValidator: HostedInputValidator,
-        protected _paymentHandler: HostedInputPaymentHandler
+        protected _paymentHandler: HostedInputPaymentHandler,
+        protected _ppsdkPaymentHandler: PpsdkHostedInputPaymentHandler
     ) {
         this._input = document.createElement('input');
 
@@ -42,6 +44,7 @@ export default class HostedInput {
         this._input.addEventListener('focus', this._handleFocus);
         this._eventListener.addListener(HostedFieldEventType.ValidateRequested, this._handleValidate);
         this._eventListener.addListener(HostedFieldEventType.SubmitRequested, this._paymentHandler.handle);
+        this._eventListener.addListener(HostedFieldEventType.PpsdkSubmitRequested, this._ppsdkPaymentHandler.handle);
 
         this._configureInput();
     }

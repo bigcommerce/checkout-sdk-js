@@ -26,6 +26,18 @@ export default class PaymentRequestSender {
         });
     }
 
+    submitPpsdkPayment(payload: PaymentRequestBody): Promise<Response<any>> {
+        return new Promise((resolve, reject) => {
+            this._client.submitPpsdkPayment(payload, (error: any, response: any) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
+    }
+
     initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void> {
         return new Promise(() => {
             this._client.initializeOffsitePayment(payload, null, target);
