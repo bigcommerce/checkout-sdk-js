@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.226.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.225.0...v1.226.0) (2022-03-10)
+
+
+### Features
+
+* **payment:** INT-4970 Stored Credit Cards - vaulting enabled ([1fcda16](https://github.com/bigcommerce/checkout-sdk-js/commit/1fcda1644967f346c93bf59c51af2e3a22004b80))
+
 ## [1.225.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.224.0...v1.225.0) (2022-03-03)
 
 
