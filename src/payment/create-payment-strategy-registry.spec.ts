@@ -17,6 +17,7 @@ import { ApplePayPaymentStrategy } from './strategies/apple-pay';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
+import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { CheckoutcomAPMPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy } from './strategies/clearpay';
@@ -310,5 +311,10 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate ppsdk', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.PPSDK);
         expect(paymentStrategy).toBeInstanceOf(PPSDKStrategy);
+    });
+
+    it('can instantiate MPGS', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CBA_MPGS);
+        expect(paymentStrategy).toBeInstanceOf(CBAMPGSPaymentStrategy);
     });
 });

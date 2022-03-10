@@ -26,7 +26,6 @@ export interface RestApiResponse {
 export interface ThreeDSConfiguration {
   merchantId: string;
   sessionId: string;
-  containerId?: string;
   configuration: ThreeDSAPIConfiguration;
   callback(): void;
 }
@@ -34,10 +33,7 @@ export interface ThreeDSConfiguration {
 export interface ThreeDSAuthenticationResponse {
   error?: ThreeDSAuthenticationError;
   restApiResponse: RestApiResponse;
-  correlationId: string;
   gatewayRecommendation: string;
-  htmlRedirectCode: string;
-  authenticationVersion: string;
 }
 
 export interface AuthenticatePayerOptionalParams {
@@ -47,8 +43,6 @@ export interface AuthenticatePayerOptionalParams {
 export interface ThreeDSAuthenticationError {
   code: string;
   msg: string;
-  result: string;
-  status: string;
   cause?: string;
 }
 
