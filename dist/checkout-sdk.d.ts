@@ -47,11 +47,45 @@ declare interface AdyenAdditionalActionCallbacks {
     onComplete?(): void;
 }
 
+declare interface AdyenAdditionalActionCallbacks_2 {
+    /**
+     * A callback that gets called before adyen component is loaded
+     */
+    onBeforeLoad?(shopperInteraction?: boolean): void;
+    /**
+     * A callback that gets called when adyen component is loaded
+     */
+    onLoad?(cancel?: () => void): void;
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete?(): void;
+}
+
 declare interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {
     /**
      * The location to insert the additional action component.
      */
     containerId: string;
+}
+
+declare interface AdyenAdditionalActionOptions_2 extends AdyenAdditionalActionCallbacks_2 {
+    /**
+     * The location to insert the additional action component.
+     */
+    containerId: string;
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
+     */
+    widgetSize?: string;
 }
 
 declare interface AdyenBaseCardComponentOptions {
@@ -65,6 +99,19 @@ declare interface AdyenBaseCardComponentOptions {
      * for a list of supported properties.
      */
     styles?: StyleOptions;
+}
+
+declare interface AdyenBaseCardComponentOptions_2 {
+    /**
+     * Array of card brands that will be recognized by the component.
+     *
+     */
+    brands?: string[];
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: StyleOptions_2;
 }
 
 declare interface AdyenComponent {
@@ -93,7 +140,33 @@ declare interface AdyenComponentEvents {
     onFieldValid?(state: AdyenComponentState, component: AdyenComponent): void;
 }
 
+declare interface AdyenComponentEvents_2 {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+    /**
+     * Called in case of an invalid card number, invalid expiry date, or
+     *  incomplete field. Called again when errors are cleared.
+     */
+    onError?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+    onFieldValid?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+}
+
 declare type AdyenComponentState = (CardState | WechatState);
+
+declare interface AdyenComponent_2 {
+    componentRef?: {
+        showValidation(): void;
+    };
+    props?: {
+        type?: string;
+    };
+    state?: CardState_2;
+    mount(containerId: string): HTMLElement;
+    unmount(): void;
+}
 
 declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
@@ -142,6 +215,18 @@ declare interface AdyenPaymentMethodState {
 }
 
 declare interface AdyenPlaceholderData {
+    holderName?: string;
+    billingAddress?: {
+        street: string;
+        houseNumberOrName: string;
+        postalCode: string;
+        city: string;
+        stateOrProvince: string;
+        country: string;
+    };
+}
+
+declare interface AdyenPlaceholderData_2 {
     holderName?: string;
     billingAddress?: {
         street: string;
@@ -262,6 +347,124 @@ declare interface AdyenV2PaymentInitializeOptions {
     options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(componentState: AdyenComponentState): void;
+}
+
+declare type AdyenV3ComponentState = CardState_2;
+
+declare interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponentOptions_2, AdyenComponentEvents_2 {
+    /**
+     * Set an object containing the details array for type: scheme from
+     * the /paymentMethods response.
+     */
+    details?: InputDetail_2[];
+    /**
+     * Set to true to show the checkbox to save card details for the next payment.
+     */
+    enableStoreDetails?: boolean;
+    /**
+     * Set to true to request the name of the card holder.
+     */
+    hasHolderName?: boolean;
+    /**
+     * Set to true to require the card holder name.
+     */
+    holderNameRequired?: boolean;
+    /**
+     * Information to prefill fields.
+     */
+    data?: AdyenPlaceholderData_2;
+    /**
+     * Defaults to ['mc','visa','amex']. Configure supported card types to
+     * facilitate brand recognition used in the Secured Fields onBrand callback.
+     * See list of available card types. If a shopper enters a card type not
+     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
+     */
+    groupTypes?: string[];
+    /**
+     * Specify the sample values you want to appear for card detail input fields.
+     */
+    placeholders?: CreditCardPlaceHolder_2 | SepaPlaceHolder_2;
+}
+
+/**
+ * A set of options that are required to initialize the Adyenv3 payment method.
+ *
+ * Once Adyenv3 payment is initialized, credit card form fields, provided by the
+ * payment provider as IFrames, will be inserted into the current page. These
+ * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- This is where the credit card component will be inserted -->
+ * <div id="container"></div>
+ *
+ * <!-- This is where the secondary components (i.e.: 3DS) will be inserted -->
+ * <div id="additional-action-container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'adyenv3',
+ *     adyenv3: {
+ *         containerId: 'container',
+ *         additionalActionOptions: {
+ *             containerId: 'additional-action-container',
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the components and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'adyenv3',
+ *     adyenv3: {
+ *         containerId: 'container',
+ *         additionalActionOptions: {
+ *             containerId: 'additional-action-container',
+ *             onBeforeLoad(shopperInteraction) {
+ *                 console.log(shopperInteraction);
+ *             },
+ *             onLoad(cancel) {
+ *                 console.log(cancel);
+ *             },
+ *             onComplete() {
+ *                 console.log('Completed');
+ *             },
+ *         },
+ *         options: {
+ *             scheme: {
+ *                 hasHolderName: true,
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface AdyenV3PaymentInitializeOptions {
+    /**
+     * The location to insert the Adyen component.
+     */
+    containerId: string;
+    /**
+     * The location to insert the Adyen custom card component
+     */
+    cardVerificationContainerId?: string;
+    /**
+     * True if the Adyen component has some Vaulted instrument
+     */
+    hasVaultedInstruments?: boolean;
+    /**
+     * A set of options that are required to initialize additional payment actions.
+     */
+    additionalActionOptions: AdyenAdditionalActionOptions_2;
+    /**
+     * Optional. Overwriting the default options
+     */
+    options?: Omit<AdyenV3CreditCardComponentOptions, 'onChange'>;
+    shouldShowNumberField?: boolean;
+    validateCardFields(componentState: AdyenV3ComponentState): void;
 }
 
 /**
@@ -1205,6 +1408,14 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
     holderName: string;
 }
 
+declare interface CardPaymentMethodState_2 {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName: string;
+}
+
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
@@ -1216,6 +1427,19 @@ declare interface CardState {
 
 declare interface CardStateErrors {
     [key: string]: string;
+}
+
+declare interface CardStateErrors_2 {
+    [key: string]: string;
+}
+
+declare interface CardState_2 {
+    data: CardPaymentMethodState_2;
+    isValid?: boolean;
+    valid?: {
+        [key: string]: boolean;
+    };
+    errors?: CardStateErrors_2;
 }
 
 declare interface Cart {
@@ -3577,7 +3801,45 @@ declare interface CreditCardPlaceHolder {
     encryptedSecurityCode: string;
 }
 
+declare interface CreditCardPlaceHolder_2 {
+    encryptedCardNumber?: string;
+    encryptedExpiryDate?: string;
+    encryptedSecurityCode: string;
+}
+
 declare interface CssProperties {
+    background?: string;
+    color?: string;
+    display?: string;
+    font?: string;
+    fontFamily?: string;
+    fontSize?: string;
+    fontSizeAdjust?: string;
+    fontSmoothing?: string;
+    fontStretch?: string;
+    fontStyle?: string;
+    fontVariant?: string;
+    fontVariantAlternates?: string;
+    fontVariantCaps?: string;
+    fontVariantEastAsian?: string;
+    fontVariantLigatures?: string;
+    fontVariantNumeric?: string;
+    fontWeight?: string;
+    letterSpacing?: string;
+    lineHeight?: string;
+    mozOsxFontSmoothing?: string;
+    mozTransition?: string;
+    outline?: string;
+    opacity?: string | number;
+    padding?: string;
+    textAlign?: string;
+    textShadow?: string;
+    transition?: string;
+    webkitFontSmoothing?: string;
+    webkitTransition?: string;
+}
+
+declare interface CssProperties_2 {
     background?: string;
     color?: string;
     display?: string;
@@ -4488,6 +4750,41 @@ declare interface InputDetail {
     value?: string;
 }
 
+declare interface InputDetail_2 {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+    /**
+     * Input details can also be provided recursively.
+     */
+    details?: SubInputDetail_2[];
+    /**
+     * In case of a select, the URL from which to query the items.
+     */
+    itemSearchUrl?: string;
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item_2[];
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+    /**
+     * True if this input value is optional.
+     */
+    optional?: boolean;
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
 declare interface InputStyles extends BlockElementStyles {
     active?: BlockElementStyles;
     error?: InputStyles;
@@ -4499,6 +4796,17 @@ declare interface InputStyles extends BlockElementStyles {
 declare type Instrument = CardInstrument;
 
 declare interface Item {
+    /**
+     * The value to provide in the result.
+     */
+    id?: string;
+    /**
+     * The display name.
+     */
+    name?: string;
+}
+
+declare interface Item_2 {
     /**
      * The value to provide in the result.
      */
@@ -5176,6 +5484,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * method. They can be omitted unless you need to support AdyenV2.
      */
     adyenv2?: AdyenV2PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the AdyenV3 payment
+     * method. They can be omitted unless you need to support AdyenV3.
+     */
+    adyenv3?: AdyenV3PaymentInitializeOptions;
     /**
      * The options that are required to initialize the Amazon Pay payment
      * method. They can be omitted unless you need to support AmazonPay.
@@ -5891,6 +6204,11 @@ declare interface SepaPlaceHolder {
     ibanNumber?: string;
 }
 
+declare interface SepaPlaceHolder_2 {
+    ownerName?: string;
+    ibanNumber?: string;
+}
+
 /**
  * A set of options that are required to initialize the shipping step of the
  * current checkout flow.
@@ -6413,6 +6731,25 @@ declare interface StyleOptions {
     validated?: CssProperties;
 }
 
+declare interface StyleOptions_2 {
+    /**
+     * Base styling applied to the iframe. All styling extends from this style.
+     */
+    base?: CssProperties_2;
+    /**
+     * Styling applied when a field fails validation.
+     */
+    error?: CssProperties_2;
+    /**
+     * Styling applied to the field's placeholder values.
+     */
+    placeholder?: CssProperties_2;
+    /**
+     * Styling applied once a field passes validation.
+     */
+    validated?: CssProperties_2;
+}
+
 declare interface SubInputDetail {
     /**
      * Configuration parameters for the required input.
@@ -6422,6 +6759,33 @@ declare interface SubInputDetail {
      * In case of a select, the items to choose from.
      */
     items?: Item[];
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+    /**
+     * True if this input is optional to provide.
+     */
+    optional?: boolean;
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
+declare interface SubInputDetail_2 {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item_2[];
     /**
      * The value to provide in the result.
      */

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.227.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.226.0...v1.227.0) (2022-03-10)
+
+
+### Features
+
+* **checkout:** ADYEN-378 AdyenV3 module creation ([de64268](https://github.com/bigcommerce/checkout-sdk-js/commit/de64268aa1a21dc655161ab52088dbc6ce54b332))
+
 ## [1.226.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.225.0...v1.226.0) (2022-03-10)
 
 

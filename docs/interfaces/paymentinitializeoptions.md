@@ -20,6 +20,7 @@ current checkout flow.
 ### Properties
 
 * [adyenv2](paymentinitializeoptions.md#optional-adyenv2)
+* [adyenv3](paymentinitializeoptions.md#optional-adyenv3)
 * [amazon](paymentinitializeoptions.md#optional-amazon)
 * [amazonpay](paymentinitializeoptions.md#optional-amazonpay)
 * [applepay](paymentinitializeoptions.md#optional-applepay)
@@ -62,6 +63,15 @@ current checkout flow.
 
 The options that are required to initialize the AdyenV2 payment
 method. They can be omitted unless you need to support AdyenV2.
+
+___
+
+### `Optional` adyenv3
+
+• **adyenv3**? : *[AdyenV3PaymentInitializeOptions](adyenv3paymentinitializeoptions.md)*
+
+The options that are required to initialize the AdyenV3 payment
+method. They can be omitted unless you need to support AdyenV3.
 
 ___
 

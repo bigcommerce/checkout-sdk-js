@@ -44,16 +44,24 @@
 * [Address](interfaces/address.md)
 * [AddressRequestBody](interfaces/addressrequestbody.md)
 * [AdyenAdditionalActionCallbacks](interfaces/adyenadditionalactioncallbacks.md)
+* [AdyenAdditionalActionCallbacks_2](interfaces/adyenadditionalactioncallbacks_2.md)
 * [AdyenAdditionalActionOptions](interfaces/adyenadditionalactionoptions.md)
+* [AdyenAdditionalActionOptions_2](interfaces/adyenadditionalactionoptions_2.md)
 * [AdyenBaseCardComponentOptions](interfaces/adyenbasecardcomponentoptions.md)
+* [AdyenBaseCardComponentOptions_2](interfaces/adyenbasecardcomponentoptions_2.md)
 * [AdyenComponent](interfaces/adyencomponent.md)
 * [AdyenComponentEvents](interfaces/adyencomponentevents.md)
+* [AdyenComponentEvents_2](interfaces/adyencomponentevents_2.md)
+* [AdyenComponent_2](interfaces/adyencomponent_2.md)
 * [AdyenCreditCardComponentOptions](interfaces/adyencreditcardcomponentoptions.md)
 * [AdyenIdealComponentOptions](interfaces/adyenidealcomponentoptions.md)
 * [AdyenPaymentMethodState](interfaces/adyenpaymentmethodstate.md)
 * [AdyenPlaceholderData](interfaces/adyenplaceholderdata.md)
+* [AdyenPlaceholderData_2](interfaces/adyenplaceholderdata_2.md)
 * [AdyenThreeDS2Options](interfaces/adyenthreeds2options.md)
 * [AdyenV2PaymentInitializeOptions](interfaces/adyenv2paymentinitializeoptions.md)
+* [AdyenV3CreditCardComponentOptions](interfaces/adyenv3creditcardcomponentoptions.md)
+* [AdyenV3PaymentInitializeOptions](interfaces/adyenv3paymentinitializeoptions.md)
 * [AmazonPayCustomerInitializeOptions](interfaces/amazonpaycustomerinitializeoptions.md)
 * [AmazonPayOrderReference](interfaces/amazonpayorderreference.md)
 * [AmazonPayPaymentInitializeOptions](interfaces/amazonpaypaymentinitializeoptions.md)
@@ -109,8 +117,11 @@
 * [CardInstrument](interfaces/cardinstrument.md)
 * [CardNumberElementOptions](interfaces/cardnumberelementoptions.md)
 * [CardPaymentMethodState](interfaces/cardpaymentmethodstate.md)
+* [CardPaymentMethodState_2](interfaces/cardpaymentmethodstate_2.md)
 * [CardState](interfaces/cardstate.md)
 * [CardStateErrors](interfaces/cardstateerrors.md)
+* [CardStateErrors_2](interfaces/cardstateerrors_2.md)
+* [CardState_2](interfaces/cardstate_2.md)
 * [Cart](interfaces/cart.md)
 * [ChasePayCustomerInitializeOptions](interfaces/chasepaycustomerinitializeoptions.md)
 * [ChasePayInitializeOptions](interfaces/chasepayinitializeoptions.md)
@@ -142,7 +153,9 @@
 * [CreditCardInstrument](interfaces/creditcardinstrument.md)
 * [CreditCardPaymentInitializeOptions](interfaces/creditcardpaymentinitializeoptions.md)
 * [CreditCardPlaceHolder](interfaces/creditcardplaceholder.md)
+* [CreditCardPlaceHolder_2](interfaces/creditcardplaceholder_2.md)
 * [CssProperties](interfaces/cssproperties.md)
+* [CssProperties_2](interfaces/cssproperties_2.md)
 * [Currency](interfaces/currency.md)
 * [CustomError](interfaces/customerror.md)
 * [CustomItem](interfaces/customitem.md)
@@ -204,8 +217,10 @@
 * [InitializationStrategy](interfaces/initializationstrategy.md)
 * [InlineElementStyles](interfaces/inlineelementstyles.md)
 * [InputDetail](interfaces/inputdetail.md)
+* [InputDetail_2](interfaces/inputdetail_2.md)
 * [InputStyles](interfaces/inputstyles.md)
 * [Item](interfaces/item.md)
+* [Item_2](interfaces/item_2.md)
 * [KlarnaLoadResponse](interfaces/klarnaloadresponse.md)
 * [KlarnaLoadResponse_2](interfaces/klarnaloadresponse_2.md)
 * [KlarnaPaymentInitializeOptions](interfaces/klarnapaymentinitializeoptions.md)
@@ -268,6 +283,7 @@
 * [RequestOptions](interfaces/requestoptions.md)
 * [SearchArea](interfaces/searcharea.md)
 * [SepaPlaceHolder](interfaces/sepaplaceholder.md)
+* [SepaPlaceHolder_2](interfaces/sepaplaceholder_2.md)
 * [ShippingInitializeOptions](interfaces/shippinginitializeoptions.md)
 * [ShippingOption](interfaces/shippingoption.md)
 * [ShippingRequestOptions](interfaces/shippingrequestoptions.md)
@@ -292,7 +308,9 @@
 * [StripeUPEPaymentInitializeOptions](interfaces/stripeupepaymentinitializeoptions.md)
 * [StripeV3PaymentInitializeOptions](interfaces/stripev3paymentinitializeoptions.md)
 * [StyleOptions](interfaces/styleoptions.md)
+* [StyleOptions_2](interfaces/styleoptions_2.md)
 * [SubInputDetail](interfaces/subinputdetail.md)
+* [SubInputDetail_2](interfaces/subinputdetail_2.md)
 * [Subscriptions](interfaces/subscriptions.md)
 * [Tax](interfaces/tax.md)
 * [TextInputStyles](interfaces/textinputstyles.md)
@@ -317,6 +335,7 @@
 * [AccountInstrument](README.md#accountinstrument)
 * [AddressKey](README.md#addresskey)
 * [AdyenComponentState](README.md#adyencomponentstate)
+* [AdyenV3ComponentState](README.md#adyenv3componentstate)
 * [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
 * [AnalyticStepType](README.md#analyticsteptype)
 * [BraintreeFormFieldBlurEventData](README.md#braintreeformfieldblureventdata)
@@ -379,6 +398,12 @@ ___
 ###  AdyenComponentState
 
 Ƭ **AdyenComponentState**: *[CardState](interfaces/cardstate.md) | [WechatState](interfaces/wechatstate.md)*
+
+___
+
+###  AdyenV3ComponentState
+
+Ƭ **AdyenV3ComponentState**: *[CardState_2](interfaces/cardstate_2.md)*
 
 ___
 
