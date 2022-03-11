@@ -292,7 +292,7 @@ describe('StripeV3PaymentStrategy', () => {
                             bigpay_token: {
                                 token: 'token',
                             },
-                            confirm: false,
+                            confirm: true,
                         },
                         shouldSetAsDefaultInstrument: true,
                     }}
