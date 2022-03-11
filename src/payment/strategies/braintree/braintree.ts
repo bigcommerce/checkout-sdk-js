@@ -418,11 +418,13 @@ export interface BraintreeComponents {
 
 export interface Config extends BraintreeComponents {
     currency?: string;
+    merchantId?: string;
 }
 
-export interface GetPaypalConfig {
+export interface GetBraintreeConfig {
     currency?: string;
     storeCountry?: string;
+    paypalMerchantId?: string;
 }
 
 export interface GetVenmoConfig {
