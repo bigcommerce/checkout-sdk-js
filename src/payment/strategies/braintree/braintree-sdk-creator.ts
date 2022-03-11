@@ -9,7 +9,7 @@ import { BraintreeClient,
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
-    GetPaypalConfig,
+    GetBraintreeConfig,
     GetVenmoConfig,
     GooglePayBraintreeSDK,
     PaypalClientInstance,
@@ -44,14 +44,14 @@ export default class BraintreeSDKCreator {
         this._clientToken = clientToken;
     }
 
-    getClient(): Promise<BraintreeClient> {
+    getClient(merchantAccountId?: string): Promise<BraintreeClient> {
         if (!this._clientToken) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (!this._client) {
             this._client = this._braintreeScriptLoader.loadClient()
-                .then(client => client.create({ authorization: this._clientToken }));
+                .then(client => client.create({ authorization: this._clientToken, merchantAccountId }));
         }
 
         return this._client;
@@ -69,10 +69,10 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    getPaypalCheckout(config: GetPaypalConfig, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(config: GetBraintreeConfig, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
-                this.getClient(),
+                this.getClient(config.merchantAccountId),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
                 .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {

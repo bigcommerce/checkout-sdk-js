@@ -26,6 +26,7 @@ export interface BraintreeModuleCreator<TInstance, TOptions = BraintreeModuleCre
 export interface BraintreeModuleCreatorConfig {
     client?: BraintreeClient;
     authorization?: string;
+    merchantAccountId?: string;
 }
 
 export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCreatorConfig {
@@ -418,11 +419,13 @@ export interface BraintreeComponents {
 
 export interface Config extends BraintreeComponents {
     currency?: string;
+    merchantId?: string;
 }
 
-export interface GetPaypalConfig {
+export interface GetBraintreeConfig {
     currency?: string;
     storeCountry?: string;
+    merchantAccountId?: string;
 }
 
 export interface GetVenmoConfig {

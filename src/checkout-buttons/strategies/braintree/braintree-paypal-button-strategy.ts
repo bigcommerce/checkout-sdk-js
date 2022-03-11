@@ -40,6 +40,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
         const isVenmoEnabled = paymentMethod?.initializationData?.isBraintreeVenmoEnabled;
+        const merchantAccountId = paymentMethod?.initializationData?.merchantAccountId;
         const storeState = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = storeState.config.getStoreConfig()?.shopperCurrency;
 
@@ -61,7 +62,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         };
 
         return Promise.all([
-            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code}, (paypalCheckoutInstance: PaypalClientInstance) => this._renderButtons(paypalCheckoutInstance)),
+            this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code, merchantAccountId}, (paypalCheckoutInstance: PaypalClientInstance) => this._renderButtons(paypalCheckoutInstance)),
             this._braintreeSDKCreator.getVenmoCheckout({isBraintreeVenmoEnabled: !!isVenmoEnabled}, (venmoCheckoutInstance: VenmoInstance): Promise<VenmoInstance> | void => this._renderVenmoButton(venmoCheckoutInstance)),
             this._braintreeSDKCreator.getPaypal(),
         ])
