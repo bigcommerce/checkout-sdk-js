@@ -79,6 +79,7 @@ export default class BraintreeSDKCreator {
                     this._paypalcheckoutInstance = instance;
                     instance.loadPayPalSDK({
                         currency: config.currency,
+                        merchantId: config.merchantId,
                         components: PAYPAL_COMPONENTS.toString(),
                     }, () => {
                         renderButtonCallback(instance);
