@@ -133,4 +133,45 @@ describe('HostedInputInitializer', () => {
         expect(factory.normalizeParentOrigin)
             .toHaveBeenCalled();
     });
+
+    it('applies Firefox/Safari input field focus loss bugfix', async () => {
+        Object.defineProperty(window.navigator, 'userAgent', {
+            writable: true,
+            value: 'Firefox',
+        });
+        const inputField = document.createElement('input');
+        container.appendChild(inputField);
+
+        process.nextTick(() => {
+            eventListener.trigger({
+                type: HostedFieldEventType.AttachRequested,
+                payload: { type: HostedFieldType.CardNumber },
+            });
+        });
+        await initializer.initialize('input-container');
+
+        expect(document.activeElement).toEqual(document.body);
+        window.dispatchEvent(new Event('focus'));
+        expect(document.activeElement).toEqual(inputField);
+    });
+
+    it('does not apply Firefox/Safari bugfix to Chrome', async () => {
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Chrome',
+        });
+        initializer.firefoxAndSafariBugfix = jest.fn();
+
+        jest.spyOn(window, 'addEventListener');
+
+        process.nextTick(() => {
+            eventListener.trigger({
+                type: HostedFieldEventType.AttachRequested,
+                payload: { type: HostedFieldType.CardNumber },
+            });
+        });
+        await initializer.initialize('input-container');
+
+        expect(window.addEventListener)
+            .not.toHaveBeenCalledWith('focus', initializer.firefoxAndSafariBugfix);
+    });
 });

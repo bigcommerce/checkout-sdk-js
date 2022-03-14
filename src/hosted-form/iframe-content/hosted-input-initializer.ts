@@ -31,6 +31,11 @@ export default class HostedInputInitializer {
         this._resetPageStyles(containerId);
         this._eventListener.listen();
 
+        const browserName = navigator.userAgent.toLowerCase();
+        if (browserName.indexOf('firefox') > -1 || browserName.indexOf('safari') > -1) {
+            window.addEventListener('focus', this.firefoxAndSafariBugfix);
+        }
+
         return fromEvent<HostedFieldAttachEvent>(
             this._eventListener as EventTargetLike<HostedFieldAttachEvent>,
             HostedFieldEventType.AttachRequested
@@ -52,6 +57,22 @@ export default class HostedInputInitializer {
                 take(1)
             )
             .toPromise();
+    }
+
+    firefoxAndSafariBugfix(): void {
+        if (document.activeElement === document.body) {
+            const textField = document.querySelectorAll('input')[0];
+            if (textField) {
+                const browserName = navigator.userAgent.toLowerCase();
+                if (browserName.indexOf('firefox') > -1) {
+                    textField.focus();
+                } else if (browserName.indexOf('safari') > -1) {
+                    setTimeout(() => {
+                        textField.focus();
+                    }, 150);
+                }
+            }
+        }
     }
 
     private _resetPageStyles(containerId: string) {
