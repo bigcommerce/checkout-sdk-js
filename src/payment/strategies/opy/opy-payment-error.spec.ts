@@ -1,11 +1,12 @@
-import OpyError from './opy-payment-error';
+import OpyError, { OpyErrorType } from './opy-payment-error';
 
-describe('DigitalRiverError', () => {
-    it('returns error name, type and message', () => {
-        const error = new OpyError('payment.opy_invalid_cart_error', 'opyInvalidCartError');
+describe('OpyError', () => {
+    it('returns error name, type, subtype and message', () => {
+        const error = new OpyError(OpyErrorType.InvalidCart, 'Foo Payment Method');
 
-        expect(error.name).toEqual('opyInvalidCartError');
-        expect(error.type).toEqual('payment.opy_invalid_cart_error');
-        expect(error.message).toEqual('Unable to proceed because cart data is unavailable or payment for this order has already been made');
+        expect(error.name).toEqual('OpyError');
+        expect(error.type).toEqual('opy_error');
+        expect(error.subtype).toEqual('invalid_cart');
+        expect(error.message).toEqual('Cart price is different to Foo Payment Method plan amount.');
     });
 });

@@ -11,7 +11,7 @@ import PaymentStrategy from '../payment-strategy';
 
 import { isOpyPaymentMethod, ActionTypes } from './opy';
 import { OpyWidgetConfig } from './opy-library';
-import OpyError from './opy-payment-error';
+import OpyError, { OpyErrorType } from './opy-payment-error';
 import OpyScriptLoader from './opy-script-loader';
 
 export default class OpyPaymentStrategy implements PaymentStrategy {
@@ -67,7 +67,9 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         } = paymentMethod;
 
         if (!nextAction) {
-            throw new OpyError('payment.opy_invalid_cart_error', 'opyInvalidCartError');
+            const { displayName = 'Openpay' } = paymentMethod.config;
+
+            throw new OpyError(OpyErrorType.InvalidCart, displayName);
         }
 
         if (!nonce) {
