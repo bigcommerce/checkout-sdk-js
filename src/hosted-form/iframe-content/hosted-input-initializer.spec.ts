@@ -154,24 +154,4 @@ describe('HostedInputInitializer', () => {
         window.dispatchEvent(new Event('focus'));
         expect(document.activeElement).toEqual(inputField);
     });
-
-    it('does not apply Firefox/Safari bugfix to Chrome', async () => {
-        Object.defineProperty(window.navigator, 'userAgent', {
-            value: 'Chrome',
-        });
-        initializer.firefoxAndSafariBugfix = jest.fn();
-
-        jest.spyOn(window, 'addEventListener');
-
-        process.nextTick(() => {
-            eventListener.trigger({
-                type: HostedFieldEventType.AttachRequested,
-                payload: { type: HostedFieldType.CardNumber },
-            });
-        });
-        await initializer.initialize('input-container');
-
-        expect(window.addEventListener)
-            .not.toHaveBeenCalledWith('focus', initializer.firefoxAndSafariBugfix);
-    });
 });
