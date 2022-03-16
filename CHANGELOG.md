@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.227.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.0...v1.227.1) (2022-03-16)
+
+
+### Bug Fixes
+
+* **payment:** INT-5645 Openpay: Change `OpyError` message ([f1e734f](https://github.com/bigcommerce/checkout-sdk-js/commit/f1e734f92e69c7c5a7c146d40a04a15a73a51e73))
+
 ## [1.227.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.226.0...v1.227.0) (2022-03-10)
 
 
