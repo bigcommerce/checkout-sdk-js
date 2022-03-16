@@ -495,14 +495,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
 
     const getPickupOptions = createSelector(
         ({ pickupOptions }: InternalCheckoutSelectors) => pickupOptions.getPickupOptions,
-        getPickupOptions => clone((consignmentId: string, searchArea: SearchArea) => {
-            const pickupOptions = getPickupOptions(consignmentId, searchArea);
-            if (!pickupOptions || !pickupOptions.length) {
-                return;
-            }
-
-            return pickupOptions;
-        })
+        getPickupOptions => clone(getPickupOptions)
     );
 
     return memoizeOne((
