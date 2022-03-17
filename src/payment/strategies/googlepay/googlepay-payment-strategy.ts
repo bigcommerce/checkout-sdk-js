@@ -20,6 +20,7 @@ import PaymentStrategy from '../payment-strategy';
 import { GooglePaymentData, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
 import GooglePayAdyenV3PaymentProcessor from './googlepay-adyenv3-payment-processor';
+import GooglePayCheckoutcomPaymentProcessor from './googlepay-checkoutcom-payment-processor';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
@@ -39,6 +40,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
         private _googlePayAdyenPaymentProcessor?: GooglePayAdyenV2PaymentProcessor | GooglePayAdyenV3PaymentProcessor,
+        private _googlePayCheckoutcomPaymentProcessor?: GooglePayCheckoutcomPaymentProcessor,
         private _braintreeSDKCreator?: BraintreeSDKCreator
     ) {}
 
@@ -139,8 +141,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(newPayment));
         } catch (error) {
-
-            return this._googlePayAdyenPaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
+            return this._processAdditionalAction(methodId, error);
         }
     }
 
@@ -148,7 +149,24 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-     private async _verifyCard(methodId: string , amount: number,  payment: PaymentMethodData): Promise<GooglePayVerifyPayload>  {
+    private _processAdditionalAction(methodId: string, error: unknown): Promise<InternalCheckoutSelectors> {
+        const availableProcessors = {
+            googlepayadyenv2: this._googlePayAdyenPaymentProcessor,
+            googlepaycheckoutcom: this._googlePayCheckoutcomPaymentProcessor,
+        };
+
+        const selectedProcessor = methodId as keyof typeof availableProcessors;
+
+        const processor = selectedProcessor in availableProcessors ?  availableProcessors[selectedProcessor] : undefined;
+
+        if (processor) {
+            return processor.processAdditionalAction(error);
+        }
+
+        return Promise.reject(error);
+    }
+
+    private async _verifyCard(methodId: string , amount: number,  payment: PaymentMethodData): Promise<GooglePayVerifyPayload>  {
         if (methodId === PaymentStrategyType.BRAINTREE_GOOGLE_PAY) {
             const { nonce } = payment.paymentData;
             const threeDSecure = await this._braintreeSDKCreator?.get3DS();

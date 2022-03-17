@@ -1,11 +1,14 @@
+import { createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
+import { of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -15,14 +18,17 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { PaymentActionType } from '../../payment-actions';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { AdyenV2ScriptLoader } from '../adyenv2';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
+import GooglePayCheckoutcomPaymentProcessor from './googlepay-checkoutcom-payment-processor';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayPaymentStrategy from './googlepay-payment-strategy';
 import { getGoogleOrderRequestBody, getGooglePaymentDataMock } from './googlepay.mock';
@@ -40,6 +46,7 @@ describe('GooglePayPaymentStrategy', () => {
     let walletButton: HTMLAnchorElement;
     let paymentMethodMock: PaymentMethod;
     let googlePayAdyenV2PaymentProcessor: GooglePayAdyenV2PaymentProcessor;
+    let googlePayCheckoutcomPaymentProcessor: GooglePayCheckoutcomPaymentProcessor;
     let braintreeSDKCreator: BraintreeSDKCreator;
     const verifyCard: jest.Mock = jest.fn(({ onLookupComplete }) => {
         onLookupComplete('nonce', noop);
@@ -102,6 +109,7 @@ describe('GooglePayPaymentStrategy', () => {
             )
         );
         googlePayAdyenV2PaymentProcessor = new GooglePayAdyenV2PaymentProcessor(store, paymentActionCreator, new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()));
+        googlePayCheckoutcomPaymentProcessor = new GooglePayCheckoutcomPaymentProcessor();
 
         container = document.createElement('div');
         walletButton = document.createElement('a');
@@ -115,7 +123,7 @@ describe('GooglePayPaymentStrategy', () => {
         };
         const order = getOrder();
 
-        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve()).mockReturnValue(store.getState());
+        jest.spyOn(store, 'dispatch');
         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(order);
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(googlePaymentMethodData);
         jest.spyOn(walletButton, 'removeEventListener');
@@ -124,6 +132,7 @@ describe('GooglePayPaymentStrategy', () => {
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(googlePayAdyenV2PaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayAdyenV2PaymentProcessor, 'processAdditionalAction').mockReturnValue(Promise.resolve());
+        jest.spyOn(googlePayCheckoutcomPaymentProcessor, 'processAdditionalAction').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayPaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayPaymentProcessor, 'deinitialize').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(Promise.resolve(getGooglePaymentDataMock()));
@@ -146,6 +155,8 @@ describe('GooglePayPaymentStrategy', () => {
 
     describe('GooglePayPaymentStrategy Other Providers', () => {
         beforeEach(() => {
+            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve()).mockReturnValue(store.getState());
+
             strategy = new GooglePayPaymentStrategy(
                 store,
                 checkoutActionCreator,
@@ -155,6 +166,7 @@ describe('GooglePayPaymentStrategy', () => {
                 orderActionCreator,
                 googlePayPaymentProcessor,
                 undefined,
+                undefined,
                 braintreeSDKCreator
             );
         });
@@ -163,6 +175,8 @@ describe('GooglePayPaymentStrategy', () => {
             let googlePayOptions: PaymentInitializeOptions;
 
             beforeEach(() => {
+                jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve()).mockReturnValue(store.getState());
+
                 googlePayOptions = {
                     methodId: 'googlepaybraintree',
                     googlepaybraintree: {
@@ -284,6 +298,7 @@ describe('GooglePayPaymentStrategy', () => {
             };
 
             beforeEach(() => {
+                jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve()).mockReturnValue(store.getState());
                 googlePayOptions = {
                     methodId: 'googlepaybraintree',
                     googlepaybraintree: googlePayPayload,
@@ -628,6 +643,7 @@ describe('GooglePayPaymentStrategy', () => {
                 orderActionCreator,
                 googlePayPaymentProcessor,
                 googlePayAdyenV2PaymentProcessor,
+                googlePayCheckoutcomPaymentProcessor,
                 braintreeSDKCreator
             );
         });
@@ -649,6 +665,138 @@ describe('GooglePayPaymentStrategy', () => {
                     cardInformation: 'card_info',
                 },
             });
+        });
+
+        it('uses the appropriate payment processor for googlepayadyenv2', async () => {
+            const errorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'additional_action_required' },
+                ],
+                additional_action_required: {
+                    type: 'unknown_action',
+                },
+                status: 'error',
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(googlePayOptions);
+
+            await strategy.execute({
+                ...getGoogleOrderRequestBody(),
+                payment: { methodId: 'googlepayadyenv2' },
+            });
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+            expect(googlePayAdyenV2PaymentProcessor.processAdditionalAction).toHaveBeenCalled();
+            expect(googlePayCheckoutcomPaymentProcessor.processAdditionalAction).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('GooglePayPaymentStrategy for Checkoutcom', () => {
+        const googlePayOptions = {
+            methodId: 'googlepaycheckoutcom',
+            googlepaycheckoutcom: {
+                walletButton: 'mockButton',
+                onError: jest.fn(),
+                onPaymentSelect: jest.fn(),
+            },
+        };
+
+        beforeEach(() => {
+            strategy = new GooglePayPaymentStrategy(
+                store,
+                checkoutActionCreator,
+                paymentMethodActionCreator,
+                paymentStrategyActionCreator,
+                paymentActionCreator,
+                orderActionCreator,
+                googlePayPaymentProcessor,
+                googlePayAdyenV2PaymentProcessor,
+                googlePayCheckoutcomPaymentProcessor,
+                braintreeSDKCreator
+            );
+        });
+
+        it('uses the appropriate payment processor for googlepaycheckoutcom', async () => {
+            const errorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'additional_action_required' },
+                ],
+                additional_action_required: {
+                    type: 'unknown_action',
+                },
+                status: 'error',
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(googlePayOptions);
+
+            await strategy.execute({
+                ...getGoogleOrderRequestBody(),
+                payment: { methodId: 'googlepaycheckoutcom' },
+            });
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+            expect(googlePayAdyenV2PaymentProcessor.processAdditionalAction).not.toHaveBeenCalled();
+            expect(googlePayCheckoutcomPaymentProcessor.processAdditionalAction).toHaveBeenCalled();
+        });
+    });
+
+    describe('GooglePayPaymentStrategy for Braintree', () => {
+        const googlePayOptions = {
+            methodId: 'googlepaycheckoutcom',
+            googlepaycheckoutcom: {
+                walletButton: 'mockButton',
+                onError: jest.fn(),
+                onPaymentSelect: jest.fn(),
+            },
+        };
+
+        beforeEach(() => {
+            strategy = new GooglePayPaymentStrategy(
+                store,
+                checkoutActionCreator,
+                paymentMethodActionCreator,
+                paymentStrategyActionCreator,
+                paymentActionCreator,
+                orderActionCreator,
+                googlePayPaymentProcessor,
+                googlePayAdyenV2PaymentProcessor,
+                googlePayCheckoutcomPaymentProcessor,
+                braintreeSDKCreator
+            );
+        });
+
+        it('does not use any processor to handle additional action if none is available', async () => {
+            const errorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'additional_action_required' },
+                ],
+                additional_action_required: {
+                    type: 'unknown_action',
+                },
+                status: 'error',
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(googlePayOptions);
+
+            await expect(strategy.execute({
+                ...getGoogleOrderRequestBody(),
+            })).rejects.toThrow(RequestError);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+            expect(googlePayAdyenV2PaymentProcessor.processAdditionalAction).not.toHaveBeenCalled();
+            expect(googlePayCheckoutcomPaymentProcessor.processAdditionalAction).not.toHaveBeenCalled();
         });
     });
 });
