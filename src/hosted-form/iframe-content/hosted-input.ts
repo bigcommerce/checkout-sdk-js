@@ -71,6 +71,9 @@ export default class HostedInput {
         this._eventPoster.setTarget(window.parent);
         this._eventListener.listen();
 
+        // fixes the issue on Firefox/Safari where the input doesn't focus properly
+        window.addEventListener('focus', this._forceFocusToInput);
+
         // Assign itself to the global so it can be accessed by its sibling frames
         (window as unknown as HostedInputWindow).hostedInput = this;
 
@@ -84,6 +87,8 @@ export default class HostedInput {
 
         this._form.removeEventListener('submit', this._handleSubmit);
         this._unloadFonts();
+
+        window.removeEventListener('focus', this._forceFocusToInput);
 
         this._eventListener.stopListen();
     }
@@ -245,5 +250,20 @@ export default class HostedInput {
                 fieldType: this._type,
             },
         });
+    };
+
+    private _forceFocusToInput = (): void => {
+        if (document.activeElement === document.body) {
+            const browserName = navigator.userAgent.toLowerCase();
+            if (browserName.indexOf('safari') > -1) {
+                if (this._input.value === '') {
+                    this._input.setAttribute('value', ' ');
+                    this._input.setSelectionRange(0, 1);
+                    this._input.setAttribute('value', '');
+                }
+            } else {
+                this._input.focus();
+            }
+        }
     };
 }

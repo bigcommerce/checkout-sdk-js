@@ -296,4 +296,12 @@ describe('HostedInput', () => {
         expect(document.querySelector('link[href*="fonts.googleapis.com"][rel="stylesheet"]'))
             .toBeFalsy();
     });
+
+    it('applies bugfix of forcing focus on input field', () => {
+        input.attach();
+
+        expect(document.activeElement).toEqual(document.body);
+        window.dispatchEvent(new Event('focus'));
+        expect(document.activeElement).toEqual(container.querySelector('input'));
+    });
 });

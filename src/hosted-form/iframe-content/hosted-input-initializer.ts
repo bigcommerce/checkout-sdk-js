@@ -31,9 +31,6 @@ export default class HostedInputInitializer {
         this._resetPageStyles(containerId);
         this._eventListener.listen();
 
-        // fixes the issue on Firefox/Safari where the input doesn't focus properly
-        window.addEventListener('focus', this.firefoxAndSafariBugfix);
-
         return fromEvent<HostedFieldAttachEvent>(
             this._eventListener as EventTargetLike<HostedFieldAttachEvent>,
             HostedFieldEventType.AttachRequested
@@ -55,24 +52,6 @@ export default class HostedInputInitializer {
                 take(1)
             )
             .toPromise();
-    }
-
-    firefoxAndSafariBugfix(): void {
-        if (document.activeElement === document.body) {
-            const textField = document.querySelectorAll('input')[0];
-            if (textField) {
-                const browserName = navigator.userAgent.toLowerCase();
-                if (browserName.indexOf('safari') > -1) {
-                    if (textField.value === '') {
-                        textField.setAttribute('value', ' ');
-                        textField.setSelectionRange(0, 1);
-                        textField.setAttribute('value', '');
-                    }
-                } else {
-                    textField.focus();
-                }
-            }
-        }
     }
 
     private _resetPageStyles(containerId: string) {
