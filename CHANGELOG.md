@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.227.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.1...v1.227.2) (2022-03-20)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6125 Safari and Firefox focus loss bugfix ([#1373](https://github.com/bigcommerce/checkout-sdk-js/issues/1373)) ([e8f8f43](https://github.com/bigcommerce/checkout-sdk-js/commit/e8f8f438602e5efb5fae712495f2124a75b017da))
+
 ### [1.227.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.0...v1.227.1) (2022-03-16)
 
 
