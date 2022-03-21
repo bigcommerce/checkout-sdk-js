@@ -31,6 +31,7 @@ checkout information, such as shipping and billing details.
 * [getOrder](checkoutstoreselector.md#getorder)
 * [getPaymentMethod](checkoutstoreselector.md#getpaymentmethod)
 * [getPaymentMethods](checkoutstoreselector.md#getpaymentmethods)
+* [getPickupOptions](checkoutstoreselector.md#getpickupoptions)
 * [getSelectedPaymentMethod](checkoutstoreselector.md#getselectedpaymentmethod)
 * [getSelectedShippingOption](checkoutstoreselector.md#getselectedshippingoption)
 * [getShippingAddress](checkoutstoreselector.md#getshippingaddress)
@@ -276,6 +277,26 @@ Gets a list of payment methods available for checkout.
 **Returns:** *[PaymentMethod](paymentmethod.md)[] | undefined*
 
 The list of payment methods if it is loaded, otherwise undefined.
+
+___
+
+###  getPickupOptions
+
+▸ **getPickupOptions**(`consignmentId`: string, `searchArea`: [SearchArea](searcharea.md)): *[PickupOptionResult](pickupoptionresult.md)[] | undefined*
+
+Gets a list of pickup options for specified parameters.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`consignmentId` | string | Id of consignment. |
+`searchArea` | [SearchArea](searcharea.md) | An object containing of radius and co-ordinates. |
+
+**Returns:** *[PickupOptionResult](pickupoptionresult.md)[] | undefined*
+
+The set of shipping address form fields if it is loaded,
+otherwise undefined.
 
 ___
 

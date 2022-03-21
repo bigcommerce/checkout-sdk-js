@@ -41,6 +41,7 @@ order and waiting for the request to complete.
 * [isLoadingOrder](checkoutstorestatusselector.md#isloadingorder)
 * [isLoadingPaymentMethod](checkoutstorestatusselector.md#isloadingpaymentmethod)
 * [isLoadingPaymentMethods](checkoutstorestatusselector.md#isloadingpaymentmethods)
+* [isLoadingPickupOptions](checkoutstorestatusselector.md#isloadingpickupoptions)
 * [isLoadingShippingCountries](checkoutstorestatusselector.md#isloadingshippingcountries)
 * [isLoadingShippingOptions](checkoutstorestatusselector.md#isloadingshippingoptions)
 * [isPaymentStepPending](checkoutstorestatusselector.md#ispaymentsteppending)
@@ -414,6 +415,18 @@ Checks whether payment methods are loading.
 **Returns:** *boolean*
 
 True if payment methods are loading, otherwise false.
+
+___
+
+###  isLoadingPickupOptions
+
+▸ **isLoadingPickupOptions**(): *boolean*
+
+Checks whether pickup options are loading.
+
+**Returns:** *boolean*
+
+True if pickup options are loading, otherwise false.
 
 ___
 

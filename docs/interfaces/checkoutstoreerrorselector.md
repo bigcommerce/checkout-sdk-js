@@ -41,6 +41,7 @@ you can use this object to retrieve the reason for the failure.
 * [getLoadPaymentMethodsError](checkoutstoreerrorselector.md#getloadpaymentmethodserror)
 * [getLoadShippingCountriesError](checkoutstoreerrorselector.md#getloadshippingcountrieserror)
 * [getLoadShippingOptionsError](checkoutstoreerrorselector.md#getloadshippingoptionserror)
+* [getPickupOptionsError](checkoutstoreerrorselector.md#getpickupoptionserror)
 * [getRemoveCouponError](checkoutstoreerrorselector.md#getremovecouponerror)
 * [getRemoveGiftCertificateError](checkoutstoreerrorselector.md#getremovegiftcertificateerror)
 * [getSelectShippingOptionError](checkoutstoreerrorselector.md#getselectshippingoptionerror)
@@ -389,6 +390,18 @@ Returns an error if unable to load shipping options.
 **Returns:** *[Error](amazonpaywidgeterror.md#error) | undefined*
 
 The error object if unable to load, otherwise undefined.
+
+___
+
+###  getPickupOptionsError
+
+▸ **getPickupOptionsError**(): *[Error](amazonpaywidgeterror.md#error) | undefined*
+
+Returns an error if unable to fetch pickup options.
+
+**Returns:** *[Error](amazonpaywidgeterror.md#error) | undefined*
+
+The error object if unable to fetch pickup options, otherwise undefined.
 
 ___
 

@@ -10,21 +10,17 @@
 
 ### Properties
 
-* [id](item.md#optional-id)
-* [name](item.md#optional-name)
+* [quantity](item.md#quantity)
+* [variantId](item.md#variantid)
 
 ## Properties
 
-### `Optional` id
+###  quantity
 
-• **id**? : *undefined | string*
-
-The value to provide in the result.
+• **quantity**: *number*
 
 ___
 
-### `Optional` name
+###  variantId
 
-• **name**? : *undefined | string*
-
-The display name.
+• **variantId**: *number*

@@ -47,7 +47,7 @@ ___
 
 ### `Optional` items
 
-• **items**? : *[Item](item.md)[]*
+• **items**? : *[Item_2](item_2.md)[]*
 
 In case of a select, the items to choose from.
 

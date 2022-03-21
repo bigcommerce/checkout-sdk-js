@@ -2144,21 +2144,20 @@ declare class CheckoutService {
      * Loads a list of pickup options for a given criteria.
      *
      * ```js
-     * const state = await service.loadPickupOptions({
-     *     search_area: {
-     *         radius: {
-     *             value: 1.4,
-     *             unit: 'KM'
-     *         },
-     *         coordinates: {
-     *             latitude: 1.4,
-     *             longitude: 0
-     *         },
+     * const consignmentId = '1';
+     * const searchArea = {
+     *     radius: {
+     *         value: 1.4,
+     *         unit: 'KM'
      *     },
-     *     consignmentId: 1,
-     * });
+     *     coordinates: {
+     *         latitude: 1.4,
+     *         longitude: 0
+     *     },
+     * };
+     * const state = await service.loadPickupOptions({ consignmentId, searchArea });
      *
-     * console.log(state.data.getPickupOptions());
+     * console.log(state.data.getPickupOptions(consignmentId, searchArea));
      * ```
      *
      * @alpha
@@ -3101,6 +3100,12 @@ declare interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to create address, otherwise undefined.
      */
     getCreateCustomerAddressError(): Error | undefined;
+    /**
+     * Returns an error if unable to fetch pickup options.
+     *
+     * @returns The error object if unable to fetch pickup options, otherwise undefined.
+     */
+    getPickupOptionsError(): Error | undefined;
 }
 
 /**
@@ -3312,6 +3317,15 @@ declare interface CheckoutStoreSelector {
      * otherwise undefined.
      */
     getShippingAddressFields(countryCode: string): FormField[];
+    /**
+     * Gets a list of pickup options for specified parameters.
+     *
+     * @param consignmentId - Id of consignment.
+     * @param searchArea - An object containing of radius and co-ordinates.
+     * @returns The set of shipping address form fields if it is loaded,
+     * otherwise undefined.
+     */
+    getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
 }
 
 /**
@@ -3630,6 +3644,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if creating, otherwise false.
      */
     isCreatingCustomerAddress(): boolean;
+    /**
+     * Checks whether pickup options are loading.
+     *
+     * @returns True if pickup options are loading, otherwise false.
+     */
+    isLoadingPickupOptions(): boolean;
 }
 
 declare type ComparableCheckout = Pick<Checkout, 'outstandingBalance' | 'coupons' | 'giftCertificates'> & {
@@ -4731,7 +4751,7 @@ declare interface InputDetail {
     /**
      * In case of a select, the items to choose from.
      */
-    items?: Item[];
+    items?: Item_2[];
     /**
      * The value to provide in the result.
      */
@@ -4766,7 +4786,7 @@ declare interface InputDetail_2 {
     /**
      * In case of a select, the items to choose from.
      */
-    items?: Item_2[];
+    items?: Item_3[];
     /**
      * The value to provide in the result.
      */
@@ -4796,6 +4816,11 @@ declare interface InputStyles extends BlockElementStyles {
 declare type Instrument = CardInstrument;
 
 declare interface Item {
+    variantId: number;
+    quantity: number;
+}
+
+declare interface Item_2 {
     /**
      * The value to provide in the result.
      */
@@ -4806,7 +4831,7 @@ declare interface Item {
     name?: string;
 }
 
-declare interface Item_2 {
+declare interface Item_3 {
     /**
      * The value to provide in the result.
      */
@@ -5265,6 +5290,11 @@ declare interface NonceInstrument {
 }
 
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+declare interface Option {
+    pickupMethod: PickupMethod;
+    itemQuantities: Item;
+}
 
 /**
  * When creating your Drop-in instance, you can specify options to trigger different features or functionality.
@@ -6131,9 +6161,21 @@ declare interface PhysicalItem extends LineItem {
     };
 }
 
+declare interface PickupMethod {
+    id: number;
+    locationId: number;
+    displayName: string;
+    collectionInstructions: string;
+    collectionTimeDescription: string;
+}
+
 declare interface PickupOptionRequestBody {
     searchArea: SearchArea;
     consignmentId: string;
+}
+
+declare interface PickupOptionResult {
+    options: Option[];
 }
 
 declare interface Promotion {
@@ -6758,7 +6800,7 @@ declare interface SubInputDetail {
     /**
      * In case of a select, the items to choose from.
      */
-    items?: Item[];
+    items?: Item_2[];
     /**
      * The value to provide in the result.
      */
@@ -6785,7 +6827,7 @@ declare interface SubInputDetail_2 {
     /**
      * In case of a select, the items to choose from.
      */
-    items?: Item_2[];
+    items?: Item_3[];
     /**
      * The value to provide in the result.
      */
