@@ -10,7 +10,7 @@ export { default as consignmentReducer } from './consignment-reducer';
 export { default as ConsignmentActionCreator } from './consignment-action-creator';
 export { default as ConsignmentRequestSender } from './consignment-request-sender';
 
-export { PickupOptionRequestBody } from './pickup-option';
+export { PickupOptionResult, PickupOptionRequestBody, SearchArea } from './pickup-option';
 export { default as PickupOptionActionCreator } from './pickup-option-action-creator';
 export { default as PickupOptionRequestSender } from './pickup-option-request-sender';
 export { default as PickupOptionSelector, PickupOptionSelectorFactory, createPickupOptionSelectorFactory } from './pickup-option-selector';

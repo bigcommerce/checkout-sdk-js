@@ -14,7 +14,7 @@ import { Country } from '../geography';
 import { Order } from '../order';
 import { PaymentMethod } from '../payment';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
-import { Consignment, ShippingOption } from '../shipping';
+import { Consignment, PickupOptionResult, SearchArea, ShippingOption } from '../shipping';
 import { SignInEmail } from '../signin-email';
 
 import Checkout from './checkout';
@@ -255,6 +255,16 @@ export default interface CheckoutStoreSelector {
      * otherwise undefined.
      */
     getShippingAddressFields(countryCode: string): FormField[];
+
+    /**
+     * Gets a list of pickup options for specified parameters.
+     *
+     * @param consignmentId - Id of consignment.
+     * @param searchArea - An object containing of radius and co-ordinates.
+     * @returns The set of shipping address form fields if it is loaded,
+     * otherwise undefined.
+     */
+    getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
 }
 
 export type CheckoutStoreSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreSelector;
@@ -483,6 +493,11 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getFlashMessages => clone(getFlashMessages)
     );
 
+    const getPickupOptions = createSelector(
+        ({ pickupOptions }: InternalCheckoutSelectors) => pickupOptions.getPickupOptions,
+        getPickupOptions => clone(getPickupOptions)
+    );
+
     return memoizeOne((
         state: InternalCheckoutSelectors
     ): CheckoutStoreSelector => {
@@ -512,6 +527,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getCustomerAccountFields: getCustomerAccountFields(state),
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
+            getPickupOptions: getPickupOptions(state),
         };
     });
 }

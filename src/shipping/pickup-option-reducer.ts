@@ -27,7 +27,11 @@ function dataReducer(
     switch (action.type) {
         case PickupOptionActionType.LoadPickupOptionsSucceeded:
             if (action.meta) {
-                const flattenedMeta = objectFlatten(action.meta);
+                const optionQuery = {
+                    consignmentId: action.meta.consignmentId,
+                    searchArea: action.meta.searchArea,
+                };
+                const flattenedMeta = objectFlatten(optionQuery);
                 const sortedflattenedMeta = objectWithSortedKeys(flattenedMeta);
                 const keyString = btoa(`${JSON.stringify(sortedflattenedMeta)}`);
 
