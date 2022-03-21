@@ -58,6 +58,7 @@ export default interface CheckoutStoreSelector {
     getSignInEmail(): SignInEmail | undefined;
 
     /**
+     * @deprecated
      * Gets the shipping address of the current checkout.
      *
      * If the address is partially complete, it may not have shipping options
@@ -67,6 +68,14 @@ export default interface CheckoutStoreSelector {
      * undefined.
      */
     getShippingAddress(): Address | undefined;
+
+    /**
+     * Gets the address of the current checkout.
+     *
+     * @returns The address object if it is loaded, otherwise
+     * undefined.
+     */
+     getAddress(): Address | undefined;
 
     /**
      * Gets a list of shipping options available for the shipping address.
@@ -247,6 +256,7 @@ export default interface CheckoutStoreSelector {
     getBillingAddressFields(countryCode: string): FormField[];
 
     /**
+     * @deprecated
      * Gets a set of form fields that should be presented to customers in order
      * to capture their shipping address for a specific country.
      *
@@ -255,6 +265,16 @@ export default interface CheckoutStoreSelector {
      * otherwise undefined.
      */
     getShippingAddressFields(countryCode: string): FormField[];
+
+    /**
+     * Gets a set of form fields that should be presented to customers in order
+     * to capture their address for a specific country.
+     *
+     * @param countryCode - A 2-letter country code (ISO 3166-1 alpha-2).
+     * @returns The set of address form fields if it is loaded,
+     * otherwise undefined.
+     */
+     getAddressFields(countryCode: string): FormField[];
 
     /**
      * Gets a list of pickup options for specified parameters.
@@ -315,6 +335,39 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             }
 
             return shippingAddress;
+        })
+    );
+
+    const getAddress = createSelector(
+        ({ shippingAddress }: InternalCheckoutSelectors) => shippingAddress.getAddress,
+        ({ config }: InternalCheckoutSelectors) => config.getContextConfig,
+        (getAddress, getContextConfig) => clone(() => {
+            const address = getAddress();
+            const context = getContextConfig();
+
+            if (!address) {
+                if (!context || !context.geoCountryCode) {
+                    return;
+                }
+
+                return {
+                    firstName: '',
+                    lastName: '',
+                    company: '',
+                    address1: '',
+                    address2: '',
+                    city: '',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                    postalCode: '',
+                    country: '',
+                    phone: '',
+                    customFields: [],
+                    countryCode: context.geoCountryCode,
+                };
+            }
+
+            return address;
         })
     );
 
@@ -488,6 +541,14 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         })
     );
 
+    const getAddressFields = createSelector(
+        ({ form }: InternalCheckoutSelectors) => form.getShippingAddressFields,
+        ({ shippingCountries }: InternalCheckoutSelectors) => shippingCountries.getShippingCountries,
+        (getShippingAddressFields, getShippingCountries) => clone((countryCode: string) => {
+            return getShippingAddressFields(getShippingCountries(), countryCode);
+        })
+    );
+
     const getFlashMessages = createSelector(
         ({ config }: InternalCheckoutSelectors) => config.getFlashMessages,
         getFlashMessages => clone(getFlashMessages)
@@ -506,6 +567,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getOrder: getOrder(state),
             getConfig: getConfig(state),
             getFlashMessages: getFlashMessages(state),
+            getAddress: getAddress(state),
             getShippingAddress: getShippingAddress(state),
             getShippingOptions: getShippingOptions(state),
             getConsignments: getConsignments(state),
@@ -528,6 +590,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
             getPickupOptions: getPickupOptions(state),
+            getAddressFields: getAddressFields(state),
         };
     });
 }

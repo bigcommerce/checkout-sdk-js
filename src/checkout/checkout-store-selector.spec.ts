@@ -205,6 +205,47 @@ describe('CheckoutStoreSelector', () => {
         });
     });
 
+    describe('#getAddress()', () => {
+        it('returns address', () => {
+            expect(selector.getAddress()).toEqual(internalSelectors.address.getAddress());
+        });
+
+        it('returns geo-ip dummy address', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.address, 'getAddress').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getAddress()).toEqual({
+                address1: '',
+                address2: '',
+                city: '',
+                company: '',
+                country: '',
+                customFields: [],
+                firstName: '',
+                lastName: '',
+                phone: '',
+                postalCode: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                countryCode: 'AU',
+            });
+        });
+
+        it('returns undefined if address & geoIp are not present', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.address, 'getAddress').mockReturnValue(undefined);
+            jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getAddress()).toBeUndefined();
+        });
+    });
+
     it('returns instruments', () => {
         expect(selector.getInstruments()).toEqual(internalSelectors.instruments.getInstruments());
     });
@@ -221,6 +262,16 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns shipping address fields', () => {
         const results = selector.getShippingAddressFields('AU');
+        const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const field = find(results, { name: 'stateOrProvinceCode' });
+
+        expect(reject(results, predicate)).toEqual(reject(getAddressFormFields(), predicate));
+        expect(field && field.options && field.options.items)
+            .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
+    });
+
+    it('returns address fields', () => {
+        const results = selector.getAddressFields('AU');
         const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
         const field = find(results, { name: 'stateOrProvinceCode' });
 

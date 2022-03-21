@@ -16,6 +16,7 @@ export function getConsignment(): Consignment {
         lineItemIds: [
             '12e11c8f-7dce-4da3-9413-b649533f8bad',
         ],
+        address: omit(getShippingAddress(), 'id') as Address,
         shippingAddress: omit(getShippingAddress(), 'id') as Address,
         availableShippingOptions: [
             getShippingOption(),
@@ -49,6 +50,7 @@ export function getConsignmentsState(): ConsignmentState {
 export function getConsignmentRequestBody(): ConsignmentUpdateRequestBody {
     return {
         id: '55c96cda6f04c',
+        address: getShippingAddress(),
         lineItems: [{
             itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
             quantity: 1,

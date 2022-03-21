@@ -918,6 +918,7 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
 
             const payload = {
+                address,
                 id: 'foo',
                 shippingAddress: address,
                 lineItems: [],
@@ -945,6 +946,7 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
 
             const payload = {
+                address,
                 shippingAddress: address,
                 lineItems: [{
                     itemId: 'item-foo',
@@ -974,6 +976,7 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
 
             const payload = {
+                address,
                 shippingAddress: address,
                 lineItems: [{
                     itemId: 'item-foo',
@@ -993,9 +996,11 @@ describe('CheckoutService', () => {
 
     describe('#createConsignments()', () => {
         it('dispatches action to create consignments', async () => {
+            const address = getShippingAddress();
             const consignments = [{
+                address,
                 lineItems: [],
-                shippingAddress: getShippingAddress(),
+                shippingAddress: address,
             }];
             const options = { timeout: createTimeout() };
             const action = of(createAction('CREATE_CONSIGNMENTS'));

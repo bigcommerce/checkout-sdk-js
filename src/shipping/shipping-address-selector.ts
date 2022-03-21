@@ -6,6 +6,7 @@ import { createSelector } from '../common/selector';
 import ConsignmentState, { DEFAULT_STATE } from './consignment-state';
 
 export default interface ShippingAddressSelector {
+    getAddress(): Address | undefined;
     getShippingAddress(): Address | undefined;
 }
 
@@ -19,7 +20,7 @@ export function createShippingAddressSelectorFactory(): ShippingAddressSelectorF
                 return;
             }
 
-            return consignments[0].shippingAddress;
+            return consignments[0].address;
         }
     );
 
@@ -28,6 +29,7 @@ export function createShippingAddressSelectorFactory(): ShippingAddressSelectorF
     ): ShippingAddressSelector => {
         return {
             getShippingAddress: getShippingAddress(state),
+            getAddress: getShippingAddress(state),
         };
     });
 }

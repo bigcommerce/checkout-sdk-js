@@ -18,6 +18,7 @@ import { SubscriptionsSelector } from '../subscription';
 import CheckoutSelector from './checkout-selector';
 
 export default interface InternalCheckoutSelectors {
+    address: ShippingAddressSelector;
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
     checkout: CheckoutSelector;

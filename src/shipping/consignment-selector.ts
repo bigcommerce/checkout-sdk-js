@@ -65,7 +65,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
             }
 
             return find(consignments, consignment =>
-                isAddressEqual(consignment.shippingAddress, address)
+                isAddressEqual(consignment.address, address)
             );
         }
     );

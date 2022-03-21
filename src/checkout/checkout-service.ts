@@ -491,6 +491,7 @@ export default class CheckoutService {
     }
 
     /**
+     * @deprecated
      * Loads a set of form fields that should be presented to customers in order
      * to capture their shipping address.
      *
@@ -508,6 +509,27 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadShippingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors> {
+        return this.loadShippingCountries(options);
+    }
+
+    /**
+     * Loads a set of form fields that should be presented to customers in order
+     * to capture their address.
+     *
+     * Once the method has been executed successfully, you can call
+     * `CheckoutStoreSelector#getAddressFields` to retrieve the set of
+     * form fields.
+     *
+     * ```js
+     * const state = service.loadAddressFields();
+     *
+     * console.log(state.data.loadAddressFields('US'));
+     * ```
+     *
+     * @param options - Options for loading the shipping address form fields.
+     * @returns A promise that resolves to the current state.
+     */
+     loadAddressFields(options?: RequestOptions): Promise<CheckoutSelectors> {
         return this.loadShippingCountries(options);
     }
 
@@ -854,7 +876,7 @@ export default class CheckoutService {
      * When a customer updates their shipping address for an order, they will
      * see an updated list of shipping options and the cost for each option,
      * unless no options are available. If the update is successful, you can
-     * call `CheckoutStoreSelector#getShippingAddress` to retrieve the address.
+     * call `CheckoutStoreSelector#getAddress` to retrieve the address.
      *
      * If the shipping address changes and the selected shipping option becomes
      * unavailable for the updated address, the shipping option will be
@@ -866,7 +888,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateShippingAddress(address);
      *
-     * console.log(state.data.getShippingAddress());
+     * console.log(state.data.getAddress());
      * ```
      *
      * @param address - The address to be used for shipping.
