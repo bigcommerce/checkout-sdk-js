@@ -15,7 +15,10 @@ import PaymentStrategy from '../payment-strategy';
 import { StripeElement, StripeElements, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
-const APM_REDIRECT = [StripePaymentMethodType.SOFORT];
+const APM_REDIRECT = [
+  StripePaymentMethodType.SOFORT,
+  StripePaymentMethodType.EPS,
+];
 
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeUPEClient;

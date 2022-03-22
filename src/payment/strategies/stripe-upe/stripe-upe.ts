@@ -126,4 +126,5 @@ export interface StripeHostWindow extends Window {
 export enum StripePaymentMethodType {
     CreditCard = 'card',
     SOFORT = 'sofort',
+    EPS = 'eps',
 }
