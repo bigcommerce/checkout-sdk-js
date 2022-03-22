@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.227.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.3...v1.227.4) (2022-03-22)
+
+
+### Bug Fixes
+
+* **payment:** INT-5619 fix deinitialize to remove dom elements on mollie strategy ([#1369](https://github.com/bigcommerce/checkout-sdk-js/issues/1369)) ([8e863db](https://github.com/bigcommerce/checkout-sdk-js/commit/8e863db49f272abfc2f8b13f8626861482c82d47))
+
 ### [1.227.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.2...v1.227.3) (2022-03-21)
 
 
