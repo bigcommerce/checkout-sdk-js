@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.231.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.230.0...v1.231.0) (2022-03-23)
+
+
+### Features
+
+* **payment:** INT-5042 [Stripe UPE] Add support for Bancontact & iDeal ([#1356](https://github.com/bigcommerce/checkout-sdk-js/issues/1356)) ([3495d00](https://github.com/bigcommerce/checkout-sdk-js/commit/3495d00d7b9b534ea3869cda58a58bbd84b4787e))
+
+
+### Bug Fixes
+
+* **payment:** INT-5723 fix customers with saved credit cards unable to check out with 3ds ([#1371](https://github.com/bigcommerce/checkout-sdk-js/issues/1371)) ([4f3fe50](https://github.com/bigcommerce/checkout-sdk-js/commit/4f3fe50ce0df58aeedd6a54f0414925bc24877d8))
+
 ## [1.230.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.229.0...v1.230.0) (2022-03-23)
 
 
