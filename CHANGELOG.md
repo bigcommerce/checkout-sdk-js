@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.229.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.228.0...v1.229.0) (2022-03-23)
+
+
+### Features
+
+* **payment:** INT-5061 Stripe UPE localization ([#1357](https://github.com/bigcommerce/checkout-sdk-js/issues/1357)) ([35b8341](https://github.com/bigcommerce/checkout-sdk-js/commit/35b83410b980ed6d2a4a09704f99d5c632b25cb9))
+
 ## [1.228.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.227.4...v1.228.0) (2022-03-22)
 
 
