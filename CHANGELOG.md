@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.230.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.229.0...v1.230.0) (2022-03-23)
+
+
+### Features
+
+* **payment:** INT-5040 Add GrabPay to StripeUPE ([#1350](https://github.com/bigcommerce/checkout-sdk-js/issues/1350)) ([dd41821](https://github.com/bigcommerce/checkout-sdk-js/commit/dd418217d2e233ea81ce1890c62549be8bc8fc6d))
+
 ## [1.229.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.228.0...v1.229.0) (2022-03-23)
 
 
