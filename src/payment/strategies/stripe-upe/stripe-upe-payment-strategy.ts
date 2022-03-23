@@ -19,6 +19,7 @@ import StripeUPEScriptLoader from './stripe-upe-script-loader';
 const APM_REDIRECT = [
   StripePaymentMethodType.SOFORT,
   StripePaymentMethodType.EPS,
+  StripePaymentMethodType.GRABPAY,
 ];
 
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
