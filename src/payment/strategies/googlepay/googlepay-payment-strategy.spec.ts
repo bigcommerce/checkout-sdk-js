@@ -166,7 +166,6 @@ describe('GooglePayPaymentStrategy', () => {
                 orderActionCreator,
                 googlePayPaymentProcessor,
                 undefined,
-                undefined,
                 braintreeSDKCreator
             );
         });
@@ -643,7 +642,6 @@ describe('GooglePayPaymentStrategy', () => {
                 orderActionCreator,
                 googlePayPaymentProcessor,
                 googlePayAdyenV2PaymentProcessor,
-                googlePayCheckoutcomPaymentProcessor,
                 braintreeSDKCreator
             );
         });
@@ -714,7 +712,6 @@ describe('GooglePayPaymentStrategy', () => {
                 paymentActionCreator,
                 orderActionCreator,
                 googlePayPaymentProcessor,
-                googlePayAdyenV2PaymentProcessor,
                 googlePayCheckoutcomPaymentProcessor,
                 braintreeSDKCreator
             );
@@ -767,8 +764,7 @@ describe('GooglePayPaymentStrategy', () => {
                 paymentActionCreator,
                 orderActionCreator,
                 googlePayPaymentProcessor,
-                googlePayAdyenV2PaymentProcessor,
-                googlePayCheckoutcomPaymentProcessor,
+                undefined,
                 braintreeSDKCreator
             );
         });

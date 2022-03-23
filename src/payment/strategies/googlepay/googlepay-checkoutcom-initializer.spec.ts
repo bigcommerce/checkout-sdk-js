@@ -5,7 +5,7 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodFailedError } from '../../errors';
 
 import GooglePayCheckoutcomInitializer from './googlepay-checkoutcom-initializer';
-import { getCheckoutMock, getGooglePaymentCheckoutcomDataMock, getGooglePaymentDataMock, getGooglePayCheckoutcomPaymentDataRequestMock, getGooglePayTokenizePayloadCheckoutcom, getGooglePayTokenizePayloadCheckoutcomWithTokenFormat, getPaymentMethodMock } from './googlepay.mock';
+import { getCheckoutMock, getGooglePaymentCheckoutcomDataMock, getGooglePaymentDataMock, getGooglePayCheckoutcomPaymentDataRequestMock, getGooglePayTokenizePayloadCheckoutcom, getPaymentMethodMock } from './googlepay.mock';
 
 describe('GooglePayCheckoutcomInitializer', () => {
     const requestSender: RequestSender = createRequestSender();

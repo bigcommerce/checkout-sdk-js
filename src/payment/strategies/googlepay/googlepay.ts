@@ -1,4 +1,5 @@
-import { Checkout } from '../../../checkout';
+import { PaymentInitializeOptions } from '../..';
+import { Checkout, InternalCheckoutSelectors } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 import { BraintreeModuleCreator, BraintreeVerifyPayload, GooglePayBraintreeSDK } from '../braintree';
 
@@ -9,6 +10,11 @@ export interface GooglePayInitializer {
     initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV2>;
     teardown(): Promise<void>;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
+}
+
+export interface GooglePayProviderProcessor {
+    initialize(options: PaymentInitializeOptions): Promise<void>;
+    processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors>;
 }
 
 export interface GooglePayCreator extends BraintreeModuleCreator<GooglePayBraintreeSDK> {}

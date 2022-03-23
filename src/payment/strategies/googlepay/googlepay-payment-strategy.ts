@@ -17,10 +17,7 @@ import { AdyenPaymentMethodType } from '../adyenv2';
 import { BraintreeGooglePayThreeDSecure, BraintreeSDKCreator, BraintreeVerifyPayload } from '../braintree';
 import PaymentStrategy from '../payment-strategy';
 
-import { GooglePaymentData, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
-import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
-import GooglePayAdyenV3PaymentProcessor from './googlepay-adyenv3-payment-processor';
-import GooglePayCheckoutcomPaymentProcessor from './googlepay-checkoutcom-payment-processor';
+import { GooglePaymentData, GooglePayProviderProcessor, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
@@ -39,8 +36,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _googlePayAdyenPaymentProcessor?: GooglePayAdyenV2PaymentProcessor | GooglePayAdyenV3PaymentProcessor,
-        private _googlePayCheckoutcomPaymentProcessor?: GooglePayCheckoutcomPaymentProcessor,
+        private _googlePayProviderProcessor?: GooglePayProviderProcessor,
         private _braintreeSDKCreator?: BraintreeSDKCreator
     ) {}
 
@@ -141,7 +137,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(newPayment));
         } catch (error) {
-            return this._processAdditionalAction(methodId, error);
+            return this._processAdditionalAction(error);
         }
     }
 
@@ -149,18 +145,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _processAdditionalAction(methodId: string, error: unknown): Promise<InternalCheckoutSelectors> {
-        const availableProcessors = {
-            googlepayadyenv2: this._googlePayAdyenPaymentProcessor,
-            googlepaycheckoutcom: this._googlePayCheckoutcomPaymentProcessor,
-        };
-
-        const selectedProcessor = methodId as keyof typeof availableProcessors;
-
-        const processor = selectedProcessor in availableProcessors ?  availableProcessors[selectedProcessor] : undefined;
-
-        if (processor) {
-            return processor.processAdditionalAction(error);
+    private _processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
+        if (this._googlePayProviderProcessor) {
+            return this._googlePayProviderProcessor.processAdditionalAction(error);
         }
 
         return Promise.reject(error);
@@ -201,21 +188,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     /* tslint:disable:cyclomatic-complexity */
     private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
         if (options.methodId === PaymentStrategyType.ADYENV2_GOOGLEPAY && options.googlepayadyenv2) {
-            if (!this._googlePayAdyenPaymentProcessor) {
+            if (!this._googlePayProviderProcessor) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._googlePayAdyenPaymentProcessor.initialize(options);
+            this._googlePayProviderProcessor.initialize(options);
 
             return options.googlepayadyenv2;
         }
 
         if (options.methodId === PaymentStrategyType.ADYENV3_GOOGLEPAY && options.googlepayadyenv3) {
-            if (!this._googlePayAdyenPaymentProcessor) {
+            if (!this._googlePayProviderProcessor) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._googlePayAdyenPaymentProcessor.initialize(options);
+            this._googlePayProviderProcessor.initialize(options);
 
             return options.googlepayadyenv3;
         }

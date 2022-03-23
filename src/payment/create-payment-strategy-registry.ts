@@ -277,7 +277,6 @@ export default function createPaymentStrategyRegistry(
                 )
             ),
             undefined,
-            undefined,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader))
         )
     );
@@ -453,7 +452,6 @@ export default function createPaymentStrategyRegistry(
                 store,
                 new GooglePayCheckoutcomInitializer(requestSender)
             ),
-            undefined,
             new GooglePayCheckoutcomPaymentProcessor()
         )
     );

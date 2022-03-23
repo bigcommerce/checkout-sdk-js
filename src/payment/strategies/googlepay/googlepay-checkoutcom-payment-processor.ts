@@ -2,8 +2,14 @@ import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../../../checkout';
 import { RequestError } from '../../../common/error/errors';
+import { PaymentInitializeOptions } from '../../payment-request-options';
 
-export default class GooglePayCheckoutcomPaymentProcessor {
+import { GooglePayProviderProcessor } from './googlepay';
+export default class GooglePayCheckoutcomPaymentProcessor implements GooglePayProviderProcessor {
+    initialize(_options: PaymentInitializeOptions): Promise<void> {
+        return Promise.resolve();
+    }
+
     async processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'three_d_secure_required'})) {
             return Promise.reject(error);
