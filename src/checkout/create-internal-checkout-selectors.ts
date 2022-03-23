@@ -54,7 +54,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createSignInEmailSelector = createSignInEmailSelectorFactory();
 
     return (state, options = {}) => {
-        const address = createShippingAddressSelector(state.consignments);
+        const fulfilmentAddress = createShippingAddressSelector(state.consignments);
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
         const checkoutButton = createCheckoutButtonSelector(state.checkoutButton);
@@ -84,7 +84,6 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const config = createConfigSelector(state.config, state.formFields);
 
         const selectors = {
-            address,
             billingAddress,
             cart,
             checkout,
@@ -96,6 +95,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             customer,
             customerStrategies,
             form,
+            fulfilmentAddress,
             giftCertificates,
             instruments,
             order,

@@ -205,19 +205,19 @@ describe('CheckoutStoreSelector', () => {
         });
     });
 
-    describe('#getAddress()', () => {
-        it('returns address', () => {
-            expect(selector.getAddress()).toEqual(internalSelectors.address.getAddress());
+    describe('#getFulfilmentAddress()', () => {
+        it('returns fulfilment address', () => {
+            expect(selector.getFulfilmentAddress()).toEqual(internalSelectors.fulfilmentAddress.getFulfilmentAddress());
         });
 
         it('returns geo-ip dummy address', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
-            jest.spyOn(internalSelectors.address, 'getAddress').mockReturnValue(undefined);
+            jest.spyOn(internalSelectors.fulfilmentAddress, 'getFulfilmentAddress').mockReturnValue(undefined);
 
             selector = createCheckoutStoreSelector(internalSelectors);
 
-            expect(selector.getAddress()).toEqual({
+            expect(selector.getFulfilmentAddress()).toEqual({
                 address1: '',
                 address2: '',
                 city: '',
@@ -237,12 +237,12 @@ describe('CheckoutStoreSelector', () => {
         it('returns undefined if address & geoIp are not present', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
-            jest.spyOn(internalSelectors.address, 'getAddress').mockReturnValue(undefined);
+            jest.spyOn(internalSelectors.fulfilmentAddress, 'getFulfilmentAddress').mockReturnValue(undefined);
             jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
 
             selector = createCheckoutStoreSelector(internalSelectors);
 
-            expect(selector.getAddress()).toBeUndefined();
+            expect(selector.getFulfilmentAddress()).toBeUndefined();
         });
     });
 
@@ -270,8 +270,8 @@ describe('CheckoutStoreSelector', () => {
             .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 
-    it('returns address fields', () => {
-        const results = selector.getAddressFields('AU');
+    it('returns fulfilment address fields', () => {
+        const results = selector.getFulfilmentAddressFields('AU');
         const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
         const field = find(results, { name: 'stateOrProvinceCode' });
 

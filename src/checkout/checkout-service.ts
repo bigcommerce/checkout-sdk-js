@@ -517,19 +517,19 @@ export default class CheckoutService {
      * to capture their address.
      *
      * Once the method has been executed successfully, you can call
-     * `CheckoutStoreSelector#getAddressFields` to retrieve the set of
+     * `CheckoutStoreSelector#getFulfilmentAddressFields` to retrieve the set of
      * form fields.
      *
      * ```js
-     * const state = service.loadAddressFields();
+     * const state = service.loadFulfilmentAddressFields();
      *
-     * console.log(state.data.loadAddressFields('US'));
+     * console.log(state.data.loadFulfilmentAddressFields('US'));
      * ```
      *
      * @param options - Options for loading the shipping address form fields.
      * @returns A promise that resolves to the current state.
      */
-     loadAddressFields(options?: RequestOptions): Promise<CheckoutSelectors> {
+     loadFulfilmentAddressFields(options?: RequestOptions): Promise<CheckoutSelectors> {
         return this.loadShippingCountries(options);
     }
 
@@ -876,7 +876,7 @@ export default class CheckoutService {
      * When a customer updates their shipping address for an order, they will
      * see an updated list of shipping options and the cost for each option,
      * unless no options are available. If the update is successful, you can
-     * call `CheckoutStoreSelector#getAddress` to retrieve the address.
+     * call `CheckoutStoreSelector#getFulfilmentAddress` to retrieve the address.
      *
      * If the shipping address changes and the selected shipping option becomes
      * unavailable for the updated address, the shipping option will be
@@ -888,7 +888,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateShippingAddress(address);
      *
-     * console.log(state.data.getAddress());
+     * console.log(state.data.getFulfilmentAddress());
      * ```
      *
      * @param address - The address to be used for shipping.
