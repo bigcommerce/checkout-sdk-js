@@ -219,7 +219,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private async _executeWithVaulted(payment: OrderPaymentRequestBody, token: string, shouldSetAsDefaultInstrument: boolean | undefined): Promise<InternalCheckoutSelectors> {
         const formattedPayload = {
             bigpay_token: { token },
-            confirm: false,
+            confirm: true,
         };
 
         if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId) && this._hostedForm) {
