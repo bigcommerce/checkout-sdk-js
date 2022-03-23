@@ -19,6 +19,7 @@ import PaymentStrategy from '../payment-strategy';
 
 import { GooglePaymentData, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
+import GooglePayAdyenV3PaymentProcessor from './googlepay-adyenv3-payment-processor';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
@@ -37,7 +38,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _googlePayAdyenV2PaymentProcessor?: GooglePayAdyenV2PaymentProcessor,
+        private _googlePayAdyenPaymentProcessor?: GooglePayAdyenV2PaymentProcessor | GooglePayAdyenV3PaymentProcessor,
         private _braintreeSDKCreator?: BraintreeSDKCreator
     ) {}
 
@@ -139,7 +140,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(newPayment));
         } catch (error) {
 
-            return this._googlePayAdyenV2PaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
+            return this._googlePayAdyenPaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
         }
     }
 
@@ -179,15 +180,26 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return verification.promise;
     }
 
+    /* tslint:disable:cyclomatic-complexity */
     private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
         if (options.methodId === PaymentStrategyType.ADYENV2_GOOGLEPAY && options.googlepayadyenv2) {
-            if (!this._googlePayAdyenV2PaymentProcessor) {
+            if (!this._googlePayAdyenPaymentProcessor) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._googlePayAdyenV2PaymentProcessor.initialize(options);
+            this._googlePayAdyenPaymentProcessor.initialize(options);
 
             return options.googlepayadyenv2;
+        }
+
+        if (options.methodId === PaymentStrategyType.ADYENV3_GOOGLEPAY && options.googlepayadyenv3) {
+            if (!this._googlePayAdyenPaymentProcessor) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            this._googlePayAdyenPaymentProcessor.initialize(options);
+
+            return options.googlepayadyenv3;
         }
 
         if (options.methodId === PaymentStrategyType.AUTHORIZENET_GOOGLE_PAY && options.googlepayauthorizenet) {
@@ -220,6 +232,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
     }
+    /* tslint:enable:cyclomatic-complexity */
 
     private async _getPayment(methodId: string, requireRenewNonce = false): Promise<PaymentMethodData> {
         if (!methodId || !this._paymentMethod) {
@@ -255,6 +268,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 type: AdyenPaymentMethodType.GooglePay,
                 googlePayToken: nonce,
                 browser_info: getBrowserInfo(),
+            });
+        }
+
+        if (methodId === PaymentStrategyType.ADYENV3_GOOGLEPAY) {
+            return JSON.stringify({
+                type: AdyenPaymentMethodType.GooglePay,
+                googlePayToken: nonce,
             });
         }
 

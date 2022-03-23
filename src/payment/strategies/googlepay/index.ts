@@ -5,6 +5,8 @@ export { default as GooglePayScriptLoader } from './googlepay-script-loader';
 export { default as GooglePayPaymentStrategy } from './googlepay-payment-strategy';
 export { default as GooglePayAdyenV2Initializer } from './googlepay-adyenv2-initializer';
 export { default as GooglePayAdyenV2PaymentProcessor } from './googlepay-adyenv2-payment-processor';
+export { default as GooglePayAdyenV3Initializer } from './googlepay-adyenv3-initializer';
+export { default as GooglePayAdyenV3PaymentProcessor } from './googlepay-adyenv3-payment-processor';
 export { default as GooglePayBraintreeInitializer } from './googlepay-braintree-initializer';
 export { default as GooglePayCheckoutcomInitializer } from './googlepay-checkoutcom-initializer';
 export { default as GooglePayCybersourceV2Initializer } from './googlepay-cybersourcev2-initializer';
