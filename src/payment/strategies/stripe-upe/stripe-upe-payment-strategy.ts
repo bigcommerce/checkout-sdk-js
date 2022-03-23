@@ -12,6 +12,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import formatLocale from './format-locale';
 import { StripeElement, StripeElements, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
@@ -30,8 +31,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _stripeScriptLoader: StripeUPEScriptLoader,
-        private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _locale: string
+        private _storeCreditActionCreator: StoreCreditActionCreator
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -46,7 +46,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { stripePublishableKey, stripeConnectedAccount } } = paymentMethod;
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage } } = paymentMethod;
 
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -56,6 +56,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this._stripeElements = this._stripeElements ?? this._stripeUPEClient.elements({
             clientSecret: paymentMethod.clientToken,
+            locale: formatLocale(shopperLanguage),
         });
 
         const stripeElement: StripeElement = this._stripeElements.getElement('payment') || this._stripeElements.create('payment',
@@ -195,8 +196,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         return await this._stripeScriptLoader.load(
             stripePublishableKey,
-            stripeConnectedAccount,
-            this._locale
+            stripeConnectedAccount
         );
     }
 }
