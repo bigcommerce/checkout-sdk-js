@@ -44,6 +44,7 @@ export interface GooglePayHostWindow extends Window {
 
 export interface TokenizePayload {
     nonce: string;
+    tokenFormat?: string;
     details: {
         cardType: string;
         lastFour: string;

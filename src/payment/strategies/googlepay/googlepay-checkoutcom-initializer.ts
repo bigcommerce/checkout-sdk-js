@@ -51,8 +51,8 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         }
         const finalToken = await this._convertToken(this._testMode, this._publishableKey, token);
 
-        return {
-            nonce: finalToken,
+        const payload: TokenizePayload = {
+            nonce: finalToken.token,
             type: 'CreditCard',
             description: paymentData.paymentMethodData.description,
             details: {
@@ -60,9 +60,15 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
                 lastFour: paymentData.paymentMethodData.info.cardDetails,
             },
         };
+
+        if (finalToken.token_format) {
+            payload.tokenFormat = finalToken.token_format;
+        }
+
+        return payload;
     }
 
-    private async _convertToken(testMode: boolean, checkoutcomkey: string, token: CheckoutcomGooglePayToken): Promise<string> {
+    private async _convertToken(testMode: boolean, checkoutcomkey: string, token: CheckoutcomGooglePayToken): Promise<CheckoutcomToken> {
         const checkoutcomToken: CheckoutcomToken = await this._requestCheckoutcomTokenize(testMode, checkoutcomkey, {
             type: 'googlepay',
             token_data: token,
@@ -72,7 +78,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
             throw new PaymentMethodFailedError('Unable to parse response from Checkout.com');
         }
 
-        return checkoutcomToken.token;
+        return checkoutcomToken;
     }
 
     private async _requestCheckoutcomTokenize(testMode: boolean, checkoutcomKey: string, data = {}): Promise<CheckoutcomToken> {

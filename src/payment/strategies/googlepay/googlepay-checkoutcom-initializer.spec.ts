@@ -1,10 +1,11 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
 
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodFailedError } from '../../errors';
 
 import GooglePayCheckoutcomInitializer from './googlepay-checkoutcom-initializer';
-import { getCheckoutMock, getGooglePaymentCheckoutcomDataMock, getGooglePaymentDataMock, getGooglePayCheckoutcomPaymentDataRequestMock, getGooglePayTokenizePayloadCheckoutcom, getPaymentMethodMock } from './googlepay.mock';
+import { getCheckoutMock, getGooglePaymentCheckoutcomDataMock, getGooglePaymentDataMock, getGooglePayCheckoutcomPaymentDataRequestMock, getGooglePayTokenizePayloadCheckoutcom, getGooglePayTokenizePayloadCheckoutcomWithTokenFormat, getPaymentMethodMock } from './googlepay.mock';
 
 describe('GooglePayCheckoutcomInitializer', () => {
     const requestSender: RequestSender = createRequestSender();
@@ -48,6 +49,15 @@ describe('GooglePayCheckoutcomInitializer', () => {
 
             expect(tokenizePayload).toBeTruthy();
             expect(tokenizePayload).toEqual(getGooglePayTokenizePayloadCheckoutcom());
+        });
+
+        it('parses a response from google pay payload received with token format', async () => {
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve({ body: { token: 'parsedToken', token_format: 'pan_only' } }));
+
+            const tokenizePayload = await googlePayCheckoutcomInitializer.parseResponse(getGooglePaymentCheckoutcomDataMock());
+
+            expect(tokenizePayload).toBeTruthy();
+            expect(tokenizePayload).toEqual(merge({ tokenFormat: 'pan_only' }, getGooglePayTokenizePayloadCheckoutcom()));
         });
 
         it('throws when try to parse a response from google pay payload received', () => {
