@@ -15,7 +15,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import formatLocale from './format-locale';
-import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripeError, StripePaymentMethodType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
+import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripeError, StripePaymentMethodType, StripeStringConstants, StripeUPEAppearanceOptions, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const APM_REDIRECT = [
@@ -60,10 +60,33 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         this._stripeUPEClient = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
+        let appearance: StripeUPEAppearanceOptions | undefined;
+        if (stripeupe.style) {
+            const styles = stripeupe.style;
+            appearance = {
+                variables: {
+                    colorPrimary: styles.fieldInnerShadow,
+                    colorBackground: styles.fieldBackground,
+                    colorText: styles.labelText,
+                    colorDanger: styles.fieldErrorText,
+                    colorTextSecondary: styles.labelText,
+                    colorTextPlaceholder: styles.fieldPlaceholderText,
+                    colorIcon: styles.fieldPlaceholderText,
+                },
+                rules: {
+                    '.Input': {
+                        borderColor: styles.fieldBorder,
+                        color: styles.fieldText,
+                        boxShadow: styles.fieldInnerShadow,
+                    },
+                },
+            };
+        }
 
         this._stripeElements = this._stripeElements ?? this._stripeUPEClient.elements({
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
+            appearance,
         });
 
         const stripeElement: StripeElement = this._stripeElements.getElement(StripeStringConstants.PAYMENT) || this._stripeElements.create(StripeStringConstants.PAYMENT,

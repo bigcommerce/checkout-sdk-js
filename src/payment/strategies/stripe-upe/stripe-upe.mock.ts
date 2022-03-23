@@ -35,12 +35,13 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
     };
 }
 
-export function getStripeUPEInitializeOptionsMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard): PaymentInitializeOptions {
+export function getStripeUPEInitializeOptionsMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, style: {[key: string]: string} = {fieldText: '#ccc'}): PaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,
         gatewayId,
         stripeupe: {
             containerId: `stripe-${stripePaymentMethodType}-component-field`,
+            style,
         },
     };
 }
