@@ -43,6 +43,30 @@ export function getAdyenV2CustomerInitializeOptions(mode: Mode = Mode.Full): Cus
     }
 }
 
+export function getAdyenV3CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepayadyenv3' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayAdyenV3 = { googlepayadyenv3: { ...container } };
+    const googlepayAdyenV3WithInvalidContainer = { googlepayadyenv3: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete: {
+            return { ...methodId };
+        }
+        case Mode.UndefinedMethodId: {
+            return { ...undefinedMethodId, ...googlepayAdyenV3 };
+        }
+        case Mode.InvalidContainer: {
+            return { ...methodId, ...googlepayAdyenV3WithInvalidContainer };
+        }
+        default: {
+            return { ...methodId, ...googlepayAdyenV3 };
+        }
+    }
+}
+
 export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayauthorizenet' };
     const undefinedMethodId = { methodId: undefined };

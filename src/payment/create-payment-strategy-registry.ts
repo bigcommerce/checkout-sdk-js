@@ -46,7 +46,7 @@ import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { ExternalPaymentStrategy } from './strategies/external';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAdyenV3Initializer, GooglePayAdyenV3PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
@@ -146,6 +146,26 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             new AdyenV3ScriptLoader(scriptLoader, getStylesheetLoader()),
             locale
+        )
+    );
+
+    registry.register(PaymentStrategyType.ADYENV3_GOOGLEPAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayAdyenV3Initializer()
+            ),
+            new GooglePayAdyenV3PaymentProcessor(
+                store,
+                paymentActionCreator,
+                new AdyenV3ScriptLoader(scriptLoader, getStylesheetLoader())
+            )
         )
     );
 

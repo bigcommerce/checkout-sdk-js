@@ -77,6 +77,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             return options.googlepayadyenv2;
         }
 
+        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV3 && options.googlepayadyenv3) {
+            return options.googlepayadyenv3;
+        }
+
         if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET && options.googlepayauthorizenet) {
             return options.googlepayauthorizenet;
         }
