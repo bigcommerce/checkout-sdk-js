@@ -1,4 +1,4 @@
-import { createAction, createDataStore, Action, DataStore, ReadableDataStore } from '@bigcommerce/data-store';
+import { createAction, createDataStore, Action, ReadableDataStore } from '@bigcommerce/data-store';
 
 enum ProjectionActionType {
     Synchronize = 'SYNCHRONIZE',
@@ -14,7 +14,7 @@ export interface DataStoreProjection<TTransformedState> extends ReadableDataStor
 }
 
 export default function createDataStoreProjection<TState, TTransformedState = TState>(
-    store: DataStore<any, Action, TState>,
+    store: ReadableDataStore<TState>,
     stateTransformer: (state: TState) => TTransformedState
 ): DataStoreProjection<TTransformedState> {
     const projection = createDataStore<TState | undefined, SynchronizeAction<TState>, TTransformedState>(

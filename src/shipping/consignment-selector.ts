@@ -3,7 +3,9 @@ import { find } from 'lodash';
 
 import { isAddressEqual, AddressRequestBody } from '../address';
 import { CartSelector, PhysicalItem } from '../cart';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 
 import Consignment from './consignment';
 import ConsignmentState, { DEFAULT_STATE } from './consignment-state';
@@ -11,6 +13,7 @@ import ShippingOption from './shipping-option';
 
 export default interface ConsignmentSelector {
     getConsignments(): Consignment[] | undefined;
+    getConsignmentsOrThrow(): Consignment[];
     getConsignmentById(id: string): Consignment | undefined;
     getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined;
     getShippingOption(): ShippingOption | undefined;
@@ -44,6 +47,13 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
     const getConsignments = createSelector(
         (state: ConsignmentState) => state.data,
         consignments => () => consignments
+    );
+
+    const getConsignmentsOrThrow = createSelector(
+        getConsignments,
+        getConsignments => () => {
+            return guard(getConsignments(), () => new MissingDataError(MissingDataErrorType.MissingConsignments));
+        }
     );
 
     const getConsignmentById = createSelector(
@@ -224,6 +234,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
     ): ConsignmentSelector => {
         return {
             getConsignments: getConsignments(state),
+            getConsignmentsOrThrow: getConsignmentsOrThrow(state),
             getConsignmentById: getConsignmentById(state),
             getConsignmentByAddress: getConsignmentByAddress(state),
             getShippingOption: getShippingOption(state),

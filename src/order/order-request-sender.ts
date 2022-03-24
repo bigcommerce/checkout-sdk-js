@@ -46,7 +46,7 @@ export default class OrderRequestSender {
         });
     }
 
-    submitOrder(body: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(body?: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
         return this._requestSender.post<InternalOrderResponseBody>(url, {

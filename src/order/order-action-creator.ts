@@ -62,7 +62,7 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
+    submitOrder(payload?: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
             defer(() => {
@@ -83,7 +83,7 @@ export default class OrderActionCreator {
                     this._checkoutValidator.validate(checkout, options)
                         .then(() => this._orderRequestSender.submitOrder(
                             this._mapToOrderRequestBody(
-                                payload,
+                                payload ?? {},
                                 checkout.customerMessage,
                                 externalSource
                             ),

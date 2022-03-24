@@ -2,7 +2,9 @@ import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { CheckoutSelector } from '../checkout';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 import { GatewayOrderPayment, OrderSelector } from '../order';
 
 import PaymentMethod from './payment-method';
@@ -11,9 +13,13 @@ import { ACKNOWLEDGE, FINALIZE } from './payment-status-types';
 
 export default interface PaymentSelector {
     getPaymentId(): { providerId: string; gatewayId?: string } | undefined;
+    getPaymentIdOrThrow(): { providerId: string; gatewayId?: string };
     getPaymentStatus(): string | undefined;
+    getPaymentStatusOrThrow(): string;
     getPaymentToken(): string | undefined;
+    getPaymentTokenOrThrow(): string;
     getPaymentRedirectUrl(): string | undefined;
+    getPaymentRedirectUrlOrThrow(): string;
     isPaymentDataRequired(useStoreCredit?: boolean): boolean;
     isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean;
 }
@@ -85,6 +91,13 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
         }
     );
 
+    const getPaymentIdOrThrow = createSelector(
+        getPaymentId,
+        getPaymentId => () => {
+            return guard(getPaymentId(), () => new MissingDataError(MissingDataErrorType.MissingPaymentId));
+        }
+    );
+
     const getPaymentStatus = createSelector(
         getInternalPayment,
         getHostedPayment,
@@ -104,6 +117,13 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
         }
     );
 
+    const getPaymentStatusOrThrow = createSelector(
+        getPaymentStatus,
+        getPaymentStatus => () => {
+            return guard(getPaymentStatus(), () => new MissingDataError(MissingDataErrorType.MissingPaymentStatus));
+        }
+    );
+
     const getPaymentToken = createSelector(
         ({ order }: PaymentSelectorDependencies) => order.getOrderMeta,
         getOrderMeta => () => {
@@ -113,12 +133,26 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
         }
     );
 
+    const getPaymentTokenOrThrow = createSelector(
+        getPaymentToken,
+        getPaymentToken => () => {
+            return guard(getPaymentToken(), () => new MissingDataError(MissingDataErrorType.MissingPaymentToken));
+        }
+    );
+
     const getPaymentRedirectUrl = createSelector(
         getInternalPayment,
         getInternalPayment => () => {
             const payment = getInternalPayment();
 
             return payment && payment.redirectUrl;
+        }
+    );
+
+    const getPaymentRedirectUrlOrThrow = createSelector(
+        getPaymentRedirectUrl,
+        getPaymentRedirectUrl => () => {
+            return guard(getPaymentRedirectUrl(), () => new MissingDataError(MissingDataErrorType.MissingPaymentRedirectUrl));
         }
     );
 
@@ -148,9 +182,13 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
     ): PaymentSelector => {
         return {
             getPaymentId: getPaymentId({ checkout, order }),
+            getPaymentIdOrThrow: getPaymentIdOrThrow({ checkout, order }),
             getPaymentStatus: getPaymentStatus({ checkout, order }),
+            getPaymentStatusOrThrow: getPaymentStatusOrThrow({ checkout, order }),
             getPaymentToken: getPaymentToken({ checkout, order }),
+            getPaymentTokenOrThrow: getPaymentTokenOrThrow({ checkout, order }),
             getPaymentRedirectUrl: getPaymentRedirectUrl({ checkout, order }),
+            getPaymentRedirectUrlOrThrow: getPaymentRedirectUrlOrThrow({ checkout, order }),
             isPaymentDataRequired: isPaymentDataRequired({ checkout, order }),
             isPaymentDataSubmitted: isPaymentDataSubmitted({ checkout, order }),
         };
