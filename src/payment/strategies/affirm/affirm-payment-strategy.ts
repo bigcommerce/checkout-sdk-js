@@ -2,6 +2,7 @@ import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
+import { StoreConfig } from '../../../config';
 import { Order, OrderActionCreator, OrderIncludes, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { Consignment } from '../../../shipping';
@@ -108,7 +109,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     private _getCheckoutInformation(): AffirmRequestData {
         const state = this._store.getState();
-        const config = state.config.getStoreConfig();
+        const config = state.config.getStoreConfig() as StoreConfig | undefined;
         const consignments = state.consignments.getConsignments();
         const order = state.order.getOrder();
 
@@ -124,10 +125,16 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const billingAddress = this._getBillingAddress();
 
         return {
+            financing_program: '',
+            config: {
+                financial_product_key: config.checkoutSettings.affirmFinancialKey
+            },
             merchant: {
+                exchange_lease_enabled: true,
                 user_confirmation_url: config.links.checkoutLink,
                 user_cancel_url: config.links.checkoutLink,
-                user_confirmation_url_action: 'POST',
+                user_decline_url: config.links.affirmDeclineLink,
+                user_confirmation_url_action: 'GET',
             },
             shipping: this._getShippingAddress() || billingAddress,
             billing: billingAddress,

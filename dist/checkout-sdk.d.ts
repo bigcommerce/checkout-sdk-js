@@ -2820,6 +2820,8 @@ declare interface CheckoutServiceOptions {
 }
 
 declare interface CheckoutSettings {
+    affirmFinancingProgram: string;
+    affirmFinancialKey: string;
     features: {
         [featureName: string]: boolean;
     };
@@ -6478,6 +6480,7 @@ declare interface StoreCurrency {
 declare interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
+    affirmDeclineLink: string;
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;

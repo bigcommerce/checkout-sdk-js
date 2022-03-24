@@ -33,10 +33,16 @@ export interface AffirmFailResponse {
 }
 
 export interface AffirmRequestData {
+    financing_program: string;
+    config: {
+        financial_product_key: string
+    };
     merchant: {
+        exchange_lease_enabled: boolean;
         user_confirmation_url: string;
         user_cancel_url: string;
         user_confirmation_url_action?: string;
+        user_decline_url: string;
         name?: string;
     };
     shipping: AffirmAddress;
@@ -51,6 +57,9 @@ export interface AffirmRequestData {
         platform_type: string;
         platform_version: string;
         platform_affirm: string;
+        utm_source?: string;
+        utm_medium?: string;
+        utm_campaign?: number;
     };
     order_id?: string;
     shipping_amount: number;

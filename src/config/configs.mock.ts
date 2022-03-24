@@ -19,6 +19,8 @@ export function getConfig(): Config {
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
+                affirmFinancingProgram: '',
+                affirmFinancialKey: '',
                 features: {},
                 enableOrderComments: true,
                 enableTermsAndConditions: false,
@@ -64,6 +66,7 @@ export function getConfig(): Config {
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
                 checkoutLink: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                affirmDeclineLink: 'https://nourl',
                 createAccountLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=create_account',
                 forgotPasswordLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=reset_password',
                 loginLink: 'https://store-k1drp8k8.bcapp.dev/login.php',
