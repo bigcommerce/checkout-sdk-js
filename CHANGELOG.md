@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.232.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.231.0...v1.232.0) (2022-03-24)
+
+
+### Features
+
+* **payment:** INT-5033 - INT-5053 [Stripe UPE] Add support for Giropay and Alipay ([#1361](https://github.com/bigcommerce/checkout-sdk-js/issues/1361)) ([2ed11b9](https://github.com/bigcommerce/checkout-sdk-js/commit/2ed11b9c99ae9276a8b8e0b054a2be7335a7897e))
+
 ## [1.231.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.230.0...v1.231.0) (2022-03-23)
 
 
