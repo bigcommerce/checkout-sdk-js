@@ -130,4 +130,6 @@ export enum StripePaymentMethodType {
     GRABPAY = 'grabpay',
     BANCONTACT = 'bancontact',
     IDEAL = 'ideal',
+    GIROPAY = 'giropay',
+    ALIPAY = 'alipay',
 }

@@ -22,6 +22,8 @@ const APM_REDIRECT = [
   StripePaymentMethodType.GRABPAY,
   StripePaymentMethodType.BANCONTACT,
   StripePaymentMethodType.IDEAL,
+  StripePaymentMethodType.GIROPAY,
+  StripePaymentMethodType.ALIPAY,
 ];
 
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
