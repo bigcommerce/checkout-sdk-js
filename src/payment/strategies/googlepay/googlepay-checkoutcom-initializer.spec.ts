@@ -1,6 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { PaymentMethodFailedError } from '../../errors';
 
 import GooglePayCheckoutcomInitializer from './googlepay-checkoutcom-initializer';
 import { getCheckoutMock, getGooglePaymentCheckoutcomDataMock, getGooglePaymentDataMock, getGooglePayCheckoutcomPaymentDataRequestMock, getGooglePayTokenizePayloadCheckoutcom, getPaymentMethodMock } from './googlepay.mock';
@@ -42,10 +43,6 @@ describe('GooglePayCheckoutcomInitializer', () => {
     });
 
     describe('#parseResponse', () => {
-        beforeEach(() => {
-            jest.spyOn(RequestSender.prototype, 'post').mockReturnValue(Promise.resolve({ body: { token: 'parsedToken' } }));
-        });
-
         it('parses a response from google pay payload received', async () => {
             const tokenizePayload = await googlePayCheckoutcomInitializer.parseResponse(getGooglePaymentCheckoutcomDataMock());
 
@@ -58,5 +55,26 @@ describe('GooglePayCheckoutcomInitializer', () => {
             expect(response).rejects.toThrow(new InvalidArgumentError('Unable to parse response from Google Pay.'));
         });
 
+        it('throws when token from google response is not a json', () => {
+            const withoutToken = getGooglePaymentDataMock();
+            withoutToken.paymentMethodData.tokenizationData.token = 'invalidjson';
+            const response = googlePayCheckoutcomInitializer.parseResponse(withoutToken);
+
+            expect(response).rejects.toThrow(new InvalidArgumentError('Unable to parse response from Google Pay.'));
+        });
+
+        it('throws error when checkoutcom token is not received', async () => {
+            jest.spyOn(requestSender, 'post').mockReturnValueOnce(Promise.resolve({ body: { token: '' } }));
+            try {
+                await googlePayCheckoutcomInitializer.initialize(
+                    getCheckoutMock(),
+                    getPaymentMethodMock(),
+                    true
+                );
+                await googlePayCheckoutcomInitializer.parseResponse(getGooglePaymentCheckoutcomDataMock());
+            } catch (error) {
+                expect(error).toEqual(new PaymentMethodFailedError('Unable to parse response from Checkout.com'));
+            }
+        });
     });
 });

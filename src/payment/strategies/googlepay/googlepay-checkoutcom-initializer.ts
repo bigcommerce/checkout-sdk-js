@@ -13,6 +13,7 @@ import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePa
 export default class GooglePayCheckoutcomInitializer implements GooglePayInitializer {
     private _publishableKey: string = '';
     private _testMode: boolean = true;
+    private _errorMessage: string = 'Unable to parse response from GooglePay.';
 
     constructor(
        private _requestSender: RequestSender
@@ -42,11 +43,11 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         try {
             token = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
         } catch (err) {
-            throw new InvalidArgumentError('Unable to parse response from Google Pay.');
+            throw new InvalidArgumentError(this._errorMessage);
         }
 
         if (!token.signature || !token.protocolVersion || !token.signedMessage) {
-            throw new PaymentMethodFailedError('Unable to parse response from Google Pay.');
+            throw new PaymentMethodFailedError(this._errorMessage);
         }
         const finalToken = await this._convertToken(this._testMode, this._publishableKey, token);
 
@@ -62,10 +63,6 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
     }
 
     private async _convertToken(testMode: boolean, checkoutcomkey: string, token: CheckoutcomGooglePayToken): Promise<string> {
-        if (!token || !token.protocolVersion) {
-            throw new PaymentMethodFailedError('Unable to parse response from GooglePay.');
-        }
-
         const checkoutcomToken: CheckoutcomToken = await this._requestCheckoutcomTokenize(testMode, checkoutcomkey, {
             type: 'googlepay',
             token_data: token,
