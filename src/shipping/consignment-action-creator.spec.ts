@@ -111,6 +111,7 @@ describe('consignmentActionCreator', () => {
 
         beforeEach(() => {
             payload = [{
+                address: consignment.address,
                 shippingAddress: consignment.shippingAddress,
                 lineItems: [],
             }];
@@ -199,6 +200,7 @@ describe('consignmentActionCreator', () => {
 
         beforeEach(() => {
             payload = {
+                address: consignment.address,
                 shippingAddress: consignment.shippingAddress,
                 lineItems: [{
                     itemId: 'unassigned',
@@ -308,7 +310,8 @@ describe('consignmentActionCreator', () => {
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     {
                         id: consignment.id,
-                        shippingAddress: consignment.shippingAddress,
+                        address: consignment.address,
+                        shippingAddress: consignment.address,
                         lineItems: [
                             {
                                 itemId: 'existing',
@@ -383,6 +386,7 @@ describe('consignmentActionCreator', () => {
 
         beforeEach(() => {
             payload = {
+                address: consignment.address,
                 shippingAddress: consignment.shippingAddress,
                 lineItems: [{
                     itemId: 'unassigned',
@@ -481,7 +485,8 @@ describe('consignmentActionCreator', () => {
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     {
                         id: consignment.id,
-                        shippingAddress: consignment.shippingAddress,
+                        address: consignment.address,
+                        shippingAddress: consignment.address,
                         lineItems: payload.lineItems,
                     },
                     options
@@ -515,6 +520,7 @@ describe('consignmentActionCreator', () => {
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     {
                         id: consignment.id,
+                        address: consignment.address,
                         shippingAddress: consignment.shippingAddress,
                         lineItems: [
                             {
@@ -908,6 +914,7 @@ describe('consignmentActionCreator', () => {
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 {
                     id: '55c96cda6f04c',
+                    address,
                     shippingAddress: address,
                     lineItems: [
                         {
@@ -933,6 +940,7 @@ describe('consignmentActionCreator', () => {
             expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 [{
+                    address,
                     shippingAddress: address,
                     lineItems: [
                         {

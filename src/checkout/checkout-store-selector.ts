@@ -323,9 +323,12 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getConsignments => clone(() => {
             const consignments = getConsignments();
 
-            if (consignments && consignments.length) {
-                return consignments[0].availableShippingOptions;
+            if (!consignments) {
+                return;
             }
+            const shippingConsignment = consignments.find(consignment => !consignment.selectedPickupOption);
+
+            return shippingConsignment && shippingConsignment.availableShippingOptions;
         })
     );
 
@@ -339,11 +342,13 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getConsignments => clone(() => {
             const consignments = getConsignments();
 
-            if (!consignments || !consignments.length) {
+            if (!consignments) {
                 return;
             }
 
-            return consignments[0].selectedShippingOption;
+            const shippingConsignment = consignments.find(consignment => !consignment.selectedPickupOption);
+
+            return shippingConsignment && shippingConsignment.selectedShippingOption;
         })
     );
 
