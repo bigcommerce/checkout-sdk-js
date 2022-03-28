@@ -1,3 +1,4 @@
+import { AffirmInstrument } from '../..';
 import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
@@ -48,7 +49,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const methodId = payload.payment && payload.payment.methodId;
-        const { useStoreCredit } = payload;
+        const { useStoreCredit, payment } = payload;
         const { _affirm } = this;
 
         if (!_affirm) {
@@ -69,9 +70,12 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             },
         };
 
+        const financingProgram = (<AffirmInstrument | undefined>payment?.paymentData)
+            ?.financingProgram  ?? '';
+
         return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
-                _affirm.checkout(this._getCheckoutInformation());
+                _affirm.checkout(this._getCheckoutInformation(financingProgram));
 
                 return new Promise((resolve, reject) => {
                     _affirm.checkout.open({
@@ -107,7 +111,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _getCheckoutInformation(): AffirmRequestData {
+    private _getCheckoutInformation(financingProgram: string): AffirmRequestData {
         const state = this._store.getState();
         const config = state.config.getStoreConfig() as StoreConfig | undefined;
         const consignments = state.consignments.getConsignments();
@@ -125,7 +129,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const billingAddress = this._getBillingAddress();
 
         return {
-            financing_program: '',
+            financing_program: financingProgram,
             config: {
                 financial_product_key: config.checkoutSettings.affirmFinancialKey
             },

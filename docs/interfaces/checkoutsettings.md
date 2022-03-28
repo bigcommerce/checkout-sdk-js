@@ -10,6 +10,8 @@
 
 ### Properties
 
+* [affirmFinancialKey](checkoutsettings.md#affirmfinancialkey)
+* [affirmFinancingProgram](checkoutsettings.md#affirmfinancingprogram)
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [features](checkoutsettings.md#features)
@@ -38,6 +40,18 @@
 * [shippingQuoteFailedMessage](checkoutsettings.md#shippingquotefailedmessage)
 
 ## Properties
+
+###  affirmFinancialKey
+
+• **affirmFinancialKey**: *string*
+
+___
+
+###  affirmFinancingProgram
+
+• **affirmFinancingProgram**: *string*
+
+___
 
 ###  enableOrderComments
 

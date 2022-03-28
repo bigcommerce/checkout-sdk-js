@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [affirmDeclineLink](storelinks.md#affirmdeclinelink)
 * [cartLink](storelinks.md#cartlink)
 * [checkoutLink](storelinks.md#checkoutlink)
 * [createAccountLink](storelinks.md#createaccountlink)
@@ -19,6 +20,12 @@
 * [siteLink](storelinks.md#sitelink)
 
 ## Properties
+
+###  affirmDeclineLink
+
+• **affirmDeclineLink**: *string*
+
+___
 
 ###  cartLink
 

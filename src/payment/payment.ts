@@ -11,6 +11,7 @@ export default interface Payment {
 }
 
 export type PaymentInstrument = (
+    AffirmInstrument |
     CreditCardInstrument |
     CreditCardInstrument & WithHostedFormNonce |
     CreditCardInstrument & WithDocumentInstrument |
@@ -34,6 +35,10 @@ export interface PaymentInstrumentMeta {
 
 export interface WithAccountCreation {
     shouldCreateAccount?: boolean;
+}
+
+export interface AffirmInstrument {
+    financingProgram: string;
 }
 
 export interface CreditCardInstrument {

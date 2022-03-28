@@ -467,6 +467,10 @@ declare interface AdyenV3PaymentInitializeOptions {
     validateCardFields(componentState: AdyenV3ComponentState): void;
 }
 
+declare interface AffirmInstrument {
+    financingProgram: string;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support Amazon Pay.
@@ -5426,7 +5430,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
+    paymentData?: AffirmInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
