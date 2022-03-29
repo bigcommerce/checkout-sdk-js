@@ -27,6 +27,7 @@
 * [isDownloadable](order.md#isdownloadable)
 * [isTaxIncluded](order.md#istaxincluded)
 * [lineItems](order.md#lineitems)
+* [mandateUrl](order.md#optional-mandateurl)
 * [orderAmount](order.md#orderamount)
 * [orderAmountAsInteger](order.md#orderamountasinteger)
 * [orderId](order.md#orderid)
@@ -138,6 +139,12 @@ ___
 ###  lineItems
 
 • **lineItems**: *[LineItemMap](lineitemmap.md)*
+
+___
+
+### `Optional` mandateUrl
+
+• **mandateUrl**? : *undefined | string*
 
 ___
 
