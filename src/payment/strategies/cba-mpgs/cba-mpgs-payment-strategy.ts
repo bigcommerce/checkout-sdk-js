@@ -17,7 +17,7 @@ import CBAMPGSScriptLoader from './cba-mpgs-script-loader';
 
 export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
     private _threeDSjs?: ThreeDSjs;
-    private _sessionId?: string;
+    private _sessionId: string = '';
 
     constructor(
         store: CheckoutStore,
@@ -97,7 +97,7 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 threeDSecure: { token: this._sessionId },
             };
 
-            if ( payload.payment ) {
+            if (payload.payment) {
                 payload.payment.paymentData = newPaymentData;
             }
         }
@@ -141,7 +141,7 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
         this._threeDSjs = undefined;
-        this._sessionId = undefined;
+        this._sessionId = '';
 
         return super.deinitialize();
     }
@@ -174,7 +174,7 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
         }
     }
 
-    private async _authenticatePayer(orderId: string, transactionId: string): Promise<InternalCheckoutSelectors | never> {
+    private async _authenticatePayer(orderId: string, transactionId: string, attempt: number = 1): Promise<InternalCheckoutSelectors | never> {
         return await new Promise((_resolve, reject) => {
             if (!this._threeDSjs) {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
@@ -184,8 +184,8 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 const error = data.error;
 
                 if (error) {
-                    if (error.cause && error.cause === THREE_D_SECURE_BUSY) {
-                        return this._authenticatePayer(orderId, transactionId);
+                    if (error.cause && error.cause === THREE_D_SECURE_BUSY && attempt < 5) {
+                        return this._authenticatePayer(orderId, transactionId, ++attempt);
                     }
 
                     return reject(new PaymentMethodDeclinedError());

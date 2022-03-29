@@ -29,7 +29,7 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './';
 import { ThreeDSjs } from './cba-mpgs';
-import { getCBAMPGSScriptMock } from './cba-mpgs.mock';
+import { getCBAMPGSScriptMock, getCBAMPGSScriptMockRetryOnly } from './cba-mpgs.mock';
 
 describe('CBAMPGSPaymentStrategy', () => {
     let scriptLoader: ScriptLoader;
@@ -179,18 +179,18 @@ describe('CBAMPGSPaymentStrategy', () => {
     describe('#execute', () => {
         beforeEach(() => {
             const error = new RequestError(getResponse({
-              ...getErrorPaymentResponseBody(),
-              errors: [
-                  { code: 'three_d_secure_required' },
-              ],
-              three_ds_result: {
-                  acs_url: null,
-                  payer_auth_request: null,
-                  merchant_data: null,
-                  callback_url: null,
-                  token: 'session-id-uuid',
-              },
-              status: 'error',
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                    token: 'session-id-uuid',
+                },
+                status: 'error',
             }));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
@@ -301,10 +301,10 @@ describe('CBAMPGSPaymentStrategy', () => {
         });
 
         it('should fail to execute the 3DS strategy if an error occurs when initializing Authentication', async () => {
-            const _threeDSjs = getCBAMPGSScriptMock(true, true, true, true, true);
+            const _threeDSjs = getCBAMPGSScriptMock(true, true, true, true, true , false, true);
 
             jest.spyOn(cbaMPGSScriptLoader, 'load')
-                  .mockResolvedValue(_threeDSjs);
+                .mockResolvedValue(_threeDSjs);
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
@@ -320,7 +320,7 @@ describe('CBAMPGSPaymentStrategy', () => {
             const _threeDSjs = getCBAMPGSScriptMock(true, false);
 
             jest.spyOn(cbaMPGSScriptLoader, 'load')
-                  .mockResolvedValue(_threeDSjs);
+                .mockResolvedValue(_threeDSjs);
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
@@ -336,7 +336,7 @@ describe('CBAMPGSPaymentStrategy', () => {
             const _threeDSjs = getCBAMPGSScriptMock(true, true, true, false);
 
             jest.spyOn(cbaMPGSScriptLoader, 'load')
-                  .mockResolvedValue(_threeDSjs);
+                .mockResolvedValue(_threeDSjs);
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
@@ -349,10 +349,26 @@ describe('CBAMPGSPaymentStrategy', () => {
         });
 
         it('should retry to authenticate payer if server is busy', async () => {
-            const _threeDSjs = getCBAMPGSScriptMock(true, true, true, true, true, true);
+            threeDSjs = getCBAMPGSScriptMock(true, true, true, true, false, true, true);
 
             jest.spyOn(cbaMPGSScriptLoader, 'load')
-                  .mockResolvedValue(_threeDSjs);
+                .mockResolvedValueOnce(threeDSjs);
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            strategy.execute(payload);
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(threeDSjs.initiateAuthentication).toHaveBeenCalled();
+            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(2);
+        });
+
+        it('should retry up to 5 times to authenticate payer if server is busy', async () => {
+            threeDSjs = getCBAMPGSScriptMockRetryOnly(true, true, true, true, false, true, true);
+
+            jest.spyOn(cbaMPGSScriptLoader, 'load')
+                .mockResolvedValueOnce(threeDSjs);
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
@@ -360,9 +376,9 @@ describe('CBAMPGSPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            expect(_threeDSjs.initiateAuthentication).toHaveBeenCalled();
-            expect(_threeDSjs.authenticatePayer).not.toHaveBeenCalledTimes(2);
-      });
+            expect(threeDSjs.initiateAuthentication).toHaveBeenCalled();
+            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(5);
+        });
     });
 
     describe('#finalize',  () => {
@@ -410,12 +426,12 @@ describe('CBAMPGSPaymentStrategy', () => {
                 .mockReturnValue(null);
 
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
-          });
+        });
     });
 
     describe('#deinitialize', () => {
         it('deinitializes strategy', async () => {
             await expect(strategy.deinitialize()).resolves.toEqual(store.getState());
         });
-  });
+    });
 });

@@ -5,18 +5,39 @@ export function getCBAMPGSScriptMock(
     initiateAuthSuccess: boolean = true,
     authPayerSuccess: boolean = true,
     authAvailable: boolean = true,
-    includeError: boolean = false,
+    includeErrorStep1: boolean = false,
+    includeErrorStep2: boolean = false,
     retryErrorCode: boolean = false
     ): ThreeDSjs {
         const authenticatePayerRetry = jest.fn()
-            .mockImplementationOnce((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeError, authAvailable)))
-            .mockImplementationOnce((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, false, includeError, authAvailable)));
+            .mockImplementationOnce((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable)))
+            .mockImplementationOnce((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, false, includeErrorStep2, authAvailable)));
 
         return {
             configure: jest.fn(config => config.callback()),
             isConfigured: jest.fn(() => configureSuccess),
-            initiateAuthentication: jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(initiateAuthSuccess, retryErrorCode, includeError, authAvailable))),
-            authenticatePayer: retryErrorCode ? authenticatePayerRetry : jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeError, authAvailable))),
+            initiateAuthentication: jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(initiateAuthSuccess, retryErrorCode, includeErrorStep1, authAvailable))),
+            authenticatePayer: retryErrorCode ? authenticatePayerRetry : jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable))),
+        };
+}
+
+export function getCBAMPGSScriptMockRetryOnly(
+    configureSuccess: boolean = true,
+    initiateAuthSuccess: boolean = true,
+    authPayerSuccess: boolean = true,
+    authAvailable: boolean = true,
+    includeErrorStep1: boolean = false,
+    includeErrorStep2: boolean = false,
+    retryErrorCode: boolean = false
+    ): ThreeDSjs {
+        const authenticatePayerRetry = jest.fn()
+            .mockImplementation((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable)));
+
+        return {
+            configure: jest.fn(config => config.callback()),
+            isConfigured: jest.fn(() => configureSuccess),
+            initiateAuthentication: jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(initiateAuthSuccess, retryErrorCode, includeErrorStep1, authAvailable))),
+            authenticatePayer: retryErrorCode ? authenticatePayerRetry : jest.fn((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable))),
         };
 }
 
