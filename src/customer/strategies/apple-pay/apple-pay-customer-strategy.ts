@@ -262,17 +262,32 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         if (!isShippingOptions(availableOptions)) {
             throw new Error('Shipping options not available.');
-        } else {
-            const recommendedOption = availableOptions.find(
-                option => option.isRecommended
+        }
+
+        if (availableOptions.length === 0) {
+            applePaySession.completeShippingContactSelection(
+                ApplePaySession.STATUS_INVALID_SHIPPING_POSTAL_ADDRESS,
+                [],
+                {
+                    type: 'pending',
+                    label: storeName,
+                    amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                },
+                []
             );
 
-            const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
-            try {
-                await this._updateShippingOption(optionId);
-            } catch (error) {
-                return this._onError(error);
-            }
+            return;
+        }
+
+        const recommendedOption = availableOptions.find(
+            option => option.isRecommended
+        );
+
+        const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
+        try {
+            await this._updateShippingOption(optionId);
+        } catch (error) {
+            return this._onError(error);
         }
 
         state = this._store.getState();
