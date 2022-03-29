@@ -224,6 +224,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }));
 
         if (!isShippingOptions(availableOptions)) {
+            // tslint:disable-next-line:no-console
             console.log('not valid', availableOptions);
             throw new Error('Shipping options not available.');
         } else {
@@ -231,7 +232,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 option => option.isRecommended
             );
 
+            // tslint:disable-next-line:no-console
             console.log('recommeneded', recommendedOption);
+            // tslint:disable-next-line:no-console
             console.log('availableOptions', availableOptions);
 
             const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
