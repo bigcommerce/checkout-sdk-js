@@ -7,12 +7,7 @@
   "typings": "dist/checkout-sdk.d.ts",
   "files": [
     "dist/",
-    "docs/",
-    "src/",
-    "scripts/",
-    "webpack.config.js",
-    "webpack-common.config.js",
-    "tsconfig.json"
+    "docs/"
   ],
   "sideEffects": false,
   "repository": {
