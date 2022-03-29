@@ -5,6 +5,7 @@ import { RequestError } from '../../../common/error/errors';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
 import { GooglePayProviderProcessor } from './googlepay';
+
 export default class GooglePayCheckoutcomPaymentProcessor implements GooglePayProviderProcessor {
     initialize(_options: PaymentInitializeOptions): Promise<void> {
         return Promise.resolve();

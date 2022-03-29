@@ -7,6 +7,7 @@ import { PaymentMethodCancelledError } from '../../errors';
 import { AdyenAction, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenError, AdyenV2ScriptLoader } from '../adyenv2';
 
 import { GooglePayProviderProcessor } from './googlepay';
+
 export default class GooglePayAdyenV2PaymentProcessor implements GooglePayProviderProcessor {
     private _adyenClient?: AdyenClient;
 

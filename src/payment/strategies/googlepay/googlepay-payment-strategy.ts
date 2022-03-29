@@ -146,11 +146,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     }
 
     private _processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
-        if (this._googlePayProviderProcessor) {
-            return this._googlePayProviderProcessor.processAdditionalAction(error);
+        if (!this._googlePayProviderProcessor) {
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        return this._googlePayProviderProcessor.processAdditionalAction(error);
     }
 
     private async _verifyCard(methodId: string , amount: number,  payment: PaymentMethodData): Promise<GooglePayVerifyPayload>  {
