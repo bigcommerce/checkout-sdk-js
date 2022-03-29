@@ -34,9 +34,6 @@ export interface AffirmFailResponse {
 
 export interface AffirmRequestData {
     financing_program: string;
-    config: {
-        financial_product_key: string
-    };
     merchant: {
         exchange_lease_enabled: boolean;
         user_confirmation_url: string;

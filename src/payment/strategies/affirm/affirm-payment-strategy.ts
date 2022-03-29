@@ -130,9 +130,6 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         return {
             financing_program: financingProgram,
-            config: {
-                financial_product_key: config.checkoutSettings.affirmFinancialKey
-            },
             merchant: {
                 exchange_lease_enabled: true,
                 user_confirmation_url: config.links.checkoutLink,
