@@ -67,6 +67,11 @@ export default interface SquarePaymentInitializeOptions {
     inputStyles?: Array<{ [key: string]: string }>;
 
     /**
+     * Initialize Masterpass placeholder ID
+     */
+    masterpass?: SquareFormElement;
+
+    /**
      * A callback that gets called when the customer selects a payment option.
      */
     onPaymentSelect?(): void;
