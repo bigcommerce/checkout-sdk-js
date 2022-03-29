@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.232.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.232.1...v1.232.2) (2022-03-29)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-0000 Throw error if no shipping options present ([#1389](https://github.com/bigcommerce/checkout-sdk-js/issues/1389)) ([670ea28](https://github.com/bigcommerce/checkout-sdk-js/commit/670ea28d6fcfc6d4a26d045967551268704f5b7c))
+
 ### [1.232.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.232.0...v1.232.1) (2022-03-28)
 
 ## [1.232.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.231.0...v1.232.0) (2022-03-24)
