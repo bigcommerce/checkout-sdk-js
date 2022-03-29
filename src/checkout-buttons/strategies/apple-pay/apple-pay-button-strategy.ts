@@ -224,14 +224,19 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }));
 
         if (!isShippingOptions(availableOptions)) {
+            console.log('not valid', availableOptions);
             throw new Error('Shipping options not available.');
         } else {
             const recommendedOption = availableOptions.find(
                 option => option.isRecommended
             );
 
+            console.log('recommeneded', recommendedOption);
+            console.log('availableOptions', availableOptions);
+
             const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
             try {
+                console.log('going to update', optionId);
                 await this._updateShippingOption(optionId);
             } catch (error) {
                 throw new Error('Shipping options update failed');

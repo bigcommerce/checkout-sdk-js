@@ -91,6 +91,8 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingConsignments);
             }
 
+            console.log(consignments);
+
             const consignmentUpdateBody = {
                 id: consignments[0].id,
                 shippingOptionId: id,
