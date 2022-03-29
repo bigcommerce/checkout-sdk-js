@@ -49,6 +49,7 @@ service.initializePayment({
 * [expirationDate](squarepaymentinitializeoptions.md#expirationdate)
 * [inputClass](squarepaymentinitializeoptions.md#optional-inputclass)
 * [inputStyles](squarepaymentinitializeoptions.md#optional-inputstyles)
+* [masterpass](squarepaymentinitializeoptions.md#optional-masterpass)
 * [postalCode](squarepaymentinitializeoptions.md#postalcode)
 
 ### Methods
@@ -95,6 +96,14 @@ ___
 • **inputStyles**? : *Array‹object›*
 
 The set of CSS styles to apply to all form fields.
+
+___
+
+### `Optional` masterpass
+
+• **masterpass**? : *[SquareFormElement](squareformelement.md)*
+
+Initialize Masterpass placeholder ID
 
 ___
 

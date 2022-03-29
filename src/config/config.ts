@@ -72,6 +72,7 @@ export interface PaymentSettings {
 export interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
+    affirmDeclineLink: string;
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;
@@ -89,6 +90,8 @@ export interface StoreCurrency {
 }
 
 export interface CheckoutSettings {
+    affirmFinancingProgram: string;
+    affirmFinancialKey: string;
     features: { [featureName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;

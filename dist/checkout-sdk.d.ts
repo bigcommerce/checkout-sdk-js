@@ -467,6 +467,10 @@ declare interface AdyenV3PaymentInitializeOptions {
     validateCardFields(componentState: AdyenV3ComponentState): void;
 }
 
+declare interface AffirmInstrument {
+    financingProgram: string;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support Amazon Pay.
@@ -2820,6 +2824,8 @@ declare interface CheckoutServiceOptions {
 }
 
 declare interface CheckoutSettings {
+    affirmFinancingProgram: string;
+    affirmFinancialKey: string;
     features: {
         [featureName: string]: boolean;
     };
@@ -5392,6 +5398,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    mandateUrl?: string;
 }
 
 declare interface OrderConsignment {
@@ -5424,7 +5431,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
+    paymentData?: AffirmInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -6406,6 +6413,10 @@ declare interface SquarePaymentInitializeOptions {
         [key: string]: string;
     }>;
     /**
+     * Initialize Masterpass placeholder ID
+     */
+    masterpass?: SquareFormElement;
+    /**
      * A callback that gets called when the customer selects a payment option.
      */
     onPaymentSelect?(): void;
@@ -6478,6 +6489,7 @@ declare interface StoreCurrency {
 declare interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
+    affirmDeclineLink: string;
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;

@@ -1,4 +1,4 @@
-import { CreditCardInstrument, HostedCreditCardInstrument, HostedInstrument, HostedVaultedInstrument, NonceInstrument, VaultedInstrument, WithAccountCreation, WithCheckoutcomiDealInstrument, WithCheckoutcomFawryInstrument, WithCheckoutcomSEPAInstrument, WithDocumentInstrument, WithMollieIssuerInstrument } from '../payment';
+import { AffirmInstrument, CreditCardInstrument, HostedCreditCardInstrument, HostedInstrument, HostedVaultedInstrument, NonceInstrument, VaultedInstrument, WithAccountCreation, WithCheckoutcomiDealInstrument, WithCheckoutcomFawryInstrument, WithCheckoutcomSEPAInstrument, WithDocumentInstrument, WithMollieIssuerInstrument } from '../payment';
 
 /**
  * An object that contains the information required for submitting an order.
@@ -39,5 +39,5 @@ export interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card, vaulted payment
      * instrument or nonce instrument.
      */
-    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
+    paymentData?: AffirmInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation;
 }

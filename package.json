@@ -12,7 +12,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git://github.com/bigcommerce/checkout-sdk-js.git"
+    "url": "git://github.com/LullCode/checkout-sdk-js.git"
   },
   "author": "BigCommerce",
   "bugs": {

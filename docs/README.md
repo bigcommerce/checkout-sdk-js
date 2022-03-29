@@ -62,6 +62,7 @@
 * [AdyenV2PaymentInitializeOptions](interfaces/adyenv2paymentinitializeoptions.md)
 * [AdyenV3CreditCardComponentOptions](interfaces/adyenv3creditcardcomponentoptions.md)
 * [AdyenV3PaymentInitializeOptions](interfaces/adyenv3paymentinitializeoptions.md)
+* [AffirmInstrument](interfaces/affirminstrument.md)
 * [AmazonPayCustomerInitializeOptions](interfaces/amazonpaycustomerinitializeoptions.md)
 * [AmazonPayOrderReference](interfaces/amazonpayorderreference.md)
 * [AmazonPayPaymentInitializeOptions](interfaces/amazonpaypaymentinitializeoptions.md)

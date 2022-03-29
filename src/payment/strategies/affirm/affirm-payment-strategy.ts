@@ -1,7 +1,9 @@
+import { AffirmInstrument } from '../..';
 import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
+import { StoreConfig } from '../../../config';
 import { Order, OrderActionCreator, OrderIncludes, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { Consignment } from '../../../shipping';
@@ -47,7 +49,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const methodId = payload.payment && payload.payment.methodId;
-        const { useStoreCredit } = payload;
+        const { useStoreCredit, payment } = payload;
         const { _affirm } = this;
 
         if (!_affirm) {
@@ -68,9 +70,12 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             },
         };
 
+        const financingProgram = (<AffirmInstrument | undefined>payment?.paymentData)
+            ?.financingProgram  ?? '';
+
         return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
-                _affirm.checkout(this._getCheckoutInformation());
+                _affirm.checkout(this._getCheckoutInformation(financingProgram));
 
                 return new Promise((resolve, reject) => {
                     _affirm.checkout.open({
@@ -106,9 +111,9 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _getCheckoutInformation(): AffirmRequestData {
+    private _getCheckoutInformation(financingProgram: string): AffirmRequestData {
         const state = this._store.getState();
-        const config = state.config.getStoreConfig();
+        const config = state.config.getStoreConfig() as StoreConfig | undefined;
         const consignments = state.consignments.getConsignments();
         const order = state.order.getOrder();
 
@@ -124,10 +129,13 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const billingAddress = this._getBillingAddress();
 
         return {
+            financing_program: financingProgram,
             merchant: {
+                exchange_lease_enabled: true,
                 user_confirmation_url: config.links.checkoutLink,
                 user_cancel_url: config.links.checkoutLink,
-                user_confirmation_url_action: 'POST',
+                user_decline_url: config.links.affirmDeclineLink,
+                user_confirmation_url_action: 'GET',
             },
             shipping: this._getShippingAddress() || billingAddress,
             billing: billingAddress,

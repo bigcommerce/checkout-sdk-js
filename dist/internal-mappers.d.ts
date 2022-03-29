@@ -592,6 +592,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    mandateUrl?: string;
 }
 
 declare interface OrderConsignment {
