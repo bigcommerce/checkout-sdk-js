@@ -19,6 +19,57 @@ export interface StripeError {
 }
 
 /**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface AddressOptions {
+    city?: string;
+    country?: string;
+    state?: string;
+    postal_code?: string;
+    line1?: string;
+    line2?: string;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface AddressProperties {
+    city?: AutoOrNever;
+    country?: AutoOrNever;
+    state?: AutoOrNever;
+    postalCode?: AutoOrNever;
+    line1?: AutoOrNever;
+    line2?: AutoOrNever;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface BillingDetailsOptions {
+    name?: string;
+    email?: string;
+    address?: AddressOptions;
+    phone?: string;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface BillingDetailsProperties {
+    name?: AutoOrNever;
+    email?: AutoOrNever;
+    address?: AutoOrNever | AddressProperties;
+    phone?: AutoOrNever;
+}
+
+/**
+ * Object definition for part of the data sent to confirm the PaymentIntent.
+ */
+export interface PaymentMethodDataOptions {
+    billing_details: BillingDetailsOptions;
+}
+
+/**
  * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
  */
 export interface StripeUPEConfirmParams {
@@ -29,6 +80,7 @@ export interface StripeUPEConfirmParams {
      * @recommended
      */
     return_url?: string;
+    payment_method_data?: PaymentMethodDataOptions;
 }
 
 /**
@@ -44,24 +96,29 @@ export interface StripeConfirmPaymentData {
     /**
      * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
      */
-     confirmParams?: StripeUPEConfirmParams;
+    confirmParams?: StripeUPEConfirmParams;
 
     /**
      * By default, confirmPayment will always redirect to your return_url after a successful confirmation.
      * If you set redirect: "if_required", then confirmPayment will only redirect if your user chooses a redirect-based payment method.
      */
-    redirect?: 'always' | 'if_required';
+    redirect?: StripeStringConstants.ALWAYS | StripeStringConstants.IF_REQUIRED;
+}
+
+export interface FieldsOptions {
+    billingDetails?: AutoOrNever | BillingDetailsProperties;
 }
 
 export interface WalletOptions {
-    applePay?: 'auto' | 'never';
-    googlePay?: 'auto' | 'never';
+    applePay?: AutoOrNever;
+    googlePay?: AutoOrNever;
 }
 
 /**
  * All available options are herehttps://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface StripeElementsCreateOptions {
+    fields?: FieldsOptions;
     wallets?: WalletOptions;
 }
 
@@ -69,12 +126,12 @@ export interface StripeElements {
     /**
      * Creates a `payment` element.
      */
-    create(elementType: 'payment', options?: StripeElementsCreateOptions): StripeElement;
+    create(elementType: StripeStringConstants.PAYMENT, options?: StripeElementsCreateOptions): StripeElement;
 
     /**
      * Looks up a previously created `payment` element.
      */
-    getElement(elementType: 'payment'): StripeElement | null;
+    getElement(elementType: StripeStringConstants.PAYMENT): StripeElement | null;
 }
 
 export interface StripeElementsOptions {
@@ -132,4 +189,14 @@ export enum StripePaymentMethodType {
     IDEAL = 'ideal',
     GIROPAY = 'giropay',
     ALIPAY = 'alipay',
+}
+
+type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
+
+export enum StripeStringConstants {
+    NEVER = 'never',
+    AUTO = 'auto',
+    ALWAYS = 'always',
+    PAYMENT = 'payment',
+    IF_REQUIRED = 'if_required',
 }
