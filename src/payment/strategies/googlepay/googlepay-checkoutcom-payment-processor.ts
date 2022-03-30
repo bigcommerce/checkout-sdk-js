@@ -23,7 +23,7 @@ export default class GooglePayCheckoutcomPaymentProcessor implements GooglePayPr
 
     private _performRedirect(redirectUrl: string): Promise<InternalCheckoutSelectors> {
         return new Promise(() => {
-            window.location.replace(redirectUrl);
+            window.location.assign(redirectUrl);
         });
     }
 }

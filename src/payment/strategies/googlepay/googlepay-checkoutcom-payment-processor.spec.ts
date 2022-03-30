@@ -6,7 +6,7 @@ describe('GooglePayCheckoutcomPaymentProcessor', () => {
     let processor: GooglePayCheckoutcomPaymentProcessor;
 
     beforeEach(() => {
-        jest.spyOn(window.location, 'replace')
+        jest.spyOn(window.location, 'assign')
             .mockResolvedValue(undefined);
 
         processor = new GooglePayCheckoutcomPaymentProcessor();
@@ -33,12 +33,12 @@ describe('GooglePayCheckoutcomPaymentProcessor', () => {
 
         await new Promise(resolve => process.nextTick(resolve));
 
-        expect(window.location.replace).toHaveBeenCalledWith(err.body.three_ds_result.acs_url);
+        expect(window.location.assign).toHaveBeenCalledWith(err.body.three_ds_result.acs_url);
     });
 
     it('does not redirect the customer if threeDSecure is not required', async () => {
         await expect(processor.processAdditionalAction(new Error())).rejects.toThrow(Error);
 
-        expect(window.location.replace).not.toHaveBeenCalled();
+        expect(window.location.assign).not.toHaveBeenCalled();
     });
 });
