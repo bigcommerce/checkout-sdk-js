@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.233.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.232.2...v1.233.0) (2022-03-30)
+
+
+### Features
+
+* **payment:** INT-5572 Stripe UPE Hide Fields ([833c940](https://github.com/bigcommerce/checkout-sdk-js/commit/833c940a01d8bfbb8c404b32ffcf27cc5180c686))
+* **payment:** INT-5572 Stripe UPE string constants ([66e06c4](https://github.com/bigcommerce/checkout-sdk-js/commit/66e06c41aa4d0f8dc901b58f113beabfcaf7ef09))
+
+
+### Bug Fixes
+
+* **payment:** INT-5175 fixing redirect in googlepay using embedded checkout on customer section ([42c3bc6](https://github.com/bigcommerce/checkout-sdk-js/commit/42c3bc65f4130bc4a7f9cc21311c7abe7c3acbc4))
+
 ### [1.232.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.232.1...v1.232.2) (2022-03-29)
 
 
