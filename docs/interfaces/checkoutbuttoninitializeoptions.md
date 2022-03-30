@@ -22,6 +22,7 @@
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#optional-braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
 * [googlepayadyenv2](checkoutbuttoninitializeoptions.md#optional-googlepayadyenv2)
+* [googlepayadyenv3](checkoutbuttoninitializeoptions.md#optional-googlepayadyenv3)
 * [googlepayauthorizenet](checkoutbuttoninitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](checkoutbuttoninitializeoptions.md#optional-googlepaycheckoutcom)
@@ -84,6 +85,15 @@ ___
 ### `Optional` googlepayadyenv2
 
 • **googlepayadyenv2**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support adyenv2 GooglePay.
+
+___
+
+### `Optional` googlepayadyenv3
+
+• **googlepayadyenv3**? : *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support adyenv2 GooglePay.

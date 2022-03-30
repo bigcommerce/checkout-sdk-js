@@ -31,6 +31,7 @@ information in order to initialize the customer step of checkout.
 * [braintreevisacheckout](customerinitializeoptions.md#optional-braintreevisacheckout)
 * [chasepay](customerinitializeoptions.md#optional-chasepay)
 * [googlepayadyenv2](customerinitializeoptions.md#optional-googlepayadyenv2)
+* [googlepayadyenv3](customerinitializeoptions.md#optional-googlepayadyenv3)
 * [googlepayauthorizenet](customerinitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](customerinitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](customerinitializeoptions.md#optional-googlepaycheckoutcom)
@@ -102,6 +103,15 @@ ___
 ### `Optional` googlepayadyenv2
 
 • **googlepayadyenv2**? : *[GooglePayCustomerInitializeOptions](googlepaycustomerinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### `Optional` googlepayadyenv3
+
+• **googlepayadyenv3**? : *[GooglePayCustomerInitializeOptions](googlepaycustomerinitializeoptions.md)*
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.

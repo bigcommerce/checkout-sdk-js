@@ -1631,6 +1631,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     googlepayadyenv2?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support adyenv2 GooglePay.
+     */
+    googlepayadyenv3?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Braintree GooglePay. They can be
      * omitted unless you need to support Braintree GooglePay.
      */
@@ -1764,6 +1769,7 @@ declare enum CheckoutButtonMethodType {
     BRAINTREE_VENMO = "braintreevenmo",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
+    GOOGLEPAY_ADYENV3 = "googlepayadyenv3",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
@@ -4028,6 +4034,11 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
+    googlepayadyenv3?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
     googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -5610,6 +5621,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * payment method. They can be omitted unless you need to support GooglePay.
      */
     googlepayadyenv2?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Authorize.Net
      * payment method. They can be omitted unless you need to support GooglePay.

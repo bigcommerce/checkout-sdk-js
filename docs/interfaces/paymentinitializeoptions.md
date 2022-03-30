@@ -33,6 +33,7 @@ current checkout flow.
 * [digitalriver](paymentinitializeoptions.md#optional-digitalriver)
 * [gatewayId](paymentinitializeoptions.md#optional-gatewayid)
 * [googlepayadyenv2](paymentinitializeoptions.md#optional-googlepayadyenv2)
+* [googlepayadyenv3](paymentinitializeoptions.md#optional-googlepayadyenv3)
 * [googlepayauthorizenet](paymentinitializeoptions.md#optional-googlepayauthorizenet)
 * [googlepaybraintree](paymentinitializeoptions.md#optional-googlepaybraintree)
 * [googlepaycheckoutcom](paymentinitializeoptions.md#optional-googlepaycheckoutcom)
@@ -183,6 +184,15 @@ ___
 ### `Optional` googlepayadyenv2
 
 • **googlepayadyenv2**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay Authorize.Net
+payment method. They can be omitted unless you need to support GooglePay.
+
+___
+
+### `Optional` googlepayadyenv3
+
+• **googlepayadyenv3**? : *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
 
 The options that are required to initialize the GooglePay Authorize.Net
 payment method. They can be omitted unless you need to support GooglePay.

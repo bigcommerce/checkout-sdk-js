@@ -12,6 +12,7 @@
 * [BRAINTREE_PAYPAL_CREDIT](checkoutbuttonmethodtype.md#braintree_paypal_credit)
 * [BRAINTREE_VENMO](checkoutbuttonmethodtype.md#braintree_venmo)
 * [GOOGLEPAY_ADYENV2](checkoutbuttonmethodtype.md#googlepay_adyenv2)
+* [GOOGLEPAY_ADYENV3](checkoutbuttonmethodtype.md#googlepay_adyenv3)
 * [GOOGLEPAY_AUTHORIZENET](checkoutbuttonmethodtype.md#googlepay_authorizenet)
 * [GOOGLEPAY_BRAINTREE](checkoutbuttonmethodtype.md#googlepay_braintree)
 * [GOOGLEPAY_CHECKOUTCOM](checkoutbuttonmethodtype.md#googlepay_checkoutcom)
@@ -58,6 +59,12 @@ ___
 ###  GOOGLEPAY_ADYENV2
 
 • **GOOGLEPAY_ADYENV2**: = "googlepayadyenv2"
+
+___
+
+###  GOOGLEPAY_ADYENV3
+
+• **GOOGLEPAY_ADYENV3**: = "googlepayadyenv3"
 
 ___
 
