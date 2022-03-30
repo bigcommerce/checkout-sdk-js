@@ -144,12 +144,16 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _onPaymentSelectComplete(): void {
-        this._formPoster.postForm('/checkout.php', {
-            headers: {
-                Accept: 'text/html',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                ...SDK_VERSION_HEADERS,
-            },
-        });
+        const checkoutUrl = this._store.getState().config.getStoreConfigOrThrow().links.siteLink;
+
+        this._formPoster.postForm(
+            window.location.pathname === '/embedded-checkout' ? `${checkoutUrl}/checkout` : '/checkout.php',
+            {
+                headers: {
+                    Accept: 'text/html',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    ...SDK_VERSION_HEADERS,
+                },
+            });
     }
 }
