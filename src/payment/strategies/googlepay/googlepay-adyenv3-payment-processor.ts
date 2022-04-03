@@ -6,7 +6,9 @@ import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitial
 import { PaymentMethodCancelledError } from '../../errors';
 import { AdyenAction, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenError, AdyenV3ScriptLoader } from '../adyenv3';
 
-export default class GooglePayAdyenV3PaymentProcessor {
+import { GooglePayProviderProcessor } from './googlepay';
+
+export default class GooglePayAdyenV3PaymentProcessor implements GooglePayProviderProcessor {
     private _adyenClient?: AdyenClient;
 
     constructor(private _store: CheckoutStore, private _paymentActionCreator: PaymentActionCreator, private _scriptLoader: AdyenV3ScriptLoader) {}

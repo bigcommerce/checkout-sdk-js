@@ -218,6 +218,7 @@ export default class GooglePayPaymentProcessor {
             body: {
                 payment_type: postPaymentData.type,
                 nonce: postPaymentData.nonce,
+                tokenFormat: postPaymentData.tokenFormat,
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),

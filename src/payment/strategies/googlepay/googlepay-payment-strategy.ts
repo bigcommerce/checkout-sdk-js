@@ -17,9 +17,7 @@ import { AdyenPaymentMethodType } from '../adyenv2';
 import { BraintreeGooglePayThreeDSecure, BraintreeSDKCreator, BraintreeVerifyPayload } from '../braintree';
 import PaymentStrategy from '../payment-strategy';
 
-import { GooglePaymentData, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
-import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
-import GooglePayAdyenV3PaymentProcessor from './googlepay-adyenv3-payment-processor';
+import { GooglePaymentData, GooglePayProviderProcessor, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
@@ -38,7 +36,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _googlePayAdyenPaymentProcessor?: GooglePayAdyenV2PaymentProcessor | GooglePayAdyenV3PaymentProcessor,
+        private _googlePayProviderProcessor?: GooglePayProviderProcessor,
         private _braintreeSDKCreator?: BraintreeSDKCreator
     ) {}
 
@@ -139,8 +137,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(newPayment));
         } catch (error) {
-
-            return this._googlePayAdyenPaymentProcessor?.processAdditionalAction(error) || Promise.reject(error);
+            return this._processAdditionalAction(error);
         }
     }
 
@@ -148,7 +145,15 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-     private async _verifyCard(methodId: string , amount: number,  payment: PaymentMethodData): Promise<GooglePayVerifyPayload>  {
+    private _processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
+        if (!this._googlePayProviderProcessor) {
+            return Promise.reject(error);
+        }
+
+        return this._googlePayProviderProcessor.processAdditionalAction(error);
+    }
+
+    private async _verifyCard(methodId: string , amount: number,  payment: PaymentMethodData): Promise<GooglePayVerifyPayload>  {
         if (methodId === PaymentStrategyType.BRAINTREE_GOOGLE_PAY) {
             const { nonce } = payment.paymentData;
             const threeDSecure = await this._braintreeSDKCreator?.get3DS();
@@ -183,21 +188,21 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     /* tslint:disable:cyclomatic-complexity */
     private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
         if (options.methodId === PaymentStrategyType.ADYENV2_GOOGLEPAY && options.googlepayadyenv2) {
-            if (!this._googlePayAdyenPaymentProcessor) {
+            if (!this._googlePayProviderProcessor) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._googlePayAdyenPaymentProcessor.initialize(options);
+            this._googlePayProviderProcessor.initialize(options);
 
             return options.googlepayadyenv2;
         }
 
         if (options.methodId === PaymentStrategyType.ADYENV3_GOOGLEPAY && options.googlepayadyenv3) {
-            if (!this._googlePayAdyenPaymentProcessor) {
+            if (!this._googlePayProviderProcessor) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._googlePayAdyenPaymentProcessor.initialize(options);
+            this._googlePayProviderProcessor.initialize(options);
 
             return options.googlepayadyenv3;
         }
