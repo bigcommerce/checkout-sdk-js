@@ -111,6 +111,10 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (this._hostedForm) {
+            this._hostedForm.detach();
+        }
+
         this._mollieClient = undefined;
 
         if (options && options.methodId && options.gatewayId) {

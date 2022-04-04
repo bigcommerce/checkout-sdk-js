@@ -139,6 +139,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._hostedForm) {
+            this._hostedForm.detach();
+        }
+
         this._unmountElement();
 
         return Promise.resolve(this._store.getState());

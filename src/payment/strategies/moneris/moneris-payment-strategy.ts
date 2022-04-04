@@ -93,6 +93,10 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._hostedForm) {
+            this._hostedForm.detach();
+        }
+
         if (this._windowEventListener) {
             window.removeEventListener('message', this._windowEventListener);
             this._windowEventListener = undefined;
