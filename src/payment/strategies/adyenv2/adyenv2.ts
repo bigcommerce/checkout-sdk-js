@@ -138,6 +138,18 @@ export interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallb
      * The location to insert the additional action component.
      */
     containerId: string;
+
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
+     */
+    widgetSize?: string;
 }
 
 export interface AdyenAdditionalActionState {
