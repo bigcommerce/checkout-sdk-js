@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.235.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.234.0...v1.235.0) (2022-04-04)
+
+
+### Features
+
+* **payment:** INT-5057 STRIPE UPE use vaulted card ([c78e600](https://github.com/bigcommerce/checkout-sdk-js/commit/c78e6007b709603f57a432a483cf0ad2fd01419f))
+
+
+### Bug Fixes
+
+* **checkout:** INT-5543 [CKO] Add token format support ([b4e0289](https://github.com/bigcommerce/checkout-sdk-js/commit/b4e02899d45fe5291dd8bb716c30e5ef4eeac67c))
+* **checkout:** INT-5543 [CKO] Implement interface for processors ([059f7ec](https://github.com/bigcommerce/checkout-sdk-js/commit/059f7ecdfc489c5ed34432cf07b408fcf31e5b26))
+* **checkout:** INT-5543 [CKO] Minor style changes ([1716cf5](https://github.com/bigcommerce/checkout-sdk-js/commit/1716cf5cb69665b645ede8eda2d48cbe6af4c3d0))
+* **checkout:** INT-5543 [CKO] Solve conflicts and change window replace ([4490aef](https://github.com/bigcommerce/checkout-sdk-js/commit/4490aef7d6786ce2efd1227c4e00dd43f1c915a9))
+* **checkout:** INT-5543 [CKO] Update to 3ds on Googlepay ([7b073a9](https://github.com/bigcommerce/checkout-sdk-js/commit/7b073a99f6383718a9062d435dc3aaa74e3aaf57))
+
 ## [1.234.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.233.0...v1.234.0) (2022-03-30)
 
 
