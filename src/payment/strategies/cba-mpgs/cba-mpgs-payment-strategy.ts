@@ -109,14 +109,14 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 }
 
                 const state = this._store.getState();
-                const _order = state.order.getOrder();
+                const order = state.order.getOrder();
                 const { storeProfile: { storeId } } = state.config.getStoreConfigOrThrow();
 
-                if (!_order || !this._sessionId) {
+                if (!order || !this._sessionId) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
-                const orderId = `${storeId}_${_order.orderId.toString()}`;
+                const orderId = `${storeId}_${order.orderId}`;
 
                 const { three_ds_result: { token: transactionId } } = error.body;
 

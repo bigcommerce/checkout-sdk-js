@@ -7,7 +7,7 @@ import { CBAMPGSHostWindow, ThreeDSjs } from './cba-mpgs';
 export default class CBAMPGSScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
-        public _window: CBAMPGSHostWindow = window
+        private _window: CBAMPGSHostWindow = window
     ) {}
 
     async load(testMode?: boolean): Promise<ThreeDSjs> {
