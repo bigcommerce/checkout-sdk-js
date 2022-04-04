@@ -180,7 +180,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     private _getThreeDS2ChallengeWidgetSize(): string {
-        const { widgetSize } = this._getPaymentInitializeOptions().threeDS2Options;
+        const { additionalActionOptions, threeDS2Options} = this._getPaymentInitializeOptions();
+        const widgetSize = additionalActionOptions.widgetSize || threeDS2Options?.widgetSize;
 
         if (!widgetSize) {
             return '05';

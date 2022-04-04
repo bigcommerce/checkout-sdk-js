@@ -91,7 +91,7 @@ export default interface AdyenV2PaymentInitializeOptions {
      * @deprecated
      * Use additionalActionOptions instead as this property will be removed in the future
      */
-    threeDS2Options: AdyenThreeDS2Options;
+    threeDS2Options?: AdyenThreeDS2Options;
 
     /**
      * A set of options that are required to initialize additional payment actions.
