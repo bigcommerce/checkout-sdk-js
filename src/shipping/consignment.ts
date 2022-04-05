@@ -29,7 +29,7 @@ export interface ConsignmentCreateRequestBody {
 
 export interface ConsignmentAssignmentRequestBody {
     address: AddressRequestBody;
-    shippingAddress: AddressRequestBody;
+    shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }

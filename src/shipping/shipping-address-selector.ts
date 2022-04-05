@@ -15,13 +15,9 @@ export function createShippingAddressSelectorFactory(): ShippingAddressSelectorF
     const getShippingAddress = createSelector(
         (state: ConsignmentState) => state.data,
         consignments => () => {
-            if (!consignments) {
-                return;
-            }
+            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
 
-            const shippingConsignment = consignments.find(consignment => !consignment.selectedPickupOption);
-
-            return shippingConsignment && shippingConsignment.shippingAddress;
+            return shippingConsignment?.shippingAddress;
         }
     );
 

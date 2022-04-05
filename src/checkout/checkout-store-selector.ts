@@ -323,12 +323,9 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         getConsignments => clone(() => {
             const consignments = getConsignments();
 
-            if (!consignments) {
-                return;
-            }
-            const shippingConsignment = consignments.find(consignment => !consignment.selectedPickupOption);
+            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
 
-            return shippingConsignment && shippingConsignment.availableShippingOptions;
+            return shippingConsignment?.availableShippingOptions;
         })
     );
 
@@ -341,14 +338,9 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         ({ consignments }: InternalCheckoutSelectors) => consignments.getConsignments,
         getConsignments => clone(() => {
             const consignments = getConsignments();
+            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
 
-            if (!consignments) {
-                return;
-            }
-
-            const shippingConsignment = consignments.find(consignment => !consignment.selectedPickupOption);
-
-            return shippingConsignment && shippingConsignment.selectedShippingOption;
+            return shippingConsignment?.selectedShippingOption;
         })
     );
 

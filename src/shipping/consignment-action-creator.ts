@@ -30,7 +30,7 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address);
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
 
             if (!existingConsignment) {
                 throw new InvalidArgumentError('No consignment found for the specified address');
@@ -48,8 +48,7 @@ export default class ConsignmentActionCreator {
 
             return this.updateConsignment({
                 id: existingConsignment.id,
-                address: consignment.address,
-                shippingAddress: consignment.address,
+                address: consignment.address ?? consignment.shippingAddress,
                 lineItems,
             }, options)(store);
         };
@@ -61,12 +60,11 @@ export default class ConsignmentActionCreator {
     ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => {
             const state = store.getState();
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address);
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
 
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
-                address: consignment.address,
-                shippingAddress: consignment.address,
+                address: consignment.address ?? consignment.shippingAddress,
                 lineItems: this._addLineItems(
                     consignment.lineItems,
                     existingConsignment,
@@ -300,7 +298,6 @@ export default class ConsignmentActionCreator {
 
         return {
             address,
-            shippingAddress: address,
             lineItems: [ ...physicalItems, ...customItems ].map(item => ({
                 itemId: item.id,
                 quantity: item.quantity,
