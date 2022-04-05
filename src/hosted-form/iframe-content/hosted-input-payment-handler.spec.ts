@@ -139,7 +139,7 @@ describe('HostedInputPaymentHandler', () => {
             .toHaveBeenCalledWith(getPaymentRequestBody());
     });
 
-    it('posts event if payment submission succeeds', async () => {
+    it('posts event with payload if payment submission succeeds', async () => {
         jest.spyOn(eventPoster, 'post');
 
         await handler.handle({
@@ -148,7 +148,18 @@ describe('HostedInputPaymentHandler', () => {
         });
 
         expect(eventPoster.post)
-            .toHaveBeenCalledWith({ type: HostedInputEventType.SubmitSucceeded });
+            .toHaveBeenCalledWith({
+                type: HostedInputEventType.SubmitSucceeded,
+                payload: {
+                    paymentType: 'PAYMENT_TYPE_API',
+                    response: {
+                        body: getPaymentResponseBody(),
+                        headers: { 'content-type': 'application/json' },
+                        status: 200,
+                        statusText: 'OK',
+                    },
+                },
+            });
     });
 
     it('posts event if payment submission fails', async () => {

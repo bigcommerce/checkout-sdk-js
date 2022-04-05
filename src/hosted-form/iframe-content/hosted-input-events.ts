@@ -106,6 +106,10 @@ export interface HostedInputEnterEvent {
 
 export interface HostedInputSubmitSuccessEvent {
     type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        paymentType?: string;
+        response: Response<unknown>;
+    };
 }
 
 export interface HostedInputSubmitErrorEvent {

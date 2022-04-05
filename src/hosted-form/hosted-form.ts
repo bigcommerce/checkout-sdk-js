@@ -2,6 +2,7 @@ import { noop, without } from 'lodash';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
+import { StepHandler } from '../payment/strategies/ppsdk/step-handler';
 import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
@@ -21,7 +22,8 @@ export default class HostedForm {
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
         private _eventCallbacks: HostedFormEventCallbacks,
-        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
+        ppsdkStepHandler?: StepHandler
     ) {
         const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
 
@@ -33,6 +35,8 @@ export default class HostedForm {
 
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => this._cardType = payload.cardType);
         this._eventListener.addListener(HostedInputEventType.BinChanged, ({ payload }) => this._bin = payload.bin);
+
+        this._eventListener.addListener(HostedInputEventType.SubmitSucceeded, ({ payload }) => ppsdkStepHandler?.handle(payload));
     }
 
     getBin(): string | undefined {
