@@ -7,6 +7,7 @@ import { of, Observable } from 'rxjs';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentInitializeOptions, PaymentMethod, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
@@ -61,6 +62,18 @@ describe('BoltPaymentStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
+
+        const config = getConfig();
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+            .mockReturnValue({
+                ...config.storeConfig,
+                checkoutSettings: {
+                    ...config.storeConfig.checkoutSettings,
+                    features: {
+                        'BOLT-203.Bolt_string_type_of_token_card_data': true,
+                    },
+                },
+            });
 
         paymentRequestTransformer = new PaymentRequestTransformer();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient());
@@ -462,8 +475,8 @@ describe('BoltPaymentStrategy', () => {
                     formattedPayload: {
                         credit_card_token: {
                             token: 'token',
-                            last_four_digits: 1111,
-                            iin: 1111,
+                            last_four_digits: '1111',
+                            iin: '1111',
                             expiration_month: 11,
                             expiration_year: 2022,
                         },
@@ -499,8 +512,8 @@ describe('BoltPaymentStrategy', () => {
                     formattedPayload: {
                         credit_card_token: {
                             token: 'token',
-                            last_four_digits: 1111,
-                            iin: 1111,
+                            last_four_digits: '1111',
+                            iin: '1111',
                             expiration_month: 11,
                             expiration_year: 2022,
                         },
@@ -526,6 +539,53 @@ describe('BoltPaymentStrategy', () => {
             await strategy.execute(boltEmbeddedPayload);
             expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
+        });
+
+        it('check card number digits with disabled BOLT-203 experiment', async () => {
+            const config = getConfig();
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'BOLT-203.Bolt_string_type_of_token_card_data': false,
+                        },
+                    },
+                });
+
+            const submitPaymentOptions = {
+                methodId: 'bolt',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: 'token',
+                            last_four_digits: 1111,
+                            iin: 1111,
+                            expiration_month: 11,
+                            expiration_year: 2022,
+                        },
+                        provider_data: {
+                            create_account: false,
+                            embedded_checkout: true,
+                        },
+                    },
+                },
+            };
+
+            const boltEmbeddedPayload = {
+                payment: {
+                    methodId: 'bolt',
+                    paymentData: {
+                        shouldCreateAccount: false,
+                    },
+                },
+            };
+
+            paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
+            await strategy.initialize(boltEmbeddedScriptInitializationOptions);
+            await strategy.execute(boltEmbeddedPayload);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
         });
     });
