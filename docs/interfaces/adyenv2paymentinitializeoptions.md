@@ -78,7 +78,7 @@ service.initializePayment({
 * [options](adyenv2paymentinitializeoptions.md#optional-options)
 * [shouldShowNumberField](adyenv2paymentinitializeoptions.md#optional-shouldshownumberfield)
 * [threeDS2ContainerId](adyenv2paymentinitializeoptions.md#threeds2containerid)
-* [threeDS2Options](adyenv2paymentinitializeoptions.md#threeds2options)
+* [threeDS2Options](adyenv2paymentinitializeoptions.md#optional-threeds2options)
 
 ### Methods
 
@@ -141,9 +141,9 @@ Use additionalActionOptions instead as this property will be removed in the futu
 
 ___
 
-###  threeDS2Options
+### `Optional` threeDS2Options
 
-• **threeDS2Options**: *[AdyenThreeDS2Options](adyenthreeds2options.md)*
+• **threeDS2Options**? : *[AdyenThreeDS2Options](adyenthreeds2options.md)*
 
 **`deprecated`** 
 Use additionalActionOptions instead as this property will be removed in the future

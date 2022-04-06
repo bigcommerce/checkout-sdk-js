@@ -68,6 +68,17 @@ declare interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCall
      * The location to insert the additional action component.
      */
     containerId: string;
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     *
+     * Values
+     * '01' = 250px x 400px
+     * '02' = 390px x 400px
+     * '03' = 500px x 600px
+     * '04' = 600px x 400px
+     * '05' = 100% x 100%
+     */
+    widgetSize?: string;
 }
 
 declare interface AdyenAdditionalActionOptions_2 extends AdyenAdditionalActionCallbacks_2 {
@@ -336,7 +347,7 @@ declare interface AdyenV2PaymentInitializeOptions {
      * @deprecated
      * Use additionalActionOptions instead as this property will be removed in the future
      */
-    threeDS2Options: AdyenThreeDS2Options;
+    threeDS2Options?: AdyenThreeDS2Options;
     /**
      * A set of options that are required to initialize additional payment actions.
      */
