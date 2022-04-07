@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.236.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.235.1...v1.236.0) (2022-04-07)
+
+
+### Features
+
+* **checkout:** INT-5126 [MPGS] Add  MPGS to vaulting supported providers ([9c5cbd8](https://github.com/bigcommerce/checkout-sdk-js/commit/9c5cbd85b505ac12f65754ec9919225d23d24fc6))
+* **checkout:** INT-5126 [MPGS] Add 3DS support to MPGS ([d7a8545](https://github.com/bigcommerce/checkout-sdk-js/commit/d7a85458db6bbe20071c9f51c0307bf6df84147c))
+* **checkout:** INT-5126 [MPGS] Add retry limit for AuthenticatePayer ([63704a0](https://github.com/bigcommerce/checkout-sdk-js/commit/63704a0b4f841f2683174d6b63c6e512bba5fe0e))
+* **checkout:** INT-5126 [MPGS] Add Unit Tests and small refactor ([2fca208](https://github.com/bigcommerce/checkout-sdk-js/commit/2fca208a2901104c3297bb0c7d38f43889574e78))
+* **checkout:** INT-5126 [MPGS] Minor Styling Changes ([fcf5382](https://github.com/bigcommerce/checkout-sdk-js/commit/fcf5382fe1a7ca478fd1c624c3ad60ddb4673f5b))
+* **payment:** INT-5498 add detach function to deinitialize ([c4067c7](https://github.com/bigcommerce/checkout-sdk-js/commit/c4067c745a44f9612fca4cf7170be154eb0afa59))
+
 ### [1.235.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.235.0...v1.235.1) (2022-04-06)
 
 
