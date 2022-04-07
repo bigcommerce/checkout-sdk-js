@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.237.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.0...v1.237.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **payment:** BOLT-203 Incorrect type of last 4 card number digit ([24fb188](https://github.com/bigcommerce/checkout-sdk-js/commit/24fb188278732be703c347eb74cda65a4653cd9c))
+
 ## [1.237.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.236.0...v1.237.0) (2022-04-07)
 
 
