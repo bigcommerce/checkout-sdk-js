@@ -945,6 +945,7 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
 
             const payload = {
+                address,
                 shippingAddress: address,
                 lineItems: [{
                     itemId: 'item-foo',
@@ -974,6 +975,7 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
 
             const payload = {
+                address,
                 shippingAddress: address,
                 lineItems: [{
                     itemId: 'item-foo',

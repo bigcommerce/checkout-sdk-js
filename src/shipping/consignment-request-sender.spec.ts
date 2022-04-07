@@ -14,6 +14,8 @@ describe('ConsignmentRequestSender', () => {
     const consignment = getConsignmentRequestBody();
     const consignments = [{
         // tslint:disable-next-line:no-non-null-assertion
+        address: consignment.address!,
+        // tslint:disable-next-line:no-non-null-assertion
         shippingAddress: consignment.shippingAddress!,
         // tslint:disable-next-line:no-non-null-assertion
         lineItems: consignment.lineItems!,

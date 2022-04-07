@@ -30,7 +30,7 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
 
             if (!existingConsignment) {
                 throw new InvalidArgumentError('No consignment found for the specified address');
@@ -48,7 +48,7 @@ export default class ConsignmentActionCreator {
 
             return this.updateConsignment({
                 id: existingConsignment.id,
-                shippingAddress: consignment.shippingAddress,
+                address: consignment.address ?? consignment.shippingAddress,
                 lineItems,
             }, options)(store);
         };
@@ -60,11 +60,11 @@ export default class ConsignmentActionCreator {
     ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => {
             const state = store.getState();
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
 
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
-                shippingAddress: consignment.shippingAddress,
+                address: consignment.address ?? consignment.shippingAddress,
                 lineItems: this._addLineItems(
                     consignment.lineItems,
                     existingConsignment,
@@ -285,7 +285,7 @@ export default class ConsignmentActionCreator {
     }
 
     private _getUpdateAddressRequestBody(
-        shippingAddress: AddressRequestBody,
+        address: AddressRequestBody,
         store: ReadableCheckoutStore
     ): ConsignmentRequestBody {
         const state = store.getState();
@@ -297,7 +297,7 @@ export default class ConsignmentActionCreator {
         const { physicalItems, customItems = [] } = cart.lineItems;
 
         return {
-            shippingAddress,
+            address,
             lineItems: [ ...physicalItems, ...customItems ].map(item => ({
                 itemId: item.id,
                 quantity: item.quantity,
