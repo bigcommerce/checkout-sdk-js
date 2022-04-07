@@ -244,7 +244,7 @@ describe('MolliePaymentStrategy', () => {
     });
 
     describe('When Hosted Form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate' | 'detach'>;
         let initializeOptions: PaymentInitializeOptions;
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
@@ -254,6 +254,7 @@ describe('MolliePaymentStrategy', () => {
                 attach: jest.fn(() => Promise.resolve()),
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
+                detach: jest.fn(),
             };
             initializeOptions = getHostedFormInitializeOptions();
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
@@ -315,6 +316,14 @@ describe('MolliePaymentStrategy', () => {
                 expect(form.submit)
                     .not.toHaveBeenCalled();
             }
+        });
+
+        it('should detach hostedForm on Deinitialize', async () => {
+            await strategy.initialize(initializeOptions);
+            await strategy.deinitialize();
+
+            expect(form.detach)
+                .toHaveBeenCalled();
         });
     });
 
