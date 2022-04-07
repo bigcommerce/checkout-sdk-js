@@ -3675,6 +3675,7 @@ declare type ComparableCheckout = Pick<Checkout, 'outstandingBalance' | 'coupons
 
 declare interface Consignment {
     id: string;
+    address: Address;
     shippingAddress: Address;
     handlingCost: number;
     shippingCost: number;
@@ -3685,13 +3686,15 @@ declare interface Consignment {
 }
 
 declare interface ConsignmentAssignmentRequestBody {
-    shippingAddress: AddressRequestBody;
+    address: AddressRequestBody;
+    shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }
 
 declare interface ConsignmentCreateRequestBody {
-    shippingAddress: AddressRequestBody;
+    address?: AddressRequestBody;
+    shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }
@@ -3707,6 +3710,7 @@ declare interface ConsignmentPickupOption {
 
 declare interface ConsignmentUpdateRequestBody {
     id: string;
+    address?: AddressRequestBody;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;

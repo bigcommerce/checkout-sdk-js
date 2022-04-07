@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.237.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.236.0...v1.237.0) (2022-04-07)
+
+
+### Features
+
+* **payment:** CHECKOUT-6264 Add payment integration service ([0618c41](https://github.com/bigcommerce/checkout-sdk-js/commit/0618c417c1d283963ae39a6a44fd098ffe26e399))
+* **shipping:** CHECKOUT-6422 Add address property to consignment interface ([#1386](https://github.com/bigcommerce/checkout-sdk-js/issues/1386)) ([1bbab84](https://github.com/bigcommerce/checkout-sdk-js/commit/1bbab8487f149811f8843857958cbcdb291aad4f))
+
 ## [1.236.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.235.1...v1.236.0) (2022-04-07)
 
 

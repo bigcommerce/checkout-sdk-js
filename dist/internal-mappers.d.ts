@@ -114,6 +114,7 @@ declare interface CheckoutPayment {
 
 declare interface Consignment {
     id: string;
+    address: Address;
     shippingAddress: Address;
     handlingCost: number;
     shippingCost: number;

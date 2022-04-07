@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [address](consignment.md#address)
 * [availableShippingOptions](consignment.md#optional-availableshippingoptions)
 * [handlingCost](consignment.md#handlingcost)
 * [id](consignment.md#id)
@@ -20,6 +21,12 @@
 * [shippingCost](consignment.md#shippingcost)
 
 ## Properties
+
+###  address
+
+• **address**: *[Address](address.md)*
+
+___
 
 ### `Optional` availableShippingOptions
 

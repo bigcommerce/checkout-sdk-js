@@ -10,11 +10,18 @@
 
 ### Properties
 
+* [address](consignmentassignmentrequestbody.md#address)
 * [lineItems](consignmentassignmentrequestbody.md#lineitems)
 * [pickupOption](consignmentassignmentrequestbody.md#optional-pickupoption)
-* [shippingAddress](consignmentassignmentrequestbody.md#shippingaddress)
+* [shippingAddress](consignmentassignmentrequestbody.md#optional-shippingaddress)
 
 ## Properties
+
+###  address
+
+• **address**: *[AddressRequestBody](addressrequestbody.md)*
+
+___
 
 ###  lineItems
 
@@ -28,6 +35,6 @@ ___
 
 ___
 
-###  shippingAddress
+### `Optional` shippingAddress
 
-• **shippingAddress**: *[AddressRequestBody](addressrequestbody.md)*
+• **shippingAddress**? : *[AddressRequestBody](addressrequestbody.md)*

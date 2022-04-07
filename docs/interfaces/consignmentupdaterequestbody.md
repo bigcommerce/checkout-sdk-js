@@ -10,12 +10,19 @@
 
 ### Properties
 
+* [address](consignmentupdaterequestbody.md#optional-address)
 * [id](consignmentupdaterequestbody.md#id)
 * [lineItems](consignmentupdaterequestbody.md#optional-lineitems)
 * [pickupOption](consignmentupdaterequestbody.md#optional-pickupoption)
 * [shippingAddress](consignmentupdaterequestbody.md#optional-shippingaddress)
 
 ## Properties
+
+### `Optional` address
+
+• **address**? : *[AddressRequestBody](addressrequestbody.md)*
+
+___
 
 ###  id
 
