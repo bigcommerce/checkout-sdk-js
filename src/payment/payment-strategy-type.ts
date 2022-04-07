@@ -12,6 +12,7 @@ enum PaymentStrategyType {
     BARCLAYS = 'barclays',
     BLUESNAPV2 = 'bluesnapv2',
     BOLT = 'bolt',
+    CBA_MPGS = 'cba_mpgs',
     CHECKOUTCOM = 'checkoutcom',
     CHECKOUTCOM_APM = 'checkoutcomapm',
     CHECKOUTCOM_FAWRY = 'checkoutcomfawry',

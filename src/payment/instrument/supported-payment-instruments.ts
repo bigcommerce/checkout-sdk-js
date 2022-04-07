@@ -125,6 +125,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'moneris',
         method: 'credit_card',
     },
+    cba_mpgs: {
+        provider: 'cba_mpgs',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;

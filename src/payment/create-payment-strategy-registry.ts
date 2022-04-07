@@ -36,6 +36,7 @@ import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow, CardinalThreeDSecureFlowV2 } from './strategies/cardinal';
+import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { CheckoutcomiDealPaymentStrategy, CheckoutcomAPMPaymentStrategy, CheckoutcomFawryPaymentStrategy, CheckoutcomSEPAPaymentStrategy } from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
@@ -333,6 +334,18 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             storeCreditActionCreator,
             new BoltScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.CBA_MPGS, () =>
+        new CBAMPGSPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            paymentMethodActionCreator,
+            new CBAMPGSScriptLoader(scriptLoader),
+            locale
         )
     );
 

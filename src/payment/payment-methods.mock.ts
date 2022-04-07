@@ -888,6 +888,26 @@ export function getOpy(): PaymentMethod {
     };
 }
 
+export function getCBAMPGS(): PaymentMethod {
+    return {
+        id: 'cba_mpgs',
+        gateway: '',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [],
+        clientToken: 'foo',
+        config: {
+            displayName: 'CBA MPGS',
+            is3dsEnabled: true,
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            merchantId: 'ABC123',
+        },
+    };
+}
+
 export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
