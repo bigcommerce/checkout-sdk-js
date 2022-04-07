@@ -1,7 +1,9 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 import { filter, flatMap, isMatch, values } from 'lodash';
 
+import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
 import { createSelector } from '../../common/selector';
+import { guard } from '../../common/utility';
 import PaymentMethod from '../payment-method';
 
 import PaymentInstrument, { CardInstrument } from './instrument';
@@ -10,6 +12,7 @@ import supportedInstruments from './supported-payment-instruments';
 
 export default interface InstrumentSelector {
     getCardInstrument(instrumentId: string): CardInstrument | undefined;
+    getCardInstrumentOrThrow(instrumentId: string): CardInstrument;
     getInstruments(): PaymentInstrument[] | undefined;
     getInstrumentsByPaymentMethod(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
     getInstrumentsMeta(): InstrumentMeta | undefined;
@@ -46,11 +49,18 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
         (instruments = []) => (instrumentId: string) => {
             const cards = values(supportedInstruments);
 
-            return instruments.find((instrument): instrument is CardInstrument =>
+            return instruments?.find((instrument): instrument is CardInstrument =>
                 instrument.bigpayToken === instrumentId &&
                 instrument.type === 'card' &&
                 cards.some(card => isMatch(instrument, card))
             );
+        }
+    );
+
+    const getCardInstrumentOrThrow = createSelector(
+        getCardInstrument,
+        getCardInstrument => (instrumentId: string) => {
+            return guard(getCardInstrument(instrumentId), () => new MissingDataError(MissingDataErrorType.MissingPaymentInstrument));
         }
     );
 
@@ -115,6 +125,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
     ): InstrumentSelector => {
         return {
             getCardInstrument: getCardInstrument(state),
+            getCardInstrumentOrThrow: getCardInstrumentOrThrow(state),
             getInstruments: getInstruments(state),
             getInstrumentsByPaymentMethod: getInstrumentsByPaymentMethod(state),
             getInstrumentsMeta: getInstrumentsMeta(state),

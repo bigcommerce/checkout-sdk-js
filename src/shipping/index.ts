@@ -17,6 +17,7 @@ export { default as PickupOptionSelector, PickupOptionSelectorFactory, createPic
 export { default as PickupOptionState } from './pickup-option-state';
 export { default as pickupOptionReducer } from './pickup-option-reducer';
 
+export { ShippingAddress, ShippingAddressRequestBody } from './shipping-address';
 export { default as ShippingAddressSelector, ShippingAddressSelectorFactory, createShippingAddressSelectorFactory } from './shipping-address-selector';
 
 export { default as ShippingCountryActionCreator } from './shipping-country-action-creator';
