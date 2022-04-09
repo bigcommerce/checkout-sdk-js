@@ -82,6 +82,7 @@ export function getOrderRequestBodyAPMs(): OrderRequestBody {
             gatewayId: 'mollie',
             paymentData: {
                 issuer: 'foo',
+                shopper_locale: 'en-US',
             },
         },
     };

@@ -58,6 +58,7 @@ export interface WithDocumentInstrument {
 
 export interface WithMollieIssuerInstrument {
     issuer: string;
+    shopper_locale: string;
 }
 
 export interface WithCheckoutcomSEPAInstrument {

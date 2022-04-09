@@ -27,6 +27,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     private _cardNumberElement?: MollieElement;
     private _verificationCodeElement?: MollieElement;
     private _expiryDateElement?: MollieElement;
+    private _locale?: string;
 
     private _hostedForm?: HostedForm;
 
@@ -65,6 +66,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         const paymentMethods = state.paymentMethods;
         const paymentMethod = paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
         const { config: { merchantId, testMode } } = paymentMethod;
+        const { locale } = paymentMethod.initializationData;
+        this._locale = locale;
 
         if (!merchantId) {
             throw new InvalidArgumentError('Unable to initialize payment because "merchantId" argument is not provided.');
@@ -149,6 +152,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                     vault_payment_instrument: shouldSaveInstrument,
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                     browser_info: getBrowserInfo(),
+                    shopper_locale: this._getShopperLocale(),
                 },
             },
         }));
@@ -181,6 +185,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 ...paymentData,
                 formattedPayload: {
                     issuer,
+                    shopper_locale: this._getShopperLocale(),
                 },
             },
         }));
@@ -260,6 +265,14 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         }
 
         return this._mollieClient;
+    }
+
+    private _getShopperLocale(): string {
+        if (!this._locale) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._locale;
     }
 
     /**
