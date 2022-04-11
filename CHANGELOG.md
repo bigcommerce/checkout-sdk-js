@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.237.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.1...v1.237.2) (2022-04-11)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6071 Add apple pay style container class ([#1400](https://github.com/bigcommerce/checkout-sdk-js/issues/1400)) ([f643abf](https://github.com/bigcommerce/checkout-sdk-js/commit/f643abf528aaeb33a320b1ab43b95858f9f9fe9b))
+
 ### [1.237.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.0...v1.237.1) (2022-04-07)
 
 
