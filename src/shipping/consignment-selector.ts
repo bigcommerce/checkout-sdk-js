@@ -15,7 +15,7 @@ export default interface ConsignmentSelector {
     getConsignments(): Consignment[] | undefined;
     getConsignmentsOrThrow(): Consignment[];
     getConsignmentById(id: string): Consignment | undefined;
-    getConsignmentByAddress(address?: AddressRequestBody): Consignment | undefined;
+    getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined;
     getShippingOption(): ShippingOption | undefined;
     getLoadError(): Error | undefined;
     getCreateError(): Error | undefined;
@@ -69,11 +69,7 @@ export function createConsignmentSelectorFactory(): ConsignmentSelectorFactory {
 
     const getConsignmentByAddress = createSelector(
         (state: ConsignmentState) => state.data,
-        consignments => (address?: AddressRequestBody) => {
-            if (!address) {
-                return;
-            }
-
+        consignments => (address: AddressRequestBody) => {
             if (!consignments || !consignments.length) {
                 return;
             }
