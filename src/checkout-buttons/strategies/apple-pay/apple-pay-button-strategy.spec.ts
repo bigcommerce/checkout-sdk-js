@@ -2,12 +2,18 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+import { from } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
 import { Observable } from 'rxjs/internal/Observable';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { createCheckoutStore,
+    CheckoutActionCreator,
+    CheckoutActionType,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator } from '../../../checkout';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
@@ -118,6 +124,11 @@ describe('ApplePayButtonStrategy', () => {
             .mockReturnValue(true);
         jest.spyOn(remoteCheckoutActionCreator, 'signOut')
             .mockReturnValue(true);
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+            .mockReturnValue(() => from([
+                createAction(CheckoutActionType.LoadCheckoutRequested),
+                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+            ]));
 
         strategy = new ApplePayButtonStrategy(
             store,
@@ -143,6 +154,8 @@ describe('ApplePayButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('creates the button', async () => {
+            jest.spyOn(store, 'dispatch');
+
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             let children = container.children;
             expect(children.length).toBe(0);
@@ -151,6 +164,8 @@ describe('ApplePayButtonStrategy', () => {
 
             expect(children.length).toBe(1);
             expect(container.getElementsByClassName('apple-pay-checkout-button')[0]).toBeTruthy();
+            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(checkoutActionCreator.loadDefaultCheckout());
         });
 
         it('creates the button with a custom style class name', async () => {
