@@ -1,5 +1,6 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { getVaultedInstrument } from '../../payments.mock';
 
 import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK, VenmoInstance } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
@@ -162,6 +163,13 @@ export function getBraintreePaymentData(): OrderPaymentRequestBody {
     return {
         ...getOrderRequestBody().payment,
         methodId: 'braintree',
+    };
+}
+
+export function getBraintreeVaultedPaymentData(): OrderPaymentRequestBody {
+    return {
+        methodId: 'braintree',
+        paymentData: getVaultedInstrument(),
     };
 }
 

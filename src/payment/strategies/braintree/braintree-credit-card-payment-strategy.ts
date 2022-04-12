@@ -32,7 +32,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
-        if (!paymentMethod || !paymentMethod.clientToken) {
+        if (!paymentMethod?.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -119,6 +119,20 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private async _preparePaymentData(payment: OrderPaymentRequestBody, billingAddress: Address, orderAmount: number): Promise<PaymentInstrument & PaymentInstrumentMeta> {
         const commonPaymentData = { deviceSessionId: this._deviceSessionId };
 
+        if (this._is3DSFixExperimentOn() && this._shouldPerform3DSVerification(payment)) {
+            const cardVerificationResult = this._isSubmittingWithStoredCard(payment)
+                ? await this._braintreePaymentProcessor.verifyStoredCreditCard(payment, orderAmount)
+                : await this._braintreePaymentProcessor.verifyCard(payment, billingAddress, orderAmount);
+
+            return {
+                ...commonPaymentData,
+                ...this._mapToNonceInstrument({
+                    ...payment.paymentData,
+                    ...cardVerificationResult,
+                }),
+            };
+        }
+
         if (this._isSubmittingWithStoredCard(payment) || this._isStoringNewCard(payment)) {
             return {
                 ...commonPaymentData,
@@ -126,7 +140,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             };
         }
 
-        if (this._shouldPerform3DSVerification(payment)) {
+        if (!this._is3DSFixExperimentOn() && this._shouldPerform3DSVerification(payment)) {
             return {
                 ...commonPaymentData,
                 ...this._mapToNonceInstrument({
@@ -148,17 +162,26 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private async _prepareHostedPaymentData(payment: OrderPaymentRequestBody, billingAddress: Address, orderAmount: number): Promise<PaymentInstrument & PaymentInstrumentMeta> {
         const commonPaymentData = { deviceSessionId: this._deviceSessionId };
 
-        if (this._shouldPerform3DSVerification(payment)) {
+        console.log('test 1');
+
+        if (await this._shouldPerform3DSVerification(payment)) {
+            console.log('test 2');
+            const cardVerificationResult = this._isSubmittingWithStoredCard(payment)
+                ? await this._braintreePaymentProcessor.verifyStoredCreditCard(payment, orderAmount)
+                : await this._braintreePaymentProcessor.verifyCardWithHostedForm(billingAddress, orderAmount);
+
             return {
                 ...commonPaymentData,
                 ...this._mapToNonceInstrument({
                     ...payment.paymentData,
-                    ...await this._braintreePaymentProcessor.verifyCardWithHostedForm(billingAddress, orderAmount),
+                    ...cardVerificationResult,
                 }),
             };
         }
 
         if (this._isSubmittingWithStoredCard(payment)) {
+            console.log('test 3');
+
             return {
                 ...commonPaymentData,
                 ...this._mapToVaultedInstrumentWithNonceVerification({
@@ -167,6 +190,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 }),
             };
         }
+
+        console.log('test 4');
 
         return {
             ...commonPaymentData,
@@ -205,6 +230,21 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     private _shouldPerform3DSVerification(payment: OrderPaymentRequestBody): boolean {
-        return !!(this._is3dsEnabled && !this._isSubmittingWithStoredCard(payment));
+        if (this._is3DSFixExperimentOn()) {
+            console.log('test _shouldPerform3DSVerification 1');
+
+            return !!this._is3dsEnabled;
+        }
+
+        console.log('test _shouldPerform3DSVerification 2');
+
+        return !!this._is3dsEnabled && !this._isSubmittingWithStoredCard(payment);
+    }
+
+    private _is3DSFixExperimentOn(): boolean {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+
+        return storeConfig.checkoutSettings.features['PAYPAL-1177.braintree-3ds-issue'];
     }
 }

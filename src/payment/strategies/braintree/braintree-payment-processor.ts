@@ -1,12 +1,14 @@
+import { RequestSender } from '@bigcommerce/request-sender';
 import { supportsPopups } from '@braintree/browser-detection';
 
 import { Address } from '../../../address';
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { CheckoutStore } from '../../../checkout';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { Overlay } from '../../../common/overlay';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
-import { CreditCardInstrument, NonceInstrument } from '../../payment';
+import { CreditCardInstrument, NonceInstrument, VaultedInstrument } from '../../payment';
 
 import { BraintreePaypal, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
@@ -28,7 +30,9 @@ export default class BraintreePaymentProcessor {
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _braintreeHostedForm: BraintreeHostedForm,
-        private _overlay: Overlay
+        private _overlay: Overlay,
+        private _store: CheckoutStore,
+        private _requestSender: RequestSender
     ) {}
 
     initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
@@ -121,6 +125,13 @@ export default class BraintreePaymentProcessor {
         return this._braintreeHostedForm.tokenizeForStoredCardVerification();
     }
 
+    async verifyStoredCreditCard(payment: OrderPaymentRequestBody, amount: number): Promise<NonceInstrument> {
+        const { nonce } = await this.getStoredCreditCardNonce(payment);
+        const threeDSecure = await this._braintreeSDKCreator.get3DS();
+
+        return this._present3DSChallenge(threeDSecure, amount, nonce);
+    }
+
     async verifyCardWithHostedForm(billingAddress: Address, amount: number): Promise<NonceInstrument> {
         const [{ nonce }, threeDSecure] = await Promise.all([
             this._braintreeHostedForm.tokenize(billingAddress),
@@ -128,6 +139,60 @@ export default class BraintreePaymentProcessor {
         ]);
 
         return this._present3DSChallenge(threeDSecure, amount, nonce);
+    }
+
+    async getStoredCreditCardNonce(payment: OrderPaymentRequestBody): Promise<NonceInstrument> {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+        const cart = state.cart.getCartOrThrow();
+
+        console.log({
+            state,
+            storeConfig,
+            cart,
+        });
+
+        if (!storeConfig) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
+
+        const { customerId } = cart;
+        const { currency, paymentSettings, storeProfile, shopperCurrency } = storeConfig;
+        const { code } = shopperCurrency.isTransactional ? shopperCurrency : currency;
+        const { bigpayBaseUrl } = paymentSettings || {};
+        const { storeId } = storeProfile || {};
+
+        if (!bigpayBaseUrl || !storeId || !customerId) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        const { paymentData } = payment;
+        const { instrumentId } = paymentData as VaultedInstrument;
+
+        console.log('instrumentId', instrumentId);
+
+        // TODO: update the variable with bigpay-client method when the url will be ready
+        const url = `${bigpayBaseUrl}/api/v3/stores/${storeId}/shoppers/${customerId}/instruments/${instrumentId}/create_nonce`;
+
+        return this._requestSender.post<NonceInstrument>(url, {
+            credentials: false,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-XSRF-TOKEN': null,
+            },
+            body: {
+                currency: code,
+            },
+        })
+            .then(({ body }) => body)
+            .catch(error => {
+                throw error;
+            });
     }
 
     private _present3DSChallenge(
@@ -156,6 +221,7 @@ export default class BraintreePaymentProcessor {
                     addFrame(error, iframe, cancelVerifyCard);
                 },
                 amount: Number(roundedAmount),
+                challengeRequested: true,
                 nonce,
                 removeFrame,
                 onLookupComplete: (_data, next) => {

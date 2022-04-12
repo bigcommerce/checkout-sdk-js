@@ -9,6 +9,7 @@ import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -51,6 +52,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_verification_with_hosted_form' }));
         braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
         braintreePaymentProcessorMock.verifyCardWithHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card_with_hosted_form' }));
+        braintreePaymentProcessorMock.verifyStoredCreditCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_stored_credit_card' }));
         braintreePaymentProcessorMock.getSessionId = jest.fn(() => Promise.resolve('my_session_id'));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
         braintreePaymentProcessorMock.deinitializeHostedForm = jest.fn(() => Promise.resolve());
@@ -279,6 +281,84 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
+        it('verifies stored credit card with 3DS if 3DS and the PAYPAL-1177.braintree-3ds-issue feature is enabled', async () => {
+            const config = getConfig();
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'PAYPAL-1177.braintree-3ds-issue': true,
+                        },
+                    },
+                });
+
+            const options3ds = { methodId: paymentMethodMock.id };
+
+            paymentMethodMock.config.is3dsEnabled = true;
+
+            await braintreeCreditCardPaymentStrategy.initialize(options3ds);
+
+            const payload = {
+                ...orderRequestBody,
+                payment: {
+                    methodId: 'braintree',
+                    paymentData: {
+                        instrumentId: 'my_instrument_id',
+                    },
+                },
+            };
+
+            await braintreeCreditCardPaymentStrategy.execute(payload, options);
+
+            expect(braintreePaymentProcessorMock.verifyStoredCreditCard)
+                .toHaveBeenCalledWith(payload.payment, 190);
+
+            expect(await paymentActionCreator.submitPayment)
+                .toHaveBeenCalledWith({
+                    ...payload.payment,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        nonce: 'my_verified_stored_credit_card',
+                    },
+                });
+        });
+
+        it('does not verifies stored card with 3DS even if 3DS is enabled but the PAYPAL-1177.braintree-3ds-issue feature off', async () => {
+            const options3ds = { methodId: paymentMethodMock.id };
+
+            paymentMethodMock.config.is3dsEnabled = true;
+
+            await braintreeCreditCardPaymentStrategy.initialize(options3ds);
+
+            const payload = {
+                ...orderRequestBody,
+                payment: {
+                    methodId: 'braintree',
+                    paymentData: {
+                        instrumentId: 'my_instrument_id',
+                        ccCvv: '333',
+                    },
+                },
+            };
+
+            await braintreeCreditCardPaymentStrategy.execute(payload, options);
+
+            expect(braintreePaymentProcessorMock.verifyStoredCreditCard)
+                .not.toHaveBeenCalled();
+
+            expect(await paymentActionCreator.submitPayment)
+                .toHaveBeenCalledWith({
+                    ...payload.payment,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        instrumentId: 'my_instrument_id',
+                        ccCvv: '333',
+                    },
+                });
+        });
+
         it('passes the order amount to 3ds client', async () => {
             order.orderAmount = 123;
             paymentMethodMock.config.is3dsEnabled = true;
@@ -394,6 +474,48 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                         paymentData: {
                             deviceSessionId: 'my_session_id',
                             nonce: 'my_verified_card_with_hosted_form',
+                        },
+                    });
+            });
+
+            it('verifies stored card with 3DS through hosted form if 3DS and the PAYPAL-1177.braintree-3ds-issue feature are enabled', async () => {
+                const config = getConfig();
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                    .mockReturnValue({
+                        ...config.storeConfig,
+                        checkoutSettings: {
+                            ...config.storeConfig.checkoutSettings,
+                            features: {
+                                'PAYPAL-1177.braintree-3ds-issue': true,
+                            },
+                        },
+                    });
+
+                paymentMethodMock.config.is3dsEnabled = true;
+
+                await braintreeCreditCardPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+
+                const payload = {
+                    ...orderRequestBody,
+                    payment: {
+                        methodId: 'braintree',
+                        paymentData: {
+                            instrumentId: 'my_instrument_id',
+                        },
+                    },
+                };
+
+                await braintreeCreditCardPaymentStrategy.execute(payload, options);
+
+                expect(braintreePaymentProcessorMock.verifyStoredCreditCard)
+                    .toHaveBeenCalledWith(payload.payment, 190);
+
+                expect(await paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith({
+                        ...payload.payment,
+                        paymentData: {
+                            deviceSessionId: 'my_session_id',
+                            nonce: 'my_verified_stored_credit_card',
                         },
                     });
             });

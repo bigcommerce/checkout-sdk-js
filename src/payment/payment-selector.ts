@@ -129,6 +129,8 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
         getOrderMeta => () => {
             const meta = getOrderMeta();
 
+            console.log('meta', meta);
+
             return meta && meta.token;
         }
     );

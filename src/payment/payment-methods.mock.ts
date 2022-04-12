@@ -18,7 +18,7 @@ export function getBraintree(): PaymentMethod {
             displayName: 'Credit Card',
             cardCode: true,
             enablePaypal: true,
-            merchantId: '',
+            merchantId: '100000',
             testMode: true,
             isVisaCheckoutEnabled: false,
         },

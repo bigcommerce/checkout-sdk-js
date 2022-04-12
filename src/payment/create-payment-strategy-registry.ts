@@ -60,12 +60,7 @@ import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
-import { createPaypalCommercePaymentProcessor,
-    PaypalCommerceCreditCardPaymentStrategy,
-    PaypalCommerceFundingKeyResolver,
-    PaypalCommerceHostedForm,
-    PaypalCommercePaymentStrategy,
-    PaypalCommerceRequestSender } from './strategies/paypal-commerce';
+import { createPaypalCommercePaymentProcessor, PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceFundingKeyResolver, PaypalCommerceHostedForm, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { createStepHandler, createSubStrategyRegistry, PaymentResumer, PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
@@ -90,7 +85,7 @@ export default function createPaymentStrategyRegistry(
         new BillingAddressRequestSender(requestSender),
         new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
     );
-    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader, store, requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender));

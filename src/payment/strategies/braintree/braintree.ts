@@ -98,6 +98,7 @@ export interface BraintreeGooglePayThreeDSecure {
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
+    challengeRequested: boolean;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
