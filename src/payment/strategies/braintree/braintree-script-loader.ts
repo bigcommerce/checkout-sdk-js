@@ -50,7 +50,6 @@ export default class BraintreeScriptLoader {
     }
 
     loadPaypal(): Promise<BraintreePaypalCreator> {
-
         return this._scriptLoader
             .loadScript(`//js.braintreegateway.com/web/${version}/js/paypal.min.js`)
             .then(() => {

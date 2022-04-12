@@ -3,6 +3,8 @@ import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
+export type BraintreePaypalButtonStyles = Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+
 export interface BraintreePaypalButtonInitializeOptions {
     /**
      * @internal
@@ -18,7 +20,7 @@ export interface BraintreePaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: BraintreePaypalButtonStyles;
 
     /**
      * Whether or not to show a credit button.

@@ -19,14 +19,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        let state = this._store.getState();
+        const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+
+        // load methods
         const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
         }
 
-        state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCartOrThrow();
         const buttonParams: ButtonsOptions = {
             onApprove: data => this._tokenizePayment(data),

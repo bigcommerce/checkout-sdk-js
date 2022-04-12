@@ -43,6 +43,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const storeState = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = storeState.config.getStoreConfig()?.shopperCurrency;
 
+        console.log('test');
+
         if (!paymentMethod || !paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }

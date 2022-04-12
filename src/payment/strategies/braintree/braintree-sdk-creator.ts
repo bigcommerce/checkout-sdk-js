@@ -76,6 +76,8 @@ export default class BraintreeSDKCreator {
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
                 .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {
+                    console.log('instance', instance);
+
                     this._paypalcheckoutInstance = instance;
                     instance.loadPayPalSDK({
                         currency: config.currency,
@@ -88,6 +90,8 @@ export default class BraintreeSDKCreator {
             renderButtonCallback(this._paypalcheckoutInstance);
         }
 
+        console.log('this._paypalCheckout', this._paypalCheckout);
+
         return this._paypalCheckout;
     }
 
@@ -99,22 +103,31 @@ export default class BraintreeSDKCreator {
             this.getClient(),
             this._braintreeScriptLoader.loadVenmoCheckout(),
         ])
-            .then(([client, venmoCheckout]) => venmoCheckout.create({
-                    client, allowDesktop: true,
-                    paymentMethodUsage: 'multi_use',
-                },
-                (venmoErr: string, venmoInstance: VenmoInstance) =>  {
-                    this._venmoCheckoutInstance = venmoInstance;
-                    getVenmoInstance(this._venmoCheckoutInstance);
-                    if (venmoErr) {
-                        return;
-                    }
+            .then(([client, venmoCheckout]) => {
+                const result = venmoCheckout.create({
+                        client, allowDesktop: true,
+                        paymentMethodUsage: 'multi_use',
+                    },
+                    (venmoErr: string, venmoInstance: VenmoInstance) =>  {
+                        this._venmoCheckoutInstance = venmoInstance;
 
-                    if (!venmoInstance.isBrowserSupported()) {
+                        console.log('venmoInstance', venmoInstance);
 
-                        return;
-                    }
-                }));
+                        if (venmoErr) {
+                            return;
+                        }
+
+                        if (!venmoInstance.isBrowserSupported()) {
+                            return;
+                        }
+
+                        getVenmoInstance(this._venmoCheckoutInstance);
+                    });
+
+                console.log('result', result);
+
+                return result;
+            });
 
         return this._venmoCheckout;
     }

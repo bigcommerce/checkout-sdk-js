@@ -14,6 +14,8 @@ export default class PaypalScriptLoader {
     }
 
     async loadPaypal(merchantId: string = ''): Promise<PaypalSDK> {
+        console.log('loadPaypal script');
+
         const scriptSrc = '//www.paypalobjects.com/api/checkout.min.js';
         const options: LoadScriptOptions = { async: true, attributes: { 'data-merchant-id': merchantId } };
 

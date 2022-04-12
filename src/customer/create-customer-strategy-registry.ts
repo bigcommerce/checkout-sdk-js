@@ -30,7 +30,7 @@ import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
-import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
+import { BraintreePaypalCustomerStrategy, BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
@@ -105,6 +105,34 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             createAmazonPayV2PaymentProcessor()
+        )
+    );
+
+    registry.register('braintreepaypal', () =>
+        new BraintreePaypalCustomerStrategy(
+            store,
+            paymentMethodActionCreator,
+            checkoutActionCreator,
+            new BraintreeSDKCreator(
+                new BraintreeScriptLoader(scriptLoader)
+            ),
+            formPoster,
+            false,
+            window
+        )
+    );
+
+    registry.register('braintreepaypalcredit', () =>
+        new BraintreePaypalCustomerStrategy(
+            store,
+            paymentMethodActionCreator,
+            checkoutActionCreator,
+            new BraintreeSDKCreator(
+                new BraintreeScriptLoader(scriptLoader)
+            ),
+            formPoster,
+            true,
+            window
         )
     );
 
