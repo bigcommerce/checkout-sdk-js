@@ -155,6 +155,9 @@ describe('ApplePayButtonStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        beforeEach(() => {
+           jest.clearAllMocks();
+        });
         it('creates the button', async () => {
             jest.spyOn(store, 'dispatch');
 
@@ -329,7 +332,7 @@ describe('ApplePayButtonStrategy', () => {
                             ...getShippingOption(),
                             description: 'Free Shipping',
                             additionalDescription: 'Free shipping to your order',
-                            id: '0:61d4bb52f746477e1d4fb411221318c3',
+                            id: '0:61d4bb52f746477e1d4fb411221318c4',
                         },
                         availableShippingOptions: [
                             getShippingOption(),
@@ -337,7 +340,7 @@ describe('ApplePayButtonStrategy', () => {
                                 ...getShippingOption(),
                                 description: 'Free Shipping',
                                 additionalDescription: 'Free shipping to your order',
-                                id: '0:61d4bb52f746477e1d4fb411221318c3',
+                                id: '0:61d4bb52f746477e1d4fb411221318c4',
                             },
                         ],
                     },
@@ -350,8 +353,11 @@ describe('ApplePayButtonStrategy', () => {
                 identifier: option.id,
             }));
 
-            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
-                .mockReturnValue(newCheckout);
+            jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+                .mockReturnValue(() => from([
+                    createAction(CheckoutActionType.LoadCheckoutRequested),
+                    createAction(CheckoutActionType.LoadCheckoutSucceeded, newCheckout),
+                ]));
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
             if (CheckoutButtonInitializeOptions.applepay) {
@@ -366,7 +372,7 @@ describe('ApplePayButtonStrategy', () => {
                     await applePaySession.onshippingcontactselected(event);
 
                     expect(consignmentActionCreator.selectShippingOption)
-                        .toHaveBeenCalledWith('0:61d4bb52f746477e1d4fb411221318c3');
+                        .toHaveBeenCalledWith('0:61d4bb52f746477e1d4fb411221318c4');
                     expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith({
                         newShippingMethods: availableShippingMethods,
                         newTotal: expect.anything(),
