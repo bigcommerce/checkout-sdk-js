@@ -246,6 +246,24 @@ describe('MonerisPaymentStrategy', () => {
     });
 
     describe('#execute', () => {
+        it('throws error when moneris response is not successful', async () => {
+            await strategy.initialize(initializeOptions);
+            const promise =  strategy.execute(payload, options);
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            const mockMonerisIframeMessage = {
+                responseCode: ['400'],
+                errorMessage: 'expected error message',
+                dataKey: 'ABC123',
+                bin: '1234',
+            };
+
+            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
+
+            await expect(promise).rejects.toThrow(new Error('expected error message'));
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+        });
         it('successfully executes moneris strategy and submits payment', async () => {
             const expectedPayment = {
                 methodId: 'moneris',
@@ -375,25 +393,6 @@ describe('MonerisPaymentStrategy', () => {
             await strategy.execute(vaultingPayload, options);
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
-        });
-
-        it('throws error when moneris response is not successful', async () => {
-            await strategy.initialize(initializeOptions);
-            const promise =  strategy.execute(payload, options);
-
-            await new Promise(resolve => process.nextTick(resolve));
-
-            const mockMonerisIframeMessage = {
-                responseCode: ['400'],
-                errorMessage: 'expected error message',
-                dataKey: 'ABC123',
-                bin: '1234',
-            };
-
-            window.postMessage(JSON.stringify(mockMonerisIframeMessage), '*');
-
-            await expect(promise).rejects.toThrow(new Error('expected error message'));
-            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
 
         it('fails to executes moneris strategy when payment is not provided', async () => {
@@ -527,6 +526,7 @@ describe('MonerisPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         it('deinitializes strategy and removes event listener if set', async () => {
+            await new Promise(resolve => setTimeout(resolve, 0));
             await strategy.initialize(initializeOptions);
             const promise =  strategy.execute(payload, options);
 
