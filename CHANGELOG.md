@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.237.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.2...v1.237.3) (2022-04-13)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6563 Apple Pay in Cart does not load config ([#1402](https://github.com/bigcommerce/checkout-sdk-js/issues/1402)) ([dc66e45](https://github.com/bigcommerce/checkout-sdk-js/commit/dc66e45096b193d57f4e54a8d263dc210de4988e))
+
 ### [1.237.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.1...v1.237.2) (2022-04-11)
 
 
