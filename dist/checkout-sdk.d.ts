@@ -2304,7 +2304,7 @@ declare class CheckoutService {
      *   address1: '55 Market St',
      *   stateOrProvinceCode: 'CA',
      *   countryCode: 'US',
-     *   postalCode: '90110'
+     *   postalCode: '90110',
      *   customFields: [],
      * });
      * ```
@@ -3685,12 +3685,19 @@ declare interface Consignment {
     lineItemIds: string[];
 }
 
-declare interface ConsignmentAssignmentRequestBody {
+declare interface ConsignmentAssignmentBaseRequestBodyWithAddress {
     address: AddressRequestBody;
-    shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }
+
+declare interface ConsignmentAssignmentBaseRequestBodyWithShippingAddress {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
+    pickupOption?: ConsignmentPickupOption;
+}
+
+declare type ConsignmentAssignmentRequestBody = ConsignmentAssignmentBaseRequestBodyWithShippingAddress | ConsignmentAssignmentBaseRequestBodyWithAddress;
 
 declare interface ConsignmentCreateRequestBody {
     address?: AddressRequestBody;
@@ -6743,7 +6750,7 @@ declare interface StripeUPEPaymentInitializeOptions {
  *             },
  *             iban: {
  *                 classes: { base: 'form-input' },
- *                 supportedCountries: ['SEPA],
+ *                 supportedCountries: ['SEPA'],
  *             },
  *             idealBank: {
  *                 classes: { base: 'form-input' },

@@ -149,7 +149,7 @@ ___
 
 ###  assignItemsToAddress
 
-▸ **assignItemsToAddress**(`consignment`: [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+▸ **assignItemsToAddress**(`consignment`: [ConsignmentAssignmentRequestBody](../README.md#consignmentassignmentrequestbody), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
 
 Convenience method that assigns items to be shipped to a specific address.
 
@@ -161,7 +161,7 @@ will be created.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`consignment` | [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md) | The consignment data that will be used. |
+`consignment` | [ConsignmentAssignmentRequestBody](../README.md#consignmentassignmentrequestbody) | The consignment data that will be used. |
 `options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for the request |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
@@ -311,7 +311,7 @@ checkoutService.createCustomerAddress({
   address1: '55 Market St',
   stateOrProvinceCode: 'CA',
   countryCode: 'US',
-  postalCode: '90110'
+  postalCode: '90110',
   customFields: [],
 });
 ```
@@ -1350,7 +1350,7 @@ ___
 
 ###  unassignItemsToAddress
 
-▸ **unassignItemsToAddress**(`consignment`: [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
+▸ **unassignItemsToAddress**(`consignment`: [ConsignmentAssignmentRequestBody](../README.md#consignmentassignmentrequestbody), `options?`: [RequestOptions](../interfaces/requestoptions.md)): *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*
 
 Convenience method that unassigns items from a specific shipping address.
 
@@ -1362,7 +1362,7 @@ after the unassignment, it will be deleted.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`consignment` | [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md) | The consignment data that will be used. |
+`consignment` | [ConsignmentAssignmentRequestBody](../README.md#consignmentassignmentrequestbody) | The consignment data that will be used. |
 `options?` | [RequestOptions](../interfaces/requestoptions.md) | Options for the request |
 
 **Returns:** *Promise‹[CheckoutSelectors](../interfaces/checkoutselectors.md)›*

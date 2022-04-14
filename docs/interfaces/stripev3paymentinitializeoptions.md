@@ -35,7 +35,7 @@ service.initializePayment({
             },
             iban: {
                 classes: { base: 'form-input' },
-                supportedCountries: ['SEPA],
+                supportedCountries: ['SEPA'],
             },
             idealBank: {
                 classes: { base: 'form-input' },

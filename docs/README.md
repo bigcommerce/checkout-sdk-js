@@ -142,7 +142,8 @@
 * [CheckoutStoreSelector](interfaces/checkoutstoreselector.md)
 * [CheckoutStoreStatusSelector](interfaces/checkoutstorestatusselector.md)
 * [Consignment](interfaces/consignment.md)
-* [ConsignmentAssignmentRequestBody](interfaces/consignmentassignmentrequestbody.md)
+* [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/consignmentassignmentbaserequestbodywithaddress.md)
+* [ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/consignmentassignmentbaserequestbodywithshippingaddress.md)
 * [ConsignmentCreateRequestBody](interfaces/consignmentcreaterequestbody.md)
 * [ConsignmentLineItem](interfaces/consignmentlineitem.md)
 * [ConsignmentPickupOption](interfaces/consignmentpickupoption.md)
@@ -348,6 +349,7 @@
 * [BraintreeFormFieldStyles](README.md#braintreeformfieldstyles)
 * [CheckoutIncludeParam](README.md#checkoutincludeparam)
 * [ComparableCheckout](README.md#comparablecheckout)
+* [ConsignmentAssignmentRequestBody](README.md#consignmentassignmentrequestbody)
 * [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 * [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 * [FlashMessageType](README.md#flashmessagetype)
@@ -460,6 +462,12 @@ ___
 ###  ComparableCheckout
 
 Ƭ **ComparableCheckout**: *Pick‹[Checkout](interfaces/checkout.md), "outstandingBalance" | "coupons" | "giftCertificates"› & object*
+
+___
+
+###  ConsignmentAssignmentRequestBody
+
+Ƭ **ConsignmentAssignmentRequestBody**: *[ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/consignmentassignmentbaserequestbodywithshippingaddress.md) | [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/consignmentassignmentbaserequestbodywithaddress.md)*
 
 ___
 

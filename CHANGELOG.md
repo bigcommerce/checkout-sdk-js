@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.238.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.238.0...v1.238.1) (2022-04-14)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-6422 Use union type for consignment assignment interface ([#1405](https://github.com/bigcommerce/checkout-sdk-js/issues/1405)) ([0647e6f](https://github.com/bigcommerce/checkout-sdk-js/commit/0647e6fb8c8a46ff5cb932ec148419d011cef952))
+
 ## [1.238.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.3...v1.238.0) (2022-04-14)
 
 
