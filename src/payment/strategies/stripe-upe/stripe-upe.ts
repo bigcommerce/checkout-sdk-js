@@ -115,7 +115,7 @@ export interface WalletOptions {
 }
 
 /**
- * All available options are herehttps://stripe.com/docs/js/elements_object/create_payment_element
+ * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
@@ -132,6 +132,31 @@ export interface StripeElements {
      * Looks up a previously created `payment` element.
      */
     getElement(elementType: StripeStringConstants.PAYMENT): StripeElement | null;
+}
+
+/**
+ * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
+ */
+export interface StripeUPEAppearanceOptions {
+    variables?: {
+        colorPrimary?: string;
+        colorBackground?: string;
+        colorText?: string;
+        colorDanger?: string;
+        colorTextSecondary?: string;
+        colorTextPlaceholder?: string;
+        colorIcon?: string;
+        colorIconCardError?: string;
+        colorIconRedirect?: string;
+    };
+
+    rules?: {
+        '.Input'?: {
+            borderColor?: string;
+            color?: string;
+            boxShadow?: string;
+        };
+    };
 }
 
 export interface StripeElementsOptions {
@@ -158,6 +183,12 @@ export interface StripeElementsOptions {
      * Refer to our docs to accept a payment and learn about how client_secret should be handled.
      */
     clientSecret: string;
+
+    /**
+     * Match the design of your site with the appearance option.
+     * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
+     */
+    appearance?: StripeUPEAppearanceOptions;
 }
 
 export interface StripeUPEClient {

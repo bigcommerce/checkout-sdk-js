@@ -208,6 +208,132 @@ describe('StripeUPEPaymentStrategy', () => {
                     .rejects.toThrow(InvalidArgumentError);
             });
         });
+
+        describe('mounts payment element with styles', () => {
+            const testColor = '#123456';
+            beforeEach(() => {
+                options = getStripeUPEInitializeOptionsMock();
+
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValue(getStripeUPE());
+            });
+
+            it('mounts stripe element with valid styles', async () => {
+                jest.spyOn(stripeScriptLoader, 'load')
+                    .mockReturnValue(Promise.resolve(stripeUPEJsMock));
+
+                const style = {
+                    labelText: testColor,
+                    fieldText: testColor,
+                    fieldPlaceholderText: testColor,
+                    fieldErrorText: testColor,
+                    fieldBackground: testColor,
+                    fieldInnerShadow: testColor,
+                    fieldBorder: testColor,
+                };
+                options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
+
+                await strategy.initialize(options);
+
+                expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
+                    {
+                        locale: 'en',
+                        clientSecret: 'myToken',
+                        appearance: {
+                            rules: {
+                                '.Input': {
+                                    borderColor: testColor,
+                                    boxShadow: testColor,
+                                    color: testColor,
+                                },
+                            },
+                            variables: {
+                                colorBackground: testColor,
+                                colorDanger: testColor,
+                                colorIcon: testColor,
+                                colorPrimary: testColor,
+                                colorText: testColor,
+                                colorTextPlaceholder: testColor,
+                                colorTextSecondary: testColor,
+                            },
+                        },
+                    }
+                );
+            });
+
+            it('mounts stripe element regardless of invalid styles', async () => {
+                jest.spyOn(stripeScriptLoader, 'load')
+                    .mockReturnValue(Promise.resolve(stripeUPEJsMock));
+
+                const style = {
+                    labelText: 'not valid #123456',
+                    invalidStyle: '#123456',
+                };
+                options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
+
+                await strategy.initialize(options);
+
+                expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
+                    {
+                        locale: 'en',
+                        clientSecret: 'myToken',
+                        appearance: {
+                            rules: {
+                                '.Input': {
+                                    borderColor: undefined,
+                                    boxShadow: undefined,
+                                    color: undefined,
+                                },
+                            },
+                            variables: {
+                                colorBackground: undefined,
+                                colorDanger: undefined,
+                                colorIcon: undefined,
+                                colorPrimary: undefined,
+                                colorText: 'not valid #123456',
+                                colorTextPlaceholder: undefined,
+                                colorTextSecondary: 'not valid #123456',
+                            },
+                        },
+                    }
+                );
+            });
+
+            it('mounts stripe element with no styles', async () => {
+                jest.spyOn(stripeScriptLoader, 'load')
+                    .mockReturnValue(Promise.resolve(stripeUPEJsMock));
+
+                const style = {};
+                options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
+
+                await strategy.initialize(options);
+
+                expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
+                    {
+                        locale: 'en',
+                        clientSecret: 'myToken',
+                        appearance: {
+                            rules: {
+                                '.Input': {
+                                    borderColor: undefined,
+                                    boxShadow: undefined,
+                                    color: undefined,
+                                },
+                            },
+                            variables: {
+                                colorBackground: undefined,
+                                colorDanger: undefined,
+                                colorIcon: undefined,
+                                colorPrimary: undefined,
+                                colorText: undefined,
+                                colorTextPlaceholder: undefined,
+                                colorTextSecondary: undefined,
+                            },
+                        },
+                    }
+                );
+            });
+        });
     });
 
     describe('#execute()', () => {

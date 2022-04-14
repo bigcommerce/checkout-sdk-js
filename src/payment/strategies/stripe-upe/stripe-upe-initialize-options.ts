@@ -25,4 +25,11 @@ export default interface StripeUPEPaymentInitializeOptions {
      * The location to insert the credit card number form field.
      */
     containerId: string;
+
+    /**
+     * Checkout styles from store theme
+     */
+    style?: {
+        [key: string]: string;
+    };
 }
