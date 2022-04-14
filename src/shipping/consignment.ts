@@ -27,12 +27,20 @@ export interface ConsignmentCreateRequestBody {
     pickupOption?: ConsignmentPickupOption;
 }
 
-export interface ConsignmentAssignmentRequestBody {
+export interface ConsignmentAssignmentBaseRequestBodyWithAddress {
     address: AddressRequestBody;
-    shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }
+
+export interface ConsignmentAssignmentBaseRequestBodyWithShippingAddress {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
+    pickupOption?: ConsignmentPickupOption;
+}
+
+export type ConsignmentAssignmentRequestBody =
+    ConsignmentAssignmentBaseRequestBodyWithShippingAddress | ConsignmentAssignmentBaseRequestBodyWithAddress;
 
 export interface ConsignmentUpdateRequestBody {
     id: string;

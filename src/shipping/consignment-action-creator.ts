@@ -8,7 +8,7 @@ import { CheckoutIncludes, CheckoutParams, CheckoutRequestSender, InternalChecko
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import Consignment, { ConsignmentsRequestBody, ConsignmentAssignmentRequestBody, ConsignmentCreateRequestBody, ConsignmentLineItem, ConsignmentRequestBody, ConsignmentShippingOptionRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import Consignment, { ConsignmentsRequestBody, ConsignmentAssignmentBaseRequestBodyWithAddress, ConsignmentAssignmentBaseRequestBodyWithShippingAddress, ConsignmentAssignmentRequestBody, ConsignmentCreateRequestBody, ConsignmentLineItem, ConsignmentRequestBody, ConsignmentShippingOptionRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 import { ConsignmentActionType, CreateConsignmentsAction, DeleteConsignmentAction, LoadShippingOptionsAction, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
 import ConsignmentRequestSender from './consignment-request-sender';
 
@@ -30,7 +30,9 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
+            const address = this._consignmentHasAddress(consignment) ? consignment.address : consignment.shippingAddress;
+
+            const existingConsignment = state.consignments.getConsignmentByAddress(address);
 
             if (!existingConsignment) {
                 throw new InvalidArgumentError('No consignment found for the specified address');
@@ -48,7 +50,7 @@ export default class ConsignmentActionCreator {
 
             return this.updateConsignment({
                 id: existingConsignment.id,
-                address: consignment.address ?? consignment.shippingAddress,
+                address,
                 lineItems,
             }, options)(store);
         };
@@ -60,11 +62,12 @@ export default class ConsignmentActionCreator {
     ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => {
             const state = store.getState();
-            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.address ?? consignment.shippingAddress);
+            const address = this._consignmentHasAddress(consignment) ? consignment.address : consignment.shippingAddress;
+            const existingConsignment = state.consignments.getConsignmentByAddress(address);
 
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
-                address: consignment.address ?? consignment.shippingAddress,
+                address,
                 lineItems: this._addLineItems(
                     consignment.lineItems,
                     existingConsignment,
@@ -359,5 +362,11 @@ export default class ConsignmentActionCreator {
         const updateRequest = request as ConsignmentUpdateRequestBody;
 
         return !!updateRequest.id;
+    }
+
+    private _consignmentHasAddress(
+        consignment: ConsignmentAssignmentBaseRequestBodyWithAddress | ConsignmentAssignmentBaseRequestBodyWithShippingAddress
+    ): consignment is ConsignmentAssignmentBaseRequestBodyWithAddress {
+        return typeof consignment === 'object' && 'address' in consignment;
     }
 }
