@@ -141,10 +141,25 @@ export default class BraintreePaymentProcessor {
         return this._present3DSChallenge(threeDSecure, amount, nonce);
     }
 
+    private async _getToken(orderId: number): Promise<string> {
+        const url = `/api/storefront/payments/auth-token`;
+        const options = {
+            params: {
+                order_id: orderId,
+            },
+        };
+
+        return this._requestSender
+            .get<{ auth_token: string }>(url, options)
+            .then(({ body }) => body.auth_token);
+    }
+
     async getStoredCreditCardNonce(payment: OrderPaymentRequestBody): Promise<NonceInstrument> {
         const state = this._store.getState();
         const storeConfig = state.config.getStoreConfigOrThrow();
         const cart = state.cart.getCartOrThrow();
+        const order = state.order.getOrderOrThrow();
+        const token = await this._getToken(order.orderId);
 
         console.log({
             state,
@@ -184,6 +199,7 @@ export default class BraintreePaymentProcessor {
                 Accept: 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-XSRF-TOKEN': null,
+                authorization: token,
             },
             body: {
                 currency: code,
