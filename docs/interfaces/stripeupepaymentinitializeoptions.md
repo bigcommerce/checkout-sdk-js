@@ -31,6 +31,7 @@ service.initializePayment({
 ### Properties
 
 * [containerId](stripeupepaymentinitializeoptions.md#containerid)
+* [style](stripeupepaymentinitializeoptions.md#optional-style)
 
 ## Properties
 
@@ -39,3 +40,11 @@ service.initializePayment({
 • **containerId**: *string*
 
 The location to insert the credit card number form field.
+
+___
+
+### `Optional` style
+
+• **style**? : *undefined | object*
+
+Checkout styles from store theme

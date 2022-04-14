@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.238.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.3...v1.238.0) (2022-04-14)
+
+
+### Features
+
+* **payment:** INT-5060 Stripe UPE Look and Feel map theme styles to stripe appearance API ([2fd15b0](https://github.com/bigcommerce/checkout-sdk-js/commit/2fd15b0f217502a0773cec0c02a871a6459a9f45))
+
 ### [1.237.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.237.2...v1.237.3) (2022-04-13)
 
 
