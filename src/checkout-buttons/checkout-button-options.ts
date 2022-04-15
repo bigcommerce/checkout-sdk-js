@@ -16,6 +16,13 @@ export interface CheckoutButtonOptions extends RequestOptions {
      * The identifier of the payment method.
      */
     methodId: CheckoutButtonMethodType;
+
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: PayPal Commerce, Adyen, Klarna, etc.
+     */
+    gatewayId?: string;
 }
 
 export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
@@ -64,13 +71,13 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support adyenv2 GooglePay.
      */
-     googlepayadyenv2?: GooglePayButtonInitializeOptions;
+    googlepayadyenv2?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support adyenv2 GooglePay.
      */
-      googlepayadyenv3?: GooglePayButtonInitializeOptions;
+    googlepayadyenv3?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree GooglePay. They can be
@@ -94,7 +101,7 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The options that are required to facilitate Orbital GooglePay. They can be
      * omitted unless you need to support Orbital GooglePay.
      */
-     googlepayorbital?: GooglePayButtonInitializeOptions;
+    googlepayorbital?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Stripe GooglePay. They can be

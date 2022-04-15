@@ -4,6 +4,7 @@ import { catchError } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator } from '../payment';
 
@@ -19,16 +20,21 @@ export default class CheckoutButtonStrategyActionCreator {
 
     initialize(options: CheckoutButtonInitializeOptions): ThunkAction<InitializeButtonAction, InternalCheckoutSelectors> {
         return store => {
-            const meta = { methodId: options.methodId, containerId: options.containerId };
+            const { methodId, containerId, timeout } = options;
+            const meta = { methodId, containerId };
 
-            if (store.getState().checkoutButton.isInitialized(options.methodId, options.containerId)) {
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            if (store.getState().checkoutButton.isInitialized(methodId, containerId)) {
                 return empty();
             }
 
             return concat(
                 of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
-                this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, { timeout: options.timeout, useCache: true }),
-                defer(() => this._registry.get(options.methodId).initialize(options)
+                this._paymentMethodActionCreator.loadPaymentMethod(methodId, { timeout, useCache: true }),
+                defer(() => this._registry.get(methodId).initialize(options)
                     .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
             ).pipe(
                 catchError(error => throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta))

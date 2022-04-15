@@ -115,6 +115,7 @@ export interface CheckoutSettings {
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
+    smartButtonsProviders: any[]; // Todo: update the type with normal type
 }
 
 export interface CustomizationConfig {

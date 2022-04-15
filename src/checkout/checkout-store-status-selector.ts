@@ -150,6 +150,18 @@ export default interface CheckoutStoreStatusSelector {
     isInitializingCustomer(methodId?: string): boolean;
 
     /**
+     * Checks whether the checkout (smart) button is initializing.
+     *
+     * If an ID is provided, the method also checks whether the checkout button strategy is
+     * initializing using a specific checkout button method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for initializing the
+     * checkout (smart) button.
+     * @returns True if the checkout button is initializing, otherwise false.
+     */
+    isInitializingCheckoutButton(methodId?: string): boolean;
+
+    /**
      * Checks whether the current customer is executing payment method checkout.
      *
      * If an ID is provided, the method also checks whether the customer is
@@ -470,6 +482,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isSigningOut: state.customerStrategies.isSigningOut,
             isExecutingPaymentMethodCheckout: state.customerStrategies.isExecutingPaymentMethodCheckout,
             isInitializingCustomer: state.customerStrategies.isInitializing,
+            isInitializingCheckoutButton: state.checkoutButton.isInitializing,
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),
             isUpdatingBillingAddress: state.billingAddress.isUpdating,

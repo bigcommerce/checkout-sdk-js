@@ -36,12 +36,16 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+        console.log('test');
+
         const paypalOptions = (this._offerCredit ? options.braintreepaypalcredit : options.braintreepaypal) || {};
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
         const isVenmoEnabled = paymentMethod?.initializationData?.isBraintreeVenmoEnabled;
         const storeState = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = storeState.config.getStoreConfig()?.shopperCurrency;
+
+        console.log(paymentMethod, paymentMethod?.clientToken);
 
         if (!paymentMethod || !paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);

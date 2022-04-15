@@ -1,7 +1,9 @@
+import { createFormPoster } from '@bigcommerce/form-poster/';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { createCheckoutButtonRegistry, CheckoutButtonStrategyActionCreator } from '../checkout-buttons';
 import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
@@ -76,6 +78,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
 
     return new CheckoutService(
         store,
@@ -98,7 +101,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,
-        new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+        paymentMethodActionCreator,
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale),
             orderActionCreator,
@@ -111,7 +114,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         spamProtectionActionCreator,
         new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),
         subscriptionsActionCreator,
-        formFieldsActionCreator
+        formFieldsActionCreator,
+        new CheckoutButtonStrategyActionCreator(
+            createCheckoutButtonRegistry(store, paymentClient, requestSender, createFormPoster(), locale),
+            paymentMethodActionCreator
+        )
     );
 }
 

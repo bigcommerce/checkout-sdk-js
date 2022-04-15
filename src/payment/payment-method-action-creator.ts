@@ -43,6 +43,7 @@ export default class PaymentMethodActionCreator {
 
             this._requestSender.loadPaymentMethod(methodId, options)
                 .then(response => {
+                    console.log('loadPaymentMethod response', response);
                     observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, response.body, { methodId }));
                     observer.complete();
                 })

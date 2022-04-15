@@ -49,6 +49,7 @@ export function getConfig(): Config {
                 ],
                 requiresMarketingConsent: false,
                 remoteCheckoutProviders: [],
+                smartButtonsProviders: [],
             },
             currency: {
                 code: 'USD',

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
+import { CheckoutButtonStrategyActionCreator } from '../checkout-buttons';
 import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
@@ -68,7 +69,8 @@ export default class CheckoutService {
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _subscriptionsActionCreator: SubscriptionsActionCreator,
-        private _formFieldsActionCreator: FormFieldsActionCreator
+        private _formFieldsActionCreator: FormFieldsActionCreator,
+        private _checkoutButtonStrategyActionCreator: CheckoutButtonStrategyActionCreator
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -344,6 +346,18 @@ export default class CheckoutService {
         const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
 
         return this._dispatch(action, { queueId: 'paymentMethods' });
+    }
+
+    initializeSmartButton(options: any): Promise<CheckoutSelectors> {
+        const action = this._checkoutButtonStrategyActionCreator.initialize(options);
+
+        return this._dispatch(action, { queueId: 'checkoutButtonStrategy' });
+    }
+
+    deinitializeSmartButton(options: any): Promise<CheckoutSelectors> {
+        const action = this._checkoutButtonStrategyActionCreator.deinitialize(options);
+
+        return this._dispatch(action, { queueId: 'checkoutButtonStrategy' });
     }
 
     /**
