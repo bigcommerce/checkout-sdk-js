@@ -55,5 +55,9 @@ describe('paypalCommerceFundingKeyResolver', () => {
         it('should return "VENMO"', () => {
             expect(paypalCommerceFundingKeyResolver.resolve('venmo', 'paypalcommercealternativemethods')).toEqual('VENMO');
         });
+
+        it('should return "OXXO"', () => {
+            expect(paypalCommerceFundingKeyResolver.resolve('oxxo', 'paypalcommercealternativemethods')).toEqual('OXXO');
+        });
     });
 });

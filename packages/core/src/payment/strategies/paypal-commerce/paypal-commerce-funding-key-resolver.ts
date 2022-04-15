@@ -36,6 +36,8 @@ export default class PaypalCommerceFundingKeyResolver {
                     return 'SEPA';
                 case 'venmo':
                     return 'VENMO';
+                case 'oxxo':
+                    return 'OXXO';
             }
         }
 
