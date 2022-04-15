@@ -19,6 +19,7 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
             EPS: 'eps',
             IDEAL: 'ideal',
             MYBANK: 'mybank',
+            OXXO: 'oxxo',
             SOFORT: 'sofort',
             TRUSTLY: 'trustly',
             SEPA: 'sepa',

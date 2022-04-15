@@ -194,6 +194,7 @@ export interface PaypalCommerceSDKFunding {
     EPS: string;
     IDEAL: string;
     MYBANK: string;
+    OXXO: string;
     SOFORT: string;
     SEPA: string;
     BLIK: string;
