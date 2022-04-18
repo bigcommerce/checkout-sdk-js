@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.239.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.238.2...v1.239.0) (2022-04-18)
+
+
+### Features
+
+* **payment:** PAYMENTS-7707 Bump bigpay-client for PPSDK payment endpoint ([2714d24](https://github.com/bigcommerce/checkout-sdk-js/commit/2714d24430f48f3224d7f1b5d32dfd0feefe7292))
+* **payment:** PAYMENTS-7707 Create PPSDK credit card payment substrategy ([775e17c](https://github.com/bigcommerce/checkout-sdk-js/commit/775e17c1b5a2241f12b6128ba8eacb0b0cf1764f))
+* **payment:** PAYMENTS-7707 Update hosted forms to handle PPSDK credit card payment responses ([2db757f](https://github.com/bigcommerce/checkout-sdk-js/commit/2db757fcc599d731cb68605a3248dc114c2495eb))
+
 ### [1.238.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.238.1...v1.238.2) (2022-04-14)
 
 ### [1.238.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.238.0...v1.238.1) (2022-04-14)
