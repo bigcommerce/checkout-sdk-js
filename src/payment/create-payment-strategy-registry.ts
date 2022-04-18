@@ -106,9 +106,9 @@ export default function createPaymentStrategyRegistry(
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
-    const hostedFormFactory = new HostedFormFactory(store);
-    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
     const stepHandler = createStepHandler(formPoster);
+    const hostedFormFactory = new HostedFormFactory(store, stepHandler);
+    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -705,7 +705,7 @@ export default function createPaymentStrategyRegistry(
         new PPSDKStrategy(
             store,
             orderActionCreator,
-            createSubStrategyRegistry(requestSender, stepHandler),
+            createSubStrategyRegistry(store, orderActionCreator, requestSender, stepHandler, hostedFormFactory),
             new PaymentResumer(requestSender, stepHandler),
             new BrowserStorage('PPSDK')
         )

@@ -1,5 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
@@ -26,6 +27,8 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getStripeV3 } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
+import { StepHandler } from '../ppsdk/step-handler';
+import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import { StripeElement, StripeElements, StripeElementType, StripePaymentMethodType, StripeV3Client } from './stripev3';
 import StripeV3PaymentStrategy from './stripev3-payment-strategy';
@@ -104,7 +107,7 @@ describe('StripeV3PaymentStrategy', () => {
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
             .mockReturnValue(checkoutMock);
 
-        formFactory = new HostedFormFactory(store);
+        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())));
 
         strategy = new StripeV3PaymentStrategy(
             store,

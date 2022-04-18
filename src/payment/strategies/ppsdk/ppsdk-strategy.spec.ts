@@ -5,6 +5,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '.
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { BrowserStorage } from '../../../common/storage';
+import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
@@ -12,17 +13,19 @@ import { getOrder } from '../../../order/orders.mock';
 import { createSubStrategyRegistry } from './create-ppsdk-sub-strategy-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
 import { PPSDKStrategy } from './ppsdk-strategy';
+import { SubStrategyRegistry } from './ppsdk-sub-strategy-registry';
 import { createStepHandler } from './step-handler';
 
 describe('PPSDKStrategy', () => {
     const stepHandler = createStepHandler(new FormPoster());
     const requestSender = createRequestSender();
-    const subStrategyRegistry = createSubStrategyRegistry(requestSender, stepHandler);
+    let subStrategyRegistry: SubStrategyRegistry;
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
     const completedOrder = getOrder();
     const incompleteOrder = { ...completedOrder, isComplete: false };
     let store: ReturnType<typeof createCheckoutStore>;
     let orderActionCreator: InstanceType<typeof OrderActionCreator>;
+    let hostedFormFactory: HostedFormFactory;
     let submitSpy: jest.SpyInstance;
 
     beforeEach(() => {
@@ -31,6 +34,8 @@ describe('PPSDKStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
+        hostedFormFactory = new HostedFormFactory(store, stepHandler);
+        subStrategyRegistry = createSubStrategyRegistry(store, orderActionCreator, requestSender, stepHandler, hostedFormFactory);
         submitSpy = jest.spyOn(orderActionCreator, 'submitOrder');
         jest.spyOn(store, 'dispatch').mockResolvedValue(undefined);
     });
@@ -46,6 +51,37 @@ describe('PPSDKStrategy', () => {
 
                 await expect(strategy.initialize({ methodId: 'cabbagepay' })).resolves.toBeTruthy();
             });
+
+            it('calls the sub-strategy initialize method', async () => {
+                const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
+
+                const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
+                jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
+
+                await strategy.initialize({ methodId: 'cabbagepay' });
+
+                expect(mockSubStrategy.initialize).toHaveBeenCalled();
+            });
+        });
+
+        describe('#deinitialize', () => {
+            it('does not throw an error', async () => {
+                const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
+
+                await expect(strategy.deinitialize({ methodId: 'cabbagepay' })).resolves.toBeTruthy();
+            });
+
+            it('calls the sub-strategy deinitialize method', async () => {
+                const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
+
+                const mockSubStrategy = { initialize: jest.fn() , deinitialize: jest.fn() };
+                jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
+
+                await strategy.initialize({ methodId: 'cabbagepay' });
+                await strategy.deinitialize({ methodId: 'cabbagepay' });
+
+                expect(mockSubStrategy.deinitialize).toHaveBeenCalled();
+            });
         });
 
         describe('when the bigpayBaseUrl is correctly set within store config', () => {
@@ -54,7 +90,7 @@ describe('PPSDKStrategy', () => {
                     it('submits the order and calls the sub-strategy', async () => {
                         const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
-                        const mockSubStrategy = { execute: jest.fn() };
+                        const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
 
@@ -72,7 +108,7 @@ describe('PPSDKStrategy', () => {
                     it('throws a MissingDataError error, does not call the sub-strategy', async () => {
                         const strategy = new PPSDKStrategy(store, orderActionCreator, subStrategyRegistry, paymentResumer, new BrowserStorage('ppsdk'));
 
-                        const mockSubStrategy = { execute: jest.fn() };
+                        const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: undefined });
 

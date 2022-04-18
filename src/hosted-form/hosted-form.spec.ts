@@ -1,9 +1,12 @@
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 import { IframeEventListener } from '../common/iframe';
 import { PaymentAdditionalAction } from '../payment';
+import { StepHandler } from '../payment/strategies/ppsdk/step-handler';
+import { ContinueHandler } from '../payment/strategies/ppsdk/step-handler/continue-handler';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
@@ -66,7 +69,8 @@ describe('HostedForm', () => {
             eventListener,
             payloadTransformer as HostedFormOrderDataTransformer,
             callbacks,
-            paymentHumanVerificationHandler
+            paymentHumanVerificationHandler,
+            new StepHandler(new ContinueHandler(new FormPoster()))
         );
 
         errorResponse = {

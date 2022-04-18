@@ -101,10 +101,14 @@ export class PPSDKStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
+        await this._subStrategy.initialize(options);
+
         return this._store.getState();
     }
 
     async deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        this._subStrategy?.deinitialize();
+
         return this._store.getState();
     }
 }

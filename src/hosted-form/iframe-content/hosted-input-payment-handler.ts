@@ -43,7 +43,7 @@ export default class HostedInputPaymentHandler {
         }
 
         try {
-            await this._paymentRequestSender.submitPayment(
+            const response = await this._paymentRequestSender.submitPayment(
                 this._paymentRequestTransformer.transformWithHostedFormData(
                     values,
                     data,
@@ -51,7 +51,10 @@ export default class HostedInputPaymentHandler {
                 )
             );
 
-            this._eventPoster.post({ type: HostedInputEventType.SubmitSucceeded });
+            this._eventPoster.post({
+                type: HostedInputEventType.SubmitSucceeded,
+                payload: { paymentType: data.paymentMethod?.type, response },
+            });
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitFailed,

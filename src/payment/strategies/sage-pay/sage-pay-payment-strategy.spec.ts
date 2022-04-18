@@ -24,6 +24,8 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { CreditCardPaymentStrategy } from '../credit-card';
+import { StepHandler } from '../ppsdk/step-handler';
+import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
@@ -54,7 +56,7 @@ describe('SagePayPaymentStrategy', () => {
         );
 
         formPoster = createFormPoster();
-        hostedFormFactory = new HostedFormFactory(store);
+        hostedFormFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(formPoster)));
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));

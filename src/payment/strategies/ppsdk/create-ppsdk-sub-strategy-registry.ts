@@ -1,12 +1,27 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
+import { CheckoutStore } from '../../../checkout';
+import { HostedFormFactory } from '../../../hosted-form';
+import { OrderActionCreator } from '../../../order';
+
 import { SubStrategyRegistry } from './ppsdk-sub-strategy-registry';
 import { SubStrategyType } from './ppsdk-sub-strategy-type';
 import { StepHandler } from './step-handler';
-import { NoneSubStrategy } from './sub-strategies';
+import { CardSubStrategy, NoneSubStrategy } from './sub-strategies';
 
-export const createSubStrategyRegistry = (requestSender: RequestSender, stepHandler: StepHandler) => {
+export const createSubStrategyRegistry = (
+    store: CheckoutStore,
+    orderActionCreator: OrderActionCreator,
+    requestSender: RequestSender,
+    stepHandler: StepHandler,
+    hostedFormFactory: HostedFormFactory
+) => {
     const registry = new SubStrategyRegistry();
+
+    registry.register(
+        SubStrategyType.CARD,
+        () => new CardSubStrategy(store, orderActionCreator, hostedFormFactory)
+    );
 
     registry.register(
         SubStrategyType.NONE,

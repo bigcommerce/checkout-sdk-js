@@ -20,6 +20,7 @@ export class ContinueHandler {
         switch (body.code) {
             case 'redirect':
                 return handleRedirect(body.parameters, this._formPoster);
+            // TODO: Add a case for human verification handling
         }
     }
 }
