@@ -17,10 +17,11 @@ import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer
 
 export default class HostedFormFactory {
     constructor(
-        private _store: ReadableCheckoutStore
+        private _store: ReadableCheckoutStore,
+        private _ppsdkStepHandler: StepHandler
     ) {}
 
-    create(host: string, options: HostedFormOptions, ppsdkStepHandler?: StepHandler): HostedForm {
+    create(host: string, options: HostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
             const fields = options.fields as HostedStoredCardFieldOptionsMap & HostedCardFieldOptionsMap;
@@ -54,7 +55,7 @@ export default class HostedFormFactory {
             new HostedFormOrderDataTransformer(this._store),
             pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate'),
             new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-            ppsdkStepHandler
+            this._ppsdkStepHandler
         );
     }
 

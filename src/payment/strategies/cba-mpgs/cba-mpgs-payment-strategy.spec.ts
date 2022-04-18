@@ -1,5 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -26,6 +27,8 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
+import { StepHandler } from '../ppsdk/step-handler';
+import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './';
 import { ThreeDSjs } from './cba-mpgs';
@@ -77,7 +80,7 @@ describe('CBAMPGSPaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
-            new HostedFormFactory(store),
+            new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster()))),
             paymentMethodActionCreator,
             cbaMPGSScriptLoader,
             'en_US'

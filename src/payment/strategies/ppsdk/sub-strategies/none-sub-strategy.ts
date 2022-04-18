@@ -10,7 +10,7 @@ export class NoneSubStrategy implements SubStrategy {
         private _stepHandler: StepHandler
     ) {}
 
-    execute({ methodId, bigpayBaseUrl, token }: SubStrategySettings) {
+    execute({ methodId, bigpayBaseUrl, token }: SubStrategySettings): Promise<void> {
         const body = { payment_method_id: methodId };
         const options = {
             credentials: false,
@@ -23,5 +23,13 @@ export class NoneSubStrategy implements SubStrategy {
 
         return this._requestSender.post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, options)
             .then(response => this._stepHandler.handle(response));
+    }
+
+    initialize(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    deinitialize(): void {
+        return;
     }
 }

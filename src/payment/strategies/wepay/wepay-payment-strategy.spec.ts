@@ -1,5 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -16,6 +17,8 @@ import PaymentMethod from '../../payment-method';
 import { getWepay } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { StepHandler } from '../ppsdk/step-handler';
+import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import WepayPaymentStrategy from './wepay-payment-strategy';
 import WepayRiskClient from './wepay-risk-client';
@@ -56,7 +59,7 @@ describe('WepayPaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
-            new HostedFormFactory(store),
+            new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster()))),
             wepayRiskClient
         );
 

@@ -3,11 +3,12 @@ import { cond, constant, stubTrue } from 'lodash';
 import { Registry } from '../../../common/registry';
 import { PPSDKPaymentMethod } from '../../ppsdk-payment-method';
 
-import { isNone } from './initialization-strategies';
+import { isCard, isNone } from './initialization-strategies';
 import { SubStrategy } from './ppsdk-sub-strategy';
 import { SubStrategyType } from './ppsdk-sub-strategy-type';
 
 const getToken = cond([
+    [isCard, constant(SubStrategyType.CARD)],
     [isNone, constant(SubStrategyType.NONE)],
     [stubTrue, constant(SubStrategyType.UNSUPPORTED)],
 ]);

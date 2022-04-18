@@ -1,4 +1,5 @@
 import { OrderPaymentRequestBody } from '../../../order';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 
 export interface SubStrategySettings {
     token: string;
@@ -9,4 +10,8 @@ export interface SubStrategySettings {
 
 export interface SubStrategy {
     execute(settings: SubStrategySettings): Promise<void>;
+
+    initialize(options?: PaymentInitializeOptions): Promise<void>;
+
+    deinitialize(options?: PaymentRequestOptions): void;
 }

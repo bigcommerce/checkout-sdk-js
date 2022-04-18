@@ -24,6 +24,8 @@ import PaymentRequestSender from '../../../payment-request-sender';
 import PaymentRequestTransformer from '../../../payment-request-transformer';
 import * as paymentStatusTypes from '../../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../../payments.mock';
+import { StepHandler } from '../../ppsdk/step-handler';
+import { ContinueHandler } from '../../ppsdk/step-handler/continue-handler';
 
 import CheckoutcomAPMPaymentStrategy from './checkoutcom-apm-payment-strategy';
 
@@ -42,7 +44,6 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
     let state: InternalCheckoutSelectors;
 
     beforeEach(() => {
-        formFactory = new HostedFormFactory(store);
         requestSender = createRequestSender();
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
@@ -58,6 +59,7 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
         );
 
         formPoster = createFormPoster();
+        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(formPoster)));
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));

@@ -17,6 +17,8 @@ import { PaymentActionType, SubmitPaymentAction } from '../../../payment-actions
 import { getPaymentMethod } from '../../../payment-methods.mock';
 import PaymentRequestSender from '../../../payment-request-sender';
 import PaymentRequestTransformer from '../../../payment-request-transformer';
+import { StepHandler } from '../../ppsdk/step-handler';
+import { ContinueHandler } from '../../ppsdk/step-handler/continue-handler';
 
 import CheckoutcomFawryPaymentStrategy from './checkoutcom-fawry-payment-strategy';
 
@@ -35,7 +37,6 @@ describe('CheckoutcomFawryPaymentStrategy', () => {
     let state: InternalCheckoutSelectors;
 
     beforeEach(() => {
-        formFactory = new HostedFormFactory(store);
         requestSender = createRequestSender();
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
@@ -51,6 +52,7 @@ describe('CheckoutcomFawryPaymentStrategy', () => {
         );
 
         formPoster = createFormPoster();
+        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(formPoster)));
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
