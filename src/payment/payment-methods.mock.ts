@@ -820,7 +820,9 @@ export function getMollie(): PaymentMethod {
             requireCustomerCode: false,
             testMode: true,
         },
-        initializationData: null,
+        initializationData: {
+            locale: 'en-US',
+        },
         type: 'PAYMENT_TYPE_API',
     };
 }

@@ -178,6 +178,7 @@ describe('MolliePaymentStrategy', () => {
                             credit_card_token : {
                                 token: 'tkn_test',
                             },
+                            shopper_locale: 'en-US',
                         },
                     },
                 });
@@ -205,6 +206,7 @@ describe('MolliePaymentStrategy', () => {
                                 token: 'tkn_test',
                             },
                             set_as_default_stored_instrument: true,
+                            shopper_locale: 'en-US',
                             vault_payment_instrument: true,
                         },
                     },
@@ -221,8 +223,10 @@ describe('MolliePaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: {
                             issuer: 'foo',
+                            shopper_locale: 'en-US',
                         },
                         issuer: 'foo',
+                        shopper_locale: 'en-US',
                     },
                 });
             });
@@ -237,6 +241,7 @@ describe('MolliePaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: {
                             issuer: '',
+                            shopper_locale: 'en-US',
                         },
                         shouldSaveInstrument: true,
                         shouldSetAsDefaultInstrument: false,
