@@ -6968,6 +6968,7 @@ declare interface WithDocumentInstrument {
 
 declare interface WithMollieIssuerInstrument {
     issuer: string;
+    shopper_locale: string;
 }
 
 declare interface ZipCodeElementOptions {

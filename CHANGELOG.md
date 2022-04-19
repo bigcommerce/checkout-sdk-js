@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.240.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.239.0...v1.240.0) (2022-04-19)
+
+
+### Features
+
+* **payment:** INT-5573 Add shopper locale to Mollie strategy ([#1399](https://github.com/bigcommerce/checkout-sdk-js/issues/1399)) ([a6c1e32](https://github.com/bigcommerce/checkout-sdk-js/commit/a6c1e320988602a0ee1a1ae5617e04f6ff32a741))
+
 ## [1.239.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.238.2...v1.239.0) (2022-04-18)
 
 
