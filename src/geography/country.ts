@@ -15,3 +15,8 @@ export interface Region {
 export interface GetCountryResponse {
     data: Country[];
 }
+
+export interface UnitedStatesCodes {
+    name: string;
+    abbreviation: string;
+}

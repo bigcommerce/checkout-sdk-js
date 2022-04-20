@@ -7,6 +7,7 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutVa
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { PaymentActionCreator,
     PaymentMethodActionCreator,
@@ -59,6 +60,10 @@ export default function createCheckoutButtonRegistry(
         orderRequestSender,
         new CheckoutValidator(new CheckoutRequestSender(requestSender))
     );
+    const countryActionCreator = new CountryActionCreator(new CountryRequestSender(requestSender, { locale }));
+    const consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), new CheckoutRequestSender(requestSender));
+    const billingAdressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender), new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)));
+    const paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator, new PaymentRequestTransformer(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(
@@ -66,10 +71,7 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             requestSender,
             paymentMethodActionCreator,
-            new ConsignmentActionCreator(
-                new ConsignmentRequestSender(requestSender),
-                new CheckoutRequestSender(requestSender)
-            ),
+            consignmentActionCreator,
             new BillingAddressActionCreator(
                 new BillingAddressRequestSender(requestSender),
                 new SubscriptionsActionCreator(
@@ -252,7 +254,11 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             formPoster,
             paypalCommercePaymentProcessor,
-            orderActionCreator
+            orderActionCreator,
+            countryActionCreator,
+            consignmentActionCreator,
+            billingAdressActionCreator,
+            paymentActionCreator
         )
     );
 
