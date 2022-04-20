@@ -250,13 +250,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             const action = error.body.additional_action_required;
 
             if (action && action.type === 'redirect_to_url' && action.data.redirect_url) {
-                const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmPayment({
-                    elements: this._stripeElements,
-                    redirect: StripeStringConstants.IF_REQUIRED,
-                    confirmParams: {
-                        return_url: action.data.redirect_url,
-                    },
-                });
+                const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmPayment(this._mapStripePaymentData(action.data.redirect_url));
 
                 if (stripeError) {
                     this._throwDisplayableStripeError(stripeError);
@@ -331,7 +325,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
     }
 
-    private _mapStripePaymentData(): StripeConfirmPaymentData {
+    private _mapStripePaymentData(returnUrl?: string): StripeConfirmPaymentData {
         const billingAddress = this._store.getState().billingAddress.getBillingAddress();
         const address = this._mapStripeAddress(billingAddress);
 
@@ -355,6 +349,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         address,
                     },
                 },
+                ...(returnUrl && { return_url: returnUrl }),
             },
         };
     }

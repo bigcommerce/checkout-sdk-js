@@ -756,6 +756,11 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledWith(
                             expect.objectContaining({
                                 confirmParams: {
+                                    payment_method_data: {
+                                        billing_details: expect.objectContaining({
+                                            email: 'test@bigcommerce.com',
+                                        }),
+                                    },
                                     return_url: 'https://redirect-url.com',
                                 },
                             })
