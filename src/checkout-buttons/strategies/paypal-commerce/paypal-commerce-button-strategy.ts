@@ -4,7 +4,7 @@ import { includes } from 'lodash';
 import { Cart, CollectedLineItem, LineItem, LineItemMap } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { Country, GetCountryResponse, Region } from '../../../geography';
+import { Country, Region } from '../../../geography';
 import { OrderActionCreator } from '../../../order';
 import { ApproveActions,
     ApproveDataOptions,
@@ -18,7 +18,9 @@ import { ApproveActions,
     PaypalCommerceScriptParams,
     ShippingAddress,
     ShippingChangeData,
-    ShippingOptions } from '../../../payment/strategies/paypal-commerce';
+    ShippingOptions,
+    UnitedStatesCodes,
+    UNITED_STATES_CODES } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -43,7 +45,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         let state = this._store.getState();
         const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
         this._intent = initializationData.intent;
-        const { isHosted } = initializationData;
+        const { isHosted = true } = initializationData;
         this._cache = {};
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
@@ -115,12 +117,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private async _onApproveHandler(_data: ApproveDataOptions, actions: ApproveActions, cart: Cart) {
         const order = this._intent === 'capture' ? actions.order.capture : actions.order.authorize;
 
-        return order().then(async (details: PayerDetails) => {
+        return await order().then(async (details: PayerDetails) => {
             if (this._currentShippingAddress) {
-
-                const shippingAddress = this._transformContactToAddress(details, {...this._currentShippingAddress});
+                let shippingAddress = this._transformContactToAddress(details, {...this._currentShippingAddress});
                 const lineItems = this._collectLineItems(cart.lineItems);
-
+                // @ts-ignore
+                shippingAddress = {...shippingAddress, postalCode: 'California 90210'};
                 const consignmentPayload = [{
                     shippingAddress,
                     lineItems,
@@ -128,7 +130,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 try {
                     await this._paypalCommercePaymentProcessor.getConsignments(cart.id, consignmentPayload);
                     const checkoutWithBillingAddress = await this._paypalCommercePaymentProcessor.getBillingAddress(cart.id, shippingAddress) as CheckoutWithBillingAddress;
-
                     if (this._shippingOptionId) {
                         await this._paypalCommercePaymentProcessor.putConsignments(cart.id, checkoutWithBillingAddress.consignments[0].id, { shippingOptionId: this._shippingOptionId });
                     }
@@ -161,7 +162,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const availableShippingOptions = (checkout as CheckoutWithBillingAddress).consignments[0].availableShippingOptions;
         const shippingRequired = (checkout as CheckoutWithBillingAddress ).cart.lineItems.physicalItems.length > 0;
         if (!shippingRequired) {
-            return actions.order.patch([
+            const patch = await actions.order.patch([
                 {
                     op: 'replace',
                     path: '/purchase_units/@reference_id==\'default\'/amount',
@@ -177,6 +178,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 },
             ]);
+
+            return patch;
             // If no shipping options returned, but shipping is required, do not allow to submit such order
         } else if (shippingRequired && availableShippingOptions?.length === 0) {
             return actions.reject();
@@ -255,30 +258,36 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return JSON.stringify(address1) === JSON.stringify(address2);
     }
 
+    private _transformUSCodes(code: string) {
+       return  UNITED_STATES_CODES.find((state: UnitedStatesCodes) => {
+            return state.name === code && state.abbreviation;
+        });
+    }
+
     private async _transformToAddress(contact: ShippingAddress) {
-        return (this._cache.countries ? Promise.resolve(this._cache.countries) : this._paypalCommercePaymentProcessor.getStoreCountries())
-            .then((response: GetCountryResponse ) => {
-                this._cache.countries = response;
-                const address = {
-                    city: contact.city,
-                    postalCode: contact.postal_code,
-                    countryCode: contact.country_code,
-                };
-                const country = response.data.find((country: Country) => {
-                    return country.code === (contact.country_code || '').toUpperCase();
-                });
-                const state = country && country.subdivisions.find((state: Region) => {
-                    return state.code === (contact.state || '').toUpperCase();
-                });
+        const getCountries = await this._paypalCommercePaymentProcessor.getStoreCountries();
+        const countries = this._cache.countries || getCountries;
+        this._cache.countries = countries;
+        const address = {
+            city: contact.city,
+            postalCode: contact.postal_code,
+            countryCode: contact.country_code,
+        };
+        const country = countries.data.find((country: Country) => {
+            return country.code === (contact.country_code || '').toUpperCase();
+        });
+        const state = country && country.subdivisions.find((state: Region) => {
 
-                if (state) {
-                    address.postalCode = state.code;
-                } else {
-                    throw new Error('Address Error');
-                }
+            return state.code === (contact.state || '').toUpperCase() || this._transformUSCodes(contact.state);
+        });
 
-                return address;
-            });
+        if (state) {
+            address.postalCode = state.code;
+        } else {
+            throw new Error('Address Error');
+        }
+
+        return address;
     }
 
     private _collectLineItems(lineItems: LineItemMap) {

@@ -314,7 +314,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             }];
 
             const getBillingAddress = paypalCommerceRequestSender.getBillingAddress = jest.fn();
-            await paypalCommercePaymentProcessor.getBillingAddress('1', {payer, purchase_units: purchaseUnits });
+            await paypalCommercePaymentProcessor.getBillingAddress('1', { payer, purchase_units: purchaseUnits });
             expect(getBillingAddress).toHaveBeenCalled();
         });
 
