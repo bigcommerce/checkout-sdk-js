@@ -10,7 +10,7 @@ import CustomerRequestSender from './customer-request-sender';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 import { getCustomerResponseBody } from './internal-customers.mock';
 
-describe('CustomerRequestSender', () => {
+describe.only('CustomerRequestSender', () => {
     let customerRequestSender: CustomerRequestSender;
     let requestSender: RequestSender;
 
