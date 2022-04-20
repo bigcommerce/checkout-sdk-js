@@ -103,13 +103,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypalButtons;
     }
 
-    renderFields({
-                     apmFieldsContainer,
-                     fundingKey,
-                     apmFieldsStyles,
-                     fullName,
-                     email,
-                 }: RenderApmFieldsParams): PaypalCommerceFields {
+    renderFields({ apmFieldsContainer, fundingKey, apmFieldsStyles, fullName, email }: RenderApmFieldsParams): PaypalCommerceFields {
         if (!this._paypal || !this._paypal.PaymentFields) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -165,6 +159,10 @@ export default class PaypalCommercePaymentProcessor {
 
     async deleteCart(cartId: string) {
         return await this._paypalCommerceRequestSender.deleteCart(cartId);
+    }
+
+     getBilling(checkoutId: string, consignmentId: string, selected: string) {
+        return this._paypalCommerceRequestSender.getBilling(checkoutId, consignmentId, selected);
     }
 
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {

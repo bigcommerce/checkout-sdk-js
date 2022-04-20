@@ -39,26 +39,6 @@ describe('PaypalCommerceRequestSender', () => {
             }));
         });
 
-        it('getConsignments', async () => {
-            await paypalCommerceRequestSender.getConsignments('1', {a: '1'});
-
-            expect(requestSender.post).toHaveBeenCalledWith(`/api/storefront/checkouts/1/consignments`, expect.objectContaining({
-                body: {a: '1'},
-            }));
-        });
-
-        it('putConsignments', async () => {
-            jest.spyOn(requestSender, 'put')
-                .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({
-                    body: {},
-                })));
-            await paypalCommerceRequestSender.putConsignments('1', '1', {shippingOptionId: '1'});
-
-            expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/1/consignments/1`, expect.objectContaining({
-                body: {shippingOptionId: '1'},
-            }));
-        });
-
         it('deleteCart', async () => {
             jest.spyOn(requestSender, 'delete')
                 .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({
