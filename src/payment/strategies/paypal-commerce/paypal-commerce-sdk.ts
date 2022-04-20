@@ -1,5 +1,3 @@
-import { Consignment } from '../../../shipping/';
-
 export interface ApproveDataOptions {
     orderID?: string;
 }
@@ -62,7 +60,7 @@ export interface ButtonsOptions {
     fundingSource?: string;
     createOrder?(): Promise<string>;
     onApprove?(data: ApproveDataOptions, actions: ApproveActions): void;
-    onShippingChange?(data: any, actions: any): void;
+    onShippingChange?(data: ShippingChangeData, actions: ApproveActions): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;
@@ -70,34 +68,19 @@ export interface ButtonsOptions {
 
 export interface ApproveActions {
     order: {
-        capture(): Promise<any>;
-        authorize(): Promise<any>;
-        get(): void;
+        capture(): Promise<PayerDetails>;
+        authorize(): Promise<PayerDetails>;
         patch(data: PatchArgument[]): void;
+        get(): Promise<PayerDetails>;
     };
     resolve(): void;
     reject(): void;
 }
 
-export interface CheckoutWithBillingAddress {
-    consignments: Consignment[];
-    cart: {
-        id: string;
-        lineItems: {
-            physicalItems: PhysicalItem[];
-        };
-    };
-}
-
-interface PhysicalItem {
-    id: string;
-    imageUrl: string;
-}
-
 interface PatchArgument {
     op: string;
     path: string;
-    value: PatchValue | ShippingOptions[];
+    value: PatchValue | ShippingOption[];
 }
 
 interface PatchValue {
@@ -161,17 +144,42 @@ export interface ShippingAddress {
     state: string;
 }
 
+export interface PaymentMethodInitializationData {
+    initializationData?: {
+        intent?: string;
+        isHosted?: boolean;
+        clientId?: string;
+    };
+    id?: string;
+}
+
+export interface CurrentShippingAddress {
+    city: string;
+    countryCode: string;
+    postalCode: string;
+}
+
 interface ItemTotal {
     currency_code: string;
     value: string;
 }
 
-export interface ShippingOptions {
+export interface ShippingOption {
     id: string;
     type: string;
     label: string;
     selected: boolean;
     amount: ItemTotal;
+}
+
+export interface AddressData {
+    firstName?: string;
+    lastName?: string;
+    countryCode: string;
+    postalCode: string;
+    email?: string;
+    address1?: string;
+    city: string;
 }
 
 export interface PurchaseUnits {

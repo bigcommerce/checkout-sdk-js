@@ -1,4 +1,5 @@
 import { Address, AddressRequestBody } from '../address';
+import { AddressData } from '../payment/strategies/paypal-commerce';
 
 import { ConsignmentPickupOption } from './pickup-option';
 import ShippingOption from './shipping-option';
@@ -22,9 +23,10 @@ export type ConsignmentRequestBody =
 
 export interface ConsignmentCreateRequestBody {
     address?: AddressRequestBody;
-    shippingAddress?: AddressRequestBody;
+    shippingAddress?: AddressRequestBody | AddressData;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
+    billingAddress?: AddressData;
 }
 
 export interface ConsignmentAssignmentBaseRequestBodyWithAddress {
@@ -45,9 +47,10 @@ export type ConsignmentAssignmentRequestBody =
 export interface ConsignmentUpdateRequestBody {
     id: string;
     address?: AddressRequestBody;
-    shippingAddress?: AddressRequestBody;
+    shippingAddress?: AddressRequestBody | AddressData;
     lineItems?: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
+    shippingOptionId?: string;
 }
 
 export interface ConsignmentMeta {
