@@ -490,10 +490,14 @@ export interface Card {
 }
 
 export interface CardState {
-    data: CardPaymentMethodState;
+    data: CardDataPaymentMethodState;
     isValid?: boolean;
     valid?: {[key: string]: boolean};
     errors?: CardStateErrors;
+}
+
+interface CardDataPaymentMethodState {
+    paymentMethod: CardPaymentMethodState;
 }
 
 export interface CardStateErrors {
@@ -814,12 +818,12 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
-export type AdyenV3ComponentState = CardState;
+export type AdyenV3ComponentState = CardState | WechatState;
 
 export type AdyenComponentOptions = AdyenV3CreditCardComponentOptions | AdyenV3IdealComponentOptions | AdyenCustomCardComponentOptions;
 
 export function isCardState(param: unknown): param is CardState {
     return typeof param === 'object' && !!param &&
-        typeof (param as CardState).data.encryptedSecurityCode === 'string' ||
-        typeof (param as CardState).data.encryptedExpiryMonth === 'string';
+        typeof (param as CardState).data.paymentMethod.encryptedSecurityCode === 'string' ||
+        typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string';
 }

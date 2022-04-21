@@ -87,11 +87,13 @@ export function getAdyenError(): AdyenError {
 export function getComponentState(isValid: boolean = true): AdyenV3ComponentState {
     return {
         data: {
-            encryptedCardNumber: 'ENCRYPTED_CARD_NUMBER',
-            encryptedExpiryMonth: 'ENCRYPTED_EXPIRY_MONTH',
-            encryptedExpiryYear: 'ENCRYPTED_EXPIRY_YEAR',
-            encryptedSecurityCode: 'ENCRYPTED_CVV',
-            holderName: 'John Smith',
+            paymentMethod: {
+                encryptedCardNumber: 'ENCRYPTED_CARD_NUMBER',
+                encryptedExpiryMonth: 'ENCRYPTED_EXPIRY_MONTH',
+                encryptedExpiryYear: 'ENCRYPTED_EXPIRY_YEAR',
+                encryptedSecurityCode: 'ENCRYPTED_CVV',
+                holderName: 'John Smith',
+            },
         },
         isValid,
     };
