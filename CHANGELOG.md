@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.240.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.0...v1.240.1) (2022-04-21)
+
+
+### Bug Fixes
+
+* **payment:** INT-5821 Stripe UPE Error on redirect payments with hidden fields ([#1397](https://github.com/bigcommerce/checkout-sdk-js/issues/1397)) ([f568e6c](https://github.com/bigcommerce/checkout-sdk-js/commit/f568e6c0c8d6d8525e3a1cc6c38f0757ed1c105d))
+
 ## [1.240.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.239.0...v1.240.0) (2022-04-19)
 
 
