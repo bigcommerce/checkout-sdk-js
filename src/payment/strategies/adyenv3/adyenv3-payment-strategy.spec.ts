@@ -95,7 +95,6 @@ describe('AdyenV3PaymentStrategy', () => {
                     return;
                 }),
                 unmount: jest.fn(),
-                state: getComponentState(),
             };
 
             cardVerificationComponent = {
@@ -105,7 +104,6 @@ describe('AdyenV3PaymentStrategy', () => {
                     return;
                 }),
                 unmount: jest.fn(),
-                state: getComponentState(),
             };
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(getAdyenV3());

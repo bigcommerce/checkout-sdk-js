@@ -15,13 +15,14 @@ import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { isCardState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentType, AdyenError, AdyenPaymentMethodType, AdyenPlaceholderData, CardStateErrors } from './adyenv3';
+import { isCardState, AdyenAction, AdyenActionType, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenComponent, AdyenComponentType, AdyenError, AdyenPaymentMethodType, AdyenPlaceholderData, AdyenV3ComponentState, CardStateErrors } from './adyenv3';
 import AdyenV3PaymentInitializeOptions from './adyenv3-initialize-options';
 import AdyenV3ScriptLoader from './adyenv3-script-loader';
 
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _adyenClient?: AdyenClient;
     private _cardVerificationComponent?: AdyenComponent;
+    private _componentState?: AdyenV3ComponentState;
     private _paymentComponent?: AdyenComponent;
     private _paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
 
@@ -80,14 +81,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         try {
             await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-            const paymentComponent = paymentData && isVaultedInstrument(paymentData) ? this._cardVerificationComponent : this._paymentComponent;
-            const componentState = paymentComponent?.state || { data: { paymentMethod: { type: payment.methodId } } } ;
+            const componentState = this._componentState || { data: { paymentMethod: { type: payment.methodId } } } ;
 
             if (paymentData && isVaultedInstrument(paymentData)) {
                 let bigpayToken = {};
                 if (isCardState(componentState)) {
                     bigpayToken = {
-                        verification_value: componentState.data.encryptedSecurityCode,
+                        verification_value: componentState.data.paymentMethod.encryptedSecurityCode,
                     };
                 }
 
@@ -112,7 +112,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     formattedPayload: {
                         credit_card_token: {
                             token: JSON.stringify({
-                                ...componentState.data,
+                                ...componentState.data.paymentMethod,
                                 type: payment.methodId,
                                 origin: window.location.origin,
                             }),
@@ -133,6 +133,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._componentState = undefined;
+
         if (this._paymentComponent) {
             this._paymentComponent.unmount();
             this._paymentComponent = undefined;
@@ -144,6 +146,10 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         }
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private _updateComponentState(componentState: AdyenV3ComponentState) {
+        this._componentState = componentState;
     }
 
     private _getAdyenClient(): AdyenClient {
@@ -249,7 +255,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                             color: 'green',
                         },
                     },
+                    onChange: componentState => this._updateComponentState(componentState),
                     onError: componentState => {
+                        this._updateComponentState(componentState);
                         adyenv3.validateCardFields(componentState);
                     },
                     onFieldValid: componentState => adyenv3.validateCardFields(componentState),
@@ -276,6 +284,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
             paymentComponent = adyenClient.create(paymentMethod.method, {
                 ...adyenv3.options,
+                onChange: componentState => this._updateComponentState(componentState),
                 ...(billingAddress ? { data: this._mapAdyenPlaceholderData(billingAddress) } : {}),
             });
 
