@@ -664,7 +664,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator),
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
             new LoadingIndicator({ styles: { backgroundColor: 'black' } })
@@ -676,7 +676,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            createPaypalCommercePaymentProcessor(scriptLoader, requestSender),
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator),
             new PaypalCommerceFundingKeyResolver(),
             new PaypalCommerceRequestSender(requestSender),
             new LoadingIndicator({ styles: { backgroundColor: 'black' } })
@@ -687,7 +687,7 @@ export default function createPaymentStrategyRegistry(
         new PaypalCommerceCreditCardPaymentStrategy(
             store,
             paymentMethodActionCreator,
-            new PaypalCommerceHostedForm(createPaypalCommercePaymentProcessor(scriptLoader, requestSender)),
+            new PaypalCommerceHostedForm(createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator)),
             orderActionCreator,
             paymentActionCreator
         )

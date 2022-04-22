@@ -51,7 +51,13 @@ describe('PaypalCommercePaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         requestSender = createRequestSender();
-        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(
+            new PaypalCommerceScriptLoader(getScriptLoader()),
+            new PaypalCommerceRequestSender(requestSender),
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        );
         eventEmitter = new EventEmitter();
         paypalCommerceFundingKeyResolver = new PaypalCommerceFundingKeyResolver();
 

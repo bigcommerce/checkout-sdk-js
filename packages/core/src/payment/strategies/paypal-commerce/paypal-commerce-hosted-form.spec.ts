@@ -1,7 +1,14 @@
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
+import { of, Observable } from 'rxjs';
 
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { OrderActionCreator, OrderActionType } from '../../../order';
 import { PaymentInvalidFormError, PaymentMethodFailedError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType } from '../../payment-actions';
 
 import { PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from './index';
 
@@ -12,6 +19,11 @@ describe('PaypalCommerceHostedForm', () => {
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let containers: HTMLElement[];
     let orderId: string;
+    let store: CheckoutStore;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     function appendContainer(id: string): HTMLElement {
         const container = document.createElement('div');
@@ -31,7 +43,20 @@ describe('PaypalCommerceHostedForm', () => {
     };
 
     beforeEach(() => {
-        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
+        store = createCheckoutStore(getCheckoutStoreState());
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        orderActionCreator = {} as OrderActionCreator;
+        orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
+        paymentActionCreator = {} as PaymentActionCreator;
+        paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(
+            new PaypalCommerceScriptLoader(getScriptLoader()),
+            new PaypalCommerceRequestSender(requestSender),
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        );
         requestSender = createRequestSender();
         orderId = 'orderId';
 
