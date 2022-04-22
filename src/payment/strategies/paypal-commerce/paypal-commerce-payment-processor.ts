@@ -1,10 +1,13 @@
 import { isNil, omitBy } from 'lodash';
 
+import { CheckoutStore } from '../../../checkout';
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { OrderActionCreator } from '../../../order';
 import { PaymentMethodClientUnavailableError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, FieldsOptions, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -45,7 +48,10 @@ export default class PaypalCommercePaymentProcessor {
 
     constructor(
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private _store: CheckoutStore,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator
     ) {}
 
     async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean, gatewayId?: string): Promise<PaypalCommerceSDK> {
@@ -210,6 +216,39 @@ export default class PaypalCommercePaymentProcessor {
         const isAPM = this._gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {...paramsForProvider, isAPM});
         this._orderId = orderId;
+        const methodId = this._fundingSource;
+
+        if (methodId && NON_INSTANT_PAYMENT_METHODS.indexOf(methodId) > -1) {
+            const gatewayId = this._gatewayId;
+            const paymentData =  {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    device_info: null,
+                    method_id: this._fundingSource,
+                    paypal_account: {
+                        order_id: this._orderId,
+                    },
+                },
+            };
+
+            const order = { useStoreCredit: false };
+            const paymentRequestOptions = {
+                gatewayId,
+                methodId,
+            };
+
+            await this._store.dispatch(this._orderActionCreator.submitOrder(
+                order,
+                { params: paymentRequestOptions }
+            ));
+
+            await this._store.dispatch(this._paymentActionCreator.submitPayment({
+                gatewayId,
+                methodId,
+                paymentData,
+            }));
+        }
 
         return orderId;
     }
@@ -262,5 +301,4 @@ export default class PaypalCommercePaymentProcessor {
 
         throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
     }
-
 }

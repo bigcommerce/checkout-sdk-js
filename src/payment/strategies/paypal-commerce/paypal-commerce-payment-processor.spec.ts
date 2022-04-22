@@ -1,11 +1,18 @@
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
+import { of, Observable } from 'rxjs';
 
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { NotImplementedError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderActionType } from '../../../order';
 import { PaymentMethodClientUnavailableError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType } from '../../payment-actions';
 
 import { ButtonsOptions, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
@@ -28,6 +35,11 @@ describe('PaypalCommercePaymentProcessor', () => {
     let submit: () => (PaypalCommerceHostedFieldsApprove);
     let orderID: string;
     let fundingSource: string;
+    let store: CheckoutStore;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     function appendContainer(id: string): HTMLElement {
         const container = document.createElement('div');
@@ -135,7 +147,20 @@ describe('PaypalCommercePaymentProcessor', () => {
             appendContainer('cardExpiry'),
         ];
 
-        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(paypalScriptLoader, paypalCommerceRequestSender);
+        store = createCheckoutStore(getCheckoutStoreState());
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        orderActionCreator = {} as OrderActionCreator;
+        orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
+        paymentActionCreator = {} as PaymentActionCreator;
+        paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(
+            paypalScriptLoader,
+            paypalCommerceRequestSender,
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        );
 
     });
 

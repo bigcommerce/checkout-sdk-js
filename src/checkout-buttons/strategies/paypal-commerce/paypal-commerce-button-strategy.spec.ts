@@ -12,7 +12,8 @@ import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { PaymentMethod, PaymentMethodActionType } from '../../../payment';
+import { OrderActionCreator } from '../../../order';
+import { PaymentActionCreator, PaymentMethod, PaymentMethodActionType } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -36,6 +37,8 @@ describe('PaypalCommerceButtonStrategy', () => {
     let cart: Cart;
     let fundingSource: string;
     let messageContainer: HTMLDivElement;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -49,7 +52,16 @@ describe('PaypalCommerceButtonStrategy', () => {
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
-        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(new PaypalCommerceScriptLoader(getScriptLoader()), new PaypalCommerceRequestSender(requestSender));
+        orderActionCreator = {} as OrderActionCreator;
+        paymentActionCreator = {} as PaymentActionCreator;
+
+        paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(
+            new PaypalCommerceScriptLoader(getScriptLoader()),
+            new PaypalCommerceRequestSender(requestSender),
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        );
         eventEmitter = new EventEmitter();
 
         paypalOptions = {

@@ -203,6 +203,8 @@ export interface PaypalCommerceSDKFunding {
     VENMO: string;
 }
 
+export const NON_INSTANT_PAYMENT_METHODS = ['oxxo'];
+
 export interface PaypalCommerceSDK {
     FUNDING: PaypalCommerceSDKFunding;
     HostedFields: {
