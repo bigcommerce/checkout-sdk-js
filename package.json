@@ -19,7 +19,7 @@
     "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
   },
   "engines": {
-    "node": "14.18",
+    "node": ">=14.18",
     "npm": "6"
   },
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
