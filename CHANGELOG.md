@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.240.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.1...v1.240.2) (2022-04-26)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-6268 Check in array while loading config ([#1415](https://github.com/bigcommerce/checkout-sdk-js/issues/1415)) ([3ba71c6](https://github.com/bigcommerce/checkout-sdk-js/commit/3ba71c65e408c9f138b24fa20c5fca9b9e161133))
+
 ### [1.240.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.0...v1.240.1) (2022-04-21)
 
 
