@@ -85,7 +85,7 @@ async function getCdnLoaderConfig(options, argv) {
 
 // This configuration is for building distribution files for CDN deployment
 async function getConfigs(options, argv) {
-    if (argv.configName.includes('umd-loader')) {
+    if (argv.configName === 'umd-loader') {
         return await getCdnLoaderConfig(options, argv);
     }
 
