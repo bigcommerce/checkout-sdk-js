@@ -23,6 +23,7 @@ import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
+import { WorldpayPaymentInitializeOptions } from './strategies/worldpay';
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -241,4 +242,10 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Mollie.
      */
     mollie?: MolliePaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Worldpay payment method.
+     * They can be omitted unless you need to support Worldpay.
+     */
+    worldpay?: WorldpayPaymentInitializeOptions;
 }
