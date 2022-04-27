@@ -19,7 +19,7 @@
 
 ###  data
 
-• **data**: *[CardPaymentMethodState_2](cardpaymentmethodstate_2.md)*
+• **data**: *[CardDataPaymentMethodState_2](carddatapaymentmethodstate_2.md)*
 
 ___
 

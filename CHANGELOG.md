@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.240.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.4...v1.240.5) (2022-04-27)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-431 AdyenV3 component state fix ([4300c75](https://github.com/bigcommerce/checkout-sdk-js/commit/4300c75b6b29ddcd89f017d7b4111c46664f26ee))
+
 ### [1.240.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.3...v1.240.4) (2022-04-27)
 
 

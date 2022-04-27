@@ -56,6 +56,7 @@
 * [AdyenCreditCardComponentOptions](interfaces/adyencreditcardcomponentoptions.md)
 * [AdyenIdealComponentOptions](interfaces/adyenidealcomponentoptions.md)
 * [AdyenPaymentMethodState](interfaces/adyenpaymentmethodstate.md)
+* [AdyenPaymentMethodState_2](interfaces/adyenpaymentmethodstate_2.md)
 * [AdyenPlaceholderData](interfaces/adyenplaceholderdata.md)
 * [AdyenPlaceholderData_2](interfaces/adyenplaceholderdata_2.md)
 * [AdyenThreeDS2Options](interfaces/adyenthreeds2options.md)
@@ -112,6 +113,7 @@
 * [ButtonStyles](interfaces/buttonstyles.md)
 * [CardCvcElementOptions](interfaces/cardcvcelementoptions.md)
 * [CardDataPaymentMethodState](interfaces/carddatapaymentmethodstate.md)
+* [CardDataPaymentMethodState_2](interfaces/carddatapaymentmethodstate_2.md)
 * [CardElementOptions](interfaces/cardelementoptions.md)
 * [CardExpiryElementOptions](interfaces/cardexpiryelementoptions.md)
 * [CardInstrument](interfaces/cardinstrument.md)
@@ -326,7 +328,9 @@
 * [UnknownObject](interfaces/unknownobject.md)
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
 * [WechatDataPaymentMethodState](interfaces/wechatdatapaymentmethodstate.md)
+* [WechatDataPaymentMethodState_2](interfaces/wechatdatapaymentmethodstate_2.md)
 * [WechatState](interfaces/wechatstate.md)
+* [WechatState_2](interfaces/wechatstate_2.md)
 * [WithAccountCreation](interfaces/withaccountcreation.md)
 * [WithCheckoutcomFawryInstrument](interfaces/withcheckoutcomfawryinstrument.md)
 * [WithCheckoutcomSEPAInstrument](interfaces/withcheckoutcomsepainstrument.md)
@@ -409,7 +413,7 @@ ___
 
 ###  AdyenV3ComponentState
 
-Ƭ **AdyenV3ComponentState**: *[CardState_2](interfaces/cardstate_2.md)*
+Ƭ **AdyenV3ComponentState**: *[CardState_2](interfaces/cardstate_2.md) | [WechatState_2](interfaces/wechatstate_2.md)*
 
 ___
 

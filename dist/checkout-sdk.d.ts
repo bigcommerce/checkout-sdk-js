@@ -225,6 +225,10 @@ declare interface AdyenPaymentMethodState {
     type: string;
 }
 
+declare interface AdyenPaymentMethodState_2 {
+    type: string;
+}
+
 declare interface AdyenPlaceholderData {
     holderName?: string;
     billingAddress?: {
@@ -360,7 +364,7 @@ declare interface AdyenV2PaymentInitializeOptions {
     validateCardFields(componentState: AdyenComponentState): void;
 }
 
-declare type AdyenV3ComponentState = CardState_2;
+declare type AdyenV3ComponentState = CardState_2 | WechatState_2;
 
 declare interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponentOptions_2, AdyenComponentEvents_2 {
     /**
@@ -1370,6 +1374,10 @@ declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
 }
 
+declare interface CardDataPaymentMethodState_2 {
+    paymentMethod: CardPaymentMethodState_2;
+}
+
 declare interface CardElementOptions extends BaseElementOptions_2 {
     /**
      * A pre-filled set of values to include in the input (e.g., {postalCode: '94110'}).
@@ -1445,7 +1453,7 @@ declare interface CardStateErrors_2 {
 }
 
 declare interface CardState_2 {
-    data: CardPaymentMethodState_2;
+    data: CardDataPaymentMethodState_2;
     isValid?: boolean;
     valid?: {
         [key: string]: boolean;
@@ -6940,8 +6948,16 @@ declare interface WechatDataPaymentMethodState {
     paymentMethod: AdyenPaymentMethodState;
 }
 
+declare interface WechatDataPaymentMethodState_2 {
+    paymentMethod: AdyenPaymentMethodState_2;
+}
+
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+declare interface WechatState_2 {
+    data: WechatDataPaymentMethodState_2;
 }
 
 declare interface WithAccountCreation {
