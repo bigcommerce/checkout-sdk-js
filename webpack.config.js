@@ -60,4 +60,3 @@ async function getConfigs(options, argv) {
 }
 
 module.exports = getConfigs;
-module.exports.parallelism = 2;
