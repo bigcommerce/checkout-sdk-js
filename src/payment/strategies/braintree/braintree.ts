@@ -98,6 +98,7 @@ export interface BraintreeGooglePayThreeDSecure {
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
+    challengeRequested: boolean;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
@@ -158,11 +159,16 @@ export interface BraintreeHostedFieldsTokenizeOptions {
     billingAddress?: BraintreeBillingAddressRequestData;
 }
 
-export interface BraintreeHostedFieldsTokenizePayload {
+export interface BraintreeAuthenticationInsight {
+    authenticationInsight?: BraintreeRegulationEnvironment;
+}
+
+export interface BraintreeRegulationEnvironment {
+    regulationEnvironment: 'psd2' | 'unregulated' | 'unavailable';
+}
+
+export interface BraintreeHostedFieldsTokenizePayload extends BraintreeAuthenticationInsight {
     nonce: string;
-    authenticationInsight?: {
-        regulationEnvironment: string;
-    };
     details: {
         bin: string;
         cardType: string;

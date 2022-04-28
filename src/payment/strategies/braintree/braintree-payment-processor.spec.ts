@@ -8,6 +8,7 @@ import { NonceInstrument } from '../../payment';
 
 import { BraintreeClient, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
+import { BraintreeFormOptions } from './braintree-payment-options';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { getBraintreePaymentData, getBraintreeRequestData, getClientMock, getThreeDSecureMock, getThreeDSecureOptionsMock, getTokenizeResponseBody, getVerifyPayload } from './braintree.mock';
@@ -41,6 +42,24 @@ describe('BraintreePaymentProcessor', () => {
         });
     });
 
+    describe('#deinitialize()', () => {
+        it('calls teardown in the braintree sdk creator', async () => {
+            braintreeSDKCreator.teardown = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+            await braintreePaymentProcessor.deinitialize();
+            expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
+        });
+    });
+
+    describe('#preloadPaypal', () => {
+        it('gets paypal from the braintree sdk creator', async () => {
+            braintreeSDKCreator.getPaypal = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+            await braintreePaymentProcessor.preloadPaypal();
+            expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
+        });
+    });
+
     describe('#tokenizeCard()', () => {
         let clientMock: BraintreeClient;
         let braintreePaymentProcessor: BraintreePaymentProcessor;
@@ -66,41 +85,23 @@ describe('BraintreePaymentProcessor', () => {
 
     describe('#verifyCard()', () => {
         let clientMock: BraintreeClient;
-        let threeDSecureMock: BraintreeThreeDSecure;
         let braintreePaymentProcessor: BraintreePaymentProcessor;
-        let cancelVerifyCard: () => void;
 
         beforeEach(() => {
             clientMock = getClientMock();
-            threeDSecureMock = getThreeDSecureMock();
 
             jest.spyOn(clientMock, 'request')
                 .mockResolvedValue(getTokenizeResponseBody());
 
             braintreeSDKCreator.initialize = jest.fn();
             braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
-            braintreeSDKCreator.get3DS = jest.fn().mockReturnValue(Promise.resolve(threeDSecureMock));
 
             braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
 
-            braintreePaymentProcessor.initialize('clientToken', {
-                threeDSecure: {
-                    ...getThreeDSecureOptionsMock(),
-                    addFrame: (_error, _iframe, cancel) => {
-                        cancelVerifyCard = cancel;
-                    },
-                },
-            });
-
             jest.spyOn(braintreePaymentProcessor, 'tokenizeCard')
                 .mockReturnValue(Promise.resolve({ nonce: 'my_nonce' }));
-        });
-
-        it('throws if no modal handler was supplied on initialization', () => {
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
-
-            return expect(braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122))
-                .rejects.toThrow(NotInitializedError);
+            jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification')
+                .mockReturnValue(Promise.resolve({ nonce: 'three_ds_nonce' }));
         });
 
         it('tokenizes the card with the right params', async () => {
@@ -108,67 +109,9 @@ describe('BraintreePaymentProcessor', () => {
             expect(braintreePaymentProcessor.tokenizeCard).toHaveBeenCalledWith(getBraintreePaymentData(), getBillingAddress());
         });
 
-        it('verifies the card using 3', async () => {
-            jest.spyOn(threeDSecureMock, 'verifyCard')
-                .mockReturnValue(Promise.resolve({ nonce: 'my_nonce' }));
+        it('verifies the card using 3DS', async () => {
             const verifiedCard = await braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
-            expect(verifiedCard).toEqual({ nonce: 'my_nonce' });
-        });
-
-        it('calls the verification service with the right values', async () => {
-            await braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
-
-            expect(threeDSecureMock.verifyCard)
-                .toHaveBeenCalledWith({
-                    addFrame: expect.any(Function),
-                    removeFrame: expect.any(Function),
-                    amount: 122,
-                    nonce: 'my_nonce',
-                    onLookupComplete: expect.any(Function),
-                });
-        });
-
-        describe('when cancel function gets called', () => {
-            beforeEach(() => {
-                jest.spyOn(threeDSecureMock, 'verifyCard')
-                    .mockImplementation(({ addFrame }) => {
-                        addFrame();
-
-                        return new Promise(() => { });
-                    });
-
-                jest.spyOn(threeDSecureMock, 'cancelVerifyCard')
-                    .mockReturnValue(Promise.resolve(getVerifyPayload()));
-            });
-
-            it('cancels card verification', async () => {
-                braintreePaymentProcessor
-                    .verifyCard(getBraintreePaymentData(), getBillingAddress(), 122)
-                    .catch(() => {});
-
-                await new Promise(resolve => process.nextTick(resolve));
-                cancelVerifyCard();
-
-                expect(threeDSecureMock.cancelVerifyCard).toHaveBeenCalled();
-            });
-
-            it('rejects the return promise', async () => {
-                const promise = braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
-
-                await new Promise(resolve => process.nextTick(resolve));
-                cancelVerifyCard();
-
-                return expect(promise).rejects.toBeInstanceOf(PaymentMethodCancelledError);
-            });
-
-            it('resolves with verify payload', async () => {
-                braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
-
-                await new Promise(resolve => process.nextTick(resolve));
-                const response = await cancelVerifyCard();
-
-                expect(response).toEqual(getVerifyPayload());
-            });
+            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
         });
     });
 
@@ -204,15 +147,6 @@ describe('BraintreePaymentProcessor', () => {
             const expected = await braintreePaymentProcessor.getSessionId();
 
             expect(expected).toEqual('my_device_session_id');
-        });
-    });
-
-    describe('#deinitialize()', () => {
-        it('calls teardown in the braintree sdk creator', async () => {
-            braintreeSDKCreator.teardown = jest.fn();
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
-            await braintreePaymentProcessor.deinitialize();
-            expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
         });
     });
 
@@ -348,6 +282,231 @@ describe('BraintreePaymentProcessor', () => {
                 });
                 expect(overlay.show)
                     .not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('#initializeHostedForm', () => {
+        let hostedFormInitializationOptions: BraintreeFormOptions;
+
+        it('initializes the hosted form', () => {
+            braintreeHostedForm.initialize = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            hostedFormInitializationOptions = {
+                fields: {
+                    cardCode: { containerId: 'cardCode', placeholder: 'Card code' },
+                    cardName: { containerId: 'cardName', placeholder: 'Card name' },
+                    cardNumber: { containerId: 'cardNumber', placeholder: 'Card number' },
+                    cardExpiry: { containerId: 'cardExpiry', placeholder: 'Card expiry' },
+                },
+            };
+
+            braintreePaymentProcessor.initializeHostedForm(hostedFormInitializationOptions);
+            expect(braintreeHostedForm.initialize).toHaveBeenCalledWith(hostedFormInitializationOptions);
+        });
+    });
+
+    describe('#deinitializeHostedForm', () => {
+        it('deinitializes the hosted form', async () => {
+            braintreeHostedForm.deinitialize = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            await braintreePaymentProcessor.deinitializeHostedForm();
+            expect(braintreeHostedForm.deinitialize).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isInitializedHostedForm()', () => {
+        it('returns false is hosted form is not initialized', async () => {
+            const braintreeHostedForm = new BraintreeHostedForm(braintreeSDKCreator);
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            await braintreeHostedForm.initialize({ fields: {} });
+
+            expect(braintreePaymentProcessor.isInitializedHostedForm()).toBeFalsy();
+        });
+    });
+
+    describe('#tokenizeHostedForm', () => {
+        it('tokenizes credit card with hosted form', () => {
+            braintreeHostedForm.tokenize = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            braintreePaymentProcessor.tokenizeHostedForm(getBillingAddress());
+            expect(braintreeHostedForm.tokenize).toHaveBeenCalledWith(getBillingAddress());
+        });
+    });
+
+    describe('#tokenizeHostedFormForStoredCardVerification', () => {
+        it('tokenizes stored credit card with hosted form', () => {
+            braintreeHostedForm.tokenizeForStoredCardVerification = jest.fn();
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            braintreePaymentProcessor.tokenizeHostedFormForStoredCardVerification();
+            expect(braintreeHostedForm.tokenizeForStoredCardVerification).toHaveBeenCalled();
+        });
+    });
+
+    describe('#verifyCardWithHostedForm', () => {
+        it('verifies the card with hosted form using 3DS', async () => {
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+            braintreeHostedForm.tokenize = jest.fn();
+
+            jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification')
+                .mockReturnValue({ nonce: 'three_ds_nonce' });
+            jest.spyOn(braintreeHostedForm, 'tokenize')
+                .mockReturnValue({ nonce: 'tokenized_nonce' });
+
+            const verifiedCard = await braintreePaymentProcessor.verifyCardWithHostedForm(getBillingAddress(), 122);
+            expect(braintreeHostedForm.tokenize).toHaveBeenCalledWith(getBillingAddress());
+            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
+        });
+    });
+
+    describe('#verifyCardWithHostedFormAnd3DSCheck', () => {
+        let braintreePaymentProcessor: BraintreePaymentProcessor;
+        let merchantAccountIdMock: string;
+
+        beforeEach(() => {
+            merchantAccountIdMock = '100000';
+
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            braintreeHostedForm.tokenizeWith3DSRegulationCheck = jest.fn();
+
+            jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification')
+                .mockReturnValue({ nonce: 'three_ds_nonce' });
+        });
+
+        it('verifies credit card with hosted form using 3DS if the card is regulated', async () => {
+            jest.spyOn(braintreeHostedForm, 'tokenizeWith3DSRegulationCheck')
+                .mockReturnValue({
+                    authenticationInsight: {
+                        regulationEnvironment: 'psd2',
+                    },
+                    nonce: 'tokenized_nonce',
+                });
+
+            const verifiedCard = await braintreePaymentProcessor.verifyCardWithHostedFormAnd3DSCheck(getBillingAddress(), 122, merchantAccountIdMock);
+            expect(braintreePaymentProcessor.challenge3DSVerification).toHaveBeenCalledWith('tokenized_nonce', 122);
+            expect(braintreeHostedForm.tokenizeWith3DSRegulationCheck).toHaveBeenCalledWith(getBillingAddress(), merchantAccountIdMock);
+            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
+        });
+
+        it('only tokenizes credit card with hosted form using 3DS if the card is unregulated', async () => {
+            jest.spyOn(braintreeHostedForm, 'tokenizeWith3DSRegulationCheck')
+                .mockReturnValue({
+                    authenticationInsight: {
+                        regulationEnvironment: 'unregulated',
+                    },
+                    nonce: 'tokenized_nonce',
+                });
+
+            const verifiedCard = await braintreePaymentProcessor.verifyCardWithHostedFormAnd3DSCheck(getBillingAddress(), 122, merchantAccountIdMock);
+            expect(braintreePaymentProcessor.challenge3DSVerification).not.toHaveBeenCalled();
+            expect(braintreeHostedForm.tokenizeWith3DSRegulationCheck).toHaveBeenCalledWith(getBillingAddress(), merchantAccountIdMock);
+            expect(verifiedCard).toEqual({ nonce: 'tokenized_nonce' });
+        });
+    });
+
+    describe('#challenge3DSVerification()', () => {
+        let clientMock: BraintreeClient;
+        let threeDSecureMock: BraintreeThreeDSecure;
+        let braintreePaymentProcessor: BraintreePaymentProcessor;
+        let cancelVerifyCard: () => void;
+
+        beforeEach(() => {
+            clientMock = getClientMock();
+            threeDSecureMock = getThreeDSecureMock();
+
+            jest.spyOn(clientMock, 'request')
+                .mockResolvedValue(getTokenizeResponseBody());
+
+            braintreeSDKCreator.initialize = jest.fn();
+            braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
+            braintreeSDKCreator.get3DS = jest.fn().mockReturnValue(Promise.resolve(threeDSecureMock));
+
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+
+            braintreePaymentProcessor.initialize('clientToken', {
+                threeDSecure: {
+                    ...getThreeDSecureOptionsMock(),
+                    addFrame: (_error, _iframe, cancel) => {
+                        cancelVerifyCard = cancel;
+                    },
+                },
+            });
+        });
+
+        it('throws if no 3DS modal handler was supplied on initialization', () => {
+            braintreePaymentProcessor.initialize('clientToken', {});
+
+            return expect(braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122))
+                .rejects.toThrow(NotInitializedError);
+        });
+
+        it('challenges 3DS verifies the card using 3DS', async () => {
+            jest.spyOn(threeDSecureMock, 'verifyCard')
+                .mockReturnValue(Promise.resolve({ nonce: 'three_ds_nonce' }));
+            const verifiedCard = await braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
+        });
+
+        it('calls the verification service with the right values', async () => {
+            await braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+
+            expect(threeDSecureMock.verifyCard)
+                .toHaveBeenCalledWith({
+                    addFrame: expect.any(Function),
+                    removeFrame: expect.any(Function),
+                    challengeRequested: true,
+                    amount: 122,
+                    nonce: 'tokenization_nonce',
+                    onLookupComplete: expect.any(Function),
+                });
+        });
+
+        describe('when cancel function gets called', () => {
+            beforeEach(() => {
+                jest.spyOn(threeDSecureMock, 'verifyCard')
+                    .mockImplementation(({ addFrame }) => {
+                        addFrame();
+
+                        return new Promise(() => { });
+                    });
+
+                jest.spyOn(threeDSecureMock, 'cancelVerifyCard')
+                    .mockReturnValue(Promise.resolve(getVerifyPayload()));
+            });
+
+            it('cancels card verification', async () => {
+                braintreePaymentProcessor
+                    .challenge3DSVerification('tokenization_nonce', 122)
+                    .catch(() => {});
+
+                await new Promise(resolve => process.nextTick(resolve));
+                cancelVerifyCard();
+
+                expect(threeDSecureMock.cancelVerifyCard).toHaveBeenCalled();
+            });
+
+            it('rejects the return promise', async () => {
+                const promise = braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+
+                await new Promise(resolve => process.nextTick(resolve));
+                cancelVerifyCard();
+
+                return expect(promise).rejects.toBeInstanceOf(PaymentMethodCancelledError);
+            });
+
+            it('resolves with verify payload', async () => {
+                braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+
+                await new Promise(resolve => process.nextTick(resolve));
+                const response = await cancelVerifyCard();
+
+                expect(response).toEqual(getVerifyPayload());
             });
         });
     });

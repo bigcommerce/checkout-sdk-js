@@ -5,7 +5,7 @@ import { NotInitializedError, NotInitializedErrorType } from '../../../common/er
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
+import { BraintreeAuthenticationInsight, BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
 import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap, BraintreeFormFieldType, BraintreeFormFieldValidateErrorData, BraintreeFormFieldValidateEventData, BraintreeFormOptions, BraintreeStoredCardFieldsMap } from './braintree-payment-options';
 import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -21,12 +21,13 @@ export default class BraintreeHostedForm {
     private _cardNameField?: BraintreeRegularField;
     private _formOptions?: BraintreeFormOptions;
     private _type?: BraintreeHostedFormType;
+    private _isInitializedHostedForm: boolean = false;
 
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    async initialize(options: BraintreeFormOptions): Promise<boolean> {
+    async initialize(options: BraintreeFormOptions): Promise<void> {
         this._formOptions = options;
 
         this._type = isBraintreeFormFieldsMap(options.fields) ?
@@ -36,7 +37,9 @@ export default class BraintreeHostedForm {
         const fields = this._mapFieldOptions(options.fields);
 
         if (isEmpty(fields)) {
-            return false;
+            this._isInitializedHostedForm = false;
+
+            return;
         }
 
         this._cardFields = await this._braintreeSDKCreator.createHostedFields({
@@ -60,10 +63,16 @@ export default class BraintreeHostedForm {
             this._cardNameField.attach();
         }
 
-        return true;
+        this._isInitializedHostedForm = true;
+    }
+
+    isInitialized(): boolean {
+        return !!this._isInitializedHostedForm;
     }
 
     async deinitialize(): Promise<void> {
+        this._isInitializedHostedForm = false;
+
         await this._cardFields?.teardown();
         this._cardNameField?.detach();
     }
@@ -117,6 +126,47 @@ export default class BraintreeHostedForm {
             });
 
             return { nonce };
+        } catch (error) {
+            const errors = this._mapTokenizeError(error);
+
+            if (errors) {
+                this._formOptions?.onValidate?.({
+                    isValid: false,
+                    errors,
+                });
+
+                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+            }
+
+            throw error;
+        }
+    }
+
+    async tokenizeWith3DSRegulationCheck(billingAddress: Address, merchantAccountId: string): Promise<BraintreeAuthenticationInsight & NonceInstrument> {
+        if (!this._cardFields) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        try {
+            const tokenizationOptions = omitBy(
+                {
+                    authenticationInsight: {
+                        merchantAccountId,
+                    },
+                    billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
+                    cardholderName: this._cardNameField?.getValue(),
+                },
+                isNil
+            );
+
+            const { authenticationInsight, nonce } = await this._cardFields.tokenize(tokenizationOptions);
+
+            this._formOptions?.onValidate?.({
+                isValid: true,
+                errors: {},
+            });
+
+            return { authenticationInsight, nonce };
         } catch (error) {
             const errors = this._mapTokenizeError(error);
 
