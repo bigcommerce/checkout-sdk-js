@@ -78,360 +78,408 @@ describe('BraintreeHostedForm', () => {
         });
     });
 
-    it('creates and configures hosted fields', async () => {
-        await subject.initialize(formOptions);
+    describe('#initialize', () => {
+        it('creates and configures hosted fields', async () => {
+            await subject.initialize(formOptions);
 
-        expect(braintreeSdkCreator.createHostedFields)
-            .toHaveBeenCalledWith({
+            expect(braintreeSdkCreator.createHostedFields)
+                .toHaveBeenCalledWith({
+                    fields: {
+                        cvv: {
+                            container: '#cardCode',
+                            placeholder: 'Card code',
+                        },
+                        expirationDate: {
+                            container: '#cardExpiry',
+                            placeholder: 'Card expiry',
+                        },
+                        number: {
+                            container: '#cardNumber',
+                            placeholder: 'Card number',
+                        },
+                    },
+                    styles: {
+                        input: {
+                            color: '#000',
+                        },
+                        '.invalid': {
+                            color: '#f00',
+                            'font-weight': 'bold',
+                        },
+                        ':focus': {
+                            color: '#00f',
+                        },
+                    },
+                });
+        });
+
+        it('creates and configures hosted fields for stored card verification', async () => {
+            await subject.initialize({
+                ...formOptions,
                 fields: {
-                    cvv: {
-                        container: '#cardCode',
+                    cardCodeVerification: {
+                        containerId: 'cardCode',
                         placeholder: 'Card code',
+                        instrumentId: 'foobar_instrument_id',
                     },
-                    expirationDate: {
-                        container: '#cardExpiry',
-                        placeholder: 'Card expiry',
-                    },
-                    number: {
-                        container: '#cardNumber',
+                    cardNumberVerification: {
+                        containerId: 'cardNumber',
                         placeholder: 'Card number',
+                        instrumentId: 'foobar_instrument_id',
                     },
                 },
                 styles: {
-                    input: {
+                    default: {
                         color: '#000',
                     },
-                    '.invalid': {
+                    error: {
                         color: '#f00',
-                        'font-weight': 'bold',
+                        fontWeight: 'bold',
                     },
-                    ':focus': {
+                    focus: {
                         color: '#00f',
                     },
                 },
             });
+
+            expect(braintreeSdkCreator.createHostedFields)
+                .toHaveBeenCalledWith({
+                    fields: {
+                        cvv: {
+                            container: '#cardCode',
+                            placeholder: 'Card code',
+                        },
+                        number: {
+                            container: '#cardNumber',
+                            placeholder: 'Card number',
+                        },
+                    },
+                    styles: {
+                        input: {
+                            color: '#000',
+                        },
+                        '.invalid': {
+                            color: '#f00',
+                            'font-weight': 'bold',
+                        },
+                        ':focus': {
+                            color: '#00f',
+                        },
+                    },
+                });
+        });
     });
 
-    it('creates and configures hosted fields for stored card verification', async () => {
-        await subject.initialize({
-            ...formOptions,
-            fields: {
-                cardCodeVerification: {
-                    containerId: 'cardCode',
-                    placeholder: 'Card code',
-                    instrumentId: 'foobar_instrument_id',
-                },
-                cardNumberVerification: {
-                    containerId: 'cardNumber',
-                    placeholder: 'Card number',
-                    instrumentId: 'foobar_instrument_id',
-                },
-            },
-            styles: {
-                default: {
-                    color: '#000',
-                },
-                error: {
-                    color: '#f00',
-                    fontWeight: 'bold',
-                },
-                focus: {
-                    color: '#00f',
-                },
-            },
+    describe('#isInitialized', () => {
+        it('returns true if hosted form is initialized', async () => {
+            await subject.initialize(formOptions);
+
+            expect(subject.isInitialized()).toBe(true);
         });
 
-        expect(braintreeSdkCreator.createHostedFields)
-            .toHaveBeenCalledWith({
-                fields: {
-                    cvv: {
-                        container: '#cardCode',
-                        placeholder: 'Card code',
-                    },
-                    number: {
-                        container: '#cardNumber',
-                        placeholder: 'Card number',
-                    },
-                },
-                styles: {
-                    input: {
-                        color: '#000',
-                    },
-                    '.invalid': {
-                        color: '#f00',
-                        'font-weight': 'bold',
-                    },
-                    ':focus': {
-                        color: '#00f',
-                    },
-                },
-            });
-    });
+        it('returns false when no fields specified in form options', async () => {
+            await subject.initialize({ fields: {} });
 
-    it('returns true', async () => {
-        expect(await subject.initialize(formOptions)).toBe(true);
-    });
-
-    it('returns false when no fields specified in form options', async () => {
-        const options = { ...formOptions, fields: {} };
-        expect(await subject.initialize(options)).toBe(false);
-    });
-
-    it('notifies when field receives focus', async () => {
-        const handleFocus = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onFocus: handleFocus,
+            expect(subject.isInitialized()).toBe(false);
         });
 
-        cardFieldsEventEmitter.emit('focus', { emittedBy: 'cvv' });
+        it('changes hosted form initialization state', async () => {
+            await subject.initialize(formOptions);
+            expect(subject.isInitialized()).toBe(true);
 
-        expect(handleFocus)
-            .toHaveBeenCalledWith({ fieldType: 'cardCode' });
+            await subject.deinitialize();
+            expect(subject.isInitialized()).toBe(false);
+        });
     });
 
-    it('notifies when field loses focus', async () => {
-        const handleBlur = jest.fn();
+    describe('#deinitialize', () => {
+        it('calls hosted form fields teardown on deinitialize', async () => {
+            await subject.initialize(formOptions);
+            await subject.deinitialize();
 
-        await subject.initialize({
-            ...formOptions,
-            onBlur: handleBlur,
+            expect(cardFields.teardown).toHaveBeenCalled();
+        });
+    });
+
+    describe('#tokenize', () => {
+        it('tokenizes data through hosted fields', async () => {
+            await subject.initialize(formOptions);
+
+            const billingAddress = getBillingAddress();
+            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
+
+            cardNameInput.value = 'Foobar';
+
+            await subject.tokenize(billingAddress);
+
+            expect(cardFields.tokenize)
+                .toHaveBeenCalledWith({
+                    billingAddress: {
+                        countryName: billingAddress.country,
+                        postalCode: billingAddress.postalCode,
+                        streetAddress: billingAddress.address1,
+                    },
+                    cardholderName: 'Foobar',
+                });
         });
 
-        cardFieldsEventEmitter.emit('blur', { emittedBy: 'cvv' });
+        it('returns invalid form error when tokenizing with invalid form data', async () => {
+            await subject.initialize(formOptions);
 
-        expect(handleBlur)
-            .toHaveBeenCalledWith({ fieldType: 'cardCode' });
-    });
+            jest.spyOn(cardFields, 'tokenize')
+                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
 
-    it('notifies when input receives submit event', async () => {
-        const handleEnter = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onEnter: handleEnter,
+            try {
+                await subject.tokenize(getBillingAddress());
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentInvalidFormError);
+            }
         });
 
-        cardFieldsEventEmitter.emit('inputSubmitRequest', { emittedBy: 'cvv' });
-
-        expect(handleEnter)
-            .toHaveBeenCalledWith({ fieldType: 'cardCode' });
+        it('throws error if trying to tokenize before initialization', async () => {
+            try {
+                await subject.tokenize(getBillingAddress());
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
     });
 
-    describe('#cardTypeChange', () => {
+    describe('#tokenizeForStoredCardVerification', () => {
+        it('tokenizes data through hosted fields for stored card verification', async () => {
+            await subject.initialize(formOptions);
+
+            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
+
+            cardNameInput.value = 'Foobar';
+
+            await subject.tokenizeForStoredCardVerification();
+
+            expect(cardFields.tokenize)
+                .toHaveBeenCalledWith({
+                    cardholderName: 'Foobar',
+                });
+        });
+
+        it('returns invalid form error when tokenizing store credit card with invalid form data', async () => {
+            await subject.initialize(formOptions);
+
+            jest.spyOn(cardFields, 'tokenize')
+                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+
+            try {
+                await subject.tokenizeForStoredCardVerification();
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentInvalidFormError);
+            }
+        });
+
+        it('throws error if trying to tokenize store credit card before initialization', async () => {
+            try {
+                await subject.tokenizeForStoredCardVerification();
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+    });
+
+    describe('#tokenizeWith3DSRegulationCheck', () => {
+        it('tokenizes data with 3DS regulation check through hosted fields for credit card verification', async () => {
+            await subject.initialize(formOptions);
+
+            const merchantAccountIdMock = '1000000';
+            const billingAddress = getBillingAddress();
+            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
+
+            cardNameInput.value = 'Foobar';
+
+            await subject.tokenizeWith3DSRegulationCheck(billingAddress, merchantAccountIdMock);
+
+            expect(cardFields.tokenize)
+                .toHaveBeenCalledWith({
+                    authenticationInsight: {
+                        merchantAccountId: merchantAccountIdMock,
+                    },
+                    billingAddress: {
+                        countryName: billingAddress.country,
+                        postalCode: billingAddress.postalCode,
+                        streetAddress: billingAddress.address1,
+                    },
+                    cardholderName: 'Foobar',
+                });
+        });
+
+        it('returns invalid form error when tokenizing with invalid form data', async () => {
+            await subject.initialize(formOptions);
+
+            jest.spyOn(cardFields, 'tokenize')
+                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+
+            try {
+                await subject.tokenizeWith3DSRegulationCheck(getBillingAddress(), '100000');
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentInvalidFormError);
+            }
+        });
+
+        it('throws error if trying to tokenize before initialization', async () => {
+            try {
+                await subject.tokenizeWith3DSRegulationCheck(getBillingAddress(), '100000');
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+    });
+
+    describe('card fields events notifications', () => {
+        let handleFocus: jest.Mock;
+        let handleBlur: jest.Mock;
+        let handleEnter: jest.Mock;
         let handleCardTypeChange: jest.Mock;
+        let handleValidate: jest.Mock;
 
         beforeEach(async () => {
+            handleFocus = jest.fn();
+            handleBlur = jest.fn();
+            handleEnter = jest.fn();
             handleCardTypeChange = jest.fn();
+            handleValidate = jest.fn();
 
             await subject.initialize({
                 ...formOptions,
+                onFocus: handleFocus,
+                onBlur: handleBlur,
+                onEnter: handleEnter,
                 onCardTypeChange: handleCardTypeChange,
+                onValidate: handleValidate,
             });
+        });
+
+        it('notifies when field receives focus', () => {
+            cardFieldsEventEmitter.emit('focus', { emittedBy: 'cvv' });
+            expect(handleFocus).toHaveBeenCalledWith({ fieldType: 'cardCode' });
+        });
+
+        it('notifies when field loses focus', () => {
+            cardFieldsEventEmitter.emit('blur', { emittedBy: 'cvv' });
+            expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode' });
+        });
+
+        it('notifies when input receives submit event', () => {
+            cardFieldsEventEmitter.emit('inputSubmitRequest', { emittedBy: 'cvv' });
+            expect(handleEnter).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when card number changes', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }] });
-
-            expect(handleCardTypeChange)
-                .toHaveBeenCalledWith({ cardType: 'visa' });
+            expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'visa' });
         });
 
         it('notifies when card number changes and type is master-card', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'master-card' }] });
-
-            expect(handleCardTypeChange)
-                .toHaveBeenCalledWith({ cardType: 'mastercard' });
+            expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'mastercard' });
         });
 
         it('notifies when card number changes and type of card is not yet known', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }, { type: 'master-card' }] });
-
-            expect(handleCardTypeChange)
-                .toHaveBeenCalledWith({ cardType: undefined });
-        });
-    });
-
-    it('notifies when there are validation errors', async () => {
-        const handleValidate = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onValidate: handleValidate,
+            expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: undefined });
         });
 
-        cardFieldsEventEmitter.emit('validityChange', {
-            fields: {
-                cvv: { isValid: false },
-                number: { isValid: false },
-                expirationDate: { isValid: false },
-            },
-        });
-
-        expect(handleValidate)
-            .toHaveBeenCalledWith({
-                errors: {
-                    cardCode: [{
-                        fieldType: 'cardCode',
-                        message: 'Invalid card code',
-                        type: 'invalid_card_code',
-                    }],
-                    cardNumber: [{
-                        fieldType: 'cardNumber',
-                        message: 'Invalid card number',
-                        type: 'invalid_card_number',
-                    }],
-                    cardExpiry: [{
-                        fieldType: 'cardExpiry',
-                        message: 'Invalid card expiry',
-                        type: 'invalid_card_expiry',
-                    }],
+        it('notifies when there are validation errors', () => {
+            cardFieldsEventEmitter.emit('validityChange', {
+                fields: {
+                    cvv: { isValid: false },
+                    number: { isValid: false },
+                    expirationDate: { isValid: false },
                 },
-                isValid: false,
             });
-    });
 
-    it('notifies when tokenizing with invalid form data', async () => {
-        const handleValidate = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onValidate: handleValidate,
-        });
-
-        jest.spyOn(cardFields, 'tokenize')
-            .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
-
-        try {
-            await subject.tokenize(getBillingAddress());
-        } catch (error) {
             expect(handleValidate)
                 .toHaveBeenCalledWith({
                     errors: {
                         cardCode: [{
                             fieldType: 'cardCode',
-                            message: 'CVV is required',
-                            type: 'required',
+                            message: 'Invalid card code',
+                            type: 'invalid_card_code',
                         }],
                         cardNumber: [{
                             fieldType: 'cardNumber',
-                            message: 'Credit card number is required',
-                            type: 'required',
+                            message: 'Invalid card number',
+                            type: 'invalid_card_number',
                         }],
                         cardExpiry: [{
                             fieldType: 'cardExpiry',
-                            message: 'Expiration date is required',
-                            type: 'required',
+                            message: 'Invalid card expiry',
+                            type: 'invalid_card_expiry',
                         }],
                     },
                     isValid: false,
                 });
-        }
-    });
-
-    it('notifies when there are no more validation errors', async () => {
-        const handleValidate = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onValidate: handleValidate,
         });
 
-        cardFieldsEventEmitter.emit('validityChange', {
-            fields: {
-                cvv: { isValid: true },
-                number: { isValid: true },
-                expirationDate: { isValid: true },
-            },
+        it('notifies when there are no more validation errors', () => {
+            cardFieldsEventEmitter.emit('validityChange', {
+                fields: {
+                    cvv: { isValid: true },
+                    number: { isValid: true },
+                    expirationDate: { isValid: true },
+                },
+            });
+
+            expect(handleValidate)
+                .toHaveBeenCalledWith({
+                    errors: {
+                        cardCode: undefined,
+                        cardNumber: undefined,
+                        cardExpiry: undefined,
+                    },
+                    isValid: true,
+                });
         });
 
-        expect(handleValidate)
-            .toHaveBeenCalledWith({
-                errors: {
-                    cardCode: undefined,
-                    cardNumber: undefined,
-                    cardExpiry: undefined,
-                },
-                isValid: true,
-            });
-    });
+        it('notifies when tokenizing with invalid form data', async () => {
+            jest.spyOn(cardFields, 'tokenize')
+                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
 
-    it('notifies when tokenizing with valid form data', async () => {
-        const handleValidate = jest.fn();
-
-        await subject.initialize({
-            ...formOptions,
-            onValidate: handleValidate,
+            try {
+                await subject.tokenize(getBillingAddress());
+            } catch (error) {
+                expect(handleValidate)
+                    .toHaveBeenCalledWith({
+                        errors: {
+                            cardCode: [{
+                                fieldType: 'cardCode',
+                                message: 'CVV is required',
+                                type: 'required',
+                            }],
+                            cardNumber: [{
+                                fieldType: 'cardNumber',
+                                message: 'Credit card number is required',
+                                type: 'required',
+                            }],
+                            cardExpiry: [{
+                                fieldType: 'cardExpiry',
+                                message: 'Expiration date is required',
+                                type: 'required',
+                            }],
+                        },
+                        isValid: false,
+                    });
+            }
         });
 
-        await subject.tokenize(getBillingAddress());
-
-        expect(handleValidate)
-            .toHaveBeenCalledWith({
-                errors: {
-                    cardCode: undefined,
-                    cardNumber: undefined,
-                    cardExpiry: undefined,
-                },
-                isValid: true,
-            });
-    });
-
-    it('tokenizes data through hosted fields', async () => {
-        await subject.initialize(formOptions);
-
-        const billingAddress = getBillingAddress();
-        const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
-
-        cardNameInput.value = 'Foobar';
-
-        await subject.tokenize(billingAddress);
-
-        expect(cardFields.tokenize)
-            .toHaveBeenCalledWith({
-                billingAddress: {
-                    countryName: billingAddress.country,
-                    postalCode: billingAddress.postalCode,
-                    streetAddress: billingAddress.address1,
-                },
-                cardholderName: 'Foobar',
-            });
-    });
-
-    it('returns invalid form error when tokenizing with invalid form data', async () => {
-        await subject.initialize(formOptions);
-
-        jest.spyOn(cardFields, 'tokenize')
-            .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
-
-        try {
+        it('notifies when tokenizing with valid form data', async () => {
             await subject.tokenize(getBillingAddress());
-        } catch (error) {
-            expect(error).toBeInstanceOf(PaymentInvalidFormError);
-        }
-    });
 
-    it('tokenizes data through hosted fields for stored card verification', async () => {
-        await subject.initialize(formOptions);
-
-        const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
-
-        cardNameInput.value = 'Foobar';
-
-        await subject.tokenizeForStoredCardVerification();
-
-        expect(cardFields.tokenize)
-            .toHaveBeenCalledWith({
-                cardholderName: 'Foobar',
-            });
-    });
-
-    it('throws error if trying to tokenize before initialization', async () => {
-        try {
-            await subject.tokenize(getBillingAddress());
-        } catch (error) {
-            expect(error).toBeInstanceOf(NotInitializedError);
-        }
+            expect(handleValidate)
+                .toHaveBeenCalledWith({
+                    errors: {
+                        cardCode: undefined,
+                        cardNumber: undefined,
+                        cardExpiry: undefined,
+                    },
+                    isValid: true,
+                });
+        });
     });
 });

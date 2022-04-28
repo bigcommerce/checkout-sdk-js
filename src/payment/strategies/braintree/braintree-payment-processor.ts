@@ -33,7 +33,11 @@ export default class BraintreePaymentProcessor {
 
     initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
         this._braintreeSDKCreator.initialize(clientToken);
-        this._threeDSecureOptions = options && options.threeDSecure;
+        this._threeDSecureOptions = options?.threeDSecure;
+    }
+
+    deinitialize(): Promise<void> {
+        return this._braintreeSDKCreator.teardown();
     }
 
     preloadPaypal(): Promise<BraintreePaypal> {
@@ -48,13 +52,10 @@ export default class BraintreePaymentProcessor {
         return { nonce: creditCards[0].nonce };
     }
 
-    async verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<BraintreeVerifyPayload> {
-        const [{ nonce }, threeDSecure] = await Promise.all([
-            this.tokenizeCard(payment, billingAddress),
-            this._braintreeSDKCreator.get3DS(),
-        ]);
+    async verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
+        const { nonce } = await this.tokenizeCard(payment, billingAddress);
 
-        return this._present3DSChallenge(threeDSecure, amount, nonce);
+        return this.challenge3DSVerification(nonce, amount);
     }
 
     paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
@@ -101,12 +102,12 @@ export default class BraintreePaymentProcessor {
             .then(([paymentData, { deviceData }]) => ({ ...paymentData, deviceSessionId: deviceData }));
     }
 
-    deinitialize(): Promise<void> {
-        return this._braintreeSDKCreator.teardown();
+    async initializeHostedForm(options: BraintreeFormOptions): Promise<void> {
+        return await this._braintreeHostedForm.initialize(options);
     }
 
-    async initializeHostedForm(options: BraintreeFormOptions): Promise<boolean> {
-        return await this._braintreeHostedForm.initialize(options);
+    isInitializedHostedForm(): boolean {
+        return this._braintreeHostedForm.isInitialized();
     }
 
     async deinitializeHostedForm(): Promise<void> {
@@ -122,10 +123,23 @@ export default class BraintreePaymentProcessor {
     }
 
     async verifyCardWithHostedForm(billingAddress: Address, amount: number): Promise<NonceInstrument> {
-        const [{ nonce }, threeDSecure] = await Promise.all([
-            this._braintreeHostedForm.tokenize(billingAddress),
-            this._braintreeSDKCreator.get3DS(),
-        ]);
+        const { nonce } = await this._braintreeHostedForm.tokenize(billingAddress);
+
+        return this.challenge3DSVerification(nonce, amount);
+    }
+
+    async verifyCardWithHostedFormAnd3DSCheck(billingAddress: Address, amount: number, merchantAccountId: string): Promise<NonceInstrument> {
+        const { authenticationInsight, nonce } = await this._braintreeHostedForm.tokenizeWith3DSRegulationCheck(billingAddress, merchantAccountId);
+
+        if (authenticationInsight?.regulationEnvironment === 'psd2') {
+            return this.challenge3DSVerification(nonce, amount);
+        }
+
+        return { nonce };
+    }
+
+    async challenge3DSVerification(nonce: string, amount: number): Promise<NonceInstrument> {
+        const threeDSecure = await this._braintreeSDKCreator.get3DS();
 
         return this._present3DSChallenge(threeDSecure, amount, nonce);
     }
@@ -156,6 +170,7 @@ export default class BraintreePaymentProcessor {
                     addFrame(error, iframe, cancelVerifyCard);
                 },
                 amount: Number(roundedAmount),
+                challengeRequested: true,
                 nonce,
                 removeFrame,
                 onLookupComplete: (_data, next) => {

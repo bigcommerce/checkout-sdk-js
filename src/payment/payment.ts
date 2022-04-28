@@ -24,7 +24,6 @@ export type PaymentInstrument = (
     ThreeDSVaultedInstrument |
     VaultedInstrument |
     VaultedInstrument & WithHostedFormNonce |
-    VaultedInstrumentWithNonceVerification |
     WithAccountCreation
 );
 
@@ -95,11 +94,6 @@ export interface VaultedInstrument {
     instrumentId: string;
     ccCvv?: string;
     ccNumber?: string;
-}
-
-export interface VaultedInstrumentWithNonceVerification {
-    instrumentId: string;
-    nonce: string;
 }
 
 export interface ThreeDSVaultedInstrument extends VaultedInstrument {
