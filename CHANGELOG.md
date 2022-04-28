@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.241.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.5...v1.241.0) (2022-04-28)
+
+
+### Features
+
+* **checkout:** INT-5273 Non-Default Shipping Method Selection On Cart Page Is Not Persisted to Apple Pay ([cded620](https://github.com/bigcommerce/checkout-sdk-js/commit/cded620bee137dcb4947d134494429901983cab0))
+
 ### [1.240.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.240.4...v1.240.5) (2022-04-27)
 
 
