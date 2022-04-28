@@ -66,7 +66,7 @@
     "iframe-resizer": "^3.6.2",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.15",
-    "messageformat": "2.1.0",
+    "messageformat": "^2.3.0",
     "query-string": "^7.0.1",
     "reselect": "^4.1.5",
     "rxjs": "^6.5.3",
@@ -97,16 +97,16 @@
     "source-map-loader": "^0.2.4",
     "standard-version": "^8.0.1",
     "ts-jest": "^24.1.0",
-    "ts-loader": "^6.1.2",
+    "ts-loader": "^9.2.9",
     "tslint": "^5.18.0",
     "typedoc": "^0.17.7",
     "typedoc-plugin-markdown": "^2.3.1",
     "typescript": "^3.9.3",
-    "webpack": "^4.41.0",
-    "webpack-assets-manifest": "^3.1.1",
-    "webpack-bundle-analyzer": "^3.5.1",
-    "webpack-cli": "^3.3.9",
-    "webpack-node-externals": "^1.7.2"
+    "webpack": "^5.72.0",
+    "webpack-assets-manifest": "^5.1.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-node-externals": "^3.0.0"
   },
   "standard-version": {
     "scripts": {
