@@ -5,12 +5,12 @@ import { catchError, toArray } from 'rxjs/operators';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { PaymentMethodInvalidError } from './errors';
 import PaymentMethod from './payment-method';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import { PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { getPaymentMethod, getPaymentMethods, getPaymentMethodsMeta } from './payment-methods.mock';
-import {PaymentMethodInvalidError} from "./errors";
 
 describe('PaymentMethodActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;

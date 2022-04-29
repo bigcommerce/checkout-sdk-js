@@ -5,10 +5,10 @@ import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
 import { PaymentMethod } from '.';
+import { PaymentMethodInvalidError } from './errors';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { isApplePayWindow } from './strategies/apple-pay';
-import {PaymentMethodInvalidError} from "./errors";
 
 const APPLEPAYID = 'applepay';
 
