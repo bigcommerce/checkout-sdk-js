@@ -10,6 +10,7 @@ import PaymentMethodActionCreator from './payment-method-action-creator';
 import { PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { getPaymentMethod, getPaymentMethods, getPaymentMethodsMeta } from './payment-methods.mock';
+import {PaymentMethodInvalidError} from "./errors";
 
 describe('PaymentMethodActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -77,6 +78,25 @@ describe('PaymentMethodActionCreator', () => {
             expect(actions).toEqual([
                 { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
                 { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: errorResponse, error: true },
+            ]);
+        });
+
+        it('throws PaymentMethodInvalidError if payment methods list is an empty string', async () => {
+            jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
+                .mockReturnValue(Promise.resolve({...paymentMethodsResponse, body: ''}));
+
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await paymentMethodActionCreator.loadPaymentMethods()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: new PaymentMethodInvalidError(), error: true },
             ]);
         });
     });

@@ -8,6 +8,7 @@ import { PaymentMethod } from '.';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { isApplePayWindow } from './strategies/apple-pay';
+import {PaymentMethodInvalidError} from "./errors";
 
 const APPLEPAYID = 'applepay';
 
@@ -53,12 +54,16 @@ export default class PaymentMethodActionCreator {
     }
 
     private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
-        return methods.filter(method => {
-            if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
-                return false;
-            }
+        try {
+            return methods.filter(method => {
+                if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
+                    return false;
+                }
 
-            return true;
-        });
+                return true;
+            });
+        } catch {
+            throw new PaymentMethodInvalidError();
+        }
     }
 }
