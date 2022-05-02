@@ -1,11 +1,11 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { filter } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
 import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
 import { PaymentMethod } from '.';
-import { PaymentMethodInvalidError } from './errors';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { isApplePayWindow } from './strategies/apple-pay';
@@ -27,8 +27,9 @@ export default class PaymentMethodActionCreator {
                         deviceSessionId: response.headers['x-device-session-id'],
                         sessionHash: response.headers['x-session-hash'],
                     };
-
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, this._filterApplePay(response.body), meta));
+                    const methods = response.body;
+                    const filteredMethods = Array.isArray(methods) ? this._filterApplePay(methods) : methods;
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, filteredMethods, meta));
                     observer.complete();
                 })
                 .catch(response => {
@@ -54,16 +55,13 @@ export default class PaymentMethodActionCreator {
     }
 
     private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
-        try {
-            return methods.filter(method => {
-                if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
-                    return false;
-                }
 
-                return true;
-            });
-        } catch {
-            throw new PaymentMethodInvalidError();
-        }
+        return filter(methods, method => {
+            if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
+                return false;
+            }
+
+            return true;
+        });
     }
 }
