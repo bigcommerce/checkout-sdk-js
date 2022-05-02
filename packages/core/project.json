@@ -3,15 +3,25 @@
   "sourceRoot": "packages/core/src",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "main": "packages/core/bundles/checkout-sdk.ts",
-        "outputPath": "build/packages/core",
-        "tsConfig": "packages/core/tsconfig.lib.json",
-        "webpackConfig": "packages/core/webpack.config.js"
+          "command": "webpack"
+      }
+    },
+    "build-cdn": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+          "parallel": false,
+          "commands": [
+            "webpack --config webpack-cdn.config.js --config-name umd",
+            "webpack --config webpack-cdn.config.js --config-name umd-loader"
+          ]
+      }
+    },
+    "prebundle-dts": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+          "command": "tsc --outDir temp ./packages/core/tsconfig.json --declaration"
       }
     },
     "lint": {
