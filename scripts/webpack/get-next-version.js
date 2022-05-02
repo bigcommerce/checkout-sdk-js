@@ -1,10 +1,8 @@
-const path = require('path');
 const { execSync } = require('child_process');
 const conventionalRecommendedBump = require('conventional-recommended-bump');
 const semver = require('semver');
 
-const packageJsonPath = path.join(__dirname, '../../../../', 'package.json')
-const packageJson = require(packageJsonPath);
+const packageJson = require('../../package.json');
 
 function getNextVersion() {
     return new Promise((resolve, reject) => {

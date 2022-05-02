@@ -3,7 +3,7 @@ const { DefinePlugin } = require('webpack');
 
 const { getNextVersion } = require('./scripts/webpack');
 
-const srcPath = path.join(__dirname, 'src');
+const srcPath = path.join(__dirname, 'packages/core/src');
 
 const libraryName = 'checkoutKit';
 
@@ -17,6 +17,9 @@ const libraryEntries = {
 
 async function getBaseConfig() {
     return {
+        stats: {
+            errorDetails: false,
+        },
         devtool: 'source-map',
         mode: 'production',
         resolve: {
