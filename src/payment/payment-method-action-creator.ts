@@ -29,6 +29,7 @@ export default class PaymentMethodActionCreator {
                     };
                     const methods = response.body;
                     const filteredMethods = Array.isArray(methods) ? this._filterApplePay(methods) : methods;
+
                     observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, filteredMethods, meta));
                     observer.complete();
                 })

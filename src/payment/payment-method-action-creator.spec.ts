@@ -5,7 +5,6 @@ import { catchError, toArray } from 'rxjs/operators';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { PaymentMethodInvalidError } from './errors';
 import PaymentMethod from './payment-method';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import { PaymentMethodActionType } from './payment-method-actions';
