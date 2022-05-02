@@ -1,4 +1,5 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { filter } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
 import { cachableAction, ActionOptions } from '../common/data-store';
@@ -26,8 +27,10 @@ export default class PaymentMethodActionCreator {
                         deviceSessionId: response.headers['x-device-session-id'],
                         sessionHash: response.headers['x-session-hash'],
                     };
+                    const methods = response.body;
+                    const filteredMethods = Array.isArray(methods) ? this._filterApplePay(methods) : methods;
 
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, this._filterApplePay(response.body), meta));
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, filteredMethods, meta));
                     observer.complete();
                 })
                 .catch(response => {
@@ -53,7 +56,8 @@ export default class PaymentMethodActionCreator {
     }
 
     private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
-        return methods.filter(method => {
+
+        return filter(methods, method => {
             if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
                 return false;
             }
