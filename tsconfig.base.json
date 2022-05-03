@@ -23,7 +23,7 @@
     "baseUrl": ".",
     "paths": {
       "@bigcommerce/checkout-sdk/core": [
-        "packages/core/src/index.ts"
+        "packages/core/src/bundles/index.ts"
       ]
     }
   }
