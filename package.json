@@ -35,7 +35,7 @@
     "prebundle-dts": "npx nx run core:prebundle-dts",
     "bundle-dts": "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
     "postbundle-dts": "rm -rf temp",
-    "docs": "typedoc --plugin typedoc-plugin-markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --hideSources dist/checkout-sdk.d.ts",
+    "docs": "typedoc --plugin typedoc-plugin-markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --hideSources --tsconfig ./packages/core/tsconfig.json  dist/checkout-sdk.d.ts",
     "lint": "eslint 'src/**/*.ts' && tsc --noEmit",
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
