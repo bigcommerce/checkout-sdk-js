@@ -7,13 +7,5 @@
       "files": [
         "src/common/types/card-validator.d.ts",
         "src/common/types/webpack.d.ts"
-    ],
-    "references": [
-        {
-            "path": "./tsconfig.lib.json"
-        },
-        {
-            "path": "./tsconfig.spec.json"
-        }
     ]
 }
