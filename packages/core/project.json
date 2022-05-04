@@ -8,6 +8,12 @@
           "command": "webpack --config webpack.config.js"
       }
     },
+    "build-watch": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+          "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
+      }
+    },
     "build-cdn": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
@@ -29,6 +35,18 @@
       }
     },
     "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "packages/core",
+        "parallel": false,
+        "commands": [
+          "eslint 'src/**/*.ts'",
+          "tsc --noEmit"
+        ]
+      }
+    },
+    "lint-new": {
+      "_comment": "This cannot be used right now since we need to upgrade eslint to 7.6 or higher, till then use npm run lint",
       "executor": "@nrwl/linter:eslint",
       "outputs": [
         "{options.outputFile}"
