@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@bigcommerce/checkout-sdk/core": [
+        "packages/core/src/index.ts"
+      ]
+    }
+  },
+  "extends": "../../../packages/core/tsconfig.lib.json"
+}
