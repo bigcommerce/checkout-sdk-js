@@ -31,6 +31,8 @@ const APM_REDIRECT = [
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeUPEClient;
     private _stripeElements?: StripeElements;
+    private _isMounted: boolean = false;
+    private _unsubscribe?: (() => void);
 
     constructor(
         private _store: CheckoutStore,
@@ -51,68 +53,40 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to initialize payment because "gatewayId" argument is not provided.');
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage } } = paymentMethod;
-
-        if (!paymentMethod.clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        this._stripeUPEClient = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
-        let appearance: StripeUPEAppearanceOptions | undefined;
-        if (stripeupe.style) {
-            const styles = stripeupe.style;
-            appearance = {
-                variables: {
-                    colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
-                    colorText: styles.labelText,
-                    colorDanger: styles.fieldErrorText,
-                    colorTextSecondary: styles.labelText,
-                    colorTextPlaceholder: styles.fieldPlaceholderText,
-                    colorIcon: styles.fieldPlaceholderText,
-                },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                },
-            };
-        }
-
-        this._stripeElements = this._stripeElements ?? this._stripeUPEClient.elements({
-            clientSecret: paymentMethod.clientToken,
-            locale: formatLocale(shopperLanguage),
-            appearance,
-        });
-
-        const stripeElement: StripeElement = this._stripeElements.getElement(StripeStringConstants.PAYMENT) || this._stripeElements.create(StripeStringConstants.PAYMENT,
-        {
-            fields: {
-                billingDetails: {
-                    email: StripeStringConstants.NEVER,
-                    address: {
-                        country: StripeStringConstants.NEVER,
-                        postalCode: StripeStringConstants.NEVER,
-                        state: StripeStringConstants.NEVER,
-                        city: StripeStringConstants.NEVER,
-                    },
-                },
+        this._unsubscribe = await this._store.subscribe(
+            async _state => {
+                const payment = this._stripeElements?.getElement(StripeStringConstants.PAYMENT);
+                if (payment) {
+                    let error;
+                    await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`)).catch(err => error = err);
+                    if (error) {
+                        if (this._isMounted) {
+                            payment.unmount();
+                            this._isMounted = false;
+                        }
+                        stripeupe.onError?.(error);
+                    } else {
+                        if (!this._isMounted) {
+                            payment.mount(`#${stripeupe.containerId}`);
+                            this._isMounted = true;
+                        }
+                    }
+                } else {
+                    this._loadStripeElement(stripeupe.containerId, stripeupe.style, gatewayId, methodId)
+                        .catch(error => stripeupe.onError?.(error));
+                }
             },
-            wallets: {
-                applePay: StripeStringConstants.NEVER,
-                googlePay: StripeStringConstants.NEVER,
-            },
-        });
+            state => {
+                const checkout = state.checkout.getCheckout();
 
-        try {
-            stripeElement.mount(`#${stripeupe.containerId}`);
-        } catch (error) {
-            throw new InvalidArgumentError('Unable to mount Stripe component without valid container ID.');
-        }
+                return checkout && checkout.outstandingBalance;
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.coupons;
+            }
+        );
 
         return Promise.resolve(this._store.getState());
     }
@@ -182,6 +156,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
         this._stripeElements?.getElement(StripeStringConstants.PAYMENT)?.unmount();
 
         return Promise.resolve(this._store.getState());
@@ -235,6 +212,72 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
             return await this._processVaultedAdditionalAction(error, methodId, shouldSetAsDefaultInstrument);
+        }
+    }
+
+    private async _loadStripeElement(containerId: string, style: { [key: string]: string } | undefined, gatewayId: string, methodId: string) {
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage } } = paymentMethod;
+
+        if (!paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        this._stripeUPEClient = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
+        let appearance: StripeUPEAppearanceOptions | undefined;
+        if (style) {
+            const styles = style;
+            appearance = {
+                variables: {
+                    colorPrimary: styles.fieldInnerShadow,
+                    colorBackground: styles.fieldBackground,
+                    colorText: styles.labelText,
+                    colorDanger: styles.fieldErrorText,
+                    colorTextSecondary: styles.labelText,
+                    colorTextPlaceholder: styles.fieldPlaceholderText,
+                    colorIcon: styles.fieldPlaceholderText,
+                },
+                rules: {
+                    '.Input': {
+                        borderColor: styles.fieldBorder,
+                        color: styles.fieldText,
+                        boxShadow: styles.fieldInnerShadow,
+                    },
+                },
+            };
+        }
+
+        this._stripeElements = this._stripeElements ?? this._stripeUPEClient.elements({
+            clientSecret: paymentMethod.clientToken,
+            locale: formatLocale(shopperLanguage),
+            appearance,
+        });
+
+        const stripeElement: StripeElement = this._stripeElements.getElement(StripeStringConstants.PAYMENT) || this._stripeElements.create(StripeStringConstants.PAYMENT,
+            {
+                fields: {
+                    billingDetails: {
+                        email: StripeStringConstants.NEVER,
+                        address: {
+                            country: StripeStringConstants.NEVER,
+                            postalCode: StripeStringConstants.NEVER,
+                            state: StripeStringConstants.NEVER,
+                            city: StripeStringConstants.NEVER,
+                        },
+                    },
+                },
+                wallets: {
+                    applePay: StripeStringConstants.NEVER,
+                    googlePay: StripeStringConstants.NEVER,
+                },
+            });
+
+        try {
+            stripeElement.mount(`#${containerId}`);
+            this._isMounted = true;
+        } catch (error) {
+            throw new InvalidArgumentError('Unable to mount Stripe component without valid container ID.');
         }
     }
 
