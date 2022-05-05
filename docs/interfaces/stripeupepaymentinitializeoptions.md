@@ -33,6 +33,10 @@ service.initializePayment({
 * [containerId](stripeupepaymentinitializeoptions.md#containerid)
 * [style](stripeupepaymentinitializeoptions.md#optional-style)
 
+### Methods
+
+* [onError](stripeupepaymentinitializeoptions.md#optional-onerror)
+
 ## Properties
 
 ###  containerId
@@ -48,3 +52,17 @@ ___
 • **style**? : *undefined | object*
 
 Checkout styles from store theme
+
+## Methods
+
+### `Optional` onError
+
+▸ **onError**(`error?`: [Error](amazonpaywidgeterror.md#error)): *void*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`error?` | [Error](amazonpaywidgeterror.md#error) |
+
+**Returns:** *void*

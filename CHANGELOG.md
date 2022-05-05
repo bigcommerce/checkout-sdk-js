@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.243.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.242.2...v1.243.0) (2022-05-05)
+
+
+### Features
+
+* **payment:** INT-5754 Stripe UPE update payment intent ([8c7fc8e](https://github.com/bigcommerce/checkout-sdk-js/commit/8c7fc8ee9a1f386cf19473c1f906b190e3f29192))
+
 ### [1.242.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.242.1...v1.242.2) (2022-05-02)
 
 

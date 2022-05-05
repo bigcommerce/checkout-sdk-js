@@ -6722,6 +6722,7 @@ declare interface StripeUPEPaymentInitializeOptions {
     style?: {
         [key: string]: string;
     };
+    onError?(error?: Error): void;
 }
 
 /**
