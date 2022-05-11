@@ -43,10 +43,10 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { clientToken, initializationData: { merchantId }, config: { is3dsEnabled, testMode } } = paymentMethod;
+        const { clientToken, initializationData: { isTestModeFlagEnabled = false, merchantId }, config: { is3dsEnabled } } = paymentMethod;
 
         if (is3dsEnabled) {
-            this._threeDSjs = await this._CBAMGPSScriptLoader.load(testMode);
+            this._threeDSjs = await this._CBAMGPSScriptLoader.load(isTestModeFlagEnabled);
 
             if (!this._threeDSjs) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
