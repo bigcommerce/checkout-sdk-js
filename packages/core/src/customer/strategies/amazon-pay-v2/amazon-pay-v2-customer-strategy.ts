@@ -116,7 +116,10 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
                 AmazonPayV2PayOptions.PayAndShip,
             createCheckoutSession: {
                 method: checkoutSessionMethod,
-                url: `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
+                // tslint:disable-next-line: no-string-literal
+                url: config.checkoutSettings.features['INT-5826.amazon_relative_url']
+                    ? `/remote-checkout/${methodId}/payment-session`
+                    : `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
                 extractAmazonCheckoutSessionId,
             },
             placement: AmazonPayV2Placement.Checkout,

@@ -158,9 +158,37 @@ describe('AmazonPayV2ButtonStrategy', () => {
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
         });
 
-        it('loads the checkout and creates the button if amazonpay is not provided', async () => {
+        it('loads the checkout and creates the button if AmazonPayV2ButtonInitializeOptions is not provided', async () => {
             const expectedOptions = getAmazonPayV2ButtonParamsMock();
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
+            expectedOptions.placement = AmazonPayV2Placement.Cart;
+
+            jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout');
+
+            checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedAmazonPay);
+
+            await strategy.initialize(checkoutButtonOptions);
+
+            expect(checkoutActionCreator.loadDefaultCheckout).toBeCalled();
+            expect(paymentProcessor.createButton).toHaveBeenCalledWith('#amazonpayCheckoutButton', expectedOptions);
+        });
+
+        it('creates the button with a realtive url if AmazonPayV2ButtonInitializeOptions is not provided', async () => {
+            const config = getConfig();
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'INT-5826.amazon_relative_url': true,
+                        },
+                    },
+                });
+
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
             expectedOptions.placement = AmazonPayV2Placement.Cart;
 
             jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout');

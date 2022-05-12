@@ -106,6 +106,30 @@ describe('AmazonPayV2CustomerStrategy', () => {
             expect(paymentProcessor.createButton).toHaveBeenCalledWith('#amazonpayCheckoutButton', expectedOptions);
         });
 
+        it('creates the button with a relative checkout session url', async () => {
+            const config = getConfig();
+
+            jest.spyOn(store.getState().config, 'getStoreConfig')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'INT-5826.amazon_relative_url': true,
+                        },
+                    },
+                });
+
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
+
+            customerInitializeOptions = getAmazonPayV2CustomerInitializeOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+
+            expect(paymentProcessor.createButton).toHaveBeenCalledWith('#amazonpayCheckoutButton', expectedOptions);
+        });
+
         it('creates the button and validates if cart contains physical items', async () => {
             const expectedOptions = getAmazonPayV2ButtonParamsMock();
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;

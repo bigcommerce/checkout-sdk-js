@@ -175,6 +175,30 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
         });
 
+        it('creates the signin button with a relative url if no paymentToken is present on initializationData', async () => {
+            const config = getConfig();
+
+            jest.spyOn(store.getState().config, 'getStoreConfig')
+                .mockReturnValue({
+                    ...config.storeConfig,
+                    checkoutSettings: {
+                        ...config.storeConfig.checkoutSettings,
+                        features: {
+                            'INT-5826.amazon_relative_url': true,
+                        },
+                    },
+                });
+
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
+
+            await strategy.initialize(initializeOptions);
+
+            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
+            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
+            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
+        });
+
         it('fails to initialize the strategy if there is no payment method data', async () => {
             const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
             const state = { ...getCheckoutStoreState(), paymentMethods };
