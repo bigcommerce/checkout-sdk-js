@@ -5,13 +5,13 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, Chec
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
-import { getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
+import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions } from '../../../payment/strategies/amazon-pay-v2';
+import { getAmazonPayV2ButtonParamsMock, getPaymentMethodMockUndefinedMerchant } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
@@ -96,21 +96,28 @@ describe('AmazonPayV2CustomerStrategy', () => {
     describe('#initialize()', () => {
 
         it('creates the button', async () => {
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
+
             customerInitializeOptions = getAmazonPayV2CustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
 
-            expect(paymentProcessor.createButton).toHaveBeenCalled();
+            expect(paymentProcessor.createButton).toHaveBeenCalledWith('#amazonpayCheckoutButton', expectedOptions);
         });
 
         it('creates the button and validates if cart contains physical items', async () => {
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
+            expectedOptions.productType = AmazonPayV2PayOptions.PayOnly;
+
             customerInitializeOptions = getAmazonPayV2CustomerInitializeOptions();
             jest.spyOn(store.getState().cart, 'getCart')
-                .mockReturnValue({...store.getState().cart.getCart(), lineItems: {physicalItems: []}});
+                .mockReturnValue({ ...store.getState().cart.getCart(), lineItems: { physicalItems: [] } });
 
             await strategy.initialize(customerInitializeOptions);
 
-            expect(paymentProcessor.createButton).toHaveBeenCalled();
+            expect(paymentProcessor.createButton).toHaveBeenCalledWith('#amazonpayCheckoutButton', expectedOptions);
         });
 
         it('fails to initialize the strategy if no AmazonPayV2CustomerInitializeOptions is provided ', async () => {
