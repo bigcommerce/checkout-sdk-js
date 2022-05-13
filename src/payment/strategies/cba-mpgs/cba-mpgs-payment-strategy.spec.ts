@@ -150,6 +150,36 @@ describe('CBAMPGSPaymentStrategy', () => {
             expect(threeDSjs.isConfigured).toHaveBeenCalled();
         });
 
+        it('should initialize the strategy and load ThreeDSjs in production mode if `isTestModeFlagEnabled` is false', async () => {
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(false);
+        });
+
+        it('should initialize the strategy and load ThreeDSjs in sandbox mode if `isTestModeFlagEnabled` is true', async () => {
+            paymentMethod.initializationData.isTestModeFlagEnabled = true;
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(true);
+        });
+
+        it('should initialize the strategy and load ThreeDSjs in production mode if `isTestModeFlagEnabled` is undefined', async () => {
+            paymentMethod.initializationData.isTestModeFlagEnabled = undefined;
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(false);
+        });
+
+        it('should initialize the strategy and load ThreeDSjs in production mode if `isTestModeFlagEnabled` is not present', async () => {
+            delete paymentMethod.initializationData.isTestModeFlagEnabled;
+
+            await strategy.initialize({ methodId: paymentMethod.id });
+
+            expect(cbaMPGSScriptLoader.load).toHaveBeenCalledWith(false);
+        });
+
         it('should fail to initialize strategy if the script loader fails to load the script', () => {
             jest.spyOn(cbaMPGSScriptLoader, 'load')
                 .mockResolvedValue(undefined);

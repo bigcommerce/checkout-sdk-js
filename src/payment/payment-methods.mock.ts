@@ -905,6 +905,7 @@ export function getCBAMPGS(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         initializationData: {
+            isTestModeFlagEnabled: false,
             merchantId: 'ABC123',
         },
     };
