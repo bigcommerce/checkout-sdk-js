@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.244.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.243.0...v1.244.0) (2022-05-13)
+
+
+### Features
+
+* **checkout:** INT-5963 Check for feature flag when loading threeDS Script ([#1435](https://github.com/bigcommerce/checkout-sdk-js/issues/1435)) ([eeca0e4](https://github.com/bigcommerce/checkout-sdk-js/commit/eeca0e44937a1242e84c4897a48f8259767f4c09))
+
 ## [1.243.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.242.2...v1.243.0) (2022-05-05)
 
 
