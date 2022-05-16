@@ -18,7 +18,7 @@ export default class PaypalCommerceScriptLoader {
         this._validateParams(params, isProgressiveOnboardingAvailable);
 
         if (!this._window.paypalLoadScript) {
-            const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@1.0.2/dist/paypal.browser.min.js';
+            const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js';
 
             await this._scriptLoader.loadScript(scriptSrc, {async: true, attributes: {}});
 

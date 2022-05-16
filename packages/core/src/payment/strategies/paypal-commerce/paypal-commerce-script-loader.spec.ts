@@ -49,7 +49,7 @@ describe('PaypalCommerceScriptLoader', () => {
             await paypalLoader.loadPaypalCommerce(params);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://unpkg.com/@paypal/paypal-js@1.0.2/dist/paypal.browser.min.js',
+                'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js',
                 { async: true, attributes: {} }
             );
         });
