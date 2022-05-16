@@ -1,4 +1,4 @@
-module.exports = {
+{
     "extends": [
         "plugin:import/errors",
         "plugin:import/typescript",
@@ -8,15 +8,6 @@ module.exports = {
         "browser": true
     },
     "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": "./packages/core/tsconfig.json",
-        "tsconfigRootDir": __dirname,
-        "ecmaFeatures": {
-            "modules": true
-        },
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
     "plugins": [
         "@typescript-eslint/tslint"
     ],
