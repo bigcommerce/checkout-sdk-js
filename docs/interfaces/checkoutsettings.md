@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [checkoutBillingSameAsShippingEnabled](checkoutsettings.md#checkoutbillingsameasshippingenabled)
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [features](checkoutsettings.md#features)
@@ -38,6 +39,12 @@
 * [shippingQuoteFailedMessage](checkoutsettings.md#shippingquotefailedmessage)
 
 ## Properties
+
+###  checkoutBillingSameAsShippingEnabled
+
+• **checkoutBillingSameAsShippingEnabled**: *boolean*
+
+___
 
 ###  enableOrderComments
 

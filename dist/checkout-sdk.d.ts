@@ -2848,6 +2848,7 @@ declare interface CheckoutSettings {
     features: {
         [featureName: string]: boolean;
     };
+    checkoutBillingSameAsShippingEnabled: boolean;
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
