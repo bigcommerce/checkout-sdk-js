@@ -20,6 +20,7 @@ export function getConfig(): Config {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
                 features: {},
+                checkoutBillingSameAsShippingEnabled: true,
                 enableOrderComments: true,
                 enableTermsAndConditions: false,
                 guestCheckoutEnabled: true,
