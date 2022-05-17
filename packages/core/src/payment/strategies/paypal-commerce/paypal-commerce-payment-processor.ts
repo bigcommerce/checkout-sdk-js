@@ -1,6 +1,6 @@
 import { isNil, omitBy } from 'lodash';
 
-import { CheckoutStore } from '../../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { PaymentMethodClientUnavailableError } from '../../errors';
@@ -219,38 +219,42 @@ export default class PaypalCommercePaymentProcessor {
         const methodId = this._fundingSource;
 
         if (methodId && NON_INSTANT_PAYMENT_METHODS.indexOf(methodId) > -1) {
-            const gatewayId = this._gatewayId;
-            const paymentData =  {
-                formattedPayload: {
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: null,
-                    device_info: null,
-                    method_id: this._fundingSource,
-                    paypal_account: {
-                        order_id: this._orderId,
-                    },
-                },
-            };
-
-            const order = { useStoreCredit: false };
-            const paymentRequestOptions = {
-                gatewayId,
-                methodId,
-            };
-
-            await this._store.dispatch(this._orderActionCreator.submitOrder(
-                order,
-                { params: paymentRequestOptions }
-            ));
-
-            await this._store.dispatch(this._paymentActionCreator.submitPayment({
-                gatewayId,
-                methodId,
-                paymentData,
-            }));
+            await this._patchNonInstantPaymentMethods(methodId);
         }
 
         return orderId;
+    }
+
+    private async _patchNonInstantPaymentMethods(methodId: string): Promise<InternalCheckoutSelectors> {
+        const gatewayId = this._gatewayId;
+        const paymentData =  {
+            formattedPayload: {
+                vault_payment_instrument: null,
+                set_as_default_stored_instrument: null,
+                device_info: null,
+                method_id: methodId,
+                paypal_account: {
+                    order_id: this._orderId,
+                },
+            },
+        };
+
+        const order = { useStoreCredit: false };
+        const paymentRequestOptions = {
+            gatewayId,
+            methodId,
+        };
+
+        await this._store.dispatch(this._orderActionCreator.submitOrder(
+            order,
+            { params: paymentRequestOptions }
+        ));
+
+        return this._store.dispatch(this._paymentActionCreator.submitPayment({
+            gatewayId,
+            methodId,
+            paymentData,
+        }));
     }
 
     private _validateStyleParams = (style: PaypalButtonStyleOptions): PaypalButtonStyleOptions  => {
