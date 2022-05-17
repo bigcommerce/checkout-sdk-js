@@ -1,7 +1,7 @@
 import getEnvironment from './get-environment';
 
 describe('getEnvironment', () => {
-    let savedEnvironment: string;
+    let savedEnvironment: NodeJS.ProcessEnv;
     let savedProcess: any;
 
     beforeEach(() => {

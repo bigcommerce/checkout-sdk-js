@@ -1,10 +1,10 @@
 {
     "compiler": {
         "configType": "tsconfig",
-        "rootFolder": "."
+        "rootFolder": "./packages/core"
     },
     "project": {
-        "entryPointSourceFile": "temp/bundles/checkout-sdk.d.ts"
+        "entryPointSourceFile": "../../temp/bundles/checkout-sdk.d.ts"
     },
     "validationRules": {
         "missingReleaseTags": "allow"
