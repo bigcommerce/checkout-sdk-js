@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.245.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.244.2...v1.245.0) (2022-05-18)
+
+
+### Features
+
+* **payment:** PAYPAL-1409 added OXXO APM to paypalcommerce ([1a5ef86](https://github.com/bigcommerce/checkout-sdk-js/commit/1a5ef86926a14b41b2684753016141a0471ca9c3))
+* **payment:** PAYPAL-1420 add new creating flow for paypal oxxo ([fbf3f45](https://github.com/bigcommerce/checkout-sdk-js/commit/fbf3f45903afb5b9eafa4dbd7cdefa777a38fdad))
+* **payment:** PAYPAL-1420 changes after code review ([a9cc582](https://github.com/bigcommerce/checkout-sdk-js/commit/a9cc5825c1be3be2d42101a1ea87c188ad9bcf5d))
+
 ### [1.244.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.244.1...v1.244.2) (2022-05-17)
 
 ### [1.244.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.244.0...v1.244.1) (2022-05-16)
