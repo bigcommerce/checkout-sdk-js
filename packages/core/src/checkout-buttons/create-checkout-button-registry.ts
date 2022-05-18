@@ -53,7 +53,13 @@ export default function createCheckoutButtonRegistry(
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
-    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
+    const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
+    const paymentRequestSender = new PaymentRequestSender(paymentClient);
+    const paymentRequestTransformer = new PaymentRequestTransformer();
+    const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+    const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
+    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(

@@ -194,6 +194,7 @@ export interface PaypalCommerceSDKFunding {
     EPS: string;
     IDEAL: string;
     MYBANK: string;
+    OXXO: string;
     SOFORT: string;
     SEPA: string;
     BLIK: string;
@@ -201,6 +202,8 @@ export interface PaypalCommerceSDKFunding {
     VERKKOPANKKI: string;
     VENMO: string;
 }
+
+export const NON_INSTANT_PAYMENT_METHODS = ['oxxo'];
 
 export interface PaypalCommerceSDK {
     FUNDING: PaypalCommerceSDKFunding;

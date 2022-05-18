@@ -10,16 +10,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions,
-    ButtonsOptions,
-    ComponentsScriptType,
-    PaypalCommerceCreditCardPaymentInitializeOptions,
-    PaypalCommerceFundingKeyResolver,
-    PaypalCommerceInitializationData,
-    PaypalCommercePaymentInitializeOptions,
-    PaypalCommercePaymentProcessor,
-    PaypalCommerceRequestSender,
-    PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions, ButtonsOptions, ComponentsScriptType, NON_INSTANT_PAYMENT_METHODS, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptParams } from './index';
 
 const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
@@ -163,7 +154,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 },
             },
         };
-        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+        if (NON_INSTANT_PAYMENT_METHODS.indexOf(options.methodId) === -1) {
+            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        }
 
         return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
     }
@@ -181,7 +175,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     private _initializePollingMechanism(submitForm: () => void, gatewayId?: string, methodId?: any, paypalcommerce?: any ) {
-        if (!this._isAPM)  {
+        if (!this._isAPM || NON_INSTANT_PAYMENT_METHODS.indexOf(methodId) > -1)  {
             this._loadingIndicator?.hide();
 
             return;
