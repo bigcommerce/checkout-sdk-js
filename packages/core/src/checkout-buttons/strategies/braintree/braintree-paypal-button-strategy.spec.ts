@@ -138,6 +138,8 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(formPoster, 'postForm')
             .mockImplementation(() => {});
 
+        jest.spyOn(braintreeSDKCreator, 'getFraudnetDataCollector').mockReturnValue(Promise.resolve({deviceData: '{"correlation_id":"deviceData"}'}));
+
         (window as PaypalHostWindow).paypal = paypal;
 
         strategy = new BraintreePaypalButtonStrategy(
@@ -397,7 +399,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             payment_type: 'paypal',
             provider: 'braintreepaypal',
             action: 'set_external_checkout',
-            device_data: dataCollector.deviceData,
+            device_data: '{"correlation_id":"deviceData"}',
             nonce: 'NONCE',
             billing_address: JSON.stringify({
                 email: 'foo@bar.com',
@@ -443,7 +445,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             payment_type: 'paypal',
             provider: 'braintreepaypal',
             action: 'process_payment',
-            device_data: dataCollector.deviceData,
+            device_data: '{"correlation_id":"deviceData"}',
             nonce: 'NONCE',
             billing_address: JSON.stringify({
                 email: 'foo@bar.com',

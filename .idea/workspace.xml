@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/core/src/checkout-buttons/strategies/braintree/braintree-paypal-button-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/checkout-buttons/strategies/braintree/braintree-paypal-button-strategy.ts" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1yURJEuOKSUZeRJKjWDdg21whYD" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../checkout-js" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs.jest.jest_package" value="" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="PaypalCommerceButtonStrategy. //// calls getConsignments after order success" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/src/checkout-buttons/strategies/paypal-commerce/paypal-commerce-button-strategy.spec.ts" />
+      <test-names>
+        <test-name value="PaypalCommerceButtonStrategy" />
+        <test-name value=" //// calls getConsignments after order success" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest">
+      <config-file value="$PROJECT_DIR$/jest-config.js" />
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Jest.PaypalCommerceButtonStrategy. //// calls getConsignments after order success" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="70c0717c-e025-4f70-8417-5a3e10c4e061" name="Default Changelist" comment="" />
+      <created>1632304106355</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1632304106355</updated>
+      <workItem from="1632304107526" duration="1111000" />
+      <workItem from="1632322951345" duration="22920000" />
+      <workItem from="1632732411750" duration="1701000" />
+      <workItem from="1632739299168" duration="1110000" />
+      <workItem from="1632810728003" duration="990000" />
+      <workItem from="1632816729408" duration="358000" />
+      <workItem from="1632818297963" duration="1238000" />
+      <workItem from="1632839681321" duration="613000" />
+      <workItem from="1632905887931" duration="531000" />
+      <workItem from="1632909240911" duration="435000" />
+      <workItem from="1632910709639" duration="564000" />
+      <workItem from="1632915555427" duration="220000" />
+      <workItem from="1632915913855" duration="810000" />
+      <workItem from="1632918823744" duration="793000" />
+      <workItem from="1632990715791" duration="1701000" />
+      <workItem from="1633011593433" duration="490000" />
+      <workItem from="1633356181846" duration="2941000" />
+      <workItem from="1633416891709" duration="5564000" />
+      <workItem from="1633426991532" duration="329000" />
+      <workItem from="1633427328861" duration="227000" />
+      <workItem from="1633427558161" duration="8354000" />
+      <workItem from="1633500292376" duration="2260000" />
+      <workItem from="1633615965880" duration="2721000" />
+      <workItem from="1633690341699" duration="492000" />
+      <workItem from="1634018534003" duration="872000" />
+      <workItem from="1634022376845" duration="721000" />
+      <workItem from="1634029176415" duration="443000" />
+      <workItem from="1634108933033" duration="601000" />
+      <workItem from="1634115532457" duration="2301000" />
+      <workItem from="1634124646392" duration="272000" />
+      <workItem from="1634125997662" duration="4638000" />
+      <workItem from="1634727884400" duration="1569000" />
+      <workItem from="1634736561756" duration="7334000" />
+      <workItem from="1635408417636" duration="3253000" />
+      <workItem from="1635762782136" duration="27000" />
+      <workItem from="1635959213790" duration="643000" />
+      <workItem from="1635960087359" duration="3641000" />
+      <workItem from="1635971995206" duration="2818000" />
+      <workItem from="1636099881796" duration="30000" />
+      <workItem from="1636100105912" duration="2791000" />
+      <workItem from="1636111988480" duration="843000" />
+      <workItem from="1636378957689" duration="1824000" />
+      <workItem from="1636614406471" duration="13345000" />
+      <workItem from="1637135989896" duration="9956000" />
+      <workItem from="1637309329630" duration="599000" />
+      <workItem from="1637571795134" duration="4119000" />
+      <workItem from="1637673558095" duration="2798000" />
+      <workItem from="1637746431492" duration="2832000" />
+      <workItem from="1637848814436" duration="14986000" />
+      <workItem from="1638174187684" duration="2545000" />
+      <workItem from="1638349722014" duration="348000" />
+      <workItem from="1638953606054" duration="6197000" />
+      <workItem from="1639065514147" duration="19125000" />
+      <workItem from="1639729417695" duration="5758000" />
+      <workItem from="1642505630973" duration="136000" />
+      <workItem from="1642591403011" duration="10611000" />
+      <workItem from="1643034682676" duration="52458000" />
+      <workItem from="1649755276091" duration="47110000" />
+      <workItem from="1650448745560" duration="23733000" />
+      <workItem from="1650553442024" duration="5248000" />
+      <workItem from="1650627176275" duration="36501000" />
+      <workItem from="1651140162828" duration="18912000" />
+      <workItem from="1651236583273" duration="10200000" />
+      <workItem from="1651258978615" duration="20000" />
+      <workItem from="1651259012521" duration="27720000" />
+      <workItem from="1651663783715" duration="143875000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/payment/strategies/moneris/moneris-payment-strategy.spec.ts</url>
+          <line>513</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

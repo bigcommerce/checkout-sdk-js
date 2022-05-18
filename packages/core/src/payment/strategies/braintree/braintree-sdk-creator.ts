@@ -1,4 +1,5 @@
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaypalHostWindow } from '../paypal';
 
 import { BraintreeClient,
     BraintreeDataCollector,
@@ -35,6 +36,7 @@ export default class BraintreeSDKCreator {
     private _paypalcheckoutInstance?: PaypalClientInstance;
     private _venmoCheckoutInstance?: VenmoInstance;
     private _venmoCheckout?: VenmoCheckout;
+    private _window: PaypalHostWindow = window;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -55,6 +57,12 @@ export default class BraintreeSDKCreator {
         }
 
         return this._client;
+    }
+
+   async getFraudnetDataCollector() {
+        const client = await this.getClient();
+
+        return  this._window.braintree.dataCollector.create({client});
     }
 
     getPaypal(): Promise<BraintreePaypal> {

@@ -60,7 +60,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             venmoParentContainer,
         };
 
-        return Promise.all([
+        const promises = Promise.all([
             this._braintreeSDKCreator.getPaypalCheckout({currency: currency?.code}, (paypalCheckoutInstance: PaypalClientInstance) => this._renderButtons(paypalCheckoutInstance)),
             this._braintreeSDKCreator.getVenmoCheckout({isBraintreeVenmoEnabled: !!isVenmoEnabled}, (venmoCheckoutInstance: VenmoInstance): Promise<VenmoInstance> | void => this._renderVenmoButton(venmoCheckoutInstance)),
             this._braintreeSDKCreator.getPaypal(),
@@ -70,6 +70,11 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     this._paypalCheckout = paypalCheckout;
                 }
             });
+        const { deviceData } =  await this._braintreeSDKCreator.getFraudnetDataCollector();
+        this._addFraudnetScript(deviceData);
+        this._loadFraudnet();
+
+        return promises;
     }
 
     deinitialize(): Promise<void> {
@@ -79,6 +84,20 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         this._braintreeSDKCreator.teardown();
 
         return Promise.resolve();
+    }
+
+    private _addFraudnetScript(deviceData: string) {
+        const fraudnetScript = document.createElement('script');
+        fraudnetScript.type = 'application/json';
+        fraudnetScript.setAttribute('fncls', 'fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99');
+        fraudnetScript.innerHTML = `{"f":${deviceData}, "s":"CART_PAGE_BIGC"}`;
+        document.body.appendChild(fraudnetScript);
+    }
+
+    private _loadFraudnet() {
+        const script = document.createElement('script');
+        script.src = 'https://c.sandbox.paypal.com';
+        document.body.appendChild(script);
     }
 
     private _renderButtons(paypalCheckoutInstance: PaypalClientInstance) {
@@ -261,7 +280,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
         return Promise.all([
             paypalCheckoutInstance.tokenizePayment(data),
-            this._braintreeSDKCreator.getDataCollector({ paypal: true }),
+            this._braintreeSDKCreator.getFraudnetDataCollector(),
         ])
             .then(([payload, { deviceData }]) => {
                 this._formPoster.postForm('/checkout.php', {

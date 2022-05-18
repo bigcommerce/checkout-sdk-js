@@ -155,4 +155,5 @@ export interface PaypalExpressCheckoutOptions {
 
 export interface PaypalHostWindow extends Window {
     paypal?: PaypalSDK;
+    braintree?: any;
 }
