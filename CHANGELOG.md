@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.246.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.245.1...v1.246.0) (2022-05-19)
+
+
+### Features
+
+* **payment:** PAYPAL-1465 added extra check for braintree 3DS verification ([538616f](https://github.com/bigcommerce/checkout-sdk-js/commit/538616f8d96219961b8e0a313bb1d4a904a11be7))
+
 ### [1.245.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.245.0...v1.245.1) (2022-05-19)
 
 
