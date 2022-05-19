@@ -22,8 +22,11 @@
     "target": "es5",
     "baseUrl": ".",
     "paths": {
+      "@bigcommerce/checkout-sdk/payment-integration-service": [
+        "packages/payment-integration-service/src/index.ts"
+      ],
       "@bigcommerce/checkout-sdk/core": [
-        "packages/core/src/bundles/index.ts"
+        "packages/core/src/index.ts"
       ]
     }
   }
