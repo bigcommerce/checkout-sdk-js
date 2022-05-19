@@ -394,6 +394,21 @@ describe('BraintreePaymentProcessor', () => {
             expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
         });
 
+        it('verifies credit card with hosted form using 3DS if the card is unavailable', async () => {
+            jest.spyOn(braintreeHostedForm, 'tokenizeWith3DSRegulationCheck')
+                .mockReturnValue({
+                    authenticationInsight: {
+                        regulationEnvironment: 'unavailable',
+                    },
+                    nonce: 'tokenized_nonce',
+                });
+
+            const verifiedCard = await braintreePaymentProcessor.verifyCardWithHostedFormAnd3DSCheck(getBillingAddress(), 122, merchantAccountIdMock);
+            expect(braintreePaymentProcessor.challenge3DSVerification).toHaveBeenCalledWith('tokenized_nonce', 122);
+            expect(braintreeHostedForm.tokenizeWith3DSRegulationCheck).toHaveBeenCalledWith(getBillingAddress(), merchantAccountIdMock);
+            expect(verifiedCard).toEqual({ nonce: 'three_ds_nonce' });
+        });
+
         it('only tokenizes credit card with hosted form using 3DS if the card is unregulated', async () => {
             jest.spyOn(braintreeHostedForm, 'tokenizeWith3DSRegulationCheck')
                 .mockReturnValue({
