@@ -55,6 +55,7 @@ current checkout flow.
 * [stripeupe](paymentinitializeoptions.md#optional-stripeupe)
 * [stripev3](paymentinitializeoptions.md#optional-stripev3)
 * [timeout](paymentinitializeoptions.md#optional-timeout)
+* [worldpay](paymentinitializeoptions.md#optional-worldpay)
 
 ## Properties
 
@@ -390,3 +391,12 @@ ___
 Provide this option if you want to cancel or time out the request. If the
 timeout object completes before the request, the request will be
 cancelled.
+
+___
+
+### `Optional` worldpay
+
+• **worldpay**? : *[WorldpayPaymentInitializeOptions](worldpaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the Worldpay payment method.
+They can be omitted unless you need to support Worldpay.

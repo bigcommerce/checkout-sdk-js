@@ -337,6 +337,7 @@
 * [WithCheckoutcomiDealInstrument](interfaces/withcheckoutcomidealinstrument.md)
 * [WithDocumentInstrument](interfaces/withdocumentinstrument.md)
 * [WithMollieIssuerInstrument](interfaces/withmollieissuerinstrument.md)
+* [WorldpayPaymentInitializeOptions](interfaces/worldpaypaymentinitializeoptions.md)
 * [ZipCodeElementOptions](interfaces/zipcodeelementoptions.md)
 
 ### Type aliases

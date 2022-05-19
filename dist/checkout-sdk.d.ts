@@ -5707,6 +5707,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Mollie.
      */
     mollie?: MolliePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Worldpay payment method.
+     * They can be omitted unless you need to support Worldpay.
+     */
+    worldpay?: WorldpayPaymentInitializeOptions;
 }
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
@@ -6987,6 +6992,20 @@ declare interface WithDocumentInstrument {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WorldpayPaymentInitializeOptions {
+    /**
+     * A callback that gets called when the iframe is ready to be added to the
+     * current page. It is responsible for determining where the iframe should
+     * be inserted in the DOM.
+     *
+     * @param iframe - The iframe element containing the payment web page
+     * provided by the strategy.
+     * @param cancel - A function, when called, will cancel the payment
+     * process and remove the iframe.
+     */
+    onLoad(iframe: HTMLIFrameElement, cancel: () => void): void;
 }
 
 declare interface ZipCodeElementOptions {

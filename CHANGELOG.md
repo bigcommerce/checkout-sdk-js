@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.245.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.245.0...v1.245.1) (2022-05-19)
+
+
+### Bug Fixes
+
+* **payment:** INT-5481 Worldpay - Add worldpay initialize options ([82ae296](https://github.com/bigcommerce/checkout-sdk-js/commit/82ae2965f38784e111683795013d58d6b68d476d))
+
 ## [1.245.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.244.2...v1.245.0) (2022-05-18)
 
 
