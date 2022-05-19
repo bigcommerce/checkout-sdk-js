@@ -1,6 +1,6 @@
 {
-  "root": "packages/payment-integration-service",
-  "sourceRoot": "packages/payment-integration-service/src",
+  "root": "packages/payment-integration-core",
+  "sourceRoot": "packages/payment-integration-core/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -10,17 +10,17 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "packages/payment-integration-service/**/*.ts"
+          "packages/payment-integration-core/**/*.ts"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": [
-        "coverage/packages/payment-integration-service"
+        "coverage/packages/payment-integration-core"
       ],
       "options": {
-        "jestConfig": "packages/payment-integration-service/jest.config.js",
+        "jestConfig": "packages/payment-integration-core/jest.config.js",
         "passWithNoTests": true
       }
     }

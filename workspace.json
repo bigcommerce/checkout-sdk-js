@@ -2,6 +2,6 @@
   "version": 2,
   "projects": {
     "core": "packages/core",
-    "payment-integration-service": "packages/payment-integration-service"
+    "payment-integration-core": "packages/payment-integration-core"
   }
 }
