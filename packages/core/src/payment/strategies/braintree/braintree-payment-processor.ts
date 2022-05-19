@@ -130,8 +130,9 @@ export default class BraintreePaymentProcessor {
 
     async verifyCardWithHostedFormAnd3DSCheck(billingAddress: Address, amount: number, merchantAccountId: string): Promise<NonceInstrument> {
         const { authenticationInsight, nonce } = await this._braintreeHostedForm.tokenizeWith3DSRegulationCheck(billingAddress, merchantAccountId);
+        const { regulationEnvironment } = authenticationInsight || {};
 
-        if (authenticationInsight?.regulationEnvironment === 'psd2') {
+        if (regulationEnvironment === 'psd2' || regulationEnvironment === 'unavailable') {
             return this.challenge3DSVerification(nonce, amount);
         }
 
