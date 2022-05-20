@@ -1,9 +1,11 @@
-export { BillingAddress, BillingAddressRequestBody } from './billing';
+export { BillingAddress, BillingAddressRequestBody, BillingAddressActionCreator } from './billing';
+export { createDataStoreProjection, DataStoreProjection } from './common/data-store';
+export { cloneResult as clone } from './common/utility';
 export { Cart } from './cart';
-export { Checkout } from './checkout';
+export { Checkout, CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors, ReadableCheckoutStore } from './checkout';
 export { StoreConfig } from './config';
 export { Customer } from './customer';
-export { Order, OrderRequestBody } from './order';
-export { Payment, PaymentMethod, } from './payment';
+export { Order, OrderActionCreator, OrderRequestBody } from './order';
+export { Payment, PaymentActionCreator, PaymentMethodActionCreator, PaymentMethod, } from './payment';
 export { CardInstrument } from './payment/instrument';
-export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
+export { Consignment, ConsignmentActionCreator, ShippingAddress, ShippingAddressRequestBody } from './shipping';
