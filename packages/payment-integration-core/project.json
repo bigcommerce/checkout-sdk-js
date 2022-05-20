@@ -4,6 +4,17 @@
   "projectType": "library",
   "targets": {
     "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "cwd": "packages/payment-integration-core",
+        "parallel": false,
+        "commands": [
+          "eslint 'src/**/*.ts'"
+        ]
+      }
+    },
+    "lint-new": {
+      "_comment": "This cannot be used right now since we need to upgrade eslint to 7.6 or higher, till then use npm run lint",
       "executor": "@nrwl/linter:eslint",
       "outputs": [
         "{options.outputFile}"

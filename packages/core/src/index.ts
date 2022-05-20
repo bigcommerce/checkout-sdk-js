@@ -9,7 +9,7 @@ export { StoreConfig } from './config';
 export { Customer } from './customer';
 export { Order, OrderActionCreator, OrderRequestBody } from './order';
 export { getOrder } from './order/orders.mock';
-export { Payment, PaymentActionCreator, PaymentMethodActionCreator, PaymentMethod, } from './payment';
+export { Payment, PaymentActionCreator, PaymentMethodActionCreator, PaymentMethod } from './payment';
 export { getPayment } from './payment/payments.mock';
 export { CardInstrument } from './payment/instrument';
 export { Consignment, ConsignmentActionCreator, ShippingAddress, ShippingAddressRequestBody } from './shipping';

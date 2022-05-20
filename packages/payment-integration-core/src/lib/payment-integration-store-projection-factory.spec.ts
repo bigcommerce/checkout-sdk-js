@@ -1,5 +1,6 @@
+import { createCheckoutStore,
+    InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { createCheckoutStore, InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
 import PaymentIntegrationSelectors from './payment-integration-selectors';

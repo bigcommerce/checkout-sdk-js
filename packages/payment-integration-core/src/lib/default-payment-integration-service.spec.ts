@@ -1,7 +1,4 @@
-import { createAction } from '@bigcommerce/data-store';
-
-import {
-    getBillingAddress,
+import { getBillingAddress,
     getOrder,
     getPayment,
     getShippingAddress,
@@ -9,16 +6,16 @@ import {
     CheckoutActionCreator,
     CheckoutStore,
     ConsignmentActionCreator,
-    InternalCheckoutSelectors,
     DataStoreProjection,
+    InternalCheckoutSelectors,
     OrderActionCreator,
     PaymentActionCreator,
-    PaymentMethodActionCreator,
-} from '@bigcommerce/checkout-sdk/core';
+    PaymentMethodActionCreator } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+import { createAction } from '@bigcommerce/data-store';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
-import PaymentIntegrationSelectors from './payment-integration-selectors';
 import PaymentIntegrationService from './payment-integration-core';
+import PaymentIntegrationSelectors from './payment-integration-selectors';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 describe('DefaultPaymentIntegrationService', () => {

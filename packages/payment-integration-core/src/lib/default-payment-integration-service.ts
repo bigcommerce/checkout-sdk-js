@@ -1,5 +1,4 @@
-import {
-    BillingAddressActionCreator,
+import { BillingAddressActionCreator,
     BillingAddressRequestBody,
     CheckoutActionCreator,
     CheckoutStore,
@@ -10,11 +9,10 @@ import {
     Payment,
     PaymentActionCreator,
     PaymentMethodActionCreator,
-    ShippingAddressRequestBody
-} from '@bigcommerce/checkout-sdk/core';
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 
-import PaymentIntegrationSelectors from './payment-integration-selectors';
 import PaymentIntegrationService from './payment-integration-core';
+import PaymentIntegrationSelectors from './payment-integration-selectors';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {
