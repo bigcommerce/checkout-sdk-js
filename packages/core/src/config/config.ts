@@ -112,6 +112,7 @@ export interface CheckoutSettings {
     orderTermsAndConditionsType: string;
     privacyPolicyUrl: string;
     providerWithCustomCheckout: string | null;
+    paymentMethodsWithCreditCardConflicts: PaymentMethodsWithConflicts[] | null;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;
@@ -138,4 +139,9 @@ export interface ContextConfig {
         formId?: string;
         token?: string;
     };
+}
+
+export interface PaymentMethodsWithConflicts {
+    methodId: string;
+    conflictMethodIds: string[];
 }
