@@ -1,5 +1,4 @@
-import { InternalCheckoutSelectors } from '../../checkout';
-import { cloneResult as clone } from '../../common/utility';
+import { clone, InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 

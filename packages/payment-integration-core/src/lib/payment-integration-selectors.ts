@@ -1,12 +1,13 @@
-import { BillingAddress } from '../../billing';
-import { Cart } from '../../cart';
-import { Checkout } from '../../checkout';
-import { StoreConfig } from '../../config';
-import { Customer } from '../../customer';
-import { Order } from '../../order';
-import { PaymentMethod } from '../../payment';
-import { CardInstrument } from '../../payment/instrument';
-import { Consignment, ShippingAddress } from '../../shipping';
+import { BillingAddress,
+    CardInstrument,
+    Cart,
+    Checkout,
+    Consignment,
+    Customer,
+    Order,
+    PaymentMethod,
+    ShippingAddress,
+    StoreConfig } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 
 export default interface PaymentIntegrationSelectors {
     getBillingAddress(): BillingAddress | undefined;

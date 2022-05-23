@@ -1,12 +1,18 @@
-import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../billing';
-import { CheckoutActionCreator, CheckoutStore } from '../../checkout';
-import { DataStoreProjection } from '../../common/data-store';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { Payment, PaymentActionCreator, PaymentMethodActionCreator } from '../../payment';
-import { ConsignmentActionCreator, ShippingAddressRequestBody } from '../../shipping';
+import { BillingAddressActionCreator,
+    BillingAddressRequestBody,
+    CheckoutActionCreator,
+    CheckoutStore,
+    ConsignmentActionCreator,
+    DataStoreProjection,
+    OrderActionCreator,
+    OrderRequestBody,
+    Payment,
+    PaymentActionCreator,
+    PaymentMethodActionCreator,
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 
+import PaymentIntegrationService from './payment-integration-core';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
-import PaymentIntegrationService from './payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {

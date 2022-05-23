@@ -1,7 +1,7 @@
-import { BillingAddressRequestBody } from '../../billing';
-import { OrderRequestBody } from '../../order';
-import { Payment } from '../../payment';
-import { ShippingAddressRequestBody } from '../../shipping';
+import { BillingAddressRequestBody,
+    OrderRequestBody,
+    Payment,
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
 
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 
