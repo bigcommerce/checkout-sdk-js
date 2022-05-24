@@ -14,8 +14,8 @@
       }
     },
     "lint-new": {
-      "_comment": "This cannot be used right now since we need to upgrade eslint to 7.6 or higher, till then use npm run lint",
       "executor": "@nrwl/linter:eslint",
+      "fix": true,
       "outputs": [
         "{options.outputFile}"
       ],

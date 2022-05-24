@@ -17,7 +17,7 @@ import CBAMPGSScriptLoader from './cba-mpgs-script-loader';
 
 export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
     private _threeDSjs?: ThreeDSjs;
-    private _sessionId: string = '';
+    private _sessionId = '';
 
     constructor(
         store: CheckoutStore,
@@ -174,7 +174,7 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
         }
     }
 
-    private async _authenticatePayer(orderId: string, transactionId: string, attempt: number = 1): Promise<InternalCheckoutSelectors | never> {
+    private async _authenticatePayer(orderId: string, transactionId: string, attempt = 1): Promise<InternalCheckoutSelectors | never> {
         return await new Promise((_resolve, reject) => {
             if (!this._threeDSjs) {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));

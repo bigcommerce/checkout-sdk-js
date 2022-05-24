@@ -141,7 +141,7 @@ export default class LanguageService {
         return output;
     }
 
-    private _flattenObject(object: Translations, result: Translations = {}, parentKey: string = ''): Translations {
+    private _flattenObject(object: Translations, result: Translations = {}, parentKey = ''): Translations {
         try {
             Object.keys(object).forEach(key => {
                 const value = object[key];

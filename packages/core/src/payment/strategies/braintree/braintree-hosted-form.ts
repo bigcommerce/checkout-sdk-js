@@ -21,7 +21,7 @@ export default class BraintreeHostedForm {
     private _cardNameField?: BraintreeRegularField;
     private _formOptions?: BraintreeFormOptions;
     private _type?: BraintreeHostedFormType;
-    private _isInitializedHostedForm: boolean = false;
+    private _isInitializedHostedForm = false;
 
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator

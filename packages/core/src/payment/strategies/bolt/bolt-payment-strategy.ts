@@ -19,8 +19,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
     private _boltClient?: BoltCheckout;
     private _boltEmbedded?: BoltEmbedded;
     private _embeddedField?: BoltEmbededField;
-    private _useBoltClient: boolean = false;
-    private _useBoltEmbedded: boolean = false;
+    private _useBoltClient = false;
+    private _useBoltEmbedded = false;
 
     constructor(
         private _store: CheckoutStore,

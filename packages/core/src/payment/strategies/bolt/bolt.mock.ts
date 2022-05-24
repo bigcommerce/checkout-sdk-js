@@ -1,6 +1,6 @@
 import { BoltCallbacks, BoltCheckout, BoltClient, BoltEmbedded, BoltTransaction } from './bolt';
 
-export function getBoltClientScriptMock(shouldSucceed: boolean = false, isValidTransactionReference: boolean = true): BoltCheckout {
+export function getBoltClientScriptMock(shouldSucceed = false, isValidTransactionReference = true): BoltCheckout {
     return {
         configure: jest.fn((_cart: object, _hints: {}, callbacks?: BoltCallbacks) => {
             return getConfiguredBoltMock(shouldSucceed, isValidTransactionReference, callbacks || { success: () => {}, close: () => {}});

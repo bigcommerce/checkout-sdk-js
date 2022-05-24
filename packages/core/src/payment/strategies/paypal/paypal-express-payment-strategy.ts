@@ -13,7 +13,7 @@ import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private _paypalSdk?: PaypalSDK;
     private _paymentMethod?: PaymentMethod;
-    private _useRedirectFlow: boolean = false;
+    private _useRedirectFlow = false;
 
     constructor(
         private _store: CheckoutStore,

@@ -205,7 +205,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 return await this._getStripeJs().confirmSepaDebitPayment(clientSecret, data);
             }
 
-            default:
+            default: {
                 const card = this._useIndividualCardFields ? this._getStripeCardElements()[0] : this._getStripeElement();
                 const billingDetails = this._mapStripeBillingDetails(
                     this._store.getState().billingAddress.getBillingAddress(),
@@ -217,6 +217,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                     card,
                     billing_details: billingDetails,
                 });
+            }
         }
     }
 
@@ -355,9 +356,8 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _mapStripePaymentData(stripePaymentMethodType: StripePaymentMethodType, returnUrl?: string): StripeConfirmPaymentData {
         const customer = this._store.getState().customer.getCustomer();
         const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-        let result: Partial<StripeConfirmPaymentData>;
 
-        result = {
+        const result: Partial<StripeConfirmPaymentData> = {
             payment_method: {
                 [stripePaymentMethodType]: this._getStripeElement(),
                 billing_details: this._mapStripeBillingDetails(billingAddress, customer),
@@ -475,10 +475,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
         if (isThreeDSecureRequiredError) {
             const clientSecret = error.body.three_ds_result.token;
-            let result;
             const needsConfirm = false;
 
-            result = await this._getStripeJs().confirmCardPayment(clientSecret);
+            const result = await this._getStripeJs().confirmCardPayment(clientSecret);
 
             const { id: token } = result.paymentIntent || { id: '' };
 

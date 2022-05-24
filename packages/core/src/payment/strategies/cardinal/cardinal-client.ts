@@ -22,10 +22,10 @@ export interface CardinalOrderData {
 }
 
 export default class CardinalClient {
-    private _provider: string = '';
-    private _testMode: boolean = false;
+    private _provider = '';
+    private _testMode = false;
     private _sdk?: Promise<CardinalSDK>;
-    private _configurationToken: string = '';
+    private _configurationToken = '';
 
     constructor(
         private _scriptLoader: CardinalScriptLoader
@@ -43,7 +43,7 @@ export default class CardinalClient {
     }
 
     configure(clientToken: string): Promise<void> {
-        if (!!this._configurationToken) {
+        if (this._configurationToken) {
             if (this._configurationToken === clientToken) {
                 return Promise.resolve();
             } else {

@@ -70,7 +70,7 @@ export function getAdyenClient(): AdyenClient {
     };
 }
 
-export function getAdyenConfiguration(useOriginKey: boolean = true): AdyenConfiguration {
+export function getAdyenConfiguration(useOriginKey = true): AdyenConfiguration {
     return useOriginKey ? {
         environment: 'test',
         originKey: 'YOUR_ORIGIN_KEY',
@@ -87,7 +87,7 @@ export function getAdyenError(): AdyenError {
     };
 }
 
-export function getComponentState(isValid: boolean = true): AdyenComponentState {
+export function getComponentState(isValid = true): AdyenComponentState {
     return {
         data: {
             paymentMethod: {

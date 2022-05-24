@@ -69,13 +69,13 @@ export interface BraintreeHostedFieldOption {
     supportedCardBrands?: { [key: string]: boolean };
 }
 
-export interface BraintreeClientCreator extends BraintreeModuleCreator<BraintreeClient> { }
-export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector, BraintreeDataCollectorCreatorConfig> {}
-export interface BraintreeHostedFieldsCreator extends BraintreeModuleCreator<BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig> {}
-export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure, BraintreeThreeDSecureCreatorConfig> {}
-export interface BraintreePaypalCreator extends BraintreeModuleCreator<BraintreePaypal> {}
-export interface BraintreePaypalCheckoutCreator extends BraintreeModuleCreator<BraintreePaypalCheckout> {}
-export interface BraintreeVisaCheckoutCreator extends BraintreeModuleCreator<BraintreeVisaCheckout> {}
+export type BraintreeClientCreator = BraintreeModuleCreator<BraintreeClient>
+export type BraintreeDataCollectorCreator = BraintreeModuleCreator<BraintreeDataCollector, BraintreeDataCollectorCreatorConfig>
+export type BraintreeHostedFieldsCreator = BraintreeModuleCreator<BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig>
+export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<BraintreeThreeDSecure, BraintreeThreeDSecureCreatorConfig>
+export type BraintreePaypalCreator = BraintreeModuleCreator<BraintreePaypal>
+export type BraintreePaypalCheckoutCreator = BraintreeModuleCreator<BraintreePaypalCheckout>
+export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaCheckout>
 
 export interface BraintreeModule {
     teardown(): Promise<void>;

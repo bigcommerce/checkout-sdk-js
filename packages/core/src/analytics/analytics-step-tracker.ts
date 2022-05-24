@@ -35,7 +35,7 @@ const ANALYTIC_STEPS: { [key: string]: AnalyticStepId } = {
 };
 
 export default class AnalyticsStepTracker implements StepTracker {
-    private _checkoutStarted: boolean = false;
+    private _checkoutStarted = false;
     private _completedSteps: { [key: string]: boolean } = {};
     private _viewedSteps: { [key in AnalyticStepId]?: boolean; } = {};
     private _analyticStepOrder: AnalyticStepType[] = [

@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { noop } from 'lodash';
 import { of } from 'rxjs';
 
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentActionType, ConsignmentRequestSender, ShippingStrategyActionCreator } from '../..';
@@ -66,10 +67,10 @@ describe('AmazonPayV2ShippingStrategy', () => {
             .mockReturnValue(container);
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton')
-            .mockImplementation(() => {});
+            .mockImplementation(() => noop);
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => {}) => callback());
+            .mockImplementation((_url, _data, callback = () => noop) => callback());
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockResolvedValue(store.getState());

@@ -84,7 +84,7 @@ export function getAdyenError(): AdyenError {
     };
 }
 
-export function getComponentState(isValid: boolean = true): AdyenV3ComponentState {
+export function getComponentState(isValid = true): AdyenV3ComponentState {
     return {
         data: {
             paymentMethod: {

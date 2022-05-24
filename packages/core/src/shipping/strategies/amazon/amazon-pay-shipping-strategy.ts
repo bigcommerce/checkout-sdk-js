@@ -1,4 +1,5 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { noop } from 'lodash';
 
 import { isInternalAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -80,7 +81,7 @@ export default class AmazonPayShippingStrategy implements ShippingStrategy {
 
     private _createAddressBook(options: AmazonPayShippingInitializeOptions): Promise<AmazonPayAddressBook> {
         return new Promise((resolve, reject) => {
-            const { container, onAddressSelect = () => {}, onError = () => {}, onReady = () => {} } = options;
+            const { container, onAddressSelect = () => noop, onError = () => noop, onReady = () => noop } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
             if (!document.getElementById(container)) {

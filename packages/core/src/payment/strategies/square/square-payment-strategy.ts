@@ -46,6 +46,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
 
         this._syncPaymentMethod(methodId);
 
+        /* eslint-disable */
         return new Promise(async (resolve, reject) => {
             const state = this._store.getState();
             const { config: { testMode } } = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
