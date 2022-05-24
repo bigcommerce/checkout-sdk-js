@@ -7,7 +7,7 @@ import { BillingAddress,
     Order,
     PaymentMethod,
     ShippingAddress,
-    StoreConfig } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+    StoreConfig } from '@bigcommerce/checkout-sdk/core';
 
 export default interface PaymentIntegrationSelectors {
     getBillingAddress(): BillingAddress | undefined;

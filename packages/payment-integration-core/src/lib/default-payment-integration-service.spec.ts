@@ -10,8 +10,9 @@ import { getBillingAddress,
     InternalCheckoutSelectors,
     OrderActionCreator,
     PaymentActionCreator,
-    PaymentMethodActionCreator } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+    PaymentMethodActionCreator } from '@bigcommerce/checkout-sdk/core';
 import { createAction } from '@bigcommerce/data-store';
+import { noop } from 'lodash';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationService from './payment-integration-core';
@@ -47,7 +48,7 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         storeProjection = {
-            subscribe: jest.fn(() => () => {}),
+            subscribe: jest.fn(() => () => noop),
             getState: jest.fn(() => paymentIntegrationSelectors),
         };
 
