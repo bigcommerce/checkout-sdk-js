@@ -1,6 +1,7 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
@@ -119,7 +120,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction');
         jest.spyOn(requestSender, 'post');
-        JPMC.ChasePay.showLoadingAnimation = jest.fn(() => jest.fn(() => {}))
+        JPMC.ChasePay.showLoadingAnimation = jest.fn(() => jest.fn(() => noop))
             .mockReturnValue(Promise.resolve(store.getState()));
 
         strategy = new ChasePayPaymentStrategy(

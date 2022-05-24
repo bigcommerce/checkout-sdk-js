@@ -1,7 +1,7 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { merge, omit } from 'lodash';
+import { merge, noop, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -81,7 +81,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             authorize: jest.fn((_params, _data, callback) => {
                 callback({ approved: true, authorization_token: 'bar' });
             }),
-            init: jest.fn(() => {}),
+            init: jest.fn(() => noop),
             load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 

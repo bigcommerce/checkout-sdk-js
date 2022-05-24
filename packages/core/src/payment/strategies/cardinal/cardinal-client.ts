@@ -1,4 +1,4 @@
-import { includes } from 'lodash';
+import { includes, noop } from 'lodash';
 
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
@@ -39,7 +39,7 @@ export default class CardinalClient {
             this._sdk = this._scriptLoader.load(provider, testMode);
         }
 
-        return this._sdk.then(() => {});
+        return this._sdk.then(() => { return; });
     }
 
     configure(clientToken: string): Promise<void> {
@@ -84,7 +84,7 @@ export default class CardinalClient {
 
     runBinProcess(binNumber: string): Promise<void> {
         return this._getClientSDK()
-            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => {}))
+            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => noop))
             .then(result => {
                 if (!result || !result.Status) {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);

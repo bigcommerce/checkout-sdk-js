@@ -200,6 +200,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     private _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
+        /* eslint-disable */
         return new Promise(async (resolve , reject) => {
             try {
                 const { config } = this._store.getState();
