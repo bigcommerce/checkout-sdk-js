@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.246.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.2...v1.246.3) (2022-05-25)
+
+
+### Bug Fixes
+
+* **checkout:** IINT-5126 [MPGS] Add delay between calls for 3ds ([#1428](https://github.com/bigcommerce/checkout-sdk-js/issues/1428)) ([fa86745](https://github.com/bigcommerce/checkout-sdk-js/commit/fa86745d52168f440e513dc320e5623de6b4c75b))
+
 ### [1.246.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.1...v1.246.2) (2022-05-23)
 
 ### [1.246.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.0...v1.246.1) (2022-05-19)
