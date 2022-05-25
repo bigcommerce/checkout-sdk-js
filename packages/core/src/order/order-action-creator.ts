@@ -84,6 +84,7 @@ export default class OrderActionCreator {
                         .then(() => this._orderRequestSender.submitOrder(
                             this._mapToOrderRequestBody(
                                 payload ?? {},
+                                checkout.id,
                                 checkout.customerMessage,
                                 externalSource
                             ),
@@ -130,6 +131,7 @@ export default class OrderActionCreator {
 
     private _mapToOrderRequestBody(
         payload: OrderRequestBody,
+        cartId: string,
         customerMessage: string,
         externalSource?: string
     ): InternalOrderRequestBody {
@@ -138,6 +140,7 @@ export default class OrderActionCreator {
         if (!payment) {
             return {
                 ...order,
+                cartId,
                 customerMessage,
                 externalSource,
             };
@@ -145,6 +148,7 @@ export default class OrderActionCreator {
 
         return {
             ...order,
+            cartId,
             customerMessage,
             externalSource,
             payment: {
