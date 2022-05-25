@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.246.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.3...v1.246.4) (2022-05-25)
+
+
+### Bug Fixes
+
+* **payment:** INT-5949 stripe UPE Don't hide the state field ([#1431](https://github.com/bigcommerce/checkout-sdk-js/issues/1431)) ([3194435](https://github.com/bigcommerce/checkout-sdk-js/commit/31944355a188a83e3ad2a37e3f67bf761d737bc6))
+
 ### [1.246.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.2...v1.246.3) (2022-05-25)
 
 
