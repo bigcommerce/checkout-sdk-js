@@ -99,6 +99,8 @@ describe('CBAMPGSPaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
+        jest.useFakeTimers();
+
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
             .mockReturnValue(getConfig().storeConfig);
 
@@ -391,10 +393,15 @@ describe('CBAMPGSPaymentStrategy', () => {
 
             strategy.execute(payload);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            const expectedTimes = 2;
+
+            for (let i = 0; i < expectedTimes; i++) {
+                await new Promise(resolve => process.nextTick(resolve));
+                jest.runAllTimers();
+            }
 
             expect(threeDSjs.initiateAuthentication).toHaveBeenCalled();
-            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(2);
+            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(expectedTimes);
         });
 
         it('should retry up to 5 times to authenticate payer if server is busy', async () => {
@@ -407,10 +414,15 @@ describe('CBAMPGSPaymentStrategy', () => {
 
             expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodDeclinedError);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            const expectedTimes = 5;
+
+            for (let i = 0; i < expectedTimes; i++) {
+                await new Promise(resolve => process.nextTick(resolve));
+                jest.runAllTimers();
+            }
 
             expect(threeDSjs.initiateAuthentication).toHaveBeenCalled();
-            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(5);
+            expect(threeDSjs.authenticatePayer).toHaveBeenCalledTimes(expectedTimes);
         });
     });
 

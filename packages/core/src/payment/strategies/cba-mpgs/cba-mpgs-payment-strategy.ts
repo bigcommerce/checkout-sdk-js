@@ -180,11 +180,16 @@ export default class CBAMPGSPaymentStrategy extends CreditCardPaymentStrategy {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
             }
 
-            this._threeDSjs.authenticatePayer(orderId, transactionId, data => {
+            this._threeDSjs.authenticatePayer(orderId, transactionId, async data => {
                 const error = data.error;
 
                 if (error) {
                     if (error.cause && error.cause === THREE_D_SECURE_BUSY && attempt < 5) {
+                        // Wait 3 seconds for MPGS server to process the `initiateAuthentication` call
+                        // See: Step 1: Initiate Authentication ->  Initiate Authentication Request:
+                        // https://ap-gateway.mastercard.com/api/documentation/integrationGuidelines/supportedFeatures/pickAdditionalFunctionality/authentication/3DS/integrationModelAPI.html?locale=en_US#x_3DSTest
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+
                         return this._authenticatePayer(orderId, transactionId, ++attempt);
                     }
 
