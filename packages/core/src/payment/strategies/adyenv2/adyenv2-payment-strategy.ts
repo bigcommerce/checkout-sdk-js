@@ -115,6 +115,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                                         ...bigpayToken,
                                         token: paymentData.instrumentId,
                                     },
+                                    origin: window.location.origin,
                                     browser_info: getBrowserInfo(),
                                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                                 },

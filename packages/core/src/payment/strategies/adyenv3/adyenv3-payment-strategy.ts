@@ -86,8 +86,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             if (paymentData && isVaultedInstrument(paymentData)) {
                 let bigpayToken = {};
                 if (isCardState(componentState)) {
+                    const { encryptedCardNumber, encryptedSecurityCode, encryptedExpiryMonth, encryptedExpiryYear } = componentState.data.paymentMethod;
+
                     bigpayToken = {
-                        verification_value: componentState.data.paymentMethod.encryptedSecurityCode,
+                        credit_card_number_confirmation: encryptedCardNumber,
+                        expiry_month: encryptedExpiryMonth,
+                        expiry_year: encryptedExpiryYear,
+                        verification_value: encryptedSecurityCode,
                     };
                 }
 
@@ -99,6 +104,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                                 ...bigpayToken,
                                 token: paymentData.instrumentId,
                             },
+                            origin: window.location.origin,
                             browser_info: getBrowserInfo(),
                             set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                         },

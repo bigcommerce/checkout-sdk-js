@@ -167,6 +167,7 @@ interface AppleInstrument {
 }
 
 interface AdyenV2Token extends FormattedVaultedInstrument {
+    origin?: string;
     browser_info: BrowserInfo;
     credit_card_token?: void;
 }
