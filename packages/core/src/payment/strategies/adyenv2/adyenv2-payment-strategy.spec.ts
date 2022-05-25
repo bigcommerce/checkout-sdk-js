@@ -335,6 +335,7 @@ describe('AdyenV2PaymentStrategy', () => {
                                 expiry_month: 'ENCRYPTED_EXPIRY_MONTH',
                                 expiry_year: 'ENCRYPTED_EXPIRY_YEAR',
                             },
+                            origin: 'http://localhost',
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
@@ -531,6 +532,7 @@ describe('AdyenV2PaymentStrategy', () => {
                             bigpay_token : {
                                 token: '123',
                             },
+                            origin: 'http://localhost',
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,

@@ -261,8 +261,12 @@ describe('AdyenV3PaymentStrategy', () => {
                         formattedPayload: expect.objectContaining({
                             bigpay_token : {
                                 token: '123',
+                                credit_card_number_confirmation: 'ENCRYPTED_CARD_NUMBER',
                                 verification_value: 'ENCRYPTED_CVV',
+                                expiry_month: 'ENCRYPTED_EXPIRY_MONTH',
+                                expiry_year: 'ENCRYPTED_EXPIRY_YEAR',
                             },
+                            origin: 'http://localhost',
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
