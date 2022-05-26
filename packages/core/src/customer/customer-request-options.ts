@@ -8,6 +8,7 @@ import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/bra
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
+import { StripeupeCustomerInitializeOptions } from './strategies/stripe-upe';
 
 /**
  * A set of options for configuring any requests related to the customer step of
@@ -126,6 +127,12 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
      googlepaystripeupe?: GooglePayCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Customer Stripe Upe payment method.
+     * They can be omitted unless you need to support Customer Stripe Upe.
+     */
+    stripeupe?: StripeupeCustomerInitializeOptions;
 }
 
 /**

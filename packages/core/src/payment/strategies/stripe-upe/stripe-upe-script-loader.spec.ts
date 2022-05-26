@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { StripeHostWindow } from './stripe-upe';
+import { StripeElementsOptions, StripeHostWindow } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getStripeUPEJsMock } from './stripe-upe.mock';
 
@@ -19,6 +19,7 @@ describe('StripeUPEPayScriptLoader', () => {
 
     describe('#load()', () => {
         const stripeUPEJsMock = getStripeUPEJsMock();
+        const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
@@ -28,22 +29,28 @@ describe('StripeUPEPayScriptLoader', () => {
             });
         });
 
-        it('loads the JS', async () => {
-            await stripeUPEScriptLoader.load(
+        it('loads a single instance of StripeUPEClient', async () => {
+            await stripeUPEScriptLoader.getStripeClient(
+                'STRIPE_PUBLIC_KEY',
+                'STRIPE_CONNECTED_ACCOUNT'
+            );
+            await stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
                 'STRIPE_CONNECTED_ACCOUNT'
             );
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://js.stripe.com/v3/');
+            expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1,'https://js.stripe.com/v3/');
         });
 
-        it('returns the JS from the window', async () => {
-            const stripeJs = await stripeUPEScriptLoader.load(
+        it('loads a single instance of StripeElements', async () => {
+            const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
                 'STRIPE_CONNECTED_ACCOUNT'
             );
+            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
+            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
 
-            expect(stripeJs).toBe(stripeUPEJsMock);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
         it('throws an error when window is not set', async () => {
@@ -52,11 +59,11 @@ describe('StripeUPEPayScriptLoader', () => {
 
                 return Promise.resolve();
             });
-
-            const result = stripeUPEScriptLoader.load(
+            const result = stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
                 'STRIPE_CONNECTED_ACCOUNT'
             );
+
             await expect(result).rejects.toBeInstanceOf(StandardError);
         });
     });

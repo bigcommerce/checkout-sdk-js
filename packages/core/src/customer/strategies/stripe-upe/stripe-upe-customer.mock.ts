@@ -1,0 +1,29 @@
+import { StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { CustomerInitializeOptions } from '../../customer-request-options';
+
+export function getCustomerStripeUPEJsMock(): StripeUPEClient {
+    return {
+        elements: jest.fn(() => ({
+            create: jest.fn(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn(),
+            })),
+            getElement: jest.fn().mockReturnValue(null),
+            update: jest.fn(),
+            fetchUpdates: jest.fn(),
+        })),
+        confirmPayment: jest.fn(),
+        confirmCardPayment: jest.fn(),
+    };
+}
+
+export function getStripeUPECustomerInitializeOptionsMock(): CustomerInitializeOptions {
+    return {
+        methodId: 'stripeupe',
+        stripeupe: {
+            container: 'stripeupeLink',
+            onEmailChange: jest.fn(),
+        },
+    };
+}

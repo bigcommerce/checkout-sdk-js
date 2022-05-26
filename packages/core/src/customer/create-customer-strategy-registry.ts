@@ -17,6 +17,7 @@ import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, Bra
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
+import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
@@ -36,6 +37,7 @@ import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
 import { SquareCustomerStrategy } from './strategies/square';
+import { StripeUPECustomerStrategy } from './strategies/stripe-upe';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
@@ -277,6 +279,15 @@ export default function createCustomerStrategyRegistry(
                 new CheckoutValidator(checkoutRequestSender)
             ),
             new ApplePaySessionFactory()
+        )
+    );
+
+    registry.register('stripeupe', () =>
+        new StripeUPECustomerStrategy(
+            store,
+            new StripeScriptLoader(scriptLoader),
+            customerActionCreator,
+            paymentMethodActionCreator
         )
     );
 

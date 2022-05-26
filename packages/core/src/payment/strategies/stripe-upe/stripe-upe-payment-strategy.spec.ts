@@ -25,7 +25,7 @@ import { getStripeUPE } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { StripeElement, StripeElements, StripeElementsOptions, StripePaymentMethodType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
+import { StripeElementsOptions, StripeElementType, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getStripeUPEInitializeOptionsMock, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
@@ -117,21 +117,63 @@ describe('StripeUPEPaymentStrategy', () => {
         let options: PaymentInitializeOptions;
         const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
         let stripeUPEJsMock: StripeUPEClient;
+        const testColor = '#123456';
+        const style = {
+            labelText: testColor,
+            fieldText: testColor,
+            fieldPlaceholderText: testColor,
+            fieldErrorText: testColor,
+            fieldBackground: testColor,
+            fieldInnerShadow: testColor,
+            fieldBorder: testColor,
+        };
 
         beforeEach(() => {
             stripeUPEJsMock = getStripeUPEJsMock();
-            options = getStripeUPEInitializeOptionsMock();
-            const { create, getElement } = stripeUPEJsMock.elements(elementsOptions);
+            options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
+            const { create, getElement, update, fetchUpdates } = stripeUPEJsMock.elements(elementsOptions);
             stripeUPEJsMock.elements = jest.fn()
-                .mockReturnValue({ create, getElement });
-            jest.spyOn(stripeScriptLoader, 'load')
-                .mockReturnValue(Promise.resolve(stripeUPEJsMock));
+                .mockReturnValue({ create, getElement, update, fetchUpdates });
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
+                .mockReturnValueOnce(Promise.resolve(stripeUPEJsMock));
+        });
+
+        it('loads a single instance of StripeUPEClient and StripeElements including styles', async () => {
+
+            await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+            await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenNthCalledWith(1,
+                {
+                    locale: 'en',
+                    clientSecret: 'myToken',
+                    appearance: {
+                        rules: {
+                            '.Input': {
+                                borderColor: testColor,
+                                boxShadow: testColor,
+                                color: testColor,
+                            },
+                        },
+                        variables: {
+                            colorBackground: testColor,
+                            colorDanger: testColor,
+                            colorIcon: testColor,
+                            colorPrimary: testColor,
+                            colorText: testColor,
+                            colorTextPlaceholder: testColor,
+                            colorTextSecondary: testColor,
+                        },
+                    },
+                }
+            );
         });
 
         it('loads stripeUPE script', async () => {
             await expect(strategy.initialize(options)).resolves.toBe(store.getState());
 
-            expect(stripeScriptLoader.load).toHaveBeenCalled();
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
         });
 
         it('loads subscribe once', async () => {
@@ -139,14 +181,6 @@ describe('StripeUPEPaymentStrategy', () => {
 
             store.notifyState();
             expect(store.subscribe).toHaveBeenCalledTimes(1);
-        });
-
-        it('loads a single instance of StripeUPEClient and StripeElements', async () => {
-            await expect(strategy.initialize(options)).resolves.toBe(store.getState());
-            await expect(strategy.initialize(options)).resolves.toBe(store.getState());
-
-            expect(stripeScriptLoader.load).toHaveBeenCalledTimes(1);
-            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
         it('does not load stripeUPE if initialization options are not provided', () => {
@@ -158,7 +192,7 @@ describe('StripeUPEPaymentStrategy', () => {
         });
 
         it('fails to load stripeUPE', async () => {
-            jest.spyOn(stripeScriptLoader, 'load')
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
                 .mockReturnValue(undefined);
 
             await expect(strategy.initialize(options)).resolves.toBe(store.getState());
@@ -177,7 +211,7 @@ describe('StripeUPEPaymentStrategy', () => {
         describe('mounts single payment element', () => {
             beforeEach(() => {
                 const elements = stripeUPEJsMock.elements(elementsOptions);
-                elements.create(StripeStringConstants.PAYMENT);
+                elements.create(StripeElementType.PAYMENT);
                 jest.spyOn(stripeUPEJsMock, 'elements')
                     .mockReturnValue(elements);
             });
@@ -187,7 +221,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 stripeUPEJsMock.elements = jest.fn()
                     .mockReturnValue({ create, getElement });
 
-                jest.spyOn(stripeScriptLoader, 'load')
+                jest.spyOn(stripeScriptLoader, 'getStripeClient')
                     .mockReturnValue(Promise.resolve(stripeUPEJsMock));
 
                 await strategy.initialize(options);
@@ -201,150 +235,31 @@ describe('StripeUPEPaymentStrategy', () => {
                 const { create, getElement } = stripeUPEJsMock.elements(elementsOptions);
                 stripeUPEJsMock.elements = jest.fn()
                     .mockReturnValue({ create, getElement });
-                const { mount, unmount } = create(StripeStringConstants.PAYMENT);
+                const { mount, unmount } = create(StripeElementType.PAYMENT);
                 stripeUPEJsMock.elements(elementsOptions).create = jest.fn()
                     .mockReturnValue({ mount, unmount });
 
-                jest.spyOn(stripeScriptLoader, 'load')
+                jest.spyOn(stripeScriptLoader, 'getStripeClient')
                     .mockReturnValue(Promise.resolve(stripeUPEJsMock));
 
                 await expect(strategy.initialize(options)).resolves.toBe(store.getState());
                 expect(mount).not.toHaveBeenCalled();
             });
         });
-
-        describe('mounts payment element with styles', () => {
-            const testColor = '#123456';
-            describe('with valid styles', () => {
-                beforeEach(async () => {
-                    const style = {
-                        labelText: testColor,
-                        fieldText: testColor,
-                        fieldPlaceholderText: testColor,
-                        fieldErrorText: testColor,
-                        fieldBackground: testColor,
-                        fieldInnerShadow: testColor,
-                        fieldBorder: testColor,
-                    };
-                    options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
-
-                    await strategy.initialize(options);
-                });
-                it('mounts stripe element', () => {
-                    expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
-                        {
-                            locale: 'en',
-                            clientSecret: 'myToken',
-                            appearance: {
-                                rules: {
-                                    '.Input': {
-                                        borderColor: testColor,
-                                        boxShadow: testColor,
-                                        color: testColor,
-                                    },
-                                },
-                                variables: {
-                                    colorBackground: testColor,
-                                    colorDanger: testColor,
-                                    colorIcon: testColor,
-                                    colorPrimary: testColor,
-                                    colorText: testColor,
-                                    colorTextPlaceholder: testColor,
-                                    colorTextSecondary: testColor,
-                                },
-                            },
-                        }
-                    );
-                });
-            });
-
-            describe('regardless of invalid styles', () => {
-                beforeEach(async () => {
-                    const style = {
-                        labelText: 'not valid #123456',
-                        invalidStyle: '#123456',
-                    };
-                    options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
-
-                    await strategy.initialize(options);
-                });
-                it('mounts stripe element', () => {
-                    expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
-                        {
-                            locale: 'en',
-                            clientSecret: 'myToken',
-                            appearance: {
-                                rules: {
-                                    '.Input': {
-                                        borderColor: undefined,
-                                        boxShadow: undefined,
-                                        color: undefined,
-                                    },
-                                },
-                                variables: {
-                                    colorBackground: undefined,
-                                    colorDanger: undefined,
-                                    colorIcon: undefined,
-                                    colorPrimary: undefined,
-                                    colorText: 'not valid #123456',
-                                    colorTextPlaceholder: undefined,
-                                    colorTextSecondary: 'not valid #123456',
-                                },
-                            },
-                        }
-                    );
-                });
-            });
-
-            describe('with no style', () => {
-                beforeEach(async () => {
-                    const style = {};
-                    options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
-
-                    await strategy.initialize(options);
-                });
-                it('mounts stripe element', () => {
-                    expect(stripeUPEJsMock.elements).toHaveBeenCalledWith(
-                        {
-                            locale: 'en',
-                            clientSecret: 'myToken',
-                            appearance: {
-                                rules: {
-                                    '.Input': {
-                                        borderColor: undefined,
-                                        boxShadow: undefined,
-                                        color: undefined,
-                                    },
-                                },
-                                variables: {
-                                    colorBackground: undefined,
-                                    colorDanger: undefined,
-                                    colorIcon: undefined,
-                                    colorPrimary: undefined,
-                                    colorText: undefined,
-                                    colorTextPlaceholder: undefined,
-                                    colorTextSecondary: undefined,
-                                },
-                            },
-                        }
-                    );
-                });
-            });
-        });
     });
 
     describe('#execute()', () => {
         let options: PaymentInitializeOptions;
-        const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
+        const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken', locale: 'en' };
         let stripeUPEJsMock: StripeUPEClient;
 
         beforeEach(() => {
             options = getStripeUPEInitializeOptionsMock();
             stripeUPEJsMock = getStripeUPEJsMock();
-            const { create, getElement } = stripeUPEJsMock.elements(elementsOptions);
+            const { create, getElement, update } = stripeUPEJsMock.elements(elementsOptions);
             stripeUPEJsMock.elements = jest.fn()
-                .mockReturnValue({ create, getElement });
-            jest.spyOn(stripeScriptLoader, 'load')
+                .mockReturnValue({ create, getElement, update });
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
                 .mockReturnValue(Promise.resolve(stripeUPEJsMock));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(getStripeUPE());
@@ -356,7 +271,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 await expect(strategy.initialize(options)).resolves.toBe(store.getState());
 
-                expect(stripeScriptLoader.load).not.toHaveBeenCalled();
+                expect(stripeScriptLoader.getStripeClient).not.toHaveBeenCalled();
                 expect(stripeUPEJsMock.elements).not.toHaveBeenCalled();
             });
 
@@ -897,18 +812,10 @@ describe('StripeUPEPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        let cardElement: StripeElement;
-        const elementsOptions: StripeElementsOptions = {clientSecret: 'myToken'};
         const stripeUPEJsMock = getStripeUPEJsMock();
-        let elements: StripeElements;
 
         beforeEach(async () => {
-            elements = stripeUPEJsMock.elements(elementsOptions);
-            cardElement = elements.create(StripeStringConstants.PAYMENT);
-
-            stripeUPEJsMock.elements = jest.fn()
-                .mockReturnValue(elements);
-            jest.spyOn(stripeScriptLoader, 'load')
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
                 .mockReturnValue(Promise.resolve(stripeUPEJsMock));
 
             await strategy.initialize(getStripeUPEInitializeOptionsMock());
@@ -918,21 +825,8 @@ describe('StripeUPEPaymentStrategy', () => {
             const promise = await strategy.deinitialize();
             expect(promise).toBe(store.getState());
 
-            expect(stripeScriptLoader.load).toHaveBeenCalledTimes(1);
-            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
-        });
-
-        it('validates if stripe element still exists before trying to unmount it', async () => {
-            jest.spyOn(stripeUPEJsMock.elements(elementsOptions), 'getElement')
-                .mockReturnValue(undefined)
-                .mockReturnValueOnce(cardElement);
-
-            await strategy.deinitialize();
-            const promise = strategy.deinitialize();
-
-            await expect(promise).resolves.toBe(store.getState());
-
-            expect(cardElement.unmount).toHaveBeenCalledTimes(1);
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(0);
         });
     });
 });
