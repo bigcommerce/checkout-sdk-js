@@ -14,7 +14,8 @@
         "cacheableOperations": [
           "build",
           "lint",
-          "test"
+          "test",
+          "lint-new"
         ]
       }
     }

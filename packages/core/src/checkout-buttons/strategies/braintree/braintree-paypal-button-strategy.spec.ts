@@ -116,11 +116,10 @@ describe('BraintreePaypalButtonStrategy', () => {
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
             ]));
-        
-        const options = { currency: 'AUD' };
 
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
-            .mockImplementation((_options, callback) => {
+            /* eslint-disable no-empty-pattern */
+            .mockImplementation(({}, callback) => {
                 callback(paypalCheckout);
 
                 return Promise.resolve(paypalCheckout);
