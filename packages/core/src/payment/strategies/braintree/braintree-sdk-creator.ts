@@ -1,23 +1,6 @@
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType, UnsupportedBrowserError } from '../../../common/error/errors';
 
-import { BraintreeClient,
-    BraintreeDataCollector,
-    BraintreeHostedFields,
-    BraintreeHostedFieldsCreatorConfig,
-    BraintreeModule,
-    BraintreePaypal,
-    BraintreePaypalCheckout,
-    BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
-    GetPaypalConfig,
-    GetVenmoConfig,
-    GooglePayBraintreeSDK,
-    PaypalClientInstance,
-    PAYPAL_COMPONENTS,
-    RenderButtons,
-    RenderVenmoButtons,
-    VenmoCheckout,
-    VenmoInstance } from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeError, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeModule, BraintreePaypal, BraintreePaypalCheckout, BraintreeThreeDSecure, BraintreeVenmoCheckout, BraintreeVisaCheckout, GooglePayBraintreeSDK, PAYPAL_COMPONENTS } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -27,14 +10,13 @@ export default class BraintreeSDKCreator {
     private _paypalCheckout?: Promise<BraintreePaypalCheckout>;
     private _clientToken?: string;
     private _visaCheckout?: Promise<BraintreeVisaCheckout>;
+    private _venmoCheckout?: Promise<BraintreeVenmoCheckout>;
     private _dataCollectors: {
         default?: Promise<BraintreeDataCollector>;
         paypal?: Promise<BraintreeDataCollector>;
     } = {};
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
-    private _paypalcheckoutInstance?: PaypalClientInstance;
-    private _venmoCheckoutInstance?: VenmoInstance;
-    private _venmoCheckout?: VenmoCheckout;
+    private _braintreePaypalCheckoutInstance?: BraintreePaypalCheckout;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -69,14 +51,17 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    getPaypalCheckout(config: GetPaypalConfig, renderButtonCallback: RenderButtons): Promise<BraintreePaypalCheckout> {
+    getPaypalCheckout(
+        config: { currency: string },
+        renderButtonCallback: (instance: BraintreePaypalCheckout) => void
+    ): Promise<BraintreePaypalCheckout> {
         if (!this._paypalCheckout) {
             this._paypalCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypalCheckout(),
             ])
-                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: string, instance: PaypalClientInstance) =>  {
-                    this._paypalcheckoutInstance = instance;
+                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }, (_error: unknown, instance: BraintreePaypalCheckout) =>  {
+                    this._braintreePaypalCheckoutInstance = instance;
                     instance.loadPayPalSDK({
                         currency: config.currency,
                         components: PAYPAL_COMPONENTS.toString(),
@@ -84,37 +69,42 @@ export default class BraintreeSDKCreator {
                         renderButtonCallback(instance);
                     });
                 }));
-        } else if (this._paypalcheckoutInstance) {
-            renderButtonCallback(this._paypalcheckoutInstance);
+        } else if (this._braintreePaypalCheckoutInstance) {
+            renderButtonCallback(this._braintreePaypalCheckoutInstance);
         }
 
         return this._paypalCheckout;
     }
 
-    getVenmoCheckout(config: GetVenmoConfig, getVenmoInstance: RenderVenmoButtons): Promise<void> {
-        if (!config.isBraintreeVenmoEnabled) {
-            return Promise.resolve();
+    async getVenmoCheckout(
+        onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
+        onError: (error: BraintreeError | UnsupportedBrowserError) => void
+    ): Promise<BraintreeVenmoCheckout> {
+        if (!this._venmoCheckout) {
+            const client = await this.getClient();
+
+            const venmoCheckout = await this._braintreeScriptLoader.loadVenmoCheckout();
+
+            const venmoCheckoutConfig = {
+                client,
+                allowDesktop: true,
+                paymentMethodUsage: 'multi_use',
+            };
+
+            const venmoCheckoutCallback = (error: BraintreeError, braintreeVenmoCheckout: BraintreeVenmoCheckout): void => {
+                if (error) {
+                    return onError(error);
+                }
+
+                if (!braintreeVenmoCheckout.isBrowserSupported()) {
+                    return onError(new UnsupportedBrowserError());
+                }
+
+                onSuccess(braintreeVenmoCheckout);
+            };
+
+            this._venmoCheckout = venmoCheckout.create(venmoCheckoutConfig, venmoCheckoutCallback);
         }
-        this._venmoCheckout = Promise.all([
-            this.getClient(),
-            this._braintreeScriptLoader.loadVenmoCheckout(),
-        ])
-            .then(([client, venmoCheckout]) => venmoCheckout.create({
-                    client, allowDesktop: true,
-                    paymentMethodUsage: 'multi_use',
-                },
-                (venmoErr: string, venmoInstance: VenmoInstance) =>  {
-                    this._venmoCheckoutInstance = venmoInstance;
-                    getVenmoInstance(this._venmoCheckoutInstance);
-                    if (venmoErr) {
-                        return;
-                    }
-
-                    if (!venmoInstance.isBrowserSupported()) {
-
-                        return;
-                    }
-                }));
 
         return this._venmoCheckout;
     }
@@ -195,10 +185,12 @@ export default class BraintreeSDKCreator {
             this._teardown(this._3ds),
             this._teardown(this._dataCollectors.default),
             this._teardown(this._dataCollectors.paypal),
+            this._teardown(this._venmoCheckout),
             this._teardown(this._visaCheckout),
             this._teardown(this._googlePay),
         ]).then(() => {
             this._3ds = undefined;
+            this._venmoCheckout = undefined;
             this._visaCheckout = undefined;
             this._dataCollectors = {};
             this._googlePay = undefined;

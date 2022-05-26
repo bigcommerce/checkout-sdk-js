@@ -12,12 +12,9 @@ import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
-import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator, VenmoInstance } from '../../../payment/strategies/braintree';
-import { getDataCollectorMock, getPaypalCheckoutMock, getVenmoCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
-import { PaypalButtonOptions,
-    PaypalHostWindow,
-    PaypalScriptLoader,
-    PaypalSDK } from '../../../payment/strategies/paypal';
+import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
+import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
+import { PaypalButtonOptions, PaypalHostWindow, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -36,7 +33,6 @@ describe('BraintreePaypalButtonStrategy', () => {
     let paypalOptions: BraintreePaypalButtonInitializeOptions;
     let paypal: PaypalSDK;
     let paypalCheckout: BraintreePaypalCheckout;
-    let venmoCheckout: VenmoInstance;
     let paypalScriptLoader: PaypalScriptLoader;
     let store: CheckoutStore;
     let strategy: BraintreePaypalButtonStrategy;
@@ -70,7 +66,6 @@ describe('BraintreePaypalButtonStrategy', () => {
         dataCollector = getDataCollectorMock();
         paypal = getPaypalMock();
         paypalCheckout = getPaypalCheckoutMock();
-        venmoCheckout = getVenmoCheckoutMock();
 
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
@@ -124,8 +119,6 @@ describe('BraintreePaypalButtonStrategy', () => {
                 return Promise.resolve(paypalCheckout);
             });
 
-        jest.spyOn(braintreeSDKCreator, 'getVenmoCheckout').mockReturnValue(Promise.resolve(venmoCheckout));
-
         jest.spyOn(braintreeSDKCreator, 'getDataCollector')
             .mockReturnValue(Promise.resolve(dataCollector));
 
@@ -176,7 +169,6 @@ describe('BraintreePaypalButtonStrategy', () => {
         await strategy.initialize(options);
 
         expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
-        expect(braintreeSDKCreator.getVenmoCheckout).toHaveBeenCalled();
         expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
     });
 

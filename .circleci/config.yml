@@ -8,7 +8,7 @@ version: 2.1
 
 orbs:
   ci: bigcommerce/internal@volatile
-  node: bigcommerce/internal-node@volatile
+  node: bigcommerce/internal-microapp@dev:PR-206
 
 jobs:
   test:
