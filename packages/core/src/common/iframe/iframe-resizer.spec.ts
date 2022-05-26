@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 jest.mock('iframe-resizer', () => {
     window.addEventListener('resize', () => {});
 

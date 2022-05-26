@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
@@ -154,8 +155,7 @@ describe('BoltCustomerStrategy', () => {
 
         it('fails to execute payment method checkout if provided continueWithCheckoutCallback is not a function', async () => {
             try {
-                // @ts-ignore
-                await strategy.executePaymentMethodCheckout({ methodId: 'bolt', continueWithCheckoutCallback: 'string' });
+                await strategy.executePaymentMethodCheckout({ methodId: 'bolt', continueWithCheckoutCallback: () => noop });
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }

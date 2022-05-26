@@ -60,7 +60,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
-        let submitPaymentAction: Observable<SubmitPaymentAction>;
+        const submitPaymentAction: Observable<SubmitPaymentAction> = of(createAction(PaymentActionType.SubmitPaymentRequested));;
 
         paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
 
@@ -93,7 +93,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
         document.body.appendChild(editMethodButton);
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(store, 'dispatch');
 

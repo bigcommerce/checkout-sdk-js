@@ -9,7 +9,7 @@ export default function objectSet<T extends { [key: string]: any }, K extends ke
     key: K,
     value: T[K]
 ): T {
-    if (object && object.hasOwnProperty(key) && isEqual(object[key], value)) {
+    if (object && Object.prototype.hasOwnProperty.call(object, key) && isEqual(object[key], value)) {
         return object;
     }
 

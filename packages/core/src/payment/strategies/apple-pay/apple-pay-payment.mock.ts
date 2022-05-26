@@ -1,3 +1,4 @@
+import { noop } from "lodash";
 
 export class MockApplePaySession {
     static supportsVersion: () => boolean;
@@ -33,5 +34,5 @@ export class MockApplePaySession {
         return event;
     }
 
-    oncancel() { }
+    oncancel() { noop }
 }

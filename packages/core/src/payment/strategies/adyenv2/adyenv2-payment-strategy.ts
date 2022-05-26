@@ -306,7 +306,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             switch (paymentMethod.method) {
                 case AdyenPaymentMethodType.CreditCard:
                 case AdyenPaymentMethodType.ACH:
-                case AdyenPaymentMethodType.Bancontact:
+                case AdyenPaymentMethodType.Bancontact: {
                     const billingAddress = this._store.getState().billingAddress.getBillingAddress();
 
                     paymentComponent = adyenClient.create(paymentMethod.method, {
@@ -322,6 +322,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     }
 
                     break;
+                }
 
                 case AdyenPaymentMethodType.iDEAL:
                 case AdyenPaymentMethodType.SEPA:

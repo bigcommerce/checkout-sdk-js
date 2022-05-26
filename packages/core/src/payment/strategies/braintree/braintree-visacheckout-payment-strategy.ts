@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -55,8 +56,8 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                 }
 
                 const {
-                    onError = () => {},
-                    onPaymentSelect = () => {},
+                    onError = () => noop,
+                    onPaymentSelect = () => noop,
                 } = visaCheckoutOptions;
 
                 const initOptions = {

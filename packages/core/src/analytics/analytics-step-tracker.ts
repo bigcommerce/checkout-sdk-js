@@ -304,10 +304,10 @@ export default class AnalyticsStepTracker implements StepTracker {
         const shippingOption = this.getSelectedShippingOption();
         const shippingMethodId = shippingOption ? shippingOption.id : '';
 
-        return this._completedSteps.hasOwnProperty(stepId) ||
+        return Object.prototype.hasOwnProperty.call(this._completedSteps, stepId) ||
             (
                 stepId === AnalyticStepId.SHIPPING &&
-                this._completedSteps.hasOwnProperty(`${stepId}-${shippingMethodId}`)
+                Object.prototype.hasOwnProperty.call(this._completedSteps, `${stepId}-${shippingMethodId}`)
             );
     }
 

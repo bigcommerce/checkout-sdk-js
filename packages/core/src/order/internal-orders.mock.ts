@@ -198,6 +198,7 @@ export function getCompleteOrder(): InternalOrder {
         customerCanBeCreated: true,
         isComplete: true,
         status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
+        /* eslint no-useless-escape: "off" */
         socialData: {
             5: {
                 fb: {

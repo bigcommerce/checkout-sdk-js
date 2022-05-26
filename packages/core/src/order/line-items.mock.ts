@@ -1,3 +1,4 @@
+/* eslint no-useless-escape: "off" */
 import { PhysicalItem } from '../cart';
 import { getPhysicalItem as getCartPhysicalItem } from '../cart/line-items.mock';
 

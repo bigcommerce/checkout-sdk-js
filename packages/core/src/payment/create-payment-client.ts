@@ -1,5 +1,5 @@
-// tslint:disable-next-line:no-reference
-/// <reference path="../payment/bigpay-client.d.ts" />
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../payment/bigpay-client.d.ts" /> 
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
 import { CheckoutStore } from '../checkout';

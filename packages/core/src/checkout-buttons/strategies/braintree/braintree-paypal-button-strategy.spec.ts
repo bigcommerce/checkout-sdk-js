@@ -116,9 +116,11 @@ describe('BraintreePaypalButtonStrategy', () => {
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
             ]));
+        
+        const options = { currency: 'AUD' };
 
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
-            .mockImplementation(({}, callback) => {
+            .mockImplementation((_options, callback) => {
                 callback(paypalCheckout);
 
                 return Promise.resolve(paypalCheckout);

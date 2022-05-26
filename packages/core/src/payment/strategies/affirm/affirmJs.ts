@@ -20,7 +20,7 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         const p = document.getElementsByTagName(e)[0];
         const l = function bar(a: Affirm | any, b: keyof Affirm, c: string) {
             return function baz() {
-                a[b]._.push([c, arguments]);
+                a[b]._.push([c, arguments]); /* eslint-disable-line */
             };
         };
         b[d] = l(b, d, 'set');
@@ -31,7 +31,7 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         b._ = [];
         b[a][h] = l(b, a, h);
         b[c] = function qux() {
-            b._.push([h, arguments]);
+            b._.push([h, arguments]); /* eslint-disable-line */
         };
         let a1 = 0;
         for (

@@ -54,7 +54,7 @@ describe('ConfigRequestSender', () => {
             });
         });
 
-        it('throws a CheckoutNotAvailable error when it encounters a client error(400–499)', async () => {
+        it('throws a CheckoutNotAvailable error when it encounters a client error(400-499)', async () => {
             jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
 
             try {
@@ -64,7 +64,7 @@ describe('ConfigRequestSender', () => {
             }
         });
 
-        it('throws a generic request error when it encounters a server error(500–599)', async () => {
+        it('throws a generic request error when it encounters a server error(500-599)', async () => {
             jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 500));
 
             try {
