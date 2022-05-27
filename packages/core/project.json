@@ -35,17 +35,6 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "cwd": "packages/core",
-        "parallel": false,
-        "commands": [
-          "eslint 'src/**/*.ts'",
-          "tsc --noEmit"
-        ]
-      }
-    },
-    "lint-new": {
       "executor": "@nrwl/linter:eslint",
       "outputs": [
         "{options.outputFile}"

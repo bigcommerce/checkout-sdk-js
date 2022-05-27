@@ -4,16 +4,6 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "cwd": "packages/payment-integration-core",
-        "parallel": false,
-        "commands": [
-          "eslint 'src/**/*.ts'"
-        ]
-      }
-    },
-    "lint-new": {
       "executor": "@nrwl/linter:eslint",
       "fix": true,
       "outputs": [
