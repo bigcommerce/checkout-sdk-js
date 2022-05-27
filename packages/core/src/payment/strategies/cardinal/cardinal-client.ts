@@ -1,4 +1,4 @@
-import { includes, noop } from 'lodash';
+import { includes } from 'lodash';
 
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
@@ -84,7 +84,7 @@ export default class CardinalClient {
 
     runBinProcess(binNumber: string): Promise<void> {
         return this._getClientSDK()
-            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => noop))
+            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => {}))
             .then(result => {
                 if (!result || !result.Status) {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
