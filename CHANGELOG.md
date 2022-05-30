@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.247.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.247.0...v1.247.1) (2022-05-30)
+
+
+### Bug Fixes
+
+* **payment:** INT-5826 AmazonPayV2: Provide a relative URL for `createCheckoutSession.url` ([d3d6951](https://github.com/bigcommerce/checkout-sdk-js/commit/d3d69518cb7a10d1e4ebb3e4fb3a3dd96e1108d6))
+
 ## [1.247.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.5...v1.247.0) (2022-05-30)
 
 
