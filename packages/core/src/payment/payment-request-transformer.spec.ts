@@ -9,13 +9,13 @@ import { getCustomer } from '../customer/customers.mock';
 import { HostedFieldType } from '../hosted-form';
 import { getHostedFormOrderData } from '../hosted-form/hosted-form-order-data.mock';
 import { getOrder, getOrderMeta } from '../order/orders.mock';
-import { getConsignments } from '../shipping/consignments.mock';
+import { getConsignment, getConsignments } from '../shipping/consignments.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import { getInstrumentsMeta } from './instrument/instrument.mock';
 import Payment from './payment';
-import { getAdyenAmex, getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
+import { getAdyenAmex, getAuthorizenet, getPaymentMethodsMeta, getStripeV3 } from './payment-methods.mock';
 import PaymentRequestTransformer from './payment-request-transformer';
 import { getPayment, getPaymentRequestBody } from './payments.mock';
 
@@ -209,5 +209,29 @@ describe('PaymentRequestTransformer', () => {
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
 
         expect(paymentRequestBodyResponse.additionalAction).toEqual(additionalActionMock);
+    });
+
+    describe('BOPIS', () => {
+        it('should pass nothing in for shipping object', () => {
+            const paymentMethod = getStripeV3();
+            paymentMethod.initializationData.bopis.enabled = true;
+            paymentMethod.initializationData.bopis.requiredAddress = 'none';
+
+            jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethod);
+
+            jest.spyOn(selectors.consignments, 'getConsignments')
+                .mockReturnValue([{
+                    ...getConsignment(),
+                    selectedShippingOption: null,
+                    selectedPickupOption: {
+                        pickupMethodId: 1,
+                    },
+                }]);
+
+            const paymentRequestBody = paymentRequestTransformer.transform(payment, selectors);
+
+            expect(paymentRequestBody.shippingAddress).toBeUndefined();
+        });
     });
 });

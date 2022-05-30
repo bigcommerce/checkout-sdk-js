@@ -672,6 +672,7 @@ export function getQuadpay(): PaymentMethod {
 export function getStripeV3(method = 'card', shouldUseIndividualCardFields = false, isHostedFormEnabled = false): PaymentMethod {
     return {
         id: method,
+        gateway: 'stripev3',
         logoUrl: '',
         method,
         supportedCards: [],
@@ -684,6 +685,10 @@ export function getStripeV3(method = 'card', shouldUseIndividualCardFields = fal
         initializationData: {
             stripePublishableKey: 'key',
             useIndividualCardFields: shouldUseIndividualCardFields,
+            bopis: {
+                enabled: false,
+                requiredAddress: 'none',
+            },
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',

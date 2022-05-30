@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { mapToInternalAddress } from '../address';
+import { mapToInternalAddress, Address } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { CheckoutButtonMethodType } from '../checkout-buttons/strategies';
@@ -26,7 +26,7 @@ export default class PaymentRequestTransformer {
         const customer = checkoutState.customer.getCustomer();
         const order = checkoutState.order.getOrder();
         const paymentMethod = checkoutState.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
-        const shippingAddress = checkoutState.shippingAddress.getShippingAddress();
+        const shippingAddress = this._mapShippingAddress(checkoutState, paymentMethod);
         const consignments = checkoutState.consignments.getConsignments();
         const shippingOption = checkoutState.consignments.getShippingOption();
         const storeConfig = checkoutState.config.getStoreConfig();
@@ -143,5 +143,20 @@ export default class PaymentRequestTransformer {
                 ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
                 hostedFormNonce: nonce,
             };
+    }
+
+    private _mapShippingAddress(checkoutState: InternalCheckoutSelectors, paymentMethod?: PaymentMethod): Address | undefined {
+        if (paymentMethod) {
+            const isBopisEnabled = paymentMethod.initializationData?.bopis?.enabled;
+            const requiredAddress = paymentMethod.initializationData?.bopis?.requiredAddress;
+            const consignments = checkoutState.consignments.getConsignments();
+            const isPickup = consignments?.every(consignment => consignment.selectedPickupOption);
+
+            if (isBopisEnabled && isPickup && requiredAddress === 'none') {
+                return undefined;
+            }
+        }
+
+        return checkoutState.shippingAddress.getShippingAddress();
     }
 }
