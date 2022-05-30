@@ -56,7 +56,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
     private async _getAmazonPayV2ButtonOptions(paymentMethod: PaymentMethod): Promise<AmazonPayV2ButtonParams> {
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCart();
-        const { storeProfile: { shopPath } } = state.config.getStoreConfigOrThrow();
+        const { storeProfile: { shopPath }, checkoutSettings: { features } } = state.config.getStoreConfigOrThrow();
 
         const {
             config: {
@@ -78,7 +78,10 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
         return {
             merchantId,
             createCheckoutSession: {
-                url: `${shopPath}/remote-checkout/${paymentMethod.id}/payment-session`,
+                // tslint:disable-next-line: no-string-literal
+                url: features['INT-5826.amazon_relative_url']
+                    ? `/remote-checkout/${paymentMethod.id}/payment-session`
+                    : `${shopPath}/remote-checkout/${paymentMethod.id}/payment-session`,
                 method: checkoutSessionMethod,
                 extractAmazonCheckoutSessionId,
             },
