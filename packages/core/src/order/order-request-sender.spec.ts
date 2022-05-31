@@ -104,7 +104,7 @@ describe('OrderRequestSender', () => {
         });
 
         it('submits order and returns response', async () => {
-            const payload = { useStoreCredit: false };
+            const payload = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', useStoreCredit: false };
             const output = await orderRequestSender.submitOrder(payload);
 
             expect(output).toEqual(response);
@@ -123,7 +123,7 @@ describe('OrderRequestSender', () => {
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
 
             try {
-                const payload = { useStoreCredit: false };
+                const payload = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', useStoreCredit: false };
                 await orderRequestSender.submitOrder(payload);
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderTaxProviderUnavailableError);
@@ -131,7 +131,7 @@ describe('OrderRequestSender', () => {
         });
 
         it('submits order and returns response with timeout', async () => {
-            const payload = { useStoreCredit: false };
+            const payload = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', useStoreCredit: false };
             const options = { timeout: createTimeout() };
             const output = await orderRequestSender.submitOrder(payload, options);
 
@@ -143,7 +143,7 @@ describe('OrderRequestSender', () => {
         });
 
         it('submits order with checkout variant header and library version when variant is provided', async () => {
-            const payload = {};
+            const payload = {cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7'};
             const headers = {
                 checkoutVariant: 'default',
                 ...SDK_VERSION_HEADERS,
@@ -162,7 +162,7 @@ describe('OrderRequestSender', () => {
         });
 
         it('submits order with library version', async () => {
-            const payload = {};
+            const payload = {cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7'};
 
             await orderRequestSender.submitOrder(payload);
 

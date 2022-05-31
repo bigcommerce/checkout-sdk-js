@@ -17,6 +17,7 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
     const payment = getPayment();
 
     return {
+        cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         customerMessage: 'comment',
         externalSource: 'Partner',
         useStoreCredit: false,
