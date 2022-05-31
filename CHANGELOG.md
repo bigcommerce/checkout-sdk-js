@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.248.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.247.1...v1.248.0) (2022-05-31)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6703 post cartid for order creation API endpoint ([2f9bd11](https://github.com/bigcommerce/checkout-sdk-js/commit/2f9bd11cd66174dba481e5d8ede8f3757083c321))
+
 ### [1.247.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.247.0...v1.247.1) (2022-05-30)
 
 
