@@ -24,6 +24,7 @@ export {
 // they are plain TypeScript interfaces; meaning they are only used for type
 // checks rather than for code output.
 export function iframeResizer(options: IFrameOptions, target: string | HTMLElement): IFrameComponent[] {
+    /* eslint-disable @typescript-eslint/no-var-requires */
     const { iframeResizer: originalIframeResizer } = require('iframe-resizer');
 
     return originalIframeResizer(options, target);
@@ -36,6 +37,5 @@ export function iframeResizer(options: IFrameOptions, target: string | HTMLEleme
 // considered as "unused", unless we explicitly mark it as a package that
 // produces side effects.
 export function setupContentWindowForIframeResizer(): void {
-    /* eslint-disable-next-line import/no-internal-modules */
     require('iframe-resizer/js/iframeResizer.contentWindow');
 }

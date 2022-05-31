@@ -9,7 +9,7 @@ import { BillingAddressActionCreator,
     Payment,
     PaymentActionCreator,
     PaymentMethodActionCreator,
-    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core';
 
 import PaymentIntegrationService from './payment-integration-core';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
@@ -31,6 +31,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
 
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => any>): () => void {
         return this._storeProjection.subscribe(subscriber, ...filters);
     }

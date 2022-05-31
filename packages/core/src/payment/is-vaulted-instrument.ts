@@ -7,8 +7,8 @@ export default function isVaultedInstrument(instrument: PaymentInstrument): inst
 export function isHostedVaultedInstrument(instrument: PaymentInstrument): instrument is HostedVaultedInstrument {
     return (
         Boolean((instrument as HostedVaultedInstrument).instrumentId) &&
-        !instrument.hasOwnProperty('ccNumber') &&
-        !instrument.hasOwnProperty('ccCvv')
+        !Object.prototype.hasOwnProperty.call(instrument, 'ccNumber') &&
+        !Object.prototype.hasOwnProperty.call(instrument, 'ccCvv')
     );
 }
 

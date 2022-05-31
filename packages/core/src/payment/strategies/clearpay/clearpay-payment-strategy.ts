@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { RequestOptions } from '../../../common/http-request';
@@ -73,7 +74,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
-        return new Promise(() => {});
+        return new Promise(noop);
     }
 
     async finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

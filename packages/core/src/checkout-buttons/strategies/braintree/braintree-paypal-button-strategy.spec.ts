@@ -118,6 +118,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             ]));
 
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
+            /* eslint-disable no-empty-pattern */
             .mockImplementation(({}, callback) => {
                 callback(paypalCheckout);
 

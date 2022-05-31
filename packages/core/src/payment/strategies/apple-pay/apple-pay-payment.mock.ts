@@ -1,4 +1,3 @@
-
 export class MockApplePaySession {
     static supportsVersion: () => boolean;
     static canMakePayments: () => boolean;
@@ -33,5 +32,5 @@ export class MockApplePaySession {
         return event;
     }
 
-    oncancel() { }
+    oncancel() { return }
 }

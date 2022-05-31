@@ -1,6 +1,6 @@
 import { createInternalCheckoutSelectors,
     getCheckoutStoreStateWithOrder,
-    InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+    InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core';
 import { merge } from 'lodash';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';

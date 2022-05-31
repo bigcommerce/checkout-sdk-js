@@ -76,7 +76,7 @@ function isObjectEqual(
     for (let index = 0, length = keysA.length; index < length; index++) {
         const key = keysA[index];
 
-        if (!objectB.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(objectB, key)) {
             return false;
         }
 

@@ -94,7 +94,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         if (paypal) {
             const FUNDING_SOURCES = [];
             for (const fundingKey in paypal.FUNDING) {
-                if (paypal.FUNDING.hasOwnProperty(fundingKey)) {
+                if (Object.prototype.hasOwnProperty.call(paypal.FUNDING, fundingKey)) {
                     const skipCreditSource = (fundingKey === 'CREDIT' || fundingKey === 'PAYLATER') && !paypalOptions.allowCredit;
                     if (fundingKey === 'CARD' || skipCreditSource) {
                         continue;
@@ -161,6 +161,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             this._formPoster.postForm('/checkout.php', {
                 payment_type: 'paypal',
                 provider: CheckoutButtonMethodType.BRAINTREE_VENMO,
+                /* eslint-disable  no-constant-condition */
                 action: false ? 'process_payment' : 'set_external_checkout',
                 nonce: payload.nonce,
                 device_data: deviceData,

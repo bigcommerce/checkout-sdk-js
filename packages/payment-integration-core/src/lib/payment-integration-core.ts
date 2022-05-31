@@ -1,11 +1,12 @@
 import { BillingAddressRequestBody,
     OrderRequestBody,
     Payment,
-    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core'; // eslint-disable-line import/no-unresolved
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core';
 
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 
 export default interface PaymentIntegrationService {
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => any>): () => void;
 
     getState(): PaymentIntegrationSelectors;

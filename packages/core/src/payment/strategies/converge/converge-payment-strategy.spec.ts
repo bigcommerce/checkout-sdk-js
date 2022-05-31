@@ -3,7 +3,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { omit } from 'lodash';
+import { noop, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -63,7 +63,7 @@ describe('ConvergeaymentStrategy', () => {
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => {}) => callback());
+            .mockImplementation((_url, _data, callback = noop) => callback());
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);

@@ -349,7 +349,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     }
 
     private _isInstrumentValid(cardComponent: AdyenComponent, adyenv3: AdyenV3PaymentInitializeOptions): boolean {
-        if (!!adyenv3.shouldShowNumberField) {
+        if (adyenv3.shouldShowNumberField) {
             return !!cardComponent.state?.isValid;
         }
 

@@ -35,7 +35,7 @@ const ANALYTIC_STEPS: { [key: string]: AnalyticStepId } = {
 };
 
 export default class AnalyticsStepTracker implements StepTracker {
-    private _checkoutStarted: boolean = false;
+    private _checkoutStarted = false;
     private _completedSteps: { [key: string]: boolean } = {};
     private _viewedSteps: { [key in AnalyticStepId]?: boolean; } = {};
     private _analyticStepOrder: AnalyticStepType[] = [
@@ -304,10 +304,10 @@ export default class AnalyticsStepTracker implements StepTracker {
         const shippingOption = this.getSelectedShippingOption();
         const shippingMethodId = shippingOption ? shippingOption.id : '';
 
-        return this._completedSteps.hasOwnProperty(stepId) ||
+        return Object.prototype.hasOwnProperty.call(this._completedSteps, stepId) ||
             (
                 stepId === AnalyticStepId.SHIPPING &&
-                this._completedSteps.hasOwnProperty(`${stepId}-${shippingMethodId}`)
+                Object.prototype.hasOwnProperty.call(this._completedSteps, `${stepId}-${shippingMethodId}`)
             );
     }
 

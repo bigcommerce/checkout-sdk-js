@@ -1,0 +1,22 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/ban-types": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

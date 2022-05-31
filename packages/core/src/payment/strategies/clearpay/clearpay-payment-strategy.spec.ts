@@ -2,7 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
+import { merge, noop } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -49,8 +49,8 @@ describe('ClearpayPaymentStrategy', () => {
     let strategy: ClearpayPaymentStrategy;
 
     const clearpaySdk = {
-        initialize: () => {},
-        redirect: () => {},
+        initialize: noop,
+        redirect: noop,
     };
 
     beforeEach(() => {
@@ -131,10 +131,10 @@ describe('ClearpayPaymentStrategy', () => {
             .mockReturnValue(Promise.resolve(clearpaySdk));
 
         jest.spyOn(clearpaySdk, 'initialize')
-            .mockImplementation(() => {});
+            .mockImplementation(noop);
 
         jest.spyOn(clearpaySdk, 'redirect')
-            .mockImplementation(() => {});
+            .mockImplementation(noop);
     });
 
     describe('#initialize()', () => {

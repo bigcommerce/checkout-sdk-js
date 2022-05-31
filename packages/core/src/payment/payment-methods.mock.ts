@@ -669,7 +669,7 @@ export function getQuadpay(): PaymentMethod {
     };
 }
 
-export function getStripeV3(method: string = 'card', shouldUseIndividualCardFields: boolean = false, isHostedFormEnabled: boolean = false): PaymentMethod {
+export function getStripeV3(method = 'card', shouldUseIndividualCardFields = false, isHostedFormEnabled = false): PaymentMethod {
     return {
         id: method,
         logoUrl: '',
@@ -691,7 +691,7 @@ export function getStripeV3(method: string = 'card', shouldUseIndividualCardFiel
     };
 }
 
-export function getStripeUPE(method: string = 'card'): PaymentMethod {
+export function getStripeUPE(method = 'card'): PaymentMethod {
     return {
         id: method,
         logoUrl: '',
@@ -714,7 +714,7 @@ export function getStripeUPE(method: string = 'card'): PaymentMethod {
     };
 }
 
-export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
+export function getAdyenV2(method = 'scheme'): PaymentMethod {
     return {
         id: 'adyenv2',
         logoUrl: '',
@@ -734,7 +734,7 @@ export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     };
 }
 
-export function getAdyenV3(method: string = 'scheme'): PaymentMethod {
+export function getAdyenV3(method = 'scheme'): PaymentMethod {
     return {
         id: 'adyenv3',
         logoUrl: '',

@@ -119,8 +119,8 @@ describe('DigitalRiverPaymentStrategy', () => {
         const digitalRiverElement = digitalRiverLoadResponse.createElement(expect.any(Object), expect.any(Object));
         const customer = getCustomer();
         let options: PaymentInitializeOptions;
-        let onErrorCallback: (error: OnCancelOrErrorResponse) => {};
-        let onSuccessCallback: (data?: OnSuccessResponse) => {};
+        let onErrorCallback: (error: OnCancelOrErrorResponse) => void;
+        let onSuccessCallback: (data?: OnSuccessResponse) => void;
         let container: HTMLDivElement;
 
         beforeEach(() => {
@@ -327,7 +327,7 @@ describe('DigitalRiverPaymentStrategy', () => {
     describe('#execute()', () => {
         let submitOrderAction: Observable<SubmitOrderAction>;
         let options: PaymentInitializeOptions;
-        let onSuccessCallback: (data: OnSuccessResponse) => {};
+        let onSuccessCallback: (data: OnSuccessResponse) => void;
         const digitalRiverLoadResponse = getDigitalRiverJSMock();
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
 

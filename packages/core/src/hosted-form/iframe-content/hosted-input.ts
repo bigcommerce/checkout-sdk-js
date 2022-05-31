@@ -16,7 +16,7 @@ export default class HostedInput {
     protected _input: HTMLInputElement;
     protected _previousValue?: string;
     private _fontLinks?: HTMLLinkElement[];
-    private _isTouched: boolean = false;
+    private _isTouched = false;
 
     /**
      * @internal

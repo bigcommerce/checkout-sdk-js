@@ -11,9 +11,9 @@ import { CheckoutcomGooglePayToken, CheckoutcomToken } from '../checkoutcom';
 import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 
 export default class GooglePayCheckoutcomInitializer implements GooglePayInitializer {
-    private _publishableKey: string = '';
-    private _testMode: boolean = true;
-    private _errorMessage: string = 'Unable to parse response from GooglePay.';
+    private _publishableKey = '';
+    private _testMode = true;
+    private _errorMessage = 'Unable to parse response from GooglePay.';
 
     constructor(
        private _requestSender: RequestSender
@@ -82,8 +82,8 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
     }
 
     private async _requestCheckoutcomTokenize(testMode: boolean, checkoutcomKey: string, data = {}): Promise<CheckoutcomToken> {
-        const TEST_URL: string = 'https://api.sandbox.checkout.com/tokens';
-        const LIVE_URL: string = 'https://api.checkout.com/tokens';
+        const TEST_URL = 'https://api.sandbox.checkout.com/tokens';
+        const LIVE_URL = 'https://api.checkout.com/tokens';
 
         const url = testMode ? TEST_URL : LIVE_URL;
 

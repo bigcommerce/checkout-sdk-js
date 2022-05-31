@@ -358,11 +358,10 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('additional action component fires back onError', async () => {
-                let additionalActionComponentWithError: AdyenComponent;
                 const adyenError = getAdyenError();
                 let handleOnError: (error: AdyenError) => {};
 
-                additionalActionComponentWithError = {
+                const additionalActionComponentWithError: AdyenComponent = {
                     mount: jest.fn(() => {
                         handleOnError(adyenError);
 

@@ -12,7 +12,6 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { createPaymentClient, PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../../../payment';
-// eslint-disable-next-line import/no-internal-modules
 import { PaymentActionType, SubmitPaymentAction } from '../../../payment/payment-actions';
 import { ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
 import { MockApplePaySession } from '../../../payment/strategies/apple-pay/apple-pay-payment.mock';

@@ -21,7 +21,7 @@ export default class BraintreeHostedForm {
     private _cardNameField?: BraintreeRegularField;
     private _formOptions?: BraintreeFormOptions;
     private _type?: BraintreeHostedFormType;
-    private _isInitializedHostedForm: boolean = false;
+    private _isInitializedHostedForm = false;
 
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator
@@ -413,7 +413,7 @@ export default class BraintreeHostedForm {
     private _handleCardTypeChange: (event: BraintreeHostedFieldsState) => void = event => {
         this._formOptions?.onCardTypeChange?.({
             cardType: event.cards.length === 1
-                ? event.cards[0].type.replace(/^master\-card$/, 'mastercard')
+                ? event.cards[0].type.replace(/^master\-card$/, 'mastercard') /* eslint-disable-line */
                 : undefined,
         });
     };

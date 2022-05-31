@@ -980,8 +980,7 @@ describe('StripeV3PaymentStrategy', () => {
                         });
 
                         it('with valid input field', async () => {
-                            let container: HTMLDivElement;
-                            container = document.createElement('input');
+                            const container: HTMLDivElement = document.createElement('input');
                             container.setAttribute('id', 'stripe-postal-code-component-field');
                             container.setAttribute('value', '90210');
                             document.body.appendChild(container);

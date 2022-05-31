@@ -17,7 +17,7 @@ export interface GooglePayProviderProcessor {
     processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors>;
 }
 
-export interface GooglePayCreator extends BraintreeModuleCreator<GooglePayBraintreeSDK> {}
+export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>
 
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;

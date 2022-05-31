@@ -9,8 +9,8 @@ describe('CardinalClient', () => {
     let client: CardinalClient;
     let cardinalScriptLoader: CardinalScriptLoader;
     let sdk: CardinalSDK;
-    let setupCall: () => {};
-    let validatedCall: (data: CardinalValidatedData, jwt: string) => {};
+    let setupCall: () => void;
+    let validatedCall: (data: CardinalValidatedData, jwt: string) => void;
 
     beforeEach(() => {
         cardinalScriptLoader = new CardinalScriptLoader(createScriptLoader());
@@ -29,8 +29,8 @@ describe('CardinalClient', () => {
     });
 
     describe('#configure', () => {
-        let completed: () => {};
-        let validated: (data: CardinalValidatedData, jwt: string) => {};
+        let completed: () => void;
+        let validated: (data: CardinalValidatedData, jwt: string) => void;
 
         beforeEach(() => {
             sdk.on = jest.fn((type, callback) => {

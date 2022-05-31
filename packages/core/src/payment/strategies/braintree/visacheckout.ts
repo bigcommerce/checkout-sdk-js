@@ -49,8 +49,8 @@ export interface VisaCheckoutEventMap {
 }
 
 export interface VisaCheckoutSDK {
-    init(options: VisaCheckoutInitOptions): {};
-    on<VisaCheckoutEventType extends keyof VisaCheckoutEventMap>(eventType: VisaCheckoutEventType, callback: VisaCheckoutEventMap[VisaCheckoutEventType]): {};
+    init(options: VisaCheckoutInitOptions): void;
+    on<VisaCheckoutEventType extends keyof VisaCheckoutEventMap>(eventType: VisaCheckoutEventType, callback: VisaCheckoutEventMap[VisaCheckoutEventType]): void;
 }
 
 export type VisaCheckoutCardType = 'VISA' | 'MASTERCARD' | 'AMEX' | 'DISCOVER' | 'ELECTRON' | 'ELO';

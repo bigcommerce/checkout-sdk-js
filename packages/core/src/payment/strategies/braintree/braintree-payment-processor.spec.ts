@@ -1,4 +1,5 @@
 import braintreeBrowserDetection from '@braintree/browser-detection';
+import { noop } from 'lodash';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
@@ -488,7 +489,7 @@ describe('BraintreePaymentProcessor', () => {
                     .mockImplementation(({ addFrame }) => {
                         addFrame();
 
-                        return new Promise(() => { });
+                        return new Promise(noop);
                     });
 
                 jest.spyOn(threeDSecureMock, 'cancelVerifyCard')
@@ -498,7 +499,7 @@ describe('BraintreePaymentProcessor', () => {
             it('cancels card verification', async () => {
                 braintreePaymentProcessor
                     .challenge3DSVerification('tokenization_nonce', 122)
-                    .catch(() => {});
+                    .catch(noop);
 
                 await new Promise(resolve => process.nextTick(resolve));
                 cancelVerifyCard();

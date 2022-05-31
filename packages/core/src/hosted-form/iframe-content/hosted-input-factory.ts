@@ -30,7 +30,7 @@ export default class HostedInputFactory {
         type: HostedFieldType,
         styles: HostedInputStylesMap = {},
         fontUrls: string[] = [],
-        placeholder: string = '',
+        placeholder = '',
         accessibilityLabel: string = mapToAccessibilityLabel(type),
         cardInstrument?: CardInstrument
     ): HostedInput {
@@ -77,8 +77,8 @@ export default class HostedInputFactory {
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
-        accessibilityLabel: string = '',
-        autocomplete: string = ''
+        accessibilityLabel = '',
+        autocomplete = ''
     ): HostedCardExpiryInput {
         return new HostedCardExpiryInput(
             form,
@@ -102,8 +102,8 @@ export default class HostedInputFactory {
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
-        accessibilityLabel: string = '',
-        autocomplete: string = '',
+        accessibilityLabel = '',
+        autocomplete = '',
         cardInstrument?: CardInstrument
     ): HostedCardNumberInput {
         return new HostedCardNumberInput(
@@ -134,8 +134,8 @@ export default class HostedInputFactory {
         styles: HostedInputStylesMap,
         fontUrls: string[],
         placeholder: string,
-        accessibilityLabel: string = '',
-        autocomplete: string = '',
+        accessibilityLabel = '',
+        autocomplete = '',
         cardInstrument?: CardInstrument
     ): HostedInput {
         return new HostedInput(

@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { PaymentInitializeOptions } from '../..';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -73,7 +74,7 @@ export function getSquarePaymentInitializeOptions(): PaymentInitializeOptions {
                 elementId: 'postalCode',
             },
             onError: jest.fn(),
-            onPaymentSelect: () => { },
+            onPaymentSelect: noop,
         },
     };
 }

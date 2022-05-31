@@ -1,5 +1,6 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { getCartState } from '../../../cart/carts.mock';
@@ -190,14 +191,14 @@ describe('GooglePayPaymentProcessor', () => {
 
         it('creates the html button element', async () => {
             await processor.initialize('googlepay');
-            await processor.createButton(jest.fn(() => {}));
+            await processor.createButton(jest.fn(noop));
 
             expect(clientMock.createButton).toHaveBeenCalled();
         });
 
         it('throws an error when googlePaymentsClient is not initialized', async () => {
             try {
-                await processor.createButton(jest.fn(() => {}));
+                await processor.createButton(jest.fn(noop));
             } catch (error) {
                 expect(error).toBeInstanceOf(NotInitializedError);
                 expect(error).toEqual(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));

@@ -1,41 +1,38 @@
 {
-    "extends": [
-        "plugin:import/errors",
-        "plugin:import/typescript",
-        "plugin:import/warnings"
-    ],
+    "root": true,
+    "ignorePatterns": ["**/*"],
+    "plugins": ["@nrwl/nx"],
     "env": {
         "browser": true
     },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint/tslint"
-    ],
-    "rules": {
-        "@typescript-eslint/tslint/config": [
-            "error",
-            {
-                "lintFile": "./tslint.json"
-            }
-        ],
-        "import/no-internal-modules": [
-            "error",
-            {
-                "allow": [
-                    "**/*.{mock,scss}",
-                    "**/index.ts",
-                    "**/bundles/**",
-                    "**/dist/**",
-                    "rxjs/**",
-                    "scripts/**"
-                ]
-            }
-        ],
-        "object-curly-newline": [
-            "error",
-            {
-                "ImportDeclaration": "never"
-            }
-        ]
-    }
+    "overrides": [
+        {
+          "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+          "rules": {
+            "@nrwl/nx/enforce-module-boundaries": [
+                "error",
+                {
+                  "enforceBuildableLibDependency": true,
+                  "allow": [],
+                  "depConstraints": [
+                    {
+                      "sourceTag": "*",
+                      "onlyDependOnLibsWithTags": ["*"]
+                    }
+                  ]
+                }
+              ]
+          }
+        },
+        {
+          "files": ["*.ts", "*.tsx"],
+          "extends": ["plugin:@nrwl/nx/typescript"],
+          "rules": {}
+        },
+        {
+          "files": ["*.js", "*.jsx"],
+          "extends": ["plugin:@nrwl/nx/javascript"],
+          "rules": {}
+        }
+      ]
 }

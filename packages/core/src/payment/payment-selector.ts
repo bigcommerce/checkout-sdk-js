@@ -158,7 +158,7 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
 
     const isPaymentDataRequired = createSelector(
         ({ checkout }: PaymentSelectorDependencies) => checkout.getOutstandingBalance,
-        getOutstandingBalance => (useStoreCredit: boolean = false) => {
+        getOutstandingBalance => (useStoreCredit = false) => {
             const grandTotal = getOutstandingBalance(useStoreCredit);
 
             return grandTotal ? grandTotal > 0 : false;

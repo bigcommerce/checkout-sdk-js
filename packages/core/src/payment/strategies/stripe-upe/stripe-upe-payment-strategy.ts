@@ -31,7 +31,7 @@ const APM_REDIRECT = [
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeUPEClient;
     private _stripeElements?: StripeElements;
-    private _isMounted: boolean = false;
+    private _isMounted = false;
     private _unsubscribe?: (() => void);
 
     constructor(

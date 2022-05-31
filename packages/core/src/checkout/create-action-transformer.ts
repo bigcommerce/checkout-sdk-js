@@ -28,6 +28,6 @@ function isResponse(object: any) {
     }
 
     return ['body', 'headers', 'status', 'statusText'].every(key =>
-        object.hasOwnProperty(key)
+        Object.prototype.hasOwnProperty.call(object, key)
     );
 }

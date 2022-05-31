@@ -37,6 +37,7 @@ function dataReducer(
 
                 return objectSet(data, keyString , action.payload);
             }
+            break;
 
         default:
             return data;

@@ -11,7 +11,7 @@ import CustomerStrategy from '../customer-strategy';
 
 export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
-    private _buttonClassName: string = 'visa-checkout-wrapper';
+    private _buttonClassName = 'visa-checkout-wrapper';
 
     constructor(
         private _store: CheckoutStore,

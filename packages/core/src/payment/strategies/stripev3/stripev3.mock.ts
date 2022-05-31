@@ -70,7 +70,7 @@ export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElemen
     };
 }
 
-export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: boolean = false): PaymentInitializeOptions {
+export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode = false): PaymentInitializeOptions {
     const paymentInitializeOptions: PaymentInitializeOptions = {
         methodId: StripeElementType.CreditCard,
         gatewayId,
@@ -127,7 +127,7 @@ export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode: b
     };
 }
 
-export function getStripeV3OrderRequestBodyMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSaveInstrument: boolean = false): OrderRequestBody {
+export function getStripeV3OrderRequestBodyMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSaveInstrument = false): OrderRequestBody {
     return {
         payment: {
             methodId: stripeElementType,
@@ -138,7 +138,7 @@ export function getStripeV3OrderRequestBodyMock(stripeElementType: StripeElement
     };
 }
 
-export function getStripeV3OrderRequestBodyVaultMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSetAsDefaultInstrument: boolean = false): OrderRequestBody {
+export function getStripeV3OrderRequestBodyVaultMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSetAsDefaultInstrument = false): OrderRequestBody {
     return {
         payment: {
             methodId: stripeElementType,

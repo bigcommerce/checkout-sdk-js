@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -13,7 +14,7 @@ import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private _paypalSdk?: PaypalSDK;
     private _paymentMethod?: PaymentMethod;
-    private _useRedirectFlow: boolean = false;
+    private _useRedirectFlow = false;
 
     constructor(
         private _store: CheckoutStore,
@@ -74,7 +75,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                     }
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
-                    return new Promise<never>(() => {});
+                    return new Promise<never>(noop);
                 });
         }
 
@@ -93,7 +94,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                 }
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
-                return new Promise<never>(() => {});
+                return new Promise<never>(noop);
             })
             .catch(error => {
                 paypal.checkout.closeFlow();

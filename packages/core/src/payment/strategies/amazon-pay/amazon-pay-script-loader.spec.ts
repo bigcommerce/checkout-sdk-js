@@ -15,7 +15,7 @@ describe('AmazonPayScriptLoader', () => {
     let setUseCookieSpy: jest.Mock;
 
     const MockLogin: AmazonPayLogin = {
-        authorize(): void {},
+        authorize(): void { return },
 
         setClientId(clientId: string): void {
             setClientIdSpy(clientId);

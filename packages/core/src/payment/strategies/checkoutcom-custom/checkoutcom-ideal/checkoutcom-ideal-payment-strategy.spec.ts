@@ -3,7 +3,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
+import { merge, noop } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../../checkout';
@@ -67,7 +67,7 @@ describe('CheckoutcomiDealPaymentStrategy', () => {
             .mockReturnValue(getPaymentMethod());
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => {}) => callback());
+            .mockImplementation((_url, _data, callback = noop) => callback());
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);

@@ -1,13 +1,13 @@
 import { ThreeDSjs, ThreeDSAuthenticationResponse, THREE_D_SECURE_AVAILABLE, THREE_D_SECURE_BUSY, THREE_D_SECURE_PROCEED } from './cba-mpgs';
 
 export function getCBAMPGSScriptMock(
-    configureSuccess: boolean = true,
-    initiateAuthSuccess: boolean = true,
-    authPayerSuccess: boolean = true,
-    authAvailable: boolean = true,
-    includeErrorStep1: boolean = false,
-    includeErrorStep2: boolean = false,
-    retryErrorCode: boolean = false
+    configureSuccess = true,
+    initiateAuthSuccess = true,
+    authPayerSuccess = true,
+    authAvailable = true,
+    includeErrorStep1 = false,
+    includeErrorStep2 = false,
+    retryErrorCode = false
     ): ThreeDSjs {
         const authenticatePayerRetry = jest.fn()
             .mockImplementationOnce((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable)))
@@ -22,13 +22,13 @@ export function getCBAMPGSScriptMock(
 }
 
 export function getCBAMPGSScriptMockRetryOnly(
-    configureSuccess: boolean = true,
-    initiateAuthSuccess: boolean = true,
-    authPayerSuccess: boolean = true,
-    authAvailable: boolean = true,
-    includeErrorStep1: boolean = false,
-    includeErrorStep2: boolean = false,
-    retryErrorCode: boolean = false
+    configureSuccess = true,
+    initiateAuthSuccess = true,
+    authPayerSuccess = true,
+    authAvailable = true,
+    includeErrorStep1 = false,
+    includeErrorStep2 = false,
+    retryErrorCode = false
     ): ThreeDSjs {
         const authenticatePayerRetry = jest.fn()
             .mockImplementation((_orderId, _transactionId, callback) => callback(_authenticationResponse(authPayerSuccess, retryErrorCode, includeErrorStep2, authAvailable)));

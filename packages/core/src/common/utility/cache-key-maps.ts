@@ -16,9 +16,9 @@ export interface TerminalCacheKeyMap extends IntermediateCacheKeyMap {
 export type ChildCacheKeyMap = IntermediateCacheKeyMap | TerminalCacheKeyMap;
 
 export function isTerminalCacheKeyMap(map: ChildCacheKeyMap): map is TerminalCacheKeyMap {
-    return map.hasOwnProperty('cacheKey');
+    return Object.prototype.hasOwnProperty.call(map, 'cacheKey');
 }
 
 export function isRootCacheKeyMap(map: RootCacheKeyMap | ChildCacheKeyMap): map is RootCacheKeyMap {
-    return map.hasOwnProperty('parentMap');
+    return Object.prototype.hasOwnProperty.call(map, 'parentMap');
 }
