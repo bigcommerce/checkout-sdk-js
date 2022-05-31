@@ -1,5 +1,5 @@
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
-import { merge, noop } from 'lodash';
+import { merge } from 'lodash';
 
 import { getAmazonPay } from '../../payment-methods.mock';
 
@@ -15,7 +15,7 @@ describe('AmazonPayScriptLoader', () => {
     let setUseCookieSpy: jest.Mock;
 
     const MockLogin: AmazonPayLogin = {
-        authorize(): void { noop },
+        authorize(): void { return },
 
         setClientId(clientId: string): void {
             setClientIdSpy(clientId);

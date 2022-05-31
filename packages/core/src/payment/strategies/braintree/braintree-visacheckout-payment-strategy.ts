@@ -56,8 +56,8 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                 }
 
                 const {
-                    onError = () => noop,
-                    onPaymentSelect = () => noop,
+                    onError = noop,
+                    onPaymentSelect = noop,
                 } = visaCheckoutOptions;
 
                 const initOptions = {

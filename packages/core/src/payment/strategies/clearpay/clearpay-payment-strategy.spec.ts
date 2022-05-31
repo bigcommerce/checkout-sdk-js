@@ -49,8 +49,8 @@ describe('ClearpayPaymentStrategy', () => {
     let strategy: ClearpayPaymentStrategy;
 
     const clearpaySdk = {
-        initialize: () => noop,
-        redirect: () => noop,
+        initialize: noop,
+        redirect: noop,
     };
 
     beforeEach(() => {
@@ -131,10 +131,10 @@ describe('ClearpayPaymentStrategy', () => {
             .mockReturnValue(Promise.resolve(clearpaySdk));
 
         jest.spyOn(clearpaySdk, 'initialize')
-            .mockImplementation(() => noop);
+            .mockImplementation(noop);
 
         jest.spyOn(clearpaySdk, 'redirect')
-            .mockImplementation(() => noop);
+            .mockImplementation(noop);
     });
 
     describe('#initialize()', () => {

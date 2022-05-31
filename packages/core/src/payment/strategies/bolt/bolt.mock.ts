@@ -9,7 +9,7 @@ export function getBoltClientScriptMock(shouldSucceed = false, isValidTransactio
             return getConfiguredBoltMock(
                 shouldSucceed,
                 isValidTransactionReference,
-                callbacks || { success: () => noop, close: () => noop });
+                callbacks || { success: noop, close: noop });
         }),
         getTransactionReference: jest.fn(),
         hasBoltAccount: jest.fn(),

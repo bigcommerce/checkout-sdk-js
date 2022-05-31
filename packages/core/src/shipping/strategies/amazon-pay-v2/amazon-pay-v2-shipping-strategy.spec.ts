@@ -67,10 +67,10 @@ describe('AmazonPayV2ShippingStrategy', () => {
             .mockReturnValue(container);
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton')
-            .mockImplementation(() => noop);
+            .mockImplementation(noop);
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => noop) => callback());
+            .mockImplementation((_url, _data, callback = noop) => callback());
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockResolvedValue(store.getState());

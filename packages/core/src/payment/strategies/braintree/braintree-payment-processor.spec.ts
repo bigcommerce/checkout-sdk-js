@@ -489,7 +489,7 @@ describe('BraintreePaymentProcessor', () => {
                     .mockImplementation(({ addFrame }) => {
                         addFrame();
 
-                        return new Promise(() => noop);
+                        return new Promise(noop);
                     });
 
                 jest.spyOn(threeDSecureMock, 'cancelVerifyCard')
@@ -499,7 +499,7 @@ describe('BraintreePaymentProcessor', () => {
             it('cancels card verification', async () => {
                 braintreePaymentProcessor
                     .challenge3DSVerification('tokenization_nonce', 122)
-                    .catch(() => noop);
+                    .catch(noop);
 
                 await new Promise(resolve => process.nextTick(resolve));
                 cancelVerifyCard();

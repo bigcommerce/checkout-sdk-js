@@ -81,7 +81,7 @@ export default class AmazonPayShippingStrategy implements ShippingStrategy {
 
     private _createAddressBook(options: AmazonPayShippingInitializeOptions): Promise<AmazonPayAddressBook> {
         return new Promise((resolve, reject) => {
-            const { container, onAddressSelect = () => noop, onError = () => noop, onReady = () => noop } = options;
+            const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
             if (!document.getElementById(container)) {

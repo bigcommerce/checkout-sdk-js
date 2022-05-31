@@ -77,7 +77,7 @@ describe('KlarnaPaymentStrategy', () => {
 
         klarnaCredit = {
             authorize: jest.fn((_, callback) => callback({ approved: true, authorization_token: 'bar' })),
-            init: jest.fn(() => noop),
+            init: jest.fn(noop),
             load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 

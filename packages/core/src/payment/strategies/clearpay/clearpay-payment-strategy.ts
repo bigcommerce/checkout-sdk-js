@@ -74,7 +74,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
-        return new Promise(() => noop);
+        return new Promise(noop);
     }
 
     async finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

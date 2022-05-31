@@ -74,7 +74,7 @@ export function getSquarePaymentInitializeOptions(): PaymentInitializeOptions {
                 elementId: 'postalCode',
             },
             onError: jest.fn(),
-            onPaymentSelect: () => noop,
+            onPaymentSelect: noop,
         },
     };
 }

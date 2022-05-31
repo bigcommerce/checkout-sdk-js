@@ -66,7 +66,7 @@ describe('SagePayPaymentStrategy', () => {
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => noop) => callback());
+            .mockImplementation((_url, _data, callback = noop) => callback());
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);

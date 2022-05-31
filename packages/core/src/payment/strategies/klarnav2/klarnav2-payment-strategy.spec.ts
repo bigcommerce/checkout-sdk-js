@@ -81,7 +81,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             authorize: jest.fn((_params, _data, callback) => {
                 callback({ approved: true, authorization_token: 'bar' });
             }),
-            init: jest.fn(() => noop),
+            init: jest.fn(noop),
             load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 

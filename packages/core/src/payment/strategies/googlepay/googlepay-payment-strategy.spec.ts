@@ -473,8 +473,8 @@ describe('GooglePayPaymentStrategy', () => {
                     methodId: 'googlepaystripe',
                     googlepaystripe: {
                         walletButton: 'mockButton',
-                        onError: () => noop,
-                        onPaymentSelect: () => noop,
+                        onError: noop,
+                        onPaymentSelect: noop,
                     },
                 };
 
@@ -512,8 +512,8 @@ describe('GooglePayPaymentStrategy', () => {
                     methodId: 'googlepaystripeupe',
                     googlepaystripeupe: {
                         walletButton: 'mockButton',
-                        onError: () => noop,
-                        onPaymentSelect: () => noop,
+                        onError: noop,
+                        onPaymentSelect: noop,
                     },
                 };
 

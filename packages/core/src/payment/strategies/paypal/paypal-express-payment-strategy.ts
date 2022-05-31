@@ -75,7 +75,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                     }
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
-                    return new Promise<never>(() => noop);
+                    return new Promise<never>(noop);
                 });
         }
 
@@ -94,7 +94,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                 }
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
-                return new Promise<never>(() => noop);
+                return new Promise<never>(noop);
             })
             .catch(error => {
                 paypal.checkout.closeFlow();

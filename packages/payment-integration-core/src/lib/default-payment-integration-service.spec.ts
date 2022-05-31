@@ -48,7 +48,7 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         storeProjection = {
-            subscribe: jest.fn(() => () => noop),
+            subscribe: jest.fn(() => noop),
             getState: jest.fn(() => paymentIntegrationSelectors),
         };
 
