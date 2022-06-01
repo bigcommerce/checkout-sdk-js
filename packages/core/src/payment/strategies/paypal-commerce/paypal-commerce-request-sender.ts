@@ -9,6 +9,7 @@ export interface ParamsForProvider {
     isCheckout?: boolean;
     isCreditCard?: boolean;
     isAPM?: boolean;
+    isVenmo?: boolean;
 }
 
 export default class PaypalCommerceRequestSender {
@@ -17,7 +18,7 @@ export default class PaypalCommerceRequestSender {
     ) {}
 
     async setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<OrderData> {
-        const { isCredit, isCheckout, isCreditCard, isAPM } = params;
+        const { isCredit, isCheckout, isCreditCard, isAPM, isVenmo} = params;
         let provider = 'paypalcommerce';
 
         if (isCreditCard) {
@@ -26,6 +27,9 @@ export default class PaypalCommerceRequestSender {
             provider = isCredit ? 'paypalcommercecreditcheckout' : 'paypalcommercecheckout';
         } else if (isCredit) {
             provider = 'paypalcommercecredit';
+        }
+        if (isVenmo && !isAPM) {
+            provider = isCheckout ? 'paypalcommercevenmocheckout' : 'paypalcommercevenmo';
         }
 
         if (isAPM) {
