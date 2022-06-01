@@ -149,10 +149,11 @@ describe('PaypalCommerceButtonStrategy', () => {
                 'card',
                 'credit',
                 'paylater',
+                'venmo',
             ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
     });
 
     it('initializes PaypalCommerce and PayPal credit enabled & messaging enabled', async () => {
@@ -169,6 +170,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 components: ['buttons', 'messages'],
                 'disable-funding': [
                     'card',
+                    'venmo',
                 ],
                 'enable-funding': [
                     'credit',
@@ -176,7 +178,32 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+    });
+
+    it('initializes PaypalCommerce with enabled Venmo', async () => {
+        paymentMethod.initializationData.isVenmoEnabled = true;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
+
+        await strategy.initialize(options);
+
+        const obj = {
+            'client-id': 'abc',
+            commit: false,
+            currency: 'USD',
+            intent: 'capture',
+            components: ['buttons', 'messages'],
+            'disable-funding': [
+                'card',
+                'credit',
+                'paylater',
+            ],
+            'enable-funding': [
+                'venmo',
+            ],
+        };
+
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, true);
     });
 
     it('initializes PaypalCommerce with enabled APMs', async () => {
@@ -199,6 +226,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                     'venmo',
                     'credit',
                     'paylater',
+                    'venmo',
                 ],
                 'enable-funding': [
                     'sofort',
@@ -206,7 +234,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
     });
 
     it('initializes PaypalCommerce with disabled APMs', async () => {
@@ -230,10 +258,11 @@ describe('PaypalCommerceButtonStrategy', () => {
                     'mybank',
                     'credit',
                     'paylater',
+                    'venmo',
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
     });
 
     it('render PayPal buttons', async () => {

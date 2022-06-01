@@ -10,6 +10,8 @@ import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _isCredit?: boolean;
+    private _isVenmo?: boolean;
+    private _isVenmoEnabled?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -26,6 +28,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             throw new InvalidArgumentError();
         }
 
+        this._isVenmoEnabled = initializationData._isVenmoEnabled;
         state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const cart = state.cart.getCartOrThrow();
         const buttonParams: ButtonsOptions = {
@@ -40,7 +43,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
 
-        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart));
+        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart), undefined, undefined, initializationData.isVenmoEnabled);
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 
@@ -53,23 +56,34 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     deinitialize(): Promise<void> {
         this._isCredit = undefined;
+        this._isVenmo = undefined;
 
         return Promise.resolve();
     }
 
     private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
         this._isCredit = fundingSource === 'credit' || fundingSource === 'paylater';
+        this._isVenmo = fundingSource === 'venmo';
     }
 
     private _tokenizePayment({ orderID }: ApproveDataOptions) {
         if (!orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
+        let provider;
+
+        if (this._isVenmo && this._isVenmoEnabled) {
+            provider = 'paypalcommercevenmo';
+        } else if (this._isCredit) {
+            provider = 'paypalcommercecredit';
+        } else {
+            provider = 'paypalcommerce';
+        }
 
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: this._isCredit ? 'paypalcommercecredit' : 'paypalcommerce',
+            provider,
             order_id: orderID,
         });
     }
@@ -83,6 +97,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             attributionId,
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
+            isVenmoEnabled,
         } = initializationData;
 
         const disableFunding: FundingType = [ 'card' ];
@@ -102,6 +117,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             enableFunding.push('credit', 'paylater');
         } else {
             disableFunding.push('credit', 'paylater');
+        }
+
+        if (isVenmoEnabled) {
+            enableFunding.push('venmo');
+        } else if (!enableFunding.includes('venmo')) {
+            disableFunding.push('venmo');
         }
 
         return {

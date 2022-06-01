@@ -180,8 +180,35 @@ describe('PaypalCommercePaymentStrategy', () => {
                 ],
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
         });
+
+        // it('initializes paypalCommercePaymentProcessor with enabled Venmo', async () => {
+        //     jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
+        //         .mockReturnValue('VENMO');
+        //
+        //     jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+        //         .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined, shouldRenderFields: true,  isVenmoEnabled: true }});
+        //
+        //     await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_VENMO, methodId: 'venmo' });
+        //
+        //     const obj = {
+        //         'client-id': 'abc',
+        //         commit: true,
+        //         currency: 'USD',
+        //         intent: 'capture',
+        //         components: [
+        //             'buttons',
+        //             'messages',
+        //             'payment-fields',
+        //             'funding-eligibility',
+        //         ],
+        //         'enable-funding': 'venmo',
+        //     };
+        //
+        //     expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, PaymentStrategyType.PAYPAL_COMMERCE_VENMO, true);
+        // });
+
 
         it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling APM in restricted countries with correct billing address', async () => {
             jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
@@ -203,7 +230,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'enable-funding': 'p24',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, 'paypalcommercealternativemethods');
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, 'paypalcommercealternativemethods', undefined);
         });
 
         it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling pay later', async () => {
@@ -226,7 +253,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'enable-funding': 'paylater',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
         });
 
         it('renders PayPal button if orderId is undefined', async () => {

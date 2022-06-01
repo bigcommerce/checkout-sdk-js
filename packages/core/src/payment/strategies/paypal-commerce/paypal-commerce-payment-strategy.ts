@@ -22,6 +22,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
     private _isAPM?: boolean;
     private _isPaylater?: boolean;
+    private _isVenmo?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -46,6 +47,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         this._isPaylater = methodId === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
+        this._isVenmo = methodId === PaymentStrategyType.PAYPAL_COMMERCE_VENMO && initializationData.isVenmoEnabled;
 
         if (orderId) {
             this._orderId = orderId;
@@ -72,6 +74,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             initializationMethodId = methodId;
         } else if (this._isPaylater) {
             initializationMethodId = 'paylater';
+        } else if (this._isVenmo) {
+            initializationMethodId = 'venmo';
         }
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode, initializationMethodId);
@@ -105,7 +109,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId);
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId, initializationData.isVenmoEnabled);
 
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 

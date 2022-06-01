@@ -45,6 +45,7 @@ enum PaymentStrategyType {
     PAYPAL_COMMERCE_CREDIT = 'paypalcommercecredit',
     PAYPAL_COMMERCE_CREDIT_CARD = 'paypalcommercecreditcards',
     PAYPAL_COMMERCE_ALTERNATIVE_METHODS = 'paypalcommercealternativemethods',
+    PAYPAL_COMMERCE_VENMO = 'paypalcommercevenmo',
     PPSDK = 'PAYMENT_TYPE_SDK',
     QUADPAY = 'quadpay',
     SAGE_PAY = 'sagepay',
