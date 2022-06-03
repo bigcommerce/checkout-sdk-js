@@ -160,6 +160,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             this._unsubscribe();
         }
         this._stripeElements?.getElement(StripeStringConstants.PAYMENT)?.unmount();
+        this._isMounted = false;
 
         return Promise.resolve(this._store.getState());
     }
