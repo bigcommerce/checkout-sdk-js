@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.248.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.248.1...v1.248.2) (2022-06-03)
+
+
+### Bug Fixes
+
+* **payment:** INT-6055 Stripe UPE mount fields properly if previously selected ([34df8a6](https://github.com/bigcommerce/checkout-sdk-js/commit/34df8a6b0b224d694d4e717273c6d1dd82ac90b3))
+
 ### [1.248.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.248.0...v1.248.1) (2022-06-01)
 
 ## [1.248.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.247.1...v1.248.0) (2022-05-31)
