@@ -3,17 +3,12 @@ import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
-export interface BraintreePaypalButtonInitializeOptions {
+export interface BraintreePaypalCreditButtonInitializeOptions {
     /**
      * @internal
      * This is an internal property and therefore subject to change. DO NOT USE.
      */
     shouldProcessPayment?: boolean;
-
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
 
     /**
      * A set of styling options for the checkout button.

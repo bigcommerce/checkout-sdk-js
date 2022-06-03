@@ -5,6 +5,7 @@ export function getPaypalMock(): PaypalSDK {
         FUNDING: {
             CARD: 'card',
             CREDIT: 'credit',
+            PAYLATER: 'paylater',
             PAYPAL: 'paypal',
         },
         Button: {

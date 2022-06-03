@@ -4,16 +4,16 @@ import { Address } from '../../../address';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import { mapToBraintreeShippingAddressOverride, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
-import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
+import { PaypalAuthorizeData, PaypalButtonStyleLabelOption, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
+import { BraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal-credit-button-options';
 import getValidButtonStyle from './get-valid-button-style';
 import mapToLegacyBillingAddress from './map-to-legacy-billing-address';
 import mapToLegacyShippingAddress from './map-to-legacy-shipping-address';
 
-export default class BraintreePaypalButtonStrategy implements CheckoutButtonStrategy {
+export default class BraintreePaypalCreditButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
@@ -23,8 +23,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const { braintreepaypal, containerId, methodId } = options;
-        const { messagingContainerId, onError } = braintreepaypal || {};
+        const { braintreepaypalcredit, containerId, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
@@ -34,12 +33,12 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
         }
 
-        if (!braintreepaypal) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.braintreepaypal" argument is not provided.`);
+        if (!braintreepaypalcredit) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.braintreepaypalcredit" argument is not provided.`);
         }
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
         const currency = state.cart.getCartOrThrow()?.currency.code;
 
         if (!paymentMethod.clientToken) {
@@ -47,22 +46,21 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         }
 
         const paypalCheckoutOptions = { currency };
-        const paypalCheckoutSuccessCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) => {
-            this._renderPayPalComponents(
+        const paypalCheckoutCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) =>
+            this._renderPayPalComponent(
                 braintreePaypalCheckout,
-                braintreepaypal,
+                braintreepaypalcredit,
                 containerId,
                 methodId,
                 Boolean(paymentMethod.config.testMode)
             );
-        };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
-            this._handleError(error, containerId, messagingContainerId, onError);
+            this._handleError(error, containerId, braintreepaypalcredit.onError);
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
-            paypalCheckoutSuccessCallback,
+            paypalCheckoutCallback,
             paypalCheckoutErrorCallback
         );
     }
@@ -73,67 +71,70 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         return Promise.resolve();
     }
 
-    private _renderPayPalComponents(
+    private _renderPayPalComponent(
         braintreePaypalCheckout: BraintreePaypalCheckout,
-        braintreepaypal: BraintreePaypalButtonInitializeOptions,
+        braintreepaypalcredit: BraintreePaypalCreditButtonInitializeOptions,
         containerId: string,
         methodId: string,
         testMode: boolean
-    ): void {
-        const { messagingContainerId } = braintreepaypal;
-
-        this._renderPayPalMessages(messagingContainerId);
-        this._renderPayPalButton(braintreePaypalCheckout, braintreepaypal, containerId, methodId, testMode);
-    }
-
-    private _renderPayPalButton(
-        braintreePaypalCheckout: BraintreePaypalCheckout,
-        braintreepaypal: BraintreePaypalButtonInitializeOptions,
-        containerId: string,
-        methodId: string,
-        testMode: boolean
-    ): void {
-        const { style, shippingAddress, shouldProcessPayment, onAuthorizeError, onPaymentError } = braintreepaypal;
-
+    ) {
         const { paypal } = this._window;
-        const fundingSource = paypal?.FUNDING.PAYPAL;
 
-        if (paypal && fundingSource) {
-            const validButtonStyle = style ? getValidButtonStyle(style) : {};
-
-            const paypalButtonRender = paypal.Buttons({
-                env: testMode ? 'sandbox' : 'production',
-                commit: false,
-                fundingSource,
-                style: validButtonStyle,
-                createOrder: () => this._setupPayment(braintreePaypalCheckout, shippingAddress, onPaymentError),
-                onApprove: (authorizeData: PaypalAuthorizeData) =>
-                    this._tokenizePayment(authorizeData, braintreePaypalCheckout, methodId, shouldProcessPayment, onAuthorizeError),
-            });
-
-            if (paypalButtonRender.isEligible()) {
-                paypalButtonRender.render(`#${containerId}`);
-            }
+        if (paypal) {
+            this._renderPayPalButton(
+                braintreePaypalCheckout,
+                braintreepaypalcredit,
+                containerId,
+                methodId,
+                testMode
+            );
         } else {
             this._hideElement(containerId);
         }
     }
 
-    private _renderPayPalMessages(messagingContainerId?: string): void {
-        const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
-        const storeConfig = state.config.getStoreConfigOrThrow();
-
-        const isMessageContainerAvailable = messagingContainerId && !!document.getElementById(messagingContainerId);
-        const isMessagesRenderingFeatureOn = storeConfig.checkoutSettings.features['PAYPAL-1149.braintree-new-card-below-totals-banner-placement'];
-
+    private _renderPayPalButton(
+        braintreePaypalCheckout: BraintreePaypalCheckout,
+        braintreepaypalcredit: BraintreePaypalCreditButtonInitializeOptions,
+        containerId: string,
+        methodId: string,
+        testMode: boolean
+    ): void {
+        const { style, shippingAddress, shouldProcessPayment, onAuthorizeError, onPaymentError } = braintreepaypalcredit;
         const { paypal } = this._window;
 
-        if (paypal && isMessagesRenderingFeatureOn && messagingContainerId && isMessageContainerAvailable) {
-            const paypalMessagesRender = paypal.Messages({ amount: cart.cartAmount, placement: 'cart' });
-            paypalMessagesRender.render(`#${messagingContainerId}`);
-        } else {
-            this._hideElement(messagingContainerId);
+        if (paypal) {
+            let hasRenderedSmartButton = false;
+
+            const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
+            const commonButtonStyle = style ? getValidButtonStyle(style) : {};
+
+            fundingSources.forEach(fundingSource => {
+                const buttonStyle = fundingSource === paypal.FUNDING.CREDIT
+                    ? { label: PaypalButtonStyleLabelOption.CREDIT, ...commonButtonStyle }
+                    : commonButtonStyle;
+
+                if (!hasRenderedSmartButton && fundingSource) {
+                    const paypalButtonRender = paypal.Buttons({
+                        env: testMode ? 'sandbox' : 'production',
+                        commit: false,
+                        fundingSource,
+                        style: buttonStyle,
+                        createOrder: () => this._setupPayment(braintreePaypalCheckout, shippingAddress, onPaymentError),
+                        onApprove: (authorizeData: PaypalAuthorizeData) =>
+                            this._tokenizePayment(authorizeData, braintreePaypalCheckout, methodId, shouldProcessPayment, onAuthorizeError),
+                    });
+
+                    if (paypalButtonRender.isEligible()) {
+                        paypalButtonRender.render(`#${containerId}`);
+                        hasRenderedSmartButton = true;
+                    }
+                }
+            });
+
+            if (!hasRenderedSmartButton) {
+                this._hideElement(containerId);
+            }
         }
     }
 
@@ -159,7 +160,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 shippingAddressOverride,
                 amount: checkout.outstandingBalance,
                 currency: config.currency.code,
-                offerCredit: false,
+                offerCredit: true,
             });
         } catch (error) {
             if (onError) {
@@ -204,12 +205,10 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
     private _handleError(
         error: BraintreeError,
-        buttonContainerId: string,
-        messagingContainerId?: string,
+        containerId: string,
         onErrorCallback?: (error: BraintreeError) => void
     ): void {
-        this._hideElement(buttonContainerId);
-        this._hideElement(messagingContainerId);
+        this._hideElement(containerId);
 
         if (onErrorCallback) {
             onErrorCallback(error);

@@ -1,7 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK, VenmoInstance } from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreePaypalCheckoutCreator, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVenmoCheckout, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {
@@ -40,15 +40,25 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
 
 export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     return {
+        loadPayPalSDK: jest.fn((_config, callback) => callback()),
         createPayment: jest.fn((() => Promise.resolve())),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
     };
 }
 
-export function getVenmoCheckoutMock(): VenmoInstance {
+export function getPayPalCheckoutCreatorMock(braintreePaypalCheckoutMock: BraintreePaypalCheckout | undefined, shouldThrowError: boolean): BraintreePaypalCheckoutCreator {
     return {
-        create: jest.fn((() => Promise.resolve())),
+        create: shouldThrowError
+            ? jest.fn((_config, callback) => callback(new Error('test'), undefined))
+            : jest.fn((_config, callback) => callback(undefined, braintreePaypalCheckoutMock)),
+    };
+}
+
+export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
+    return {
+        teardown: jest.fn((() => Promise.resolve())),
+        tokenize: jest.fn((() => Promise.resolve())),
         isBrowserSupported: jest.fn(),
     };
 }

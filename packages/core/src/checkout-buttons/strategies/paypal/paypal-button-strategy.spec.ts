@@ -12,7 +12,7 @@ import { InvalidArgumentError, MissingDataError } from '../../../common/error/er
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaypalExpress } from '../../../payment/payment-methods.mock';
-import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import { PaypalActions, PaypalButtonOptions, PaypalButtonStyleColorOption, PaypalButtonStyleShapeOption, PaypalButtonStyleSizeOption, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -204,9 +204,9 @@ describe('PaypalButtonStrategy', () => {
             paypal: {
                 ...paypalOptions,
                 style: {
-                    color: 'blue',
-                    shape: 'pill',
-                    size: 'responsive',
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    shape: PaypalButtonStyleShapeOption.PILL,
+                    size: PaypalButtonStyleSizeOption.RESPONSIVE,
                 },
             },
         };

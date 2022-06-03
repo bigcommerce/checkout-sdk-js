@@ -161,9 +161,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(braintreePaymentProcessorMock.isInitializedHostedForm).toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
         });
-
-        // throws BraintreeError
-        // throws another error
     });
 
     describe('#deinitialize()', () => {

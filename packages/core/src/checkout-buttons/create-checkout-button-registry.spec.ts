@@ -9,7 +9,7 @@ import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 
 describe('createCheckoutButtonRegistry', () => {
@@ -30,7 +30,11 @@ describe('createCheckoutButtonRegistry', () => {
     });
 
     it('returns registry with Braintree PayPal Credit registered', () => {
-        expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalButtonStrategy));
+        expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
+    });
+
+    it('returns registry with Braintree Venmo registered', () => {
+        expect(registry.get('braintreevenmo')).toEqual(expect.any(BraintreeVenmoButtonStrategy));
     });
 
     it('returns registry with GooglePay on Adyen Credit registered', () => {
