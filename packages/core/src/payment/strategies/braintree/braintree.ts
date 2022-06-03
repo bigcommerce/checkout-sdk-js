@@ -1,3 +1,6 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/core';
+
+import { BraintreePaypalOldButtonInitializeOptions } from '../../../checkout-buttons/strategies/braintree/braintree-paypal-old-button-options';
 import { GooglePaymentData, GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1, GooglePayCreator, TokenizePayload } from '../googlepay';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
 
@@ -453,4 +456,13 @@ export interface BraintreeVisaCheckout extends BraintreeModule {
 export interface BraintreeHostWindow extends Window {
     braintree?: BraintreeSDK;
     paypal?: PaypalSDK;
+}
+
+// TODO: remove after braintree-paypal-old-button-strategy will be removed
+export interface RenderButtonsData {
+    paymentMethod: PaymentMethod;
+    paypalOptions: BraintreePaypalOldButtonInitializeOptions;
+    container: string;
+    venmoParentContainer: string;
+    messagingContainerId?: string;
 }
