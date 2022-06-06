@@ -3,7 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import { GooglePayCreator } from '../googlepay';
 
-import { BraintreeClientCreator, BraintreeDataCollectorCreator, BraintreeHostedFieldsCreator, BraintreeHostWindow, BraintreePaypalCheckoutCreator, BraintreePaypalCreator, BraintreeThreeDSecureCreator, BraintreeVisaCheckoutCreator } from './braintree';
+import { BraintreeClientCreator, BraintreeDataCollectorCreator, BraintreeHostedFieldsCreator, BraintreeHostWindow, BraintreePaypalCheckoutCreator, BraintreePaypalCreator, BraintreeThreeDSecureCreator, BraintreeVenmoCheckoutCreator, BraintreeVisaCheckoutCreator } from './braintree';
 
 const version = '3.81.0';
 
@@ -50,7 +50,6 @@ export default class BraintreeScriptLoader {
     }
 
     loadPaypal(): Promise<BraintreePaypalCreator> {
-
         return this._scriptLoader
             .loadScript(`//js.braintreegateway.com/web/${version}/js/paypal.min.js`)
             .then(() => {
@@ -63,7 +62,6 @@ export default class BraintreeScriptLoader {
     }
 
     loadPaypalCheckout(): Promise<BraintreePaypalCheckoutCreator> {
-
         return this._scriptLoader
             .loadScript(`//js.braintreegateway.com/web/${version}/js/paypal-checkout.min.js`)
             .then(() => {
@@ -87,11 +85,11 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    loadVenmoCheckout() {
+    loadVenmoCheckout(): Promise<BraintreeVenmoCheckoutCreator> {
         return this._scriptLoader
             .loadScript(`//js.braintreegateway.com/web/${version}/js/venmo.min.js`)
             .then(() => {
-                if (!this._window.braintree || !this._window.braintree.venmo) {
+                if (!this._window.braintree?.venmo) {
                     throw new PaymentMethodClientUnavailableError();
                 }
 

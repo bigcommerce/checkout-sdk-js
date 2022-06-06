@@ -13,3 +13,4 @@ export { default as createBraintreeVisaCheckoutPaymentProcessor } from './create
 export { default as VisaCheckoutScriptLoader } from './visacheckout-script-loader';
 export { default as BraintreeVisaCheckoutPaymentStrategy } from './braintree-visacheckout-payment-strategy';
 export { default as BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree-visacheckout-payment-initialize-options';
+export { default as mapToBraintreeShippingAddressOverride } from './map-to-braintree-shipping-address-override';

@@ -3,7 +3,7 @@ import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
-export interface BraintreePaypalButtonInitializeOptions {
+export interface BraintreePaypalV1ButtonInitializeOptions {
     /**
      * @internal
      * This is an internal property and therefore subject to change. DO NOT USE.
@@ -44,4 +44,11 @@ export interface BraintreePaypalButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onPaymentError?(error: BraintreeError | StandardError): void;
+
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
 }

@@ -6,6 +6,7 @@ export function getPaypalMock(): PaypalSDK {
             CARD: 'card',
             CREDIT: 'credit',
             PAYPAL: 'paypal',
+            PAYLATER: 'paylater',
         },
         Button: {
             render: jest.fn(),
