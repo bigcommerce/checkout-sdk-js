@@ -1,17 +1,19 @@
 import { supportsPopups } from '@braintree/browser-detection';
+import { isEmpty } from 'lodash';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { Overlay } from '../../../common/overlay';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
-import { PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodCancelledError } from '../../errors';
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
 import { BraintreePaypal, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
 import { BraintreeFormOptions, BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
+import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
 
 export interface PaypalConfig {
     amount: number;
@@ -45,7 +47,19 @@ export default class BraintreePaymentProcessor {
     }
 
     async tokenizeCard(payment: OrderPaymentRequestBody, billingAddress: Address): Promise<NonceInstrument> {
-        const requestData = this._mapToCreditCard(payment.paymentData as CreditCardInstrument, billingAddress);
+        const { paymentData } = payment;
+
+        if (!isCreditCardInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        }
+
+        const errors = this._getErrorsRequiredFields(paymentData);
+
+        if (!isEmpty(errors)) {
+            throw new PaymentInvalidFormError(errors);
+        }
+
+        const requestData = this._mapToCreditCard(paymentData, billingAddress);
         const client = await this._braintreeSDKCreator.getClient();
         const { creditCards } = await client.request(requestData);
 
@@ -143,6 +157,30 @@ export default class BraintreePaymentProcessor {
         const threeDSecure = await this._braintreeSDKCreator.get3DS();
 
         return this._present3DSChallenge(threeDSecure, amount, nonce);
+    }
+
+    private _getErrorsRequiredFields(paymentData: CreditCardInstrument): PaymentInvalidFormErrorDetails {
+        const {
+            ccNumber,
+            ccExpiry,
+        } = paymentData;
+        const errors: PaymentInvalidFormErrorDetails = {};
+
+        if (!ccNumber) {
+            errors.ccNumber = [{
+                message: 'Credit card number is required',
+                type: 'required',
+            }];
+        }
+
+        if (!ccExpiry) {
+            errors.ccExpiry = [{
+                message: 'Expiration date is required',
+                type: 'required',
+            }];
+        }
+
+        return errors;
     }
 
     private _present3DSChallenge(
