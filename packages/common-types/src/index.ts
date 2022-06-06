@@ -1,6 +1,6 @@
 export {} from './lib/address';
-export { BillingAddressRequestBody } from './lib/billing';
+export { BillingAddress, BillingAddressRequestBody } from './lib/billing';
 export {} from './lib/browser';
-export { OrderRequestBody } from './lib/order';
-export { Payment } from './lib/payment';
+export { Order, OrderRequestBody } from './lib/order';
+export { CardInstrument, Payment } from './lib/payment';
 export { ShippingAddressRequestBody } from './lib/shipping';

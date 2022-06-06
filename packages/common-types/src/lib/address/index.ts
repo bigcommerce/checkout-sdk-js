@@ -1,1 +1,1 @@
-export { default as Address, AddressRequestBody } from './address'
+export { default as Address, AddressKey, AddressRequestBody } from './address'
