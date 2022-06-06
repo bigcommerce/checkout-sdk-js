@@ -3,7 +3,7 @@ import braintreeBrowserDetection from '@braintree/browser-detection';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
 import { Overlay } from '../../../common/overlay';
-import { PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
 import { BraintreeClient, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
@@ -80,6 +80,15 @@ describe('BraintreePaymentProcessor', () => {
         it('calls the braintree client request with the correct information', async () => {
             await braintreePaymentProcessor.tokenizeCard(getBraintreePaymentData(), getBillingAddress());
             expect(clientMock.request).toHaveBeenCalledWith(getBraintreeRequestData());
+        });
+
+        it('throws an error when tokenising card with invalid form data', async () => {
+            const payment = getBraintreePaymentData();
+            payment.paymentData = undefined;
+
+            await expect(braintreePaymentProcessor.tokenizeCard(payment, getBillingAddress()))
+                .rejects
+                .toThrow(PaymentArgumentInvalidError);
         });
     });
 
