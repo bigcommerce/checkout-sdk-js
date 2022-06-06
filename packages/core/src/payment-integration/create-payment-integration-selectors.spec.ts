@@ -1,10 +1,10 @@
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
 import { createInternalCheckoutSelectors,
     getCheckoutStoreStateWithOrder,
     InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core';
 import { merge } from 'lodash';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
-import PaymentIntegrationSelectors from './payment-integration-selectors';
 
 describe('createPaymentIntegrationSelectors', () => {
     describe('PaymentIntegrationSelectors', () => {

@@ -1,6 +1,5 @@
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
 import { clone, InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core';
-
-import PaymentIntegrationSelectors from './payment-integration-selectors';
 
 export default function createPaymentIntegrationSelectors({
     billingAddress: {

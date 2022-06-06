@@ -1,13 +1,12 @@
-import { BillingAddress,
-    CardInstrument,
-    Cart,
-    Checkout,
-    Consignment,
-    Customer,
-    Order,
-    PaymentMethod,
-    ShippingAddress,
-    StoreConfig } from '@bigcommerce/checkout-sdk/common-types';
+import { BillingAddress } from "../billing";
+import { Cart } from "../cart";
+import { Checkout } from "../checkout";
+import { StoreConfig } from "../config";
+import { Customer } from "../customer";
+import { Order } from "../order";
+import { CardInstrument } from "../payment/instrument";
+import PaymentMethod from "../payment/payment-method";
+import { Consignment, ShippingAddress } from "../shipping";
 
 export default interface PaymentIntegrationSelectors {
     getBillingAddress(): BillingAddress | undefined;

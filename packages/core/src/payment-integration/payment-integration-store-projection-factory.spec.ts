@@ -3,7 +3,7 @@ import { createCheckoutStore,
 import { ReadableDataStore } from '@bigcommerce/data-store';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
-import PaymentIntegrationSelectors from './payment-integration-selectors';
+import PaymentIntegrationSelectors from '../../../payment-integration-core/src/lib/payment-integration-selectors';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 describe('PaymentIntegrationStoreProjectionFactory', () => {

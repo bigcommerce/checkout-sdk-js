@@ -1,22 +1,19 @@
-import { getBillingAddress,
-    getOrder,
-    getPayment,
-    getShippingAddress,
-    BillingAddressActionCreator,
-    CheckoutActionCreator,
-    CheckoutStore,
-    ConsignmentActionCreator,
-    DataStoreProjection,
-    InternalCheckoutSelectors,
-    OrderActionCreator,
-    PaymentActionCreator,
-    PaymentMethodActionCreator } from '@bigcommerce/checkout-sdk/core';
+import { PaymentIntegrationSelectors, PaymentIntegrationService} from '@bigcommerce/checkout-sdk/common-types';
 import { createAction } from '@bigcommerce/data-store';
 import { noop } from 'lodash';
+import { BillingAddressActionCreator } from '../billing';
+import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { InternalCheckoutSelectors, CheckoutStore, CheckoutActionCreator } from '../checkout';
+import { DataStoreProjection } from '../common/data-store';
+import { OrderActionCreator } from '../order';
+import { getOrder } from '../order/orders.mock';
+import PaymentActionCreator from '../payment/payment-action-creator';
+import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import { getPayment } from '../payment/payments.mock';
+import { ConsignmentActionCreator } from '../shipping';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
-import PaymentIntegrationService from './payment-integration-core';
-import PaymentIntegrationSelectors from './payment-integration-selectors';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 describe('DefaultPaymentIntegrationService', () => {

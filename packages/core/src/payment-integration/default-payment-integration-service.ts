@@ -1,3 +1,4 @@
+import { PaymentIntegrationService, PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
 import { BillingAddressActionCreator,
     BillingAddressRequestBody,
     CheckoutActionCreator,
@@ -11,8 +12,7 @@ import { BillingAddressActionCreator,
     PaymentMethodActionCreator,
     ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core';
 
-import PaymentIntegrationService from './payment-integration-core';
-import PaymentIntegrationSelectors from './payment-integration-selectors';
+
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {

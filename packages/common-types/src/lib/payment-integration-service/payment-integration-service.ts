@@ -1,8 +1,7 @@
-import { BillingAddressRequestBody,
-    OrderRequestBody,
-    Payment,
-    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/common-types';
-
+import { BillingAddressRequestBody } from '../billing';
+import { OrderRequestBody } from '../order';
+import Payment from '../payment/payment';
+import { ShippingAddressRequestBody } from '../shipping';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 
 export default interface PaymentIntegrationService {
