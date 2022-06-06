@@ -1,0 +1,1 @@
+export { ShippingAddress, ShippingAddressRequestBody } from './shipping-address';

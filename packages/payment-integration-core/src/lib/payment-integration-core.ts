@@ -1,7 +1,7 @@
 import { BillingAddressRequestBody,
     OrderRequestBody,
     Payment,
-    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/core';
+    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/common-types';
 
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 
