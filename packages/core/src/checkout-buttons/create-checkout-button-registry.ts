@@ -28,7 +28,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -96,7 +96,7 @@ export default function createCheckoutButtonRegistry(
     );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
-        new BraintreePaypalButtonStrategy(
+        new BraintreePaypalV1ButtonStrategy(
             store,
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
@@ -107,7 +107,7 @@ export default function createCheckoutButtonRegistry(
     );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
-        new BraintreePaypalButtonStrategy(
+        new BraintreePaypalV1ButtonStrategy(
             store,
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),

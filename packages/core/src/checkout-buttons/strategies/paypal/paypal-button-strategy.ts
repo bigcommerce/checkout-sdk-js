@@ -5,7 +5,7 @@ import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { PaymentMethod } from '../../../payment';
-import { PaypalActions, PaypalAuthorizeData, PaypalClientToken, PaypalScriptLoader } from '../../../payment/strategies/paypal';
+import { PaypalActions, PaypalAuthorizeData, PaypalButtonStyleShapeOption, PaypalButtonStyleSizeOption, PaypalClientToken, PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -43,14 +43,9 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
                 const env = paymentMethod.config.testMode ? 'sandbox' : 'production';
                 const clientToken: PaypalClientToken = { [env]: paypalOptions.clientId };
 
-                const allowedSources = [];
-                const disallowedSources = [];
-
-                if (paypalOptions.allowCredit) {
-                    allowedSources.push(paypal.FUNDING.CREDIT);
-                } else {
-                    disallowedSources.push(paypal.FUNDING.CREDIT);
-                }
+                const fundingCreditOption = paypal.FUNDING.CREDIT || 'credit';
+                const allowedSources = paypalOptions.allowCredit ? [fundingCreditOption] : [];
+                const disallowedSources = !paypalOptions.allowCredit ? [fundingCreditOption] : [];
 
                 return paypal.Button.render({
                     env,
@@ -61,9 +56,9 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
                         disallowed: disallowedSources,
                     },
                     style: {
-                        shape: 'rect',
+                        shape: PaypalButtonStyleShapeOption.RECT,
                         ...pick(paypalOptions.style, 'layout', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
-                        size: (paymentMethod.id === 'paypalexpress' && paypalOptions.style?.size === 'small') ? 'responsive' : paypalOptions.style?.size,
+                        size: (paymentMethod.id === 'paypalexpress' && paypalOptions.style?.size === 'small') ? PaypalButtonStyleSizeOption.RESPONSIVE : paypalOptions.style?.size,
                     },
                     payment: (_, actions) => this._setupPayment(merchantId, actions, paypalOptions.onPaymentError),
                     onAuthorize: (data, actions) => this._tokenizePayment(data, actions, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),

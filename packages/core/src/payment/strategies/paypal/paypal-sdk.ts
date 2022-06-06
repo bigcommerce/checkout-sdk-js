@@ -7,9 +7,10 @@ export interface PaypalSDK {
 }
 
 export interface PaypalFundingTypeList {
-    CARD: string;
-    CREDIT: string;
-    PAYPAL: string;
+    CARD?: string;
+    CREDIT?: string;
+    PAYPAL?: string;
+    PAYLATER?: string;
 }
 
 export interface PaypalButton {
@@ -54,12 +55,44 @@ export interface PaypalFundingType {
     disallowed?: string[];
 }
 
+export enum PaypalButtonStyleLayoutOption {
+    HORIZONTAL = 'horizontal',
+    VERTICAL = 'vertical',
+}
+
+export enum PaypalButtonStyleSizeOption {
+    SMALL = 'small',
+    MEDIUM = 'medium',
+    LARGE = 'large',
+    RESPONSIVE = 'responsive',
+}
+
+export enum PaypalButtonStyleColorOption {
+    GOLD = 'gold',
+    BLUE = 'blue',
+    SIlVER = 'silver',
+    BLACK = 'black',
+}
+
+export enum PaypalButtonStyleLabelOption {
+    CHECKOUT = 'checkout',
+    PAY = 'pay',
+    BUYNOW = 'buynow',
+    PAYPAL = 'paypal',
+    CREDIT = 'credit',
+}
+
+export enum PaypalButtonStyleShapeOption {
+    PILL = 'pill',
+    RECT = 'rect',
+}
+
 export interface PaypalButtonStyleOptions {
-    layout?: 'horizontal' | 'vertical';
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
-    label?: 'checkout' | 'pay' | 'buynow' | 'paypal' | 'credit';
-    shape?: 'pill' | 'rect';
+    layout?: PaypalButtonStyleLayoutOption;
+    size?: PaypalButtonStyleSizeOption;
+    color?: PaypalButtonStyleColorOption;
+    label?: PaypalButtonStyleLabelOption;
+    shape?: PaypalButtonStyleShapeOption;
     tagline?: boolean;
     fundingicons?: boolean;
     height?: number;
