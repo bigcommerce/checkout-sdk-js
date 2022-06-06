@@ -14,6 +14,7 @@
 
 * [Error](braintreeerror.md#error)
 * [code](braintreeerror.md#code)
+* [details](braintreeerror.md#optional-details)
 * [message](braintreeerror.md#message)
 * [name](braintreeerror.md#name)
 * [stack](braintreeerror.md#optional-stack)
@@ -33,11 +34,17 @@ ___
 
 ___
 
+### `Optional` details
+
+• **details**? : *unknown*
+
+___
+
 ###  message
 
 • **message**: *string*
 
-*Overrides [AmazonPayWidgetError](amazonpaywidgeterror.md).[message](amazonpaywidgeterror.md#message)*
+*Inherited from [AmazonPayWidgetError](amazonpaywidgeterror.md).[message](amazonpaywidgeterror.md#message)*
 
 ___
 

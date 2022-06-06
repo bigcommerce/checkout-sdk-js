@@ -58,7 +58,7 @@ ___
 
 ### `Optional` braintreepaypal
 
-• **braintreepaypal**? : *[BraintreePaypalButtonInitializeOptions](braintreepaypalbuttoninitializeoptions.md)*
+• **braintreepaypal**? : *[BraintreePaypalV1ButtonInitializeOptions](braintreepaypalv1buttoninitializeoptions.md)*
 
 The options that are required to facilitate Braintree PayPal. They can be
 omitted unless you need to support Braintree PayPal.
@@ -67,7 +67,7 @@ ___
 
 ### `Optional` braintreepaypalcredit
 
-• **braintreepaypalcredit**? : *[BraintreePaypalButtonInitializeOptions](braintreepaypalbuttoninitializeoptions.md)*
+• **braintreepaypalcredit**? : *[BraintreePaypalV1ButtonInitializeOptions](braintreepaypalv1buttoninitializeoptions.md)*
 
 The options that are required to facilitate Braintree Credit. They can be
 omitted unless you need to support Braintree Credit.

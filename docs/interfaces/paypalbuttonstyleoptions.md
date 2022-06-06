@@ -23,7 +23,7 @@
 
 ### `Optional` color
 
-• **color**? : *"gold" | "blue" | "silver" | "black"*
+• **color**? : *[PaypalButtonStyleColorOption](../enums/paypalbuttonstylecoloroption.md)*
 
 ___
 
@@ -41,25 +41,25 @@ ___
 
 ### `Optional` label
 
-• **label**? : *"checkout" | "pay" | "buynow" | "paypal" | "credit"*
+• **label**? : *[PaypalButtonStyleLabelOption](../enums/paypalbuttonstylelabeloption.md)*
 
 ___
 
 ### `Optional` layout
 
-• **layout**? : *"horizontal" | "vertical"*
+• **layout**? : *[PaypalButtonStyleLayoutOption](../enums/paypalbuttonstylelayoutoption.md)*
 
 ___
 
 ### `Optional` shape
 
-• **shape**? : *"pill" | "rect"*
+• **shape**? : *[PaypalButtonStyleShapeOption](../enums/paypalbuttonstyleshapeoption.md)*
 
 ___
 
 ### `Optional` size
 
-• **size**? : *"small" | "medium" | "large" | "responsive"*
+• **size**? : *[PaypalButtonStyleSizeOption](../enums/paypalbuttonstylesizeoption.md)*
 
 ___
 

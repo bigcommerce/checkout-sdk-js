@@ -1039,7 +1039,7 @@ declare interface BoltPaymentInitializeOptions {
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
-    message: string;
+    details?: unknown;
 }
 
 declare type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
@@ -1200,7 +1200,7 @@ declare interface BraintreePaymentInitializeOptions {
     form?: BraintreeFormOptions;
 }
 
-declare interface BraintreePaypalButtonInitializeOptions {
+declare interface BraintreePaypalV1ButtonInitializeOptions {
     /**
      * The ID of a container which the messaging should be inserted.
      */
@@ -1230,6 +1230,12 @@ declare interface BraintreePaypalButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onPaymentError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
@@ -1624,12 +1630,12 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.
      */
-    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
+    braintreepaypal?: BraintreePaypalV1ButtonInitializeOptions;
     /**
      * The options that are required to facilitate Braintree Credit. They can be
      * omitted unless you need to support Braintree Credit.
      */
-    braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
+    braintreepaypalcredit?: BraintreePaypalV1ButtonInitializeOptions;
     /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
@@ -5799,12 +5805,32 @@ declare interface PaypalButtonInitializeOptions {
     onPaymentError?(error: StandardError): void;
 }
 
+declare enum PaypalButtonStyleColorOption {
+    GOLD = "gold",
+    BLUE = "blue",
+    SIlVER = "silver",
+    BLACK = "black"
+}
+
+declare enum PaypalButtonStyleLabelOption {
+    CHECKOUT = "checkout",
+    PAY = "pay",
+    BUYNOW = "buynow",
+    PAYPAL = "paypal",
+    CREDIT = "credit"
+}
+
+declare enum PaypalButtonStyleLayoutOption {
+    HORIZONTAL = "horizontal",
+    VERTICAL = "vertical"
+}
+
 declare interface PaypalButtonStyleOptions {
-    layout?: 'horizontal' | 'vertical';
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
-    label?: 'checkout' | 'pay' | 'buynow' | 'paypal' | 'credit';
-    shape?: 'pill' | 'rect';
+    layout?: PaypalButtonStyleLayoutOption;
+    size?: PaypalButtonStyleSizeOption;
+    color?: PaypalButtonStyleColorOption;
+    label?: PaypalButtonStyleLabelOption;
+    shape?: PaypalButtonStyleShapeOption;
     tagline?: boolean;
     fundingicons?: boolean;
     height?: number;
@@ -5817,6 +5843,18 @@ declare interface PaypalButtonStyleOptions_2 {
     height?: 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55;
     label?: StyleButtonLabel;
     tagline?: boolean;
+}
+
+declare enum PaypalButtonStyleShapeOption {
+    PILL = "pill",
+    RECT = "rect"
+}
+
+declare enum PaypalButtonStyleSizeOption {
+    SMALL = "small",
+    MEDIUM = "medium",
+    LARGE = "large",
+    RESPONSIVE = "responsive"
 }
 
 declare interface PaypalCommerceButtonInitializeOptions {
