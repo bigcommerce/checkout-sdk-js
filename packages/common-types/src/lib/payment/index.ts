@@ -19,3 +19,6 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
 } from './payment';
+
+export { default as PaymentMethod } from './payment-method';
+

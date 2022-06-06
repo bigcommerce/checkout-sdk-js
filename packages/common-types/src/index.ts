@@ -1,6 +1,8 @@
-export {} from './lib/address';
 export { BillingAddress, BillingAddressRequestBody } from './lib/billing';
-export {} from './lib/browser';
+export { Cart } from './lib/cart';
+export { Checkout } from './lib/checkout';
+export { StoreConfig } from './lib/config';
+export { Customer } from './lib/customer';
 export { Order, OrderRequestBody } from './lib/order';
-export { CardInstrument, Payment } from './lib/payment';
-export { ShippingAddressRequestBody } from './lib/shipping';
+export { CardInstrument, Payment, PaymentMethod } from './lib/payment';
+export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './lib/shipping';

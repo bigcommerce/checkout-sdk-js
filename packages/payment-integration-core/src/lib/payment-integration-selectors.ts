@@ -7,7 +7,7 @@ import { BillingAddress,
     Order,
     PaymentMethod,
     ShippingAddress,
-    StoreConfig } from '@bigcommerce/checkout-sdk/core';
+    StoreConfig } from '@bigcommerce/checkout-sdk/common-types';
 
 export default interface PaymentIntegrationSelectors {
     getBillingAddress(): BillingAddress | undefined;
