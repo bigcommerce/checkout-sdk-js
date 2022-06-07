@@ -112,7 +112,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         }
 
         if (!paypal || !hasRenderedSmartButton) {
-            this._hideElement(containerId);
+            this._removeElement(containerId);
         }
     }
 
@@ -186,18 +186,18 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         containerId: string,
         onErrorCallback?: (error: BraintreeError) => void
     ): void {
-        this._hideElement(containerId);
+        this._removeElement(containerId);
 
         if (onErrorCallback) {
             onErrorCallback(error);
         }
     }
 
-    private _hideElement(elementId?: string): void {
+    private _removeElement(elementId?: string): void {
         const element = elementId && document.getElementById(elementId);
 
         if (element) {
-            Object.assign(element.style, { display: 'none' });
+            element.remove();
         }
     }
 }

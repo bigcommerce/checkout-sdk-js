@@ -126,7 +126,9 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         delete (window as PaypalHostWindow).paypal;
 
-        document.body.removeChild(paypalButtonElement);
+        if (document.getElementById(defaultButtonContainerId)) {
+            document.body.removeChild(paypalButtonElement);
+        }
     });
 
     it('creates an instance of the braintree paypal credit checkout button strategy', () => {
