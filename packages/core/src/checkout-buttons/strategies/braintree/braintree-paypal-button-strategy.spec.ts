@@ -143,8 +143,13 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         delete (window as PaypalHostWindow).paypal;
 
-        document.body.removeChild(paypalButtonElement);
-        document.body.removeChild(paypalMessageElement);
+        if (document.getElementById(defaultButtonContainerId)) {
+            document.body.removeChild(paypalButtonElement);
+        }
+
+        if (document.getElementById(defaultMessageContainerId)) {
+            document.body.removeChild(paypalMessageElement);
+        }
     });
 
     it('creates an instance of the braintree paypal checkout button strategy', () => {

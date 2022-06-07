@@ -115,7 +115,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 paypalButtonRender.render(`#${containerId}`);
             }
         } else {
-            this._hideElement(containerId);
+            this._removeElement(containerId);
         }
     }
 
@@ -133,7 +133,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             const paypalMessagesRender = paypal.Messages({ amount: cart.cartAmount, placement: 'cart' });
             paypalMessagesRender.render(`#${messagingContainerId}`);
         } else {
-            this._hideElement(messagingContainerId);
+            this._removeElement(messagingContainerId);
         }
     }
 
@@ -208,19 +208,19 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         messagingContainerId?: string,
         onErrorCallback?: (error: BraintreeError) => void
     ): void {
-        this._hideElement(buttonContainerId);
-        this._hideElement(messagingContainerId);
+        this._removeElement(buttonContainerId);
+        this._removeElement(messagingContainerId);
 
         if (onErrorCallback) {
             onErrorCallback(error);
         }
     }
 
-    private _hideElement(elementId?: string): void {
+    private _removeElement(elementId?: string): void {
         const element = elementId && document.getElementById(elementId);
 
         if (element) {
-            Object.assign(element.style, { display: 'none' });
+            element.remove();
         }
     }
 }
