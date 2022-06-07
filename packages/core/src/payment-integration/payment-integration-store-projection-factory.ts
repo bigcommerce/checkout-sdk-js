@@ -1,8 +1,6 @@
 import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
-import { createDataStoreProjection,
-    DataStoreProjection,
-    InternalCheckoutSelectors,
-    ReadableCheckoutStore } from '@bigcommerce/checkout-sdk/core';
+import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { DataStoreProjection, createDataStoreProjection } from '../common/data-store';
 
 export default class PaymentIntegrationStoreProjectionFactory {
     constructor(

@@ -6,13 +6,25 @@
             "executor": "@nrwl/workspace:run-commands",
             "options": {
                 "command": "webpack --config webpack.config.js"
-            }
+            },
+            "dependsOn": [
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
         },
         "build-watch": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
                 "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
-            }
+            },
+            "dependsOn": [
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
         },
         "build-cdn": {
             "executor": "@nrwl/workspace:run-commands",
@@ -22,7 +34,13 @@
                     "webpack --config webpack-cdn.config.js --config-name umd",
                     "webpack --config webpack-cdn.config.js --config-name umd-loader"
                 ]
-            }
+            },
+            "dependsOn": [
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
         },
         "prebundle-dts": {
             "executor": "@nrwl/workspace:run-commands",

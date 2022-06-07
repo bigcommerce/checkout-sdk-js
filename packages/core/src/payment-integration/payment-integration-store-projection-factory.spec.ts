@@ -1,9 +1,8 @@
-import { createCheckoutStore,
-    InternalCheckoutSelectors } from '@bigcommerce/checkout-sdk/core';
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
 import { ReadableDataStore } from '@bigcommerce/data-store';
+import { InternalCheckoutSelectors, createCheckoutStore } from '../checkout';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
-import PaymentIntegrationSelectors from '../../../payment-integration-core/src/lib/payment-integration-selectors';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
 describe('PaymentIntegrationStoreProjectionFactory', () => {
