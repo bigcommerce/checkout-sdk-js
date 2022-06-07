@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.249.1-alpha.698e7391ed52693f43359dd36ae336abc7d9d4b4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.246.5...v1.249.1-alpha.698e7391ed52693f43359dd36ae336abc7d9d4b4) (2022-06-07)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6703 post cartid for order creation API endpoint ([2f9bd11](https://github.com/bigcommerce/checkout-sdk-js/commit/2f9bd11cd66174dba481e5d8ede8f3757083c321))
+* **payment:** PAYPAL-0000 updated braintree paypal checkout button strategy to prepare strategies separation ([5d68a3d](https://github.com/bigcommerce/checkout-sdk-js/commit/5d68a3d2b30bb7b6ddaa363e42da30655fef6f6b))
+* **payment:** PAYPAL-1368 added checking required fields ([aa706e7](https://github.com/bigcommerce/checkout-sdk-js/commit/aa706e7d468ad5bc8e354e59e60d863c662d87d5))
+* **payment:** PAYPAL-1466 fixed currency issue ([#1457](https://github.com/bigcommerce/checkout-sdk-js/issues/1457)) ([8146537](https://github.com/bigcommerce/checkout-sdk-js/commit/814653783547daf2fe7ec460b3e042eb1dfef930))
+* **payment:** PAYPAL-1487 Add paypalcommercevenmo module ([698e739](https://github.com/bigcommerce/checkout-sdk-js/commit/698e7391ed52693f43359dd36ae336abc7d9d4b4))
+
+
+### Bug Fixes
+
+* **payment:** INT-5826 AmazonPayV2: Provide a relative URL for `createCheckoutSession.url` ([d3d6951](https://github.com/bigcommerce/checkout-sdk-js/commit/d3d69518cb7a10d1e4ebb3e4fb3a3dd96e1108d6))
+* **payment:** INT-6055 Stripe UPE mount fields properly if previously selected ([34df8a6](https://github.com/bigcommerce/checkout-sdk-js/commit/34df8a6b0b224d694d4e717273c6d1dd82ac90b3))
+
 ## [1.249.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.248.2...v1.249.0) (2022-06-06)
 
 
