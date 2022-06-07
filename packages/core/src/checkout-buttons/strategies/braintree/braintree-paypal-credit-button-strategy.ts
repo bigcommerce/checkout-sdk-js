@@ -47,7 +47,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
         const paypalCheckoutOptions = { currency };
         const paypalCheckoutCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) =>
-            this._renderPayPalComponent(
+            this._renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypalcredit,
                 containerId,
@@ -71,28 +71,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         return Promise.resolve();
     }
 
-    private _renderPayPalComponent(
-        braintreePaypalCheckout: BraintreePaypalCheckout,
-        braintreepaypalcredit: BraintreePaypalCreditButtonInitializeOptions,
-        containerId: string,
-        methodId: string,
-        testMode: boolean
-    ) {
-        const { paypal } = this._window;
-
-        if (paypal) {
-            this._renderPayPalButton(
-                braintreePaypalCheckout,
-                braintreepaypalcredit,
-                containerId,
-                methodId,
-                testMode
-            );
-        } else {
-            this._hideElement(containerId);
-        }
-    }
-
     private _renderPayPalButton(
         braintreePaypalCheckout: BraintreePaypalCheckout,
         braintreepaypalcredit: BraintreePaypalCreditButtonInitializeOptions,
@@ -103,9 +81,9 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const { style, shippingAddress, shouldProcessPayment, onAuthorizeError, onPaymentError } = braintreepaypalcredit;
         const { paypal } = this._window;
 
-        if (paypal) {
-            let hasRenderedSmartButton = false;
+        let hasRenderedSmartButton = false;
 
+        if (paypal) {
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
             const commonButtonStyle = style ? getValidButtonStyle(style) : {};
 
@@ -114,7 +92,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                     ? { label: PaypalButtonStyleLabelOption.CREDIT, ...commonButtonStyle }
                     : commonButtonStyle;
 
-                if (!hasRenderedSmartButton && fundingSource) {
+                if (!hasRenderedSmartButton) {
                     const paypalButtonRender = paypal.Buttons({
                         env: testMode ? 'sandbox' : 'production',
                         commit: false,
@@ -131,10 +109,10 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                     }
                 }
             });
+        }
 
-            if (!hasRenderedSmartButton) {
-                this._hideElement(containerId);
-            }
+        if (!paypal || !hasRenderedSmartButton) {
+            this._hideElement(containerId);
         }
     }
 
