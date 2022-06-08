@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.250.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.249.0...v1.250.0) (2022-06-08)
+
+
+### Features
+
+* **payment:** PAYPAL-1368 added checking required fields ([aa706e7](https://github.com/bigcommerce/checkout-sdk-js/commit/aa706e7d468ad5bc8e354e59e60d863c662d87d5))
+
 ## [1.249.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.248.2...v1.249.0) (2022-06-06)
 
 

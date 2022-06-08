@@ -378,6 +378,7 @@
 * [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
 * [Instrument](README.md#instrument)
 * [Omit](README.md#omit)
+* [OrderPaymentInstrument](README.md#orderpaymentinstrument)
 * [OrderPayments](README.md#orderpayments)
 * [PaymentInstrument](README.md#paymentinstrument)
 * [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
@@ -586,6 +587,12 @@ ___
 ###  Omit
 
 Ƭ **Omit**: *Pick‹T, Exclude‹keyof T, K››*
+
+___
+
+###  OrderPaymentInstrument
+
+Ƭ **OrderPaymentInstrument**: *[CreditCardInstrument](interfaces/creditcardinstrument.md) | [HostedInstrument](interfaces/hostedinstrument.md) | object | [VaultedInstrument](interfaces/vaultedinstrument.md) | object | [NonceInstrument](interfaces/nonceinstrument.md) | [CreditCardInstrument](interfaces/creditcardinstrument.md) & [WithDocumentInstrument](interfaces/withdocumentinstrument.md) | [CreditCardInstrument](interfaces/creditcardinstrument.md) & [WithCheckoutcomFawryInstrument](interfaces/withcheckoutcomfawryinstrument.md) | [CreditCardInstrument](interfaces/creditcardinstrument.md) & [WithCheckoutcomSEPAInstrument](interfaces/withcheckoutcomsepainstrument.md) | [CreditCardInstrument](interfaces/creditcardinstrument.md) & [WithCheckoutcomiDealInstrument](interfaces/withcheckoutcomidealinstrument.md) | [HostedInstrument](interfaces/hostedinstrument.md) & [WithMollieIssuerInstrument](interfaces/withmollieissuerinstrument.md) | [WithAccountCreation](interfaces/withaccountcreation.md)*
 
 ___
 
