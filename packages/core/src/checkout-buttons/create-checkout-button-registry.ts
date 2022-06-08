@@ -58,16 +58,9 @@ export default function createCheckoutButtonRegistry(
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
     const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
-    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender);
-    const orderRequestSender = new OrderRequestSender(createRequestSender());
-    const orderActionCreator = new OrderActionCreator(
-        orderRequestSender,
-        new CheckoutValidator(new CheckoutRequestSender(requestSender))
-    );
     const countryActionCreator = new CountryActionCreator(new CountryRequestSender(requestSender, { locale }));
     const consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), new CheckoutRequestSender(requestSender));
     const billingAdressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender), new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)));
-    const paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator, new PaymentRequestTransformer(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(

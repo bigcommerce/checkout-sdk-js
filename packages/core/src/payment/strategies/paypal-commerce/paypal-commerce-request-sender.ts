@@ -2,7 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../../../common/http-request';
 
-import { OrderData, OrderStatus } from './paypal-commerce-sdk';
+import { OrderData, OrderStatus, ShippingChangeData } from './paypal-commerce-sdk';
 
 export interface ParamsForProvider {
     isCredit?: boolean;
@@ -62,6 +62,42 @@ export default class PaypalCommerceRequestSender {
         return res.body;
     }
 
+    async setCountry(countryId: string) {
+        const url = `remote/v1/country-states/${countryId}`;
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+        const res = await this._requestSender.get<OrderStatus>(url, {headers});
+
+        return res.body;
+    }
+
+    async setShippingQuote(countryId: string, stateId: number, city: string, stateCode: string) {
+        const url = `remote/v1/shipping-quote?city=${city}&country_id=${countryId}&state_id=${stateId}&zip_code=${stateCode}`;
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+        const res = await this._requestSender.get<OrderStatus>(url, {headers});
+
+        return res.body;
+    }
+
+    async updateShippingQuote(shippingOptionIndex: number) {
+        const url = `remote/v1/shipping-quote`;
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+        const res = await this._requestSender.get<OrderStatus>(url, {body:{shipping_method: shippingOptionIndex}, headers});
+
+        return res.body;
+    }
+
     async deleteCart(cartId: string) {
         const url = `/api/storefront/cart/${cartId}`;
         const res = await this._requestSender.delete(url);
@@ -69,9 +105,14 @@ export default class PaypalCommerceRequestSender {
         return res.body;
     }
 
-    async getBilling(checkoutId: string, consignmentId: string, selected: string) {
-        const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
-        const res = await this._requestSender.put(url, {body: {shippingOptionId: selected}});
+    async setShippingOptions(payload: ShippingChangeData) {
+        const url = `/api/storefront/initialization/paypalcommerce`;
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+        const res = await this._requestSender.put(url, {body: payload, headers});
 
         return res.body;
     }

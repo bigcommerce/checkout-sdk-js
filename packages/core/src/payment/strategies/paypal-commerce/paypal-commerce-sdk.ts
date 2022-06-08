@@ -1,3 +1,5 @@
+import Cart from "../../../cart/cart";
+
 export interface ApproveDataOptions {
     orderID?: string;
 }
@@ -59,10 +61,10 @@ export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string>;
-    onApprove?(data: ApproveDataOptions, actions: ApproveActions): void;
+    onApprove?(data: ApproveDataOptions, actions: ApproveActions, cart: Cart): void;
     onShippingChange?(data: ShippingChangeData, actions: ApproveActions): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
-    onCancel?(): void;
+    onCancel?(data: any, actions: any): void;
     onError?(error: Error): void;
 }
 
@@ -135,6 +137,8 @@ export interface ShippingChangeData {
         id: string;
         amount: ItemTotal;
     };
+    cartId: string;
+    availableShippingOptions: any;
 }
 
 export interface ShippingAddress {
@@ -147,7 +151,7 @@ export interface ShippingAddress {
 export interface PaymentMethodInitializationData {
     initializationData?: {
         intent?: string;
-        isHosted?: boolean;
+        isHostedCheckoutEnabled?: boolean;
         clientId?: string;
     };
     id?: string;
@@ -157,6 +161,13 @@ export interface CurrentShippingAddress {
     city: string;
     countryCode: string;
     postalCode: string;
+}
+
+export interface ShippingData extends CurrentShippingAddress{
+    firstName: string;
+    lastName: string;
+    address1: string;
+    email: string;
 }
 
 interface ItemTotal {
@@ -175,11 +186,11 @@ export interface ShippingOption {
 export interface AddressData {
     firstName?: string;
     lastName?: string;
-    countryCode: string;
-    postalCode: string;
+    countryCode?: string;
+    postalCode?: string;
     email?: string;
     address1?: string;
-    city: string;
+    city?: string;
 }
 
 export interface PurchaseUnits {
@@ -374,6 +385,7 @@ export interface PaypalCommerceInitializationData {
     clientToken?: string;
     attributionId?: string;
     isVenmoEnabled?: boolean;
+    isHostedCheckoutEnabled?: boolean;
 }
 
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'fields'>;

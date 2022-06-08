@@ -197,7 +197,6 @@ export default class ConsignmentActionCreator {
     ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<UpdateConsignmentAction>) => {
             const checkout = store.getState().checkout.getCheckout();
-
             if (!checkout || !checkout.id) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }

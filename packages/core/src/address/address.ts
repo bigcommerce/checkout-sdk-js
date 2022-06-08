@@ -21,4 +21,5 @@ export interface AddressRequestBody {
         fieldId: string;
         fieldValue: string | number | string[];
     }>;
+    email?: string;
 }

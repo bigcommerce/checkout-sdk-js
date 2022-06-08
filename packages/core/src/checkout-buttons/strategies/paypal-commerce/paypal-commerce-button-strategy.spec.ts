@@ -16,14 +16,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { CountryActionCreator, CountryActionType, CountryRequestSender } from '../../../geography';
 import { getCountries } from '../../../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
-import { PaymentMethod,
-    PaymentMethodActionType,
-    PaymentRequestSender,
-    PaymentRequestTransformer } from '../../../payment';
-// eslint-disable-next-line import/no-internal-modules
-import PaymentActionCreator from '../../../payment/payment-action-creator';
-import { OrderActionCreator } from '../../../order';
-import { PaymentActionCreator, PaymentMethod, PaymentMethodActionType } from '../../../payment';
+import { PaymentActionCreator, PaymentMethod, PaymentMethodActionType, PaymentRequestSender, PaymentRequestTransformer } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { ApproveActions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, StyleButtonColor, StyleButtonLabel } from '../../../payment/strategies/paypal-commerce';
 import { ConsignmentActionCreator, ConsignmentActionType, ConsignmentRequestSender } from '../../../shipping';
@@ -59,8 +52,6 @@ describe('PaypalCommerceButtonStrategy', () => {
     let billingAdressActionCreator: BillingAddressActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     const paymentClient = {};
-    let orderActionCreator: OrderActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -306,7 +297,6 @@ describe('PaypalCommerceButtonStrategy', () => {
             currency: 'USD',
             intent: 'capture',
             components: ['buttons', 'messages'],
-            'disable-funding': [ 'card', 'credit', 'paylater'],
             'disable-funding': [
                 'card',
                 'credit',
@@ -330,16 +320,8 @@ describe('PaypalCommerceButtonStrategy', () => {
                 currency: 'USD',
                 intent: 'capture',
                 components: ['buttons', 'messages'],
-                'disable-funding': [ 'card'],
+                'disable-funding': [ 'card', 'venmo'],
                 'enable-funding': ['credit', 'paylater'],
-                'disable-funding': [
-                    'card',
-                    'venmo',
-                ],
-                'enable-funding': [
-                    'credit',
-                    'paylater',
-                ],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
@@ -382,59 +364,24 @@ describe('PaypalCommerceButtonStrategy', () => {
             commit: false,
             currency: 'USD',
             intent: 'authorize',
+            'data-partner-attribution-id': undefined,
             components: ['buttons', 'messages'],
-            'disable-funding': ['card'],
+            'disable-funding': ['card', 'venmo'],
             'enable-funding': ['credit', 'paylater'],
+            'merchant-id': undefined,
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
     });
 
     it('Do not call formPoster if isHosted true in initializationData', async () => {
-        paymentMethod.initializationData.isHosted = true;
+        paymentMethod.initializationData.isHostedCheckoutEnabled = true;
         await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
         await strategy.initialize(options);
         eventEmitter.emit('onApprove');
 
         expect(formPoster.postForm).toHaveBeenCalledTimes(0);
-    });
-
-    it('calls order get', async () => {
-        paymentMethod.initializationData.isHosted = true;
-        paymentMethod.initializationData.intent = 'capture';
-        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-        await strategy.initialize(options);
-        eventEmitter.emit('onClick');
-        await new Promise(resolve => process.nextTick(resolve));
-        eventEmitter.emit('onShippingChange');
-        await new Promise(resolve => process.nextTick(resolve));
-        eventEmitter.emit('onApprove');
-
-        expect(actions.order.get).toHaveBeenCalled();
-    });
-
-    it('calls actions.order.patch', async () => {
-        jest.spyOn(consignmentActionCreator, 'createConsignments').mockReturnValue(ConsignmentActionType.CreateConsignmentsSucceeded);
-        jest.spyOn(countryActionCreator, 'loadCountries')
-            .mockImplementation( () => Promise.resolve([{
-                code: 'US',
-                hasPostalCodes: true,
-                id: 1,
-                name: 'United States',
-                requiresState: false,
-                subdivisions: [{
-                    code: 'CA',
-                    id: 12,
-                    name: 'California',
-                }],
-            }]));
-        await strategy.initialize(options);
-        eventEmitter.emit('onClick');
-        eventEmitter.emit('onShippingChange');
-        await new Promise(resolve => process.nextTick(resolve));
-
-        expect(actions.order.patch).toHaveBeenCalled();
     });
 
     it('initializes PaypalCommerce with enabled APMs', async () => {
@@ -449,43 +396,15 @@ describe('PaypalCommerceButtonStrategy', () => {
                 'client-id': 'abc',
                 commit: false,
                 currency: 'USD',
+                'data-partner-attribution-id': undefined,
+                'merchant-id': undefined,
                 intent: 'capture',
                 components: ['buttons', 'messages'],
-                'disable-funding': ['card', 'sepa', 'venmo', 'credit', 'paylater'],
+                'disable-funding': ['card', 'sepa', 'venmo', 'sofort', 'mybank', 'credit', 'paylater', 'venmo'],
                 'enable-funding': ['sofort', 'mybank'],
-                'disable-funding': [
-                    'card',
-                    'sepa',
-                    'venmo',
-                    'credit',
-                    'paylater',
-                    'venmo',
-                ],
-                'enable-funding': [
-                    'sofort',
-                    'mybank',
-                ],
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
-    });
-
-    it('call createConsignments', async () => {
-        paymentMethod.initializationData.isHosted = true;
-        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
-        const action = ConsignmentActionType.CreateConsignmentsSucceeded;
-        jest.spyOn(consignmentActionCreator, 'createConsignments').mockReturnValue(action);
-        jest.spyOn(store, 'dispatch');
-        consignmentActionCreator.createConsignments = jest.fn();
-        await strategy.initialize(options);
-        eventEmitter.emit('onClick');
-        await new Promise(resolve => process.nextTick(resolve));
-        eventEmitter.emit('onShippingChange');
-        await new Promise(resolve => process.nextTick(resolve));
-        eventEmitter.emit('onApprove');
-        await new Promise(resolve => process.nextTick(resolve));
-
-        expect(consignmentActionCreator.createConsignments).toHaveBeenCalled();
     });
 
     it('goes to checkout page when initializationData.isHosted = false', async () => {
@@ -515,18 +434,10 @@ describe('PaypalCommerceButtonStrategy', () => {
                 commit: false,
                 currency: 'USD',
                 intent: 'capture',
+                'merchant-id': undefined,
                 components: ['buttons', 'messages'],
-                'disable-funding': [ 'card', 'sepa', 'venmo', 'sofort', 'mybank', 'credit', 'paylater'],
-                'disable-funding': [
-                    'card',
-                    'sepa',
-                    'venmo',
-                    'sofort',
-                    'mybank',
-                    'credit',
-                    'paylater',
-                    'venmo',
-                ],
+                'disable-funding': [ 'card', 'sepa', 'venmo', 'sofort', 'mybank', 'credit', 'paylater', 'venmo'],
+                'data-partner-attribution-id': undefined,
         };
 
         expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
@@ -539,6 +450,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             onApprove: expect.any(Function),
             onClick: expect.any(Function),
             style: paypalOptions.style,
+            onCancel: expect.any(Function),
             onShippingChange: expect.any(Function),
         };
 
@@ -562,6 +474,8 @@ describe('PaypalCommerceButtonStrategy', () => {
     });
 
     it('post payment details to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
+        paymentMethod.initializationData.isHosted = false;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
         await strategy.initialize(options);
 
         eventEmitter.emit('onApprove');
@@ -578,6 +492,8 @@ describe('PaypalCommerceButtonStrategy', () => {
 
     it('post payment details with credit to server to set checkout data when PayPalCommerce payment details are tokenized', async () => {
         fundingSource = 'credit';
+        paymentMethod.initializationData.isHosted = false;
+        await store.dispatch(of(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [paymentMethod])));
 
         await strategy.initialize(options);
 

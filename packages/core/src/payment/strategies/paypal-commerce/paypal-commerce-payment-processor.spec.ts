@@ -114,7 +114,8 @@ describe('PaypalCommercePaymentProcessor', () => {
                                 get: jest.fn(),
                             },
                             resolve: jest.fn(),
-                            reject: jest.fn()});
+                            reject: jest.fn()},
+                            cart);
                     }
                 });
 
