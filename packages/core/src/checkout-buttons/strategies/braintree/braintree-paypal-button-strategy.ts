@@ -30,6 +30,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }
 
+        // TODO: this line should be removed with BraintreePayPalV1Button strategy
+        const updatedMethodId = methodId === 'braintreepaypalv2' ? 'braintreepaypal' : methodId;
+
         if (!containerId) {
             throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
         }
@@ -39,7 +42,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         }
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(updatedMethodId);
         const currency = state.cart.getCartOrThrow()?.currency.code;
 
         if (!paymentMethod.clientToken) {
@@ -52,7 +55,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 braintreePaypalCheckout,
                 braintreepaypal,
                 containerId,
-                methodId,
+                updatedMethodId,
                 Boolean(paymentMethod.config.testMode)
             );
         };
