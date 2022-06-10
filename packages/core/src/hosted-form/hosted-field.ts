@@ -13,7 +13,7 @@ import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import { HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputValidateEvent } from './iframe-content';
+import { HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputSubmitSuccessEvent, HostedInputValidateEvent } from './iframe-content';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -100,9 +100,9 @@ export default class HostedField {
     async submitForm(
         fields: HostedFieldType[],
         data: HostedFormOrderData
-    ): Promise<void> {
+    ): Promise<HostedInputSubmitSuccessEvent> {
         try {
-            const promise = this._eventPoster.post({
+            const promise = this._eventPoster.post<HostedInputSubmitSuccessEvent>({
                 type: HostedFieldEventType.SubmitRequested,
                 payload: { fields, data },
             }, {
@@ -110,7 +110,7 @@ export default class HostedField {
                 errorType: HostedInputEventType.SubmitFailed,
             });
 
-            await this._detachmentObserver.ensurePresence([this._iframe], promise);
+            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (event) {
             if (this._isSubmitErrorEvent(event)) {
                 if (event.payload.error.code === 'hosted_form_error') {

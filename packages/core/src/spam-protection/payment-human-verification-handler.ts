@@ -12,13 +12,41 @@ export default class PaymentHumanVerificationHandler {
         private _googleRecaptcha: GoogleRecaptcha
     ) {}
 
-    async handle(error: Error): Promise<PaymentAdditionalAction> {
+    handle(error: Error): Promise<PaymentAdditionalAction>;
+    handle(id: string, key: string): Promise<PaymentAdditionalAction>;
+    async handle(errorOrId: Error | string, key?: string): Promise<PaymentAdditionalAction> {
+        if (typeof errorOrId === 'string') {
+            return this.handleWithRecaptchaSitekey(errorOrId, key);
+        }
+
+        return this.handleWithPaymentHumanVerificationRequestError(errorOrId);
+    }
+
+    private async handleWithPaymentHumanVerificationRequestError(error: Error): Promise<PaymentAdditionalAction> {
         if (!this._isPaymentHumanVerificationRequest(error)) {
             throw error;
         }
 
         await this._initialize(error.body.additional_action_required.data.key);
 
+        return this._performRecaptcha();
+    }
+
+    private async handleWithRecaptchaSitekey(id: string, key?: string): Promise<PaymentAdditionalAction> {
+        if (id !== 'recaptcha_v2') {
+            throw Error('Human verification method is not supported.');
+        }
+
+        if (!key) {
+            throw Error('Recaptcha site key is missing.');
+        }
+
+        await this._initialize(key);
+
+        return this._performRecaptcha();
+    }
+
+    private _performRecaptcha(): Promise<PaymentAdditionalAction> {
         return this._googleRecaptcha.execute()
             .pipe(take(1))
             .pipe(switchMap(async ({ error, token }) => {

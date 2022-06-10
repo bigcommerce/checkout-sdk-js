@@ -20,7 +20,7 @@ export const createSubStrategyRegistry = (
 
     registry.register(
         SubStrategyType.CARD,
-        () => new CardSubStrategy(store, orderActionCreator, hostedFormFactory)
+        () => new CardSubStrategy(store, orderActionCreator, hostedFormFactory, stepHandler)
     );
 
     registry.register(

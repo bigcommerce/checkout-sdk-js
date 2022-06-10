@@ -1,7 +1,9 @@
 import { OrderPaymentRequestBody } from '../../../order';
+import PaymentAdditionalAction from '../../payment-additional-action';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 
 export interface SubStrategySettings {
+    additionalAction?: PaymentAdditionalAction;
     token: string;
     methodId: string;
     payment?: OrderPaymentRequestBody;

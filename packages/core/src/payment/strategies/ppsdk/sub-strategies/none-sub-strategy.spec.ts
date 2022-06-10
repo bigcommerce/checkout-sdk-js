@@ -1,14 +1,15 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { StepHandler } from '../step-handler';
-import { ContinueHandler } from '../step-handler/continue-handler';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
+import { createStepHandler } from '../step-handler';
 
 import { NoneSubStrategy } from './none-sub-strategy';
 
 describe('NoneSubStrategy', () => {
     const requestSender = createRequestSender();
-    const stepHandler = new StepHandler(new ContinueHandler(new FormPoster()));
+    const stepHandler = createStepHandler(new FormPoster(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
     const noneSubStrategy = new NoneSubStrategy(requestSender, stepHandler);
 
     describe('#execute', () => {

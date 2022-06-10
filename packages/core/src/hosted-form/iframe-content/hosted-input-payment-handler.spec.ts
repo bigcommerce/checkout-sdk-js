@@ -151,7 +151,6 @@ describe('HostedInputPaymentHandler', () => {
             .toHaveBeenCalledWith({
                 type: HostedInputEventType.SubmitSucceeded,
                 payload: {
-                    paymentType: 'PAYMENT_TYPE_API',
                     response: {
                         body: getPaymentResponseBody(),
                         headers: { 'content-type': 'application/json' },

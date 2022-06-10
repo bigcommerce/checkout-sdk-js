@@ -6,7 +6,6 @@ import { DetachmentObserver, MutationObserverFactory } from '../common/dom';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { CardInstrument } from '../payment/instrument';
-import { StepHandler } from '../payment/strategies/ppsdk/step-handler';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
@@ -17,8 +16,7 @@ import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer
 
 export default class HostedFormFactory {
     constructor(
-        private _store: ReadableCheckoutStore,
-        private _ppsdkStepHandler: StepHandler
+        private _store: ReadableCheckoutStore
     ) {}
 
     create(host: string, options: HostedFormOptions): HostedForm {
@@ -54,8 +52,7 @@ export default class HostedFormFactory {
             new IframeEventListener(host),
             new HostedFormOrderDataTransformer(this._store),
             pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate'),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-            this._ppsdkStepHandler
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
     }
 

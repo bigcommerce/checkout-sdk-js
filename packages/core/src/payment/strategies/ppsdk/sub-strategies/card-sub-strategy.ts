@@ -3,8 +3,10 @@ import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } fr
 import { HostedForm, HostedFormFactory } from '../../../../hosted-form';
 import { OrderActionCreator } from '../../../../order';
 import { PaymentArgumentInvalidError } from '../../../errors';
+import PaymentAdditionalAction from '../../../payment-additional-action';
 import { PaymentInitializeOptions } from '../../../payment-request-options';
 import { SubStrategy, SubStrategySettings } from '../ppsdk-sub-strategy';
+import { StepHandler } from '../step-handler';
 
 export class CardSubStrategy implements SubStrategy {
     protected _hostedForm?: HostedForm;
@@ -12,15 +14,18 @@ export class CardSubStrategy implements SubStrategy {
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _hostedFormFactory: HostedFormFactory
+        private _hostedFormFactory: HostedFormFactory,
+        private _ppsdkStepHandler: StepHandler
     ) {}
 
-    async execute({ payment }: SubStrategySettings): Promise<void> {
+    async execute(settings: SubStrategySettings): Promise<void> {
         const form = this._hostedForm;
 
         if (!form) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
+
+        const { additionalAction, payment } = settings;
 
         if (!payment || !payment.methodId) {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
@@ -28,7 +33,14 @@ export class CardSubStrategy implements SubStrategy {
 
         await form.validate();
 
-        await form.submit(payment);
+        const { payload } = await form.submit(payment, additionalAction);
+
+        const { response } = payload;
+
+        await this._ppsdkStepHandler.handle(
+            response,
+            async (additionalAction: PaymentAdditionalAction): Promise<void> => await this.execute({ additionalAction, ...settings })
+        );
 
         await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
     }

@@ -24,8 +24,6 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
-import { StepHandler } from '../ppsdk/step-handler';
-import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import CreditCardRedirectPaymentStrategy from './credit-card-redirect-payment-strategy';
 
@@ -58,7 +56,7 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         );
 
         formPoster = createFormPoster();
-        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(formPoster)));
+        formFactory = new HostedFormFactory(store);
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));

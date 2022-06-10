@@ -53,7 +53,7 @@ export default class HostedInputPaymentHandler {
 
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitSucceeded,
-                payload: { paymentType: data.paymentMethod?.type, response },
+                payload: { response },
             });
         } catch (error) {
             this._eventPoster.post({

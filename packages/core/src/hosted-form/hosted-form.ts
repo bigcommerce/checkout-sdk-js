@@ -2,8 +2,7 @@ import { noop, without } from 'lodash';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
-import { PaymentStrategyType } from '../payment';
-import { StepHandler } from '../payment/strategies/ppsdk/step-handler';
+import { PaymentAdditionalAction } from '../payment';
 import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
@@ -23,8 +22,7 @@ export default class HostedForm {
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
         private _eventCallbacks: HostedFormEventCallbacks,
-        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
-        private _ppsdkStepHandler: StepHandler
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
     ) {
         const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
 
@@ -36,8 +34,6 @@ export default class HostedForm {
 
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => this._cardType = payload.cardType);
         this._eventListener.addListener(HostedInputEventType.BinChanged, ({ payload }) => this._bin = payload.bin);
-
-        this._eventListener.addListener(HostedInputEventType.SubmitSucceeded, this._handleSubmitSuccess);
     }
 
     getBin(): string | undefined {
@@ -66,11 +62,11 @@ export default class HostedForm {
         });
     }
 
-    async submit(payload: OrderPaymentRequestBody): Promise<void> {
+    async submit(payload: OrderPaymentRequestBody, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent> {
         try {
             return await this._getFirstField().submitForm(
                 this._fields.map(field => field.getType()),
-                this._payloadTransformer.transform(payload)
+                this._payloadTransformer.transform(payload, additionalActionData)
             );
         } catch (error) {
             const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
@@ -110,15 +106,5 @@ export default class HostedForm {
         const { onEnter = noop } = this._eventCallbacks;
 
         onEnter(payload);
-    };
-
-    private _handleSubmitSuccess: (event: HostedInputSubmitSuccessEvent) => Promise<void> = async ({ payload }) => {
-        const { paymentType, response } = payload;
-
-        if (paymentType === PaymentStrategyType.PPSDK) {
-            return this._ppsdkStepHandler.handle(response);
-        }
-
-        return Promise.resolve();
     };
 }

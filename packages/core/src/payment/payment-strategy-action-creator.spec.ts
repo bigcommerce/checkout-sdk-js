@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
-import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -30,8 +29,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
-import { StepHandler } from './strategies/ppsdk/step-handler';
-import { ContinueHandler } from './strategies/ppsdk/step-handler/continue-handler';
 
 describe('PaymentStrategyActionCreator', () => {
     let orderActionCreator: OrderActionCreator;
@@ -68,7 +65,7 @@ describe('PaymentStrategyActionCreator', () => {
                 new PaymentRequestTransformer(),
                 paymentHumanVerificationHandler
             ),
-            new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())))
+            new HostedFormFactory(store)
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
