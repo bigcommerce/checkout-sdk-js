@@ -11,13 +11,12 @@ import { CheckoutButtonActionType, DeinitializeButtonAction, InitializeButtonAct
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 
-// TODO: should be removed when BRAINTREE_PAYPAL_CREDITV2 registries will be removed
-const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {
-    if (methodId === CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2) {
-        return CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT;
-    }
+const methodMap: { [key: string]: CheckoutButtonMethodType | undefined } = {
+    [CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, // TODO: should be removed when BRAINTREE_PAYPAL_CREDITV2 registries will be removed
+};
 
-    return methodId;
+const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {
+    return methodMap[methodId] || methodId;
 };
 
 export default class CheckoutButtonStrategyActionCreator {
