@@ -122,7 +122,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
     private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
         try {
             return await this._store.dispatch(
-                this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`, options)
+                this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { ...options, params: { ...options?.params, method: methodId } })
             );
         } catch (error) {
             if (error instanceof RequestError && error?.body?.status === 422) {

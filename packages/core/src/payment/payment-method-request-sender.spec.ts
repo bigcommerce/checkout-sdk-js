@@ -97,5 +97,22 @@ describe('PaymentMethodRequestSender', () => {
                 },
             });
         });
+
+        it('loads payment method with params', async () => {
+            const options = { params: { method: 'method-id' } };
+
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
+
+            expect(await paymentMethodRequestSender.loadPaymentMethod('afterpay', options)).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/afterpay', {
+                ...options,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
+                },
+            });
+        });
     });
 });
