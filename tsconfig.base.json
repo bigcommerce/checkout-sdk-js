@@ -17,8 +17,8 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
-            "@bigcommerce/checkout-sdk/common-types": [
-                "packages/common-types/src/index.ts"
+            "@bigcommerce/checkout-sdk/payment-integration": [
+                "packages/payment-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"]
         }

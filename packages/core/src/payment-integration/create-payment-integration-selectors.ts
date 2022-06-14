@@ -1,4 +1,4 @@
-import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/common-types';
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration';
 
 import { cloneResult as clone } from '../common/utility';
 import { InternalCheckoutSelectors } from '../checkout';

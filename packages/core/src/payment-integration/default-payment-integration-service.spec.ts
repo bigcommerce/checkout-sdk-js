@@ -1,4 +1,4 @@
-import { PaymentIntegrationSelectors, PaymentIntegrationService} from '@bigcommerce/checkout-sdk/common-types';
+import { PaymentIntegrationSelectors, PaymentIntegrationService} from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction } from '@bigcommerce/data-store';
 import { noop } from 'lodash';
 import { BillingAddressActionCreator } from '../billing';

@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: "common-types",
+    displayName: "payment-integration",
     preset: '../../jest.preset.js',
     globals: {
         'ts-jest': {

@@ -1,7 +1,7 @@
 {
     "version": 2,
     "projects": {
-        "common-types": "packages/common-types",
+        "payment-integration": "packages/payment-integration",
         "core": "packages/core"
     }
 }

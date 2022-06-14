@@ -1,20 +1,20 @@
 {
-    "root": "packages/common-types",
-    "sourceRoot": "packages/common-types/src",
+    "root": "packages/payment-integration",
+    "sourceRoot": "packages/payment-integration/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/common-types/**/*.ts"]
+                "lintFilePatterns": ["packages/payment-integration/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/common-types"],
+            "outputs": ["coverage/packages/payment-integration"],
             "options": {
-                "jestConfig": "packages/common-types/jest.config.js",
+                "jestConfig": "packages/payment-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
