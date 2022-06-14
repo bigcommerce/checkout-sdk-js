@@ -203,6 +203,15 @@ declare interface BraintreePaypalV1ButtonInitializeOptions {
     onError?(error: BraintreeError | StandardError): void;
 }
 
+declare interface BraintreeVenmoButtonInitializeOptions {
+    /**
+     * A callback that gets called on any error.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
+}
+
 declare enum ButtonColor {
     Default = "default",
     Black = "black",
@@ -246,6 +255,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * omitted unless you need to support Braintree Credit.
      */
     braintreepaypalcreditv2?: BraintreePaypalCreditButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree Venmo. They can be
+     * omitted unless you need to support Braintree Venmo.
+     */
+    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
     /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
