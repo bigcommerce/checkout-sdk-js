@@ -229,7 +229,7 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('loads payment client token', () => {
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(`${paymentMethod.gateway}?method=${paymentMethod.id}`, undefined);
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway, { params: { method: paymentMethod.id } });
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
     });

@@ -58,7 +58,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 const payment = this._stripeElements?.getElement(StripeStringConstants.PAYMENT);
                 if (payment) {
                     let error;
-                    await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`)).catch(err => error = err);
+                    await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { params: { method: methodId } })).catch(err => error = err);
                     if (error) {
                         if (this._isMounted) {
                             payment.unmount();
@@ -217,7 +217,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadStripeElement(containerId: string, style: { [key: string]: string } | undefined, gatewayId: string, methodId: string) {
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { params: { method: methodId } }));
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage } } = paymentMethod;
 

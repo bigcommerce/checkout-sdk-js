@@ -100,7 +100,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 return await this._executeWithVaulted(payment, instrumentId, shouldSetAsDefaultInstrument);
             }
 
-            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}?method=${methodId}`));
+            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}`, { params: { method: methodId } }));
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             const result = await this._confirmStripePayment(paymentMethod);
             const { clientToken, method } = paymentMethod;
