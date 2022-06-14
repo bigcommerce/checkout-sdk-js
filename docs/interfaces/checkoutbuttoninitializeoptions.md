@@ -20,6 +20,7 @@
 * [applepay](checkoutbuttoninitializeoptions.md#optional-applepay)
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#optional-braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#optional-braintreepaypalcredit)
+* [braintreepaypalcreditv2](checkoutbuttoninitializeoptions.md#optional-braintreepaypalcreditv2)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
 * [googlepayadyenv2](checkoutbuttoninitializeoptions.md#optional-googlepayadyenv2)
 * [googlepayadyenv3](checkoutbuttoninitializeoptions.md#optional-googlepayadyenv3)
@@ -68,6 +69,15 @@ ___
 ### `Optional` braintreepaypalcredit
 
 • **braintreepaypalcredit**? : *[BraintreePaypalV1ButtonInitializeOptions](braintreepaypalv1buttoninitializeoptions.md)*
+
+The options that are required to facilitate Braintree Credit. They can be
+omitted unless you need to support Braintree Credit.
+
+___
+
+### `Optional` braintreepaypalcreditv2
+
+• **braintreepaypalcreditv2**? : *[BraintreePaypalCreditButtonInitializeOptions](braintreepaypalcreditbuttoninitializeoptions.md)*
 
 The options that are required to facilitate Braintree Credit. They can be
 omitted unless you need to support Braintree Credit.

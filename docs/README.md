@@ -106,6 +106,7 @@
 * [BraintreeFormFieldsMap](interfaces/braintreeformfieldsmap.md)
 * [BraintreeFormOptions](interfaces/braintreeformoptions.md)
 * [BraintreePaymentInitializeOptions](interfaces/braintreepaymentinitializeoptions.md)
+* [BraintreePaypalCreditButtonInitializeOptions](interfaces/braintreepaypalcreditbuttoninitializeoptions.md)
 * [BraintreePaypalV1ButtonInitializeOptions](interfaces/braintreepaypalv1buttoninitializeoptions.md)
 * [BraintreeStoredCardFieldOptions](interfaces/braintreestoredcardfieldoptions.md)
 * [BraintreeStoredCardFieldsMap](interfaces/braintreestoredcardfieldsmap.md)

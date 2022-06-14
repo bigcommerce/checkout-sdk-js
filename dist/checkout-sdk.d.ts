@@ -1200,6 +1200,36 @@ declare interface BraintreePaymentInitializeOptions {
     form?: BraintreeFormOptions;
 }
 
+declare interface BraintreePaypalCreditButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    /**
+     * Address to be used for shipping.
+     * If not provided, it will use the first saved address from the active customer.
+     */
+    shippingAddress?: Address | null;
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
+}
+
 declare interface BraintreePaypalV1ButtonInitializeOptions {
     /**
      * The ID of a container which the messaging should be inserted.
@@ -1637,6 +1667,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     braintreepaypalcredit?: BraintreePaypalV1ButtonInitializeOptions;
     /**
+     * The options that are required to facilitate Braintree Credit. They can be
+     * omitted unless you need to support Braintree Credit.
+     */
+    braintreepaypalcreditv2?: BraintreePaypalCreditButtonInitializeOptions;
+    /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
      */
@@ -1793,6 +1828,7 @@ declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_VENMO = "braintreevenmo",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    BRAINTREE_PAYPAL_CREDITV2 = "braintreepaypalcreditv2",
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
     GOOGLEPAY_ADYENV3 = "googlepayadyenv3",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",

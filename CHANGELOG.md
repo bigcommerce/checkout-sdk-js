@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.251.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.250.0...v1.251.0) (2022-06-14)
+
+
+### Features
+
+* **payment:** PAYPAL-1382 added _removeElement method instead of _hideElement in BraintreePayPalCreditButtonStrategy ([a9a5e8e](https://github.com/bigcommerce/checkout-sdk-js/commit/a9a5e8e71593cd668c0261e0e86f8309ac2c8fb2))
+* **payment:** PAYPAL-1382 added braintreepaypalcredit checkout button strategy ([82aa29e](https://github.com/bigcommerce/checkout-sdk-js/commit/82aa29e016c493602e7ef6144c66d663e9b966b6))
+* **payment:** PAYPAL-1382 cleared some code in BraintreePayPalCreditButtonStrategy ([33edc69](https://github.com/bigcommerce/checkout-sdk-js/commit/33edc6913baeb247ab6f396047e91326ae1f6334))
+* **payment:** PAYPAL-1382 updated checkout button method mapper ([b165152](https://github.com/bigcommerce/checkout-sdk-js/commit/b165152f173942b37f4875426e104095fdc64294))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1382 fixed an issue with braintreepaypalcreditv2 naming ([e061d19](https://github.com/bigcommerce/checkout-sdk-js/commit/e061d196fb975c8893272fdfda91de87e11dcd91))
+
 ## [1.250.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.249.0...v1.250.0) (2022-06-08)
 
 
