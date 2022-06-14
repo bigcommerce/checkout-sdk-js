@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.253.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.253.0...v1.253.1) (2022-06-14)
+
+
+### Code Refactoring
+
+* **common:** CHECKOUT-6752 Refactor payment strategies to pass method as params ([4aa2e53](https://github.com/bigcommerce/checkout-sdk-js/commit/4aa2e53deaa969999d15de9eed9693b8e1a03d18))
+
 ## [1.253.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.252.0...v1.253.0) (2022-06-14)
 
 
