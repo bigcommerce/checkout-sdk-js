@@ -8,11 +8,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { PaymentActionCreator,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-    PaymentRequestSender,
-    PaymentRequestTransformer } from '../payment';
+import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
@@ -28,7 +24,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalCreditButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -103,6 +99,16 @@ export default function createCheckoutButtonRegistry(
             braintreeSdkCreator,
             formPoster,
             undefined,
+            window
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPALV2, () =>
+        new BraintreePaypalButtonStrategy(
+            store,
+            checkoutActionCreator,
+            braintreeSdkCreator,
+            formPoster,
             window
         )
     );

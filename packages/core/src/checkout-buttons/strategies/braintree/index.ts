@@ -4,6 +4,10 @@
 export { default as BraintreePaypalV1ButtonStrategy } from './braintree-paypal-v1-button-strategy';
 export { BraintreePaypalV1ButtonInitializeOptions } from './braintree-paypal-v1-button-options';
 
+// Braintree PayPal Button Strategy
+export { default as BraintreePaypalButtonStrategy } from './braintree-paypal-button-strategy';
+export { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
+
 // Braintree PayPal Credit (Credit / PayLater)
 export { default as BraintreePaypalCreditButtonStrategy } from './braintree-paypal-credit-button-strategy';
 export { BraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal-credit-button-options';
