@@ -24,7 +24,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -131,6 +131,15 @@ export default function createCheckoutButtonRegistry(
             braintreeSdkCreator,
             formPoster,
             window
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.BRAINTREE_VENMO, () =>
+        new BraintreeVenmoButtonStrategy(
+            store,
+            paymentMethodActionCreator,
+            braintreeSdkCreator,
+            formPoster
         )
     );
 
