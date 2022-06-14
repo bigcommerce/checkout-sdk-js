@@ -9,7 +9,15 @@ import { PaymentMethodActionCreator } from '../payment';
 
 import { CheckoutButtonActionType, DeinitializeButtonAction, InitializeButtonAction } from './checkout-button-actions';
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
-import { CheckoutButtonStrategy } from './strategies';
+import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
+
+const methodMap: { [key: string]: CheckoutButtonMethodType | undefined } = {
+    [CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, // TODO: should be removed when BRAINTREE_PAYPAL_CREDITV2 registries will be removed
+};
+
+const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {
+    return methodMap[methodId] || methodId;
+};
 
 export default class CheckoutButtonStrategyActionCreator {
     constructor(
@@ -27,7 +35,7 @@ export default class CheckoutButtonStrategyActionCreator {
 
             return concat(
                 of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
-                this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, { timeout: options.timeout, useCache: true }),
+                this._paymentMethodActionCreator.loadPaymentMethod(mapCheckoutButtonMethodId(options.methodId), { timeout: options.timeout, useCache: true }),
                 defer(() => this._registry.get(options.methodId).initialize(options)
                     .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
             ).pipe(

@@ -4,6 +4,7 @@ enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_VENMO = 'braintreevenmo',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
+    BRAINTREE_PAYPAL_CREDITV2 = 'braintreepaypalcreditv2',
     GOOGLEPAY_ADYENV2 = 'googlepayadyenv2',
     GOOGLEPAY_ADYENV3 = 'googlepayadyenv3',
     GOOGLEPAY_AUTHORIZENET = 'googlepayauthorizenet',

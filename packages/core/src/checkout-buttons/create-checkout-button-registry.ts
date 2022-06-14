@@ -28,7 +28,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalCreditButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -60,6 +60,7 @@ export default function createCheckoutButtonRegistry(
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
+    const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(
@@ -99,7 +100,7 @@ export default function createCheckoutButtonRegistry(
         new BraintreePaypalV1ButtonStrategy(
             store,
             checkoutActionCreator,
-            new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
+            braintreeSdkCreator,
             formPoster,
             undefined,
             window
@@ -110,9 +111,19 @@ export default function createCheckoutButtonRegistry(
         new BraintreePaypalV1ButtonStrategy(
             store,
             checkoutActionCreator,
-            new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
+            braintreeSdkCreator,
             formPoster,
             true,
+            window
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2, () =>
+        new BraintreePaypalCreditButtonStrategy(
+            store,
+            checkoutActionCreator,
+            braintreeSdkCreator,
+            formPoster,
             window
         )
     );
@@ -168,11 +179,7 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             createGooglePayPaymentProcessor(
                 store,
-                new GooglePayBraintreeInitializer(
-                    new BraintreeSDKCreator(
-                        new BraintreeScriptLoader(scriptLoader)
-                    )
-                )
+                new GooglePayBraintreeInitializer(braintreeSdkCreator)
             )
         )
     );
