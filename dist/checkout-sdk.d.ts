@@ -1826,6 +1826,7 @@ declare enum CheckoutButtonMethodType {
     APPLEPAY = "applepay",
     AMAZON_PAY_V2 = "amazonpay",
     BRAINTREE_PAYPAL = "braintreepaypal",
+    BRAINTREE_PAYPALV2 = "braintreepaypalv2",
     BRAINTREE_VENMO = "braintreevenmo",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
     BRAINTREE_PAYPAL_CREDITV2 = "braintreepaypalcreditv2",

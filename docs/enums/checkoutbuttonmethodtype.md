@@ -9,6 +9,7 @@
 * [AMAZON_PAY_V2](checkoutbuttonmethodtype.md#amazon_pay_v2)
 * [APPLEPAY](checkoutbuttonmethodtype.md#applepay)
 * [BRAINTREE_PAYPAL](checkoutbuttonmethodtype.md#braintree_paypal)
+* [BRAINTREE_PAYPALV2](checkoutbuttonmethodtype.md#braintree_paypalv2)
 * [BRAINTREE_PAYPAL_CREDIT](checkoutbuttonmethodtype.md#braintree_paypal_credit)
 * [BRAINTREE_PAYPAL_CREDITV2](checkoutbuttonmethodtype.md#braintree_paypal_creditv2)
 * [BRAINTREE_VENMO](checkoutbuttonmethodtype.md#braintree_venmo)
@@ -42,6 +43,12 @@ ___
 ###  BRAINTREE_PAYPAL
 
 • **BRAINTREE_PAYPAL**: = "braintreepaypal"
+
+___
+
+###  BRAINTREE_PAYPALV2
+
+• **BRAINTREE_PAYPALV2**: = "braintreepaypalv2"
 
 ___
 
