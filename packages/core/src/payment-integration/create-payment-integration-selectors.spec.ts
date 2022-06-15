@@ -1,7 +1,7 @@
 import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration';
-
 import { merge } from 'lodash';
-import { InternalCheckoutSelectors, createInternalCheckoutSelectors } from '../checkout';
+
+import { createInternalCheckoutSelectors, InternalCheckoutSelectors } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
@@ -14,11 +14,9 @@ describe('createPaymentIntegrationSelectors', () => {
         beforeEach(() => {
             internalSelectors = createInternalCheckoutSelectors(getCheckoutStoreStateWithOrder());
             subject = createPaymentIntegrationSelectors(internalSelectors);
-            console.log('This runs', subject.getBillingAddress);
         });
 
-        it.only('returns copy of billing address', () => {
-            console.log('This runs second', subject);
+        it('returns copy of billing address', () => {
             const output = subject.getBillingAddress();
 
             expect(output)
