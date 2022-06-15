@@ -1,7 +1,7 @@
 {
-  "version": 2,
-  "projects": {
-    "core": "packages/core",
-    "payment-integration-core": "packages/payment-integration-core"
-  }
+    "version": 2,
+    "projects": {
+        "payment-integration": "packages/payment-integration",
+        "core": "packages/core"
+    }
 }

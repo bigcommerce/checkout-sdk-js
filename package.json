@@ -36,11 +36,11 @@
     "bundle-dts": "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
     "postbundle-dts": "rm -rf temp",
     "docs": "typedoc --plugin typedoc-plugin-markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --hideSources --tsconfig ./packages/core/tsconfig.json  dist/checkout-sdk.d.ts",
-    "lint": "npx nx run core:lint",
+    "lint": "npx nx run-many --target=lint --all",
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
-    "test": "npx nx run core:test",
+    "test": "npx nx run-many --target=test --all",
     "test:coverage": "npm run test -- --coverage",
     "test:series": "npm run test -- --runInBand",
     "test:watch": "npm run test -- --watch"
