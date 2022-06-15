@@ -5,5 +5,5 @@ export { StoreConfig } from './lib/config';
 export { Customer } from './lib/customer';
 export { Order, OrderRequestBody } from './lib/order';
 export { CardInstrument, Payment, PaymentMethod } from './lib/payment';
-export { PaymentIntegrationSelectors, PaymentIntegrationService } from './lib/payment-integration-service';
+export { PaymentIntegrationSelectors, PaymentIntegrationService } from './lib';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './lib/shipping';

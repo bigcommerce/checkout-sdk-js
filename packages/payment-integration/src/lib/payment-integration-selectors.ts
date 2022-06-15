@@ -1,12 +1,13 @@
-import { BillingAddress } from "../billing";
-import { Cart } from "../cart";
-import { Checkout } from "../checkout";
-import { StoreConfig } from "../config";
-import { Customer } from "../customer";
-import { Order } from "../order";
-import { CardInstrument } from "../payment/instrument";
-import PaymentMethod from "../payment/payment-method";
-import { Consignment, ShippingAddress } from "../shipping";
+import { Consignment, ShippingAddress } from './shipping';
+
+import { BillingAddress } from './billing';
+import { CardInstrument } from './payment/instrument';
+import { Cart } from './cart';
+import { Checkout } from './checkout';
+import { Customer } from './customer';
+import { Order } from './order';
+import PaymentMethod from './payment/payment-method';
+import { StoreConfig } from './config';
 
 export default interface PaymentIntegrationSelectors {
     getBillingAddress(): BillingAddress | undefined;
