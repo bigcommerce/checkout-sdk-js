@@ -235,6 +235,8 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
                 item_image_url: item.imageUrl,
                 item_url: item.url,
                 categories: this._getCategories(item.categories),
+                exchange_lease_enabled: true,
+                leasable: true
             });
         }
 

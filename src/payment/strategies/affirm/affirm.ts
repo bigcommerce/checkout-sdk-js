@@ -72,6 +72,8 @@ export interface AffirmItem {
     item_image_url: string;
     item_url: string;
     categories?: string[][];
+    exchange_lease_enabled?: boolean;
+    leasable?: boolean;
 }
 
 export interface AffirmDiscount {
