@@ -1,1 +1,1 @@
-export { isContinue, Continue, ContinueHandler } from './continue-handler';
+export { isContinue, Continue, ContinueCallbacks, ContinueHandler } from './continue-handler';

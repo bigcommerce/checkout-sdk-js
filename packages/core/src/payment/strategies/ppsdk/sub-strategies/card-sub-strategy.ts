@@ -37,9 +37,15 @@ export class CardSubStrategy implements SubStrategy {
 
         const { response } = payload;
 
+        const humanVerificationCallback = async (additionalAction: PaymentAdditionalAction): Promise<void> => await this.execute({ additionalAction, ...settings });
+
         await this._ppsdkStepHandler.handle(
             response,
-            async (additionalAction: PaymentAdditionalAction): Promise<void> => await this.execute({ additionalAction, ...settings })
+            {
+                continue: {
+                    humanVerification: humanVerificationCallback,
+                },
+            }
         );
 
         await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());

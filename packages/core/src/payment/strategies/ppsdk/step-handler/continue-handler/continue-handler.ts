@@ -14,18 +14,22 @@ const isAnyContinue = overSome([isRedirect, isHumanVerification]);
 
 export const isContinue = (body: PaymentsAPIResponse['body']): body is Continue => isAnyContinue(body);
 
+export interface ContinueCallbacks {
+    humanVerification?(additionalAction: PaymentAdditionalAction): Promise<void>;
+}
+
 export class ContinueHandler {
     constructor(
         private _formPoster: FormPoster,
         private _humanVerificationHandler: PaymentHumanVerificationHandler
     ) {}
 
-    handle(body: Continue, humanVerificationCallback?: (additionalAction: PaymentAdditionalAction) => Promise<void>): Promise<void> {
+    handle(body: Continue, callbacks?: ContinueCallbacks): Promise<void> {
         switch (body.code) {
             case 'redirect':
                 return handleRedirect(body.parameters, this._formPoster);
             case 'resubmit_with_human_verification':
-                return handleHumanVerification(body.parameters, this._humanVerificationHandler, humanVerificationCallback);
+                return handleHumanVerification(body.parameters, this._humanVerificationHandler, callbacks?.humanVerification);
         }
     }
 }

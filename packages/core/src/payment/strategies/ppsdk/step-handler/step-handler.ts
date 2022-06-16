@@ -1,18 +1,21 @@
-import PaymentAdditionalAction from '../../../payment-additional-action';
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
-import { isContinue, ContinueHandler } from './continue-handler';
+import { isContinue, ContinueCallbacks, ContinueHandler } from './continue-handler';
 import { handleError, isError } from './error';
 import { handleFailure, isFailure } from './failure';
 import { handleSuccess, isSuccess } from './success';
 import { handleUnsupported } from './unsupported';
+
+interface StepHandlerCallbacks {
+    continue?: ContinueCallbacks;
+}
 
 export class StepHandler {
     constructor(
         private  _continueHandler: ContinueHandler
     ) {}
 
-    handle(response: PaymentsAPIResponse, continueCallback?: (additionalAction: PaymentAdditionalAction) => Promise<void>): Promise<void> {
+    handle(response: PaymentsAPIResponse, callbacks?: StepHandlerCallbacks): Promise<void> {
         const { body } = response;
 
         if (isSuccess(body)) {
@@ -20,7 +23,7 @@ export class StepHandler {
         }
 
         if (isContinue(body)) {
-            return this._continueHandler.handle(body, continueCallback);
+            return this._continueHandler.handle(body, callbacks?.continue);
         }
 
         if (isFailure(response)) {
