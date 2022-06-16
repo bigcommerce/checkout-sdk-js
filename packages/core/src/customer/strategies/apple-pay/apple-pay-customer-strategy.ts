@@ -419,15 +419,20 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 );
             }
 
-            await this._store.dispatch(this._orderActionCreator.submitOrder(
+            const state = await this._store.dispatch(this._orderActionCreator.submitOrder(
                 {
                     useStoreCredit: false,
                 })
             );
+            const {
+                order: { getOrderOrThrow },
+            } = state;
+            const order = getOrderOrThrow();
+
             await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-            return this._onAuthorizeCallback();
+            return this._onAuthorizeCallback(window.location, order.orderId);
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 

@@ -379,6 +379,8 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('submits payment when shopper authorises', async () => {
+            jest.spyOn(store.getState().order, 'getOrderOrThrow')
+                .mockReturnValue({orderId:100});
             const authEvent = {
                 payment: {
                     billingContact: getContactAddress(),
@@ -407,6 +409,8 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('returns an error if autorize payment fails', async () => {
+            jest.spyOn(store.getState().order, 'getOrderOrThrow')
+                .mockReturnValue({orderId:100});
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockRejectedValue(false);
             const authEvent = {
