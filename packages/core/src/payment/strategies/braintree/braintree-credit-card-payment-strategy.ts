@@ -87,11 +87,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                     : await this._preparePaymentData(payment, billingAddress, orderAmount),
             }));
         } catch (error) {
-            if (this._is3DSFixExperimentOn()) {
-                return this._processAdditionalAction(error, payment, orderAmount);
-            }
-
-            this._handleError(error);
+            return this._processAdditionalAction(error, payment, orderAmount);
         }
     }
 
@@ -165,22 +161,9 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             shouldSetAsDefaultInstrument = false,
         } = isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        if (this._shouldPerform3DSVerification(payment)) {
-            const merchantAccountId = this._getMerchantAccountIdOrThrow();
-
-            const { nonce } = this._is3DSFixExperimentOn()
-                ? await this._braintreePaymentProcessor.verifyCardWithHostedFormAnd3DSCheck(billingAddress, orderAmount, merchantAccountId)
-                : await this._braintreePaymentProcessor.verifyCardWithHostedForm(billingAddress, orderAmount);
-
-            return {
-                ...commonPaymentData,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-                nonce,
-            };
-        }
-
-        const { nonce } = await this._braintreePaymentProcessor.tokenizeHostedForm(billingAddress);
+        const { nonce } = this._shouldPerform3DSVerification(payment)
+            ? await this._braintreePaymentProcessor.verifyCardWithHostedForm(billingAddress, orderAmount)
+            : await this._braintreePaymentProcessor.tokenizeHostedForm(billingAddress);
 
         return {
             ...commonPaymentData,
@@ -236,22 +219,5 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     private _shouldPerform3DSVerification(payment: OrderPaymentRequestBody): boolean {
         return !!(this._is3dsEnabled && !this._isSubmittingWithStoredCard(payment));
-    }
-
-    private _getMerchantAccountIdOrThrow(): string {
-        const merchantAccountId = this._paymentMethod?.initializationData.merchantAccountId;
-
-        if (!merchantAccountId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        return merchantAccountId;
-    }
-
-    private _is3DSFixExperimentOn(): boolean {
-        const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfigOrThrow();
-
-        return storeConfig.checkoutSettings.features['PAYPAL-1177.braintree-3ds-issue'];
     }
 }
