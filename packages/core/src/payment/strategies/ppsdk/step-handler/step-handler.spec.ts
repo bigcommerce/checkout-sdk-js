@@ -1,13 +1,15 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { RequestError } from '../../../../common/error/errors';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
 
 import { ContinueHandler } from './continue-handler';
 import { StepHandler } from './step-handler';
 
 describe('StepHandler', () => {
     const formPoster = createFormPoster();
-    const continueHandler = new ContinueHandler(formPoster);
+    const continueHandler = new ContinueHandler(formPoster, new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
     const handler = new StepHandler(continueHandler);
 
     describe('#handler', () => {
@@ -47,7 +49,7 @@ describe('StepHandler', () => {
 
                 await handler.handle(redirectContinueResponse);
 
-                expect(continueHandlerSpy).toHaveBeenCalledWith(body);
+                expect(continueHandlerSpy).toHaveBeenCalledWith(body, undefined);
             });
         });
 

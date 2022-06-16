@@ -1,8 +1,4 @@
-import { FormPoster } from '@bigcommerce/form-poster';
-
 import { createCheckoutStore, ReadableCheckoutStore } from '../checkout';
-import { StepHandler } from '../payment/strategies/ppsdk/step-handler';
-import { ContinueHandler } from '../payment/strategies/ppsdk/step-handler/continue-handler';
 
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
@@ -14,7 +10,7 @@ describe('HostedFormFactory', () => {
 
     beforeEach(() => {
         store = createCheckoutStore();
-        factory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())));
+        factory = new HostedFormFactory(store);
     });
 
     it('creates hosted form', () => {

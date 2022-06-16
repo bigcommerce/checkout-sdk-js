@@ -1,5 +1,6 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -9,6 +10,7 @@ import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 
 import { createSubStrategyRegistry } from './create-ppsdk-sub-strategy-registry';
 import { PaymentResumer } from './ppsdk-payment-resumer';
@@ -17,7 +19,7 @@ import { SubStrategyRegistry } from './ppsdk-sub-strategy-registry';
 import { createStepHandler } from './step-handler';
 
 describe('PPSDKStrategy', () => {
-    const stepHandler = createStepHandler(new FormPoster());
+    const stepHandler = createStepHandler(new FormPoster(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
     const requestSender = createRequestSender();
     let subStrategyRegistry: SubStrategyRegistry;
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
@@ -34,8 +36,13 @@ describe('PPSDKStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
-        hostedFormFactory = new HostedFormFactory(store, stepHandler);
-        subStrategyRegistry = createSubStrategyRegistry(store, orderActionCreator, requestSender, stepHandler, hostedFormFactory);
+        hostedFormFactory = new HostedFormFactory(store);
+        subStrategyRegistry = createSubStrategyRegistry(
+            store,
+            orderActionCreator,
+            requestSender, stepHandler,
+            hostedFormFactory
+        );
         submitSpy = jest.spyOn(orderActionCreator, 'submitOrder');
         jest.spyOn(store, 'dispatch').mockResolvedValue(undefined);
     });

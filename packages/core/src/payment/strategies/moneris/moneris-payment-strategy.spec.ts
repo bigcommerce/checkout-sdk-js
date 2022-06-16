@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
-import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -23,8 +22,6 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { StepHandler } from '../ppsdk/step-handler';
-import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import MonerisPaymentStrategy from './moneris-payment-strategy';
 import { getHostedFormInitializeOptions, getOrderRequestBodyVaultedCC } from './moneris.mock';
@@ -123,7 +120,7 @@ describe('MonerisPaymentStrategy', () => {
 
         jest.spyOn(window, 'removeEventListener');
 
-        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())));
+        formFactory = new HostedFormFactory(store);
         strategy = new MonerisPaymentStrategy(
             formFactory,
             store,

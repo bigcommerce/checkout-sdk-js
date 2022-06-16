@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
-import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
@@ -20,8 +19,6 @@ import { getPaymentMethod } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { StepHandler } from '../ppsdk/step-handler';
-import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
@@ -52,7 +49,7 @@ describe('CreditCardPaymentStrategy', () => {
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
-        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())));
+        formFactory = new HostedFormFactory(store);
 
         strategy = new CreditCardPaymentStrategy(
             store,

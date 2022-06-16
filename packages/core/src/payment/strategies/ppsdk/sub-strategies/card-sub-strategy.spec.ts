@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../../checkout';
@@ -9,6 +10,7 @@ import { InvalidArgumentError, NotInitializedError } from '../../../../common/er
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../../hosted-form';
 import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderPaymentRequestBody, OrderRequestSender } from '../../../../order';
 import { getOrder } from '../../../../order/orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../../errors';
 import { PaymentInitializeOptions } from '../../../payment-request-options';
 import { getPayment } from '../../../payments.mock';
@@ -16,8 +18,8 @@ import { createStepHandler } from '../step-handler';
 
 import { CardSubStrategy } from './card-sub-strategy';
 
-describe('CreditCardPaymentStrategy', () => {
-    const stepHandler = createStepHandler(new FormPoster());
+describe('CardSubStrategy', () => {
+    const stepHandler = createStepHandler(new FormPoster(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
     const requestSender = createRequestSender();
 
     let formFactory: HostedFormFactory;
@@ -34,13 +36,13 @@ describe('CreditCardPaymentStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
-        formFactory = new HostedFormFactory(store, stepHandler);
+        formFactory = new HostedFormFactory(store);
 
-        cardSubStrategy = new CardSubStrategy(store, orderActionCreator, formFactory);
+        cardSubStrategy = new CardSubStrategy(store, orderActionCreator, formFactory, stepHandler);
 
         form = {
             attach: jest.fn(() => Promise.resolve()),
-            submit: jest.fn(() => Promise.resolve()),
+            submit: jest.fn(() => Promise.resolve({ payload: { response: { body: { type: 'success' } } } })),
             validate: jest.fn(() => Promise.resolve()),
         };
         initializeOptions = {
@@ -165,7 +167,7 @@ describe('CreditCardPaymentStrategy', () => {
                 token: 'abc',
             });
 
-            expect(form.submit).toHaveBeenCalledWith(payment);
+            expect(form.submit).toHaveBeenCalledWith(payment, undefined);
         });
 
         it('loads current order after payment submission', async () => {

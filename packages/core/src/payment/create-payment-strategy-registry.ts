@@ -106,8 +106,8 @@ export default function createPaymentStrategyRegistry(
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
-    const stepHandler = createStepHandler(formPoster);
-    const hostedFormFactory = new HostedFormFactory(store, stepHandler);
+    const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
+    const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>

@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
-import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
@@ -19,8 +18,6 @@ import { getMollie } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { StepHandler } from '../ppsdk/step-handler';
-import { ContinueHandler } from '../ppsdk/step-handler/continue-handler';
 
 import {  MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
@@ -90,7 +87,7 @@ describe('MolliePaymentStrategy', () => {
             .mockReturnValue(mollieElement);
         jest.spyOn(document, 'querySelectorAll');
 
-        formFactory = new HostedFormFactory(store, new StepHandler(new ContinueHandler(new FormPoster())));
+        formFactory = new HostedFormFactory(store);
         strategy = new MolliePaymentStrategy(
             formFactory,
             store,

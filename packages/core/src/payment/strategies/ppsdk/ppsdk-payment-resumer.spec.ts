@@ -1,16 +1,17 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 
 import { PaymentResumer } from './ppsdk-payment-resumer';
-import { StepHandler } from './step-handler';
-import { ContinueHandler } from './step-handler/continue-handler';
+import { createStepHandler } from './step-handler';
 
 describe('PaymentResumer', () => {
     const requestSender = createRequestSender();
-    const stepHandler = new StepHandler(new ContinueHandler(new FormPoster()));
+    const stepHandler = createStepHandler(new FormPoster(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
 
     describe('#resume', () => {
