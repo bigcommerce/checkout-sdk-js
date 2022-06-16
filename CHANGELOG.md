@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.255.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.254.0...v1.255.0) (2022-06-16)
+
+
+### Features
+
+* **payment:** PAYPAL-1487 Add paypalcommercevenmo module ([3165559](https://github.com/bigcommerce/checkout-sdk-js/commit/3165559e139962a0cd07dfd212ca822aa64abd31))
+
 ## [1.254.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.253.1...v1.254.0) (2022-06-16)
 
 
