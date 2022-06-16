@@ -45,6 +45,7 @@ export default class PaypalCommercePaymentProcessor {
     private _fundingSource?: string;
     private _orderId?: string;
     private _gatewayId?: string;
+    private _isVenmoEnabled?: boolean;
 
     constructor(
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
@@ -54,9 +55,10 @@ export default class PaypalCommercePaymentProcessor {
         private _paymentActionCreator: PaymentActionCreator
     ) {}
 
-    async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean, gatewayId?: string): Promise<PaypalCommerceSDK> {
+    async initialize(paramsScript: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean, gatewayId?: string, isVenmoEnabled?: boolean): Promise<PaypalCommerceSDK> {
         this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript, isProgressiveOnboardingAvailable);
         this._gatewayId = gatewayId;
+        this._isVenmoEnabled = isVenmoEnabled;
 
         return this._paypal;
     }
@@ -214,7 +216,9 @@ export default class PaypalCommercePaymentProcessor {
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
         const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' || this._fundingSource === 'paylater' };
         const isAPM = this._gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {...paramsForProvider, isAPM});
+        const isVenmo = this._fundingSource === 'venmo' && this._isVenmoEnabled;
+
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {...paramsForProvider, isAPM, isVenmo});
         this._orderId = orderId;
         const methodId = this._fundingSource;
 

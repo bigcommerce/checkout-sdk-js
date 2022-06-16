@@ -236,6 +236,7 @@ export interface PaypalCommerceInitializationData {
     isProgressiveOnboardingAvailable?: boolean;
     clientToken?: string;
     attributionId?: string;
+    isVenmoEnabled?: boolean;
 }
 
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'payment-fields'>;

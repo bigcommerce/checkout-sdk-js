@@ -12,6 +12,10 @@ export default class PaypalCommerceFundingKeyResolver {
             return 'PAYLATER';
         }
 
+        if (methodId === PaymentStrategyType.PAYPAL_COMMERCE_VENMO) {
+            return 'VENMO';
+        }
+
         if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
             switch (methodId) {
                 case 'bancontact':

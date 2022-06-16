@@ -236,7 +236,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.setupPayment)
-                .toHaveBeenCalledWith(cart.id, { isCredit: false, isAPM: false });
+                .toHaveBeenCalledWith(cart.id, { isCredit: false, isAPM: false, isVenmo: false });
         });
 
         it('create order with credit (post request to server) when PayPalCommerce payment details are setup payment', async () => {
@@ -252,7 +252,7 @@ describe('PaypalCommercePaymentProcessor', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.setupPayment)
-                .toHaveBeenCalledWith(cart.id, { isCredit: true, isAPM: false });
+                .toHaveBeenCalledWith(cart.id, { isCredit: true, isAPM: false , isVenmo: false });
         });
 
         it('call onApprove when PayPalCommerce payment details are tokenized', async () => {

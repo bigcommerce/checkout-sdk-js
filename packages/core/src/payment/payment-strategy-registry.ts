@@ -55,8 +55,12 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
             return PaymentStrategyType.PAYPAL_COMMERCE;
         }
 
-        if ( paymentMethod.gateway === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
+        if (paymentMethod.gateway === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
             return PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
+        }
+
+        if (paymentMethod.id === PaymentStrategyType.PAYPAL_COMMERCE_VENMO) {
+            return PaymentStrategyType.PAYPAL_COMMERCE_VENMO;
         }
 
         if (paymentMethod.gateway === PaymentStrategyType.CHECKOUTCOM) {

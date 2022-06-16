@@ -683,6 +683,18 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register(PaymentStrategyType.PAYPAL_COMMERCE_VENMO, () =>
+        new PaypalCommercePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator),
+            new PaypalCommerceFundingKeyResolver(),
+            new PaypalCommerceRequestSender(requestSender),
+            new LoadingIndicator({ styles: { backgroundColor: 'black' } })
+        )
+    );
+
     registry.register(PaymentStrategyType.PAYPAL_COMMERCE_CREDIT_CARD, () =>
         new PaypalCommerceCreditCardPaymentStrategy(
             store,

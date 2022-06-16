@@ -43,9 +43,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         } = this._store.getState();
 
         const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
+        const { orderId, buttonStyle, isVenmoEnabled, shouldRenderFields } = initializationData ?? {};
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         this._isPaylater = methodId === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
+        const isVenmo = methodId === PaymentStrategyType.PAYPAL_COMMERCE_VENMO;
 
         if (orderId) {
             this._orderId = orderId;
@@ -72,6 +73,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             initializationMethodId = methodId;
         } else if (this._isPaylater) {
             initializationMethodId = 'paylater';
+        } else if (isVenmo && isVenmoEnabled) {
+            initializationMethodId = 'venmo';
         }
 
         const paramsScript = this._getOptionsScript(initializationData, currencyCode, initializationMethodId);
@@ -105,7 +108,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId);
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId, isVenmoEnabled);
 
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 
