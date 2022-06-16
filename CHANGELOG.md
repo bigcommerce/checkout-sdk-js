@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.254.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.253.1...v1.254.0) (2022-06-16)
+
+
+### Features
+
+* **payment:** PAYMENTS-7524 Bump bigpay-client-js version to 5.18.0 to add human verification-related payload ([6e210c2](https://github.com/bigcommerce/checkout-sdk-js/commit/6e210c2577b2ba1123d67cd93c239495c7742dd5))
+* **payment:** PAYMENTS-7524 Change StepHandler and ContinueHandler callback parameters to be an object of multiple callbacks ([38267d8](https://github.com/bigcommerce/checkout-sdk-js/commit/38267d8a9a6b159b96bc7e0e481e6ce3ffd25151))
+* **payment:** PAYMENTS-7524 Human verification for PPSDK payment methods ([153c6c6](https://github.com/bigcommerce/checkout-sdk-js/commit/153c6c65e45eb8251010837a5b47ed73f0a1942b))
+
 ### [1.253.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.253.0...v1.253.1) (2022-06-14)
 
 
