@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.256.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.255.0...v1.256.0) (2022-06-17)
+
+
+### Features
+
+* **payment:** PAYPAL-1508 removed authentication insight check to make an ability to force trigger 3ds check on Braintree ([#1473](https://github.com/bigcommerce/checkout-sdk-js/issues/1473)) ([6c73d6c](https://github.com/bigcommerce/checkout-sdk-js/commit/6c73d6c2cdffbfd34d6a68bf0be6cff87c7f33ad))
+
 ## [1.255.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.254.0...v1.255.0) (2022-06-16)
 
 
