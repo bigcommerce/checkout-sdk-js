@@ -283,23 +283,12 @@ export interface BraintreeHostedFieldsFieldData {
 
 export interface BraintreeHostedFieldsTokenizeOptions {
     vault?: boolean;
-    authenticationInsight?: {
-        merchantAccountId: string;
-    };
     fieldsToTokenize?: string[];
     cardholderName?: string;
     billingAddress?: BraintreeBillingAddressRequestData;
 }
 
-export interface BraintreeAuthenticationInsight {
-    authenticationInsight?: BraintreeRegulationEnvironment;
-}
-
-export interface BraintreeRegulationEnvironment {
-    regulationEnvironment: 'psd2' | 'unregulated' | 'unavailable';
-}
-
-export interface BraintreeHostedFieldsTokenizePayload extends BraintreeAuthenticationInsight {
+export interface BraintreeHostedFieldsTokenizePayload {
     nonce: string;
     details: {
         bin: string;

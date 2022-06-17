@@ -10,7 +10,6 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { getConfig } from '../../../config/configs.mock';
 import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -56,7 +55,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_verification_with_hosted_form' }));
         braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
         braintreePaymentProcessorMock.verifyCardWithHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card_with_hosted_form' }));
-        braintreePaymentProcessorMock.verifyCardWithHostedFormAnd3DSCheck = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card_with_hosted_form_after_3ds_check' }));
         braintreePaymentProcessorMock.challenge3DSVerification = jest.fn(() => Promise.resolve({ nonce: 'my_verified_stored_credit_card' }));
         braintreePaymentProcessorMock.getSessionId = jest.fn(() => Promise.resolve('my_session_id'));
 
@@ -418,8 +416,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 expect(braintreePaymentProcessorMock.verifyCardWithHostedForm)
                     .toHaveBeenCalledWith(getBillingAddress(), 190);
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedFormAnd3DSCheck)
-                    .not.toHaveBeenCalled();
 
                 expect(paymentActionCreator.submitPayment)
                     .toHaveBeenCalledWith({
@@ -431,77 +427,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                             shouldSetAsDefaultInstrument: false,
                         },
                     });
-            });
-
-            it('verifies payment data through hosted form with 3DS regulation check if 3DS and an experiment are enabled', async () => {
-                const config = getConfig();
-                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                    .mockReturnValue({
-                        ...config.storeConfig,
-                        checkoutSettings: {
-                            ...config.storeConfig.checkoutSettings,
-                            features: {
-                                'PAYPAL-1177.braintree-3ds-issue': true,
-                            },
-                        },
-                    });
-
-                paymentMethodMock.config.is3dsEnabled = true;
-                paymentMethodMock.initializationData.merchantAccountId = '100000';
-
-                await braintreeCreditCardPaymentStrategy.initialize({
-                    methodId: paymentMethodMock.id,
-                    braintree: initializeOptions,
-                });
-
-                await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
-
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedForm).not.toHaveBeenCalled();
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedFormAnd3DSCheck)
-                    .toHaveBeenCalledWith(getBillingAddress(), 190, '100000');
-
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith({
-                        ...orderRequestBody.payment,
-                        paymentData: {
-                            deviceSessionId: 'my_session_id',
-                            nonce: 'my_verified_card_with_hosted_form_after_3ds_check',
-                            shouldSaveInstrument: false,
-                            shouldSetAsDefaultInstrument: false,
-                        },
-                    });
-            });
-
-            it('throws an error if merchant account id is not provided when verifies payment data through hosted form with 3DS regulation check if 3DS and an experiment are enabled', async () => {
-                const config = getConfig();
-                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                    .mockReturnValue({
-                        ...config.storeConfig,
-                        checkoutSettings: {
-                            ...config.storeConfig.checkoutSettings,
-                            features: {
-                                'PAYPAL-1177.braintree-3ds-issue': true,
-                            },
-                        },
-                    });
-
-                paymentMethodMock.config.is3dsEnabled = true;
-                paymentMethodMock.initializationData.merchantAccountId = undefined;
-
-                await braintreeCreditCardPaymentStrategy.initialize({
-                    methodId: paymentMethodMock.id,
-                    braintree: initializeOptions,
-                });
-
-                try {
-                    await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
-                } catch (error) {
-                    expect(error).toBeInstanceOf(MissingDataError);
-                }
-
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedForm).not.toHaveBeenCalled();
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedFormAnd3DSCheck).not.toHaveBeenCalled();
-                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
             });
 
             it('tokenizes stored card verification data through hosted form and submits it if paying with stored card', async () => {
@@ -567,18 +492,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             });
 
             it('challenges 3ds verification for stored credit card if gets 3ds required error on submit payment', async () => {
-                const config = getConfig();
-                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                    .mockReturnValue({
-                        ...config.storeConfig,
-                        checkoutSettings: {
-                            ...config.storeConfig.checkoutSettings,
-                            features: {
-                                'PAYPAL-1177.braintree-3ds-issue': true,
-                            },
-                        },
-                    });
-
                 const threeDSecureNonce = 'tds_nonce_for_stored_credit_card';
                 const threeDSecureRequired = new RequestError({
                     ...getResponse({

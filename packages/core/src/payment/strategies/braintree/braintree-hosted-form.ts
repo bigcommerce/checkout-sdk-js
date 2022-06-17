@@ -5,7 +5,7 @@ import { NotInitializedError, NotInitializedErrorType } from '../../../common/er
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeAuthenticationInsight, BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
+import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
 import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap, BraintreeFormFieldType, BraintreeFormFieldValidateErrorData, BraintreeFormFieldValidateEventData, BraintreeFormOptions, BraintreeStoredCardFieldsMap } from './braintree-payment-options';
 import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -126,47 +126,6 @@ export default class BraintreeHostedForm {
             });
 
             return { nonce };
-        } catch (error) {
-            const errors = this._mapTokenizeError(error);
-
-            if (errors) {
-                this._formOptions?.onValidate?.({
-                    isValid: false,
-                    errors,
-                });
-
-                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
-            }
-
-            throw error;
-        }
-    }
-
-    async tokenizeWith3DSRegulationCheck(billingAddress: Address, merchantAccountId: string): Promise<BraintreeAuthenticationInsight & NonceInstrument> {
-        if (!this._cardFields) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        try {
-            const tokenizationOptions = omitBy(
-                {
-                    authenticationInsight: {
-                        merchantAccountId,
-                    },
-                    billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
-                    cardholderName: this._cardNameField?.getValue(),
-                },
-                isNil
-            );
-
-            const { authenticationInsight, nonce } = await this._cardFields.tokenize(tokenizationOptions);
-
-            this._formOptions?.onValidate?.({
-                isValid: true,
-                errors: {},
-            });
-
-            return { authenticationInsight, nonce };
         } catch (error) {
             const errors = this._mapTokenizeError(error);
 

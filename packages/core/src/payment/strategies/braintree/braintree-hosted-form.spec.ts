@@ -283,54 +283,6 @@ describe('BraintreeHostedForm', () => {
         });
     });
 
-    describe('#tokenizeWith3DSRegulationCheck', () => {
-        it('tokenizes data with 3DS regulation check through hosted fields for credit card verification', async () => {
-            await subject.initialize(formOptions);
-
-            const merchantAccountIdMock = '1000000';
-            const billingAddress = getBillingAddress();
-            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
-
-            cardNameInput.value = 'Foobar';
-
-            await subject.tokenizeWith3DSRegulationCheck(billingAddress, merchantAccountIdMock);
-
-            expect(cardFields.tokenize)
-                .toHaveBeenCalledWith({
-                    authenticationInsight: {
-                        merchantAccountId: merchantAccountIdMock,
-                    },
-                    billingAddress: {
-                        countryName: billingAddress.country,
-                        postalCode: billingAddress.postalCode,
-                        streetAddress: billingAddress.address1,
-                    },
-                    cardholderName: 'Foobar',
-                });
-        });
-
-        it('returns invalid form error when tokenizing with invalid form data', async () => {
-            await subject.initialize(formOptions);
-
-            jest.spyOn(cardFields, 'tokenize')
-                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
-
-            try {
-                await subject.tokenizeWith3DSRegulationCheck(getBillingAddress(), '100000');
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentInvalidFormError);
-            }
-        });
-
-        it('throws error if trying to tokenize before initialization', async () => {
-            try {
-                await subject.tokenizeWith3DSRegulationCheck(getBillingAddress(), '100000');
-            } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
-            }
-        });
-    });
-
     describe('card fields events notifications', () => {
         let handleFocus: jest.Mock;
         let handleBlur: jest.Mock;
