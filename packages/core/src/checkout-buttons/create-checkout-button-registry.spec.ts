@@ -9,7 +9,7 @@ import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreePaypalV1ButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 
 describe('createCheckoutButtonRegistry', () => {
@@ -26,17 +26,19 @@ describe('createCheckoutButtonRegistry', () => {
     });
 
     it('returns registry with Braintree PayPal registered', () => {
-        expect(registry.get('braintreepaypal')).toEqual(expect.any(BraintreePaypalV1ButtonStrategy));
+        expect(registry.get('braintreepaypal')).toEqual(expect.any(BraintreePaypalButtonStrategy));
     });
 
+    // TODO: this test should be removed after PAYPAL-1518 hits Tier3
     it('returns registry with Braintree PayPal V2 registered', () => {
         expect(registry.get('braintreepaypalv2')).toEqual(expect.any(BraintreePaypalButtonStrategy));
     });
 
     it('returns registry with Braintree PayPal Credit registered', () => {
-        expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalV1ButtonStrategy));
+        expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
     });
 
+    // TODO: this test should be removed after PAYPAL-1518 hits Tier3
     it('returns registry with Braintree PayPal Credit V2 registered', () => {
         expect(registry.get('braintreepaypalcreditv2')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
     });

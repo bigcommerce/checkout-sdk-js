@@ -2,10 +2,10 @@ enum CheckoutButtonMethodType {
     APPLEPAY = 'applepay',
     AMAZON_PAY_V2 = 'amazonpay',
     BRAINTREE_PAYPAL = 'braintreepaypal',
-    BRAINTREE_PAYPALV2 = 'braintreepaypalv2',
+    BRAINTREE_PAYPALV2 = 'braintreepaypalv2', // TODO: remove this code when PAYPAL-1518 hits Tier3
     BRAINTREE_VENMO = 'braintreevenmo',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
-    BRAINTREE_PAYPAL_CREDITV2 = 'braintreepaypalcreditv2',
+    BRAINTREE_PAYPAL_CREDITV2 = 'braintreepaypalcreditv2', // TODO: remove this code when PAYPAL-1518 hits Tier3
     GOOGLEPAY_ADYENV2 = 'googlepayadyenv2',
     GOOGLEPAY_ADYENV3 = 'googlepayadyenv3',
     GOOGLEPAY_AUTHORIZENET = 'googlepayauthorizenet',

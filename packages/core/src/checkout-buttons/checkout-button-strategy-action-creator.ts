@@ -12,8 +12,8 @@ import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checko
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 
 const methodMap: { [key: string]: CheckoutButtonMethodType | undefined } = {
-    [CheckoutButtonMethodType.BRAINTREE_PAYPALV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL, // TODO: should be removed when BRAINTREE_PAYPALV2 registries will be removed
-    [CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, // TODO: should be removed when BRAINTREE_PAYPAL_CREDITV2 registries will be removed
+    [CheckoutButtonMethodType.BRAINTREE_PAYPALV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL, // TODO: this code should be removed after PAYPAL-1518 hits Tier3
+    [CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2]: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, // TODO: this code should be removed after PAYPAL-1518 hits Tier3
 };
 
 const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {

@@ -24,7 +24,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy, BraintreePaypalV1ButtonStrategy } from './strategies/braintree';
+import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -93,16 +93,16 @@ export default function createCheckoutButtonRegistry(
     );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
-        new BraintreePaypalV1ButtonStrategy(
+        new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
             braintreeSdkCreator,
             formPoster,
-            undefined,
             window
         )
     );
 
+    // TODO: this registry should be removed after PAYPAL-1518 hits Tier3
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPALV2, () =>
         new BraintreePaypalButtonStrategy(
             store,
@@ -114,16 +114,16 @@ export default function createCheckoutButtonRegistry(
     );
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
-        new BraintreePaypalV1ButtonStrategy(
+        new BraintreePaypalCreditButtonStrategy(
             store,
             checkoutActionCreator,
             braintreeSdkCreator,
             formPoster,
-            true,
             window
         )
     );
 
+    // TODO: this registry should be removed after PAYPAL-1518 hits Tier3
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2, () =>
         new BraintreePaypalCreditButtonStrategy(
             store,

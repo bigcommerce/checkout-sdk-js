@@ -29,7 +29,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }
 
-        // TODO: this line should be removed when registry will contain braintreepaypalcredit only
+        // TODO: remove updatedMethodId implementation when PAYPAL-1518 hits Tier3
         const updatedMethodId = methodId === 'braintreepaypalcreditv2' ? 'braintreepaypalcredit' : methodId;
 
         if (!containerId) {
