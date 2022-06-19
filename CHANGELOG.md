@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.257.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.256.0...v1.257.0) (2022-06-19)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6722 pass cart Id to SF/payments API endpoint ([5f48c75](https://github.com/bigcommerce/checkout-sdk-js/commit/5f48c752a35b27ada9e4730f02d5b15ce27735d2))
+
 ## [1.256.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.255.0...v1.256.0) (2022-06-17)
 
 
