@@ -226,6 +226,7 @@ export enum StripePaymentMethodType {
     IDEAL = 'ideal',
     GIROPAY = 'giropay',
     ALIPAY = 'alipay',
+    KLARNA = 'klarna',
 }
 
 type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
