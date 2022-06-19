@@ -647,13 +647,14 @@ describe('CheckoutService', () => {
 
     describe('#loadPaymentMethods()', () => {
         it('loads payment methods', async () => {
+            const options = { params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } };
             await checkoutService.loadPaymentMethods();
 
-            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(undefined);
+            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(options);
         });
 
         it('loads payment methods with timeout', async () => {
-            const options = { timeout: createTimeout() };
+            const options = { timeout: createTimeout(), params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } };
 
             await checkoutService.loadPaymentMethods(options);
 
@@ -671,7 +672,7 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadPaymentMethods();
 
-            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'paymentMethods' });
+            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Function), { queueId: 'paymentMethods' });
         });
     });
 
