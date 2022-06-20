@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.258.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.257.0...v1.258.0) (2022-06-20)
+
+
+### Features
+
+* **payment:** STRIPE-9 [Stripe UPE] Add support for Klarna ([ca706a5](https://github.com/bigcommerce/checkout-sdk-js/commit/ca706a5e040f309d1f10ca0295a52e76e30587e9))
+
 ## [1.257.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.256.0...v1.257.0) (2022-06-19)
 
 
