@@ -54,6 +54,21 @@ describe('ConfigRequestSender', () => {
             });
         });
 
+        it('loads config with checkout ID', async () => {
+            const options = { params: { checkoutId: 'dummy' } };
+            const output = await configRequestSender.loadConfig(options);
+
+            expect(output).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
+                ...options,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    ...SDK_VERSION_HEADERS,
+                },
+            });
+        });
+
         it('throws a CheckoutNotAvailable error when it encounters a client error(400-499)', async () => {
             jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
 

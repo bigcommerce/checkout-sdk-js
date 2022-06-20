@@ -24,7 +24,7 @@ export default class CheckoutActionCreator {
         return concat(
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
             merge(
-                this._configActionCreator.loadConfig({ ...options, useCache: true }),
+                this._configActionCreator.loadConfig({ ...options, useCache: true, params: {...options?.params, checkoutId: id} }),
                 this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
                 defer(() => this._checkoutRequestSender.loadCheckout(id, options)
                     .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body)))
