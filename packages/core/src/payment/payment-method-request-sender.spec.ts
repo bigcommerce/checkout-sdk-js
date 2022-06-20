@@ -54,23 +54,6 @@ describe('PaymentMethodRequestSender', () => {
                 },
             });
         });
-
-        it('loads payment methods with params', async () => {
-            const options = { params: { method: 'method-id' } };
-
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
-
-            expect(await paymentMethodRequestSender.loadPaymentMethods(options)).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments', {
-                ...options,
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                    ...SDK_VERSION_HEADERS,
-                },
-            });
-        });
     });
 
     describe('#loadPaymentMethod()', () => {

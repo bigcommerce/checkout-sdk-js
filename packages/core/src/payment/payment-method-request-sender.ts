@@ -9,7 +9,7 @@ export default class PaymentMethodRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    loadPaymentMethods({ timeout, params }: RequestOptions = {}): Promise<Response<PaymentMethod[]>> {
+    loadPaymentMethods({ timeout }: RequestOptions = {}): Promise<Response<PaymentMethod[]>> {
         const url = '/api/storefront/payments';
 
         return this._requestSender.get(url, {
@@ -19,7 +19,6 @@ export default class PaymentMethodRequestSender {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,
             },
-            params,
         });
     }
 

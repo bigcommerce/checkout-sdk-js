@@ -166,7 +166,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     }
 
     private async _updateOrder(gatewayId: string) {
-        await this._paymentMethodActionCreator.loadPaymentMethod(gatewayId);
+        await this._paymentMethodActionCreator.loadPaymentMethod(gatewayId).toPromise();
     }
 
     private _authorize(methodId: string): Promise<KlarnaAuthorizationResponse> {
