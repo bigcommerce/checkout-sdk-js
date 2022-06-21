@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.259.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.258.1...v1.259.0) (2022-06-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6765 Update checkout SDK to pass checkout Id to checkout settings api as query string ([c25f293](https://github.com/bigcommerce/checkout-sdk-js/commit/c25f2932aa6c3b1bfff59e6a99560773fdbd82c3))
+
 ### [1.258.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.258.0...v1.258.1) (2022-06-20)
 
 ## [1.258.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.257.0...v1.258.0) (2022-06-20)
