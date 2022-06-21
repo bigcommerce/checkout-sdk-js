@@ -10,7 +10,7 @@ export default class ConfigRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    loadConfig({ timeout }: RequestOptions = {}): Promise<Response<Config>> {
+    loadConfig({ timeout, params }: RequestOptions = {}): Promise<Response<Config>> {
         const url = '/api/storefront/checkout-settings';
 
         return this._requestSender.get<Config>(url, {
@@ -20,6 +20,7 @@ export default class ConfigRequestSender {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,
             },
+            params,
         }).catch(error => {
             if (error.status >= 400 && error.status < 500) {
                 throw new CheckoutNotAvailableError(error);
