@@ -153,7 +153,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
     });
 
     it('initializes PaypalCommerce and PayPal credit enabled & messaging enabled', async () => {
@@ -178,7 +178,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
     });
 
     it('initializes PaypalCommerce with enabled Venmo', async () => {
@@ -203,7 +203,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, true);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, true);
     });
 
     it('initializes PaypalCommerce with enabled APMs', async () => {
@@ -234,7 +234,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
     });
 
     it('initializes PaypalCommerce with disabled APMs', async () => {
@@ -262,7 +262,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 ],
         };
 
-        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+        expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
     });
 
     it('render PayPal buttons', async () => {

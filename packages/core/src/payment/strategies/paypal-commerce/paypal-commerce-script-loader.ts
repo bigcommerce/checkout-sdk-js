@@ -14,8 +14,8 @@ export default class PaypalCommerceScriptLoader {
         this._window = window;
     }
 
-    async loadPaypalCommerce(params: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): Promise<PaypalCommerceSDK> {
-        this._validateParams(params, isProgressiveOnboardingAvailable);
+    async loadPaypalCommerce(params: PaypalCommerceScriptParams): Promise<PaypalCommerceSDK> {
+        this._validateParams(params);
 
         if (!this._window.paypalLoadScript) {
             const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js';
@@ -36,7 +36,7 @@ export default class PaypalCommerceScriptLoader {
         return this._window.paypal;
     }
 
-    _validateParams(options: PaypalCommerceScriptParams, isProgressiveOnboardingAvailable?: boolean): void {
+    _validateParams(options: PaypalCommerceScriptParams): void {
         const CLIENT_ID = 'client-id';
         const MERCHANT_ID = 'merchant-id';
         let param;
@@ -45,7 +45,7 @@ export default class PaypalCommerceScriptLoader {
             param = 'options';
         } else if (!options[CLIENT_ID]) {
             param = CLIENT_ID;
-        } else if (!options[MERCHANT_ID] && !isProgressiveOnboardingAvailable) {
+        } else if (!options[MERCHANT_ID]) {
             param = MERCHANT_ID;
         }
 

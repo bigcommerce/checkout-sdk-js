@@ -43,7 +43,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
 
-        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart), undefined, undefined, initializationData.isVenmoEnabled);
+        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart), undefined, initializationData.isVenmoEnabled);
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 

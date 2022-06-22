@@ -233,7 +233,6 @@ export interface PaypalCommerceInitializationData {
     isPayPalCreditAvailable?: boolean;
     availableAlternativePaymentMethods: FundingType;
     enabledAlternativePaymentMethods: FundingType;
-    isProgressiveOnboardingAvailable?: boolean;
     clientToken?: string;
     attributionId?: string;
     isVenmoEnabled?: boolean;

@@ -108,7 +108,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript, undefined, gatewayId, isVenmoEnabled);
+        await this._paypalCommercePaymentProcessor.initialize(paramsScript, gatewayId, isVenmoEnabled);
 
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 

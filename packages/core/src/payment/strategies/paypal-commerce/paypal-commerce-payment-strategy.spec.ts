@@ -180,7 +180,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 ],
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
         });
 
         it('initializes paypalCommercePaymentProcessor with enabled Venmo', async () => {
@@ -206,7 +206,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'enable-funding': 'venmo',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, true);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, true);
         });
 
         it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling APM in restricted countries with correct billing address', async () => {
@@ -229,7 +229,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'enable-funding': 'p24',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, 'paypalcommercealternativemethods', undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, 'paypalcommercealternativemethods', undefined);
         });
 
         it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling pay later', async () => {
@@ -252,7 +252,7 @@ describe('PaypalCommercePaymentStrategy', () => {
                 'enable-funding': 'paylater',
             };
 
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined, undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
         });
 
         it('renders PayPal button if orderId is undefined', async () => {
