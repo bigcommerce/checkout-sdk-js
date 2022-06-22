@@ -3,8 +3,14 @@ export { Cart } from './cart';
 export { Checkout } from './checkout';
 export { StoreConfig } from './config';
 export { Customer } from './customer';
+export { InvalidArgumentError,
+    NotInitializedError,
+    NotInitializedErrorType,
+    OrderFinalizationNotRequiredError,
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError } from './errors';
 export { Order, OrderRequestBody } from './order';
-export { CardInstrument, Payment, PaymentMethod, PaymentStrategy } from './payment';
+export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions, PaymentStrategy } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';

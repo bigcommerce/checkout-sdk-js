@@ -1,5 +1,5 @@
 import { RequestSender } from '@bigcommerce/request-sender';
-import { Cart, Checkout, OrderRequestBody, Payment, PaymentIntegrationSelectors, PaymentIntegrationService, PaymentMethod, PaymentStrategy, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration';
+import { Cart, Checkout, InvalidArgumentError, NotInitializedError, NotInitializedErrorType, OrderFinalizationNotRequiredError, OrderRequestBody, Payment, PaymentArgumentInvalidError, PaymentInitializeOptions, PaymentIntegrationSelectors, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError, PaymentRequestOptions, PaymentStrategy, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration';
 
 import ApplePaySessionFactory from './apple-pay-session-factory';
 
