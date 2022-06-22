@@ -21,4 +21,5 @@ export {
 } from './payment';
 
 export { default as PaymentMethod } from './payment-method';
+export { default as PaymentStrategy } from './payment-strategy';
 

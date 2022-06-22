@@ -4,7 +4,7 @@ export { Checkout } from './checkout';
 export { StoreConfig } from './config';
 export { Customer } from './customer';
 export { Order, OrderRequestBody } from './order';
-export { CardInstrument, Payment, PaymentMethod } from './payment';
+export { CardInstrument, Payment, PaymentMethod, PaymentStrategy } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
