@@ -18,12 +18,16 @@ const libraryEntries = {
 async function getBaseConfig() {
     return {
         stats: {
-            errorDetails: false,
+            errorDetails: true,
+            logging: 'verbose'
         },
         devtool: 'source-map',
         mode: 'production',
         resolve: {
             extensions: ['.ts', '.js'],
+            alias: {
+                '@bigcommerce/checkout-sdk/apple-pay': path.resolve(__dirname, '/packages/apple-pay/src'),
+            }
         },
         module: {
             rules: [

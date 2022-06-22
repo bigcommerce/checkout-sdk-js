@@ -3,16 +3,6 @@
     "sourceRoot": "packages/apple-pay/src",
     "projectType": "library",
     "targets": {
-        "build": {
-            "executor": "@nrwl/js:tsc",
-            "outputs": ["{options.outputPath}"],
-            "options": {
-                "outputPath": "dist/packages/apple-pay",
-                "main": "packages/apple-pay/src/index.ts",
-                "tsConfig": "packages/apple-pay/tsconfig.lib.json",
-                "assets": ["packages/apple-pay/*.md"]
-            }
-        },
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],

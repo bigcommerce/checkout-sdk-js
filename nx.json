@@ -13,6 +13,7 @@
       "options": {
         "cacheableOperations": [
           "build",
+          "build-watch",
           "lint",
           "test"
         ]

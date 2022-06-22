@@ -14,3 +14,4 @@ export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, Payme
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
+export const TEST_VAR = 12;

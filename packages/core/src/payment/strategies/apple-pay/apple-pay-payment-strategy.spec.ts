@@ -94,7 +94,6 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         it('throws invalid argument error if no method id', async () => {
-            // await strategy.initialize();
             await expect(strategy.initialize())
                 .rejects.toBeInstanceOf(InvalidArgumentError);
         });

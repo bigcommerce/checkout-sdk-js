@@ -854,5 +854,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    // console.log(createApplePayPaymentStrategy);
+
     return registry;
 }

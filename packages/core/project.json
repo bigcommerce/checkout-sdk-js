@@ -1,6 +1,7 @@
 {
     "root": "packages/core",
     "sourceRoot": "packages/core/src",
+    "projectType": "library",
     "targets": {
         "build": {
             "executor": "@nrwl/workspace:run-commands",
