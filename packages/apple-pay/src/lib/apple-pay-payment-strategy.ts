@@ -40,7 +40,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<PaymentIntegrationSelectors> {
         const { payment } = payload;
-        // const state = this._paymentIntegrationSelectors.getState();
         const checkout = this._paymentIntegrationSelectors.getCheckoutOrThrow();
         const cart = this._paymentIntegrationSelectors.getCartOrThrow();
         const config = this._paymentIntegrationSelectors.getStoreConfigOrThrow();
@@ -58,7 +57,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder(
             {
                 useStoreCredit: payload.useStoreCredit,
-            }
+            }, options
         );
 
         applePaySession.begin();

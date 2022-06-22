@@ -3,6 +3,7 @@ import { OrderRequestBody } from './order';
 import Payment from './payment/payment';
 import { ShippingAddressRequestBody } from './shipping';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
+import { RequestOptions } from './util-types';
 
 export default interface PaymentIntegrationService {
     /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -14,7 +15,7 @@ export default interface PaymentIntegrationService {
 
     loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors>;
 
-    submitOrder(payload?: OrderRequestBody): Promise<PaymentIntegrationSelectors>;
+    submitOrder(payload?: OrderRequestBody, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors>;
 
