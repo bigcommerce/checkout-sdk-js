@@ -42,7 +42,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () => strategy);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(from([
+            .mockReturnValue(() => from([
                 createAction(PaymentMethodActionType.LoadPaymentMethodRequested),
                 createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod: getPaymentMethod() }),
             ]));
@@ -124,7 +124,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         const expectedError = new Error('Unable to load payment method');
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(throwError(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, expectedError)));
+            .mockReturnValue(() => throwError(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, expectedError)));
 
         const errorHandler = jest.fn(action => of(action));
         const actions = await from(strategyActionCreator.initialize({ methodId, containerId })(store))

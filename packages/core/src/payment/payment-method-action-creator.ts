@@ -47,11 +47,12 @@ export default class PaymentMethodActionCreator {
     loadPaymentMethod(methodId: string, options?: RequestOptions & ActionOptions): ThunkAction<LoadPaymentMethodAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
             const state = store.getState();
-            const cart = state.cart.getCartOrThrow();
+            const cartId = state.cart.getCart()?.id;
+            const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
 
             observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, { methodId }));
 
-            this._requestSender.loadPaymentMethod(methodId, { ...options, params: { ...options?.params, cartId: cart.id } })
+            this._requestSender.loadPaymentMethod(methodId, { ...options, params })
                 .then(response => {
                     observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, response.body, { methodId }));
                     observer.complete();
