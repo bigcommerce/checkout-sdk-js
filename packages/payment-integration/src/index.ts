@@ -10,8 +10,7 @@ export { InvalidArgumentError,
     PaymentArgumentInvalidError,
     PaymentMethodCancelledError } from './errors';
 export { Order, OrderRequestBody } from './order';
-export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions, PaymentStrategy } from './payment';
+export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions, PaymentStrategyNew } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
-export const TEST_VAR = 12;

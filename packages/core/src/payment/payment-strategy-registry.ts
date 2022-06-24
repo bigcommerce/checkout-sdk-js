@@ -1,3 +1,4 @@
+import { PaymentStrategyNew } from '@bigcommerce/checkout-sdk/payment-integration';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
@@ -20,7 +21,7 @@ const checkoutcomStrategies: {
     ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
     fawry: PaymentStrategyType.CHECKOUTCOM_FAWRY,
 };
-export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, PaymentStrategyType> {
+export default class PaymentStrategyRegistry extends Registry<PaymentStrategy | PaymentStrategyNew, PaymentStrategyType> {
     constructor(
         private _store: ReadableDataStore<InternalCheckoutSelectors>,
         options?: PaymentStrategyRegistryOptions
@@ -28,7 +29,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
         super(options);
     }
 
-    getByMethod(paymentMethod?: PaymentMethod): PaymentStrategy {
+    getByMethod(paymentMethod?: PaymentMethod): PaymentStrategy | PaymentStrategyNew {
         if (!paymentMethod) {
             return this.get();
         }

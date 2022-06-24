@@ -15,7 +15,7 @@ import {
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentRequestOptions,
-    PaymentStrategy,
+    PaymentStrategyNew,
     StoreConfig,
 } from "@bigcommerce/checkout-sdk/payment-integration";
 
@@ -38,13 +38,12 @@ enum DefaultLabels {
     Subtotal = "Subtotal",
 }
 
-export default class ApplePayPaymentStrategy implements PaymentStrategy {
+export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
 
     constructor(
         private _requestSender: RequestSender,
-        private _paymentIntegrationSelectors: PaymentIntegrationSelectors,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory
     ) {}
@@ -72,18 +71,17 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         options?: PaymentRequestOptions
     ): Promise<PaymentIntegrationSelectors> {
         const { payment } = payload;
-        const checkout = this._paymentIntegrationSelectors.getCheckoutOrThrow();
-        const cart = this._paymentIntegrationSelectors.getCartOrThrow();
-        const config =
-            this._paymentIntegrationSelectors.getStoreConfigOrThrow();
+        const state = this._paymentIntegrationService.getState();
+        const checkout = state.getCheckoutOrThrow();
+        const cart = state.getCartOrThrow();
+        const config = state.getStoreConfigOrThrow();
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(["payment"]);
         }
         const { methodId } = payment;
 
-        const paymentMethod =
-            this._paymentIntegrationSelectors.getPaymentMethodOrThrow(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         const request = this._getBaseRequest(
             cart,
