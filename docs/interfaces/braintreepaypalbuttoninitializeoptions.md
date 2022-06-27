@@ -1,35 +1,26 @@
-[@bigcommerce/checkout-sdk](../README.md) › [BraintreePaypalV1ButtonInitializeOptions](braintreepaypalv1buttoninitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) › [BraintreePaypalButtonInitializeOptions](braintreepaypalbuttoninitializeoptions.md)
 
-# Interface: BraintreePaypalV1ButtonInitializeOptions
+# Interface: BraintreePaypalButtonInitializeOptions
 
 ## Hierarchy
 
-* **BraintreePaypalV1ButtonInitializeOptions**
+* **BraintreePaypalButtonInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [allowCredit](braintreepaypalv1buttoninitializeoptions.md#optional-allowcredit)
-* [messagingContainerId](braintreepaypalv1buttoninitializeoptions.md#optional-messagingcontainerid)
-* [shippingAddress](braintreepaypalv1buttoninitializeoptions.md#optional-shippingaddress)
-* [style](braintreepaypalv1buttoninitializeoptions.md#optional-style)
+* [messagingContainerId](braintreepaypalbuttoninitializeoptions.md#optional-messagingcontainerid)
+* [shippingAddress](braintreepaypalbuttoninitializeoptions.md#optional-shippingaddress)
+* [style](braintreepaypalbuttoninitializeoptions.md#optional-style)
 
 ### Methods
 
-* [onAuthorizeError](braintreepaypalv1buttoninitializeoptions.md#optional-onauthorizeerror)
-* [onError](braintreepaypalv1buttoninitializeoptions.md#optional-onerror)
-* [onPaymentError](braintreepaypalv1buttoninitializeoptions.md#optional-onpaymenterror)
+* [onAuthorizeError](braintreepaypalbuttoninitializeoptions.md#optional-onauthorizeerror)
+* [onError](braintreepaypalbuttoninitializeoptions.md#optional-onerror)
+* [onPaymentError](braintreepaypalbuttoninitializeoptions.md#optional-onpaymenterror)
 
 ## Properties
-
-### `Optional` allowCredit
-
-• **allowCredit**? : *undefined | false | true*
-
-Whether or not to show a credit button.
-
-___
 
 ### `Optional` messagingContainerId
 

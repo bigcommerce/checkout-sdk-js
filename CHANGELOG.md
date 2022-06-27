@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.260.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.259.0...v1.260.0) (2022-06-27)
+
+
+### Features
+
+* **payment:** PAYPAL-1505 removed BraintreePayPalV1Button strategy ([#1475](https://github.com/bigcommerce/checkout-sdk-js/issues/1475)) ([23978e0](https://github.com/bigcommerce/checkout-sdk-js/commit/23978e04a4d57c4761cc2f88391e45128aba4a0b))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1530 removed Progressive Onboarding feature from PayPalCommerce ([#1478](https://github.com/bigcommerce/checkout-sdk-js/issues/1478)) ([5ece6a8](https://github.com/bigcommerce/checkout-sdk-js/commit/5ece6a8afa8ab7c951a3b30e251acb1589f08253))
+
 ## [1.259.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.258.1...v1.259.0) (2022-06-21)
 
 

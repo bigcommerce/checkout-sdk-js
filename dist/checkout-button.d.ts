@@ -135,7 +135,11 @@ declare interface BraintreeError extends Error {
     details?: unknown;
 }
 
-declare interface BraintreePaypalCreditButtonInitializeOptions {
+declare interface BraintreePaypalButtonInitializeOptions {
+    /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
     /**
      * A set of styling options for the checkout button.
      */
@@ -165,19 +169,11 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     onError?(error: BraintreeError | StandardError): void;
 }
 
-declare interface BraintreePaypalV1ButtonInitializeOptions {
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
+declare interface BraintreePaypalCreditButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
-    /**
-     * Whether or not to show a credit button.
-     */
-    allowCredit?: boolean;
     /**
      * Address to be used for shipping.
      * If not provided, it will use the first saved address from the active customer.
@@ -244,17 +240,12 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.
      */
-    braintreepaypal?: BraintreePaypalV1ButtonInitializeOptions;
+    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
     /**
      * The options that are required to facilitate Braintree Credit. They can be
      * omitted unless you need to support Braintree Credit.
      */
-    braintreepaypalcredit?: BraintreePaypalV1ButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcreditv2?: BraintreePaypalCreditButtonInitializeOptions;
+    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
     /**
      * The options that are required to facilitate Braintree Venmo. They can be
      * omitted unless you need to support Braintree Venmo.
