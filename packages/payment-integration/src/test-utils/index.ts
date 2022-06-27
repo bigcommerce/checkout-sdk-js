@@ -1,1 +1,1 @@
-export { default as paymentIntegrationServeMock } from './payment-integration-service.mock';
+export { default as PaymentIntegrationServeMock } from './payment-integration-service.mock';

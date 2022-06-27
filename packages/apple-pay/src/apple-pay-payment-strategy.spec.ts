@@ -1,5 +1,5 @@
-import { InvalidArgumentError } from "@bigcommerce/checkout-sdk/payment-integration";
-import { createAction } from "@bigcommerce/data-store";
+import { InvalidArgumentError, PaymentIntegrationServeMock, PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration";
+
 import {
     createRequestSender,
     RequestSender,
@@ -12,6 +12,8 @@ describe("ApplePayPaymentStrategy", () => {
     let applePaySession: MockApplePaySession;
     let requestSender: RequestSender;
     let applePayFactory: ApplePaySessionFactory;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let strategy: ApplePayPaymentStrategy;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -20,12 +22,14 @@ describe("ApplePayPaymentStrategy", () => {
             value: applePaySession,
         });
 
+        paymentIntegrationService = new PaymentIntegrationServeMock();
+
         requestSender = createRequestSender();
         applePayFactory = new ApplePaySessionFactory();
 
-        const strategy = new ApplePayPaymentStrategy(
+        strategy = new ApplePayPaymentStrategy(
             requestSender,
-
+            paymentIntegrationService,
             applePayFactory
         );
     });
@@ -35,6 +39,11 @@ describe("ApplePayPaymentStrategy", () => {
             await expect(strategy.initialize()).rejects.toBeInstanceOf(
                 InvalidArgumentError
             );
+        });
+
+        it('initializes the strategy successfully', async () => {
+            await strategy.initialize({ methodId: 'applepay' });
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
         });
     });
 });

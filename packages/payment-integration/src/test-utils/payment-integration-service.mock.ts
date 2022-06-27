@@ -10,7 +10,7 @@ const finalizeOrder = jest.fn();
 const updateBillingAddress = jest.fn();
 const updateShippingAddress = jest.fn();
 
-const paymentIntegrationServeMock = jest.fn<PaymentIntegrationService>().mockImplementation(() => {
+const PaymentIntegrationServeMock = jest.fn<PaymentIntegrationService>().mockImplementation(() => {
     return {
         subscribe,
         getState,
@@ -24,4 +24,4 @@ const paymentIntegrationServeMock = jest.fn<PaymentIntegrationService>().mockImp
     }
 });
 
-export default paymentIntegrationServeMock;
+export default PaymentIntegrationServeMock;
