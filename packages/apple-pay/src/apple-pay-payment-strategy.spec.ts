@@ -1,4 +1,4 @@
-import { getCart, getCheckout, getConfig, getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServeMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
+import { getCart, getCheckout, getConfig, getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServiceMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import {
     createRequestSender,
@@ -25,11 +25,14 @@ describe("ApplePayPaymentStrategy", () => {
             value: applePaySession,
         });
 
-        paymentIntegrationService = new PaymentIntegrationServeMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         requestSender = createRequestSender();
         applePayFactory = new ApplePaySessionFactory();
         paymentMethod = getApplePay();
+
+        jest.spyOn(requestSender, 'post')
+            .mockReturnValue(true);
 
         strategy = new ApplePayPaymentStrategy(
             requestSender,
@@ -53,21 +56,16 @@ describe("ApplePayPaymentStrategy", () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
-            (paymentIntegrationService.getState as jest.Mock).mockImplementation(() => {
-                return {
-                    getCartOrThrow: () => getCart(),
-                    getCheckoutOrThrow: () => getCheckout(),
-                    getStoreConfigOrThrow: () => getConfig().storeConfig,
-                    getPaymentMethodOrThrow: () => getApplePay(),
-                }
-            })
+            // (paymentIntegrationService.getState().getPaymentMethodOrThrow as jest.Mock)
+            // jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockResolvedValue(() => getApplePay())
+            console.log('AFTER', paymentIntegrationService.getState().getPaymentMethodOrThrow('lol'));
         });
 
         it('throws error when payment data is empty', async () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
-        it.only('validates merchant', async () => {
+        it('validates merchant', async () => {
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
@@ -150,7 +148,8 @@ describe("ApplePayPaymentStrategy", () => {
 
     describe('#deinitialize()', () => {
         it('deinitializes strategy', async () => {
-            await expect(strategy.deinitialize()).resolves.toEqual(paymentIntegrationService.getState());
+            const result = await strategy.deinitialize();
+            await expect(JSON.stringify(result)).toEqual(JSON.stringify(paymentIntegrationService.getState()));
         });
     });
 });

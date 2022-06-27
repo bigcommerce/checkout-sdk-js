@@ -14,4 +14,4 @@ export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, Payme
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
-export { PaymentIntegrationServeMock, getCart, getCheckout, getConfig, getOrderRequestBody } from './test-utils';
+export { PaymentIntegrationServiceMock, getCart, getCheckout, getConfig, getOrderRequestBody } from './test-utils';

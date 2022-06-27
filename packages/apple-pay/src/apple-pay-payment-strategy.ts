@@ -83,6 +83,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
 
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
+        console.log('state is', paymentMethod);
+
         const request = this._getBaseRequest(
             cart,
             checkout,
@@ -98,7 +100,11 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
             options
         );
 
+        console.log('this is called');
+
         applePaySession.begin();
+
+        console.log('this is called2');
 
         return new Promise((resolve, reject) => {
             this._handleApplePayEvents(applePaySession, paymentMethod, {
@@ -122,13 +128,13 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         config: StoreConfig,
         paymentMethod: PaymentMethod
     ): ApplePayJS.ApplePayPaymentRequest {
-        console.log('lol', config);
         const {
             storeProfile: { storeCountryCode, storeName },
         } = config;
         const {
             currency: { decimalPlaces },
         } = cart;
+        console.log('paymentMethod', paymentMethod);
         const {
             initializationData: { merchantCapabilities, supportedNetworks },
         } = paymentMethod;
@@ -172,8 +178,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         paymentMethod: PaymentMethod,
         promise: ApplePayPromise
     ) {
+        console.log('does it get here?');
         applePaySession.onvalidatemerchant = async (event) => {
             try {
+                console.log('lolol')
                 const { body: merchantSession } =
                     await this._onValidateMerchant(paymentMethod, event);
                 applePaySession.completeMerchantValidation(merchantSession);
@@ -202,6 +210,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         paymentData: PaymentMethod,
         event: ApplePayJS.ApplePayValidateMerchantEvent
     ) {
+        console.log('blah blahj');
         const body = [
             `validationUrl=${event.validationURL}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,
