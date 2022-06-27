@@ -87,17 +87,9 @@ describe('PaypalCommerceScriptLoader', () => {
         });
     });
 
-    it('do not add merchant Id if it is null and enable progressive onboarding', async () => {
-        const params: PaypalCommerceScriptParams = { 'client-id': 'aaa', 'merchant-id': undefined };
-
-        await paypalLoader.loadPaypalCommerce(params, true);
-
-        expect(paypalLoadScript).toHaveBeenCalledWith({ 'client-id': 'aaa' });
-    });
-
     it('throw error without merchant Id and disable progressive onboarding ', async () => {
         try {
-            await paypalLoader.loadPaypalCommerce({ 'client-id': 'aaa', 'merchant-id': '', currency: 'USD' }, false);
+            await paypalLoader.loadPaypalCommerce({ 'client-id': 'aaa', 'merchant-id': '', currency: 'USD' });
         } catch (error) {
             expect(error).toEqual(new InvalidArgumentError(`Unable to proceed because "merchant-id" argument in PayPal script is not provided.`));
         }

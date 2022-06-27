@@ -172,9 +172,9 @@ describe('PaypalCommercePaymentProcessor', () => {
 
     describe('initialize', () => {
         it('initializes PaypalCommerce and PayPal JS clients', async () => {
-            await paypalCommercePaymentProcessor.initialize(initOptions, false);
+            await paypalCommercePaymentProcessor.initialize(initOptions);
 
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalledWith(initOptions, false);
+            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalledWith(initOptions);
         });
 
         it('throws error if unable to initialize PaypalCommerce or PayPal JS client', async () => {
@@ -184,7 +184,7 @@ describe('PaypalCommercePaymentProcessor', () => {
                 .mockReturnValue(Promise.reject(expectedError));
 
             try {
-                await paypalCommercePaymentProcessor.initialize(initOptions, false);
+                await paypalCommercePaymentProcessor.initialize(initOptions);
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
