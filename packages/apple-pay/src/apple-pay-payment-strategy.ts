@@ -122,6 +122,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         config: StoreConfig,
         paymentMethod: PaymentMethod
     ): ApplePayJS.ApplePayPaymentRequest {
+        console.log('lol', config);
         const {
             storeProfile: { storeCountryCode, storeName },
         } = config;
