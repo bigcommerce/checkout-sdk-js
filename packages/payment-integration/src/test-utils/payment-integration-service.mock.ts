@@ -4,14 +4,14 @@ import getCheckout from "./checkouts.mock";
 import getConfig from "./config.mock";
 
 const subscribe = jest.fn();
-const getState = jest.fn(() => {
-    return {
-        getCartOrThrow: jest.fn(() => getCart()),
-        getCheckoutOrThrow: jest.fn(() => getCheckout()),
-        getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
-        getPaymentMethodOrThrow: jest.fn(() => { id: 'applepay' }),
-    };
-});
+const state = {
+    getCartOrThrow: jest.fn(() => getCart()),
+    getCheckoutOrThrow: jest.fn(() => getCheckout()),
+    getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
+    getPaymentMethodOrThrow: jest.fn(),
+};
+
+const getState = jest.fn(() => state);
 const loadCheckout = jest.fn(); 
 const loadPaymentMethod = jest.fn();
 const submitOrder = jest.fn();

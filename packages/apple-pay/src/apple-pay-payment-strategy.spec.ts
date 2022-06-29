@@ -1,4 +1,4 @@
-import { getCart, getCheckout, getConfig, getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServiceMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
+import { getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServiceMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import {
     createRequestSender,
@@ -11,7 +11,6 @@ import { getApplePay } from "./mocks/apple-pay-method.mock";
 import { MockApplePaySession } from "./mocks/apple-pay-payment.mock";
 
 describe("ApplePayPaymentStrategy", () => {
-    let applePaySession: MockApplePaySession;
     let requestSender: RequestSender;
     let applePayFactory: ApplePaySessionFactory;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -19,10 +18,9 @@ describe("ApplePayPaymentStrategy", () => {
     let paymentMethod: PaymentMethod;
 
     beforeEach(() => {
-        applePaySession = new MockApplePaySession();
         Object.defineProperty(window, "ApplePaySession", {
             writable: true,
-            value: applePaySession,
+            value: MockApplePaySession,
         });
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -56,9 +54,7 @@ describe("ApplePayPaymentStrategy", () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
-            // (paymentIntegrationService.getState().getPaymentMethodOrThrow as jest.Mock)
-            // jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockResolvedValue(() => getApplePay())
-            console.log('AFTER', paymentIntegrationService.getState().getPaymentMethodOrThrow('lol'));
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(getApplePay());
         });
 
         it('throws error when payment data is empty', async () => {
@@ -76,9 +72,9 @@ describe("ApplePayPaymentStrategy", () => {
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
             await new Promise(resolve => process.nextTick(resolve));
-            await applePaySession.onvalidatemerchant(validateEvent);
+            await strategy.applePaySession.onvalidatemerchant(validateEvent);
 
-            expect(applePaySession.begin).toHaveBeenCalled();
+            expect(strategy.applePaySession.begin).toHaveBeenCalled();
             expect(requestSender.post).toHaveBeenCalled();
         });
 
@@ -98,7 +94,7 @@ describe("ApplePayPaymentStrategy", () => {
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
             try {
-                await applePaySession.onvalidatemerchant(validateEvent);
+                await strategy.applePaySession.onvalidatemerchant(validateEvent);
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
             }
@@ -113,7 +109,7 @@ describe("ApplePayPaymentStrategy", () => {
             });
             const promise = strategy.execute(payload);
             await new Promise(resolve => process.nextTick(resolve));
-            applePaySession.oncancel();
+            strategy.applePaySession.oncancel({} as ApplePayJS.Event);
 
             expect(promise).rejects.toThrow(new PaymentMethodCancelledError('Continue with applepay'));
         });
@@ -133,10 +129,10 @@ describe("ApplePayPaymentStrategy", () => {
             } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
             strategy.execute(payload);
             await new Promise(resolve => process.nextTick(resolve));
-            await applePaySession.onpaymentauthorized(authEvent);
+            await strategy.applePaySession.onpaymentauthorized(authEvent);
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
-            expect(applePaySession.completePayment).toHaveBeenCalled();
+            expect(strategy.applePaySession.completePayment).toHaveBeenCalled();
         });
     });
 

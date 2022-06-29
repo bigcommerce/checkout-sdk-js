@@ -41,6 +41,7 @@ enum DefaultLabels {
 export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
+    public applePaySession!: ApplePaySession;
 
     constructor(
         private _requestSender: RequestSender,
@@ -83,15 +84,13 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
 
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        console.log('state is', paymentMethod);
-
         const request = this._getBaseRequest(
             cart,
             checkout,
             config,
             paymentMethod
         );
-        const applePaySession = this._sessionFactory.create(request);
+        this.applePaySession = this._sessionFactory.create(request);
 
         await this._paymentIntegrationService.submitOrder(
             {
@@ -100,14 +99,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
             options
         );
 
-        console.log('this is called');
-
-        applePaySession.begin();
-
-        console.log('this is called2');
+        this.applePaySession.begin();
 
         return new Promise((resolve, reject) => {
-            this._handleApplePayEvents(applePaySession, paymentMethod, {
+            this._handleApplePayEvents(this.applePaySession, paymentMethod, {
                 resolve,
                 reject,
             });
@@ -134,7 +129,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         const {
             currency: { decimalPlaces },
         } = cart;
-        console.log('paymentMethod', paymentMethod);
         const {
             initializationData: { merchantCapabilities, supportedNetworks },
         } = paymentMethod;
@@ -178,10 +172,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         paymentMethod: PaymentMethod,
         promise: ApplePayPromise
     ) {
-        console.log('does it get here?');
         applePaySession.onvalidatemerchant = async (event) => {
             try {
-                console.log('lolol')
                 const { body: merchantSession } =
                     await this._onValidateMerchant(paymentMethod, event);
                 applePaySession.completeMerchantValidation(merchantSession);
@@ -210,7 +202,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         paymentData: PaymentMethod,
         event: ApplePayJS.ApplePayValidateMerchantEvent
     ) {
-        console.log('blah blahj');
         const body = [
             `validationUrl=${event.validationURL}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,

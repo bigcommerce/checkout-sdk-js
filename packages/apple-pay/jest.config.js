@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: "payment-integration",
+    displayName: "apple-pay",
     preset: "../../jest.preset.js",
     globals: {
         "ts-jest": {
