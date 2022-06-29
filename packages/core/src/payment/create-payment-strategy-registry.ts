@@ -1,21 +1,16 @@
-import { createApplePayPaymentStrategy } from '@bigcommerce/checkout-sdk/apple-pay';
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import createPaymentIntegrationSelectors from '../payment-integration/create-payment-integration-selectors';
-import DefaultPaymentIntegrationService from '../payment-integration/default-payment-integration-service';
-import PaymentIntegrationStoreProjectionFactory from '../payment-integration/payment-integration-store-projection-factory';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
@@ -35,6 +30,7 @@ import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
+import { ApplePayPaymentStrategy, ApplePaySessionFactory } from './strategies/apple-pay';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
@@ -113,25 +109,6 @@ export default function createPaymentStrategyRegistry(
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-    const consignmentActionCreator = new ConsignmentActionCreator(
-        new ConsignmentRequestSender(requestSender),
-        new CheckoutRequestSender(requestSender)
-    );
-
-    // Create integration service instance
-    const state = store.getState();
-    const selectors = () => createPaymentIntegrationSelectors(state);
-    const paymentIntegrationStoreProjectFactory = new PaymentIntegrationStoreProjectionFactory(selectors);
-    const paymentIntegrationService = new DefaultPaymentIntegrationService(
-        store,
-        paymentIntegrationStoreProjectFactory,
-        checkoutActionCreator,
-        orderActionCreator,
-        billingAddressActionCreator,
-        consignmentActionCreator,
-        paymentMethodActionCreator,
-        paymentActionCreator
-    );
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -867,7 +844,14 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(PaymentStrategyType.APPLEPAY, () =>
-        createApplePayPaymentStrategy(requestSender, paymentIntegrationService)
+        new ApplePayPaymentStrategy(
+            store,
+            requestSender,
+            orderActionCreator,
+            paymentMethodActionCreator,
+            paymentActionCreator,
+            new ApplePaySessionFactory()
+        )
     );
 
     return registry;
