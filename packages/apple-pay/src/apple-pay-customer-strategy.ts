@@ -1,10 +1,23 @@
-import { CustomerWalletButtonStrategy, PaymentMethod, InvalidArgumentError, Cart, Checkout, StoreConfig, PaymentMethodCancelledError, Payment, PaymentIntegrationService, PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration';
+import { bindDecorator as bind,
+    CustomerWalletButtonStrategy,
+    PaymentMethod,
+    InvalidArgumentError,
+    Cart,
+    Checkout,
+    StoreConfig,
+    PaymentMethodCancelledError,
+    Payment,
+    PaymentIntegrationService,
+    PaymentIntegrationSelectors,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError } from '@bigcommerce/checkout-sdk/payment-integration';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { bind, noop } from 'lodash';
+import { noop } from 'lodash';
 import { AddressRequestBody } from 'packages/payment-integration/src/address';
 import { CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from 'packages/payment-integration/src/customer';
 import ShippingOption from 'packages/payment-integration/src/shipping/shipping-option';
-import ApplePaySessionFactory from './apple-pay-session-factory';
+import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
@@ -64,8 +77,8 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         this._applePayButton = this._createButton(container);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick);
@@ -387,7 +400,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         const transformedBillingAddress = this._transformContactToAddress(billingContact);
         const transformedShippingAddress = this._transformContactToAddress(shippingContact);
         const emailAddress = shippingContact?.emailAddress;
-        const phone = shippingContact?.phoneNumber;
+        const phone = shippingContact?.phoneNumber || '';
 
         try {
             await this._paymentIntegrationService.updateBillingAddress({

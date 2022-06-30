@@ -6,7 +6,7 @@ function isApplePayWindow(window: Window): window is ApplePayWindow {
     return "ApplePaySession" in window;
 }
 
-function assertApplePayWindow(
+export function assertApplePayWindow(
     window: Window
 ): asserts window is ApplePayWindow {
     if (!isApplePayWindow(window)) {

@@ -4,6 +4,9 @@ export { Checkout } from './checkout';
 export { StoreConfig } from './config';
 export { Customer } from './customer';
 export { InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -16,3 +19,4 @@ export { default as PaymentIntegrationService } from './payment-integration-serv
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
 export { CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
 export { PaymentIntegrationServiceMock, getCart, getCheckout, getConfig, getOrderRequestBody } from './test-utils';
+export { bindDecorator } from './util-types';
