@@ -1,3 +1,5 @@
+import { getConsignment } from '../../../shipping/consignments.mock';
+
 import GooglePayStripeInitializer from './googlepay-stripe-initializer';
 import { getCheckoutMock, getStripePaymentDataMock, getStripePaymentDataRequest, getStripePaymentMethodMock, getStripeTokenizedPayload } from './googlepay.mock';
 
@@ -21,6 +23,34 @@ describe('GooglePayStripeInitializer', () => {
             );
 
             expect(initialize).toEqual(getStripePaymentDataRequest());
+        });
+
+        it('should not require shipping address when BOPIS is enabled', async () => {
+            const checkout = {
+                ...getCheckoutMock(),
+                consignments: [{
+                    ...getConsignment(),
+                    selectedShippingOption: undefined,
+                    selectedPickupOption: {
+                        pickupMethodId: 1,
+                    },
+                }],
+            };
+            const paymentMethod = getStripePaymentMethodMock();
+            paymentMethod.initializationData = {
+                ...paymentMethod.initializationData,
+                bopis: {
+                    enabled: true,
+                    requiredAddress: 'none',
+                },
+            };
+
+            const initialize = await googlePayInitializer.initialize(checkout, paymentMethod, false);
+
+            expect(initialize).toEqual({
+                ...getStripePaymentDataRequest(),
+                shippingAddressRequired: false,
+            });
         });
     });
 
