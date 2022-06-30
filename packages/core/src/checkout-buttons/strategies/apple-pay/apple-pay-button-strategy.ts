@@ -373,10 +373,15 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const transformedBillingAddress = this._transformContactToAddress(billingContact);
         const transformedShippingAddress = this._transformContactToAddress(shippingContact);
         const emailAddress = shippingContact?.emailAddress;
+        const phone = shippingContact?.phoneNumber;
 
         try {
             await this._store.dispatch(
-                this._billingAddressActionCreator.updateAddress({ ...transformedBillingAddress, email: emailAddress })
+                this._billingAddressActionCreator.updateAddress({
+                    ...transformedBillingAddress,
+                    email: emailAddress,
+                    phone,
+                })
             );
 
             if (requiresShipping) {
