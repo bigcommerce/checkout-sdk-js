@@ -1,7 +1,8 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { filter } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
+import { InternalCheckoutSelectors } from '../checkout';
 import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
@@ -17,11 +18,14 @@ export default class PaymentMethodActionCreator {
         private _requestSender: PaymentMethodRequestSender
     ) {}
 
-    loadPaymentMethods(options?: RequestOptions): Observable<LoadPaymentMethodsAction> {
-        return Observable.create((observer: Observer<LoadPaymentMethodsAction>) => {
+    loadPaymentMethods(options?: RequestOptions): ThunkAction<LoadPaymentMethodsAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<LoadPaymentMethodsAction>) => {
+            const state = store.getState();
+            const cart = state.cart.getCartOrThrow();
+
             observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsRequested));
 
-            this._requestSender.loadPaymentMethods(options)
+            this._requestSender.loadPaymentMethods({ ...options, params: { ...options?.params, cartId: cart.id } })
                 .then(response => {
                     const meta = {
                         deviceSessionId: response.headers['x-device-session-id'],
@@ -40,11 +44,15 @@ export default class PaymentMethodActionCreator {
     }
 
     @cachableAction
-    loadPaymentMethod(methodId: string, options?: RequestOptions & ActionOptions): Observable<LoadPaymentMethodAction> {
-        return Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
+    loadPaymentMethod(methodId: string, options?: RequestOptions & ActionOptions): ThunkAction<LoadPaymentMethodAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
+            const state = store.getState();
+            const cartId = state.cart.getCart()?.id;
+            const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
+
             observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, { methodId }));
 
-            this._requestSender.loadPaymentMethod(methodId, options)
+            this._requestSender.loadPaymentMethod(methodId, { ...options, params })
                 .then(response => {
                     observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, response.body, { methodId }));
                     observer.complete();

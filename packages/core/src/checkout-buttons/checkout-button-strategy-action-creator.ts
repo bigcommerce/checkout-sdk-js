@@ -36,7 +36,7 @@ export default class CheckoutButtonStrategyActionCreator {
 
             return concat(
                 of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
-                this._paymentMethodActionCreator.loadPaymentMethod(mapCheckoutButtonMethodId(options.methodId), { timeout: options.timeout, useCache: true }),
+                this._paymentMethodActionCreator.loadPaymentMethod(mapCheckoutButtonMethodId(options.methodId), { timeout: options.timeout, useCache: true })(store),
                 defer(() => this._registry.get(options.methodId).initialize(options)
                     .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
             ).pipe(
