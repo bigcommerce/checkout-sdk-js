@@ -102,29 +102,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    // TODO: this registry should be removed after PAYPAL-1518 hits Tier3
-    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPALV2, () =>
-        new BraintreePaypalButtonStrategy(
-            store,
-            checkoutActionCreator,
-            braintreeSdkCreator,
-            formPoster,
-            window
-        )
-    );
-
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
-        new BraintreePaypalCreditButtonStrategy(
-            store,
-            checkoutActionCreator,
-            braintreeSdkCreator,
-            formPoster,
-            window
-        )
-    );
-
-    // TODO: this registry should be removed after PAYPAL-1518 hits Tier3
-    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDITV2, () =>
         new BraintreePaypalCreditButtonStrategy(
             store,
             checkoutActionCreator,
