@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.262.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.262.0...v1.262.1) (2022-06-30)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6790 Fix phone number with apple pay ([#1481](https://github.com/bigcommerce/checkout-sdk-js/issues/1481)) ([3ca3720](https://github.com/bigcommerce/checkout-sdk-js/commit/3ca3720d7fbc8cdbeedb61538b9fe81214a99955))
+
 ## [1.262.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.261.0...v1.262.0) (2022-06-30)
 
 
