@@ -29,18 +29,8 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('braintreepaypal')).toEqual(expect.any(BraintreePaypalButtonStrategy));
     });
 
-    // TODO: this test should be removed after PAYPAL-1518 hits Tier3
-    it('returns registry with Braintree PayPal V2 registered', () => {
-        expect(registry.get('braintreepaypalv2')).toEqual(expect.any(BraintreePaypalButtonStrategy));
-    });
-
     it('returns registry with Braintree PayPal Credit registered', () => {
         expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
-    });
-
-    // TODO: this test should be removed after PAYPAL-1518 hits Tier3
-    it('returns registry with Braintree PayPal Credit V2 registered', () => {
-        expect(registry.get('braintreepaypalcreditv2')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
     });
 
     it('returns registry with Braintree Venmo registered', () => {
