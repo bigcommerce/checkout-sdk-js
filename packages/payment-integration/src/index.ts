@@ -2,7 +2,7 @@ export { BillingAddress, BillingAddressRequestBody } from './billing';
 export { Cart } from './cart';
 export { Checkout } from './checkout';
 export { StoreConfig } from './config';
-export { Customer } from './customer';
+export { Customer, CustomerRequestOptions, CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from './customer';
 export { InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,

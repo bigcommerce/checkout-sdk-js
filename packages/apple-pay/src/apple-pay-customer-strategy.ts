@@ -11,11 +11,12 @@ import { bindDecorator as bind,
     PaymentIntegrationSelectors,
     MissingDataError,
     MissingDataErrorType,
-    NotImplementedError } from '@bigcommerce/checkout-sdk/payment-integration';
+    NotImplementedError,
+    CustomerInitializeOptions,
+    ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 import { AddressRequestBody } from 'packages/payment-integration/src/address';
-import { CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from 'packages/payment-integration/src/customer';
 import ShippingOption from 'packages/payment-integration/src/shipping/shipping-option';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 

@@ -5,7 +5,6 @@ export interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
 
-
 export interface CustomerInitializeOptions extends CustomerRequestOptions {
     applepay?: ApplePayCustomerWalletButtonInitializeOptions;
 }
