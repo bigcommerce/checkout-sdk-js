@@ -40,10 +40,10 @@
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
-    "test": "npx nx run-many --target=test --all",
-    "test:coverage": "npm run test -- --coverage",
-    "test:series": "npm run test -- --runInBand",
-    "test:watch": "npm run test -- --watch"
+    "test": "npx nx run-many --all --target=test --parallel",
+    "test:coverage": "npx nx run-many --all --target=test --parallel -- --coverage",
+    "test:series": "npx nx run-many --all --target=test --parallel -- --runInBand",
+    "test:watch": "npx nx run-many --all --target=test --parallel -- --watch"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
@@ -54,6 +54,7 @@
     "@bigcommerce/request-sender": "^1.0.3",
     "@bigcommerce/script-loader": "^2.2.1",
     "@braintree/browser-detection": "^1.11.0",
+    
     "@types/card-validator": "^4.1.0",
     "@types/iframe-resizer": "^3.5.6",
     "@types/lodash": "^4.14.178",

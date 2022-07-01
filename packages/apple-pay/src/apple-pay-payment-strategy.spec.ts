@@ -1,44 +1,22 @@
-import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServiceMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
 
-import { createPaymentClient,
-    PaymentActionCreator,
-    PaymentMethod,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-    PaymentRequestSender,
-    PaymentRequestTransformer } from '../..';
-import { getCart } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
-import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
-import { getApplePay } from '../../payment-methods.mock';
+import {
+    createRequestSender,
+    RequestSender,
+} from "@bigcommerce/request-sender"
+import { merge } from "lodash";
+import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
+import ApplePaySessionFactory from "./apple-pay-session-factory";
+import { getApplePay } from "./mocks/apple-pay-method.mock";
+import { MockApplePaySession } from "./mocks/apple-pay-payment.mock";
 
-import { ApplePayPaymentStrategy } from '.';
-import { MockApplePaySession } from './apple-pay-payment.mock';
-import ApplePaySessionFactory from './apple-pay-session-factory';
-
-describe('ApplePayPaymentStrategy', () => {
-    let store: CheckoutStore;
+describe("ApplePayPaymentStrategy", () => {
     let requestSender: RequestSender;
-    let paymentClient: OrderRequestSender;
-    let orderActionCreator: OrderActionCreator;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let paymentMethod: PaymentMethod;
-    let strategy: ApplePayPaymentStrategy;
-    let applePaySession: MockApplePaySession;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
     let applePayFactory: ApplePaySessionFactory;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let strategy: ApplePayPaymentStrategy;
+    let paymentMethod: PaymentMethod;
+    let applePaySession: MockApplePaySession;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -48,66 +26,41 @@ describe('ApplePayPaymentStrategy', () => {
             value: applePaySession,
         });
 
-        store = createCheckoutStore(getCheckoutStoreState());
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+
         requestSender = createRequestSender();
-        paymentClient = createPaymentClient(store);
-        paymentMethod = getApplePay();
         applePayFactory = new ApplePaySessionFactory();
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        paymentMethod = getApplePay();
 
-        orderActionCreator = new OrderActionCreator(
-            paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
-        );
-
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(requestSender)
-        );
-
-        paymentActionCreator = new PaymentActionCreator(
-            new PaymentRequestSender(paymentClient),
-            orderActionCreator,
-            new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
-        );
-
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(of(createAction(OrderActionType.SubmitOrderRequested)));
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
         jest.spyOn(requestSender, 'post')
             .mockReturnValue(true);
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+
         jest.spyOn(applePayFactory, 'create')
             .mockReturnValue(applePaySession);
 
         strategy = new ApplePayPaymentStrategy(
-            store,
             requestSender,
-            orderActionCreator,
-            paymentMethodActionCreator,
-            paymentActionCreator,
+            paymentIntegrationService,
             applePayFactory
         );
     });
 
-    describe('#initialize()', () => {
-        it('throws invalid argument error if no method id', async () => {
-            await expect(strategy.initialize())
-                .rejects.toBeInstanceOf(InvalidArgumentError);
+    describe("#initialize()", () => {
+        it("throws invalid argument error if no method id", async () => {
+            await expect(strategy.initialize()).rejects.toBeInstanceOf(
+                InvalidArgumentError
+            );
         });
 
         it('initializes the strategy successfully', async () => {
             await strategy.initialize({ methodId: 'applepay' });
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
         });
     });
 
     describe('#execute()', () => {
         beforeEach(() => {
-            jest.spyOn(store.getState().cart, 'getCartOrThrow')
-                .mockReturnValue(getCart());
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(getApplePay());
         });
 
         it('throws error when payment data is empty', async () => {
@@ -184,7 +137,7 @@ describe('ApplePayPaymentStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
             await applePaySession.onpaymentauthorized(authEvent);
 
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
             expect(applePaySession.completePayment).toHaveBeenCalled();
         });
     });
@@ -197,7 +150,8 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         it('deinitializes strategy', async () => {
-            await expect(strategy.deinitialize()).resolves.toEqual(store.getState());
+            const result = await strategy.deinitialize();
+            await expect(JSON.stringify(result)).toEqual(JSON.stringify(paymentIntegrationService.getState()));
         });
     });
 });
