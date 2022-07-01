@@ -1,6 +1,6 @@
 import ShippingOption from "../shipping/shipping-option";
 
-export function getShippingOption(): ShippingOption {
+export default function getShippingOption(): ShippingOption {
     return {
         additionalDescription: 'Flat rate additional description',
         description: 'Flat Rate',

@@ -1,11 +1,9 @@
-import { InvalidArgumentError, PaymentIntegrationServiceMock, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, getCheckout } from "@bigcommerce/checkout-sdk/payment-integration";
+import { InvalidArgumentError, PaymentIntegrationServiceMock, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, getCheckout, getConsignment, getShippingOption } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import {
     createRequestSender,
     RequestSender,
 } from "@bigcommerce/request-sender"
-import { getConsignment } from "packages/payment-integration/src/test-utils/consignment.mock";
-import { getShippingOption } from "packages/payment-integration/src/test-utils/shipping-option.mock";
 import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";
 import ApplePaySessionFactory from "./apple-pay-session-factory";
 import { getApplePay } from "./mocks/apple-pay-method.mock";
@@ -31,6 +29,9 @@ describe('ApplePayCustomerStrategy', () => {
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
+        jest.spyOn(requestSender, 'post')
+            .mockReturnValue(true);
+
         jest.spyOn(applePayFactory, 'create')
             .mockReturnValue(applePaySession)
 
@@ -49,15 +50,14 @@ describe('ApplePayCustomerStrategy', () => {
         document.body.removeChild(container);
     });
 
-    describe.only('#initialize()', () => {
+    describe('#initialize()', () => {
         beforeEach(() => {
             jest.spyOn(
-                paymentIntegrationService.getState(), 'getPaymentMethodOrThrow')
-                    .mockReturnValue(getApplePay()
-            );
+                paymentIntegrationService.getState(), 'getPaymentMethodOrThrow'
+            ).mockReturnValue(getApplePay());
         });
 
-        it.only('creates the button', async () => {
+        it('creates the button', async () => {
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
             let children = container.children;
             expect(children.length).toBe(0);
@@ -295,6 +295,8 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('submits payment when shopper authorises', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress')
+                .mockResolvedValue(true);
             const authEvent = {
                 payment: {
                     billingContact: getContactAddress(),
@@ -323,6 +325,8 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('returns an error if autorize payment fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress')
+                .mockResolvedValue(true);
             jest.spyOn(paymentIntegrationService, 'submitPayment')
                 .mockRejectedValue(false);
             const authEvent = {

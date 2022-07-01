@@ -19,6 +19,8 @@ const submitPayment = jest.fn();
 const finalizeOrder = jest.fn();
 const updateBillingAddress = jest.fn();
 const updateShippingAddress = jest.fn();
+const signOut = jest.fn();
+const selectShippingOption = jest.fn();
 
 const PaymentIntegrationServiceMock = jest.fn<PaymentIntegrationService>().mockImplementation(() => {
     return {
@@ -31,6 +33,8 @@ const PaymentIntegrationServiceMock = jest.fn<PaymentIntegrationService>().mockI
         finalizeOrder,
         updateBillingAddress,
         updateShippingAddress,
+        signOut,
+        selectShippingOption,
     }
 });
 

@@ -1,7 +1,7 @@
 import { Checkout } from "../checkout";
 import { getBillingAddress } from "./address.mock";
 import getCart from "./carts.mock";
-import { getConsignment } from "./consignment.mock";
+import getConsignment from "./consignment.mock";
 import { getCustomer } from "./customer.mock";
 
 export default function getCheckout(): Checkout {

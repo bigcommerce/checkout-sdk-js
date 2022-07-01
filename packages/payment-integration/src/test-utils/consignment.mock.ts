@@ -2,9 +2,9 @@ import { omit } from "lodash";
 import { Address } from "../address";
 import { Consignment } from "../shipping";
 import { getAddress } from "./address.mock";
-import { getShippingOption } from "./shipping-option.mock";
+import getShippingOption from "./shipping-option.mock";
 
-export function getConsignment(): Consignment {
+export default function getConsignment(): Consignment {
     return {
         id: '55c96cda6f04c',
         address: omit(getAddress(), 'id') as Address,

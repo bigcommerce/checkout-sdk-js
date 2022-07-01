@@ -13,11 +13,11 @@ import { bindDecorator as bind,
     MissingDataErrorType,
     NotImplementedError,
     CustomerInitializeOptions,
-    ExecutePaymentMethodCheckoutOptions } from '@bigcommerce/checkout-sdk/payment-integration';
+    ExecutePaymentMethodCheckoutOptions, 
+    ShippingOption,
+    AddressRequestBody} from '@bigcommerce/checkout-sdk/payment-integration';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
-import { AddressRequestBody } from 'packages/payment-integration/src/address';
-import ShippingOption from 'packages/payment-integration/src/shipping/shipping-option';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -69,7 +69,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
             container,
             shippingLabel,
             subtotalLabel,
-            onError = () => {},
+            onError = noop,
             onPaymentAuthorize,
         } = applepay;
 
@@ -78,7 +78,8 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
 
-        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        const state = this._paymentIntegrationService.getState();
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         this._applePayButton = this._createButton(container);
@@ -406,7 +407,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
                 ...transformedBillingAddress,
                 email: emailAddress,
                 phone,
-            })
+            });
 
             if (requiresShipping) {
                 await this._paymentIntegrationService.updateShippingAddress(transformedShippingAddress);
