@@ -10,6 +10,7 @@ import { getOrder } from '../order/orders.mock';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
+import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
@@ -26,9 +27,10 @@ describe('DefaultPaymentIntegrationService', () => {
     let checkoutActionCreator: Pick<CheckoutActionCreator, 'loadCurrentCheckout'>;
     let orderActionCreator: Pick<OrderActionCreator, 'submitOrder' | 'finalizeOrder'>;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
-    let consignmentActionCreator: Pick<ConsignmentActionCreator, 'updateAddress'>;
+    let consignmentActionCreator: Pick<ConsignmentActionCreator, 'updateAddress' | 'selectShippingOption'>;
     let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
     let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
+    let remoteCheckoutActionCreator: Pick<RemoteCheckoutActionCreator, 'signOut'>;
 
     beforeEach(() => {
         paymentIntegrationSelectors = {} as PaymentIntegrationSelectors;
@@ -68,6 +70,7 @@ describe('DefaultPaymentIntegrationService', () => {
 
         consignmentActionCreator = {
             updateAddress: jest.fn(async () => () => createAction('UPDATE_CONSIGNMENT_ADDRESS')),
+            selectShippingOption: jest.fn(async () => () => createAction('UPDATE_SHIPPING_OPTION')),
         };
 
         paymentMethodActionCreator = {
@@ -78,6 +81,10 @@ describe('DefaultPaymentIntegrationService', () => {
             submitPayment: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
         };
 
+        remoteCheckoutActionCreator = {
+            signOut: jest.fn(async () => () => createAction('SIGN_OUT_REMOTE_CUSTOMER')),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -86,7 +93,8 @@ describe('DefaultPaymentIntegrationService', () => {
             billingAddressActionCreator as BillingAddressActionCreator,
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
-            paymentActionCreator as PaymentActionCreator
+            paymentActionCreator as PaymentActionCreator,
+            remoteCheckoutActionCreator as RemoteCheckoutActionCreator
         );
     });
 
@@ -176,6 +184,32 @@ describe('DefaultPaymentIntegrationService', () => {
                 .toHaveBeenCalledWith(getShippingAddress());
             expect(store.dispatch)
                 .toHaveBeenCalledWith(consignmentActionCreator.updateAddress(getShippingAddress()));
+            expect(output)
+                .toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#selectShippingOption', () => {
+        it('select shipping option', async () => {
+            const output = await subject.selectShippingOption('1', {});
+
+            expect(consignmentActionCreator.selectShippingOption)
+                .toHaveBeenCalledWith('1', {});
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(consignmentActionCreator.selectShippingOption('1', {}));
+            expect(output)
+                .toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#signOut', () => {
+        it('signs out user', async () => {
+            const output = await subject.signOut('test', {});
+
+            expect(remoteCheckoutActionCreator.signOut)
+                .toHaveBeenCalledWith('test', {});
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(remoteCheckoutActionCreator.signOut('test', {}));
             expect(output)
                 .toEqual(paymentIntegrationSelectors);
         });

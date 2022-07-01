@@ -214,7 +214,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
 
         applePaySession.oncancel = async () => {
             try {
-                await this._store.dispatch(this._remoteCheckoutActionCreator.signOut(paymentMethod.id));
+                await this._paymentIntegrationService.signOut(paymentMethod.id);
 
                 return this._paymentIntegrationService.loadCheckout();
             } catch (error) {
@@ -351,9 +351,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
     }
 
     private async _updateShippingOption(optionId: string) {
-        return await this._store.dispatch(
-            this._consignmentActionCreator.selectShippingOption(optionId)
-        );
+        return await this._paymentIntegrationService.selectShippingOption(optionId);
     }
 
     private async _onValidateMerchant(paymentData: PaymentMethod, event: ApplePayJS.ApplePayValidateMerchantEvent) {

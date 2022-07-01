@@ -19,4 +19,4 @@ export { default as PaymentIntegrationService } from './payment-integration-serv
 export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
 export { CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
 export { PaymentIntegrationServiceMock, getCart, getCheckout, getConfig, getOrderRequestBody } from './test-utils';
-export { bindDecorator } from './util-types';
+export { bindDecorator, RequestOptions } from './util-types';

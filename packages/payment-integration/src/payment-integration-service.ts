@@ -21,7 +21,7 @@ export default interface PaymentIntegrationService {
 
     finalizeOrder(): Promise<PaymentIntegrationSelectors>;
 
-    selectShippingOption(id: string, options: RequestOptions): Promise<PaymentIntegrationSelectors>;
+    selectShippingOption(id: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     signOut(methodId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
