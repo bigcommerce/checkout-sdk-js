@@ -41,7 +41,6 @@ enum DefaultLabels {
 export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
-    public applePaySession!: ApplePaySession;
 
     constructor(
         private _requestSender: RequestSender,
@@ -90,7 +89,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
             config,
             paymentMethod
         );
-        this.applePaySession = this._sessionFactory.create(request);
+        const applePaySession = this._sessionFactory.create(request);
 
         await this._paymentIntegrationService.submitOrder(
             {
@@ -99,10 +98,10 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
             options
         );
 
-        this.applePaySession.begin();
+        applePaySession.begin();
 
         return new Promise((resolve, reject) => {
-            this._handleApplePayEvents(this.applePaySession, paymentMethod, {
+            this._handleApplePayEvents(applePaySession, paymentMethod, {
                 resolve,
                 reject,
             });
