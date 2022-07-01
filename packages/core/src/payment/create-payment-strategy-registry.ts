@@ -11,6 +11,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { ConsignmentActionCreator } from '../shipping';
 import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
@@ -80,7 +81,8 @@ export default function createPaymentStrategyRegistry(
     paymentClient: any,
     requestSender: RequestSender,
     spamProtection: GoogleRecaptcha,
-    locale: string
+    locale: string,
+    consignmentActionCreator?: ConsignmentActionCreator
 ) {
     const registry = new PaymentStrategyRegistry(store, { defaultToken: PaymentStrategyType.CREDIT_CARD });
     const scriptLoader = getScriptLoader();
@@ -850,7 +852,8 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentMethodActionCreator,
             paymentActionCreator,
-            new ApplePaySessionFactory()
+            new ApplePaySessionFactory(),
+            consignmentActionCreator
         )
     );
 

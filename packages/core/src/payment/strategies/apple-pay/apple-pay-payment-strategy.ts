@@ -1,4 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { ConsignmentActionCreator } from 'packages/core/src/shipping';
 
 import { Cart } from '../../../cart';
 import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -38,16 +40,22 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _sessionFactory: ApplePaySessionFactory
+        private _sessionFactory: ApplePaySessionFactory,
+        private _consignmentActionCreator?: ConsignmentActionCreator
     ) { }
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (window.confirm('Do you want to pick up in store?')) {
+            await this._selectPickupOption();
+        }
+        
         if (!options?.methodId) {
             throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
         }
         const { methodId } = options;
         this._shippingLabel = options?.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options?.applepay?.subtotalLabel || DefaultLabels.Subtotal;
+
         await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
 
         return this._store.getState();
@@ -187,6 +195,33 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
             return promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+        }
+    }
+
+    private async _selectPickupOption() {
+        //reescribir consignments
+        const consignment = this._store.getState().consignments.getConsignments();
+
+        if (consignment && this._consignmentActionCreator) {
+            const id = consignment[0].id;
+            const itemId = consignment[0].lineItemIds[0];
+
+            const state = await this._store.dispatch(
+                this._consignmentActionCreator.updateConsignment({
+                    id,
+                    pickupOption: {
+                        pickupMethodId: 1,
+                    },
+                    lineItems: [
+                        {
+                            itemId,
+                            quantity: 1,
+                        },
+                    ],
+                })
+            );
+
+            console.log('Consignments:', state.consignments.getConsignments());
         }
     }
 }

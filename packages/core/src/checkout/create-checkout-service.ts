@@ -76,7 +76,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
-
+    const consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender); 
+      
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(
@@ -90,7 +91,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             checkoutActionCreator,
             spamProtectionActionCreator
         ),
-        new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
+        consignmentActionCreator,
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, paymentClient, requestSender, locale)),
@@ -100,7 +101,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale),
+            createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale, consignmentActionCreator),
             orderActionCreator,
             spamProtectionActionCreator
         ),
