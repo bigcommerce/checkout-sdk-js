@@ -1,4 +1,4 @@
-import { InvalidArgumentError, PaymentIntegrationServiceMock, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, getCheckout, getConsignment, getShippingOption } from "@bigcommerce/checkout-sdk/payment-integration";
+import { InvalidArgumentError, PaymentIntegrationServiceMock, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, getCheckout, getConsignment, getShippingOption, PaymentMethodCancelledError, getCart, Consignment, ShippingOption } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import {
     createRequestSender,
@@ -71,8 +71,29 @@ describe('ApplePayCustomerStrategy', () => {
             await expect(strategy.initialize({})).rejects.toThrow(MissingDataError);
         });
 
-        it('throws error when applepay object is empty', async () => {
-            await expect(strategy.initialize({methodId: 'applepay'})).rejects.toThrow(MissingDataError);
+        it('throws error when payment data is empty', async () => {
+            await expect(strategy.initialize({})).rejects.toThrow(MissingDataError);
+        });
+
+        it('sets up request for digital items', async () => {
+            const cart = getCart();
+            cart.lineItems.physicalItems = [];
+
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getCartOrThrow'
+            ).mockReturnValue(cart);
+
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                await strategy.initialize(customerInitializeOptions);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    expect(applePaySession.begin).toHaveBeenCalled();
+                }
+            }
         });
 
         it('throws error when applepay object is empty', async () => {
@@ -101,7 +122,32 @@ describe('ApplePayCustomerStrategy', () => {
             }
         });
 
+        it('throws payment method cancelled error if loadCheckout fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'signOut')
+                .mockRejectedValue(false);
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    expect(applePaySession.begin).toHaveBeenCalled();
+
+                    try {
+                        await applePaySession.oncancel();
+                    } catch (err) {
+                        expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
+                    }
+                }
+            }
+        });
+
         it('validates merchant successfully', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getCartOrThrow'
+            ).mockReturnValue(getCart());
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
             await strategy.initialize(customerInitializeOptions);
             if (customerInitializeOptions.applepay) {
@@ -357,6 +403,119 @@ describe('ApplePayCustomerStrategy', () => {
         });
     });
 
+    describe('#intialize edge cases', () => {
+        beforeEach(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getPaymentMethodOrThrow'
+            ).mockReturnValue(getApplePay());
+        });
+
+        it('throws error if shipping options are undefined', async () => {
+            const checkout = getCheckout();
+            checkout.consignments = [{}] as Consignment[];
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getCheckoutOrThrow'
+            ).mockReturnValue(checkout);
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    try {
+                        await applePaySession.onshippingcontactselected(event);
+                    } catch (err) {
+                        expect(err).toBeInstanceOf(Error);
+                    }
+                }
+            }
+        });
+
+        it('fires event if no shipping options are available', async () => {
+            const checkout = getCheckout();
+            const options = [] as ShippingOption[];
+            checkout.consignments = [ { availableShippingOptions: options } ] as Consignment[];
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getCheckoutOrThrow'
+            ).mockReturnValue(checkout);
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    await applePaySession.onshippingcontactselected(event);
+                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
+                }
+            }
+        });
+
+        it('throws error if unable to update shipping option', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(), 'getCheckoutOrThrow'
+            ).mockReturnValue(getCheckout());
+            jest.spyOn(paymentIntegrationService, 'selectShippingOption')
+                .mockRejectedValue(false);
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    await applePaySession.onshippingcontactselected(event);
+                    expect(customerInitializeOptions.applepay.onError).toHaveBeenCalled();
+                }
+            }
+        });
+
+        it('submits payment when shopper authorises without phone number', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress')
+                .mockResolvedValue(true);
+            const authEvent = {
+                payment: {
+                    billingContact: undefined,
+                    shippingContact: undefined,
+                    token: {
+                        paymentData: {},
+                        paymentMethod: {},
+                        transactionIdentifier: {},
+                    },
+                },
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+            await strategy.initialize(customerInitializeOptions);
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(customerInitializeOptions?.applepay.container);
+                const button = buttonContainer?.firstChild as HTMLElement;
+                if (button) {
+                    button.click();
+                    await applePaySession.onpaymentauthorized(authEvent);
+
+                    expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalled();
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+                }
+            }
+        });
+    });
+
     describe('#signIn()', () => {
         it('throws error if trying to sign in programmatically', () => {
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
@@ -382,6 +541,13 @@ describe('ApplePayCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
 
             expect(mockCallback.mock.calls.length).toBe(1);
+        });
+    });
+
+    describe('#deinitialize()', () => {
+        it('deinitializes strategy', async () => {
+            const result = await strategy.deinitialize();
+            await expect(JSON.stringify(result)).toEqual(JSON.stringify(paymentIntegrationService.getState()));
         });
     });
 });

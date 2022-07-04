@@ -402,6 +402,8 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         const emailAddress = shippingContact?.emailAddress;
         const phone = shippingContact?.phoneNumber || '';
 
+        console.log('phonr is', phone);
+
         try {
             await this._paymentIntegrationService.updateBillingAddress({
                 ...transformedBillingAddress,
