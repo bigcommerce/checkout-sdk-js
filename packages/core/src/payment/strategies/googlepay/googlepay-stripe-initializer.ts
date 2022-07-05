@@ -50,6 +50,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
             cart: {
                 currency: { code: currencyCode },
             },
+            consignments,
         } = checkout;
 
         const {
@@ -60,9 +61,12 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
                 stripeVersion,
                 stripePublishableKey,
                 stripeConnectedAccount,
+                bopis,
             },
             supportedCards,
         } = paymentMethod;
+
+        const isPickup = consignments?.every(consignment => consignment.selectedPickupOption);
 
         return {
             apiVersion: 2,
@@ -98,7 +102,9 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
                 totalPrice: round(outstandingBalance, 2).toFixed(2),
             },
             emailRequired: true,
-            shippingAddressRequired: !hasShippingAddress,
+            shippingAddressRequired: bopis?.enabled && isPickup && bopis?.requiredAddress === 'none'
+                ? false
+                : !hasShippingAddress,
             shippingAddressParameters: {
                 phoneNumberRequired: true,
             },
