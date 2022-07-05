@@ -22,4 +22,4 @@ export { default as PaymentIntegrationSelectors } from './payment-integration-se
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingOption, ShippingAddressRequestBody } from './shipping';
 export { CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
-export { bindDecorator, RequestOptions } from './util-types';
+export { RequestOptions } from './util-types';

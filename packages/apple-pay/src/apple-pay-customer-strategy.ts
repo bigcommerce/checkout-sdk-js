@@ -1,4 +1,4 @@
-import { bindDecorator as bind,
+import {
     CustomerWalletButtonStrategy,
     PaymentMethod,
     InvalidArgumentError,
@@ -83,7 +83,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         this._applePayButton = this._createButton(container);
-        this._applePayButton.addEventListener('click', this._handleWalletButtonClick);
+        this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
         return this._paymentIntegrationService.getState();
     }
@@ -127,7 +127,6 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         return button;
     }
 
-    @bind
     private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
         const state = this._paymentIntegrationService.getState();
