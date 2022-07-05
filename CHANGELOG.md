@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.264.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.263.0...v1.264.0) (2022-07-05)
+
+
+### Features
+
+* **payment:** INT-3926 StripeV3: Google Pay: Add BOPIS support ([#1483](https://github.com/bigcommerce/checkout-sdk-js/issues/1483)) ([ccde9b2](https://github.com/bigcommerce/checkout-sdk-js/commit/ccde9b27d86fa83c9bc8db59be695d386d4c545c))
+
 ## [1.263.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.262.4...v1.263.0) (2022-07-05)
 
 
