@@ -1,4 +1,5 @@
-import { Checkout } from "../checkout";
+import { Checkout } from '@bigcommerce/checkout-sdk/payment-integration';
+
 import { getBillingAddress } from "./address.mock";
 import getCart from "./carts.mock";
 import getConsignment from "./consignment.mock";

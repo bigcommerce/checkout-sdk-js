@@ -1,4 +1,4 @@
-import { Discount } from "../discount";
+import { Discount } from 'packages/payment-integration/src/discount';
 
 export function getDiscount(): Discount {
     return {

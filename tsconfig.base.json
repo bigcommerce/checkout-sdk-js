@@ -17,6 +17,9 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
+            "@bigcommerce/checkout-sdk/test-utils": [
+                "packages/test-utils/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/apple-pay": [
                 "packages/apple-pay/src/index.ts"
             ],

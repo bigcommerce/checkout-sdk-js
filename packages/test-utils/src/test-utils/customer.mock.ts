@@ -1,4 +1,5 @@
-import { Customer } from "../customer";
+import { Customer } from '@bigcommerce/checkout-sdk/payment-integration';
+
 import { getAddress } from "./address.mock";
 
 export function getCustomer(): Customer {

@@ -1,4 +1,4 @@
-import { Currency } from "../currency";
+import { Currency } from 'packages/payment-integration/src/currency';
 
 export function getCurrency(): Currency {
     return {

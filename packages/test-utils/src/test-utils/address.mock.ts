@@ -1,5 +1,4 @@
-import { Address } from "../address";
-import { BillingAddress } from "../billing";
+import { Address, BillingAddress } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export function getAddress(): Address {
     return {

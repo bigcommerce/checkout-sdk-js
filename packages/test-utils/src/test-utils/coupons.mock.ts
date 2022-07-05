@@ -1,4 +1,4 @@
-import { Coupon } from "../coupon";
+import { Coupon } from 'packages/payment-integration/src/coupon';
 
 export function getCoupon(): Coupon {
     return {

@@ -1,6 +1,7 @@
+import { Consignment } from '@bigcommerce/checkout-sdk/payment-integration';
+
 import { omit } from "lodash";
-import { Address } from "../address";
-import { Consignment } from "../shipping";
+import { Address } from "../../../payment-integration/src/address";
 import { getAddress } from "./address.mock";
 import getShippingOption from "./shipping-option.mock";
 

@@ -1,4 +1,4 @@
-import ShippingOption from "../shipping/shipping-option";
+import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export default function getShippingOption(): ShippingOption {
     return {

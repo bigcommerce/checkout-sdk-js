@@ -1,4 +1,4 @@
-import { DigitalItem, GiftCertificateItem, PhysicalItem } from "../cart/line-item";
+import { PhysicalItem, DigitalItem, GiftCertificateItem } from 'packages/payment-integration/src/cart/line-item';
 
 export function getPhysicalItem(): PhysicalItem {
     return {
