@@ -33,6 +33,7 @@ describe('PaypalCommerceScriptLoader', () => {
     });
 
     afterEach(() => {
+        (window as PaypalCommerceHostWindow).paypal = undefined;
         (window as PaypalCommerceHostWindow).paypalLoadScript = undefined;
     });
 
