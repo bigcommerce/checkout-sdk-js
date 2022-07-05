@@ -10,7 +10,7 @@ describe('apple pay session factory', () => {
         }
     });
 
-    it('', () => {
+    it('calling create method returns an apple pay session', () => {
         Object.defineProperty(window, "ApplePaySession", {
             writable: true,
             value: MockApplePaySession,
