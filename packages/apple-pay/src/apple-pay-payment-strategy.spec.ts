@@ -1,4 +1,5 @@
-import { getOrderRequestBody, InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationServiceMock, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError, NotInitializedError } from "@bigcommerce/checkout-sdk/payment-integration";
+import { InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationServiceMock, getOrderRequestBody } from '@bigcommerce/checkout-sdk/test-utils';
 
 import {
     createRequestSender,

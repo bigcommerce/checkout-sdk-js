@@ -1,9 +1,10 @@
-import { PaymentIntegrationService, PaymentIntegrationServiceMock } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/test-utils';
 import { RequestSender, createRequestSender } from "@bigcommerce/request-sender";
-import { createApplePayPaymentStrategy } from ".";
+
 import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";
 import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
-import { createApplePayCustomerStrategy } from "./create-apple-pay-payment-strategy";
+import { createApplePayCustomerStrategy, createApplePayPaymentStrategy } from "./create-apple-pay-payment-strategy";
 
 describe('createApplePayPaymentStrategy', () => {
     let requestSender: RequestSender;

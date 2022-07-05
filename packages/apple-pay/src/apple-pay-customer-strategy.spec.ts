@@ -1,4 +1,5 @@
-import { InvalidArgumentError, PaymentIntegrationServiceMock, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, getCheckout, getConsignment, getShippingOption, PaymentMethodCancelledError, getCart, Consignment, ShippingOption } from "@bigcommerce/checkout-sdk/payment-integration";
+import { InvalidArgumentError, PaymentIntegrationService, MissingDataError, CustomerInitializeOptions, Consignment, ShippingOption } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationServiceMock, getCart, getCheckout, getConsignment, getShippingOption } from '@bigcommerce/checkout-sdk/test-utils';
 
 import {
     createRequestSender,
