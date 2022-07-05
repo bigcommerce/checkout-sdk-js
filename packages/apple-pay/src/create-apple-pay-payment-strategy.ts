@@ -1,6 +1,7 @@
 
-import { CustomerWalletButtonStrategy, PaymentIntegrationService, PaymentStrategyNew } from "@bigcommerce/checkout-sdk/payment-integration";
+import { CheckoutButtonStrategyNew, CustomerWalletButtonStrategy, PaymentIntegrationService, PaymentStrategyNew } from "@bigcommerce/checkout-sdk/payment-integration";
 import { RequestSender } from "@bigcommerce/request-sender";
+import ApplePayButtonStrategy from './apple-pay-button-strategy';
 import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";
 import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
 import ApplePaySessionFactory from "./apple-pay-session-factory";
@@ -21,6 +22,17 @@ export function createApplePayCustomerStrategy(
     paymentIntegrationService: PaymentIntegrationService
 ): CustomerWalletButtonStrategy {
     return new ApplePayCustomerStrategy(
+        requestSender,
+        paymentIntegrationService,
+        new ApplePaySessionFactory()
+    );
+}
+
+export function createApplePayButtonStrategy(
+    requestSender: RequestSender,
+    paymentIntegrationService: PaymentIntegrationService
+): CheckoutButtonStrategyNew {
+    return new ApplePayButtonStrategy(
         requestSender,
         paymentIntegrationService,
         new ApplePaySessionFactory()

@@ -4,10 +4,12 @@ import {
     RequestSender,
     createRequestSender,
 } from "@bigcommerce/request-sender";
+import ApplePayButtonStrategy from './apple-pay-button-strategy';
 
 import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";
 import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
 import {
+    createApplePayButtonStrategy,
     createApplePayCustomerStrategy,
     createApplePayPaymentStrategy,
 } from "./create-apple-pay-payment-strategy";
@@ -35,5 +37,13 @@ describe("createApplePayPaymentStrategy", () => {
             paymentIntegrationService
         );
         expect(strategy).toBeInstanceOf(ApplePayCustomerStrategy);
+    });
+
+    it("instantiates apple-pay checkout button strategy", () => {
+        const strategy = createApplePayButtonStrategy(
+            requestSender,
+            paymentIntegrationService
+        );
+        expect(strategy).toBeInstanceOf(ApplePayButtonStrategy);
     });
 });
