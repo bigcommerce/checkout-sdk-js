@@ -31,6 +31,9 @@ describe('ApplePayCustomerStrategy', () => {
 
         jest.spyOn(requestSender, 'post')
             .mockReturnValue(true);
+        
+        jest.spyOn(requestSender, 'get')
+            .mockReturnValue(true);
 
         jest.spyOn(applePayFactory, 'create')
             .mockReturnValue(applePaySession)
@@ -116,14 +119,14 @@ describe('ApplePayCustomerStrategy', () => {
                     expect(applePaySession.begin).toHaveBeenCalled();
                     await applePaySession.oncancel();
 
-                    expect(paymentIntegrationService.signOut).toHaveBeenCalled();
+                    expect(requestSender.get).toHaveBeenCalled();
                     expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
                 }
             }
         });
 
         it('throws payment method cancelled error if loadCheckout fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'signOut')
+            jest.spyOn(requestSender, 'get')
                 .mockRejectedValue(false);
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
             await strategy.initialize(customerInitializeOptions);

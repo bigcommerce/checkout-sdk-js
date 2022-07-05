@@ -23,8 +23,6 @@ export default interface PaymentIntegrationService {
 
     selectShippingOption(id: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
-    signOut(methodId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
-
     updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
 
     updateShippingAddress(payload: ShippingAddressRequestBody): Promise<PaymentIntegrationSelectors>;

@@ -12,7 +12,6 @@ import { DataStoreProjection } from '../common/data-store';
 import { OrderActionCreator } from '../order';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
-import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator } from '../shipping';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
@@ -29,7 +28,6 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -96,14 +94,6 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     async updateShippingAddress(payload: ShippingAddressRequestBody): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._consignmentActionCreator.updateAddress(payload)
-        );
-
-        return this._storeProjection.getState();
-    }
-
-    async signOut(methodId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(methodId, options)
         );
 
         return this._storeProjection.getState();

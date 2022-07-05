@@ -216,7 +216,8 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
 
         applePaySession.oncancel = async () => {
             try {
-                await this._paymentIntegrationService.signOut(paymentMethod.id);
+                const url = `/remote-checkout/${paymentMethod.id}/signout`;
+                await this._requestSender.get(url);
 
                 return this._paymentIntegrationService.loadCheckout();
             } catch (error) {
@@ -401,8 +402,6 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         const transformedShippingAddress = this._transformContactToAddress(shippingContact);
         const emailAddress = shippingContact?.emailAddress;
         const phone = shippingContact?.phoneNumber || '';
-
-        console.log('phonr is', phone);
 
         try {
             await this._paymentIntegrationService.updateBillingAddress({
