@@ -3,7 +3,9 @@ import { PaymentIntegrationService,
     BillingAddressRequestBody,
     OrderRequestBody,
     Payment,
-    ShippingAddressRequestBody } from '@bigcommerce/checkout-sdk/payment-integration';
+    ShippingAddressRequestBody, 
+    RequestOptions} from '@bigcommerce/checkout-sdk/payment-integration';
+
 import { BillingAddressActionCreator } from '../billing';
 import { CheckoutStore, CheckoutActionCreator } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
@@ -25,7 +27,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -92,6 +94,14 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     async updateShippingAddress(payload: ShippingAddressRequestBody): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._consignmentActionCreator.updateAddress(payload)
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async selectShippingOption(id: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._consignmentActionCreator.selectShippingOption(id, options)
         );
 
         return this._storeProjection.getState();

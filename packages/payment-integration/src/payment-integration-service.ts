@@ -21,6 +21,8 @@ export default interface PaymentIntegrationService {
 
     finalizeOrder(): Promise<PaymentIntegrationSelectors>;
 
+    selectShippingOption(id: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
     updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
 
     updateShippingAddress(payload: ShippingAddressRequestBody): Promise<PaymentIntegrationSelectors>;

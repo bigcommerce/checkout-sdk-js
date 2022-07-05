@@ -1,17 +1,25 @@
+export { Address, AddressRequestBody } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
-export { Cart } from './cart';
+export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
 export { Checkout } from './checkout';
-export { StoreConfig } from './config';
-export { Customer } from './customer';
+export { Config, StoreConfig } from './config';
+export { Coupon } from './coupon';
+export { Currency } from './currency';
+export { Customer, CustomerRequestOptions, CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from './customer';
+export { Discount } from './discount';
 export { InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentMethodCancelledError } from './errors';
-export { Order, OrderRequestBody } from './order';
-export { CardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions, PaymentStrategyNew } from './payment';
+export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
+export { CardInstrument, CreditCardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
-export { Consignment, ShippingAddress, ShippingAddressRequestBody } from './shipping';
-export { PaymentIntegrationServiceMock, getCart, getCheckout, getConfig, getOrderRequestBody } from './test-utils';
+export { Consignment, ShippingAddress, ShippingOption, ShippingAddressRequestBody } from './shipping';
+export { CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
+export { RequestOptions } from './util-types';

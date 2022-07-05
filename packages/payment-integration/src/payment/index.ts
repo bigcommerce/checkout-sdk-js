@@ -23,5 +23,3 @@ export {
 export { PaymentInitializeOptions } from './payment-initialize-options';
 export { default as PaymentMethod } from './payment-method';
 export { PaymentRequestOptions } from './payment-request-options';
-export { default as PaymentStrategyNew } from './payment-strategy';
-

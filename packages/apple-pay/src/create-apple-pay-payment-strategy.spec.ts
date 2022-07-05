@@ -1,9 +1,18 @@
-import { PaymentIntegrationService, PaymentIntegrationServiceMock } from "@bigcommerce/checkout-sdk/payment-integration";
-import { RequestSender, createRequestSender } from "@bigcommerce/request-sender";
-import { createApplePayPaymentStrategy } from ".";
-import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
+import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationServiceMock } from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
+import {
+    RequestSender,
+    createRequestSender,
+} from "@bigcommerce/request-sender";
 
-describe('createApplePayPaymentStrategy', () => {
+import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";
+import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
+import {
+    createApplePayCustomerStrategy,
+    createApplePayPaymentStrategy,
+} from "./create-apple-pay-payment-strategy";
+
+describe("createApplePayPaymentStrategy", () => {
     let requestSender: RequestSender;
     let paymentIntegrationService: PaymentIntegrationService;
 
@@ -12,10 +21,19 @@ describe('createApplePayPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
-    it('instantiates apple pay strategy', () => {
+    it("instantiates apple-pay payment strategy", () => {
         const strategy = createApplePayPaymentStrategy(
-            requestSender, paymentIntegrationService
+            requestSender,
+            paymentIntegrationService
         );
         expect(strategy).toBeInstanceOf(ApplePayPaymentStrategy);
-    })
+    });
+
+    it("instantiates apple-pay customer wallet button strategy", () => {
+        const strategy = createApplePayCustomerStrategy(
+            requestSender,
+            paymentIntegrationService
+        );
+        expect(strategy).toBeInstanceOf(ApplePayCustomerStrategy);
+    });
 });

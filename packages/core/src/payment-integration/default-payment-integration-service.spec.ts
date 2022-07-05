@@ -26,7 +26,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let checkoutActionCreator: Pick<CheckoutActionCreator, 'loadCurrentCheckout'>;
     let orderActionCreator: Pick<OrderActionCreator, 'submitOrder' | 'finalizeOrder'>;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
-    let consignmentActionCreator: Pick<ConsignmentActionCreator, 'updateAddress'>;
+    let consignmentActionCreator: Pick<ConsignmentActionCreator, 'updateAddress' | 'selectShippingOption'>;
     let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
     let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
 
@@ -68,6 +68,7 @@ describe('DefaultPaymentIntegrationService', () => {
 
         consignmentActionCreator = {
             updateAddress: jest.fn(async () => () => createAction('UPDATE_CONSIGNMENT_ADDRESS')),
+            selectShippingOption: jest.fn(async () => () => createAction('UPDATE_SHIPPING_OPTION')),
         };
 
         paymentMethodActionCreator = {
@@ -86,7 +87,7 @@ describe('DefaultPaymentIntegrationService', () => {
             billingAddressActionCreator as BillingAddressActionCreator,
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
-            paymentActionCreator as PaymentActionCreator
+            paymentActionCreator as PaymentActionCreator,
         );
     });
 
@@ -176,6 +177,19 @@ describe('DefaultPaymentIntegrationService', () => {
                 .toHaveBeenCalledWith(getShippingAddress());
             expect(store.dispatch)
                 .toHaveBeenCalledWith(consignmentActionCreator.updateAddress(getShippingAddress()));
+            expect(output)
+                .toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#selectShippingOption', () => {
+        it('select shipping option', async () => {
+            const output = await subject.selectShippingOption('1', {});
+
+            expect(consignmentActionCreator.selectShippingOption)
+                .toHaveBeenCalledWith('1', {});
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(consignmentActionCreator.selectShippingOption('1', {}));
             expect(output)
                 .toEqual(paymentIntegrationSelectors);
         });

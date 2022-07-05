@@ -27,6 +27,7 @@ async function getBaseConfig() {
             extensions: ['.ts', '.js'],
             alias: {
                 '@bigcommerce/checkout-sdk/apple-pay': path.resolve(__dirname, '/packages/apple-pay/src'),
+                '@bigcommerce/checkout-sdk/test-utils': path.resolve(__dirname, '/packages/test-utils/src'),
             }
         },
         module: {

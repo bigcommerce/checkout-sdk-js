@@ -14,8 +14,7 @@
             "executor": "@nrwl/jest:jest",
             "outputs": ["coverage/packages/apple-pay"],
             "options": {
-                "jestConfig": "packages/apple-pay/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/apple-pay/jest.config.js"
             }
         }
     },
