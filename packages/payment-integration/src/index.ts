@@ -1,6 +1,6 @@
 export { Address, AddressRequestBody } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
-export { CheckoutButtonInitializeOptions } from './button-options';
+export { CheckoutButtonMethodType, CheckoutButtonInitializeOptions } from './button-options';
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
 export { Checkout } from './checkout';
 export { Config, StoreConfig } from './config';
