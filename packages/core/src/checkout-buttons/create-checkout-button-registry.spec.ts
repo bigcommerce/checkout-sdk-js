@@ -11,6 +11,7 @@ import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
+import { PaypalCommerceButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -23,6 +24,10 @@ describe('createCheckoutButtonRegistry', () => {
 
     it('returns registry with ApplePay registered', () => {
         expect(registry.get('applepay')).toEqual(expect.any(ApplePayButtonStrategy));
+    });
+
+    it('returns registry with AmazonPayV2 registered', () => {
+        expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
     });
 
     it('returns registry with Braintree PayPal registered', () => {
@@ -69,7 +74,11 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('googlepaystripeupe')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 
-    it('returns registry with AmazonPayV2 registered', () => {
-        expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
+    it('returns registry with PayPal Commerce registered', () => {
+        expect(registry.get('paypalcommerce')).toEqual(expect.any(PaypalCommerceButtonStrategy));
+    });
+
+    it('returns registry with PayPal Commerce Venmo registered', () => {
+        expect(registry.get('paypalcommercevenmo')).toEqual(expect.any(PaypalCommerceVenmoButtonStrategy));
     });
 });

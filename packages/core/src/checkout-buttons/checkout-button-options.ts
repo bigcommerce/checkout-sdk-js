@@ -6,7 +6,7 @@ import { ApplePayButtonInitializeOptions } from './strategies/apple-pay';
 import { BraintreePaypalButtonInitializeOptions, BraintreePaypalCreditButtonInitializeOptions, BraintreeVenmoButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
-import { PaypalCommerceButtonInitializeOptions } from './strategies/paypal-commerce';
+import { PaypalCommerceButtonInitializeOptions, PaypalCommerceVenmoButtonInitializeOptions } from './strategies/paypal-commerce';
 
 /**
  * The set of options for configuring the checkout button.
@@ -50,18 +50,6 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
 
     /**
-     * The options that are required to facilitate PayPal. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypal?: PaypalButtonInitializeOptions;
-
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
-
-    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -70,13 +58,13 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support adyenv2 GooglePay.
      */
-     googlepayadyenv2?: GooglePayButtonInitializeOptions;
+    googlepayadyenv2?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support adyenv2 GooglePay.
      */
-      googlepayadyenv3?: GooglePayButtonInitializeOptions;
+    googlepayadyenv3?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree GooglePay. They can be
@@ -100,7 +88,7 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The options that are required to facilitate Orbital GooglePay. They can be
      * omitted unless you need to support Orbital GooglePay.
      */
-     googlepayorbital?: GooglePayButtonInitializeOptions;
+    googlepayorbital?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Stripe GooglePay. They can be
@@ -119,4 +107,22 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
     googlepayauthorizenet?: GooglePayButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate PayPal. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypal?: PaypalButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
+     * unless you need to support PayPal Commerce Venmo.
+     */
+    paypalcommercevenmo?: PaypalCommerceVenmoButtonInitializeOptions;
 }

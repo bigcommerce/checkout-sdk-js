@@ -15,7 +15,7 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
-import { createPaypalCommercePaymentProcessor } from '../payment/strategies/paypal-commerce';
+import { createPaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
@@ -28,7 +28,7 @@ import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, Bra
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import { PaypalCommerceButtonStrategy } from './strategies/paypal-commerce';
+import { PaypalCommerceButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -55,8 +55,10 @@ export default function createCheckoutButtonRegistry(
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
-    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
     const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
+    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
+    const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
+    const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(
@@ -92,6 +94,14 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
+    registry.register(CheckoutButtonMethodType.AMAZON_PAY_V2, () =>
+        new AmazonPayV2ButtonStrategy(
+            store,
+            checkoutActionCreator,
+            createAmazonPayV2PaymentProcessor()
+        )
+    );
+
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
             store,
@@ -120,14 +130,6 @@ export default function createCheckoutButtonRegistry(
             formPoster
         )
     );
-
-    registry.register(CheckoutButtonMethodType.MASTERPASS, () =>
-        new MasterpassButtonStrategy(
-            store,
-            checkoutActionCreator,
-            new MasterpassScriptLoader(scriptLoader),
-            locale
-        ));
 
     registry.register(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, () =>
         new GooglePayButtonStrategy(
@@ -237,6 +239,14 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
+    registry.register(CheckoutButtonMethodType.MASTERPASS, () =>
+        new MasterpassButtonStrategy(
+            store,
+            checkoutActionCreator,
+            new MasterpassScriptLoader(scriptLoader),
+            locale
+        ));
+
     registry.register(CheckoutButtonMethodType.PAYPALEXPRESS, () =>
         new PaypalButtonStrategy(
             store,
@@ -256,11 +266,13 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register(CheckoutButtonMethodType.AMAZON_PAY_V2, () =>
-        new AmazonPayV2ButtonStrategy(
+    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_VENMO, () =>
+        new PaypalCommerceVenmoButtonStrategy(
             store,
             checkoutActionCreator,
-            createAmazonPayV2PaymentProcessor()
+            formPoster,
+            paypalScriptLoader,
+            paypalCommerceRequestSender
         )
     );
 

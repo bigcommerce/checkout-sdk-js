@@ -15,28 +15,31 @@ export default class PaypalCommerceScriptLoader {
     }
 
     async loadPaypalCommerce(params: PaypalCommerceScriptParams): Promise<PaypalCommerceSDK> {
-        this._validateParams(params);
-
-        if (!this._window.paypalLoadScript) {
-            const scriptSrc = 'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js';
-
-            await this._scriptLoader.loadScript(scriptSrc, {async: true, attributes: {}});
+        if (!this._window.paypal) {
+            this._validateParams(params);
 
             if (!this._window.paypalLoadScript) {
+                const PAYPAL_SDK_VERSION = '5.0.5';
+                const scriptSrc = `https://unpkg.com/@paypal/paypal-js@${PAYPAL_SDK_VERSION}/dist/iife/paypal-js.min.js`;
+
+                await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
+
+                if (!this._window.paypalLoadScript) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+            }
+
+            await this._window.paypalLoadScript(params);
+
+            if (!this._window.paypal) {
                 throw new PaymentMethodClientUnavailableError();
             }
-        }
-
-        await this._window.paypalLoadScript(params);
-
-        if (!this._window.paypal) {
-            throw new PaymentMethodClientUnavailableError();
         }
 
         return this._window.paypal;
     }
 
-    _validateParams(options: PaypalCommerceScriptParams): void {
+    private _validateParams(options: PaypalCommerceScriptParams): void {
         const CLIENT_ID = 'client-id';
         const MERCHANT_ID = 'merchant-id';
         let param;
