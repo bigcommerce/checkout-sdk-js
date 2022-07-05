@@ -1,7 +1,9 @@
-export { PaymentIntegrationServiceMock,
+export {
+    PaymentIntegrationServiceMock,
     getCart,
     getCheckout,
     getConfig,
     getConsignment,
     getOrderRequestBody,
-    getShippingOption } from './test-utils';
+    getShippingOption,
+} from "./test-utils";

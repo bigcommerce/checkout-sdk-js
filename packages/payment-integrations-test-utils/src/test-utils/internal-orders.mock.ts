@@ -1,4 +1,7 @@
-import { OrderPaymentRequestBody, OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration';
+import {
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+} from "@bigcommerce/checkout-sdk/payment-integration";
 
 import { getPayment } from "./payments.mock";
 

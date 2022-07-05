@@ -1,10 +1,20 @@
-import { InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError, PaymentIntegrationService, PaymentMethod, PaymentMethodCancelledError } from "@bigcommerce/checkout-sdk/payment-integration";
-import { PaymentIntegrationServiceMock, getOrderRequestBody } from '@bigcommerce/checkout-sdk/test-utils';
+import {
+    InvalidArgumentError,
+    OrderFinalizationNotRequiredError,
+    PaymentArgumentInvalidError,
+    PaymentIntegrationService,
+    PaymentMethod,
+    PaymentMethodCancelledError,
+} from "@bigcommerce/checkout-sdk/payment-integration";
+import {
+    PaymentIntegrationServiceMock,
+    getOrderRequestBody,
+} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
 
 import {
     createRequestSender,
     RequestSender,
-} from "@bigcommerce/request-sender"
+} from "@bigcommerce/request-sender";
 import { merge } from "lodash";
 import ApplePayPaymentStrategy from "./apple-pay-payment-strategy";
 import ApplePaySessionFactory from "./apple-pay-session-factory";
@@ -22,7 +32,7 @@ describe("ApplePayPaymentStrategy", () => {
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
 
-        Object.defineProperty(window, 'ApplePaySession', {
+        Object.defineProperty(window, "ApplePaySession", {
             writable: true,
             value: applePaySession,
         });
@@ -33,11 +43,9 @@ describe("ApplePayPaymentStrategy", () => {
         applePayFactory = new ApplePaySessionFactory();
         paymentMethod = getApplePay();
 
-        jest.spyOn(requestSender, 'post')
-            .mockReturnValue(true);
+        jest.spyOn(requestSender, "post").mockReturnValue(true);
 
-        jest.spyOn(applePayFactory, 'create')
-            .mockReturnValue(applePaySession);
+        jest.spyOn(applePayFactory, "create").mockReturnValue(applePaySession);
 
         strategy = new ApplePayPaymentStrategy(
             requestSender,
@@ -53,51 +61,57 @@ describe("ApplePayPaymentStrategy", () => {
             );
         });
 
-        it('initializes the strategy successfully', async () => {
-            await strategy.initialize({ methodId: 'applepay' });
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
+        it("initializes the strategy successfully", async () => {
+            await strategy.initialize({ methodId: "applepay" });
+            expect(
+                paymentIntegrationService.loadPaymentMethod
+            ).toHaveBeenCalled();
         });
     });
 
-    describe('#execute()', () => {
+    describe("#execute()", () => {
         beforeEach(() => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(getApplePay());
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                "getPaymentMethodOrThrow"
+            ).mockReturnValue(getApplePay());
         });
 
-        it('throws error when payment data is empty', async () => {
-            await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
+        it("throws error when payment data is empty", async () => {
+            await expect(strategy.execute({})).rejects.toThrow(
+                PaymentArgumentInvalidError
+            );
         });
 
-        it('validates merchant', async () => {
+        it("validates merchant", async () => {
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
             strategy.execute(payload);
 
             const validateEvent = {
-                validationURL: 'test',
+                validationURL: "test",
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
             await applePaySession.onvalidatemerchant(validateEvent);
 
             expect(applePaySession.begin).toHaveBeenCalled();
             expect(requestSender.post).toHaveBeenCalled();
         });
 
-        it('throws error if merchant validation fails', async () => {
-            jest.spyOn(requestSender, 'post')
-                .mockRejectedValue(false);
+        it("throws error if merchant validation fails", async () => {
+            jest.spyOn(requestSender, "post").mockRejectedValue(false);
 
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
             strategy.execute(payload);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             const validateEvent = {
-                validationURL: 'test',
+                validationURL: "test",
             } as ApplePayJS.ApplePayValidateMerchantEvent;
 
             try {
@@ -107,21 +121,22 @@ describe("ApplePayPaymentStrategy", () => {
             }
         });
 
-        it('throws error when Apple Pay payment sheet is cancelled', async () => {
-            jest.spyOn(requestSender, 'post')
-                .mockRejectedValue(false);
+        it("throws error when Apple Pay payment sheet is cancelled", async () => {
+            jest.spyOn(requestSender, "post").mockRejectedValue(false);
 
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
             const promise = strategy.execute(payload);
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
             applePaySession.oncancel();
 
-            expect(promise).rejects.toThrow(new PaymentMethodCancelledError('Continue with applepay'));
+            expect(promise).rejects.toThrow(
+                new PaymentMethodCancelledError("Continue with applepay")
+            );
         });
 
-        it('submits payment when shopper authorises', async () => {
+        it("submits payment when shopper authorises", async () => {
             const payload = merge({}, getOrderRequestBody(), {
                 payment: { methodId: paymentMethod.id },
             });
@@ -135,7 +150,7 @@ describe("ApplePayPaymentStrategy", () => {
                 },
             } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
             strategy.execute(payload);
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
             await applePaySession.onpaymentauthorized(authEvent);
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
@@ -143,16 +158,20 @@ describe("ApplePayPaymentStrategy", () => {
         });
     });
 
-    describe('#finalize()', () => {
-        it('throws error to inform that order finalization is not required', async () => {
-            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+    describe("#finalize()", () => {
+        it("throws error to inform that order finalization is not required", async () => {
+            await expect(strategy.finalize()).rejects.toThrow(
+                OrderFinalizationNotRequiredError
+            );
         });
     });
 
-    describe('#deinitialize()', () => {
-        it('deinitializes strategy', async () => {
+    describe("#deinitialize()", () => {
+        it("deinitializes strategy", async () => {
             const result = await strategy.deinitialize();
-            await expect(JSON.stringify(result)).toEqual(JSON.stringify(paymentIntegrationService.getState()));
+            await expect(JSON.stringify(result)).toEqual(
+                JSON.stringify(paymentIntegrationService.getState())
+            );
         });
     });
 });

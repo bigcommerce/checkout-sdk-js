@@ -8,5 +8,6 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ["../../jest-setup.js"],
-    coverageDirectory: "../../coverage/packages/test-utils",
+    coverageDirectory:
+        "../../coverage/packages/payment-integrations-test-utils",
 };
