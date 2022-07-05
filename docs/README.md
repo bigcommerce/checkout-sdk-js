@@ -285,6 +285,7 @@
 * [PaypalCommercePaymentInitializeOptions](interfaces/paypalcommercepaymentinitializeoptions.md)
 * [PaypalCommerceStoredCardFieldOptions](interfaces/paypalcommercestoredcardfieldoptions.md)
 * [PaypalCommerceStoredCardFieldsMap](interfaces/paypalcommercestoredcardfieldsmap.md)
+* [PaypalCommerceVenmoButtonInitializeOptions](interfaces/paypalcommercevenmobuttoninitializeoptions.md)
 * [PaypalExpressPaymentInitializeOptions](interfaces/paypalexpresspaymentinitializeoptions.md)
 * [PaypalFieldsStyleOptions](interfaces/paypalfieldsstyleoptions.md)
 * [PhysicalItem](interfaces/physicalitem.md)

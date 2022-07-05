@@ -22,6 +22,7 @@
 * [GOOGLEPAY_STRIPEUPE](checkoutbuttonmethodtype.md#googlepay_stripeupe)
 * [MASTERPASS](checkoutbuttonmethodtype.md#masterpass)
 * [PAYPALCOMMERCE](checkoutbuttonmethodtype.md#paypalcommerce)
+* [PAYPALCOMMERCE_VENMO](checkoutbuttonmethodtype.md#paypalcommerce_venmo)
 * [PAYPALEXPRESS](checkoutbuttonmethodtype.md#paypalexpress)
 
 ## Enumeration members
@@ -119,6 +120,12 @@ ___
 ###  PAYPALCOMMERCE
 
 • **PAYPALCOMMERCE**: = "paypalcommerce"
+
+___
+
+###  PAYPALCOMMERCE_VENMO
+
+• **PAYPALCOMMERCE_VENMO**: = "paypalcommercevenmo"
 
 ___
 

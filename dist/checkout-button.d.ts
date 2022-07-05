@@ -252,16 +252,6 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
     /**
-     * The options that are required to facilitate PayPal. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypal?: PaypalButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
-    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -310,6 +300,21 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * They can be omitted unless you need to support Authorize.Net GooglePay.
      */
     googlepayauthorizenet?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypal?: PaypalButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
+     * unless you need to support PayPal Commerce Venmo.
+     */
+    paypalcommercevenmo?: PaypalCommerceVenmoButtonInitializeOptions;
 }
 
 declare class CheckoutButtonInitializer {
@@ -419,7 +424,8 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
-    PAYPALCOMMERCE = "paypalcommerce"
+    PAYPALCOMMERCE = "paypalcommerce",
+    PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
 
 /**
@@ -527,7 +533,7 @@ declare interface PaypalButtonStyleOptions_2 {
     layout?: StyleButtonLayout;
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
-    height?: 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55;
+    height?: number;
     label?: StyleButtonLabel;
     tagline?: boolean;
 }
@@ -553,6 +559,17 @@ declare interface PaypalCommerceButtonInitializeOptions {
      * Container id for messaging banner container
      */
     messagingContainer?: string;
+}
+
+declare interface PaypalCommerceVenmoButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page
+     */
+    initializesOnCheckoutPage?: boolean;
 }
 
 /**

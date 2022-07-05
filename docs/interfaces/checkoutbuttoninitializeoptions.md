@@ -35,6 +35,7 @@
 * [params](checkoutbuttoninitializeoptions.md#optional-params)
 * [paypal](checkoutbuttoninitializeoptions.md#optional-paypal)
 * [paypalCommerce](checkoutbuttoninitializeoptions.md#optional-paypalcommerce)
+* [paypalcommercevenmo](checkoutbuttoninitializeoptions.md#optional-paypalcommercevenmo)
 * [timeout](checkoutbuttoninitializeoptions.md#optional-timeout)
 
 ## Properties
@@ -208,6 +209,15 @@ ___
 
 The options that are required to facilitate PayPal Commerce. They can be omitted
 unless you need to support Paypal.
+
+___
+
+### `Optional` paypalcommercevenmo
+
+• **paypalcommercevenmo**? : *[PaypalCommerceVenmoButtonInitializeOptions](paypalcommercevenmobuttoninitializeoptions.md)*
+
+The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
+unless you need to support PayPal Commerce Venmo.
 
 ___
 
