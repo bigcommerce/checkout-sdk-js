@@ -1,4 +1,4 @@
-import { Currency } from 'packages/payment-integration/src/currency';
+import { Currency } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export function getCurrency(): Currency {
     return {

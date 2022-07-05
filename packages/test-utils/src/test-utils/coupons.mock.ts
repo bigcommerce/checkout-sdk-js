@@ -1,4 +1,4 @@
-import { Coupon } from 'packages/payment-integration/src/coupon';
+import { Coupon } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export function getCoupon(): Coupon {
     return {

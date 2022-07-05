@@ -1,5 +1,4 @@
-import { Payment } from '@bigcommerce/checkout-sdk/payment-integration';
-import { CreditCardInstrument } from 'packages/payment-integration/src/payment';
+import { CreditCardInstrument, Payment } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export function getPayment(): Payment {
     return {

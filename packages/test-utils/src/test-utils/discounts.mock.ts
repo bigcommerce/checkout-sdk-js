@@ -1,4 +1,4 @@
-import { Discount } from 'packages/payment-integration/src/discount';
+import { Discount } from '@bigcommerce/checkout-sdk/payment-integration';
 
 export function getDiscount(): Discount {
     return {
