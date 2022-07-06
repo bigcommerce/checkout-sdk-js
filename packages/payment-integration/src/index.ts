@@ -1,5 +1,6 @@
 export { Address, AddressRequestBody } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
+export { CheckoutButtonMethodType, CheckoutButtonInitializeOptions } from './button-options';
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
 export { Checkout } from './checkout';
 export { Config, StoreConfig } from './config';
@@ -21,5 +22,5 @@ export { CardInstrument, CreditCardInstrument, Payment, PaymentInitializeOptions
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingOption, ShippingAddressRequestBody } from './shipping';
-export { CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
+export { CheckoutButtonStrategyNew, CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
 export { RequestOptions } from './util-types';
