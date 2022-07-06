@@ -74,6 +74,7 @@ import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader as StripeUPEScriptLoader, StripeUPEPaymentStrategy } from './strategies/stripe-upe';
 import { StripeScriptLoader as StripeV3ScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
+import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
 import { ZipPaymentStrategy } from './strategies/zip';
 
 export default function createPaymentStrategyRegistry(
@@ -827,6 +828,15 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             hostedFormFactory,
             new WepayRiskClient(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.WORLDPAYACCESS, () =>
+        new WorldpayaccessPaymetStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
         )
     );
 

@@ -22,7 +22,7 @@ import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
-import { WorldpayPaymentInitializeOptions } from './strategies/worldpay';
+import { WorldpayAccessPaymentInitializeOptions } from './strategies/worldpayaccess';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
@@ -242,5 +242,5 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
      */
-    worldpay?: WorldpayPaymentInitializeOptions;
+    worldpay?: WorldpayAccessPaymentInitializeOptions;
 }
