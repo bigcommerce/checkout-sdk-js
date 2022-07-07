@@ -1,14 +1,14 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 export default class GoogleRecaptchaScriptLoader {
-    private _loadPromise?: Promise<ReCaptchaV2.ReCaptcha>;
+    private _loadPromise?: Promise<ReCaptchaV2.ReCaptcha | undefined>;
 
     constructor(
         private _scriptLoader: ScriptLoader,
         private _window: GoogleRecaptchaWindow = window
     ) {}
 
-    load(): Promise<ReCaptchaV2.ReCaptcha> {
+    load(): Promise<ReCaptchaV2.ReCaptcha | undefined> {
         if (!this._loadPromise) {
             this._loadPromise = this._loadScript();
         }
@@ -16,7 +16,7 @@ export default class GoogleRecaptchaScriptLoader {
         return this._loadPromise;
     }
 
-    private _loadScript(): Promise<ReCaptchaV2.ReCaptcha> {
+    private _loadScript(): Promise<ReCaptchaV2.ReCaptcha | undefined> {
         const callbackName = 'initRecaptcha';
         const params = [
             `onload=${callbackName}`,
@@ -24,10 +24,7 @@ export default class GoogleRecaptchaScriptLoader {
         ].join('&');
 
         return new Promise((resolve, reject) => {
-            const recaptcha = this._window.grecaptcha;
-            if (recaptcha) {
-                this._window[callbackName] = () => resolve(recaptcha);
-            }
+            this._window[callbackName] = () => resolve(this._window.grecaptcha);
 
             this._scriptLoader.loadScript(`//www.google.com/recaptcha/api.js?${params}`)
                 .catch(error => {

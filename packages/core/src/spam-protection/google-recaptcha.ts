@@ -57,9 +57,10 @@ export default class GoogleRecaptcha {
     load(containerId: string, sitekey: string): Promise<void> {
         return this.googleRecaptchaScriptLoader.load()
             .then(recaptcha => {
-                this._event$ = this._memoized(recaptcha, sitekey, document.getElementById(containerId));
-
-                this._recaptcha = recaptcha;
+                if (recaptcha) {
+                    this._event$ = this._memoized(recaptcha, sitekey, document.getElementById(containerId));
+                    this._recaptcha = recaptcha;
+                }
             });
     }
 
