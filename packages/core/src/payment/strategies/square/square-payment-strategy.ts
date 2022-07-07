@@ -115,7 +115,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             }
         }
 
-        return new Promise<NonceInstrument>((resolve, reject) => {
+        return new Promise<NonceInstrument>((resolve?, reject?) => {
             if (this._deferredRequestNonce) {
                 this._deferredRequestNonce.reject(new TimeoutError());
             }

@@ -24,7 +24,10 @@ export default class GoogleRecaptchaScriptLoader {
         ].join('&');
 
         return new Promise((resolve, reject) => {
-            this._window[callbackName] = () => resolve(this._window.grecaptcha);
+            const recaptcha = this._window.grecaptcha;
+            if (recaptcha) {
+                this._window[callbackName] = () => resolve(recaptcha);
+            }
 
             this._scriptLoader.loadScript(`//www.google.com/recaptcha/api.js?${params}`)
                 .catch(error => {
