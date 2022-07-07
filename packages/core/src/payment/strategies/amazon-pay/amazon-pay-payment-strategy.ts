@@ -16,7 +16,7 @@ import AmazonPayConfirmationFlow from './amazon-pay-confirmation-flow';
 import AmazonPayOrderReference from './amazon-pay-order-reference';
 import AmazonPayPaymentInitializeOptions from './amazon-pay-payment-initialize-options';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
-import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
+import { AmazonPayWalletOptions } from './amazon-pay-wallet';
 import AmazonPayWindow from './amazon-pay-window';
 
 export default class AmazonPayPaymentStrategy implements PaymentStrategy {
@@ -137,8 +137,8 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         return this._paymentMethod ? this._paymentMethod.initializationData.orderReferenceId : undefined;
     }
 
-    private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<AmazonPayWallet> {
-        return new Promise((resolve, reject) => {
+    private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
             const referenceId = this._getOrderReferenceId() || this._getOrderReferenceIdFromInitializationData();
             const merchantId = this._getMerchantId();

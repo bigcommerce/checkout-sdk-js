@@ -139,7 +139,7 @@ export interface SquareFormCallbacks {
 export type SquareFormFactory = (options: SquareFormOptions) => SquarePaymentForm;
 
 export interface DeferredPromise {
-    resolve(resolution: SquareNonceInstrument): void;
+    resolve(resolution?: SquareNonceInstrument): void;
     reject(reason?: any): void;
 }
 

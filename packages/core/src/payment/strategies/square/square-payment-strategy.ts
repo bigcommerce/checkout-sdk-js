@@ -104,7 +104,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _getNonceInstrument(methodId: string): Promise<NonceInstrument> {
+    private _getNonceInstrument(methodId: string): Promise<NonceInstrument | undefined> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
@@ -115,7 +115,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             }
         }
 
-        return new Promise<NonceInstrument>((resolve?, reject?) => {
+        return new Promise<NonceInstrument | undefined>((resolve, reject?) => {
             if (this._deferredRequestNonce) {
                 this._deferredRequestNonce.reject(new TimeoutError());
             }
@@ -126,7 +126,6 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
     }
 
     private _getFormOptions(deferred: DeferredPromise): SquareFormOptions {
-
         return {
             ...this._getInitializeOptions(),
             ...this._paymentMethod?.initializationData,
