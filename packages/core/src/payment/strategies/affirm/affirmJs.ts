@@ -52,7 +52,7 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         if (p.parentNode) {
             p.parentNode.insertBefore(k, p);
         }
-        delete g[e];
+        delete (g as Partial<AffirmConfig>)[e];
         f(g);
         m[n] = b;
     })(

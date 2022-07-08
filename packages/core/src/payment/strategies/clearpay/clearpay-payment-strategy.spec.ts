@@ -113,7 +113,7 @@ describe('ClearpayPaymentStrategy', () => {
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(checkoutValidator, 'validate')
-            .mockReturnValue(new Promise(resolve => resolve()));
+            .mockReturnValue(new Promise<void>(resolve => resolve()));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

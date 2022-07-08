@@ -6,3 +6,5 @@
 /dist/tsdoc-metadata.json
 /dist-server
 /dist-cdn
+.idea
+.vscode

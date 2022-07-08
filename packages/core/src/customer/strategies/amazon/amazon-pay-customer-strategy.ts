@@ -30,7 +30,7 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
         }
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => new Promise((resolve, reject) => {
+            .then(state => new Promise<void>((resolve, reject) => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {

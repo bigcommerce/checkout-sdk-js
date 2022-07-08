@@ -1,3 +1,4 @@
+import { Checkout } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
@@ -379,7 +380,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 formPoster,
                 paypalCommercePaymentProcessor
             );
-            const checkout = getCheckout();
+            const checkout = getCheckout() as Partial<Checkout>;
             delete checkout.cart;
 
             jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')

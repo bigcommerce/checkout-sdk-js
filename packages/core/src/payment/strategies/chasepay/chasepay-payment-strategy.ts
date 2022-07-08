@@ -157,7 +157,7 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
                 });
 
             // Wait for payment selection
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 this._walletEvent$
                     .pipe(take(1))
                     .subscribe((event: { type: ChasePayEventType }) => {

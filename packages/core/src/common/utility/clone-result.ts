@@ -4,7 +4,8 @@ import isPlainObject from './is-plain-object';
 
 const cloneDeep = memoize(<T>(input: T): T => {
     if (Array.isArray(input)) {
-        return input.map((value: T[keyof T]) => (
+        // Fixed in later versions of typescript https://github.com/microsoft/TypeScript/issues/36390
+        return (input as any[]).map((value: T[keyof T]) => (
             cloneDeepSafe(value)
         )) as any;
     }

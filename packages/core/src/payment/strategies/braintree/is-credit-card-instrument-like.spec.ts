@@ -1,3 +1,4 @@
+import { CreditCardInstrument } from '@bigcommerce/checkout-sdk/payment-integration';
 import { getCreditCardInstrument } from '../../payments.mock';
 
 import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
@@ -10,7 +11,8 @@ describe('isCreditCardInstrumentLike', () => {
     });
 
     it('returns false if data has a not correct type', () => {
-        delete payloadData.ccExpiry;
-        expect(isCreditCardInstrumentLike(payloadData)).toBeFalsy();
+        const partialPayloadData: Partial<CreditCardInstrument> = { ...payloadData };
+        delete partialPayloadData.ccExpiry;
+        expect(isCreditCardInstrumentLike(partialPayloadData)).toBeFalsy();
     });
 });
