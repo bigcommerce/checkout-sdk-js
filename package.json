@@ -23,6 +23,7 @@
     "npm": "6"
   },
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
+  "prettier": "@bigcommerce/eslint-config/prettier",
   "scripts": {
     "prepare": "check-node-version --node '>=14.18' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts && npm run docs",
@@ -77,10 +78,10 @@
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
-    "@bigcommerce/tslint-config": "^4.0.0",
+    "@bigcommerce/eslint-config": "^1.0.1",
     "@microsoft/api-extractor": "^6.3.0",
     "@nrwl/cli": "^13.10.3",
-    "@nrwl/eslint-plugin-nx": "^14.1.7",
+    "@nrwl/eslint-plugin-nx": "^13.10.3",
     "@nrwl/jest": "^13.10.3",
     "@nrwl/workspace": "^13.10.3",
     "@types/applepayjs": "^3.0.2",
@@ -96,6 +97,9 @@
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^24.9.0",
     "nx": "^13.10.3",
     "prettier": "^2.6.2",

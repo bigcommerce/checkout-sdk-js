@@ -1,4 +1,7 @@
 {
+    "extends": [
+        "@bigcommerce/eslint-config"
+    ],
     "root": true,
     "ignorePatterns": ["**/*"],
     "plugins": ["@nrwl/nx"],
@@ -21,7 +24,10 @@
                     }
                   ]
                 }
-              ]
+              ],
+            "@typescript-eslint/naming-convention": "off",
+            "jsdoc/check-tag-names": "off",
+            "@typescript-eslint/default-param-last": "off"
           }
         },
         {
