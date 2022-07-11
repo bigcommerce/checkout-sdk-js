@@ -1,0 +1,62 @@
+[@bigcommerce/checkout-sdk](../README.md) / SubInputDetail_2
+
+# Interface: SubInputDetail\_2
+
+## Table of contents
+
+### Properties
+
+- [configuration](SubInputDetail_2.md#configuration)
+- [items](SubInputDetail_2.md#items)
+- [key](SubInputDetail_2.md#key)
+- [optional](SubInputDetail_2.md#optional)
+- [type](SubInputDetail_2.md#type)
+- [value](SubInputDetail_2.md#value)
+
+## Properties
+
+### configuration
+
+• `Optional` **configuration**: `object`
+
+Configuration parameters for the required input.
+
+___
+
+### items
+
+• `Optional` **items**: [`Item_3`](Item_3.md)[]
+
+In case of a select, the items to choose from.
+
+___
+
+### key
+
+• `Optional` **key**: `string`
+
+The value to provide in the result.
+
+___
+
+### optional
+
+• `Optional` **optional**: `boolean`
+
+True if this input is optional to provide.
+
+___
+
+### type
+
+• `Optional` **type**: `string`
+
+The type of the required input.
+
+___
+
+### value
+
+• `Optional` **value**: `string`
+
+The value can be pre-filled, if available.
