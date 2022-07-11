@@ -146,8 +146,8 @@ export interface PaypalInstrument {
 interface BoltInstrument {
     credit_card_token: {
         token: string;
-        last_four_digits: string | number; // TODO: remove number type after Bolt-203 will be deployed and approved
-        iin: string | number; // TODO: remove number type after Bolt-203 will be deployed and approved
+        last_four_digits: string;
+        iin: string;
         expiration_month: number;
         expiration_year: number;
         brand?: string;

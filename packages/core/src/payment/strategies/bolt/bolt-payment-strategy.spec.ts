@@ -542,52 +542,6 @@ describe('BoltPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
         });
 
-        it('check card number digits with disabled BOLT-203 experiment', async () => {
-            const config = getConfig();
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValue({
-                    ...config.storeConfig,
-                    checkoutSettings: {
-                        ...config.storeConfig.checkoutSettings,
-                        features: {
-                            'BOLT-203.Bolt_string_type_of_token_card_data': false,
-                        },
-                    },
-                });
-
-            const submitPaymentOptions = {
-                methodId: 'bolt',
-                paymentData: {
-                    formattedPayload: {
-                        credit_card_token: {
-                            token: 'token',
-                            last_four_digits: 1111,
-                            iin: 1111,
-                            expiration_month: 11,
-                            expiration_year: 2022,
-                        },
-                        provider_data: {
-                            create_account: false,
-                            embedded_checkout: true,
-                        },
-                    },
-                },
-            };
-
-            const boltEmbeddedPayload = {
-                payment: {
-                    methodId: 'bolt',
-                    paymentData: {
-                        shouldCreateAccount: false,
-                    },
-                },
-            };
-
-            paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
-            await strategy.initialize(boltEmbeddedScriptInitializationOptions);
-            await strategy.execute(boltEmbeddedPayload);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
-        });
     });
 
     describe('#deinitialize()', () => {
