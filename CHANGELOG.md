@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.265.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.264.2...v1.265.0) (2022-07-11)
+
+
+### Features
+
+* **payment:** INT-6276 Dispatch the thunk action to retrieve the payment method ([290e2fc](https://github.com/bigcommerce/checkout-sdk-js/commit/290e2fcaeef4a8beb5a937c30fb0c219fbee235a))
+
 ### [1.264.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.264.1...v1.264.2) (2022-07-11)
 
 ### [1.264.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.264.0...v1.264.1) (2022-07-06)
