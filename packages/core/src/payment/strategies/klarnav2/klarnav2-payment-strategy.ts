@@ -92,19 +92,20 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _loadPaymentsWidget(options: PaymentInitializeOptions): Promise<KlarnaLoadResponse> {
+    private async _loadPaymentsWidget(options: PaymentInitializeOptions): Promise<KlarnaLoadResponse> {
         if (!options.klarnav2) {
             throw new InvalidArgumentError('Unable to load widget because "options.klarnav2" argument is not provided.');
         }
 
         const { methodId, gatewayId, klarnav2: { container, onLoad } } = options;
-        const state = this._store.getState();
 
         if (!gatewayId) {
             throw new InvalidArgumentError('Unable to proceed because "payload.payment.gatewayId" argument is not provided.');
         }
 
-        return this._updateOrder(gatewayId).then(() => new Promise<KlarnaLoadResponse>(resolve => {
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId));
+
+        return new Promise<KlarnaLoadResponse>(resolve => {
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
             if (!this._klarnaPayments || !paymentMethod.clientToken) {
@@ -119,7 +120,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
 
                 resolve(response);
             });
-        }));
+        })
     }
 
     private _getUpdateSessionData(billingAddress: BillingAddress, shippingAddress?: Address): KlarnaUpdateSessionParams {
@@ -163,10 +164,6 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
         }
 
         return klarnaAddress;
-    }
-
-    private async _updateOrder(gatewayId: string) {
-        await this._paymentMethodActionCreator.loadPaymentMethod(gatewayId);
     }
 
     private _authorize(methodId: string): Promise<KlarnaAuthorizationResponse> {
