@@ -17,10 +17,15 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
+            "@bigcommerce/checkout-sdk/workspace-tools": [
+                "packages/workspace-tools/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/apple-pay": [
                 "packages/apple-pay/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"],
+            "@bigcommerce/checkout-sdk/core": [
+                "packages/core/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/payment-integration": [
                 "packages/payment-integration/src/index.ts"
             ],

@@ -4,6 +4,7 @@
         "apple-pay": "packages/apple-pay",
         "core": "packages/core",
         "payment-integration": "packages/payment-integration",
-        "payment-integrations-test-utils": "packages/payment-integrations-test-utils"
+        "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
+        "workspace-tools": "packages/workspace-tools"
     }
 }
