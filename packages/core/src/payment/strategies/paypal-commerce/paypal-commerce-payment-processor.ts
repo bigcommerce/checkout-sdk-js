@@ -3,11 +3,12 @@ import { isNil, omitBy } from 'lodash';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
+import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceInitializationData, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -55,10 +56,10 @@ export default class PaypalCommercePaymentProcessor {
         private _paymentActionCreator: PaymentActionCreator
     ) {}
 
-    async initialize(paramsScript: PaypalCommerceScriptParams, gatewayId?: string, isVenmoEnabled?: boolean): Promise<PaypalCommerceSDK> {
-        this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paramsScript);
-        this._gatewayId = gatewayId;
-        this._isVenmoEnabled = isVenmoEnabled;
+    async initialize(paymentMethod: PaymentMethod<PaypalCommerceInitializationData>, currencyCode: string): Promise<PaypalCommerceSDK> {
+        this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currencyCode);
+        this._gatewayId = paymentMethod.gateway;
+        this._isVenmoEnabled = paymentMethod.initializationData?.isVenmoEnabled;
 
         return this._paypal;
     }

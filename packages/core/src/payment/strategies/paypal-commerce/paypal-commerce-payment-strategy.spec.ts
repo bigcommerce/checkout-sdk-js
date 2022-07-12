@@ -46,8 +46,8 @@ describe('PaypalCommercePaymentStrategy', () => {
     let submitForm: () => void;
 
     beforeEach(() => {
-        paymentMethod = { ...getPaypalCommerce() };
-        cart = { ...getCart() };
+        paymentMethod = getPaypalCommerce();
+        cart = getCart();
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         requestSender = createRequestSender();
@@ -156,8 +156,9 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it("doesn't initialize paypalCommercePaymentProcessor if orderId is not undefined", async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerce() });
+            paymentMethod.initializationData.orderId = 'Xz213das';
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
 
             await paypalCommercePaymentStrategy.initialize(options);
 
@@ -165,94 +166,13 @@ describe('PaypalCommercePaymentStrategy', () => {
         });
 
         it('initializes paypalCommercePaymentProcessor if orderId is undefined', async () => {
+            paymentMethod.initializationData.orderId = undefined;
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+
             await paypalCommercePaymentStrategy.initialize(options);
 
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                components: [
-                    'buttons',
-                    'messages',
-                    'payment-fields',
-                    'funding-eligibility',
-                ],
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
-        });
-
-        it('initializes paypalCommercePaymentProcessor with enabled Venmo', async () => {
-            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
-                .mockReturnValue('VENMO');
-
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getPaypalCommerce(), initializationData: { ...getPaypalCommerce().initializationData, orderId: undefined, shouldRenderFields: true,  isVenmoEnabled: true }});
-
-            await paypalCommercePaymentStrategy.initialize({ ...options, methodId: PaymentStrategyType.PAYPAL_COMMERCE_VENMO });
-
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                components: [
-                    'buttons',
-                    'messages',
-                    'payment-fields',
-                    'funding-eligibility',
-                ],
-                'enable-funding': 'venmo',
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, true);
-        });
-
-        it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling APM in restricted countries with correct billing address', async () => {
-            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
-                .mockReturnValue('P24');
-
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS, methodId: 'p24' });
-
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                components: [
-                    'buttons',
-                    'messages',
-                    'payment-fields',
-                    'funding-eligibility',
-                ],
-                'enable-funding': 'p24',
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, 'paypalcommercealternativemethods', undefined);
-        });
-
-        it('initializes paypalCommercePaymentProcessor with enable-funding field for enabling pay later', async () => {
-            jest.spyOn(paypalCommerceFundingKeyResolver, 'resolve')
-                .mockReturnValue('PAYLATER');
-
-            await paypalCommercePaymentStrategy.initialize({ ...options, gatewayId: undefined, methodId: PaymentStrategyType.PAYPAL_COMMERCE_CREDIT });
-
-            const obj = {
-                'client-id': 'abc',
-                commit: true,
-                currency: 'USD',
-                intent: 'capture',
-                components: [
-                    'buttons',
-                    'messages',
-                    'payment-fields',
-                    'funding-eligibility',
-                ],
-                'enable-funding': 'paylater',
-            };
-
-            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(obj, undefined, undefined);
+            expect(paypalCommercePaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethod, cart.currency.code);
         });
 
         it('renders PayPal button if orderId is undefined', async () => {

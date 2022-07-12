@@ -1,4 +1,3 @@
-import { Cart } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
 import { LoadingIndicator } from '../../../common/loading-indicator';
@@ -10,7 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, ComponentsScriptType, NON_INSTANT_PAYMENT_METHODS, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommerceInitializationData, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptParams } from './index';
+import { ApproveDataOptions, ButtonsOptions, NON_INSTANT_PAYMENT_METHODS, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender } from './index';
 
 const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
@@ -21,7 +20,6 @@ const POLLING_MAX_TIME = 600000;
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
     private _isAPM?: boolean;
-    private _isPaylater?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -42,11 +40,10 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             billingAddress: { getBillingAddressOrThrow },
         } = this._store.getState();
 
-        const { initializationData } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { orderId, buttonStyle, isVenmoEnabled, shouldRenderFields } = initializationData ?? {};
+        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+        const { initializationData } = paymentMethod;
+        const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
-        this._isPaylater = methodId === PaymentStrategyType.PAYPAL_COMMERCE_CREDIT;
-        const isVenmo = methodId === PaymentStrategyType.PAYPAL_COMMERCE_VENMO;
 
         if (orderId) {
             this._orderId = orderId;
@@ -68,16 +65,6 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
         const loadingIndicatorContainerId = container.split('#')[1];
 
-        let initializationMethodId;
-        if (this._isAPM) {
-            initializationMethodId = methodId;
-        } else if (this._isPaylater) {
-            initializationMethodId = 'paylater';
-        } else if (isVenmo && isVenmoEnabled) {
-            initializationMethodId = 'venmo';
-        }
-
-        const paramsScript = this._getOptionsScript(initializationData, currencyCode, initializationMethodId);
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
             onApprove: data => {
@@ -108,7 +95,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript, gatewayId, isVenmoEnabled);
+        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, currencyCode);
 
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 
@@ -229,25 +216,5 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _tokenizePayment({ orderID }: ApproveDataOptions, submitForm: () => void) {
         this._orderId = orderID;
         submitForm();
-    }
-
-    private _getOptionsScript(
-        initializationData: PaypalCommerceInitializationData,
-        currencyCode: Cart['currency']['code'],
-        initializationMethodId?: string
-    ): PaypalCommerceScriptParams {
-        const { clientId, intent, merchantId } = initializationData;
-
-        const returnObject = {
-            'client-id': clientId,
-            'merchant-id': merchantId,
-            commit: true,
-            currency: currencyCode,
-            intent,
-            components: ['buttons', 'messages', 'payment-fields', 'funding-eligibility'] as ComponentsScriptType,
-            ...(initializationMethodId && { 'enable-funding': initializationMethodId}),
-        };
-
-        return returnObject;
     }
 }

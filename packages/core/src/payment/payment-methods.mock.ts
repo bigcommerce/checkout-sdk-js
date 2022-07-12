@@ -94,6 +94,7 @@ export function getPaypalCommerce(): PaymentMethod {
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],
+        clientToken: 'asdcvY7XFSQasd',
         config: {
             testMode: true,
             merchantId: 'JTS4DY7XFSQZE',
@@ -105,9 +106,13 @@ export function getPaypalCommerce(): PaymentMethod {
                 label: 'pay',
             },
             clientId: 'abc',
+            merchantId: 'JTS4DY7XFSQZE',
             orderId: '3U4171152W1482642',
+            attributionId: '1123JLKJASD12',
             intent: 'capture',
             isPayPalCreditAvailable: false,
+            isVenmoEnabled: false,
+            shouldRenderFields: true,
         },
         type: 'PAYMENT_TYPE_API',
     };
