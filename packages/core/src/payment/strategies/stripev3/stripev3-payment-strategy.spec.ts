@@ -293,8 +293,8 @@ describe('StripeV3PaymentStrategy', () => {
                                 token: 'token',
                             },
                             confirm: true,
+                            set_as_default_stored_instrument: true,
                         },
-                        shouldSetAsDefaultInstrument: true,
                     }}
                 );
             });

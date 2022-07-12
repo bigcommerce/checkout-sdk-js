@@ -18,7 +18,7 @@ export type PaymentInstrument = (
     CreditCardInstrument & WithCheckoutcomFawryInstrument |
     CreditCardInstrument & WithCheckoutcomSEPAInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | StripeUPEIntent | WithMollieIssuerInstrument> |
+    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | StripeUPEIntent | WithMollieIssuerInstrument | StripeV3FormattedPayload> |
     HostedInstrument |
     NonceInstrument |
     ThreeDSVaultedInstrument |
@@ -211,4 +211,17 @@ export interface FormattedVaultedInstrument {
 
 export interface FormattedPayload<T> {
     formattedPayload: T;
+}
+
+export interface StripeV3FormattedPayload {
+    credit_card_token?: {
+        token: string;
+    };
+    vault_payment_instrument?: boolean;
+    confirm: boolean;
+    set_as_default_stored_instrument?: boolean;
+    client_token?: string;
+    bigpay_token?: {
+        token: string;
+    }
 }

@@ -142,18 +142,20 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             return Promise.reject(error);
         }
 
+        const formattedPayload = {
+            credit_card_token: {
+                token,
+            },
+            vault_payment_instrument: shouldSaveInstrument,
+            set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+            browser_info: getBrowserInfo(),
+            shopper_locale: this._getShopperLocale(),
+        }
+
         return await this._store.dispatch(this._paymentActionCreator.submitPayment({
             ...payment,
             paymentData: {
-                formattedPayload: {
-                    credit_card_token: {
-                        token,
-                    },
-                    vault_payment_instrument: shouldSaveInstrument,
-                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
-                    browser_info: getBrowserInfo(),
-                    shopper_locale: this._getShopperLocale(),
-                },
+                formattedPayload,
             },
         }));
     }
