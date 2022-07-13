@@ -155,16 +155,6 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
             }
         });
 
-        it('throws error if client id is missing', async () => {
-            paymentMethodMock.initializationData.clientId = undefined;
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 

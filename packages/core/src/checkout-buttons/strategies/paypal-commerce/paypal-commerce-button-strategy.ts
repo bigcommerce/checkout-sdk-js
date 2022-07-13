@@ -1,10 +1,8 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { includes } from 'lodash';
 
-import { Cart } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, FundingType, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceScriptParams } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, PaypalCommercePaymentProcessor } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -22,7 +20,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         let state = this._store.getState();
-        const { initializationData } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        const { initializationData } = paymentMethod;
 
         if (!initializationData.clientId) {
             throw new InvalidArgumentError();
@@ -43,7 +42,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
 
-        await this._paypalCommercePaymentProcessor.initialize(this._getParamsScript(initializationData, cart), undefined, initializationData.isVenmoEnabled);
+        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code);
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 
@@ -86,55 +85,5 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             provider,
             order_id: orderID,
         });
-    }
-
-    private _getParamsScript(initializationData: PaypalCommerceInitializationData, cart: Cart): PaypalCommerceScriptParams {
-        const {
-            clientId,
-            intent,
-            isPayPalCreditAvailable,
-            merchantId,
-            attributionId,
-            availableAlternativePaymentMethods = [],
-            enabledAlternativePaymentMethods = [],
-            isVenmoEnabled,
-        } = initializationData;
-
-        const disableFunding: FundingType = [ 'card' ];
-        const enableFunding: FundingType = enabledAlternativePaymentMethods.slice();
-
-        /**
-         *  The default value is different depending on the countries,
-         *  therefore there's a need to add credit, paylater or APM name to enable/disable funding explicitly
-         */
-        availableAlternativePaymentMethods.forEach(apm => {
-            if (!includes(enabledAlternativePaymentMethods, apm)) {
-                disableFunding.push(apm);
-            }
-        });
-
-        if (isPayPalCreditAvailable) {
-            enableFunding.push('credit', 'paylater');
-        } else {
-            disableFunding.push('credit', 'paylater');
-        }
-
-        if (isVenmoEnabled) {
-            enableFunding.push('venmo');
-        } else if (!enableFunding.includes('venmo')) {
-            disableFunding.push('venmo');
-        }
-
-        return {
-            'client-id': clientId,
-            'merchant-id': merchantId,
-            commit: false,
-            currency: cart.currency.code,
-            components: ['buttons', 'messages'],
-            'disable-funding': disableFunding,
-            ...(enableFunding.length && {'enable-funding': enableFunding}),
-            intent,
-            'data-partner-attribution-id': attributionId,
-        };
     }
 }

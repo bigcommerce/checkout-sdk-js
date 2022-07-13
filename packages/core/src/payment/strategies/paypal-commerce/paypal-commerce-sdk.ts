@@ -230,6 +230,8 @@ export interface PaypalCommerceInitializationData {
     buyerCountry?: string;
     isDeveloperModeApplicable?: boolean;
     intent?: 'capture' | 'authorize';
+    isHostedCheckoutEnabled?: boolean;
+    isInlineCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     availableAlternativePaymentMethods: FundingType;
     enabledAlternativePaymentMethods: FundingType;
@@ -241,7 +243,7 @@ export interface PaypalCommerceInitializationData {
 export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'payment-fields'>;
 
 export interface PaypalCommerceScriptParams  {
-    'client-id': string;
+    'client-id'?: string;
     'merchant-id'?: string;
     'buyer-country'?: string;
     'disable-funding'?: FundingType;

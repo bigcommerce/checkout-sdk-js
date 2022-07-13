@@ -4,7 +4,7 @@ import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceScriptParams, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -39,39 +39,15 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         }
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+        const currency = state.cart.getCartOrThrow().currency.code;
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-
-        if (!this._paymentMethod.initializationData.clientId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const paypalSdkScriptParams = this._getScriptParams(initializesOnCheckoutPage);
-        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(paypalSdkScriptParams);
+        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(this._paymentMethod, currency, initializesOnCheckoutPage);
 
         this._renderButton(containerId, initializesOnCheckoutPage, style);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
-    }
-
-    private _getScriptParams(initializesOnCheckoutPage?: boolean): PaypalCommerceScriptParams {
-        const state = this._store.getState();
-        const currency = state.cart.getCartOrThrow().currency.code;
-
-        const { initializationData } = this._getPaymentMethodOrThrow();
-        const { attributionId, clientId, intent, merchantId } = initializationData;
-
-        return {
-            'client-id': clientId,
-            'data-partner-attribution-id': attributionId,
-            'merchant-id': merchantId,
-            commit: !!initializesOnCheckoutPage,
-            components: ['buttons', 'messages'],
-            'enable-funding': ['venmo'],
-            currency,
-            intent,
-        };
     }
 
     private _renderButton(containerId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
@@ -101,7 +77,6 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         const cart = state.cart.getCartOrThrow();
 
         const providerId = initializesOnCheckoutPage ? 'paypalcommercevenmocheckout': 'paypalcommercevenmo';
-
 
         const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, providerId);
 

@@ -1,8 +1,10 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
+import { Cart } from '../../../cart';
+import { PaymentMethod } from '../../../payment';
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodFailedError } from '../../errors';
 
-import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommercePaymentProcessor, PaypalCommerceRegularField, PaypalCommerceScriptParams } from './index';
+import { PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap, PaypalCommerceFormFieldType, PaypalCommerceFormFieldValidateErrorData, PaypalCommerceFormFieldValidateEventData, PaypalCommerceFormOptions, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceInitializationData, PaypalCommercePaymentProcessor, PaypalCommerceRegularField } from './index';
 import { PaypalCommerceFormFieldsMap, PaypalCommerceStoredCardFieldsMap } from './paypal-commerce-payment-initialize-options';
 
 enum PaypalCommerceHostedFormType {
@@ -17,11 +19,10 @@ export default class PaypalCommerceHostedForm {
 
     constructor(
         private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
-    ) {
-    }
+    ) {}
 
-    async initialize(options: PaypalCommerceFormOptions, cartId: string, paramsScript: PaypalCommerceScriptParams) {
-        await this._paypalCommercePaymentProcessor.initialize(paramsScript);
+    async initialize(options: PaypalCommerceFormOptions, cart: Cart, paymentMethod: PaymentMethod<PaypalCommerceInitializationData>) {
+        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code);
 
         this._formOptions = options;
         this._type = this._isPaypalCommerceFormFieldsMap(options.fields) ?
@@ -39,7 +40,7 @@ export default class PaypalCommerceHostedForm {
             inputSubmitRequest: this._handleInputSubmitRequest,
         };
 
-        await this._paypalCommercePaymentProcessor.renderHostedFields(cartId, params, events);
+        await this._paypalCommercePaymentProcessor.renderHostedFields(cart.id, params, events);
 
         if (this._isPaypalCommerceFormFieldsMap(options.fields)) {
             this._cardNameField = new PaypalCommerceRegularField(
@@ -244,5 +245,4 @@ export default class PaypalCommerceHostedForm {
             errors: this._mapValidationErrors(event.fields),
         });
     };
-
 }
