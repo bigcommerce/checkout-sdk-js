@@ -1,5 +1,4 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
-import { isNil, omitBy } from 'lodash';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
 
@@ -89,19 +88,17 @@ export default class PaypalCommerceScriptLoader {
         const disableFunding: FundingType = [...disableCardFunding, ...disableCreditFunding, ...disableVenmoFunding, ...disableAPMsFunding];
         const enableFunding: FundingType = [...enableCardFunding, ...enableCreditFunding, ...enableVenmoFunding, ...enableAPMsFunding];
 
-        const scriptConfiguretion: PaypalCommerceScriptParams = {
+        return {
             'client-id': clientId,
             'data-partner-attribution-id': attributionId,
             'data-client-token': clientToken,
             'merchant-id': merchantId,
-            'enable-funding': enableFunding,
-            'disable-funding': disableFunding,
+            'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
+            'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
             commit,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency,
             intent,
-        }
-
-        return omitBy(scriptConfiguretion, isNil);
+        };
     }
 }
