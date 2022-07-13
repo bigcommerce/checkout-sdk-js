@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.266.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.265.0...v1.266.0) (2022-07-13)
+
+
+### Features
+
+* **payment:** PAYPAL-1549 added script options configuration method for PayPalCommerce ([#1496](https://github.com/bigcommerce/checkout-sdk-js/issues/1496)) ([c59a76e](https://github.com/bigcommerce/checkout-sdk-js/commit/c59a76e3cf56fbb84d8563b84991390cab671479))
+
 ## [1.265.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.264.2...v1.265.0) (2022-07-11)
 
 

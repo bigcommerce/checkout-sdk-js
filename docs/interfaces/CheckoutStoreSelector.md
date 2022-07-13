@@ -248,7 +248,7 @@ The list of payment instruments if it is loaded, otherwise undefined.
 
 | Name | Type |
 | :------ | :------ |
-| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md) |
+| `paymentMethod` | [`PaymentMethod`](PaymentMethod.md)<`any`\> |
 
 #### Returns
 
@@ -272,7 +272,7 @@ ___
 
 ### getPaymentMethod
 
-▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)
+▸ **getPaymentMethod**(`methodId`, `gatewayId?`): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
 
 Gets a payment method by an id.
 
@@ -289,7 +289,7 @@ is not loaded.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
 
 The payment method object if loaded and available, otherwise,
 undefined.
@@ -298,13 +298,13 @@ ___
 
 ### getPaymentMethods
 
-▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)[]
+▸ **getPaymentMethods**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
 
 Gets a list of payment methods available for checkout.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)[]
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
 
 The list of payment methods if it is loaded, otherwise undefined.
 
@@ -334,13 +334,13 @@ ___
 
 ### getSelectedPaymentMethod
 
-▸ **getSelectedPaymentMethod**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)
+▸ **getSelectedPaymentMethod**(): `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
 
 Gets the payment method that is selected for checkout.
 
 #### Returns
 
-`undefined` \| [`PaymentMethod`](PaymentMethod.md)
+`undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>
 
 The payment method object if there is a selected method;
 undefined if otherwise.

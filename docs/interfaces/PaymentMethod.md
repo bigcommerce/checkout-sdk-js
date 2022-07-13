@@ -1,6 +1,12 @@
 [@bigcommerce/checkout-sdk](../README.md) / PaymentMethod
 
-# Interface: PaymentMethod
+# Interface: PaymentMethod<T\>
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | `any` |
 
 ## Table of contents
 
@@ -47,7 +53,7 @@ ___
 
 ### initializationData
 
-• `Optional` **initializationData**: `any`
+• `Optional` **initializationData**: `T`
 
 ___
 

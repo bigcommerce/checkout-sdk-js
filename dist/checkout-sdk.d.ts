@@ -5770,7 +5770,7 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
-declare interface PaymentMethod {
+declare interface PaymentMethod<T = any> {
     id: string;
     config: PaymentMethodConfig;
     method: string;
@@ -5780,7 +5780,7 @@ declare interface PaymentMethod {
     gateway?: string;
     logoUrl?: string;
     nonce?: string;
-    initializationData?: any;
+    initializationData?: T;
     returnUrl?: string;
     initializationStrategy?: InitializationStrategy;
 }
