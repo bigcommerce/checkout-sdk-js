@@ -312,8 +312,13 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
             buttonColor: 'Gold',
             checkoutLanguage: 'en_US',
             checkoutSessionMethod: 'GET',
+            createCheckoutSessionConfig: {
+                payloadJSON: 'payload',
+                signature: 'xxxx',
+            },
             extractAmazonCheckoutSessionId: 'token',
             ledgerCurrency: 'USD',
+            publicKeyId: 'SANDBOX-XXXXXXXX',
             region,
         },
         logoUrl: '',

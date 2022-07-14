@@ -10,7 +10,7 @@ import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
+import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor, AmazonPayV2ButtonParams } from '../../../payment/strategies/amazon-pay-v2';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
@@ -93,13 +93,13 @@ describe('AmazonPayV2CustomerStrategy', () => {
         });
 
         it('creates the button', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
 
             await strategy.initialize(customerInitializeOptions);
 
             expect(paymentProcessor.createButton).toHaveBeenCalledWith(
-                '#amazonpayCheckoutButton',
+                'amazonpayCheckoutButton',
                 expectedOptions
             );
         });

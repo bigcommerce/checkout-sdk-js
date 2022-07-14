@@ -32,6 +32,7 @@ import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initial
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
 import { getAmazonPayV2ButtonParamsMock } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
+import { AmazonPayV2ButtonParams } from './amazon-pay-v2';
 
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;
@@ -177,14 +178,14 @@ describe('AmazonPayV2PaymentStrategy', () => {
         });
 
         it('creates the signin button if no paymentToken is present on initializationData', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
 
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
             expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
+            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`AmazonPayButton`, expectedOptions);
         });
 
         it('dispatches widgetInteraction when clicking previously binded edit method button if region not US', async () => {

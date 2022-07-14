@@ -8,6 +8,8 @@ export interface AmazonPayV2SDK {
     Pay: AmazonPayV2Client;
 }
 
+export type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
+
 export interface AmazonPayV2Client {
     /**
      * Render the Amazon Pay button to a HTML container element.
@@ -15,7 +17,7 @@ export interface AmazonPayV2Client {
      * @param containerId - HTML element id.
      * @param params - Button rendering params.
      */
-    renderButton(containerId: string, params: AmazonPayV2ButtonParams): HTMLElement;
+    renderButton(containerId: string, params: AmazonPayV2ButtonParameters): HTMLElement;
 
     /**
      * Bind click events to HTML elements, so that when the element is clicked, the buyer can select a different shipping address or payment method.
@@ -35,16 +37,11 @@ export interface AmazonPayV2HostWindow extends Window {
     amazon?: AmazonPayV2SDK;
 }
 
-export interface AmazonPayV2ButtonParams {
+interface AmazonPayV2ButtonConfig {
     /**
      * Amazon Pay merchant account identifier.
      */
     merchantId: string;
-
-    /**
-     * Configuration for calling the endpoint to Create Checkout Session.
-     */
-    createCheckoutSession: AmazonPayV2CheckoutSession;
 
     /**
      * Placement of the Amazon Pay button on your website.
@@ -72,9 +69,30 @@ export interface AmazonPayV2ButtonParams {
     checkoutLanguage?: AmazonPayV2CheckoutLanguage;
 
     /**
-     * Sets button to Sandbox environment. Default is false.
+     * Sets button to Sandbox environment. You do not have to set this parameter
+     * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
+}
+
+export interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
+    /**
+     * Configuration for calling the endpoint to Create Checkout Session.
+     */
+    createCheckoutSession: AmazonPayV2CheckoutSession;
+}
+
+export interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
+    /**
+     * Credential provided by Amazon Pay. You must also set the `sandbox`
+     * parameter if your `publicKeyId` does not have an environment prefix.
+     */
+    publicKeyId?: string;
+
+    /**
+     * Create Checkout Session configuration.
+     */
+    createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
 }
 
 export interface AmazonPayV2CheckoutSession {
@@ -92,6 +110,24 @@ export interface AmazonPayV2CheckoutSession {
      * Checkout Session ID parameter in the response. Default is 'checkoutSessionId'.
      */
     extractAmazonCheckoutSessionId?: string;
+}
+
+export interface AmazonPayV2CheckoutSessionConfig {
+    /**
+     * A payload that Amazon Pay will use to create a Checkout Session object.
+     */
+    payloadJSON: string;
+
+    /**
+     * Payload's signature.
+     */
+    signature: string;
+
+    /**
+     * Credential provided by Amazon Pay. You do not have to set this parameter
+     * if your `publicKeyId` has an environment prefix.
+     */
+    publicKeyId?: string;
 }
 
 export type AmazonPayV2ChangeActionType = 'changeAddress' | 'changePayment';

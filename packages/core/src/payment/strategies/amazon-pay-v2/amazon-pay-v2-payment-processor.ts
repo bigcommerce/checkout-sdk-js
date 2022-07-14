@@ -1,10 +1,9 @@
 import { PaymentMethod } from '../..';
 import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
 import { getShippableItemsCount } from '../../../../../core/src/shipping';
-import { AmazonPayV2ButtonInitializeOptions } from '../../../checkout-buttons/strategies/amazon-pay-v2';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
+import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
 export default class AmazonPayV2PaymentProcessor {
@@ -31,8 +30,8 @@ export default class AmazonPayV2PaymentProcessor {
         });
     }
 
-    createButton(containerId: string, options: AmazonPayV2ButtonInitializeOptions): HTMLElement {
-        return this._getAmazonPayV2SDK().Pay.renderButton(containerId, options);
+    createButton(containerId: string, options: AmazonPayV2ButtonParameters): HTMLElement {
+        return this._getAmazonPayV2SDK().Pay.renderButton(`#${containerId}`, options);
     }
 
     async signout(): Promise<void> {
@@ -48,7 +47,7 @@ export default class AmazonPayV2PaymentProcessor {
         checkoutState: InternalCheckoutSelectors,
         methodId: string,
         placement: AmazonPayV2Placement,
-        options?: AmazonPayV2ButtonInitializeOptions
+        options?: AmazonPayV2ButtonParameters
     ): HTMLElement {
         const container = document.getElementById(containerId);
 
@@ -58,7 +57,7 @@ export default class AmazonPayV2PaymentProcessor {
 
         const amazonPayV2ButtonOptions = options ?? this._getAmazonPayV2ButtonOptions(checkoutState, methodId, placement);
 
-        this.createButton(`#${containerId}`, amazonPayV2ButtonOptions);
+        this.createButton(containerId, amazonPayV2ButtonOptions);
 
         return container;
     }
@@ -71,7 +70,7 @@ export default class AmazonPayV2PaymentProcessor {
         }: InternalCheckoutSelectors,
         methodId: string,
         placement: AmazonPayV2Placement
-    ): AmazonPayV2ButtonInitializeOptions {
+    ): AmazonPayV2ButtonParameters {
         const {
             config: {
                 merchantId,
@@ -82,6 +81,8 @@ export default class AmazonPayV2PaymentProcessor {
                 ledgerCurrency,
                 checkoutSessionMethod,
                 extractAmazonCheckoutSessionId,
+                publicKeyId,
+                createCheckoutSessionConfig,
             },
         } = getPaymentMethodOrThrow(methodId);
 
@@ -106,6 +107,23 @@ export default class AmazonPayV2PaymentProcessor {
             placement,
             buttonColor: AmazonPayV2ButtonColor.Gold,
         };
+
+        if (features['PROJECT-3483.amazon_pay_ph4']) {
+            return /^(SANDBOX|LIVE)/.test(publicKeyId)
+                ? {
+                      ...buttonBaseConfig,
+                      publicKeyId,
+                      createCheckoutSessionConfig,
+                  }
+                : {
+                      ...buttonBaseConfig,
+                      sandbox: !!testMode,
+                      createCheckoutSessionConfig: {
+                          ...createCheckoutSessionConfig,
+                          publicKeyId,
+                      },
+                  };
+        }
 
         const createCheckoutSession = {
             method: checkoutSessionMethod,

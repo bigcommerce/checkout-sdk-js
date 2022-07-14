@@ -7,10 +7,10 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
 
-import { AmazonPayV2ButtonParams, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
+import { AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters, AmazonPayV2NewButtonParams, AmazonPayV2ButtonParams } from './amazon-pay-v2';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
-import { getAmazonPayV2ButtonParamsMock, getAmazonPayV2SDKMock, getPaymentMethodMockUndefinedLedgerCurrency, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';
+import { getAmazonPayV2ButtonParamsMock, getAmazonPayV2Ph4ButtonParamsMock, getAmazonPayV2SDKMock, getPaymentMethodMockUndefinedLedgerCurrency, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';
 
 describe('AmazonPayV2PaymentProcessor', () => {
     let amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader;
@@ -89,7 +89,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
     describe('#createButton', () => {
         const containerId = 'amazonpay-container';
-        let amazonPayV2ButtonParams: AmazonPayV2ButtonParams;
+        let amazonPayV2ButtonParams: AmazonPayV2ButtonParameters;
 
         beforeEach(() => {
             amazonPayV2ButtonParams = getAmazonPayV2ButtonParamsMock();
@@ -99,7 +99,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
             await processor.initialize(getAmazonPayV2());
             processor.createButton(containerId, amazonPayV2ButtonParams);
 
-            expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(containerId, amazonPayV2ButtonParams);
+            expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(`#${containerId}`, amazonPayV2ButtonParams);
         });
 
         it('throws an error when amazonPayV2SDK is not initialized', () => {
@@ -121,7 +121,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
 
         it('should render an Amazon Pay button and validate if cart contains physical items', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
             expectedOptions.productType = AmazonPayV2PayOptions.PayOnly;
 
@@ -138,7 +138,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
 
         it('should provide a relative URL to create a checkout session', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
 
             const storeConfigMock = getConfig().storeConfig;
@@ -153,6 +153,48 @@ describe('AmazonPayV2PaymentProcessor', () => {
             processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
 
             expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
+        });
+
+        describe('should use the new button params from API Version 2:', () => {
+            beforeEach(() => {
+                const storeConfigMock = getConfig().storeConfig;
+                storeConfigMock.checkoutSettings.features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                };
+
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                    .mockReturnValueOnce(storeConfigMock);
+            });
+
+            test('publicKeyId has an environment prefix', async () => {
+                const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock();
+
+                await processor.initialize(getAmazonPayV2());
+                processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+
+                expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
+            });
+
+            test('publicKeyId does not have an environment prefix', async () => {
+                const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
+                delete expectedOptions.publicKeyId;
+                expectedOptions.sandbox = true;
+                expectedOptions.createCheckoutSessionConfig = {
+                    ...expectedOptions.createCheckoutSessionConfig,
+                    publicKeyId: 'foo',
+                };
+
+                const amazonPayV2Mock = getAmazonPayV2();
+                amazonPayV2Mock.initializationData.publicKeyId = 'foo';
+
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                    .mockReturnValueOnce(amazonPayV2Mock);
+
+                await processor.initialize(getAmazonPayV2());
+                processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+
+                expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
+            });
         });
 
         describe('should fail...', () => {
