@@ -28,10 +28,9 @@ import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import { AmazonPayV2PaymentProcessor } from '.';
-import { AmazonPayV2PayOptions } from './amazon-pay-v2';
 import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
-import { getAmazonPayV2ButtonParamsMock, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';
+import { getAmazonPayV2ButtonParamsMock } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
 
 describe('AmazonPayV2PaymentStrategy', () => {
@@ -97,8 +96,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
         document.body.appendChild(editMethodButton);
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-
-        jest.spyOn(store, 'dispatch');
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
@@ -167,89 +164,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
             initializeOptions = { methodId: 'amazonpay', amazonpay: amazonpayv2InitializeOptions };
         });
 
-        it('creates the signin button if no paymentToken is present on initializationData', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
-            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
-
-            await strategy.initialize(initializeOptions);
-
-            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
-            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
-        });
-
-        it('creates the signin button with a relative url if no paymentToken is present on initializationData', async () => {
-            const config = getConfig();
-
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue({
-                    ...config.storeConfig,
-                    checkoutSettings: {
-                        ...config.storeConfig.checkoutSettings,
-                        features: {
-                            'INT-5826.amazon_relative_url': true,
-                        },
-                    },
-                });
-
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
-            expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
-
-            await strategy.initialize(initializeOptions);
-
-            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
-            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
-        });
-
-        it('fails to initialize the strategy if there is no payment method data', async () => {
-            const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
-            const state = { ...getCheckoutStoreState(), paymentMethods };
-            store = createCheckoutStore(state);
-            strategy = new AmazonPayV2PaymentStrategy(
-                store,
-                paymentStrategyActionCreator,
-                paymentMethodActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                amazonPayV2PaymentProcessor
-            );
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
-        });
-
-        it('creates the button and validates if cart contains physical items', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock();
-            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
-            expectedOptions.productType = AmazonPayV2PayOptions.PayOnly;
-
-            jest.spyOn(store.getState().cart, 'getCart')
-                .mockReturnValue({ ...store.getState().cart.getCart(), lineItems: { physicalItems: [] } });
-
-            await strategy.initialize(initializeOptions);
-
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
-        });
-
-        it('fails to initialize the strategy if no methodid is supplied', async () => {
-            initializeOptions.methodId = '';
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
-        });
-
-        it('fails to initialize the strategy if config is not initialized', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
-        });
-
-        it('fails initialize the strategy if merchantId is not supplied', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getPaymentMethodMockUndefinedMerchant());
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
-        });
-
         it('binds edit method button if paymentToken is present on initializationData', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
@@ -260,6 +174,17 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
             expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(changeMethodId, paymentToken, 'changePayment');
             expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
+        });
+
+        it('creates the signin button if no paymentToken is present on initializationData', async () => {
+            const expectedOptions = getAmazonPayV2ButtonParamsMock();
+            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
+
+            await strategy.initialize(initializeOptions);
+
+            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
+            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
+            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`#AmazonPayButton`, expectedOptions);
         });
 
         it('dispatches widgetInteraction when clicking previously binded edit method button if region not US', async () => {
@@ -295,21 +220,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(paymentStrategyActionCreator.widgetInteraction).not.toHaveBeenCalled();
         });
 
-        it('does not initialize the paymentProcessor if no options.amazonpayv2 are provided', () => {
-            initializeOptions.amazonpay = undefined;
-
-            expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
-            expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
-        });
-
-        it('does not initialize the paymentProcessor if payment method is missing', async () => {
-            initializeOptions.methodId = '';
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
-
-            expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
-        });
-
         it('does not bind edit method button if button do not exist', async () => {
             document.body.removeChild(editMethodButton);
             paymentMethodMock.initializationData.paymentToken = paymentToken;
@@ -323,6 +233,32 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
 
             document.body.appendChild(editMethodButton);
+        });
+
+        describe('should fail...', () => {
+            test('if methodId is not provided', async () => {
+                initializeOptions.methodId = '';
+
+                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
+
+                expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
+            });
+
+            test('if there is no payment method data', async () => {
+                const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
+                const state = { ...getCheckoutStoreState(), paymentMethods };
+                store = createCheckoutStore(state);
+                strategy = new AmazonPayV2PaymentStrategy(
+                    store,
+                    paymentStrategyActionCreator,
+                    paymentMethodActionCreator,
+                    orderActionCreator,
+                    paymentActionCreator,
+                    amazonPayV2PaymentProcessor
+                );
+
+                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
+            });
         });
     });
 
@@ -452,7 +388,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         });
 
         it('expect to deinitialize the payment processor', async () => {
-            await strategy.deinitialize(initializeOptions);
+            await strategy.deinitialize();
 
             expect(amazonPayV2PaymentProcessor.deinitialize).toHaveBeenCalled();
         });

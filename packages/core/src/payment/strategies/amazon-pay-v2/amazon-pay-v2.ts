@@ -62,6 +62,11 @@ export interface AmazonPayV2ButtonParams {
     productType?: AmazonPayV2PayOptions;
 
     /**
+     * Color of the Amazon Pay button.
+     */
+    buttonColor?: AmazonPayV2ButtonColor;
+
+    /**
      * Language used to render the button and text on Amazon Pay hosted pages.
      */
     checkoutLanguage?: AmazonPayV2CheckoutLanguage;
@@ -150,4 +155,10 @@ export enum AmazonPayV2PayOptions {
 
     /** Select this product type if you do not need the buyer's shipping details. */
     PayOnly = 'PayOnly',
+}
+
+export enum AmazonPayV2ButtonColor {
+    Gold = 'Gold',
+    LightGray = 'LightGray',
+    DarkGray = 'DarkGray',
 }
