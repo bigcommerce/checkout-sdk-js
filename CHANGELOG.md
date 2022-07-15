@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.266.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.266.1...v1.266.2) (2022-07-15)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-0000 removed paypal commerce apms visibility on cart ([#1504](https://github.com/bigcommerce/checkout-sdk-js/issues/1504)) ([3cd204e](https://github.com/bigcommerce/checkout-sdk-js/commit/3cd204e1879d917f352c331d7b7e5649aa545ce6))
+
 ### [1.266.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.266.0...v1.266.1) (2022-07-13)
 
 
