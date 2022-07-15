@@ -3,7 +3,7 @@ export * from './shipping-request-options';
 
 export { default as createShippingStrategyRegistry } from './create-shipping-strategy-registry';
 
-export { default as Consignment, ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+export { default as Consignment, ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ConsignmentLineItem } from './consignment';
 export { default as ConsignmentSelector, ConsignmentSelectorFactory, createConsignmentSelectorFactory } from './consignment-selector';
 export { default as ConsignmentState } from './consignment-state';
 export { default as consignmentReducer } from './consignment-reducer';

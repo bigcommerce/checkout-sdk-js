@@ -179,7 +179,6 @@ export default class ConsignmentActionCreator {
             }
 
             observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
-
             this._consignmentRequestSender.createConsignments(checkout.id, consignments, options)
                 .then(({ body }) => {
                     observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body));
