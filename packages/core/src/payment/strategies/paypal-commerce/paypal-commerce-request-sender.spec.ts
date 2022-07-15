@@ -39,6 +39,61 @@ describe('PaypalCommerceRequestSender', () => {
             }));
         });
 
+        it('set shipping options', async () => {
+            const shippingOptionsPayloadMock = {
+                amount: {
+                    breakdown: {
+                        item_total: {
+                            currency_code: 'USD',
+                            value: '100',
+                        },
+                        shipping: {
+                            currency_code: 'USD',
+                            value: '100',
+                        },
+                        tax_total: {
+                            currency_code: 'USD',
+                            value: '100',
+                        },
+                    },
+                    currency_code: 'USD',
+                    value: '100',
+                },
+                orderID: '123',
+                payment_token: 'PAYMENT_TOKEN',
+                shipping_address: {
+                    city: 'Los-Angeles',
+                    postal_code: '08547',
+                    country_code: 'US',
+                    state: 'CA',
+                },
+                selected_shipping_option: {
+                    id: '123',
+                    amount: {
+                        currency_code: 'USD',
+                        value: '100',
+                    },
+                },
+                availableShippingOptions: [],
+                cartId: '1'
+            };
+            const headers = {
+                'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
+            };
+
+            const options = {
+                body: shippingOptionsPayloadMock,
+                headers,
+            };
+
+
+           jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve(options));
+           await paypalCommerceRequestSender.setShippingOptions(shippingOptionsPayloadMock);
+           expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/initialization/paypalcommerce', {body:shippingOptionsPayloadMock, headers})
+        });
+
         it('create order from cart page with paypalcommerce credit', async () => {
             await paypalCommerceRequestSender.setupPayment('abc', { isCredit: true });
 
