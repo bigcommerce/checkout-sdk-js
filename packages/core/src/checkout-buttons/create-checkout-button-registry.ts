@@ -50,12 +50,17 @@ export default function createCheckoutButtonRegistry(
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
+    const orderRequestSender = new OrderRequestSender(requestSender);
+    const orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
+    const consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender);
+    const billingRequestSender = new BillingAddressRequestSender(requestSender);
+    const subscriptionActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
+    const billingAddressActionCreator = new BillingAddressActionCreator(billingRequestSender, subscriptionActionCreator);
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
     const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
     const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
@@ -66,16 +71,8 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             requestSender,
             paymentMethodActionCreator,
-            new ConsignmentActionCreator(
-                new ConsignmentRequestSender(requestSender),
-                new CheckoutRequestSender(requestSender)
-            ),
-            new BillingAddressActionCreator(
-                new BillingAddressRequestSender(requestSender),
-                new SubscriptionsActionCreator(
-                    new SubscriptionsRequestSender(requestSender)
-                )
-            ),
+            consignmentActionCreator,
+            billingAddressActionCreator,
             new PaymentActionCreator(
                 new PaymentRequestSender(paymentClient),
                 new OrderActionCreator(
@@ -262,7 +259,11 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             formPoster,
-            paypalCommercePaymentProcessor
+            paypalCommercePaymentProcessor,
+            orderActionCreator,
+            consignmentActionCreator,
+            billingAddressActionCreator,
+            paymentActionCreator
         )
     );
 

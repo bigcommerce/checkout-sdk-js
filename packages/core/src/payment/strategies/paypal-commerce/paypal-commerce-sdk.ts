@@ -1,3 +1,4 @@
+import Cart from "../../../cart/cart";
 
 export interface ApproveDataOptions {
     orderID?: string;
@@ -59,11 +60,119 @@ export interface PaypalButtonStyleOptions {
 export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
-    createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
-    onApprove?(data: ApproveDataOptions): void;
+    createOrder?(): Promise<string>;
+    onApprove?(data: ApproveDataOptions, actions: ApproveActions): void;
+    onShippingChange?(data: ShippingChangeData, actions: ApproveActions, cart: Cart): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
-    onCancel?(): void;
+    onCancel?(data: OnCancelData): void;
     onError?(error: Error): void;
+}
+
+export interface ApproveActions {
+    order: {
+        get(): Promise<PayerDetails>;
+    };
+    resolve(): Promise<void>;
+    reject(): Promise<void>;
+}
+
+export interface PayerDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        };
+        email_address: string;
+        payer_id: string;
+        address: {
+            country_code: string;
+        };
+    };
+    purchase_units: PurchaseUnits[];
+}
+
+export interface ShippingChangeData {
+    amount: {
+        breakdown: {
+            item_total: ItemTotal;
+            shipping: ItemTotal;
+            tax_total: ItemTotal;
+        };
+        currency_code: string;
+        value: string;
+    };
+    orderID: string;
+    payment_token: string;
+    shipping_address: ShippingAddress;
+    selected_shipping_option: {
+        id: string;
+        amount: ItemTotal;
+    };
+    cartId: string;
+    availableShippingOptions: any;
+}
+
+export interface ShippingAddress {
+    city: string;
+    postal_code: string;
+    country_code: string;
+    state: string;
+}
+
+export interface PayPalCommercePaymentMethod {
+    initializationData?: PaypalCommerceInitializationData
+    id?: string;
+}
+
+export interface CurrentShippingAddress {
+    city: string;
+    countryCode: string;
+    postalCode: string;
+}
+
+export interface ShippingData extends CurrentShippingAddress{
+    firstName: string;
+    lastName: string;
+    address1: string;
+    email: string;
+}
+
+export interface OnCancelData {
+    orderId: string;
+}
+
+interface ItemTotal {
+    currency_code: string;
+    value: string;
+}
+
+export interface ShippingOption {
+    id: string;
+    type: string;
+    label: string;
+    selected: boolean;
+    amount: ItemTotal;
+}
+
+export interface PurchaseUnits {
+    reference_id: string;
+    amount: ItemTotal;
+    payee: {
+        email_address: string;
+        merchant_id: string;
+    };
+    shipping: {
+        address: {
+            address_line_1: string;
+            address_area_1: string;
+            address_area2: string;
+            country_code: string;
+            postal_code: string;
+        };
+        name: {
+            full_name: string;
+        };
+    };
 }
 
 export interface PaypalFieldsStyleOptions {
