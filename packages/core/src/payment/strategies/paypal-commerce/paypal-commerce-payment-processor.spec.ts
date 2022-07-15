@@ -176,7 +176,7 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('initializes PaypalCommerce and PayPal JS clients', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
 
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalledWith(paymentMethodMock, 'USD');
+            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalledWith(paymentMethodMock, 'USD', undefined);
         });
 
         it('throws error if unable to initialize PaypalCommerce or PayPal JS client', async () => {

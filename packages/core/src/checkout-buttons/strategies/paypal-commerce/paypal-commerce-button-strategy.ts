@@ -42,7 +42,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
 
-        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code);
+        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code, false);
 
         this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
 
