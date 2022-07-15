@@ -48,6 +48,7 @@ export interface ConsignmentUpdateRequestBody {
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
+    shippingOptionId?: string;
 }
 
 export interface ConsignmentMeta {

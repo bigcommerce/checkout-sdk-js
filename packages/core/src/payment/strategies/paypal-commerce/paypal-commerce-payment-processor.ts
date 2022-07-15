@@ -8,7 +8,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceInitializationData, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceInitializationData, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, ShippingChangeData, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from "./index";
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -104,13 +104,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypalButtons;
     }
 
-    renderFields({
-        apmFieldsContainer,
-        fundingKey,
-        apmFieldsStyles,
-        fullName,
-        email,
-    }: RenderApmFieldsParams): PaypalCommerceFields {
+    renderFields({ apmFieldsContainer, fundingKey, apmFieldsStyles, fullName, email }: RenderApmFieldsParams): PaypalCommerceFields {
         if (!this._paypal || !this._paypal.PaymentFields) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -142,6 +136,10 @@ export default class PaypalCommercePaymentProcessor {
 
     getOrderId() {
         return this._orderId;
+    }
+
+    async setShippingOptions(payload: ShippingChangeData) {
+        return await this._paypalCommerceRequestSender.setShippingOptions(payload);
     }
 
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
