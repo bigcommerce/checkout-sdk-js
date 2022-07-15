@@ -13,7 +13,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { PaymentMethod } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
-import { ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ApproveActions, ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -33,6 +33,7 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
     let strategy: PaypalCommerceVenmoButtonStrategy;
     let paypalSdkMock: PaypalCommerceSDK;
     let paypalVenmoButtonElement: HTMLDivElement;
+    let actions: ApproveActions;
 
     const defaultButtonContainerId = 'paypal-commerce-venmo-button-mock-id';
     const approveDataOrderId = 'ORDER_ID';
@@ -84,7 +85,15 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
-
+        actions = {
+            order: {
+                get:  jest.fn(() => new Promise(resolve => {
+                    return resolve({}) ;
+                })),
+            },
+            resolve: jest.fn().mockReturnValue(Promise.resolve()),
+            reject: jest.fn().mockReturnValue(Promise.reject()),
+        } as ApproveActions;
 
         jest.spyOn(paypalSdkMock, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
@@ -96,7 +105,7 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
 
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
-                        options.onApprove({ orderID: approveDataOrderId });
+                        options.onApprove({ orderID: approveDataOrderId }, actions);
                     }
                 });
 
@@ -257,7 +266,7 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
 
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
-                            options.onApprove({ orderID: undefined });
+                            options.onApprove({ orderID: undefined }, actions);
                         }
                     });
 
