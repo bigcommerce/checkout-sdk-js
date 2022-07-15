@@ -13,7 +13,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { PaymentMethod } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
-import { ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ApproveActions, ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -33,6 +33,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
     let strategy: PaypalCommerceAlternativeMethodsButtonStrategy;
     let paypalSdkMock: PaypalCommerceSDK;
     let paypalCommerceAlternativeMethodsButtonElement: HTMLDivElement;
+    let actions: ApproveActions;
 
     const defaultButtonContainerId = 'paypal-commerce-alternative-methods-button-mock-id';
     const approveDataOrderId = 'ORDER_ID';
@@ -56,6 +57,15 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         eventEmitter = new EventEmitter();
         paymentMethodMock = { ...getPaypalCommerce(), id: 'paypalcommercealternativemethods' };
         paypalSdkMock = getPaypalCommerceMock();
+        actions = {
+            order: {
+                get:  jest.fn(() => new Promise(resolve => {
+                    return resolve({});
+                })),
+            },
+            resolve: jest.fn().mockReturnValue(Promise.resolve()),
+            reject: jest.fn().mockReturnValue(Promise.reject()),
+        } as ApproveActions;
 
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
@@ -96,7 +106,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
-                        options.onApprove({ orderID: approveDataOrderId });
+                        options.onApprove({ orderID: approveDataOrderId }, actions);
                     }
                 });
 
@@ -292,7 +302,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
-                            options.onApprove({ orderID: undefined });
+                            options.onApprove({ orderID: undefined }, actions);
                         }
                     });
 
