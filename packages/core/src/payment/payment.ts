@@ -128,6 +128,11 @@ export interface ThreeDSecureToken {
     token: string;
 }
 
+export interface ThreeDSecureData {
+    token: string;
+    reference_id?: string;
+}
+
 export interface HostedInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;

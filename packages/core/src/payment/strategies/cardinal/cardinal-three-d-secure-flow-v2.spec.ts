@@ -192,5 +192,37 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                 });
             });
         });
+
+        describe('if additional action is required and reference_id is present', () => {
+            let additionalActionRequired: Response<any>;
+
+            beforeEach(() => {
+                additionalActionRequired = getResponse({
+                    status: 'additional_action_required',
+                    additional_action_required: { data: { token: 'JWT123', reference_id: '1234567890' } },
+                    three_ds_result: { payer_auth_request: 'TOKEN123' },
+                });
+
+                execute = jest.fn(() => Promise.reject(new RequestError(additionalActionRequired)));
+            });
+
+            it('submits XID token using hosted form if provided', async () => {
+                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+
+                expect(form.submit)
+                    .toHaveBeenCalledWith(merge({}, payload.payment, {
+                        paymentData: { threeDSecure: { xid: 'TOKEN123', reference_id: '1234567890' } },
+                    }));
+            });
+
+            it('submits XID token directly if hosted form is not provided', async () => {
+                await threeDSecureFlow.start(execute, payload, options);
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith(merge({}, payload.payment, {
+                        paymentData: { threeDSecure: { xid: 'TOKEN123', reference_id: '1234567890' } },
+                    }));
+            });
+        });
     });
 });

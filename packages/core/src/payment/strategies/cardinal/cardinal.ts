@@ -1,4 +1,4 @@
-import { ThreeDSecure, ThreeDSecureToken } from '../../payment';
+import { ThreeDSecure, ThreeDSecureData, ThreeDSecureToken } from '../../payment';
 
 export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
 
@@ -180,4 +180,4 @@ export enum CardinalSignatureVerification {
     No = 'N',
 }
 
-export type CardinalThreeDSecureToken = Pick<ThreeDSecure, 'xid'> | ThreeDSecureToken;
+export type CardinalThreeDSecureToken = Pick<ThreeDSecure, 'xid'> | ThreeDSecureToken | ThreeDSecureData;

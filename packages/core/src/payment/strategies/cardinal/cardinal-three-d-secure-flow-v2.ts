@@ -40,7 +40,8 @@ export default class CardinalThreeDSecureFlowV2 {
             return await execute(payload, options);
         } catch (error) {
             if (error instanceof RequestError && error.body.status === 'additional_action_required') {
-                const token = error.body.additional_action_required?.data?.token;
+                const additionalActionData = error.body.additional_action_required?.data;
+                const { token, reference_id } = additionalActionData;
                 const xid = error.body.three_ds_result?.payer_auth_request;
 
                 await this._cardinalClient.configure(token);
@@ -52,7 +53,7 @@ export default class CardinalThreeDSecureFlowV2 {
                 }
 
                 try {
-                    return await this._submitPayment(payment, { xid }, hostedForm);
+                    return await this._submitPayment(payment, { xid, reference_id }, hostedForm);
                 } catch (error) {
                     if (error instanceof RequestError && some(error.body.errors, {code: 'three_d_secure_required'})) {
                         const threeDsResult = error.body.three_ds_result;
