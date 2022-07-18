@@ -221,7 +221,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
                         expiration_year: +tokenizeResult.expiration.split('-')[0],
                     },
                     provider_data: {
-                        create_account: paymentData.shouldCreateAccount || false,
+                        create_account: await this._shouldCreateAccount(paymentData.shouldCreateAccount),
                         embedded_checkout: true,
                     },
                 },
@@ -350,5 +350,9 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         ) {
             throw new PaymentArgumentInvalidError();
         }
+    }
+
+    private async _shouldCreateAccount(shouldCreateAccount = false): Promise<boolean> {
+        return (await this._hasBoltAccount()) ? false : shouldCreateAccount;
     }
 }

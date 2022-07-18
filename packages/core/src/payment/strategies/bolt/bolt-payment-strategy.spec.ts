@@ -542,6 +542,44 @@ describe('BoltPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
         });
 
+        it('succesfully executes the bolt strategy with bolt embedded (with already exist account)', async () => {
+            const submitPaymentOptions = {
+                methodId: 'bolt',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: 'token',
+                            last_four_digits: '1111',
+                            iin: '1111',
+                            expiration_month: 11,
+                            expiration_year: 2022,
+                        },
+                        provider_data: {
+                            create_account: false,
+                            embedded_checkout: true,
+                        },
+                    },
+                },
+            };
+
+            const boltEmbeddedPayload = {
+                payment: {
+                    methodId: 'bolt',
+                    paymentData: {
+                        shouldCreateAccount: true,
+                    },
+                },
+            };
+
+            jest.spyOn(boltClient, 'hasBoltAccount').mockImplementation(() => true);
+            paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
+            await strategy.initialize(boltEmbeddedScriptInitializationOptions);
+            await strategy.execute(boltEmbeddedPayload);
+            expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
+        });
+
     });
 
     describe('#deinitialize()', () => {
