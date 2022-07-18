@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.267.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.266.2...v1.267.0) (2022-07-18)
+
+
+### Features
+
+* **payment:** BOLT-255 remove experiment for last four digits type ([a8da3d7](https://github.com/bigcommerce/checkout-sdk-js/commit/a8da3d78855032498ac5892801dfb2e1aee3f50a))
+
 ### [1.266.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.266.1...v1.266.2) (2022-07-15)
 
 
