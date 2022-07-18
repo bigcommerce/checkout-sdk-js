@@ -215,8 +215,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
                 formattedPayload: {
                     credit_card_token: {
                         token: tokenizeResult.token,
-                        last_four_digits: this._getCardDigitsData(tokenizeResult.last4), // TODO: leave origin data type (string) after Bolt-203 will be deployed and approved
-                        iin: this._getCardDigitsData(tokenizeResult.bin), // TODO: leave origin data type (string) after Bolt-203 will be deployed and approved
+                        last_four_digits: tokenizeResult.last4,
+                        iin: tokenizeResult.bin,
                         expiration_month: +tokenizeResult.expiration.split('-')[1],
                         expiration_year: +tokenizeResult.expiration.split('-')[0],
                     },
@@ -229,20 +229,6 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         };
 
         return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
-    }
-
-    /**
-     * The method get string data of card number digits and return it in different types based on experement result
-     * number - old type, this type has bug BOLT-203
-     * string - new type, this type will fix bug BOLT-203
-     * experiment 'BOLT-203.Bolt_string_type_of_token_card_data' was added to fast revert type changes on production if such will be found
-     * was added 04.04.2022 and should be removed after fix for BOLT-203 will be deployed and approved on Tier3
-     *
-     * @param data string
-     * @returns string | number
-     */
-    private _getCardDigitsData(data: string): string | number {
-        return this._store.getState().config.getStoreConfigOrThrow().checkoutSettings.features['BOLT-203.Bolt_string_type_of_token_card_data'] === true ? data : +data;
     }
 
     /**
