@@ -24,10 +24,7 @@
                     }
                   ]
                 }
-              ],
-            "@typescript-eslint/naming-convention": "off",
-            "jsdoc/check-tag-names": "off",
-            "@typescript-eslint/default-param-last": "off"
+              ]
           }
         },
         {

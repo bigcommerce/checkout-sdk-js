@@ -23,7 +23,6 @@
     "npm": "6"
   },
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
-  "prettier": "@bigcommerce/eslint-config/prettier",
   "scripts": {
     "prepare": "check-node-version --node '>=14.18' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts && npm run docs",
