@@ -15,6 +15,8 @@ export function getInitializeOptions(): PaymentInitializeOptions {
             cardHolderId: 'mollie-card-holder-component-field',
             cardNumberId: 'mollie-card-number-component-field',
             styles: {valid: '#0f0'},
+            unsupportedMethodMessage: 'This payment method is not supported',
+            disableButton: jest.fn(),
         },
     };
 }
@@ -37,6 +39,8 @@ export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
                     [HostedFieldType.CardName]: { containerId: 'card-name' },
                 },
             },
+            unsupportedMethodMessage: 'This payment method is not supported',
+            disableButton: jest.fn(),
         },
     };
 }
