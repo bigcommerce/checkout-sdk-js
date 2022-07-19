@@ -22,6 +22,7 @@
 - [GOOGLEPAY_STRIPEUPE](CheckoutButtonMethodType.md#googlepay_stripeupe)
 - [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
 - [PAYPALCOMMERCE](CheckoutButtonMethodType.md#paypalcommerce)
+- [PAYPALCOMMERCE_APMS](CheckoutButtonMethodType.md#paypalcommerce_apms)
 - [PAYPALCOMMERCE_VENMO](CheckoutButtonMethodType.md#paypalcommerce_venmo)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
@@ -120,6 +121,12 @@ ___
 ### PAYPALCOMMERCE
 
 • **PAYPALCOMMERCE** = `"paypalcommerce"`
+
+___
+
+### PAYPALCOMMERCE\_APMS
+
+• **PAYPALCOMMERCE\_APMS** = `"paypalcommercealternativemethods"`
 
 ___
 

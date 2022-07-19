@@ -31,6 +31,7 @@
 - [params](CheckoutButtonInitializeOptions.md#params)
 - [paypal](CheckoutButtonInitializeOptions.md#paypal)
 - [paypalCommerce](CheckoutButtonInitializeOptions.md#paypalcommerce)
+- [paypalcommercealternativemethods](CheckoutButtonInitializeOptions.md#paypalcommercealternativemethods)
 - [paypalcommercevenmo](CheckoutButtonInitializeOptions.md#paypalcommercevenmo)
 - [timeout](CheckoutButtonInitializeOptions.md#timeout)
 
@@ -209,6 +210,15 @@ ___
 
 The options that are required to facilitate PayPal Commerce. They can be omitted
 unless you need to support Paypal.
+
+___
+
+### paypalcommercealternativemethods
+
+• `Optional` **paypalcommercealternativemethods**: [`PaypalCommerceAlternativeMethodsButtonOptions`](PaypalCommerceAlternativeMethodsButtonOptions.md)
+
+The options that are required to facilitate PayPal Commerce. They can be omitted
+unless you need to support PayPal Commerce Alternative Payment Methods.
 
 ___
 

@@ -1736,6 +1736,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     paypalCommerce?: PaypalCommerceButtonInitializeOptions;
     /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support PayPal Commerce Alternative Payment Methods.
+     */
+    paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
+    /**
      * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
      * unless you need to support PayPal Commerce Venmo.
      */
@@ -1850,6 +1855,7 @@ declare enum CheckoutButtonMethodType {
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
     PAYPALCOMMERCE = "paypalcommerce",
+    PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
     PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
 
@@ -5903,6 +5909,21 @@ declare enum PaypalButtonStyleSizeOption {
     MEDIUM = "medium",
     LARGE = "large",
     RESPONSIVE = "responsive"
+}
+
+declare interface PaypalCommerceAlternativeMethodsButtonOptions {
+    /**
+     * Alternative payment method id what used for initialization PayPal button as funding source.
+     */
+    apm: string;
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page.
+     */
+    initializesOnCheckoutPage?: boolean;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
 }
 
 declare interface PaypalCommerceButtonInitializeOptions {

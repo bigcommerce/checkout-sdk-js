@@ -272,6 +272,7 @@
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
 - [PaypalButtonStyleOptions](interfaces/PaypalButtonStyleOptions.md)
 - [PaypalButtonStyleOptions_2](interfaces/PaypalButtonStyleOptions_2.md)
+- [PaypalCommerceAlternativeMethodsButtonOptions](interfaces/PaypalCommerceAlternativeMethodsButtonOptions.md)
 - [PaypalCommerceButtonInitializeOptions](interfaces/PaypalCommerceButtonInitializeOptions.md)
 - [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
 - [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/PaypalCommerceFormFieldCardTypeChangeEventData.md)
