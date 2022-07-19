@@ -35,7 +35,7 @@ export default class PaypalCommerceRequestSender {
         }
 
         if (isAPM) {
-            provider = 'paypalcommercealternativemethodscheckout';
+            provider = isCheckout ? 'paypalcommercealternativemethodscheckout' : 'paypalcommercealternativemethod';
         }
 
         return this.createOrder(cartId, provider);
