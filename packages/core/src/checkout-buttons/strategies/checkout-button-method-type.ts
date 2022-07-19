@@ -16,6 +16,7 @@ enum CheckoutButtonMethodType {
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
     PAYPALCOMMERCE = 'paypalcommerce',
+    PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods',
     PAYPALCOMMERCE_VENMO = 'paypalcommercevenmo',
 }
 
