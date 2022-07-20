@@ -2,7 +2,6 @@ import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
-import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -12,7 +11,6 @@ import getValidButtonStyle from './get-valid-button-style';
 
 export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCommerceSdk?: PaypalCommerceSDK;
-    private _paymentMethod?: PaymentMethod;
 
     constructor(
         private _store: CheckoutStore,
@@ -40,17 +38,17 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = state.cart.getCartOrThrow().currency.code;
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(this._paymentMethod, currency, initializesOnCheckoutPage);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currency, initializesOnCheckoutPage);
 
-        this._renderButton(containerId, initializesOnCheckoutPage, style);
+        this._renderButton(containerId, methodId, initializesOnCheckoutPage, style);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    private _renderButton(containerId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
+    private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
         const fundingSource = paypalCommerceSdk.FUNDING.VENMO;
 
@@ -60,7 +58,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
             fundingSource,
             style: validButtonStyle,
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(orderID),
+            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
         };
 
         const paypalButtonRender = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -83,9 +81,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         return orderId;
     }
 
-    private _tokenizePayment(orderId?: string): void {
-        const paymentMethod = this._getPaymentMethodOrThrow();
-
+    private _tokenizePayment(methodId: string, orderId?: string): void {
         if (!orderId) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
@@ -93,7 +89,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider: paymentMethod.id,
+            provider: methodId,
             order_id: orderId,
         });
     }
@@ -104,14 +100,6 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         }
 
         return this._paypalCommerceSdk;
-    }
-
-    private _getPaymentMethodOrThrow(): PaymentMethod {
-        if (!this._paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        return this._paymentMethod;
     }
 
     private _getVenmoButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
