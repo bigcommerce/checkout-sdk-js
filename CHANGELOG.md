@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.269.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.268.0...v1.269.0) (2022-07-20)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6277 add eslint config to nx ([40d317d](https://github.com/bigcommerce/checkout-sdk-js/commit/40d317dbceb6829d29c44e01a7e0c2dbb73453cc))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1567 removed unnecessary method and class variable in PayPalCommerceVenmoButtonStrategy ([#1509](https://github.com/bigcommerce/checkout-sdk-js/issues/1509)) ([e50dee7](https://github.com/bigcommerce/checkout-sdk-js/commit/e50dee76eb1b1fc4b779f72f3f342e77271fa5a7))
+
 ## [1.268.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.267.0...v1.268.0) (2022-07-19)
 
 
