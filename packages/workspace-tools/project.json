@@ -1,0 +1,49 @@
+{
+    "root": "packages/workspace-tools",
+    "sourceRoot": "packages/workspace-tools/src",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist-tools",
+                "main": "packages/workspace-tools/src/index.ts",
+                "tsConfig": "packages/workspace-tools/tsconfig.lib.json",
+                "assets": [
+                    "packages/workspace-tools/*.md",
+                    {
+                        "input": "./packages/workspace-tools/src",
+                        "glob": "**/!(*.ts)",
+                        "output": "./src"
+                    },
+                    {
+                        "input": "./packages/workspace-tools/src",
+                        "glob": "**/*.d.ts",
+                        "output": "./src"
+                    },
+                    {
+                        "input": "./packages/workspace-tools",
+                        "glob": "generators.json",
+                        "output": "."
+                    }
+                ]
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/workspace-tools/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/workspace-tools"],
+            "options": {
+                "jestConfig": "packages/workspace-tools/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}

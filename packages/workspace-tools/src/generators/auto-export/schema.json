@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "AutoExport",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "projectName": {
+        "type": "string",
+        "description": "The name of the project where the files should be re-exported to."
+    },
+    "config": {
+        "type": "string",
+        "description": "The config file specifying which files to re-export and to where.",
+        "default": "./auto-export.config.json"
+    }
+  },
+  "required": ["projectName"]
+}
