@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.270.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.269.0...v1.270.0) (2022-07-20)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6780 Add Nx plugin for generating source files ([3ed6e31](https://github.com/bigcommerce/checkout-sdk-js/commit/3ed6e31b598ffbb55fbb881f4b6d63ff2b77998f))
+
 ## [1.269.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.268.0...v1.269.0) (2022-07-20)
 
 
