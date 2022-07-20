@@ -1,4 +1,7 @@
 {
+    "extends": [
+        "@bigcommerce/eslint-config"
+    ],
     "root": true,
     "ignorePatterns": ["**/*"],
     "plugins": ["@nrwl/nx"],
