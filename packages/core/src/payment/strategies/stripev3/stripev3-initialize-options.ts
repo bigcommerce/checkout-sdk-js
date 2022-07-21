@@ -2,6 +2,8 @@ import { HostedFormOptions } from '../../../hosted-form';
 
 import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
 
+import Stripev3Error from './stripev3-error';
+
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -59,4 +61,9 @@ export default interface StripeV3PaymentInitializeOptions {
      * Hosted Form Validation Options
      */
     form?: HostedFormOptions;
+
+    /**
+     * 3ds Authentication Error
+     */
+    stripev3AuthError?: Stripev3Error;
 }
