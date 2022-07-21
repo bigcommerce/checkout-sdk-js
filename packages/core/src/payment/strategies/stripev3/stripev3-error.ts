@@ -1,6 +1,6 @@
 import { StandardError } from '../../../common/error/errors';
 
-const defaultMessage: string = 'There was an error while processing your payment. Please try again or contact us.';
+const defaultMessage = 'There was an error while processing your payment. Please try again or contact us.';
 
 export enum StripeV3ErrorType {
     AuthFailure = 'auth-failure',
