@@ -73,7 +73,7 @@
     "reselect": "^4.1.5",
     "rxjs": "^6.5.3",
     "shallowequal": "^1.1.0",
-    "tslib": "^1.10.0",
+    "tslib": "^1.14.1",
     "yup": "^0.27.0"
   },
   "devDependencies": {
