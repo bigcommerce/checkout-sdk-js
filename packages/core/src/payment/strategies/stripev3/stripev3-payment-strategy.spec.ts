@@ -785,19 +785,11 @@ describe('StripeV3PaymentStrategy', () => {
                             token: 'token',
                         },
                     }));
-                    const authenticationFailErrorResponse = new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        errors: [
-                            { code: 'payment_intent_authentication_failure' },
-                        ],
-                    }));
-                    const stripeErrorMessage = 'Stripe error message.';
 
                     jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
-                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, authenticationFailErrorResponse)));
+                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() => Promise.resolve({ error: { payment_intent: { last_payment_error: { message : stripeErrorMessage } }, code: 'payment_intent_authentication_failure' } }));
+                    stripeV3JsMock.confirmCardPayment = jest.fn(() => Promise.resolve({ error: { payment_intent: { last_payment_error: { message : 'Stripe error message.' } }, code: 'payment_intent_authentication_failure' } }));
 
                     await strategy.initialize(options);
 
