@@ -10,26 +10,22 @@ import {
     Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
-    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentRequestOptions,
-    PaymentStrategyNew,
+    PaymentStrategy,
     StoreConfig,
 } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import ApplePaySessionFactory from "./apple-pay-session-factory";
+import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
 interface ApplePayPromise {
-    resolve(
-        value:
-            | PaymentIntegrationSelectors
-            | PromiseLike<PaymentIntegrationSelectors>
-    ): void;
+    resolve(): void;
     reject(reason?: Error): void;
 }
 
@@ -38,7 +34,7 @@ enum DefaultLabels {
     Subtotal = "Subtotal",
 }
 
-export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
+export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
 
@@ -49,8 +45,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions
-    ): Promise<PaymentIntegrationSelectors> {
+        options?: PaymentInitializeOptions & WithApplePayPaymentInitializeOptions
+    ): Promise<void> {
         if (!options?.methodId) {
             throw new InvalidArgumentError(
                 'Unable to submit payment because "options.methodId" argument is not provided.'
@@ -62,14 +58,12 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         this._subTotalLabel =
             options?.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
-
-        return this._paymentIntegrationService.getState();
     }
 
     async execute(
         payload: OrderRequestBody,
         options?: PaymentRequestOptions
-    ): Promise<PaymentIntegrationSelectors> {
+    ): Promise<void> {
         const { payment } = payload;
         const state = this._paymentIntegrationService.getState();
         const checkout = state.getCheckoutOrThrow();
@@ -108,12 +102,12 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
         });
     }
 
-    finalize(): Promise<PaymentIntegrationSelectors> {
+    finalize(): Promise<void> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(): Promise<PaymentIntegrationSelectors> {
-        return Promise.resolve(this._paymentIntegrationService.getState());
+    deinitialize(): Promise<void> {
+        return Promise.resolve();
     }
 
     private _getBaseRequest(
@@ -246,7 +240,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategyNew {
             await this._paymentIntegrationService.submitPayment(payment);
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
-            return promise.resolve(this._paymentIntegrationService.getState());
+            return promise.resolve();
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 

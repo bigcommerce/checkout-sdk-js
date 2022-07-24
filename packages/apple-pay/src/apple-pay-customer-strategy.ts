@@ -1,5 +1,5 @@
 import {
-    CustomerWalletButtonStrategy,
+    CustomerStrategy,
     PaymentMethod,
     InvalidArgumentError,
     Cart,
@@ -8,16 +8,16 @@ import {
     PaymentMethodCancelledError,
     Payment,
     PaymentIntegrationService,
-    PaymentIntegrationSelectors,
     MissingDataError,
     MissingDataErrorType,
     NotImplementedError,
     CustomerInitializeOptions,
-    ExecutePaymentMethodCheckoutOptions, 
+    ExecutePaymentMethodCheckoutOptions,
     ShippingOption,
     AddressRequestBody} from '@bigcommerce/checkout-sdk/payment-integration';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
+import { WithApplePayCustomerInitializeOptions } from './apple-pay-customer-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -42,7 +42,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
     return options instanceof Array;
 }
 
-export default class ApplePayCustomerStrategy implements CustomerWalletButtonStrategy {
+export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
     private _onAuthorizeCallback = noop;
@@ -56,7 +56,7 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
         private _sessionFactory: ApplePaySessionFactory
     ) {}
 
-    async initialize(options: CustomerInitializeOptions): Promise<PaymentIntegrationSelectors> {
+    async initialize(options: CustomerInitializeOptions & WithApplePayCustomerInitializeOptions): Promise<void> {
         const { methodId, applepay }  = options;
 
         assertApplePayWindow(window);
@@ -84,30 +84,28 @@ export default class ApplePayCustomerStrategy implements CustomerWalletButtonStr
 
         this._applePayButton = this._createButton(container);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
-
-        return this._paymentIntegrationService.getState();
     }
 
-    deinitialize(): Promise<PaymentIntegrationSelectors> {
-        return Promise.resolve(this._paymentIntegrationService.getState());
+    deinitialize(): Promise<void> {
+        return Promise.resolve();
     }
 
-    signIn(): Promise<PaymentIntegrationSelectors> {
+    signIn(): Promise<void> {
         throw new NotImplementedError(
             'In order to sign in via Apple, the shopper must click on "Apple Pay" button.'
         );
     }
 
-    signOut(): Promise<PaymentIntegrationSelectors> {
+    signOut(): Promise<void> {
         throw new NotImplementedError(
             'Need to do signout via apple.'
         );
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<PaymentIntegrationSelectors> {
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void> {
         options?.continueWithCheckoutCallback?.();
 
-        return Promise.resolve(this._paymentIntegrationService.getState());
+        return Promise.resolve();
     }
 
     private _createButton(containerId: string): HTMLElement {

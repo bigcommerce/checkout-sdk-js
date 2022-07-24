@@ -1,13 +1,12 @@
 import { BillingAddressRequestBody } from './billing';
 import { OrderRequestBody } from './order';
-import Payment from './payment/payment';
-import { ShippingAddressRequestBody } from './shipping';
+import { Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { RequestOptions } from './util-types';
+import { ShippingAddressRequestBody } from './shipping';
 
 export default interface PaymentIntegrationService {
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => any>): () => void;
+    subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>): () => void;
 
     getState(): PaymentIntegrationSelectors;
 

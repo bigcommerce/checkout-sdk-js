@@ -1,12 +1,12 @@
 export { Address, AddressRequestBody } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
-export { CheckoutButtonMethodType, CheckoutButtonInitializeOptions } from './button-options';
+export { CheckoutButtonStrategy, CheckoutButtonStrategyFactory, CheckoutButtonStrategyResolveId, CheckoutButtonMethodType, CheckoutButtonInitializeOptions } from './checkout-buttons';
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
 export { Checkout } from './checkout';
 export { Config, StoreConfig } from './config';
 export { Coupon } from './coupon';
 export { Currency } from './currency';
-export { Customer, CustomerRequestOptions, CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from './customer';
+export { CustomerStrategy, CustomerStrategyFactory, CustomerStrategyResolveId, Customer, CustomerRequestOptions, CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from './customer';
 export { Discount } from './discount';
 export { InvalidArgumentError,
     MissingDataError,
@@ -18,9 +18,11 @@ export { InvalidArgumentError,
     PaymentArgumentInvalidError,
     PaymentMethodCancelledError } from './errors';
 export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
-export { CardInstrument, CreditCardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions } from './payment';
+export { CardInstrument, CreditCardInstrument, Payment, PaymentInitializeOptions, PaymentMethod, PaymentRequestOptions, PaymentStrategy, PaymentStrategyFactory, PaymentStrategyResolveId } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export { Consignment, ShippingAddress, ShippingOption, ShippingAddressRequestBody } from './shipping';
-export { CheckoutButtonStrategyNew, CustomerWalletButtonStrategy, PaymentStrategyNew } from './strategy';
 export { RequestOptions } from './util-types';
+export { default as ResolvableModule } from './resolvable-module';
+export { default as isResolvableModule } from './is-resolvable-module';
+export { default as toResolvableModule } from './to-resolvable-module';

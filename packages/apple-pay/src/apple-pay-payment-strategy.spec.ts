@@ -169,9 +169,8 @@ describe("ApplePayPaymentStrategy", () => {
     describe("#deinitialize()", () => {
         it("deinitializes strategy", async () => {
             const result = await strategy.deinitialize();
-            await expect(JSON.stringify(result)).toEqual(
-                JSON.stringify(paymentIntegrationService.getState())
-            );
+
+            expect(result).toBeUndefined();
         });
     });
 });
