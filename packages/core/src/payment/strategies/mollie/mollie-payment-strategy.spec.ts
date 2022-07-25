@@ -23,7 +23,7 @@ import {  MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
 import MollieScriptLoader from './mollie-script-loader';
 import { getHostedFormInitializeOptions, getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs, getOrderRequestBodyVaultedCC, getOrderRequestBodyVaultAPMs, getOrderRequestBodyVaultCC, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
-import {getCart} from "../../../cart/carts.mock";
+import { getCart } from "../../../cart/carts.mock";
 
 describe('MolliePaymentStrategy', () => {
     let orderRequestSender: OrderRequestSender;
