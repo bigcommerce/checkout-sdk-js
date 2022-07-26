@@ -3,6 +3,6 @@
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "out": "docs",
+    "out": "../../docs",
     "readme": "none"
 }

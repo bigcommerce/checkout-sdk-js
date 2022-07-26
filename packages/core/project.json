@@ -47,13 +47,34 @@
                 }
             ]
         },
-        "prebundle-dts": {
+        "build-dts": {
             "executor": "@nrwl/workspace:run-commands",
             "options": {
                 "cwd": "packages/core",
                 "parallel": false,
-                "commands": ["tsc --outDir ../../temp --declaration"]
+                "commands": [
+                    "tsc --outDir ../../temp --declaration",
+                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
+                    "rm -rf ../../temp"
+                ]
             }
+        },
+        "docs": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "cwd": "packages/core",
+                "parallel": false,
+                "commands": [
+                    "mkdir -p src/generated && cp ../../dist/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
+                    "typedoc --plugin typedoc-plugin-markdown --options typedoc.json --tsconfig tsconfig.json src/generated/checkout-sdk.d.ts"
+                ]
+            },
+            "dependsOn": [
+                {
+                    "target": "build-dts",
+                    "projects": "self"
+                }
+            ]
         },
         "lint": {
             "executor": "@nrwl/linter:eslint",
