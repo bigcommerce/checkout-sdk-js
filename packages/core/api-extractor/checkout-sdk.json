@@ -1,7 +1,7 @@
 {
     "compiler": {
         "configType": "tsconfig",
-        "rootFolder": "./packages/core"
+        "rootFolder": "."
     },
     "project": {
         "entryPointSourceFile": "../../temp/core/src/bundles/checkout-sdk.d.ts"
