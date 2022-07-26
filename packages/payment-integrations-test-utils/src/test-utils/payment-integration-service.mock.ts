@@ -8,6 +8,7 @@ const subscribe = jest.fn();
 const state = {
     getCartOrThrow: jest.fn(() => getCart()),
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
+    getHost: jest.fn(),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
 };

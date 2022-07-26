@@ -15,3 +15,7 @@
      */
     onPaymentAuthorize(): void;
 }
+
+export interface WithApplePayButtonInitializeOptions {
+    applepay?: ApplePayButtonInitializeOptions;
+}

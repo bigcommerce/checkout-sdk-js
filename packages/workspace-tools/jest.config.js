@@ -7,5 +7,6 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ['../../jest-setup.js'],
-    collectCoverageFrom: []
+    coverageDirectory: '../../coverage/packages/workspace-tools',
+    collectCoverageFrom: [],
 };

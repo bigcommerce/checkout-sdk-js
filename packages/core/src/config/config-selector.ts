@@ -15,6 +15,8 @@ export default interface ConfigSelector {
     getStoreConfigOrThrow(): StoreConfig;
     getContextConfig(): ContextConfig | undefined;
     getExternalSource(): string | undefined;
+    getHost(): string | undefined;
+    getLocale(): string | undefined;
     getVariantIdentificationToken(): string | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
@@ -81,6 +83,16 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
         data => () => data
     );
 
+    const getHost = createSelector(
+        (state: ConfigState) => state.meta?.host,
+        data => () => data
+    );
+
+    const getLocale = createSelector(
+        (state: ConfigState) => state.meta?.locale,
+        data => () => data
+    );
+
     const getVariantIdentificationToken = createSelector(
         (state: ConfigState) => state.meta && state.meta.variantIdentificationToken,
         data => () => data
@@ -107,6 +119,8 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
             getStoreConfigOrThrow: getStoreConfigOrThrow(state, { formState }),
             getContextConfig: getContextConfig(state),
             getExternalSource: getExternalSource(state),
+            getHost: getHost(state),
+            getLocale: getLocale(state),
             getVariantIdentificationToken: getVariantIdentificationToken(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),

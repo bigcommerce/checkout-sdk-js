@@ -10,6 +10,9 @@ import PaymentMethod from './payment/payment-method';
 import { StoreConfig } from './config';
 
 export default interface PaymentIntegrationSelectors {
+    getHost(): string | undefined;
+    getLocale(): string | undefined;
+
     getBillingAddress(): BillingAddress | undefined;
     getBillingAddressOrThrow(): BillingAddress;
 

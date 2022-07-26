@@ -1,26 +1,38 @@
 import { InvalidArgumentError } from '../error/errors';
 
+import Factory from './factory';
+
 export default class Registry<T, K extends string = string> {
     private _factories: { [key: string]: Factory<T> };
     private _instances: { [key: string]: T };
-    private _options: RegistryOptions;
+    private _defaultToken: string;
+    private _useFallback: string | boolean;
+    private _tokenResolver: (token: string, registeredTokens: string[]) => string | undefined;
 
-    constructor(options?: RegistryOptions) {
+    constructor(
+        options?: RegistryOptions
+    ) {
         this._factories = {};
         this._instances = {};
-        this._options = { defaultToken: 'default', ...options };
+        this._defaultToken = options?.defaultToken ?? 'default';
+        this._useFallback = options?.useFallback ?? true;
+        this._tokenResolver = options?.tokenResolver ?? (token => token);
     }
 
     get(token?: K, cacheToken?: string): T {
         try {
             return this._getInstance(
-                token || this._options.defaultToken,
-                cacheToken || token || this._options.defaultToken
+                token || this._defaultToken,
+                cacheToken || token || this._defaultToken
             );
         } catch (error) {
+            if (!this._useFallback) {
+                throw error;
+            }
+
             return this._getInstance(
-                this._options.defaultToken,
-                cacheToken || this._options.defaultToken
+                this._defaultToken,
+                cacheToken || this._defaultToken
             );
         }
     }
@@ -43,7 +55,8 @@ export default class Registry<T, K extends string = string> {
 
     private _getInstance(token: string, cacheToken: string): T {
         if (!this._hasInstance(cacheToken)) {
-            const factory = this._factories[token];
+            const resolvedToken = this._tokenResolver(token, Object.keys(this._factories));
+            const factory = resolvedToken && this._factories[resolvedToken];
 
             if (!factory) {
                 throw new InvalidArgumentError(`'${token}' is not registered.`);
@@ -56,8 +69,8 @@ export default class Registry<T, K extends string = string> {
     }
 }
 
-export type Factory<T> = () => T;
-
 export interface RegistryOptions {
-    defaultToken: string;
+    defaultToken?: string;
+    useFallback?: boolean;
+    tokenResolver?(token: string, registeredTokens: string[]): string | undefined;
 }

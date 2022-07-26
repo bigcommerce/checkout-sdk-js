@@ -1,5 +1,4 @@
 import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration';
-
 import { cloneResult as clone } from '../common/utility';
 import { InternalCheckoutSelectors } from '../checkout';
 
@@ -17,6 +16,8 @@ export default function createPaymentIntegrationSelectors({
         getCheckoutOrThrow,
     },
     config: {
+        getHost,
+        getLocale,
         getStoreConfig,
         getStoreConfigOrThrow,
     },
@@ -60,6 +61,8 @@ export default function createPaymentIntegrationSelectors({
     },
 }: InternalCheckoutSelectors): PaymentIntegrationSelectors {
     return {
+        getHost: clone(getHost),
+        getLocale: clone(getLocale),
         getBillingAddress: clone(getBillingAddress),
         getBillingAddressOrThrow: clone(getBillingAddressOrThrow),
         getCart: clone(getCart),

@@ -10,6 +10,10 @@
             },
             "dependsOn": [
                 {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
                     "target": "build",
                     "projects": "dependencies"
                 }
@@ -57,7 +61,13 @@
             "fix": true,
             "options": {
                 "lintFilePatterns": ["packages/core/**/*.ts"]
-            }
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                }
+            ]
         },
         "test": {
             "executor": "@nrwl/jest:jest",
@@ -65,6 +75,22 @@
             "options": {
                 "jestConfig": "packages/core/jest.config.js",
                 "passWithNoTests": true
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                }
+            ]
+        },
+        "generate": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:auto-export --projectName=core",
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:extend-interface --projectName=core"
+                ],
+                "parallel": false
             }
         }
     },

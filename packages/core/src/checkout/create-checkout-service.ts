@@ -54,6 +54,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const config: ConfigState = {
         meta: {
             externalSource: options && options.externalSource,
+            host: options?.host,
+            locale: options?.locale,
             variantIdentificationToken: (window as ConfigWindow).checkoutVariantIdentificationToken,
         },
         errors: {},

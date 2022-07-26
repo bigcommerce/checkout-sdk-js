@@ -13,7 +13,7 @@ import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressReque
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
+import { PaymentInitializeOptionsV2 as PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, PickupOptionActionCreator, PickupOptionRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
 import { SignInEmailActionCreator, SignInEmailRequestBody } from '../signin-email';

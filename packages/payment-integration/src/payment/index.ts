@@ -21,5 +21,9 @@ export {
 } from './payment';
 
 export { PaymentInitializeOptions } from './payment-initialize-options';
-export { default as PaymentMethod } from './payment-method';
 export { PaymentRequestOptions } from './payment-request-options';
+export { default as PaymentMethod } from './payment-method';
+export { default as PaymentStrategy } from './payment-strategy';
+export { default as PaymentStrategyFactory } from './payment-strategy-factory';
+export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
+

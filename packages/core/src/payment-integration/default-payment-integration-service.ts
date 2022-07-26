@@ -1,11 +1,12 @@
-import { PaymentIntegrationService,
+import {
+    PaymentIntegrationService,
     PaymentIntegrationSelectors,
     BillingAddressRequestBody,
     OrderRequestBody,
     Payment,
-    ShippingAddressRequestBody, 
-    RequestOptions} from '@bigcommerce/checkout-sdk/payment-integration';
-
+    ShippingAddressRequestBody,
+    RequestOptions,
+} from '@bigcommerce/checkout-sdk/payment-integration';
 import { BillingAddressActionCreator } from '../billing';
 import { CheckoutStore, CheckoutActionCreator } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
@@ -33,7 +34,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     }
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
-    subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => any>): () => void {
+    subscribe(subscriber: (state: PaymentIntegrationSelectors) => void, ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>): () => void {
         return this._storeProjection.subscribe(subscriber, ...filters);
     }
 
