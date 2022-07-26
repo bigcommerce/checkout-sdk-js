@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.271.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.270.0...v1.271.0) (2022-07-26)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6780 Use Nx plugin to generate source files so that payment integration packages can be automatically registered ([9c8298a](https://github.com/bigcommerce/checkout-sdk-js/commit/9c8298abce327f6a78725370aca8a552bf59c0d9))
+
 ## [1.270.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.269.0...v1.270.0) (2022-07-20)
 
 
