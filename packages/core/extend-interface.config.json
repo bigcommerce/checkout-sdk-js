@@ -17,7 +17,7 @@
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/checkout-button-initialize-options.ts",
-            "memberPattern": "^With.+CheckoutButtonInitializeOptions$",
+            "memberPattern": "^With.+ButtonInitializeOptions$",
             "targetPath": "packages/payment-integration/src/index.ts",
             "targetMemberName": "CheckoutButtonInitializeOptions"
         }
