@@ -54,4 +54,4 @@ export { default as PaymentStrategySelector, PaymentStrategySelectorFactory, cre
 export { default as PaymentStrategyState } from './payment-strategy-state';
 export { default as PaymentStrategyType } from './payment-strategy-type';
 export { default as StorefrontPaymentRequestSender } from './storefront-payment-request-sender';
-export { PaymentInitializeOptions as PaymentInitializeOptionsV2 } from './payment-request-options';
+export { PaymentInitializeOptions as PaymentInitializeOptionsV2 } from './payment-request-options-v2';
