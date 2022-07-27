@@ -37,8 +37,6 @@ export default async function autoExportGenerator(
                     outputName: basename(entry.outputPath),
                 }
             );
-
-            console.log(`Modules are exported at '${entry.outputPath}'`);
         })
     );
 }
