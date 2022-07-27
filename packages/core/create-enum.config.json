@@ -1,0 +1,13 @@
+{
+    "entries": [
+        {
+            "inputPaths": [
+                "packages/*/src/index.ts",
+                "packages/core/src/checkout-buttons/index.ts"
+            ],
+            "inputMemberPattern": "^.+ButtonMethodType$",
+            "outputPath": "packages/core/src/generated/checkout-button-method-type.ts",
+            "outputMemberName": "CheckoutButtonMethodType"
+        }
+    ]
+}

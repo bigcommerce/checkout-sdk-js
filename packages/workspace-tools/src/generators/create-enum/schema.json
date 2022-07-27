@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "CreateEnum",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "projectName": {
+        "type": "string",
+        "description": "The name of the project where the generated enums should be exported to."
+    },
+    "config": {
+        "type": "string",
+        "description": "The config file specifying what enums to create",
+        "default": "./create-enum.config.json"
+    }
+  },
+  "required": ["projectName"]
+}

@@ -4,3 +4,4 @@ export { default as createApplePayButtonStrategy } from './create-apple-pay-butt
 export { WithApplePayCustomerInitializeOptions } from './apple-pay-customer-initialize-options';
 export { WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
 export { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+export { default as ApplePayButtonMethodType } from './apple-pay-button-method-type';
