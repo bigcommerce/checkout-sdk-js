@@ -5,7 +5,7 @@ const { DefinePlugin } = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 const { getNextVersion, transformManifest } = require('./scripts/webpack');
-const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName, srcPath } = require('./webpack-common.config');
+const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName, coreSrcPath } = require('./webpack-common.config');
 
 const baseOutputPath = path.join(__dirname, 'dist-cdn');
 
@@ -52,7 +52,7 @@ async function getCdnLoaderConfig(options, argv) {
         ...baseConfig,
         name: 'umd-loader',
         entry: {
-            loader: path.join(srcPath, 'loader-cdn.ts'),
+            loader: path.join(coreSrcPath, 'loader-cdn.ts'),
         },
         output: {
             filename: `[name]-v${version}.js`,

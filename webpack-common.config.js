@@ -3,16 +3,18 @@ const { DefinePlugin } = require('webpack');
 
 const { getNextVersion } = require('./scripts/webpack');
 
-const srcPath = path.join(__dirname, 'packages/core/src');
+const coreSrcPath = path.join(__dirname, 'packages/core/src');
+const appleSrcPath = path.join(__dirname, 'packages/apple-pay/src');
+const paymentIntegrationSrcPath = path.join(__dirname, 'packages/payment-integration/src');
 
 const libraryName = 'checkoutKit';
 
 const libraryEntries = {
-    'checkout-sdk': path.join(srcPath, 'bundles', 'checkout-sdk.ts'),
-    'checkout-button': path.join(srcPath, 'bundles', 'checkout-button.ts'),
-    'embedded-checkout': path.join(srcPath, 'bundles', 'embedded-checkout.ts'),
-    'hosted-form': path.join(srcPath, 'bundles', 'hosted-form.ts'),
-    'internal-mappers': path.join(srcPath, 'bundles', 'internal-mappers.ts'),
+    'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
+    'checkout-button': path.join(coreSrcPath, 'bundles', 'checkout-button.ts'),
+    'embedded-checkout': path.join(coreSrcPath, 'bundles', 'embedded-checkout.ts'),
+    'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
+    'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
 };
 
 async function getBaseConfig() {
@@ -26,6 +28,7 @@ async function getBaseConfig() {
         resolve: {
             extensions: ['.ts', '.js'],
             alias: {
+                '@bigcommerce/checkout-sdk/payment-integration': path.resolve(__dirname, '/packages/payment-integration/src'),
                 '@bigcommerce/checkout-sdk/apple-pay': path.resolve(__dirname, '/packages/apple-pay/src'),
                 '@bigcommerce/checkout-sdk/test-utils': path.resolve(__dirname, '/packages/test-utils/src'),
             }
@@ -44,7 +47,17 @@ async function getBaseConfig() {
                 },
                 {
                     test: /\.[tj]s$/,
-                    include: srcPath,
+                    include: coreSrcPath,
+                    loader: 'ts-loader',                    
+                },
+                {
+                    test: /\.[tj]s$/,
+                    include: appleSrcPath,
+                    loader: 'ts-loader',
+                },
+                {
+                    test: /\.[tj]s$/,
+                    include: paymentIntegrationSrcPath,
                     loader: 'ts-loader',
                 },
             ],
@@ -73,7 +86,7 @@ const babelLoaderRules = [
     {
         test: /\.[tj]s$/,
         loader: 'babel-loader',
-        include: srcPath,
+        include: coreSrcPath,
         options: {
             presets: [
                 babelEnvPreset,
@@ -102,5 +115,5 @@ module.exports = {
     getBaseConfig,
     libraryEntries,
     libraryName,
-    srcPath,
+    coreSrcPath,
 };
