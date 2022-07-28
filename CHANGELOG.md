@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.271.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.271.1...v1.271.2) (2022-07-28)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6781 Revert type exports ([#1526](https://github.com/bigcommerce/checkout-sdk-js/issues/1526)) ([6ea0c76](https://github.com/bigcommerce/checkout-sdk-js/commit/6ea0c7663ed4cf821d7a56963d522fef4facbd05))
+
 ### [1.271.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.271.0...v1.271.1) (2022-07-28)
 
 
