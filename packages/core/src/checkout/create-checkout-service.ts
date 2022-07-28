@@ -11,7 +11,8 @@ import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestS
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, PickupOptionActionCreator, PickupOptionRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { SignInEmailActionCreator, SignInEmailRequestSender } from '../signin-email';
@@ -78,6 +79,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
+    const paymentIntegrationService = createPaymentIntegrationService(store);
 
     return new CheckoutService(
         store,
@@ -103,6 +105,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale),
+            createPaymentStrategyRegistryV2(paymentIntegrationService),
             orderActionCreator,
             spamProtectionActionCreator
         ),

@@ -19,6 +19,7 @@ import { PaymentStrategy } from './strategies';
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
+        private _strategyRegistryV2: any,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
@@ -45,6 +46,8 @@ export default class PaymentStrategyActionCreator {
                         if (!method) {
                             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                         }
+
+                        console.log(this._strategyRegistryV2);
 
                         strategy = this._strategyRegistry.getByMethod(method);
                     } else {

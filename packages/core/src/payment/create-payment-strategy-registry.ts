@@ -1,7 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
-import { createApplePayPaymentStrategy } from '@bigcommerce/checkout-sdk/apple-pay';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
@@ -11,10 +10,12 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
+import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -91,6 +92,8 @@ export default function createPaymentStrategyRegistry(
         new BillingAddressRequestSender(requestSender),
         new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
     );
+    const paymentIntegrationService = createPaymentIntegrationService(store);
+    const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
@@ -105,13 +108,16 @@ export default function createPaymentStrategyRegistry(
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
-    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
+    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+        registry,
+        registryV2,
+        orderActionCreator,
+        spamProtectionActionCreator
+    );
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-
-    console.log(createApplePayPaymentStrategy);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
