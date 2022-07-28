@@ -37,8 +37,6 @@ export default async function extendInterfaceGenerator(
                     outputName: basename(entry.outputPath),
                 }
             );
-
-            console.log(`Interfaces are exported at '${entry.outputPath}'`);
         })
     );
 }

@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, ExecutePaymentMethodCheckoutOptions, GuestCredentials } from '../customer';
+import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptionsV2 as CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, ExecutePaymentMethodCheckoutOptions, GuestCredentials } from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
