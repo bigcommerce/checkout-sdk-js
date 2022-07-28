@@ -4,250 +4,880 @@
 
 ## Table of contents
 
+### Enumerations
+
+- [AmazonPayV2CheckoutLanguage](enums/AmazonPayV2CheckoutLanguage.md)
+- [AmazonPayV2LedgerCurrency](enums/AmazonPayV2LedgerCurrency.md)
+- [AmazonPayV2PayOptions](enums/AmazonPayV2PayOptions.md)
+- [AmazonPayV2Placement](enums/AmazonPayV2Placement.md)
+- [BraintreeFormFieldType](enums/BraintreeFormFieldType.md)
+- [ButtonColor](enums/ButtonColor.md)
+- [ButtonType](enums/ButtonType.md)
+- [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
+- [CheckoutIncludes](enums/CheckoutIncludes.md)
+- [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
+- [HostedFieldType](enums/HostedFieldType.md)
+- [HostedInputEventType](enums/HostedInputEventType.md)
+- [IconStyle](enums/IconStyle.md)
+- [PaypalButtonStyleColorOption](enums/PaypalButtonStyleColorOption.md)
+- [PaypalButtonStyleLabelOption](enums/PaypalButtonStyleLabelOption.md)
+- [PaypalButtonStyleLayoutOption](enums/PaypalButtonStyleLayoutOption.md)
+- [PaypalButtonStyleShapeOption](enums/PaypalButtonStyleShapeOption.md)
+- [PaypalButtonStyleSizeOption](enums/PaypalButtonStyleSizeOption.md)
+- [PaypalCommerceFormFieldType](enums/PaypalCommerceFormFieldType.md)
+- [RadiusUnit](enums/RadiusUnit.md)
+- [StyleButtonColor](enums/StyleButtonColor.md)
+- [StyleButtonLabel](enums/StyleButtonLabel.md)
+- [StyleButtonLayout](enums/StyleButtonLayout.md)
+- [StyleButtonShape](enums/StyleButtonShape.md)
+
 ### Classes
 
-- [CacheKeyResolver](classes/CacheKeyResolver.md)
+- [CartChangedError](classes/CartChangedError.md)
+- [CheckoutButtonErrorSelector](classes/CheckoutButtonErrorSelector.md)
+- [CheckoutButtonInitializer](classes/CheckoutButtonInitializer.md)
+- [CheckoutButtonStatusSelector](classes/CheckoutButtonStatusSelector.md)
+- [CheckoutService](classes/CheckoutService.md)
+- [CurrencyService](classes/CurrencyService.md)
+- [EmbeddedCheckout](classes/EmbeddedCheckout.md)
+- [LanguageService](classes/LanguageService.md)
+- [RequestError](classes/RequestError.md)
+- [StandardError](classes/StandardError.md)
+
+### Interfaces
+
+- [Address](interfaces/Address.md)
+- [AddressRequestBody](interfaces/AddressRequestBody.md)
+- [AdyenAdditionalActionCallbacks](interfaces/AdyenAdditionalActionCallbacks.md)
+- [AdyenAdditionalActionCallbacks_2](interfaces/AdyenAdditionalActionCallbacks_2.md)
+- [AdyenAdditionalActionOptions](interfaces/AdyenAdditionalActionOptions.md)
+- [AdyenAdditionalActionOptions_2](interfaces/AdyenAdditionalActionOptions_2.md)
+- [AdyenBaseCardComponentOptions](interfaces/AdyenBaseCardComponentOptions.md)
+- [AdyenBaseCardComponentOptions_2](interfaces/AdyenBaseCardComponentOptions_2.md)
+- [AdyenComponent](interfaces/AdyenComponent.md)
+- [AdyenComponentEvents](interfaces/AdyenComponentEvents.md)
+- [AdyenComponentEvents_2](interfaces/AdyenComponentEvents_2.md)
+- [AdyenComponent_2](interfaces/AdyenComponent_2.md)
+- [AdyenCreditCardComponentOptions](interfaces/AdyenCreditCardComponentOptions.md)
+- [AdyenIdealComponentOptions](interfaces/AdyenIdealComponentOptions.md)
+- [AdyenPaymentMethodState](interfaces/AdyenPaymentMethodState.md)
+- [AdyenPaymentMethodState_2](interfaces/AdyenPaymentMethodState_2.md)
+- [AdyenPlaceholderData](interfaces/AdyenPlaceholderData.md)
+- [AdyenPlaceholderData_2](interfaces/AdyenPlaceholderData_2.md)
+- [AdyenThreeDS2Options](interfaces/AdyenThreeDS2Options.md)
+- [AdyenV2PaymentInitializeOptions](interfaces/AdyenV2PaymentInitializeOptions.md)
+- [AdyenV3CreditCardComponentOptions](interfaces/AdyenV3CreditCardComponentOptions.md)
+- [AdyenV3PaymentInitializeOptions](interfaces/AdyenV3PaymentInitializeOptions.md)
+- [AmazonPayCustomerInitializeOptions](interfaces/AmazonPayCustomerInitializeOptions.md)
+- [AmazonPayOrderReference](interfaces/AmazonPayOrderReference.md)
+- [AmazonPayPaymentInitializeOptions](interfaces/AmazonPayPaymentInitializeOptions.md)
+- [AmazonPayShippingInitializeOptions](interfaces/AmazonPayShippingInitializeOptions.md)
+- [AmazonPayV2ButtonParams](interfaces/AmazonPayV2ButtonParams.md)
+- [AmazonPayV2CheckoutSession](interfaces/AmazonPayV2CheckoutSession.md)
+- [AmazonPayV2CustomerInitializeOptions](interfaces/AmazonPayV2CustomerInitializeOptions.md)
+- [AmazonPayV2PaymentInitializeOptions](interfaces/AmazonPayV2PaymentInitializeOptions.md)
+- [AmazonPayV2ShippingInitializeOptions](interfaces/AmazonPayV2ShippingInitializeOptions.md)
+- [AmazonPayWidgetError](interfaces/AmazonPayWidgetError.md)
+- [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)
+- [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
+- [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
+- [BankInstrument](interfaces/BankInstrument.md)
+- [Banner](interfaces/Banner.md)
+- [BaseAccountInstrument](interfaces/BaseAccountInstrument.md)
+- [BaseElementOptions](interfaces/BaseElementOptions.md)
+- [BaseElementOptions_2](interfaces/BaseElementOptions_2.md)
+- [BaseIndividualElementOptions](interfaces/BaseIndividualElementOptions.md)
+- [BaseInstrument](interfaces/BaseInstrument.md)
+- [BillingAddress](interfaces/BillingAddress.md)
+- [BillingAddressRequestBody](interfaces/BillingAddressRequestBody.md)
+- [BlockElementStyles](interfaces/BlockElementStyles.md)
+- [BlueSnapV2PaymentInitializeOptions](interfaces/BlueSnapV2PaymentInitializeOptions.md)
+- [BlueSnapV2StyleProps](interfaces/BlueSnapV2StyleProps.md)
+- [BodyStyles](interfaces/BodyStyles.md)
+- [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
+- [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
+- [BraintreeError](interfaces/BraintreeError.md)
+- [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
+- [BraintreeFormFieldKeyboardEventData](interfaces/BraintreeFormFieldKeyboardEventData.md)
+- [BraintreeFormFieldOptions](interfaces/BraintreeFormFieldOptions.md)
+- [BraintreeFormFieldStylesMap](interfaces/BraintreeFormFieldStylesMap.md)
+- [BraintreeFormFieldValidateErrorData](interfaces/BraintreeFormFieldValidateErrorData.md)
+- [BraintreeFormFieldValidateEventData](interfaces/BraintreeFormFieldValidateEventData.md)
+- [BraintreeFormFieldsMap](interfaces/BraintreeFormFieldsMap.md)
+- [BraintreeFormOptions](interfaces/BraintreeFormOptions.md)
+- [BraintreePaymentInitializeOptions](interfaces/BraintreePaymentInitializeOptions.md)
+- [BraintreePaypalButtonInitializeOptions](interfaces/BraintreePaypalButtonInitializeOptions.md)
+- [BraintreePaypalCreditButtonInitializeOptions](interfaces/BraintreePaypalCreditButtonInitializeOptions.md)
+- [BraintreeStoredCardFieldOptions](interfaces/BraintreeStoredCardFieldOptions.md)
+- [BraintreeStoredCardFieldsMap](interfaces/BraintreeStoredCardFieldsMap.md)
+- [BraintreeThreeDSecureOptions](interfaces/BraintreeThreeDSecureOptions.md)
+- [BraintreeVenmoButtonInitializeOptions](interfaces/BraintreeVenmoButtonInitializeOptions.md)
+- [BraintreeVerifyPayload](interfaces/BraintreeVerifyPayload.md)
+- [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/BraintreeVisaCheckoutCustomerInitializeOptions.md)
+- [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/BraintreeVisaCheckoutPaymentInitializeOptions.md)
+- [BrowserInfo](interfaces/BrowserInfo.md)
+- [ButtonResponse](interfaces/ButtonResponse.md)
+- [ButtonStyles](interfaces/ButtonStyles.md)
+- [CardCvcElementOptions](interfaces/CardCvcElementOptions.md)
+- [CardDataPaymentMethodState](interfaces/CardDataPaymentMethodState.md)
+- [CardDataPaymentMethodState_2](interfaces/CardDataPaymentMethodState_2.md)
+- [CardElementOptions](interfaces/CardElementOptions.md)
+- [CardExpiryElementOptions](interfaces/CardExpiryElementOptions.md)
+- [CardInstrument](interfaces/CardInstrument.md)
+- [CardNumberElementOptions](interfaces/CardNumberElementOptions.md)
+- [CardPaymentMethodState](interfaces/CardPaymentMethodState.md)
+- [CardPaymentMethodState_2](interfaces/CardPaymentMethodState_2.md)
+- [CardState](interfaces/CardState.md)
+- [CardStateErrors](interfaces/CardStateErrors.md)
+- [CardStateErrors_2](interfaces/CardStateErrors_2.md)
+- [CardState_2](interfaces/CardState_2.md)
+- [Cart](interfaces/Cart.md)
+- [ChasePayCustomerInitializeOptions](interfaces/ChasePayCustomerInitializeOptions.md)
+- [ChasePayInitializeOptions](interfaces/ChasePayInitializeOptions.md)
+- [CheckableInputStyles](interfaces/CheckableInputStyles.md)
+- [ChecklistStyles](interfaces/ChecklistStyles.md)
+- [Checkout](interfaces/Checkout.md)
+- [CheckoutButtonInitializeOptions](interfaces/CheckoutButtonInitializeOptions.md)
+- [CheckoutButtonInitializerOptions](interfaces/CheckoutButtonInitializerOptions.md)
+- [CheckoutButtonOptions](interfaces/CheckoutButtonOptions.md)
+- [CheckoutButtonSelectors](interfaces/CheckoutButtonSelectors.md)
+- [CheckoutParams](interfaces/CheckoutParams.md)
+- [CheckoutPayment](interfaces/CheckoutPayment.md)
+- [CheckoutRequestBody](interfaces/CheckoutRequestBody.md)
+- [CheckoutSelectors](interfaces/CheckoutSelectors.md)
+- [CheckoutServiceOptions](interfaces/CheckoutServiceOptions.md)
+- [CheckoutSettings](interfaces/CheckoutSettings.md)
+- [CheckoutStoreErrorSelector](interfaces/CheckoutStoreErrorSelector.md)
+- [CheckoutStoreSelector](interfaces/CheckoutStoreSelector.md)
+- [CheckoutStoreStatusSelector](interfaces/CheckoutStoreStatusSelector.md)
+- [Consignment](interfaces/Consignment.md)
+- [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
+- [ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md)
+- [ConsignmentCreateRequestBody](interfaces/ConsignmentCreateRequestBody.md)
+- [ConsignmentLineItem](interfaces/ConsignmentLineItem.md)
+- [ConsignmentPickupOption](interfaces/ConsignmentPickupOption.md)
+- [ConsignmentUpdateRequestBody](interfaces/ConsignmentUpdateRequestBody.md)
+- [Coordinates](interfaces/Coordinates.md)
+- [Country](interfaces/Country.md)
+- [Coupon](interfaces/Coupon.md)
+- [CreditCardInstrument](interfaces/CreditCardInstrument.md)
+- [CreditCardPaymentInitializeOptions](interfaces/CreditCardPaymentInitializeOptions.md)
+- [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
+- [CreditCardPlaceHolder_2](interfaces/CreditCardPlaceHolder_2.md)
+- [CssProperties](interfaces/CssProperties.md)
+- [CssProperties_2](interfaces/CssProperties_2.md)
+- [Currency](interfaces/Currency.md)
+- [CustomError](interfaces/CustomError.md)
+- [CustomItem](interfaces/CustomItem.md)
+- [Customer](interfaces/Customer.md)
+- [CustomerAccountRequestBody](interfaces/CustomerAccountRequestBody.md)
+- [CustomerAddress](interfaces/CustomerAddress.md)
+- [CustomerCredentials](interfaces/CustomerCredentials.md)
+- [CustomerGroup](interfaces/CustomerGroup.md)
+- [CustomerInitializeOptions](interfaces/CustomerInitializeOptions.md)
+- [CustomerPasswordRequirements](interfaces/CustomerPasswordRequirements.md)
+- [CustomerRequestOptions](interfaces/CustomerRequestOptions.md)
+- [DigitalItem](interfaces/DigitalItem.md)
+- [DigitalRiverElementClasses](interfaces/DigitalRiverElementClasses.md)
+- [DigitalRiverPaymentInitializeOptions](interfaces/DigitalRiverPaymentInitializeOptions.md)
+- [Discount](interfaces/Discount.md)
+- [EmbeddedCheckoutCompleteEvent](interfaces/EmbeddedCheckoutCompleteEvent.md)
+- [EmbeddedCheckoutError](interfaces/EmbeddedCheckoutError.md)
+- [EmbeddedCheckoutErrorEvent](interfaces/EmbeddedCheckoutErrorEvent.md)
+- [EmbeddedCheckoutFrameErrorEvent](interfaces/EmbeddedCheckoutFrameErrorEvent.md)
+- [EmbeddedCheckoutFrameLoadedEvent](interfaces/EmbeddedCheckoutFrameLoadedEvent.md)
+- [EmbeddedCheckoutLoadedEvent](interfaces/EmbeddedCheckoutLoadedEvent.md)
+- [EmbeddedCheckoutMessenger](interfaces/EmbeddedCheckoutMessenger.md)
+- [EmbeddedCheckoutMessengerOptions](interfaces/EmbeddedCheckoutMessengerOptions.md)
+- [EmbeddedCheckoutOptions](interfaces/EmbeddedCheckoutOptions.md)
+- [EmbeddedCheckoutSignedOutEvent](interfaces/EmbeddedCheckoutSignedOutEvent.md)
+- [EmbeddedCheckoutStyles](interfaces/EmbeddedCheckoutStyles.md)
+- [EmbeddedContentOptions](interfaces/EmbeddedContentOptions.md)
+- [ExecutePaymentMethodCheckoutOptions](interfaces/ExecutePaymentMethodCheckoutOptions.md)
+- [FlashMessage](interfaces/FlashMessage.md)
+- [FormField](interfaces/FormField.md)
+- [FormFieldItem](interfaces/FormFieldItem.md)
+- [FormFieldOptions](interfaces/FormFieldOptions.md)
+- [FormFields](interfaces/FormFields.md)
+- [GatewayOrderPayment](interfaces/GatewayOrderPayment.md)
+- [GiftCertificate](interfaces/GiftCertificate.md)
+- [GiftCertificateItem](interfaces/GiftCertificateItem.md)
+- [GiftCertificateOrderPayment](interfaces/GiftCertificateOrderPayment.md)
+- [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
+- [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
+- [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
+- [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
+- [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
+- [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
+- [HostedFormOptions](interfaces/HostedFormOptions.md)
+- [HostedInputBlurEvent](interfaces/HostedInputBlurEvent.md)
+- [HostedInputCardTypeChangeEvent](interfaces/HostedInputCardTypeChangeEvent.md)
+- [HostedInputEnterEvent](interfaces/HostedInputEnterEvent.md)
+- [HostedInputFocusEvent](interfaces/HostedInputFocusEvent.md)
+- [HostedInputValidateErrorData](interfaces/HostedInputValidateErrorData.md)
+- [HostedInputValidateErrorDataMap](interfaces/HostedInputValidateErrorDataMap.md)
+- [HostedInputValidateEvent](interfaces/HostedInputValidateEvent.md)
+- [HostedInputValidateResults](interfaces/HostedInputValidateResults.md)
+- [HostedInstrument](interfaces/HostedInstrument.md)
+- [HostedStoredCardFieldOptions](interfaces/HostedStoredCardFieldOptions.md)
+- [HostedStoredCardFieldOptionsMap](interfaces/HostedStoredCardFieldOptionsMap.md)
+- [IbanElementOptions](interfaces/IbanElementOptions.md)
+- [IdealElementOptions](interfaces/IdealElementOptions.md)
+- [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
+- [InitializationStrategy](interfaces/InitializationStrategy.md)
+- [InlineElementStyles](interfaces/InlineElementStyles.md)
+- [InputDetail](interfaces/InputDetail.md)
+- [InputDetail_2](interfaces/InputDetail_2.md)
+- [InputStyles](interfaces/InputStyles.md)
+- [Item](interfaces/Item.md)
+- [Item_2](interfaces/Item_2.md)
+- [Item_3](interfaces/Item_3.md)
+- [KlarnaLoadResponse](interfaces/KlarnaLoadResponse.md)
+- [KlarnaLoadResponse_2](interfaces/KlarnaLoadResponse_2.md)
+- [KlarnaPaymentInitializeOptions](interfaces/KlarnaPaymentInitializeOptions.md)
+- [KlarnaV2PaymentInitializeOptions](interfaces/KlarnaV2PaymentInitializeOptions.md)
+- [LabelStyles](interfaces/LabelStyles.md)
+- [LanguageConfig](interfaces/LanguageConfig.md)
+- [LineItem](interfaces/LineItem.md)
+- [LineItemCategory](interfaces/LineItemCategory.md)
+- [LineItemMap](interfaces/LineItemMap.md)
+- [LineItemOption](interfaces/LineItemOption.md)
+- [LineItemSocialData](interfaces/LineItemSocialData.md)
+- [LinkStyles](interfaces/LinkStyles.md)
+- [LoadingIndicatorStyles](interfaces/LoadingIndicatorStyles.md)
+- [Locales](interfaces/Locales.md)
+- [MasterpassCustomerInitializeOptions](interfaces/MasterpassCustomerInitializeOptions.md)
+- [MasterpassPaymentInitializeOptions](interfaces/MasterpassPaymentInitializeOptions.md)
+- [MolliePaymentInitializeOptions](interfaces/MolliePaymentInitializeOptions.md)
+- [MonerisPaymentInitializeOptions](interfaces/MonerisPaymentInitializeOptions.md)
+- [MonerisStylingProps](interfaces/MonerisStylingProps.md)
+- [NonceGenerationError](interfaces/NonceGenerationError.md)
+- [NonceInstrument](interfaces/NonceInstrument.md)
+- [Option](interfaces/Option.md)
+- [OptionsResponse](interfaces/OptionsResponse.md)
+- [OpyPaymentInitializeOptions](interfaces/OpyPaymentInitializeOptions.md)
+- [Order](interfaces/Order.md)
+- [OrderConsignment](interfaces/OrderConsignment.md)
+- [OrderPayment](interfaces/OrderPayment.md)
+- [OrderPaymentRequestBody](interfaces/OrderPaymentRequestBody.md)
+- [OrderRequestBody](interfaces/OrderRequestBody.md)
+- [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
+- [PasswordRequirements](interfaces/PasswordRequirements.md)
+- [PayPalInstrument](interfaces/PayPalInstrument.md)
+- [PaymentInitializeOptions](interfaces/PaymentInitializeOptions.md)
+- [PaymentMethod](interfaces/PaymentMethod.md)
+- [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
+- [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
+- [PaymentSettings](interfaces/PaymentSettings.md)
+- [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
+- [PaypalButtonStyleOptions](interfaces/PaypalButtonStyleOptions.md)
+- [PaypalButtonStyleOptions_2](interfaces/PaypalButtonStyleOptions_2.md)
+- [PaypalCommerceAlternativeMethodsButtonOptions](interfaces/PaypalCommerceAlternativeMethodsButtonOptions.md)
+- [PaypalCommerceButtonInitializeOptions](interfaces/PaypalCommerceButtonInitializeOptions.md)
+- [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
+- [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/PaypalCommerceFormFieldCardTypeChangeEventData.md)
+- [PaypalCommerceFormFieldKeyboardEventData](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
+- [PaypalCommerceFormFieldOptions](interfaces/PaypalCommerceFormFieldOptions.md)
+- [PaypalCommerceFormFieldStylesMap](interfaces/PaypalCommerceFormFieldStylesMap.md)
+- [PaypalCommerceFormFieldValidateErrorData](interfaces/PaypalCommerceFormFieldValidateErrorData.md)
+- [PaypalCommerceFormFieldValidateEventData](interfaces/PaypalCommerceFormFieldValidateEventData.md)
+- [PaypalCommerceFormFieldsMap](interfaces/PaypalCommerceFormFieldsMap.md)
+- [PaypalCommerceFormOptions](interfaces/PaypalCommerceFormOptions.md)
+- [PaypalCommercePaymentInitializeOptions](interfaces/PaypalCommercePaymentInitializeOptions.md)
+- [PaypalCommerceStoredCardFieldOptions](interfaces/PaypalCommerceStoredCardFieldOptions.md)
+- [PaypalCommerceStoredCardFieldsMap](interfaces/PaypalCommerceStoredCardFieldsMap.md)
+- [PaypalCommerceVenmoButtonInitializeOptions](interfaces/PaypalCommerceVenmoButtonInitializeOptions.md)
+- [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
+- [PaypalFieldsStyleOptions](interfaces/PaypalFieldsStyleOptions.md)
+- [PhysicalItem](interfaces/PhysicalItem.md)
+- [PickupMethod](interfaces/PickupMethod.md)
+- [PickupOptionRequestBody](interfaces/PickupOptionRequestBody.md)
+- [PickupOptionResult](interfaces/PickupOptionResult.md)
+- [Promotion](interfaces/Promotion.md)
+- [Radius](interfaces/Radius.md)
+- [Region](interfaces/Region.md)
+- [RequestOptions](interfaces/RequestOptions.md)
+- [SearchArea](interfaces/SearchArea.md)
+- [SepaPlaceHolder](interfaces/SepaPlaceHolder.md)
+- [SepaPlaceHolder_2](interfaces/SepaPlaceHolder_2.md)
+- [ShippingInitializeOptions](interfaces/ShippingInitializeOptions.md)
+- [ShippingOption](interfaces/ShippingOption.md)
+- [ShippingRequestOptions](interfaces/ShippingRequestOptions.md)
+- [ShopperConfig](interfaces/ShopperConfig.md)
+- [ShopperCurrency](interfaces/ShopperCurrency.md)
+- [SignInEmail](interfaces/SignInEmail.md)
+- [SignInEmailRequestBody](interfaces/SignInEmailRequestBody.md)
+- [SpamProtectionOptions](interfaces/SpamProtectionOptions.md)
+- [SquareFormElement](interfaces/SquareFormElement.md)
+- [SquarePaymentInitializeOptions](interfaces/SquarePaymentInitializeOptions.md)
+- [StepStyles](interfaces/StepStyles.md)
+- [StepTracker](interfaces/StepTracker.md)
+- [StepTrackerConfig](interfaces/StepTrackerConfig.md)
+- [StoreConfig](interfaces/StoreConfig.md)
+- [StoreCurrency](interfaces/StoreCurrency.md)
+- [StoreLinks](interfaces/StoreLinks.md)
+- [StoreProfile](interfaces/StoreProfile.md)
+- [StripeElementCSSProperties](interfaces/StripeElementCSSProperties.md)
+- [StripeElementClasses](interfaces/StripeElementClasses.md)
+- [StripeElementStyle](interfaces/StripeElementStyle.md)
+- [StripeElementStyleVariant](interfaces/StripeElementStyleVariant.md)
+- [StripeUPEPaymentInitializeOptions](interfaces/StripeUPEPaymentInitializeOptions.md)
+- [StripeV3PaymentInitializeOptions](interfaces/StripeV3PaymentInitializeOptions.md)
+- [StyleOptions](interfaces/StyleOptions.md)
+- [StyleOptions_2](interfaces/StyleOptions_2.md)
+- [SubInputDetail](interfaces/SubInputDetail.md)
+- [SubInputDetail_2](interfaces/SubInputDetail_2.md)
+- [Subscriptions](interfaces/Subscriptions.md)
+- [Tax](interfaces/Tax.md)
+- [TextInputStyles](interfaces/TextInputStyles.md)
+- [ThreeDSecure](interfaces/ThreeDSecure.md)
+- [ThreeDSecureToken](interfaces/ThreeDSecureToken.md)
+- [TranslationData](interfaces/TranslationData.md)
+- [Translations](interfaces/Translations.md)
+- [UnknownObject](interfaces/UnknownObject.md)
+- [VaultedInstrument](interfaces/VaultedInstrument.md)
+- [WechatDataPaymentMethodState](interfaces/WechatDataPaymentMethodState.md)
+- [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
+- [WechatState](interfaces/WechatState.md)
+- [WechatState_2](interfaces/WechatState_2.md)
+- [WithAccountCreation](interfaces/WithAccountCreation.md)
+- [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
+- [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
+- [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
+- [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
+- [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
+- [WorldpayPaymentInitializeOptions](interfaces/WorldpayPaymentInitializeOptions.md)
+- [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
+
+### Type aliases
+
+- [AccountInstrument](README.md#accountinstrument)
+- [AddressKey](README.md#addresskey)
+- [AdyenComponentState](README.md#adyencomponentstate)
+- [AdyenV3ComponentState](README.md#adyenv3componentstate)
+- [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
+- [AnalyticStepType](README.md#analyticsteptype)
+- [BraintreeFormFieldBlurEventData](README.md#braintreeformfieldblureventdata)
+- [BraintreeFormFieldEnterEventData](README.md#braintreeformfieldentereventdata)
+- [BraintreeFormFieldFocusEventData](README.md#braintreeformfieldfocuseventdata)
+- [BraintreeFormFieldStyles](README.md#braintreeformfieldstyles)
+- [CheckoutIncludeParam](README.md#checkoutincludeparam)
+- [ComparableCheckout](README.md#comparablecheckout)
+- [ConsignmentAssignmentRequestBody](README.md#consignmentassignmentrequestbody)
+- [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
+- [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
+- [FlashMessageType](README.md#flashmessagetype)
+- [FormFieldFieldType](README.md#formfieldfieldtype)
+- [FormFieldType](README.md#formfieldtype)
+- [GuestCredentials](README.md#guestcredentials)
+- [HostedCreditCardInstrument](README.md#hostedcreditcardinstrument)
+- [HostedFieldBlurEventData](README.md#hostedfieldblureventdata)
+- [HostedFieldCardTypeChangeEventData](README.md#hostedfieldcardtypechangeeventdata)
+- [HostedFieldEnterEventData](README.md#hostedfieldentereventdata)
+- [HostedFieldFocusEventData](README.md#hostedfieldfocuseventdata)
+- [HostedFieldOptionsMap](README.md#hostedfieldoptionsmap)
+- [HostedFieldStyles](README.md#hostedfieldstyles)
+- [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
+- [HostedInputStyles](README.md#hostedinputstyles)
+- [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
+- [Instrument](README.md#instrument)
+- [Omit](README.md#omit)
+- [OrderPaymentInstrument](README.md#orderpaymentinstrument)
+- [OrderPayments](README.md#orderpayments)
+- [PaymentInstrument](README.md#paymentinstrument)
+- [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
+- [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
+- [PaypalCommerceFormFieldFocusEventData](README.md#paypalcommerceformfieldfocuseventdata)
+- [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
+- [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
+- [StripeElementOptions](README.md#stripeelementoptions)
 
 ### Functions
 
-- [mapToInternalAddress](README.md#maptointernaladdress)
-- [mapToInternalCart](README.md#maptointernalcart)
-- [mapToInternalCoupon](README.md#maptointernalcoupon)
-- [mapToInternalCustomer](README.md#maptointernalcustomer)
-- [mapToInternalGiftCertificate](README.md#maptointernalgiftcertificate)
-- [mapToInternalLineItem](README.md#maptointernallineitem)
-- [mapToInternalLineItems](README.md#maptointernallineitems)
-- [mapToInternalOrder](README.md#maptointernalorder)
-- [mapToInternalQuote](README.md#maptointernalquote)
-- [mapToInternalShippingOption](README.md#maptointernalshippingoption)
-- [mapToInternalShippingOptions](README.md#maptointernalshippingoptions)
+- [createCheckoutButtonInitializer](README.md#createcheckoutbuttoninitializer)
+- [createCheckoutService](README.md#createcheckoutservice)
+- [createCurrencyService](README.md#createcurrencyservice)
+- [createEmbeddedCheckoutMessenger](README.md#createembeddedcheckoutmessenger)
+- [createLanguageService](README.md#createlanguageservice)
+- [createStepTracker](README.md#createsteptracker)
+- [embedCheckout](README.md#embedcheckout)
+
+## Type aliases
+
+### AccountInstrument
+
+Ƭ **AccountInstrument**: [`PayPalInstrument`](interfaces/PayPalInstrument.md) \| [`BankInstrument`](interfaces/BankInstrument.md)
+
+___
+
+### AddressKey
+
+Ƭ **AddressKey**: keyof [`Address`](interfaces/Address.md)
+
+___
+
+### AdyenComponentState
+
+Ƭ **AdyenComponentState**: [`CardState`](interfaces/CardState.md) \| [`WechatState`](interfaces/WechatState.md)
+
+___
+
+### AdyenV3ComponentState
+
+Ƭ **AdyenV3ComponentState**: [`CardState_2`](interfaces/CardState_2.md) \| [`WechatState_2`](interfaces/WechatState_2.md)
+
+___
+
+### AmazonPayV2ButtonInitializeOptions
+
+Ƭ **AmazonPayV2ButtonInitializeOptions**: [`AmazonPayV2ButtonParams`](interfaces/AmazonPayV2ButtonParams.md)
+
+The required config to render the AmazonPayV2 buttton.
+
+___
+
+### AnalyticStepType
+
+Ƭ **AnalyticStepType**: ``"customer"`` \| ``"shipping"`` \| ``"billing"`` \| ``"payment"``
+
+___
+
+### BraintreeFormFieldBlurEventData
+
+Ƭ **BraintreeFormFieldBlurEventData**: [`BraintreeFormFieldKeyboardEventData`](interfaces/BraintreeFormFieldKeyboardEventData.md)
+
+___
+
+### BraintreeFormFieldEnterEventData
+
+Ƭ **BraintreeFormFieldEnterEventData**: [`BraintreeFormFieldKeyboardEventData`](interfaces/BraintreeFormFieldKeyboardEventData.md)
+
+___
+
+### BraintreeFormFieldFocusEventData
+
+Ƭ **BraintreeFormFieldFocusEventData**: [`BraintreeFormFieldKeyboardEventData`](interfaces/BraintreeFormFieldKeyboardEventData.md)
+
+___
+
+### BraintreeFormFieldStyles
+
+Ƭ **BraintreeFormFieldStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+
+___
+
+### CheckoutIncludeParam
+
+Ƭ **CheckoutIncludeParam**: { [key in CheckoutIncludes]?: boolean }
+
+___
+
+### ComparableCheckout
+
+Ƭ **ComparableCheckout**: `Pick`<[`Checkout`](interfaces/Checkout.md), ``"outstandingBalance"`` \| ``"coupons"`` \| ``"giftCertificates"``\> & { `cart`: `Partial`<[`Cart`](interfaces/Cart.md)\>  }
+
+___
+
+### ConsignmentAssignmentRequestBody
+
+Ƭ **ConsignmentAssignmentRequestBody**: [`ConsignmentAssignmentBaseRequestBodyWithShippingAddress`](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md) \| [`ConsignmentAssignmentBaseRequestBodyWithAddress`](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
+
+___
+
+### ConsignmentsRequestBody
+
+Ƭ **ConsignmentsRequestBody**: [`ConsignmentCreateRequestBody`](interfaces/ConsignmentCreateRequestBody.md)[]
+
+___
+
+### CustomerAddressRequestBody
+
+Ƭ **CustomerAddressRequestBody**: [`AddressRequestBody`](interfaces/AddressRequestBody.md)
+
+___
+
+### FlashMessageType
+
+Ƭ **FlashMessageType**: ``"error"`` \| ``"info"`` \| ``"warning"`` \| ``"success"``
+
+___
+
+### FormFieldFieldType
+
+Ƭ **FormFieldFieldType**: ``"checkbox"`` \| ``"date"`` \| ``"text"`` \| ``"dropdown"`` \| ``"password"`` \| ``"radio"`` \| ``"multiline"``
+
+___
+
+### FormFieldType
+
+Ƭ **FormFieldType**: ``"array"`` \| ``"date"`` \| ``"integer"`` \| ``"string"``
+
+___
+
+### GuestCredentials
+
+Ƭ **GuestCredentials**: `Partial`<[`Subscriptions`](interfaces/Subscriptions.md)\> & { `email`: `string` ; `id?`: `string`  }
+
+___
+
+### HostedCreditCardInstrument
+
+Ƭ **HostedCreditCardInstrument**: [`Omit`](README.md#omit)<[`CreditCardInstrument`](interfaces/CreditCardInstrument.md), ``"ccExpiry"`` \| ``"ccName"`` \| ``"ccNumber"`` \| ``"ccCvv"``\>
+
+___
+
+### HostedFieldBlurEventData
+
+Ƭ **HostedFieldBlurEventData**: [`HostedInputBlurEvent`](interfaces/HostedInputBlurEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldCardTypeChangeEventData
+
+Ƭ **HostedFieldCardTypeChangeEventData**: [`HostedInputCardTypeChangeEvent`](interfaces/HostedInputCardTypeChangeEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldEnterEventData
+
+Ƭ **HostedFieldEnterEventData**: [`HostedInputEnterEvent`](interfaces/HostedInputEnterEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldFocusEventData
+
+Ƭ **HostedFieldFocusEventData**: [`HostedInputFocusEvent`](interfaces/HostedInputFocusEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldOptionsMap
+
+Ƭ **HostedFieldOptionsMap**: [`HostedCardFieldOptionsMap`](interfaces/HostedCardFieldOptionsMap.md) \| [`HostedStoredCardFieldOptionsMap`](interfaces/HostedStoredCardFieldOptionsMap.md)
+
+___
+
+### HostedFieldStyles
+
+Ƭ **HostedFieldStyles**: [`HostedInputStyles`](README.md#hostedinputstyles)
+
+___
+
+### HostedFieldValidateEventData
+
+Ƭ **HostedFieldValidateEventData**: [`HostedInputValidateEvent`](interfaces/HostedInputValidateEvent.md)[``"payload"``]
+
+___
+
+### HostedInputStyles
+
+Ƭ **HostedInputStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+
+___
+
+### HostedVaultedInstrument
+
+Ƭ **HostedVaultedInstrument**: [`Omit`](README.md#omit)<[`VaultedInstrument`](interfaces/VaultedInstrument.md), ``"ccNumber"`` \| ``"ccCvv"``\>
+
+___
+
+### Instrument
+
+Ƭ **Instrument**: [`CardInstrument`](interfaces/CardInstrument.md)
+
+___
+
+### Omit
+
+Ƭ **Omit**<`T`, `K`\>: `Pick`<`T`, `Exclude`<keyof `T`, `K`\>\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | `T` |
+| `K` | extends keyof `T` |
+
+___
+
+### OrderPaymentInstrument
+
+Ƭ **OrderPaymentInstrument**: [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) \| [`HostedCreditCardInstrument`](README.md#hostedcreditcardinstrument) \| [`HostedVaultedInstrument`](README.md#hostedvaultedinstrument) \| [`NonceInstrument`](interfaces/NonceInstrument.md) \| [`VaultedInstrument`](interfaces/VaultedInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithDocumentInstrument`](interfaces/WithDocumentInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomFawryInstrument`](interfaces/WithCheckoutcomFawryInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomSEPAInstrument`](interfaces/WithCheckoutcomSEPAInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomiDealInstrument`](interfaces/WithCheckoutcomiDealInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) & [`WithMollieIssuerInstrument`](interfaces/WithMollieIssuerInstrument.md) \| [`WithAccountCreation`](interfaces/WithAccountCreation.md)
+
+___
+
+### OrderPayments
+
+Ƭ **OrderPayments**: ([`GatewayOrderPayment`](interfaces/GatewayOrderPayment.md) \| [`GiftCertificateOrderPayment`](interfaces/GiftCertificateOrderPayment.md))[]
+
+___
+
+### PaymentInstrument
+
+Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
+
+___
+
+### PaypalCommerceFormFieldBlurEventData
+
+Ƭ **PaypalCommerceFormFieldBlurEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
+
+___
+
+### PaypalCommerceFormFieldEnterEventData
+
+Ƭ **PaypalCommerceFormFieldEnterEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
+
+___
+
+### PaypalCommerceFormFieldFocusEventData
+
+Ƭ **PaypalCommerceFormFieldFocusEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
+
+___
+
+### PaypalCommerceFormFieldStyles
+
+Ƭ **PaypalCommerceFormFieldStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
+
+___
+
+### PaypalCommerceInitializeOptions
+
+Ƭ **PaypalCommerceInitializeOptions**: [`PaypalCommercePaymentInitializeOptions`](interfaces/PaypalCommercePaymentInitializeOptions.md) \| [`PaypalCommerceCreditCardPaymentInitializeOptions`](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
+
+A set of options that are required to initialize the PayPal Commerce payment
+method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
+
+___
+
+### StripeElementOptions
+
+Ƭ **StripeElementOptions**: [`CardElementOptions`](interfaces/CardElementOptions.md) \| [`CardExpiryElementOptions`](interfaces/CardExpiryElementOptions.md) \| [`CardNumberElementOptions`](interfaces/CardNumberElementOptions.md) \| [`CardCvcElementOptions`](interfaces/CardCvcElementOptions.md) \| [`IdealElementOptions`](interfaces/IdealElementOptions.md) \| [`IbanElementOptions`](interfaces/IbanElementOptions.md) \| [`ZipCodeElementOptions`](interfaces/ZipCodeElementOptions.md)
 
 ## Functions
 
-### mapToInternalAddress
+### createCheckoutButtonInitializer
 
-▸ **mapToInternalAddress**(`address`, `consignments?`): `InternalAddress`<`any`\>
+▸ **createCheckoutButtonInitializer**(`options?`): [`CheckoutButtonInitializer`](classes/CheckoutButtonInitializer.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Creates an instance of `CheckoutButtonInitializer`.
+
+**`remarks`**
+```js
+const initializer = createCheckoutButtonInitializer();
+
+initializer.initializeButton({
+    methodId: 'braintreepaypal',
+    braintreepaypal: {
+        container: '#checkoutButton',
+    },
+});
+```
+
+**`alpha`**
+Please note that `CheckoutButtonInitializer` is currently in an early stage
+of development. Therefore the API is unstable and not ready for public
+consumption.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `address` | `Address` \| `BillingAddress` |
-| `consignments?` | `Consignment`[] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | [`CheckoutButtonInitializerOptions`](interfaces/CheckoutButtonInitializerOptions.md) | A set of construction options. |
 
 #### Returns
 
-`InternalAddress`<`any`\>
+[`CheckoutButtonInitializer`](classes/CheckoutButtonInitializer.md)
+
+an instance of `CheckoutButtonInitializer`.
 
 ___
 
-### mapToInternalCart
+### createCheckoutService
 
-▸ **mapToInternalCart**(`checkout`): `InternalCart`
+▸ **createCheckoutService**(`options?`): [`CheckoutService`](classes/CheckoutService.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Creates an instance of `CheckoutService`.
+
+**`remarks`**
+```js
+const service = createCheckoutService();
+
+service.subscribe(state => {
+    console.log(state);
+});
+
+service.loadCheckout();
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `checkout` | `Checkout` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | [`CheckoutServiceOptions`](interfaces/CheckoutServiceOptions.md) | A set of construction options. |
 
 #### Returns
 
-`InternalCart`
+[`CheckoutService`](classes/CheckoutService.md)
+
+an instance of `CheckoutService`.
 
 ___
 
-### mapToInternalCoupon
+### createCurrencyService
 
-▸ **mapToInternalCoupon**(`coupon`): `InternalCoupon`
+▸ **createCurrencyService**(`config`): [`CurrencyService`](classes/CurrencyService.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Creates an instance of `CurrencyService`.
+
+**`remarks`**
+```js
+const { data } = checkoutService.getState();
+const config = data.getConfig();
+const checkout = data.getCheckout();
+const currencyService = createCurrencyService(config);
+
+currencyService.toStoreCurrency(checkout.grandTotal);
+currencyService.toCustomerCurrency(checkout.grandTotal);
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `coupon` | `Coupon` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `config` | [`StoreConfig`](interfaces/StoreConfig.md) | The config object containing the currency configuration |
 
 #### Returns
 
-`InternalCoupon`
+[`CurrencyService`](classes/CurrencyService.md)
+
+an instance of `CurrencyService`.
 
 ___
 
-### mapToInternalCustomer
+### createEmbeddedCheckoutMessenger
 
-▸ **mapToInternalCustomer**(`customer`, `billingAddress`): `InternalCustomer`
+▸ **createEmbeddedCheckoutMessenger**(`options`): [`EmbeddedCheckoutMessenger`](interfaces/EmbeddedCheckoutMessenger.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Create an instance of `EmbeddedCheckoutMessenger`.
+
+**`remarks`**
+The object is responsible for posting messages to the parent window from the
+iframe when certain events have occurred. For example, when the checkout
+form is first loaded, you should notify the parent window about it.
+
+The iframe can only be embedded in domains that are allowed by the store.
+
+```ts
+const messenger = createEmbeddedCheckoutMessenger({
+    parentOrigin: 'https://some/website',
+});
+
+messenger.postFrameLoaded();
+```
+
+**`alpha`**
+Please note that this feature is currently in an early stage of development.
+Therefore the API is unstable and not ready for public consumption.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `customer` | `Customer` |
-| `billingAddress` | `BillingAddress` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`EmbeddedCheckoutMessengerOptions`](interfaces/EmbeddedCheckoutMessengerOptions.md) | Options for creating `EmbeddedCheckoutMessenger` |
 
 #### Returns
 
-`InternalCustomer`
+[`EmbeddedCheckoutMessenger`](interfaces/EmbeddedCheckoutMessenger.md)
+
+- An instance of `EmbeddedCheckoutMessenger`
 
 ___
 
-### mapToInternalGiftCertificate
+### createLanguageService
 
-▸ **mapToInternalGiftCertificate**(`giftCertificate`): `InternalGiftCertificate`
+▸ **createLanguageService**(`config?`): [`LanguageService`](classes/LanguageService.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Creates an instance of `LanguageService`.
+
+**`remarks`**
+```js
+const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+const service = createLanguageService(language);
+
+console.log(service.translate('address.city_label'));
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `giftCertificate` | `GiftCertificate` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `config?` | `Partial`<[`LanguageConfig`](interfaces/LanguageConfig.md)\> | A configuration object. |
 
 #### Returns
 
-`InternalGiftCertificate`
+[`LanguageService`](classes/LanguageService.md)
+
+An instance of `LanguageService`.
 
 ___
 
-### mapToInternalLineItem
+### createStepTracker
 
-▸ **mapToInternalLineItem**(`item`, `type`, `decimalPlaces`, `idKey?`): `InternalLineItem`
+▸ **createStepTracker**(`checkoutService`, `stepTrackerConfig?`): [`StepTracker`](interfaces/StepTracker.md)
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Creates an instance of `StepTracker`.
+
+**`remarks`**
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const stepTracker = createStepTracker(checkoutService);
+
+stepTracker.trackCheckoutStarted();
+```
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `item` | `LineItem` |
-| `type` | `string` |
-| `decimalPlaces` | `number` |
-| `idKey?` | ``"id"`` \| ``"variantId"`` \| ``"productId"`` \| ``"sku"`` \| ``"name"`` \| ``"url"`` \| ``"quantity"`` \| ``"brand"`` \| ``"categoryNames"`` \| ``"categories"`` \| ``"isTaxable"`` \| ``"imageUrl"`` \| ``"discounts"`` \| ``"discountAmount"`` \| ``"couponAmount"`` \| ``"listPrice"`` \| ``"salePrice"`` \| ``"comparisonPrice"`` \| ``"extendedListPrice"`` \| ``"extendedSalePrice"`` \| ``"extendedComparisonPrice"`` \| ``"socialMedia"`` \| ``"options"`` \| ``"addedByPromotion"`` \| ``"parentId"`` |
+| `checkoutService` | [`CheckoutService`](classes/CheckoutService.md) |
+| `stepTrackerConfig?` | [`StepTrackerConfig`](interfaces/StepTrackerConfig.md) |
 
 #### Returns
 
-`InternalLineItem`
+[`StepTracker`](interfaces/StepTracker.md)
+
+an instance of `StepTracker`.
 
 ___
 
-### mapToInternalLineItems
+### embedCheckout
 
-▸ **mapToInternalLineItems**(`itemMap`, `decimalPlaces`, `idKey?`): `InternalLineItem`[]
+▸ **embedCheckout**(`options`): `Promise`<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
 
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+Embed the checkout form in an iframe.
 
-#### Parameters
+**`remarks`**
+Once the iframe is embedded, it will automatically resize according to the
+size of the checkout form. It will also notify the parent window when certain
+events have occurred. i.e.: when the form is loaded and ready to be used.
 
-| Name | Type |
-| :------ | :------ |
-| `itemMap` | `LineItemMap` |
-| `decimalPlaces` | `number` |
-| `idKey?` | ``"id"`` \| ``"variantId"`` \| ``"productId"`` \| ``"sku"`` \| ``"name"`` \| ``"url"`` \| ``"quantity"`` \| ``"brand"`` \| ``"categoryNames"`` \| ``"categories"`` \| ``"isTaxable"`` \| ``"imageUrl"`` \| ``"discounts"`` \| ``"discountAmount"`` \| ``"couponAmount"`` \| ``"listPrice"`` \| ``"salePrice"`` \| ``"comparisonPrice"`` \| ``"extendedListPrice"`` \| ``"extendedSalePrice"`` \| ``"extendedComparisonPrice"`` \| ``"socialMedia"`` \| ``"options"`` \| ``"addedByPromotion"`` \| ``"parentId"`` |
-
-#### Returns
-
-`InternalLineItem`[]
-
-___
-
-### mapToInternalOrder
-
-▸ **mapToInternalOrder**(`order`, `orderMeta?`): `InternalOrder`
-
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
+```js
+embedCheckout({
+    url: 'https://checkout/url',
+    containerId: 'container-id',
+});
+```
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `order` | `Order` |
-| `orderMeta?` | `OrderMetaState` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`EmbeddedCheckoutOptions`](interfaces/EmbeddedCheckoutOptions.md) | Options for embedding the checkout form. |
 
 #### Returns
 
-`InternalOrder`
+`Promise`<[`EmbeddedCheckout`](classes/EmbeddedCheckout.md)\>
 
-___
-
-### mapToInternalQuote
-
-▸ **mapToInternalQuote**(`checkout`, `shippingAddress?`): `InternalQuote`
-
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `checkout` | `Checkout` |
-| `shippingAddress?` | `Address` |
-
-#### Returns
-
-`InternalQuote`
-
-___
-
-### mapToInternalShippingOption
-
-▸ **mapToInternalShippingOption**(`option`, `isSelected`): `InternalShippingOption`
-
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `option` | `ShippingOption` |
-| `isSelected` | `boolean` |
-
-#### Returns
-
-`InternalShippingOption`
-
-___
-
-### mapToInternalShippingOptions
-
-▸ **mapToInternalShippingOptions**(`consignments`): `InternalShippingOptionList`
-
-**`deprecated`** This mapper is only for internal use only. It is required during
-the transition period as we are moving to adopt the new storefront API object
-schema.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `consignments` | `Consignment`[] |
-
-#### Returns
-
-`InternalShippingOptionList`
+A promise that resolves to an instance of `EmbeddedCheckout`.
