@@ -7,11 +7,11 @@ the current checkout flow.
 
 ## Hierarchy
 
-- [`RequestOptions`](RequestOptions.md)
+- [`RequestOptions_2`](RequestOptions_2.md)
 
   ↳ **`PaymentRequestOptions`**
 
-  ↳↳ [`PaymentInitializeOptions`](PaymentInitializeOptions.md)
+  ↳↳ [`PaymentInitializeOptions_3`](PaymentInitializeOptions_3.md)
 
 ## Table of contents
 
@@ -50,7 +50,7 @@ The parameters of the request, if required.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[params](RequestOptions.md#params)
+[RequestOptions_2](RequestOptions_2.md).[params](RequestOptions_2.md#params)
 
 ___
 
@@ -64,4 +64,4 @@ cancelled.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+[RequestOptions_2](RequestOptions_2.md).[timeout](RequestOptions_2.md#timeout)

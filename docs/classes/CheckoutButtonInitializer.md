@@ -39,7 +39,7 @@ await service.deinitializeButton({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`CheckoutButtonOptions`](../interfaces/CheckoutButtonOptions.md) | Options for deinitializing the checkout button. |
+| `options` | [`CheckoutButtonOptions_2`](../interfaces/CheckoutButtonOptions_2.md) | Options for deinitializing the checkout button. |
 
 #### Returns
 
@@ -95,7 +95,7 @@ initializer.initializeButton({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`CheckoutButtonInitializeOptions`](../interfaces/CheckoutButtonInitializeOptions.md) | Options for initializing the checkout button. |
+| `options` | [`CheckoutButtonInitializeOptions`](../README.md#checkoutbuttoninitializeoptions) | Options for initializing the checkout button. |
 
 #### Returns
 

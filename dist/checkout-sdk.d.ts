@@ -1,5 +1,5 @@
 /// <reference types="applepayjs" />
-import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
+import { RequestOptions as RequestOptions_3 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
@@ -774,6 +774,23 @@ declare interface ApplePayButtonInitializeOptions {
 }
 
 /**
+ * A set of options that are required to initialize ApplePay in cart.
+ *
+ * When ApplePay is initialized, an ApplePay button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface ApplePayButtonInitializeOptions_2 {
+    /**
+     * The class name of the ApplePay button style.
+     */
+    buttonClassName?: string;
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void;
+}
+
+/**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support ApplePay.
  *
@@ -781,6 +798,39 @@ declare interface ApplePayButtonInitializeOptions {
  * DOM. When the customer clicks on it, it will trigger apple sheet
  */
 declare interface ApplePayCustomerInitializeOptions {
+    /**
+     * The ID of a container which the sign-in button should insert into.
+     */
+    container: string;
+    /**
+     * Shipping label to be passed to apple sheet.
+     */
+    shippingLabel?: string;
+    /**
+     * Sub total label to be passed to apple sheet.
+     */
+    subtotalLabel?: string;
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout in order to support ApplePay.
+ *
+ * When ApplePay is initialized, a sign-in button will be inserted into the
+ * DOM. When the customer clicks on it, it will trigger apple sheet
+ */
+declare interface ApplePayCustomerInitializeOptions_2 {
     /**
      * The ID of a container which the sign-in button should insert into.
      */
@@ -822,6 +872,32 @@ declare interface ApplePayCustomerInitializeOptions {
  * ```
  */
 declare interface ApplePayPaymentInitializeOptions {
+    /**
+     * Shipping label to be passed to apple sheet.
+     */
+    shippingLabel?: string;
+    /**
+     * Sub total label to be passed to apple sheet.
+     */
+    subtotalLabel?: string;
+}
+
+/**
+ * A set of options that are required to initialize the Applepay payment method with:
+ *
+ * 1) ApplePay:
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'applepay',
+ *     applepay: {
+ *         shippingLabel: 'Shipping',
+ *         subtotalLabel: 'Sub total',
+ *     }
+ * });
+ * ```
+ */
+declare interface ApplePayPaymentInitializeOptions_2 {
     /**
      * Shipping label to be passed to apple sheet.
      */
@@ -1650,12 +1726,24 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+declare type CheckoutButtonInitializeOptions = CheckoutButtonInitializeOptions_2 & CheckoutButtonInitializeOptions_4;
+
+declare type CheckoutButtonInitializeOptions_2 = CheckoutButtonInitializeOptions_3 & WithApplePayButtonInitializeOptions;
+
+declare interface CheckoutButtonInitializeOptions_3 extends CheckoutButtonOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
+    containerId: string;
+    [key: string]: unknown;
+}
+
+declare interface CheckoutButtonInitializeOptions_4 extends CheckoutButtonOptions_2 {
     /**
      * The options that are required to initialize the ApplePay payment method.
      * They can be omitted unless you need to support ApplePay in cart.
      */
-    applepay?: ApplePayButtonInitializeOptions;
+    applepay?: ApplePayButtonInitializeOptions_2;
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
@@ -1829,7 +1917,7 @@ declare class CheckoutButtonInitializer {
      * @param options - Options for deinitializing the checkout button.
      * @returns A promise that resolves to the current state.
      */
-    deinitializeButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors>;
+    deinitializeButton(options: CheckoutButtonOptions_2): Promise<CheckoutButtonSelectors>;
 }
 
 declare interface CheckoutButtonInitializerOptions {
@@ -1862,7 +1950,17 @@ declare enum CheckoutButtonMethodType {
 /**
  * The set of options for configuring the checkout button.
  */
-declare interface CheckoutButtonOptions extends RequestOptions {
+declare interface CheckoutButtonOptions extends RequestOptions_2 {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+}
+
+/**
+ * The set of options for configuring the checkout button.
+ */
+declare interface CheckoutButtonOptions_2 extends RequestOptions {
     /**
      * The identifier of the payment method.
      */
@@ -2188,7 +2286,7 @@ declare class CheckoutService {
      * @param options - Options for deinitializing the payment step of checkout.
      * @returns A promise that resolves to the current state.
      */
-    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors>;
+    deinitializePayment(options: PaymentRequestOptions_2): Promise<CheckoutSelectors>;
     /**
      * Loads a list of countries available for billing.
      *
@@ -2320,7 +2418,7 @@ declare class CheckoutService {
      * @param options - Options for deinitializing the customer step of checkout.
      * @returns A promise that resolves to the current state.
      */
-    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    deinitializeCustomer(options?: CustomerRequestOptions_2): Promise<CheckoutSelectors>;
     /**
      * Sends a email that contains a single-use sign-in link. When a valid links is clicked,
      * signs in the customer without requiring any password, redirecting them to the account page if no redirectUrl is provided.
@@ -2428,7 +2526,7 @@ declare class CheckoutService {
      * @param options - Options for signing in the customer.
      * @returns A promise that resolves to the current state.
      */
-    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions_2): Promise<CheckoutSelectors>;
     /**
      * Signs out the current customer if they are previously signed in.
      *
@@ -2458,7 +2556,7 @@ declare class CheckoutService {
      * @param options - Options for signing out the customer.
      * @returns A promise that resolves to the current state.
      */
-    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signOutCustomer(options?: CustomerRequestOptions_2): Promise<CheckoutSelectors>;
     /**
      * Executes custom checkout of the priority payment method.
      *
@@ -4069,6 +4167,14 @@ declare interface CustomerGroup {
     name: string;
 }
 
+declare type CustomerInitializeOptions = CustomerInitializeOptions_2 & CustomerInitializeOptions_4;
+
+declare type CustomerInitializeOptions_2 = CustomerInitializeOptions_3 & WithApplePayCustomerInitializeOptions;
+
+declare interface CustomerInitializeOptions_3 extends CustomerRequestOptions {
+    [key: string]: unknown;
+}
+
 /**
  * A set of options that are required to initialize the customer step of the
  * current checkout flow.
@@ -4078,7 +4184,7 @@ declare interface CustomerGroup {
  * using their sign-in button. As a result, you may need to provide additional
  * information in order to initialize the customer step of checkout.
  */
-declare interface CustomerInitializeOptions extends CustomerRequestOptions {
+declare interface CustomerInitializeOptions_4 extends CustomerRequestOptions_2 {
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Amazon Pay.
@@ -4093,7 +4199,7 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the customer step of checkout
      * when using ApplePay.
      */
-    applepay?: ApplePayCustomerInitializeOptions;
+    applepay?: ApplePayCustomerInitializeOptions_2;
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Visa Checkout provided by Braintree.
@@ -4168,6 +4274,10 @@ declare interface CustomerPasswordRequirements {
     description: string;
 }
 
+declare interface CustomerRequestOptions extends RequestOptions_3 {
+    methodId?: string;
+}
+
 /**
  * A set of options for configuring any requests related to the customer step of
  * the current checkout flow.
@@ -4176,7 +4286,7 @@ declare interface CustomerPasswordRequirements {
  * need to indicate the method you want to use if you need to trigger a specific
  * flow for signing in or out a customer. Otherwise, these options are not required.
  */
-declare interface CustomerRequestOptions extends RequestOptions {
+declare interface CustomerRequestOptions_2 extends RequestOptions {
     methodId?: string;
 }
 
@@ -4452,7 +4562,7 @@ declare interface EmbeddedContentOptions {
  * to execution method.
  *
  */
-declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
+declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions_2 {
     continueWithCheckoutCallback?(): void;
 }
 
@@ -5599,11 +5709,19 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
+declare type PaymentInitializeOptions = PaymentInitializeOptions_2 & PaymentInitializeOptions_4;
+
+declare type PaymentInitializeOptions_2 = PaymentInitializeOptions_3 & WithApplePayPaymentInitializeOptions;
+
+declare interface PaymentInitializeOptions_3 extends PaymentRequestOptions {
+    [key: string]: unknown;
+}
+
 /**
  * A set of options that are required to initialize the payment step of the
  * current checkout flow.
  */
-declare interface PaymentInitializeOptions extends PaymentRequestOptions {
+declare interface PaymentInitializeOptions_4 extends PaymentRequestOptions_2 {
     /**
      * @alpha
      * Please note that this option is currently in an early stage of
@@ -5630,7 +5748,7 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the Apple Pay payment
      * method. They can be omitted unless you need to support AmazonPay.
      */
-    applepay?: ApplePayPaymentInitializeOptions;
+    applepay?: ApplePayPaymentInitializeOptions_2;
     /**
      * The options that are required to initialize the AmazonPayV2 payment
      * method. They can be omitted unless you need to support AmazonPayV2.
@@ -5814,7 +5932,24 @@ declare interface PaymentMethodConfig {
  * The set of options for configuring any requests related to the payment step of
  * the current checkout flow.
  */
-declare interface PaymentRequestOptions extends RequestOptions {
+declare interface PaymentRequestOptions extends RequestOptions_2 {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Adyen and Klarna.
+     */
+    gatewayId?: string;
+}
+
+/**
+ * The set of options for configuring any requests related to the payment step of
+ * the current checkout flow.
+ */
+declare interface PaymentRequestOptions_2 extends RequestOptions {
     /**
      * The identifier of the payment method.
      */
@@ -6406,6 +6541,22 @@ declare interface RequestOptions<TParams = {}> {
     params?: TParams;
 }
 
+/**
+ * A set of options for configuring an asynchronous request.
+ */
+declare interface RequestOptions_2<TParams = {}> {
+    /**
+     * Provide this option if you want to cancel or time out the request. If the
+     * timeout object completes before the request, the request will be
+     * cancelled.
+     */
+    timeout?: Timeout;
+    /**
+     * The parameters of the request, if required.
+     */
+    params?: TParams;
+}
+
 declare interface SearchArea {
     radius: Radius;
     coordinates: Coordinates;
@@ -6492,7 +6643,7 @@ declare interface SignInEmailRequestBody {
 /**
  * The set of options for configuring any requests related to spam protection.
  */
-declare interface SpamProtectionOptions extends RequestOptions_2 {
+declare interface SpamProtectionOptions extends RequestOptions_3 {
     /**
      * The container ID where the spam protection should be rendered.
      */
@@ -7087,6 +7238,18 @@ declare interface WechatState_2 {
 
 declare interface WithAccountCreation {
     shouldCreateAccount?: boolean;
+}
+
+declare interface WithApplePayButtonInitializeOptions {
+    applepay?: ApplePayButtonInitializeOptions;
+}
+
+declare interface WithApplePayCustomerInitializeOptions {
+    applepay?: ApplePayCustomerInitializeOptions;
+}
+
+declare interface WithApplePayPaymentInitializeOptions {
+    applepay?: ApplePayPaymentInitializeOptions;
 }
 
 declare interface WithCheckoutcomFawryInstrument {

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.271.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.271.0...v1.271.1) (2022-07-28)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6781 Add missing exports ([3e9bec0](https://github.com/bigcommerce/checkout-sdk-js/commit/3e9bec04acc8819b7dade69e176f6b0f5fb2b1e2))
+* **checkout:** CHECKOUT-6781 Fix incorrect file path ([3718554](https://github.com/bigcommerce/checkout-sdk-js/commit/37185542ff8b04002ad29c14c2f0477f17cad0e1))
+* **checkout:** CHECKOUT-6781 Fix member pattern for button strategies ([fcc22bc](https://github.com/bigcommerce/checkout-sdk-js/commit/fcc22bc1534bbcb54ffdb0fccc19b91a3ae519db))
+
+
+### Code Refactoring
+
+* **common:** CHECKOUT-6781 Remove redundant logs ([0fc2cf5](https://github.com/bigcommerce/checkout-sdk-js/commit/0fc2cf5807496accc23970ebebf53a4a131a9f12))
+
 ## [1.271.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.270.0...v1.271.0) (2022-07-26)
 
 

@@ -379,7 +379,7 @@ await service.deinitializeCustomer({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options?` | [`CustomerRequestOptions`](../interfaces/CustomerRequestOptions.md) | Options for deinitializing the customer step of checkout. |
+| `options?` | [`CustomerRequestOptions_2`](../interfaces/CustomerRequestOptions_2.md) | Options for deinitializing the customer step of checkout. |
 
 #### Returns
 
@@ -410,7 +410,7 @@ await service.deinitializePayment({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`PaymentRequestOptions`](../interfaces/PaymentRequestOptions.md) | Options for deinitializing the payment step of checkout. |
+| `options` | [`PaymentRequestOptions_2`](../interfaces/PaymentRequestOptions_2.md) | Options for deinitializing the payment step of checkout. |
 
 #### Returns
 
@@ -661,7 +661,7 @@ await service.initializeCustomer({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options?` | [`CustomerInitializeOptions`](../interfaces/CustomerInitializeOptions.md) | Options for initializing the customer step of checkout. |
+| `options?` | [`CustomerInitializeOptions`](../README.md#customerinitializeoptions) | Options for initializing the customer step of checkout. |
 
 #### Returns
 
@@ -695,7 +695,7 @@ await service.initializePayment({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`PaymentInitializeOptions`](../interfaces/PaymentInitializeOptions.md) | Options for initializing the payment step of checkout. |
+| `options` | [`PaymentInitializeOptions`](../README.md#paymentinitializeoptions) | Options for initializing the payment step of checkout. |
 
 #### Returns
 
@@ -1274,7 +1274,7 @@ console.log(state.data.getCustomer());
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `credentials` | [`CustomerCredentials`](../interfaces/CustomerCredentials.md) | The credentials to be used for signing in the customer. |
-| `options?` | [`CustomerRequestOptions`](../interfaces/CustomerRequestOptions.md) | Options for signing in the customer. |
+| `options?` | [`CustomerRequestOptions_2`](../interfaces/CustomerRequestOptions_2.md) | Options for signing in the customer. |
 
 #### Returns
 
@@ -1317,7 +1317,7 @@ try {
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options?` | [`CustomerRequestOptions`](../interfaces/CustomerRequestOptions.md) | Options for signing out the customer. |
+| `options?` | [`CustomerRequestOptions_2`](../interfaces/CustomerRequestOptions_2.md) | Options for signing out the customer. |
 
 #### Returns
 

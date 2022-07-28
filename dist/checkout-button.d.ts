@@ -129,6 +129,23 @@ declare interface ApplePayButtonInitializeOptions {
     onPaymentAuthorize(): void;
 }
 
+/**
+ * A set of options that are required to initialize ApplePay in cart.
+ *
+ * When ApplePay is initialized, an ApplePay button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface ApplePayButtonInitializeOptions_2 {
+    /**
+     * The class name of the ApplePay button style.
+     */
+    buttonClassName?: string;
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void;
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -225,12 +242,24 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+declare type CheckoutButtonInitializeOptions = CheckoutButtonInitializeOptions_2 & CheckoutButtonInitializeOptions_4;
+
+declare type CheckoutButtonInitializeOptions_2 = CheckoutButtonInitializeOptions_3 & WithApplePayButtonInitializeOptions;
+
+declare interface CheckoutButtonInitializeOptions_3 extends CheckoutButtonOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
+    containerId: string;
+    [key: string]: unknown;
+}
+
+declare interface CheckoutButtonInitializeOptions_4 extends CheckoutButtonOptions_2 {
     /**
      * The options that are required to initialize the ApplePay payment method.
      * They can be omitted unless you need to support ApplePay in cart.
      */
-    applepay?: ApplePayButtonInitializeOptions;
+    applepay?: ApplePayButtonInitializeOptions_2;
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
@@ -404,7 +433,7 @@ declare class CheckoutButtonInitializer {
      * @param options - Options for deinitializing the checkout button.
      * @returns A promise that resolves to the current state.
      */
-    deinitializeButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors>;
+    deinitializeButton(options: CheckoutButtonOptions_2): Promise<CheckoutButtonSelectors>;
 }
 
 declare interface CheckoutButtonInitializerOptions {
@@ -438,6 +467,16 @@ declare enum CheckoutButtonMethodType {
  * The set of options for configuring the checkout button.
  */
 declare interface CheckoutButtonOptions extends RequestOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+}
+
+/**
+ * The set of options for configuring the checkout button.
+ */
+declare interface CheckoutButtonOptions_2 extends RequestOptions_2 {
     /**
      * The identifier of the payment method.
      */
@@ -610,6 +649,22 @@ declare interface RequestOptions<TParams = {}> {
 }
 
 /**
+ * A set of options for configuring an asynchronous request.
+ */
+declare interface RequestOptions_2<TParams = {}> {
+    /**
+     * Provide this option if you want to cancel or time out the request. If the
+     * timeout object completes before the request, the request will be
+     * cancelled.
+     */
+    timeout?: Timeout;
+    /**
+     * The parameters of the request, if required.
+     */
+    params?: TParams;
+}
+
+/**
  * This error type should not be constructed directly. It is a base class for
  * all custom errors thrown in this library.
  */
@@ -643,6 +698,10 @@ declare enum StyleButtonLayout {
 declare enum StyleButtonShape {
     pill = "pill",
     rect = "rect"
+}
+
+declare interface WithApplePayButtonInitializeOptions {
+    applepay?: ApplePayButtonInitializeOptions;
 }
 
 /**

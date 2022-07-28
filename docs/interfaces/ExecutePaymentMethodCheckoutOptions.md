@@ -13,7 +13,7 @@ to execution method.
 
 ## Hierarchy
 
-- [`CustomerRequestOptions`](CustomerRequestOptions.md)
+- [`CustomerRequestOptions_2`](CustomerRequestOptions_2.md)
 
   ↳ **`ExecutePaymentMethodCheckoutOptions`**
 
@@ -37,7 +37,7 @@ to execution method.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[methodId](CustomerRequestOptions.md#methodid)
+[CustomerRequestOptions_2](CustomerRequestOptions_2.md).[methodId](CustomerRequestOptions_2.md#methodid)
 
 ___
 
@@ -49,7 +49,7 @@ The parameters of the request, if required.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[params](CustomerRequestOptions.md#params)
+[CustomerRequestOptions_2](CustomerRequestOptions_2.md).[params](CustomerRequestOptions_2.md#params)
 
 ___
 
@@ -63,7 +63,7 @@ cancelled.
 
 #### Inherited from
 
-[CustomerRequestOptions](CustomerRequestOptions.md).[timeout](CustomerRequestOptions.md#timeout)
+[CustomerRequestOptions_2](CustomerRequestOptions_2.md).[timeout](CustomerRequestOptions_2.md#timeout)
 
 ## Methods
 

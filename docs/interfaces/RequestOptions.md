@@ -14,11 +14,11 @@ A set of options for configuring an asynchronous request.
 
 - **`RequestOptions`**
 
-  ↳ [`CheckoutButtonOptions`](CheckoutButtonOptions.md)
+  ↳ [`CheckoutButtonOptions_2`](CheckoutButtonOptions_2.md)
 
-  ↳ [`CustomerRequestOptions`](CustomerRequestOptions.md)
+  ↳ [`CustomerRequestOptions_2`](CustomerRequestOptions_2.md)
 
-  ↳ [`PaymentRequestOptions`](PaymentRequestOptions.md)
+  ↳ [`PaymentRequestOptions_2`](PaymentRequestOptions_2.md)
 
   ↳ [`ShippingRequestOptions`](ShippingRequestOptions.md)
 

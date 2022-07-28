@@ -6,11 +6,11 @@ The set of options for configuring the checkout button.
 
 ## Hierarchy
 
-- [`RequestOptions`](RequestOptions.md)
+- [`RequestOptions_2`](RequestOptions_2.md)
 
   ↳ **`CheckoutButtonOptions`**
 
-  ↳↳ [`CheckoutButtonInitializeOptions`](CheckoutButtonInitializeOptions.md)
+  ↳↳ [`CheckoutButtonInitializeOptions_3`](CheckoutButtonInitializeOptions_3.md)
 
 ## Table of contents
 
@@ -24,7 +24,7 @@ The set of options for configuring the checkout button.
 
 ### methodId
 
-• **methodId**: [`CheckoutButtonMethodType`](../enums/CheckoutButtonMethodType.md)
+• **methodId**: `string`
 
 The identifier of the payment method.
 
@@ -38,7 +38,7 @@ The parameters of the request, if required.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[params](RequestOptions.md#params)
+[RequestOptions_2](RequestOptions_2.md).[params](RequestOptions_2.md#params)
 
 ___
 
@@ -52,4 +52,4 @@ cancelled.
 
 #### Inherited from
 
-[RequestOptions](RequestOptions.md).[timeout](RequestOptions.md#timeout)
+[RequestOptions_2](RequestOptions_2.md).[timeout](RequestOptions_2.md#timeout)
