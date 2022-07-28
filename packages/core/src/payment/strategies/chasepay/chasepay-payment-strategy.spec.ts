@@ -2,6 +2,7 @@ import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
+import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
@@ -16,7 +17,7 @@ import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
@@ -94,6 +95,8 @@ describe('ChasePayPaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const _requestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(_requestSender);
@@ -114,6 +117,7 @@ describe('ChasePayPaymentStrategy', () => {
         );
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
+            registryV2,
             orderActionCreator,
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );

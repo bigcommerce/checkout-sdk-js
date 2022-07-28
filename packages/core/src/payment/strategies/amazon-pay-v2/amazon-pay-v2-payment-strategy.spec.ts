@@ -5,7 +5,7 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
-import { createPaymentStrategyRegistry, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../..';
+import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../..';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
@@ -32,6 +32,7 @@ import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initial
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
 import { getAmazonPayV2ButtonParamsMock, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
+import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;
@@ -58,6 +59,8 @@ describe('AmazonPayV2PaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
         const submitPaymentAction: Observable<SubmitPaymentAction> = of(createAction(PaymentActionType.SubmitPaymentRequested));;
@@ -71,6 +74,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
+            registryV2,
             orderActionCreator,
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );

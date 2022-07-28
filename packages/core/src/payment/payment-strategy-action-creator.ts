@@ -1,3 +1,4 @@
+import { PaymentStrategy as PaymentStrategyV2, PaymentStrategyResolveId } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -6,6 +7,7 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
+import { ResolveIdRegistry } from '../common/registry';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
@@ -19,7 +21,7 @@ import { PaymentStrategy } from './strategies';
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
-        private _strategyRegistryV2: any,
+        private _strategyRegistryV2: ResolveIdRegistry<PaymentStrategyV2, PaymentStrategyResolveId>,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
@@ -47,7 +49,7 @@ export default class PaymentStrategyActionCreator {
                             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                         }
 
-                        console.log(this._strategyRegistryV2);
+                        console.log('lolol does this log', this._strategyRegistryV2);
 
                         strategy = this._strategyRegistry.getByMethod(method);
                     } else {

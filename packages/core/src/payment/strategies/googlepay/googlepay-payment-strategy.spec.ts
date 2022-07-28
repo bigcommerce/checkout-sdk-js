@@ -2,6 +2,7 @@ import { createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
+import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
@@ -16,7 +17,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
-import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -75,6 +76,8 @@ describe('GooglePayPaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(scriptLoader);
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -90,6 +93,7 @@ describe('GooglePayPaymentStrategy', () => {
         );
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
+            registryV2,
             orderActionCreator,
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );

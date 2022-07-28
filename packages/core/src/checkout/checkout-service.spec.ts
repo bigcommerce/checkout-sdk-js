@@ -1,3 +1,4 @@
+import { PaymentStrategy as PaymentStrategyV2, PaymentStrategyResolveId } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -8,6 +9,7 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { ErrorActionCreator } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
+import { ResolveIdRegistry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
@@ -19,7 +21,8 @@ import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
-import { createPaymentClient, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator, PaymentStrategyRegistry } from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistryV2, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator, PaymentStrategyRegistry } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getLoadInstrumentsResponseBody, getVaultAccessTokenResponseBody } from '../payment/instrument/instrument.mock';
 import { getAuthorizenet, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
@@ -70,6 +73,7 @@ describe('CheckoutService', () => {
     let paymentStrategy: PaymentStrategy;
     let paymentStrategyActionCreator: PaymentStrategyActionCreator;
     let paymentStrategyRegistry: PaymentStrategyRegistry;
+    let paymentStrategyRegistryV2: ResolveIdRegistry<PaymentStrategyV2, PaymentStrategyResolveId>;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
     let signInEmailActionCreator: SignInEmailActionCreator;
@@ -145,6 +149,8 @@ describe('CheckoutService', () => {
             .mockResolvedValue(store.getState());
 
         paymentStrategyRegistry = new PaymentStrategyRegistry(store);
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
 
         jest.spyOn(paymentStrategyRegistry, 'getByMethod').mockReturnValue(paymentStrategy);
 
@@ -239,6 +245,7 @@ describe('CheckoutService', () => {
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
+            paymentStrategyRegistryV2,
             orderActionCreator,
             spamProtectionActionCreator
         );
