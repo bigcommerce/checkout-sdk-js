@@ -4,3 +4,4 @@ export { default as CheckoutButtonSelector, CheckoutButtonSelectorFactory, creat
 export { default as CheckoutButtonState } from './checkout-button-state';
 export { CheckoutButtonStrategy } from './strategies/';
 export { CheckoutButtonOptions, CheckoutButtonInitializeOptions } from './checkout-button-options';
+export { CheckoutButtonInitializeOptions as CheckoutButtonInitializeOptionsV2 } from './checkout-button-options-v2';

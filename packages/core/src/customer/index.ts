@@ -17,5 +17,6 @@ export { default as CustomerStrategySelector, CustomerStrategySelectorFactory, c
 export { default as CustomerStrategyState } from './customer-strategy-state';
 export { default as customerStrategyReducer } from './customer-strategy-reducer';
 export { default as GuestCredentials } from './guest-credentials';
+export { CustomerInitializeOptions as CustomerInitializeOptionsV2 } from './customer-request-options-v2';
 
 export { default as mapToInternalCustomer } from './map-to-internal-customer';
