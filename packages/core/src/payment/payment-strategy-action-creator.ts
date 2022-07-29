@@ -49,9 +49,11 @@ export default class PaymentStrategyActionCreator {
                             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                         }
 
-                        strategy = this._strategyRegistryV2.get({ id: method.id }) ?
-                            this._strategyRegistryV2.get({ id: method.id }) :
-                            this._strategyRegistry.getByMethod(method);
+                        try {
+                            strategy = this._strategyRegistryV2.get({ id: method.id });
+                        } catch {
+                            strategy = this._strategyRegistry.getByMethod(method)
+                        }
                     } else {
                         strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                     }
@@ -79,9 +81,17 @@ export default class PaymentStrategyActionCreator {
                     throw new OrderFinalizationNotRequiredError();
                 }
 
-                const strategy = this._strategyRegistryV2.get({ id: method.id }) ?
-                    this._strategyRegistryV2.get({ id: method.id }) :
-                    this._strategyRegistry.getByMethod(method);
+                let strategy: PaymentStrategy | PaymentStrategyV2;
+
+                console.log('this gets triggered?');
+
+                try {
+                    strategy = this._strategyRegistryV2.get({ id: method.id });
+                } catch {
+                    strategy = this._strategyRegistry.getByMethod(method)
+                }
+
+                console.log('Does it get here?');
 
                 await strategy.finalize({ ...options, methodId: method.id, gatewayId: method.gateway });
 
@@ -112,9 +122,13 @@ export default class PaymentStrategyActionCreator {
                 return empty();
             }
 
-            const strategy = this._strategyRegistryV2.get({ id: method.id }) ?
-                this._strategyRegistryV2.get({ id: method.id }) :
-                this._strategyRegistry.getByMethod(method);
+            let strategy: PaymentStrategy | PaymentStrategyV2;
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: method.id });
+            } catch {
+                strategy = this._strategyRegistry.getByMethod(method)
+            }
 
             const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({ ...options, methodId, gatewayId });
 
@@ -141,10 +155,13 @@ export default class PaymentStrategyActionCreator {
             if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
                 return empty();
             }
+            let strategy: PaymentStrategy | PaymentStrategyV2;
 
-            const strategy = this._strategyRegistryV2.get({ id: method.id }) ?
-                this._strategyRegistryV2.get({ id: method.id }) :
-                this._strategyRegistry.getByMethod(method);
+            try {
+                strategy = this._strategyRegistryV2.get({ id: method.id });
+            } catch {
+                strategy = this._strategyRegistry.getByMethod(method)
+            }
 
             const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({ ...options, methodId, gatewayId });
 

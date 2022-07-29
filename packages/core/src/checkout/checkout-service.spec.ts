@@ -619,11 +619,14 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#finalizeOrderIfNeeded()', () => {
-        it('finds payment strategy', async () => {
+    describe.only('#finalizeOrderIfNeeded()', () => {
+        it.only('finds payment strategy', async () => {
             await checkoutService.loadCheckout();
+            console.log('loadCheckjout');
             await checkoutService.loadPaymentMethods();
+            console.log('loadPaymentMethods');
             await checkoutService.finalizeOrderIfNeeded();
+            console.log('finalizeOrderIfNeeded');
 
             expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getAuthorizenet());
         });
