@@ -15,6 +15,7 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestB
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
@@ -32,7 +33,6 @@ import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initial
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
 import { getAmazonPayV2ButtonParamsMock, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
-import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;

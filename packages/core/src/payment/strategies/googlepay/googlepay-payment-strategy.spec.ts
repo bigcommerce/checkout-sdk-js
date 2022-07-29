@@ -2,7 +2,6 @@ import { createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
-import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
@@ -19,6 +18,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrder } from '../../../order/orders.mock';
 import { createPaymentClient, createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { PaymentActionType } from '../../payment-actions';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';

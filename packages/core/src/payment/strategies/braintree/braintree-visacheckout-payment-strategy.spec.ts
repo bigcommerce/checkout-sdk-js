@@ -1,7 +1,6 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -15,6 +14,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import createPaymentClient from '../../create-payment-client';
 import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
 import createPaymentStrategyRegistryV2 from '../../create-payment-strategy-registry-v2';

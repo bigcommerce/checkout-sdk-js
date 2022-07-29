@@ -83,15 +83,11 @@ export default class PaymentStrategyActionCreator {
 
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
-                console.log('this gets triggered?');
-
                 try {
                     strategy = this._strategyRegistryV2.get({ id: method.id });
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method)
                 }
-
-                console.log('Does it get here?');
 
                 await strategy.finalize({ ...options, methodId: method.id, gatewayId: method.gateway });
 
@@ -155,6 +151,7 @@ export default class PaymentStrategyActionCreator {
             if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
                 return empty();
             }
+
             let strategy: PaymentStrategy | PaymentStrategyV2;
 
             try {
@@ -163,7 +160,7 @@ export default class PaymentStrategyActionCreator {
                 strategy = this._strategyRegistry.getByMethod(method)
             }
 
-            const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({ ...options, methodId, gatewayId });
+            const promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize({ ...options, methodId, gatewayId });
 
             return concat(
                 of(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId })),

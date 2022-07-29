@@ -2,7 +2,6 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
@@ -16,6 +15,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../.
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentInitializeOptions, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';

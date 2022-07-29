@@ -2,7 +2,6 @@ import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
-import { createPaymentIntegrationService } from 'packages/core/src/payment-integration';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
@@ -22,6 +21,7 @@ import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-me
 import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
