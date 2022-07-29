@@ -253,20 +253,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             if (adyenv3.cardVerificationContainerId) {
                 cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
                     ...adyenv3.options,
-                    styles: {
-                        error: {
-                            color: 'red',
-                        },
-                        validated: {
-                            color: 'green',
-                        },
-                    },
                     onChange: componentState => this._updateComponentState(componentState),
-                    onError: componentState => {
-                        this._updateComponentState(componentState);
-                        adyenv3.validateCardFields(componentState);
-                    },
-                    onFieldValid: componentState => adyenv3.validateCardFields(componentState),
+                    onError: validateState => adyenv3.validateCardFields(validateState),
+                    onFieldValid: validateState => adyenv3.validateCardFields(validateState),
                 });
 
                 try {
@@ -333,37 +322,11 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        if (adyenv3.hasVaultedInstruments) {
-            adyenv3.validateCardFields(cardComponent.state);
-        } else {
-            cardComponent.componentRef.showValidation();
-        }
+        cardComponent.componentRef.showValidation();
 
-        if ( Object.keys(cardComponent.state).length === 0 || !this._isFieldsValid(cardComponent, adyenv3) ) {
+        if ( Object.keys(cardComponent.state).length === 0 || !cardComponent.state?.isValid ) {
             throw new PaymentInvalidFormError( this._mapCardErrors(cardComponent?.state?.errors) );
         }
-    }
-
-    private _isFieldsValid(cardComponent: AdyenComponent, adyenv3: AdyenV3PaymentInitializeOptions): boolean {
-        return adyenv3.hasVaultedInstruments ? this._isInstrumentValid(cardComponent, adyenv3) : !!cardComponent.state?.isValid;
-    }
-
-    private _isInstrumentValid(cardComponent: AdyenComponent, adyenv3: AdyenV3PaymentInitializeOptions): boolean {
-        if (adyenv3.shouldShowNumberField) {
-            return !!cardComponent.state?.isValid;
-        }
-
-        let isValid = true;
-        const fieldsValidationState = cardComponent?.state?.valid || {};
-
-        for (const fieldKey in fieldsValidationState) {
-            if (fieldKey !== 'encryptedCardNumber' && !fieldsValidationState[fieldKey]) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
     }
 
     private _mapCardErrors(cardStateErrors: CardStateErrors = {}): PaymentInvalidFormErrorDetails {
