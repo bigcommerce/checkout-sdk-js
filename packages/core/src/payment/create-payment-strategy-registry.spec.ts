@@ -14,6 +14,7 @@ import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
+import { BNZPaymentStrategy } from './strategies/bnz';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
@@ -180,6 +181,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate cybersourcev2', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2);
         expect(paymentStrategy).toBeInstanceOf(CyberSourceV2PaymentStrategy);
+    });
+
+    it('can instantiate bankofnewzealand', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BNZ);
+        expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
     });
 
     it('can instantiate digitalRiver', () => {

@@ -93,6 +93,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'cybersourcev2',
         method: 'credit_card',
     },
+    bnz: {
+        provider: 'bnz',
+        method: 'credit_card',
+    },
     converge: {
         provider: 'converge',
         method: 'credit_card',
