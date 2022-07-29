@@ -178,9 +178,9 @@ export interface AdyenComponentEvents {
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenV3ComponentState, component: AdyenComponent): void;
+    onError?(state: AdyenV3ValidationState, component: AdyenComponent): void;
 
-    onFieldValid?(state: AdyenV3ComponentState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenV3ValidationState, component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
@@ -816,6 +816,22 @@ export interface ThreeDS2ChallengeComponentOptions {
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
     onError(error: AdyenError): void;
+}
+
+export interface AdyenV3ValidationState {
+    valid: boolean;
+    fieldType?: AdyenV3CardFields;
+    endDigits?: string;
+    encryptedFieldName?: string;
+    i18n?: string;
+    error?: string;
+    errorKey?: string;
+};
+
+export enum AdyenV3CardFields {
+    CardNumber = 'encryptedCardNumber',
+    SecurityCode = 'encryptedSecurityCode',
+    ExpiryDate = 'encryptedExpiryDate',
 }
 
 export type AdyenV3ComponentState = CardState | WechatState;

@@ -85,7 +85,7 @@ describe('AdyenV3PaymentStrategy', () => {
         let cardVerificationComponent: AdyenComponent;
 
         beforeEach(() => {
-            let handleOnError: (componentState: AdyenV3ComponentState) => {};
+            let handleOnChange: (componentState: AdyenV3ComponentState) => {};
 
             options = getInitializeOptions();
 
@@ -99,7 +99,7 @@ describe('AdyenV3PaymentStrategy', () => {
 
             cardVerificationComponent = {
                 mount: jest.fn(() => {
-                    handleOnError(getComponentState(false));
+                    handleOnChange(getComponentState());
 
                     return;
                 }),
@@ -115,8 +115,8 @@ describe('AdyenV3PaymentStrategy', () => {
                     return paymentComponent;
                 }))
                 .mockImplementationOnce(jest.fn((_method, options) => {
-                    const { onError } = options;
-                    handleOnError = onError;
+                    const { onChange } = options;
+                    handleOnChange = onChange;
 
                     return cardVerificationComponent;
                 }));

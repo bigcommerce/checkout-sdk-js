@@ -1,6 +1,6 @@
 import { Omit } from '../../../common/types';
 
-import { AdyenV3ComponentState } from '.';
+import { AdyenV3ValidationState } from '.';
 import { AdyenAdditionalActionOptions, AdyenV3CreditCardComponentOptions } from './adyenv3';
 
 /**
@@ -87,5 +87,5 @@ export default interface AdyenV3PaymentInitializeOptions {
 
     shouldShowNumberField?: boolean;
 
-    validateCardFields(componentState: AdyenV3ComponentState): void;
+    validateCardFields(validateState: AdyenV3ValidationState): void;
 }
