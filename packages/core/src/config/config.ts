@@ -11,6 +11,7 @@ export interface StoreConfig {
     checkoutSettings: CheckoutSettings;
     currency: StoreCurrency;
     displayDateFormat: string;
+    displaySettings: DisplaySettings;
     inputDateFormat: string;
 
     /**
@@ -138,4 +139,8 @@ export interface ContextConfig {
         formId?: string;
         token?: string;
     };
+}
+
+export interface DisplaySettings {
+    hidePriceFromGuests: boolean;
 }
