@@ -1,11 +1,9 @@
-import { PaymentStrategy, PaymentStrategyResolveId } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
-import { ResolveIdRegistry } from '../common/registry';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
@@ -82,7 +80,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const formFieldsActionCreator = new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2: ResolveIdRegistry<PaymentStrategy, PaymentStrategyResolveId> = createPaymentStrategyRegistryV2(paymentIntegrationService);
+    const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
 
     return new CheckoutService(
         store,

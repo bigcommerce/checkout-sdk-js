@@ -1,4 +1,4 @@
-import { PaymentStrategy as PaymentStrategyV2, PaymentStrategyResolveId } from '@bigcommerce/checkout-sdk/payment-integration';
+import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -7,7 +7,6 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { ResolveIdRegistry } from '../common/registry';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
@@ -15,13 +14,14 @@ import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-prote
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyRegistryV2 from './payment-strategy-registry-v2';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
-        private _strategyRegistryV2: ResolveIdRegistry<PaymentStrategyV2, PaymentStrategyResolveId>,
+        private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
