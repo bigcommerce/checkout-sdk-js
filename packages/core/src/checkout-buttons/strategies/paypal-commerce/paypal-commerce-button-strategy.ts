@@ -34,7 +34,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
         const { initializationData } = paymentMethod;
         this._paymentMethod = paymentMethod;
-        const { isHostedCheckoutEnabled, isVenmoEnabled, clientId } = initializationData || {};
+        const { isVenmoEnabled, clientId } = initializationData || {};
         if (!clientId) {
             throw new InvalidArgumentError('Unable to initialise payment because "Client Id" is not defined');
         }
@@ -46,7 +46,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             onApprove: (data, actions) => this._onApproveHandler(data, actions),
             onClick: (data) =>  this._handleClickButtonProvider(data),
             onCancel: (data) => this._handleOnCancel(data),
-            ...(isHostedCheckoutEnabled && { onShippingChange: (data) => this._onShippingChangeHandler(data) }),
+            ...(true && { onShippingChange: (data) => this._onShippingChangeHandler(data) }),
             style: options?.paypalCommerce?.style,
         };
 
