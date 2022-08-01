@@ -1,6 +1,6 @@
 export { Address, AddressRequestBody } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
-export { CheckoutButtonStrategy, CheckoutButtonStrategyFactory, CheckoutButtonStrategyResolveId, CheckoutButtonMethodType, CheckoutButtonInitializeOptions } from './checkout-buttons';
+export { CheckoutButtonStrategy, CheckoutButtonStrategyFactory, CheckoutButtonStrategyResolveId, CheckoutButtonInitializeOptions } from './checkout-buttons';
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
 export { Checkout } from './checkout';
 export { Config, StoreConfig } from './config';

@@ -2,7 +2,6 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
     MissingDataError,
-    CheckoutButtonMethodType,
 } from "@bigcommerce/checkout-sdk/payment-integration";
 import { PaymentIntegrationServiceMock,
     getCheckout,
@@ -15,6 +14,7 @@ import {
 } from "@bigcommerce/request-sender";
 import { merge } from 'lodash';
 import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-options';
+import ApplePayButtonMethodType from './apple-pay-button-method-type';
 import ApplePayButtonStrategy from './apple-pay-button-strategy';
 import ApplePaySessionFactory from "./apple-pay-session-factory";
 import { getApplePayButtonInitializationOptions } from './mocks/apple-pay-button.mock';
@@ -532,11 +532,11 @@ describe("ApplePayButtonStrategy", () => {
         });
 
         it('throws error when payment data is empty', async () => {
-            await expect(strategy.initialize({containerId: '', methodId: CheckoutButtonMethodType.APPLEPAY, params: {}})).rejects.toThrow(MissingDataError);
+            await expect(strategy.initialize({containerId: '', methodId: ApplePayButtonMethodType.APPLEPAY, params: {}})).rejects.toThrow(MissingDataError);
         });
 
         it('throws error when ApplePay object is empty', async () => {
-            await expect(strategy.initialize({containerId: '', params: {}, methodId: CheckoutButtonMethodType.APPLEPAY })).rejects.toThrow(MissingDataError);
+            await expect(strategy.initialize({containerId: '', params: {}, methodId: ApplePayButtonMethodType.APPLEPAY })).rejects.toThrow(MissingDataError);
         });
 
         it('throws error when ApplePay object is empty', async () => {

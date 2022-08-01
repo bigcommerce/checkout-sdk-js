@@ -117,7 +117,8 @@
             "options": {
                 "commands": [
                     "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:auto-export --projectName=core",
-                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:extend-interface --projectName=core"
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:extend-interface --projectName=core",
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:create-enum --projectName=core"
                 ],
                 "parallel": false
             }
