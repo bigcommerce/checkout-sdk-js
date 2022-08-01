@@ -1,3 +1,4 @@
+import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration';
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, empty, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -13,12 +14,14 @@ import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-prote
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyRegistryV2 from './payment-strategy-registry-v2';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
+        private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
@@ -37,7 +40,7 @@ export default class PaymentStrategyActionCreator {
                 defer(() => {
                     const state = store.getState();
 
-                    let strategy: PaymentStrategy;
+                    let strategy: PaymentStrategy | PaymentStrategyV2;
 
                     if (state.payment.isPaymentDataRequired(useStoreCredit)) {
                         const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
@@ -46,14 +49,18 @@ export default class PaymentStrategyActionCreator {
                             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                         }
 
-                        strategy = this._strategyRegistry.getByMethod(method);
+                        try {
+                            strategy = this._strategyRegistryV2.get({ id: method.id });
+                        } catch {
+                            strategy = this._strategyRegistry.getByMethod(method)
+                        }
                     } else {
                         strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                     }
 
-                    return strategy
-                        .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                        .then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
+                    const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId });
+
+                    return promise.then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
                 })
             ).pipe(
                 catchError(error => throwErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta))
@@ -65,7 +72,7 @@ export default class PaymentStrategyActionCreator {
         return store => concat(
             of(createAction(PaymentStrategyActionType.FinalizeRequested)),
             this._loadOrderPaymentsIfNeeded(store, options),
-            defer(() => {
+            defer(async () => {
                 const state = store.getState();
                 const { providerId = '', gatewayId = '' } = state.payment.getPaymentId() || {};
                 const method = state.paymentMethods.getPaymentMethod(providerId, gatewayId);
@@ -74,9 +81,17 @@ export default class PaymentStrategyActionCreator {
                     throw new OrderFinalizationNotRequiredError();
                 }
 
-                return this._strategyRegistry.getByMethod(method)
-                    .finalize({ ...options, methodId: method.id, gatewayId: method.gateway })
-                    .then(() => createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, { methodId: method.id }));
+                let strategy: PaymentStrategy | PaymentStrategyV2;
+
+                try {
+                    strategy = this._strategyRegistryV2.get({ id: method.id });
+                } catch {
+                    strategy = this._strategyRegistry.getByMethod(method)
+                }
+
+                await strategy.finalize({ ...options, methodId: method.id, gatewayId: method.gateway });
+
+                return createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, { methodId: method.id });
             })
         ).pipe(
             catchError(error => {
@@ -103,11 +118,19 @@ export default class PaymentStrategyActionCreator {
                 return empty();
             }
 
+            let strategy: PaymentStrategy | PaymentStrategyV2;
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: method.id });
+            } catch {
+                strategy = this._strategyRegistry.getByMethod(method)
+            }
+
+            const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({ ...options, methodId, gatewayId });
+
             return concat(
                 of(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId })),
-                this._strategyRegistry.getByMethod(method)
-                    .initialize({ ...options, methodId, gatewayId })
-                    .then(() => createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }))
+                promise.then(() => createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }))
             );
         }).pipe(
             catchError(error => throwErrorAction(PaymentStrategyActionType.InitializeFailed, error, { methodId }))
@@ -129,11 +152,19 @@ export default class PaymentStrategyActionCreator {
                 return empty();
             }
 
+            let strategy: PaymentStrategy | PaymentStrategyV2;
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: method.id });
+            } catch {
+                strategy = this._strategyRegistry.getByMethod(method)
+            }
+
+            const promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize({ ...options, methodId, gatewayId });
+
             return concat(
                 of(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId })),
-                this._strategyRegistry.getByMethod(method)
-                    .deinitialize({ ...options, methodId, gatewayId })
-                    .then(() => createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, { methodId }))
+                promise.then(() => createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, { methodId }))
             );
         }).pipe(
             catchError(error => throwErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, { methodId }))

@@ -13,8 +13,9 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
+import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentInitializeOptions, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -88,6 +89,8 @@ describe('SquarePaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const storeConfig = getConfig().storeConfig;
 
         orderActionCreator = new OrderActionCreator(
@@ -105,6 +108,7 @@ describe('SquarePaymentStrategy', () => {
             new PaymentMethodRequestSender(requestSender));
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
+            registryV2,
             orderActionCreator,
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );

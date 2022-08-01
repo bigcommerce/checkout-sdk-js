@@ -5,7 +5,7 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
-import { createPaymentStrategyRegistry, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../..';
+import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../..';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
@@ -15,6 +15,7 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestB
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
@@ -58,6 +59,8 @@ describe('AmazonPayV2PaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
         const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
         const submitPaymentAction: Observable<SubmitPaymentAction> = of(createAction(PaymentActionType.SubmitPaymentRequested));;
@@ -71,6 +74,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
+            registryV2,
             orderActionCreator,
             new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
         );
