@@ -224,7 +224,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
         await this._store.dispatch(this._consignmentActionCreator.updateConsignment({
-           ...updatedConsignment
+           ...updatedConsignment,
+            lineItems
         }));
 
         await this._paypalCommercePaymentProcessor.setShippingOptions({
