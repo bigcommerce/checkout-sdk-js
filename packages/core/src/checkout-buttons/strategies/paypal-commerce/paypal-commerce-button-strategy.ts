@@ -109,9 +109,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        // const { isHostedCheckoutEnabled } = this._paymentMethod.initializationData;
-        return this._onHostedMethodApprove(data, actions)
-            // : this._tokenizePayment(data);
+        const { isHostedCheckoutEnabled = true } = this._paymentMethod.initializationData;
+        return isHostedCheckoutEnabled
+            ? this._onHostedMethodApprove(data, actions)
+            : this._tokenizePayment(data);
     }
 
     private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
