@@ -206,7 +206,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private async _onShippingChangeHandler(data: ShippingChangeData) {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
-        const { id: selectedShippingOptionId } = data.selected_shipping_option || {};
+        // const { id: selectedShippingOptionId } = data.selected_shipping_option || {};
         const shippingAddress = await this._transformToAddress(data.shipping_address);
         this._currentShippingAddress = shippingAddress;
         const lineItems = this._getLineItems();
@@ -218,14 +218,16 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
         }
         const updatedConsignment = state.consignments.getConsignmentsOrThrow()[0];
-        const { availableShippingOptions, id: consignmentId } = updatedConsignment;
-        const { id: recommendedShippingOptionId } = availableShippingOptions?.find(option => option.isRecommended) || {};
-        const isSelectedOptionExist = selectedShippingOptionId && availableShippingOptions?.find(option => option.id === selectedShippingOptionId);
+        const { availableShippingOptions } = updatedConsignment;
+        // const { id: recommendedShippingOptionId } = availableShippingOptions?.find(option => option.isRecommended) || {};
+        // const isSelectedOptionExist = selectedShippingOptionId && availableShippingOptions?.find(option => option.id === selectedShippingOptionId);
         await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
         await this._store.dispatch(this._consignmentActionCreator.updateConsignment({
-            id: consignmentId,
-            shippingOptionId: isSelectedOptionExist ? selectedShippingOptionId : recommendedShippingOptionId
+            // id: consignmentId,
+            // shippingOptionId: isSelectedOptionExist ? selectedShippingOptionId : recommendedShippingOptionId
+            ...updatedConsignment,
+            lineItems
         }));
 
         await this._paypalCommercePaymentProcessor.setShippingOptions({
