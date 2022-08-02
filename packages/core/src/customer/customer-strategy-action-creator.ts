@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { CustomerStrategy as CustomerStrategyV2, MissingDataError, MissingDataErrorType } from '@bigcommerce/checkout-sdk/payment-integration';
 import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -7,11 +8,13 @@ import { Registry } from '../common/registry';
 import CustomerCredentials from './customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from './customer-request-options';
 import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyExecutePaymentMethodCheckoutAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import CustomerStrategyRegistryV2 from './customer-strategy-registry-v2';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
     constructor(
-        private _strategyRegistry: Registry<CustomerStrategy>
+        private _strategyRegistry: Registry<CustomerStrategy>,
+        private _strategyRegistryV2: CustomerStrategyRegistryV2
     ) {}
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Observable<CustomerStrategySignInAction> {
@@ -21,15 +24,27 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignInRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .signIn(credentials, options)
-                .then(() => {
-                    observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
-                    observer.complete();
-                })
-                .catch(error => {
-                    observer.error(createErrorAction(CustomerStrategyActionType.SignInFailed, error, meta));
-                });
+            let strategy: CustomerStrategy | CustomerStrategyV2;
+
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: methodId });
+            } catch {
+                strategy = this._strategyRegistry.get(methodId)
+            }
+
+            let promise: Promise<InternalCheckoutSelectors | void> = strategy.signIn(credentials, options);
+
+            promise.then(() => {
+                observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
+                observer.complete();
+            })
+            .catch(error => {
+                observer.error(createErrorAction(CustomerStrategyActionType.SignInFailed, error, meta));
+            });
         });
     }
 
@@ -40,8 +55,21 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignOutRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .signOut(options)
+            let strategy: CustomerStrategy | CustomerStrategyV2;
+
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: methodId });
+            } catch {
+                strategy = this._strategyRegistry.get(methodId)
+            }
+
+            let promise: Promise<InternalCheckoutSelectors | void> = strategy.signOut(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.SignOutSucceeded, undefined, meta));
                     observer.complete();
@@ -59,8 +87,21 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .executePaymentMethodCheckout(options)
+            let strategy: CustomerStrategy | CustomerStrategyV2;
+
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: methodId });
+            } catch {
+                strategy = this._strategyRegistry.get(methodId)
+            }
+
+            let promise: Promise<InternalCheckoutSelectors | void> = strategy.executePaymentMethodCheckout(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded, undefined, meta));
                     observer.complete();
@@ -83,8 +124,21 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.InitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .initialize(options)
+            let strategy: CustomerStrategy | CustomerStrategyV2;
+
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: methodId });
+            } catch {
+                strategy = this._strategyRegistry.get(methodId)
+            }
+
+            let promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, meta));
                     observer.complete();
@@ -107,8 +161,21 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .deinitialize(options)
+            let strategy: CustomerStrategy | CustomerStrategyV2;
+
+            if (!methodId) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            try {
+                strategy = this._strategyRegistryV2.get({ id: methodId });
+            } catch {
+                strategy = this._strategyRegistry.get(methodId)
+            }
+
+            let promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, meta));
                     observer.complete();
