@@ -2,12 +2,13 @@ import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayCustomerInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
-import { ApplePayCustomerInitializeOptions } from './strategies/apple-pay';
 import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
+
+export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
 
 /**
  * A set of options for configuring any requests related to the customer step of
@@ -30,7 +31,7 @@ export interface CustomerRequestOptions extends RequestOptions {
  * using their sign-in button. As a result, you may need to provide additional
  * information in order to initialize the customer step of checkout.
  */
-export interface CustomerInitializeOptions extends CustomerRequestOptions {
+export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Amazon Pay.
@@ -42,12 +43,6 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using ApplePay.
-     */
-     applepay?: ApplePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout

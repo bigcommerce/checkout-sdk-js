@@ -8,6 +8,8 @@ import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
 import { PaypalCommerceAlternativeMethodsButtonOptions, PaypalCommerceButtonInitializeOptions, PaypalCommerceVenmoButtonInitializeOptions } from './strategies/paypal-commerce';
 
+export { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
+
 /**
  * The set of options for configuring the checkout button.
  */
@@ -18,7 +20,7 @@ export interface CheckoutButtonOptions extends RequestOptions {
     methodId: CheckoutButtonMethodType;
 }
 
-export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     /**
      * The options that are required to initialize the ApplePay payment method.
      * They can be omitted unless you need to support ApplePay in cart.

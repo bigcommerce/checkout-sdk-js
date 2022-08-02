@@ -26,5 +26,9 @@ export default interface ApplePayPaymentInitializeOptions {
 }
 
 export interface WithApplePayPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
     applepay?: ApplePayPaymentInitializeOptions;
 }

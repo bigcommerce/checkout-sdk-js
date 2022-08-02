@@ -3,5 +3,4 @@ export { default as checkoutButtonReducer } from './checkout-button-reducer';
 export { default as CheckoutButtonSelector, CheckoutButtonSelectorFactory, createCheckoutButtonSelectorFactory } from './checkout-button-selector';
 export { default as CheckoutButtonState } from './checkout-button-state';
 export { CheckoutButtonStrategy, CheckoutButtonMethodType } from './strategies';
-export { CheckoutButtonOptions, CheckoutButtonInitializeOptions } from './checkout-button-options';
-export { CheckoutButtonInitializeOptions as CheckoutButtonInitializeOptionsV2 } from './checkout-button-options-v2';
+export { BaseCheckoutButtonInitializeOptions, CheckoutButtonOptions, CheckoutButtonInitializeOptions } from './checkout-button-options';

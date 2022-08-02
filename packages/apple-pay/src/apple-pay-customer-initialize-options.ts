@@ -36,5 +36,9 @@ export default interface ApplePayCustomerInitializeOptions {
 }
 
 export interface WithApplePayCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using ApplePay.
+     */
     applepay?: ApplePayCustomerInitializeOptions;
 }

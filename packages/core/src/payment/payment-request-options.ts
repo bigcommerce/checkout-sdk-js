@@ -4,7 +4,6 @@ import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AdyenV3PaymentInitializeOptions } from './strategies/adyenv3';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
-import { ApplePayPaymentInitializeOptions } from './strategies/apple-pay';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import { BoltPaymentInitializeOptions } from './strategies/bolt';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
@@ -24,6 +23,8 @@ import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 import { WorldpayPaymentInitializeOptions } from './strategies/worldpay';
+
+export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -47,7 +48,7 @@ export interface PaymentRequestOptions extends RequestOptions {
  * A set of options that are required to initialize the payment step of the
  * current checkout flow.
  */
-export interface PaymentInitializeOptions extends PaymentRequestOptions {
+export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
     /**
      * @alpha
      * Please note that this option is currently in an early stage of
@@ -73,12 +74,6 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * method. They can be omitted unless you need to support AmazonPay.
      */
     amazon?: AmazonPayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Apple Pay payment
-     * method. They can be omitted unless you need to support AmazonPay.
-     */
-    applepay?: ApplePayPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the AmazonPayV2 payment

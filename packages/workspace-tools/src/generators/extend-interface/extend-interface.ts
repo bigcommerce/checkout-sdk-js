@@ -7,6 +7,7 @@ import { promisify } from 'util';
 export interface ExtendInterfaceOptions {
     inputPath: string;
     outputPath: string;
+    outputMemberName: string;
     memberPattern: string;
     targetPath: string;
     targetMemberName: string;
@@ -15,13 +16,14 @@ export interface ExtendInterfaceOptions {
 export default async function extendInterface({
     inputPath,
     outputPath,
+    outputMemberName,
     memberPattern,
     targetPath,
     targetMemberName,
 }: ExtendInterfaceOptions): Promise<string> {
     const filePaths = await promisify(glob)(inputPath);
     const importDeclarations = await Promise.all([
-        createImportDeclaration(targetPath, outputPath, targetMemberName, 'Base'),
+        createImportDeclaration(targetPath, outputPath, `^${targetMemberName}$`),
         ...filePaths.map(filePath => createImportDeclaration(filePath, outputPath, memberPattern))
     ]);
     const mergableMemberNames = importDeclarations.map(statement => statement?.importClause?.namedBindings)
@@ -34,7 +36,7 @@ export default async function extendInterface({
             ts.ListFormat.MultiLine,
             ts.factory.createNodeArray([
                 ...importDeclarations,
-                createTypeAliasDeclaration(targetMemberName, mergableMemberNames),
+                createTypeAliasDeclaration(outputMemberName, mergableMemberNames),
             ].filter(exists)),
             ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext)
         );
@@ -63,8 +65,7 @@ function createTypeAliasDeclaration(
 async function createImportDeclaration(
     filePath: string,
     outputPath: string,
-    memberPattern: string,
-    aliasPrefix?: string
+    memberPattern: string
 ): Promise<ts.ImportDeclaration | undefined> {
     const root = await getSource(filePath);
 
@@ -94,15 +95,10 @@ async function createImportDeclaration(
             undefined,
             ts.factory.createNamedImports(
                 memberNames.map(memberName =>
-                    aliasPrefix ?
-                        ts.factory.createImportSpecifier(
-                            ts.factory.createIdentifier(memberName),
-                            ts.factory.createIdentifier(`${aliasPrefix}${memberName}`)
-                        ) :
-                        ts.factory.createImportSpecifier(
-                            undefined,
-                            ts.factory.createIdentifier(memberName)
-                        )
+                    ts.factory.createImportSpecifier(
+                        undefined,
+                        ts.factory.createIdentifier(memberName)
+                    )
                 )
             )
         ),

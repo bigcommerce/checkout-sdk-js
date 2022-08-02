@@ -1,4 +1,4 @@
-export * from './payment-request-options';
+export { BasePaymentInitializeOptions, PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 export * from './payment-method-actions';
 export * from './payment-method-types';
 export * from './payment-status-types';
@@ -55,4 +55,3 @@ export { default as PaymentStrategySelector, PaymentStrategySelectorFactory, cre
 export { default as PaymentStrategyState } from './payment-strategy-state';
 export { default as PaymentStrategyType } from './payment-strategy-type';
 export { default as StorefrontPaymentRequestSender } from './storefront-payment-request-sender';
-export { PaymentInitializeOptions as PaymentInitializeOptionsV2 } from './payment-request-options-v2';
