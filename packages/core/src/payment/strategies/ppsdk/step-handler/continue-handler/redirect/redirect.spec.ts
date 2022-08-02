@@ -17,7 +17,7 @@ describe('handleRedirect', () => {
     });
 
     describe('when there is not an already pending redirect', () => {
-        describe('when not passed formFields', () => {
+        describe('when not passed form_fields', () => {
             it('calls location assign with the url, never resolves or rejects', () => {
                 const resolveMock = jest.fn();
                 const rejectMock = jest.fn();
@@ -35,25 +35,25 @@ describe('handleRedirect', () => {
             });
         });
 
-        describe('with passed formFields', () => {
+        describe('with passed form_fields', () => {
             it('posts a form to the url along with fields, never resolves or rejects', () => {
                 const postFormSpy = jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn);
                 const resolveMock = jest.fn();
                 const rejectMock = jest.fn();
 
-                const formFields = {
+                const form_fields = {
                     someField: 'some-value',
                     anotherField: 'another-value',
                 };
 
                 const redirectContinueResponse = {
                     url: 'http://some-post-url.com',
-                    formFields,
+                    form_fields,
                 };
 
                 handleRedirect(redirectContinueResponse, formPoster).then(resolveMock).catch(rejectMock);
 
-                expect(postFormSpy).toHaveBeenCalledWith('http://some-post-url.com', formFields);
+                expect(postFormSpy).toHaveBeenCalledWith('http://some-post-url.com', form_fields);
                 expect(resolveMock).not.toHaveBeenCalled();
                 expect(rejectMock).not.toHaveBeenCalled();
             });
@@ -88,7 +88,7 @@ describe('isRedirect', () => {
             code: 'redirect',
             parameters: {
                 url: 'http://some-url.com',
-                formFields: {
+                form_fields: {
                     someField: 'some-value',
                     anotherField: 'another-value',
                 },

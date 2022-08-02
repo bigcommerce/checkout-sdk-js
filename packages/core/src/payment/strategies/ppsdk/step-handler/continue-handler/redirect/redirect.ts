@@ -8,7 +8,7 @@ import { RedirectionState } from './RedirectionState';
 
 interface Parameters {
     url: string;
-    formFields?: Record<string, string | number | boolean>;
+    form_fields?: Record<string, string | number | boolean>;
 }
 
 export interface Redirect {
@@ -18,7 +18,7 @@ export interface Redirect {
 }
 
 const isParameters = (x: unknown): x is Parameters => {
-    const formFields = get(x, 'formFields');
+    const formFields = get(x, 'form_fields');
 
     return (
         isString(get(x, 'url')) &&
@@ -32,7 +32,7 @@ export const isRedirect = (body: PaymentsAPIResponse['body']): body is Redirect 
     isParameters(get(body, 'parameters'))
 );
 
-export const handleRedirect = ({ url, formFields }: Parameters, formPoster: FormPoster): Promise<never> => {
+export const handleRedirect = ({ url, form_fields }: Parameters, formPoster: FormPoster): Promise<never> => {
     const redirectionState = new RedirectionState();
 
     if (redirectionState.isRedirecting()) {
@@ -43,8 +43,8 @@ export const handleRedirect = ({ url, formFields }: Parameters, formPoster: Form
 
     redirectionState.setRedirecting(true);
 
-    if (formFields) {
-        formPoster.postForm(url, formFields);
+    if (form_fields) {
+        formPoster.postForm(url, form_fields);
     } else {
         window.location.assign(url);
     }
