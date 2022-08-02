@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.272.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.0...v1.272.1) (2022-08-02)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-8045 Fix form fields parameter name for PPSDK redirect ([003ab9e](https://github.com/bigcommerce/checkout-sdk-js/commit/003ab9e145c99234666e5a3c48f2f1e69e7777bd))
+
 ## [1.272.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.271.3...v1.272.0) (2022-08-02)
 
 
