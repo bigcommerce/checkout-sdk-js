@@ -68,7 +68,7 @@
     "messageformat": "^2.3.0",
     "query-string": "^7.0.1",
     "reselect": "^4.1.5",
-    "rxjs": "^6.5.3",
+    "rxjs": "^6.6.7",
     "shallowequal": "^1.1.0",
     "tslib": "^1.10.0",
     "yup": "^0.27.0"
