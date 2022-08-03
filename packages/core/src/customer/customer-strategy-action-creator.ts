@@ -24,19 +24,7 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignInRequested, undefined, meta));
 
-            let strategy: CustomerStrategy | CustomerStrategyV2;
-
-            if (!methodId) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            try {
-                strategy = this._strategyRegistryV2.get({ id: methodId });
-            } catch {
-                strategy = this._strategyRegistry.get(methodId)
-            }
-
-            let promise: Promise<InternalCheckoutSelectors | void> = strategy.signIn(credentials, options);
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).signIn(credentials, options);
 
             promise.then(() => {
                 observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
@@ -55,19 +43,7 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignOutRequested, undefined, meta));
 
-            let strategy: CustomerStrategy | CustomerStrategyV2;
-
-            if (!methodId) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            try {
-                strategy = this._strategyRegistryV2.get({ id: methodId });
-            } catch {
-                strategy = this._strategyRegistry.get(methodId)
-            }
-
-            let promise: Promise<InternalCheckoutSelectors | void> = strategy.signOut(options);
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).signOut(options);
 
             promise
                 .then(() => {
@@ -87,19 +63,7 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested, undefined, meta));
 
-            let strategy: CustomerStrategy | CustomerStrategyV2;
-
-            if (!methodId) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            try {
-                strategy = this._strategyRegistryV2.get({ id: methodId });
-            } catch {
-                strategy = this._strategyRegistry.get(methodId)
-            }
-
-            let promise: Promise<InternalCheckoutSelectors | void> = strategy.executePaymentMethodCheckout(options);
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).executePaymentMethodCheckout(options);
 
             promise
                 .then(() => {
@@ -124,19 +88,7 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.InitializeRequested, undefined, meta));
 
-            let strategy: CustomerStrategy | CustomerStrategyV2;
-
-            if (!methodId) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            try {
-                strategy = this._strategyRegistryV2.get({ id: methodId });
-            } catch {
-                strategy = this._strategyRegistry.get(methodId)
-            }
-
-            let promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize(options);
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).initialize(options);
 
             promise
                 .then(() => {
@@ -161,19 +113,7 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, meta));
 
-            let strategy: CustomerStrategy | CustomerStrategyV2;
-
-            if (!methodId) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            try {
-                strategy = this._strategyRegistryV2.get({ id: methodId });
-            } catch {
-                strategy = this._strategyRegistry.get(methodId)
-            }
-
-            let promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize(options);
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).deinitialize(options);
 
             promise
                 .then(() => {
@@ -201,5 +141,20 @@ export default class CustomerStrategyActionCreator {
                 observer.error(createErrorAction(CustomerStrategyActionType.WidgetInteractionFailed, error, meta));
             });
         });
+    }
+
+    private _getStrategy(methodId?: string): CustomerStrategy | CustomerStrategyV2 {
+        if (!methodId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+        let strategy: CustomerStrategy | CustomerStrategyV2;
+
+        try {
+            strategy = this._strategyRegistryV2.get({ id: methodId });
+        } catch {
+            strategy = this._strategyRegistry.get(methodId)
+        }
+
+        return strategy;
     }
 }

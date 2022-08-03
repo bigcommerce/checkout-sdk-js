@@ -13,7 +13,8 @@ import { ResolveIdRegistry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, createCustomerStrategyRegistryV2, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -74,6 +75,7 @@ describe('CheckoutService', () => {
     let paymentStrategyActionCreator: PaymentStrategyActionCreator;
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let paymentStrategyRegistryV2: ResolveIdRegistry<PaymentStrategyV2, PaymentStrategyResolveId>;
+    let customerRegistryV2: CustomerStrategyRegistryV2;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
     let signInEmailActionCreator: SignInEmailActionCreator;
@@ -151,6 +153,7 @@ describe('CheckoutService', () => {
         paymentStrategyRegistry = new PaymentStrategyRegistry(store);
         const paymentIntegrationService = createPaymentIntegrationService(store);
         paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+        customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
         jest.spyOn(paymentStrategyRegistry, 'getByMethod').mockReturnValue(paymentStrategy);
 
@@ -229,7 +232,8 @@ describe('CheckoutService', () => {
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale)
+            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale),
+            customerRegistryV2
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
