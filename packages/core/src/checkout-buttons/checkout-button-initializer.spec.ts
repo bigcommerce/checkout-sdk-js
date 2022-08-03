@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { createPaymentClient, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
 import CheckoutButtonErrorSelector from './checkout-button-error-selector';
@@ -12,6 +13,7 @@ import CheckoutButtonInitializer from './checkout-button-initializer';
 import CheckoutButtonStatusSelector from './checkout-button-status-selector';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
+import createCheckoutButtonRegistryV2 from './create-checkout-button-registry-v2';
 import { CheckoutButtonMethodType } from './strategies';
 
 describe('CheckoutButtonInitializer', () => {
@@ -24,6 +26,7 @@ describe('CheckoutButtonInitializer', () => {
         const paymentClient = createPaymentClient(store);
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store, paymentClient, createRequestSender(), createFormPoster(), 'en'),
+            createCheckoutButtonRegistryV2(createPaymentIntegrationService(store)),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         );
 
