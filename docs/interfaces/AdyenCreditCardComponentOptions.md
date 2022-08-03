@@ -152,7 +152,7 @@ Called in case of an invalid card number, invalid expiry date, or
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns
@@ -173,7 +173,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns

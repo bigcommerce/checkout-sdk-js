@@ -49,7 +49,7 @@ Called in case of an invalid card number, invalid expiry date, or
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV3ComponentState`](../README.md#adyenv3componentstate) |
+| `state` | [`AdyenV3ValidationState`](AdyenV3ValidationState.md) |
 | `component` | [`AdyenComponent_2`](AdyenComponent_2.md) |
 
 #### Returns
@@ -66,7 +66,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV3ComponentState`](../README.md#adyenv3componentstate) |
+| `state` | [`AdyenV3ValidationState`](AdyenV3ValidationState.md) |
 | `component` | [`AdyenComponent_2`](AdyenComponent_2.md) |
 
 #### Returns

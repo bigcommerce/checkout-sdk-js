@@ -148,13 +148,13 @@ Use additionalActionOptions instead as this property will be removed in the futu
 
 ### validateCardFields
 
-▸ **validateCardFields**(`componentState`): `void`
+▸ **validateCardFields**(`validateState`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `componentState` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `validateState` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
 
 #### Returns
 

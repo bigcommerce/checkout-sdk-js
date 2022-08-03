@@ -147,8 +147,8 @@ declare interface AdyenComponentEvents {
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenComponentState, component: AdyenComponent): void;
-    onFieldValid?(state: AdyenComponentState, component: AdyenComponent): void;
+    onError?(state: AdyenV2ValidationState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenV2ValidationState, component: AdyenComponent): void;
 }
 
 declare interface AdyenComponentEvents_2 {
@@ -161,8 +161,8 @@ declare interface AdyenComponentEvents_2 {
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
-    onFieldValid?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+    onError?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
+    onFieldValid?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
 }
 
 declare type AdyenComponentState = (CardState | WechatState);
@@ -267,6 +267,12 @@ declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
     widgetSize?: string;
 }
 
+declare enum AdyenV2CardFields {
+    CardNumber = "encryptedCardNumber",
+    SecurityCode = "encryptedSecurityCode",
+    ExpiryDate = "encryptedExpiryDate"
+}
+
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.
  *
@@ -361,7 +367,23 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
-    validateCardFields(componentState: AdyenComponentState): void;
+    validateCardFields(validateState: AdyenV2ValidationState): void;
+}
+
+declare interface AdyenV2ValidationState {
+    valid: boolean;
+    fieldType?: AdyenV2CardFields;
+    endDigits?: string;
+    encryptedFieldName?: string;
+    i18n?: string;
+    error?: string;
+    errorKey?: string;
+}
+
+declare enum AdyenV3CardFields {
+    CardNumber = "encryptedCardNumber",
+    SecurityCode = "encryptedSecurityCode",
+    ExpiryDate = "encryptedExpiryDate"
 }
 
 declare type AdyenV3ComponentState = CardState_2 | WechatState_2;
@@ -479,7 +501,17 @@ declare interface AdyenV3PaymentInitializeOptions {
      */
     options?: Omit<AdyenV3CreditCardComponentOptions, 'onChange'>;
     shouldShowNumberField?: boolean;
-    validateCardFields(componentState: AdyenV3ComponentState): void;
+    validateCardFields(validateState: AdyenV3ValidationState): void;
+}
+
+declare interface AdyenV3ValidationState {
+    valid: boolean;
+    fieldType?: AdyenV3CardFields;
+    endDigits?: string;
+    encryptedFieldName?: string;
+    i18n?: string;
+    error?: string;
+    errorKey?: string;
 }
 
 /**

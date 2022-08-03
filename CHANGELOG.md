@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.273.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.3...v1.273.0) (2022-08-03)
+
+
+### Features
+
+* **payment:** ADYEN-539 added vaulting card validation ([32d846b](https://github.com/bigcommerce/checkout-sdk-js/commit/32d846b684e9e240900f6dbf05dc6e1c2f2d5f5a))
+
 ### [1.272.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.2...v1.272.3) (2022-08-03)
 
 

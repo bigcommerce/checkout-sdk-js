@@ -122,13 +122,13 @@ ___
 
 ### validateCardFields
 
-▸ **validateCardFields**(`componentState`): `void`
+▸ **validateCardFields**(`validateState`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `componentState` | [`AdyenV3ComponentState`](../README.md#adyenv3componentstate) |
+| `validateState` | [`AdyenV3ValidationState`](AdyenV3ValidationState.md) |
 
 #### Returns
 
