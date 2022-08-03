@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.272.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.2...v1.272.3) (2022-08-03)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-0000 upgrade @babel/polyfill from 7.4.4 to 7.12.1 ([#1516](https://github.com/bigcommerce/checkout-sdk-js/issues/1516)) ([e3eb94b](https://github.com/bigcommerce/checkout-sdk-js/commit/e3eb94b8163e669fc92e48a750f01a8ac0212094))
+* **common:** CHECKOUT-0000 upgrade @bigcommerce/request-sender from 1.0.3 to 1.2.1 ([#1533](https://github.com/bigcommerce/checkout-sdk-js/issues/1533)) ([59aeeeb](https://github.com/bigcommerce/checkout-sdk-js/commit/59aeeebbbf4552479dbfbef58feb96349d3fe771))
+* **common:** CHECKOUT-0000 upgrade @types/lodash from 4.14.178 to 4.14.182 ([#1531](https://github.com/bigcommerce/checkout-sdk-js/issues/1531)) ([23e09e6](https://github.com/bigcommerce/checkout-sdk-js/commit/23e09e63280e25cfc38a82d5ab58305a90175ad6))
+* **common:** CHECKOUT-0000 upgrade iframe-resizer from 3.6.2 to 3.6.6 ([#1532](https://github.com/bigcommerce/checkout-sdk-js/issues/1532)) ([2935623](https://github.com/bigcommerce/checkout-sdk-js/commit/29356236ae5be2b8a38a086bdae9caef8104a416))
+
 ### [1.272.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.1...v1.272.2) (2022-08-03)
 
 
