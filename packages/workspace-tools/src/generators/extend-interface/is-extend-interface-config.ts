@@ -22,6 +22,10 @@ export default function isExtendInterfaceConfig(config: unknown): config is Exte
             return false;
         }
 
+        if (!hasKey(entry, 'outputMemberName') || typeof entry['outputMemberName'] !== 'string') {
+            return false;
+        }
+
         if (!hasKey(entry, 'memberPattern') || typeof entry['memberPattern'] !== 'string') {
             return false;
         }

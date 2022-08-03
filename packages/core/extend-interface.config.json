@@ -3,23 +3,26 @@
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/payment-initialize-options.ts",
+            "outputMemberName": "PaymentInitializeOptions",
             "memberPattern": "^With.+PaymentInitializeOptions$",
-            "targetPath": "packages/payment-integration/src/index.ts",
-            "targetMemberName": "PaymentInitializeOptions"
+            "targetPath": "packages/core/src/payment/index.ts",
+            "targetMemberName": "BasePaymentInitializeOptions"
         },
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/customer-initialize-options.ts",
+            "outputMemberName": "CustomerInitializeOptions",
             "memberPattern": "^With.+CustomerInitializeOptions$",
-            "targetPath": "packages/payment-integration/src/index.ts",
-            "targetMemberName": "CustomerInitializeOptions"
+            "targetPath": "packages/core/src/customer/index.ts",
+            "targetMemberName": "BaseCustomerInitializeOptions"
         },
         {
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/checkout-button-initialize-options.ts",
+            "outputMemberName": "CheckoutButtonInitializeOptions",
             "memberPattern": "^With.+ButtonInitializeOptions$",
-            "targetPath": "packages/payment-integration/src/index.ts",
-            "targetMemberName": "CheckoutButtonInitializeOptions"
+            "targetPath": "packages/core/src/checkout-buttons/index.ts",
+            "targetMemberName": "BaseCheckoutButtonInitializeOptions"
         }
     ]
 }

@@ -1,5 +1,6 @@
-enum CheckoutButtonMethodType {
-    APPLEPAY = 'applepay',
+export { default as default } from '../../generated/checkout-button-method-type';
+
+export enum BaseCheckoutButtonMethodType {
     AMAZON_PAY_V2 = 'amazonpay',
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_VENMO = 'braintreevenmo',
@@ -19,5 +20,3 @@ enum CheckoutButtonMethodType {
     PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods',
     PAYPALCOMMERCE_VENMO = 'paypalcommercevenmo',
 }
-
-export default CheckoutButtonMethodType;

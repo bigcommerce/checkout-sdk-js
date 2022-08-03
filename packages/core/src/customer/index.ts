@@ -1,4 +1,4 @@
-export * from './customer-request-options';
+export { BaseCustomerInitializeOptions, CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from './customer-request-options';
 
 export { default as InternalCustomer } from './internal-customer';
 export { default as Customer, CustomerAddress } from './customer';
@@ -17,6 +17,5 @@ export { default as CustomerStrategySelector, CustomerStrategySelectorFactory, c
 export { default as CustomerStrategyState } from './customer-strategy-state';
 export { default as customerStrategyReducer } from './customer-strategy-reducer';
 export { default as GuestCredentials } from './guest-credentials';
-export { CustomerInitializeOptions as CustomerInitializeOptionsV2 } from './customer-request-options-v2';
 
 export { default as mapToInternalCustomer } from './map-to-internal-customer';
