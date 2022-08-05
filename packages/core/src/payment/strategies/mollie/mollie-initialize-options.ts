@@ -62,7 +62,7 @@ export default interface MolliePaymentInitializeOptions {
      */
     form?: HostedFormOptions;
 
-    unsupportedMethodMessage: string;
+    unsupportedMethodMessage?: string;
 
     disableButton(): void;
 }

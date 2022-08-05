@@ -178,14 +178,14 @@ describe('MolliePaymentStrategy', () => {
 
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue( mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCart')
+                jest.spyOn(store.getState().cart, 'getCartOrThrow')
                     .mockReturnValue(cartMock);
                 jest.spyOn(document, 'createElement').mockReturnValue(paragraph);
                 jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
                 await strategy.initialize(optionsMock);
 
-                expect(store.getState().cart.getCart).toHaveBeenCalled();
+                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).toHaveBeenCalledWith(options.mollie?.containerId);
                 expect(document.createElement).toHaveBeenCalledWith('p');
                 expect(container.appendChild).toHaveBeenCalled();
@@ -228,13 +228,13 @@ describe('MolliePaymentStrategy', () => {
 
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue( mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(cartMock);
+                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
                 await strategy.initialize(optionsMock);
 
-                expect(store.getState().cart.getCart).toHaveBeenCalled();
+                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
                 expect(disableButtonMock).not.toHaveBeenCalled();
@@ -268,14 +268,14 @@ describe('MolliePaymentStrategy', () => {
 
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue( mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(null);
+                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(null);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
                 const response = strategy.initialize(optionsMock)
 
                 expect(response).rejects.toThrowError(new MissingDataError(MissingDataErrorType.MissingCart));
-                expect(store.getState().cart.getCart).toHaveBeenCalled();
+                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
                 expect(disableButtonMock).not.toHaveBeenCalled();

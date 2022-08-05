@@ -85,27 +85,24 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             this._mountElements();
         }
 
-        if(methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
-            const cart = state.cart.getCart();
-
-            if (!cart) {
-                throw new MissingDataError(MissingDataErrorType.MissingCart);
-            }
-
+        if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
+            const cart = state.cart.getCartOrThrow();
             const cartDigitalItems = cart.lineItems.digitalItems;
 
-            if(cartDigitalItems && cartDigitalItems.length > 0){
+            if (cartDigitalItems && cartDigitalItems.length > 0) {
                 const { containerId } = this._getInitializeOptions();
 
                 if (containerId) {
                     const container = document.getElementById(containerId);
 
-                    if(container){
+                    if (container) {
                         const paragraph = document.createElement('p') ;
-                        paragraph.innerText = mollie.unsupportedMethodMessage;
-                        container.appendChild(paragraph);
 
-                        mollie.disableButton();
+                        if (mollie.unsupportedMethodMessage) {
+                            paragraph.innerText = mollie.unsupportedMethodMessage;
+                            container.appendChild(paragraph);
+                            mollie.disableButton();
+                        }
                     }
                 }
             }
