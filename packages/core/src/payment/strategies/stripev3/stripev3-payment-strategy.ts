@@ -12,6 +12,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
+import { StripeV3FormattedPayload } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -71,7 +72,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
-        let formattedPayload: { [key: string]: unknown };
+        let formattedPayload: StripeV3FormattedPayload;
         let stripeError: StripeError | undefined;
 
         if (!payment || !payment.paymentData) {
@@ -111,6 +112,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 credit_card_token: { token },
                 vault_payment_instrument: shouldSaveInstrument,
                 confirm: false,
+                set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
             };
 
             if (method === StripeElementType.CreditCard) {
@@ -148,10 +150,14 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _buildPaymentPayload(methodId: string, formattedPayload: { [key: string]: unknown }, shouldSetAsDefaultInstrument: boolean | undefined): Payment {
+    private _buildPaymentPayload(methodId: string, formattedPayload: StripeV3FormattedPayload, shouldSetAsDefaultInstrument: boolean | undefined): Payment {
         const paymentData = shouldSetAsDefaultInstrument
-            ? { formattedPayload, shouldSetAsDefaultInstrument }
-            : { formattedPayload };
+            ? { formattedPayload: {
+                    ...formattedPayload,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                },
+            } :
+            { formattedPayload };
 
         return { methodId, paymentData };
     }
@@ -225,6 +231,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         const formattedPayload = {
             bigpay_token: { token },
             confirm: true,
+            set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
         };
 
         if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId) && this._hostedForm) {
