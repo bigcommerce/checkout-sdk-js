@@ -1,4 +1,5 @@
 import { FormPoster } from '@bigcommerce/form-poster';
+import { noop } from 'lodash';
 
 import { BillingAddressActionCreator } from '../../../billing/';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
@@ -17,6 +18,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _currentShippingAddress?: AddressRequestBody;
     private _isVenmoEnabled?: boolean;
     private _isVenmo?: boolean;
+    private _onAuthorizeCallback = noop;
 
     constructor(
         private _store: CheckoutStore,
@@ -49,6 +51,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             ...(isHostedCheckoutEnabled && { onShippingChange: (data) => this._onShippingChangeHandler(data) }),
             style: options?.paypalCommerce?.style,
         };
+
+        const onPaymentAuthorize  = options.paypalCommerce?.onPaymentAuthorize;
+
+        if (onPaymentAuthorize) {
+            this._onAuthorizeCallback = onPaymentAuthorize;
+        }
 
         const messagingContainer = options.paypalCommerce?.messagingContainer;
         const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
@@ -168,7 +176,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 };
                 await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
-                window.location.assign('/checkout/order-confirmation');
+                this._onAuthorizeCallback();
             }
         } catch (e) {
             throw new RequestError(e);

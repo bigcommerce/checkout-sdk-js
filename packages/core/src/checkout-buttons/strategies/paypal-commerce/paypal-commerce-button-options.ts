@@ -10,4 +10,8 @@ export interface PaypalCommerceButtonInitializeOptions {
      * Container id for messaging banner container
      */
     messagingContainer?: string;
+    /**
+     * Callback that redirects to order-confirmation page after payment authorize
+     */
+    onPaymentAuthorize(): void;
 }
