@@ -1,19 +1,17 @@
 import { noop } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getShippableItemsCount } from '../../../shipping';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '.';
+import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor, AmazonPayV2Placement } from '.';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
@@ -31,23 +29,35 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonpay } = options;
 
-        if (!methodId || !amazonpay) {
-            throw new InvalidArgumentError('Unable to proceed because "options.amazonpay" argument is not provided.');
+        if (!methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "methodId" argument is not provided.');
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId)
+        );
+        const paymentMethod = getPaymentMethodOrThrow(methodId);
+        const { initializationData: { paymentToken, region } } = paymentMethod;
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        const { paymentToken, region } = paymentMethod.initializationData;
-        const buttonId = amazonpay.editButtonId;
+        if (paymentToken && amazonpay?.editButtonId) {
+            this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
 
-        if (paymentToken && buttonId) {
-            this._bindEditButton(buttonId, paymentToken, 'changePayment', this._isModalFlow(region));
-        } else {
-            this._walletButton = this._createSignInButton(paymentMethod);
+            return this._store.getState();
         }
+
+        const { id: containerId } = this._createContainer();
+
+        this._walletButton =
+            this._amazonPayV2PaymentProcessor.renderAmazonPayButton(
+                containerId,
+                this._store.getState(),
+                methodId,
+                AmazonPayV2Placement.Checkout
+            );
 
         return this._store.getState();
     }
@@ -113,7 +123,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    async deinitialize(_options?: PaymentRequestOptions | undefined): Promise<InternalCheckoutSelectors> {
+    async deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
@@ -124,8 +134,8 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, isModalFlow: boolean): void {
-        const button = document.getElementById(id);
+    private _bindEditButton(buttonId: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, isModalFlow: boolean): void {
+        const button = document.getElementById(buttonId);
 
         if (!button || !button.parentNode) {
             return;
@@ -138,7 +148,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             clone.addEventListener('click', () => this._showLoadingSpinner());
         }
 
-        this._amazonPayV2PaymentProcessor.bindButton(id, sessionId, changeAction);
+        this._amazonPayV2PaymentProcessor.bindButton(buttonId, sessionId, changeAction);
     }
 
     private _isModalFlow(region: string) {
@@ -164,60 +174,5 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         container.style.display = 'none';
 
         return document.body.appendChild(container);
-    }
-
-    private _createSignInButton(paymentMethod: PaymentMethod): HTMLElement {
-        const state = this._store.getState();
-        const cart = state.cart.getCart();
-        const config = state.config.getStoreConfig();
-
-        if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        if (!paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const {
-            config: {
-                merchantId,
-                testMode,
-            },
-            initializationData: {
-                checkoutLanguage,
-                ledgerCurrency,
-                checkoutSessionMethod,
-                extractAmazonCheckoutSessionId,
-            },
-        } = paymentMethod;
-
-        if (!merchantId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const amazonButtonOptions = {
-            merchantId,
-            sandbox: !!testMode,
-            checkoutLanguage,
-            ledgerCurrency,
-            productType: cart && getShippableItemsCount(cart) === 0 ?
-                AmazonPayV2PayOptions.PayOnly :
-                AmazonPayV2PayOptions.PayAndShip,
-            createCheckoutSession: {
-                method: checkoutSessionMethod,
-                // tslint:disable-next-line: no-string-literal
-                url: config.checkoutSettings.features['INT-5826.amazon_relative_url']
-                    ? `/remote-checkout/${paymentMethod.id}/payment-session`
-                    : `${config.storeProfile.shopPath}/remote-checkout/${paymentMethod.id}/payment-session`,
-                extractAmazonCheckoutSessionId,
-            },
-            placement: AmazonPayV2Placement.Checkout,
-        };
-
-        const container = this._createContainer();
-        this._amazonPayV2PaymentProcessor.createButton(`#${container.id}`, amazonButtonOptions);
-
-        return container;
     }
 }

@@ -1,8 +1,9 @@
 import { PaymentMethod } from '../..';
-import { AmazonPayV2ButtonInitializeOptions } from '../../../checkout-buttons/strategies/amazon-pay-v2';
-import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
+import { getShippableItemsCount } from '../../../../../core/src/shipping';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { AmazonPayV2ChangeActionType, AmazonPayV2SDK } from './amazon-pay-v2';
+import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
 export default class AmazonPayV2PaymentProcessor {
@@ -29,8 +30,8 @@ export default class AmazonPayV2PaymentProcessor {
         });
     }
 
-    createButton(containerId: string, options: AmazonPayV2ButtonInitializeOptions): HTMLElement {
-        return this._getAmazonPayV2SDK().Pay.renderButton(containerId, options);
+    createButton(containerId: string, options: AmazonPayV2ButtonParameters): HTMLElement {
+        return this._getAmazonPayV2SDK().Pay.renderButton(`#${containerId}`, options);
     }
 
     async signout(): Promise<void> {
@@ -39,6 +40,104 @@ export default class AmazonPayV2PaymentProcessor {
         }
 
         return Promise.resolve();
+    }
+
+    renderAmazonPayButton(
+        containerId: string,
+        checkoutState: InternalCheckoutSelectors,
+        methodId: string,
+        placement: AmazonPayV2Placement,
+        options?: AmazonPayV2ButtonParameters
+    ): HTMLElement {
+        const container = document.getElementById(containerId);
+
+        if (!container) {
+            throw new InvalidArgumentError('Unable to render the Amazon Pay button to an invalid HTML container element.');
+        }
+
+        const amazonPayV2ButtonOptions = options ?? this._getAmazonPayV2ButtonOptions(checkoutState, methodId, placement);
+
+        this.createButton(containerId, amazonPayV2ButtonOptions);
+
+        return container;
+    }
+
+    private _getAmazonPayV2ButtonOptions(
+        {
+            paymentMethods: { getPaymentMethodOrThrow },
+            config: { getStoreConfigOrThrow },
+            cart: { getCart },
+        }: InternalCheckoutSelectors,
+        methodId: string,
+        placement: AmazonPayV2Placement
+    ): AmazonPayV2ButtonParameters {
+        const {
+            config: {
+                merchantId,
+                testMode,
+            },
+            initializationData: {
+                checkoutLanguage,
+                ledgerCurrency,
+                checkoutSessionMethod,
+                extractAmazonCheckoutSessionId,
+                publicKeyId,
+                createCheckoutSessionConfig,
+            },
+        } = getPaymentMethodOrThrow(methodId);
+
+        const {
+            checkoutSettings: { features },
+            storeProfile: { shopPath },
+        } = getStoreConfigOrThrow();
+
+        const cart = getCart();
+
+        if (!merchantId || !ledgerCurrency) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const buttonBaseConfig = {
+            merchantId,
+            ledgerCurrency,
+            checkoutLanguage,
+            productType: cart && getShippableItemsCount(cart) === 0 ?
+                AmazonPayV2PayOptions.PayOnly :
+                AmazonPayV2PayOptions.PayAndShip,
+            placement,
+            buttonColor: AmazonPayV2ButtonColor.Gold,
+        };
+
+        if (features['PROJECT-3483.amazon_pay_ph4']) {
+            return /^(SANDBOX|LIVE)/.test(publicKeyId)
+                ? {
+                      ...buttonBaseConfig,
+                      publicKeyId,
+                      createCheckoutSessionConfig,
+                  }
+                : {
+                      ...buttonBaseConfig,
+                      sandbox: !!testMode,
+                      createCheckoutSessionConfig: {
+                          ...createCheckoutSessionConfig,
+                          publicKeyId,
+                      },
+                  };
+        }
+
+        const createCheckoutSession = {
+            method: checkoutSessionMethod,
+            url: features['INT-5826.amazon_relative_url']
+                ? `/remote-checkout/${methodId}/payment-session`
+                : `${shopPath}/remote-checkout/${methodId}/payment-session`,
+            extractAmazonCheckoutSessionId,
+        };
+
+        return {
+            ...buttonBaseConfig,
+            createCheckoutSession,
+            sandbox: !!testMode,
+        };
     }
 
     private _getAmazonPayV2SDK(): AmazonPayV2SDK {

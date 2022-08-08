@@ -1,9 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import { InvalidArgumentError, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { AmazonPayV2PaymentProcessor, AmazonPayV2PayOptions, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
+import { AmazonPayV2PaymentProcessor, AmazonPayV2Placement } from '../../../payment/strategies/amazon-pay-v2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { getShippableItemsCount } from '../../../shipping';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
@@ -20,15 +19,25 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonpay } = options;
 
-        if (!methodId || !amazonpay) {
-            throw new InvalidArgumentError('Unable to proceed because "options.methodId" or "options.amazonpay" argument is not provided.');
+        if (!methodId || !amazonpay?.container) {
+            throw new InvalidArgumentError('Unable to proceed because "methodId" or "containerId" argument is not provided.');
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId)
+        );
 
-        await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
-        this._walletButton = this._createSignInButton(amazonpay.container, methodId);
+        await this._amazonPayV2PaymentProcessor.initialize(getPaymentMethodOrThrow(methodId));
+
+        this._walletButton =
+            this._amazonPayV2PaymentProcessor.renderAmazonPayButton(
+                amazonpay.container,
+                this._store.getState(),
+                methodId,
+                AmazonPayV2Placement.Checkout
+            );
 
         return this._store.getState();
     }
@@ -67,66 +76,5 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());
-    }
-
-    private _createSignInButton(containerId: string, methodId: string): HTMLElement {
-        const container = document.getElementById(containerId);
-
-        if (!container) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
-        }
-
-        const state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-        const config = state.config.getStoreConfig();
-        const cart = state.cart.getCart();
-
-        if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        if (!paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const {
-            config: {
-                merchantId,
-                testMode,
-            },
-            initializationData: {
-                checkoutLanguage,
-                ledgerCurrency,
-                checkoutSessionMethod,
-                extractAmazonCheckoutSessionId,
-            },
-        } = paymentMethod;
-
-        if (!merchantId) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid merchant ID.');
-        }
-
-        const amazonButtonOptions = {
-            merchantId,
-            sandbox: !!testMode,
-            checkoutLanguage,
-            ledgerCurrency,
-            productType: cart && getShippableItemsCount(cart) === 0 ?
-                AmazonPayV2PayOptions.PayOnly :
-                AmazonPayV2PayOptions.PayAndShip,
-            createCheckoutSession: {
-                method: checkoutSessionMethod,
-                // tslint:disable-next-line: no-string-literal
-                url: config.checkoutSettings.features['INT-5826.amazon_relative_url']
-                    ? `/remote-checkout/${methodId}/payment-session`
-                    : `${config.storeProfile.shopPath}/remote-checkout/${methodId}/payment-session`,
-                extractAmazonCheckoutSessionId,
-            },
-            placement: AmazonPayV2Placement.Checkout,
-        };
-
-        this._amazonPayV2PaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
-
-        return container;
     }
 }
