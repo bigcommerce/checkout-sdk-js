@@ -16,7 +16,13 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
     private _initializeOptions?: WorldpayAccessPaymentInitializeOptions;
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        this._initializeOptions = options && options.worldpay;
+        if (!options?.worldpay) {
+            throw new NotInitializedError(
+                NotInitializedErrorType.PaymentNotInitialized
+            );
+        }
+
+        this._initializeOptions = options.worldpay;
 
         return super.initialize(options);
     }

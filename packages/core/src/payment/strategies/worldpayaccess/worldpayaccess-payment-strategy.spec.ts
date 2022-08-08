@@ -5,6 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
+import { NotInitializedError } from '../../../common/error/errors';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
@@ -282,6 +283,19 @@ describe('WorldpayaccessPaymetStrategy', () => {
             expect(form.submit)
                 .not.toHaveBeenCalled();
         });
+
+        it('submit with collection data required', async () => {
+            initializeOptions = {
+                creditCard: {
+                    form: {
+                        fields: {},
+                    },
+                },
+                methodId: 'worldpayaccess'
+            };
+
+            await expect(strategy.initialize(initializeOptions)).rejects.toThrowError(NotInitializedError);
+        })
 
         it('submit with collection data required', async () => {
             HTMLFormElement.prototype.submit = () => window.parent.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*');
