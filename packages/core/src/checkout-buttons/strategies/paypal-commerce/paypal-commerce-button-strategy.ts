@@ -9,7 +9,7 @@ import { ApproveActions, ApproveDataOptions, ButtonsOptions, ClickDataOptions, O
 import { ConsignmentActionCreator, ConsignmentLineItem } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
-import { AddressRequestBody } from "../../../address";
+import { AddressRequestBody } from '../../../address';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod<PaypalCommerceInitializationData>;
@@ -90,7 +90,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             };
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
             if (existingConsignments[0]) {
-                await this._store.dispatch(this._consignmentActionCreator.updateConsignment({ id: existingConsignments[0].id, ...consignment }));
+                await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
             } else {
                 await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
             }
@@ -138,8 +138,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private async _onHostedMethodApprove(data: ApproveDataOptions, actions: ApproveActions) {
         try {
             const orderDetails = await actions.order.get();
-            const consignments = this._store.getState().consignments.getConsignmentsOrThrow();
-            const lineItems = this._getLineItems();
             if (!this._paymentMethod?.id) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
@@ -153,14 +151,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     email: orderDetails.payer.email_address,
                     address1: orderDetails.purchase_units[0].shipping.address.address_line_1,
                 };
-                const consignment = {
-                    id: consignments[0].id,
-                    shippingAddress,
-                    lineItems,
-                };
+
                 await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
-                await this._store.dispatch(this._consignmentActionCreator.updateConsignment(consignment));
+                await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
 
                 const submitOrderPayload = {};
                 const submitOrderOptions = {
