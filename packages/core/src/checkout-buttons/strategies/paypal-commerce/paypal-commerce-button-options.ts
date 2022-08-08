@@ -13,5 +13,5 @@ export interface PaypalCommerceButtonInitializeOptions {
     /**
      * Callback that redirects to order-confirmation page after payment authorize
      */
-    onPaymentAuthorize(): void;
+    onPaymentApprove(): void;
 }

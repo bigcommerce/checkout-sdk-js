@@ -18,7 +18,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _currentShippingAddress?: AddressRequestBody;
     private _isVenmoEnabled?: boolean;
     private _isVenmo?: boolean;
-    private _onAuthorizeCallback = noop;
+    private _onPaymentApproveCallback = noop;
 
     constructor(
         private _store: CheckoutStore,
@@ -52,10 +52,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             style: options?.paypalCommerce?.style,
         };
 
-        const onPaymentAuthorize  = options.paypalCommerce?.onPaymentAuthorize;
+        const onPaymentApprove  = options.paypalCommerce?.onPaymentApprove;
 
-        if (onPaymentAuthorize) {
-            this._onAuthorizeCallback = onPaymentAuthorize;
+        if (onPaymentApprove) {
+            this._onPaymentApproveCallback = onPaymentApprove;
         }
 
         const messagingContainer = options.paypalCommerce?.messagingContainer;
@@ -176,7 +176,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 };
                 await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
-                this._onAuthorizeCallback();
+                this._onPaymentApproveCallback();
             }
         } catch (e) {
             throw new RequestError(e);

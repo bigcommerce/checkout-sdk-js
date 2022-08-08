@@ -1,5 +1,3 @@
-import { Cart } from '../../../cart';
-
 export interface ApproveDataOptions {
     orderID?: string;
 }
@@ -62,7 +60,7 @@ export interface ButtonsOptions {
     fundingSource?: string;
     createOrder?(): Promise<string>;
     onApprove?(data: ApproveDataOptions, actions: ApproveActions): void;
-    onShippingChange?(data: ShippingOptionsPayload, actions: ApproveActions, cart: Cart): void;
+    onShippingChange?(data: ShippingOptionsPayload): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(data: OnCancelData): void;
     onError?(error: Error): void;
