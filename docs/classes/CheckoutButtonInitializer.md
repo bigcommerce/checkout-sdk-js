@@ -95,7 +95,7 @@ initializer.initializeButton({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`CheckoutButtonInitializeOptions`](../interfaces/CheckoutButtonInitializeOptions.md) | Options for initializing the checkout button. |
+| `options` | [`CheckoutButtonInitializeOptions`](../README.md#checkoutbuttoninitializeoptions) | Options for initializing the checkout button. |
 
 #### Returns
 

@@ -10,7 +10,7 @@ The set of options for configuring the checkout button.
 
   ↳ **`CheckoutButtonOptions`**
 
-  ↳↳ [`CheckoutButtonInitializeOptions`](CheckoutButtonInitializeOptions.md)
+  ↳↳ [`BaseCheckoutButtonInitializeOptions`](BaseCheckoutButtonInitializeOptions.md)
 
 ## Table of contents
 

@@ -661,7 +661,7 @@ await service.initializeCustomer({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options?` | [`CustomerInitializeOptions`](../interfaces/CustomerInitializeOptions.md) | Options for initializing the customer step of checkout. |
+| `options?` | [`CustomerInitializeOptions`](../README.md#customerinitializeoptions) | Options for initializing the customer step of checkout. |
 
 #### Returns
 
@@ -695,7 +695,7 @@ await service.initializePayment({
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `options` | [`PaymentInitializeOptions`](../interfaces/PaymentInitializeOptions.md) | Options for initializing the payment step of checkout. |
+| `options` | [`PaymentInitializeOptions`](../README.md#paymentinitializeoptions) | Options for initializing the payment step of checkout. |
 
 #### Returns
 

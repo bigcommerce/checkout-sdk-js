@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.274.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.273.0...v1.274.0) (2022-08-08)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6781 Point to interfaces extracted from integration packages ([d12f024](https://github.com/bigcommerce/checkout-sdk-js/commit/d12f024a3dc53db847900f8e3d87d8c4b88ee031))
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-51 set a stored card as default during checkout ([#1498](https://github.com/bigcommerce/checkout-sdk-js/issues/1498)) ([d929a2d](https://github.com/bigcommerce/checkout-sdk-js/commit/d929a2d20cd424a4a88430a8571b7ab5e3dfff3d))
+
 ## [1.273.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.272.3...v1.273.0) (2022-08-03)
 
 

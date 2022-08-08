@@ -11,7 +11,7 @@ the current checkout flow.
 
   ↳ **`PaymentRequestOptions`**
 
-  ↳↳ [`PaymentInitializeOptions`](PaymentInitializeOptions.md)
+  ↳↳ [`BasePaymentInitializeOptions`](BasePaymentInitializeOptions.md)
 
 ## Table of contents
 

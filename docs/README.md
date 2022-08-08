@@ -83,15 +83,19 @@
 - [AmazonPayV2ShippingInitializeOptions](interfaces/AmazonPayV2ShippingInitializeOptions.md)
 - [AmazonPayWidgetError](interfaces/AmazonPayWidgetError.md)
 - [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)
+- [ApplePayButtonInitializeOptions_2](interfaces/ApplePayButtonInitializeOptions_2.md)
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
 - [BankInstrument](interfaces/BankInstrument.md)
 - [Banner](interfaces/Banner.md)
 - [BaseAccountInstrument](interfaces/BaseAccountInstrument.md)
+- [BaseCheckoutButtonInitializeOptions](interfaces/BaseCheckoutButtonInitializeOptions.md)
+- [BaseCustomerInitializeOptions](interfaces/BaseCustomerInitializeOptions.md)
 - [BaseElementOptions](interfaces/BaseElementOptions.md)
 - [BaseElementOptions_2](interfaces/BaseElementOptions_2.md)
 - [BaseIndividualElementOptions](interfaces/BaseIndividualElementOptions.md)
 - [BaseInstrument](interfaces/BaseInstrument.md)
+- [BasePaymentInitializeOptions](interfaces/BasePaymentInitializeOptions.md)
 - [BillingAddress](interfaces/BillingAddress.md)
 - [BillingAddressRequestBody](interfaces/BillingAddressRequestBody.md)
 - [BlockElementStyles](interfaces/BlockElementStyles.md)
@@ -141,7 +145,6 @@
 - [CheckableInputStyles](interfaces/CheckableInputStyles.md)
 - [ChecklistStyles](interfaces/ChecklistStyles.md)
 - [Checkout](interfaces/Checkout.md)
-- [CheckoutButtonInitializeOptions](interfaces/CheckoutButtonInitializeOptions.md)
 - [CheckoutButtonInitializerOptions](interfaces/CheckoutButtonInitializerOptions.md)
 - [CheckoutButtonOptions](interfaces/CheckoutButtonOptions.md)
 - [CheckoutButtonSelectors](interfaces/CheckoutButtonSelectors.md)
@@ -178,7 +181,6 @@
 - [CustomerAddress](interfaces/CustomerAddress.md)
 - [CustomerCredentials](interfaces/CustomerCredentials.md)
 - [CustomerGroup](interfaces/CustomerGroup.md)
-- [CustomerInitializeOptions](interfaces/CustomerInitializeOptions.md)
 - [CustomerPasswordRequirements](interfaces/CustomerPasswordRequirements.md)
 - [CustomerRequestOptions](interfaces/CustomerRequestOptions.md)
 - [DigitalItem](interfaces/DigitalItem.md)
@@ -268,7 +270,6 @@
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
-- [PaymentInitializeOptions](interfaces/PaymentInitializeOptions.md)
 - [PaymentMethod](interfaces/PaymentMethod.md)
 - [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
@@ -345,6 +346,9 @@
 - [WechatState](interfaces/WechatState.md)
 - [WechatState_2](interfaces/WechatState_2.md)
 - [WithAccountCreation](interfaces/WithAccountCreation.md)
+- [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
+- [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
+- [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
 - [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
@@ -365,11 +369,13 @@
 - [BraintreeFormFieldEnterEventData](README.md#braintreeformfieldentereventdata)
 - [BraintreeFormFieldFocusEventData](README.md#braintreeformfieldfocuseventdata)
 - [BraintreeFormFieldStyles](README.md#braintreeformfieldstyles)
+- [CheckoutButtonInitializeOptions](README.md#checkoutbuttoninitializeoptions)
 - [CheckoutIncludeParam](README.md#checkoutincludeparam)
 - [ComparableCheckout](README.md#comparablecheckout)
 - [ConsignmentAssignmentRequestBody](README.md#consignmentassignmentrequestbody)
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
+- [CustomerInitializeOptions](README.md#customerinitializeoptions)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -388,6 +394,7 @@
 - [Omit](README.md#omit)
 - [OrderPaymentInstrument](README.md#orderpaymentinstrument)
 - [OrderPayments](README.md#orderpayments)
+- [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
 - [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
 - [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
@@ -470,6 +477,12 @@ ___
 
 ___
 
+### CheckoutButtonInitializeOptions
+
+Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md)
+
+___
+
 ### CheckoutIncludeParam
 
 Ƭ **CheckoutIncludeParam**: { [key in CheckoutIncludes]?: boolean }
@@ -497,6 +510,12 @@ ___
 ### CustomerAddressRequestBody
 
 Ƭ **CustomerAddressRequestBody**: [`AddressRequestBody`](interfaces/AddressRequestBody.md)
+
+___
+
+### CustomerInitializeOptions
+
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md)
 
 ___
 
@@ -612,6 +631,12 @@ ___
 ### OrderPayments
 
 Ƭ **OrderPayments**: ([`GatewayOrderPayment`](interfaces/GatewayOrderPayment.md) \| [`GiftCertificateOrderPayment`](interfaces/GiftCertificateOrderPayment.md))[]
+
+___
+
+### PaymentInitializeOptions
+
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md)
 
 ___
 

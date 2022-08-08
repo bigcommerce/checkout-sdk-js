@@ -806,6 +806,23 @@ declare interface ApplePayButtonInitializeOptions {
 }
 
 /**
+ * A set of options that are required to initialize ApplePay in cart.
+ *
+ * When ApplePay is initialized, an ApplePay button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface ApplePayButtonInitializeOptions_2 {
+    /**
+     * The class name of the ApplePay button style.
+     */
+    buttonClassName?: string;
+    /**
+     * A callback that gets called when a payment is successfully completed.
+     */
+    onPaymentAuthorize(): void;
+}
+
+/**
  * A set of options that are required to initialize the customer step of
  * checkout in order to support ApplePay.
  *
@@ -883,6 +900,190 @@ declare interface BaseAccountInstrument extends BaseInstrument {
     type: 'account' | 'bank';
 }
 
+declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+    /**
+     * The options that are required to initialize the ApplePay payment method.
+     * They can be omitted unless you need to support ApplePay in cart.
+     */
+    applepay?: ApplePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate AmazonPayV2. They can be
+     * omitted unless you need to support AmazonPayV2.
+     */
+    amazonpay?: AmazonPayV2ButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree PayPal. They can be
+     * omitted unless you need to support Braintree PayPal.
+     */
+    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree Credit. They can be
+     * omitted unless you need to support Braintree Credit.
+     */
+    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree Venmo. They can be
+     * omitted unless you need to support Braintree Venmo.
+     */
+    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
+    containerId: string;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support adyenv2 GooglePay.
+     */
+    googlepayadyenv2?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support adyenv2 GooglePay.
+     */
+    googlepayadyenv3?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree GooglePay. They can be
+     * omitted unless you need to support Braintree GooglePay.
+     */
+    googlepaybraintree?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Checkout.com GooglePay. They can be
+     * omitted unless you need to support Checkout.com GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
+     * omitted unless you need to support CybersourceV2 GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Orbital GooglePay. They can be
+     * omitted unless you need to support Orbital GooglePay.
+     */
+    googlepayorbital?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Stripe GooglePay. They can be
+     * omitted unless you need to support Stripe GooglePay.
+     */
+    googlepaystripe?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Stripe GooglePay. They can be
+     * omitted unless you need to support Stripe GooglePay.
+     */
+    googlepaystripeupe?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Authorize.Net GooglePay.
+     * They can be omitted unless you need to support Authorize.Net GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypal?: PaypalButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support PayPal Commerce Alternative Payment Methods.
+     */
+    paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
+     * unless you need to support PayPal Commerce Venmo.
+     */
+    paypalcommercevenmo?: PaypalCommerceVenmoButtonInitializeOptions;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific requirements for setting the customer
+ * details for checkout. For example, Amazon Pay requires the customer to sign in
+ * using their sign-in button. As a result, you may need to provide additional
+ * information in order to initialize the customer step of checkout.
+ */
+declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Amazon Pay.
+     */
+    amazon?: AmazonPayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using AmazonPayV2.
+     */
+    amazonpay?: AmazonPayV2CustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Visa Checkout provided by Braintree.
+     */
+    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Bolt.
+     */
+    bolt?: BoltCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
+    chasepay?: ChasePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Masterpass payment method.
+     * They can be omitted unless you need to support Masterpass.
+     */
+    masterpass?: MasterpassCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv2?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv3?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaybraintree?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayorbital?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripe?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripeupe?: GooglePayCustomerInitializeOptions;
+}
+
 declare interface BaseElementOptions {
     /**
      * Set custom class names on the container DOM element when the Digital River element is in a particular state.
@@ -917,6 +1118,176 @@ declare interface BaseInstrument {
     trustedShippingAddress: boolean;
     method: string;
     type: string;
+}
+
+/**
+ * A set of options that are required to initialize the payment step of the
+ * current checkout flow.
+ */
+declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    creditCard?: CreditCardPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the AdyenV2 payment
+     * method. They can be omitted unless you need to support AdyenV2.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the AdyenV3 payment
+     * method. They can be omitted unless you need to support AdyenV3.
+     */
+    adyenv3?: AdyenV3PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Amazon Pay payment
+     * method. They can be omitted unless you need to support AmazonPay.
+     */
+    amazon?: AmazonPayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the AmazonPayV2 payment
+     * method. They can be omitted unless you need to support AmazonPayV2.
+     */
+    amazonpay?: AmazonPayV2PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the BlueSnapV2 payment method.
+     * They can be omitted unless you need to support BlueSnapV2.
+     */
+    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
+    /**
+     * The options that allow Bolt to load the client script and handle the checkout.
+     * They can be omitted if Bolt's full checkout take over is intended.
+     */
+    bolt?: BoltPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Braintree payment method.
+     * They can be omitted unless you need to support Braintree.
+     */
+    braintree?: BraintreePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Visa Checkout payment
+     * method provided by Braintree. They can be omitted unless you need to
+     * support Visa Checkout.
+     */
+    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Digital River payment method.
+     * They can be omitted unless you need to support Digital River.
+     */
+    digitalriver?: DigitalRiverPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Klarna payment method.
+     * They can be omitted unless you need to support Klarna.
+     */
+    klarna?: KlarnaPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the KlarnaV2 payment method.
+     * They can be omitted unless you need to support KlarnaV2.
+     */
+    klarnav2?: KlarnaV2PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Masterpass payment method.
+     * They can be omitted unless you need to support Masterpass.
+     */
+    masterpass?: MasterpassPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Moneris payment method.
+     * They can be omitted unless you need to support Moneris.
+     */
+    moneris?: MonerisPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Opy payment
+     * method. They can be omitted unless you need to support Opy.
+     */
+    opy?: OpyPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the PayPal Express payment method.
+     * They can be omitted unless you need to support PayPal Express.
+     */
+    paypalexpress?: PaypalExpressPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the PayPal Commerce payment method.
+     * They can be omitted unless you need to support PayPal Commerce.
+     */
+    paypalcommerce?: PaypalCommerceInitializeOptions;
+    /**
+     * The options that are required to initialize the Square payment method.
+     * They can be omitted unless you need to support Square.
+     */
+    square?: SquarePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
+    chasepay?: ChasePayInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Braintree payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaybraintree?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Checkout.com payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay CybersourceV2 payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayorbital?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Stripe payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripe?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Stripe payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripeupe?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Stripe payment method.
+     * They can be omitted unless you need to support StripeV3.
+     */
+    stripev3?: StripeV3PaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the StripeUPE payment method.
+     * They can be omitted unless you need to support StripeUPE.
+     */
+    stripeupe?: StripeUPEPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Mollie payment method.
+     * They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Worldpay payment method.
+     * They can be omitted unless you need to support Worldpay.
+     */
+    worldpay?: WorldpayPaymentInitializeOptions;
 }
 
 declare interface BillingAddress extends Address {
@@ -1682,102 +2053,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
-    /**
-     * The options that are required to initialize the ApplePay payment method.
-     * They can be omitted unless you need to support ApplePay in cart.
-     */
-    applepay?: ApplePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate AmazonPayV2. They can be
-     * omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2ButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree PayPal. They can be
-     * omitted unless you need to support Braintree PayPal.
-     */
-    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree Venmo. They can be
-     * omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
-    /**
-     * The ID of a container which the checkout button should be inserted.
-     */
-    containerId: string;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv3?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree GooglePay. They can be
-     * omitted unless you need to support Braintree GooglePay.
-     */
-    googlepaybraintree?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Checkout.com GooglePay. They can be
-     * omitted unless you need to support Checkout.com GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
-     * omitted unless you need to support CybersourceV2 GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Orbital GooglePay. They can be
-     * omitted unless you need to support Orbital GooglePay.
-     */
-    googlepayorbital?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripeupe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Authorize.Net GooglePay.
-     * They can be omitted unless you need to support Authorize.Net GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypal?: PaypalButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support PayPal Commerce Alternative Payment Methods.
-     */
-    paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
-     * unless you need to support PayPal Commerce Venmo.
-     */
-    paypalcommercevenmo?: PaypalCommerceVenmoButtonInitializeOptions;
-}
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -4101,97 +4377,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-/**
- * A set of options that are required to initialize the customer step of the
- * current checkout flow.
- *
- * Some payment methods have specific requirements for setting the customer
- * details for checkout. For example, Amazon Pay requires the customer to sign in
- * using their sign-in button. As a result, you may need to provide additional
- * information in order to initialize the customer step of checkout.
- */
-declare interface CustomerInitializeOptions extends CustomerRequestOptions {
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Amazon Pay.
-     */
-    amazon?: AmazonPayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2CustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using ApplePay.
-     */
-    applepay?: ApplePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Visa Checkout provided by Braintree.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Bolt.
-     */
-    bolt?: BoltCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv2?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv3?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybraintree?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayorbital?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripe?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripeupe?: GooglePayCustomerInitializeOptions;
-}
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -5631,180 +5817,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-/**
- * A set of options that are required to initialize the payment step of the
- * current checkout flow.
- */
-declare interface PaymentInitializeOptions extends PaymentRequestOptions {
-    /**
-     * @alpha
-     * Please note that this option is currently in an early stage of
-     * development. Therefore the API is unstable and not ready for public
-     * consumption.
-     */
-    creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AdyenV2 payment
-     * method. They can be omitted unless you need to support AdyenV2.
-     */
-    adyenv2?: AdyenV2PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AdyenV3 payment
-     * method. They can be omitted unless you need to support AdyenV3.
-     */
-    adyenv3?: AdyenV3PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Amazon Pay payment
-     * method. They can be omitted unless you need to support AmazonPay.
-     */
-    amazon?: AmazonPayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Apple Pay payment
-     * method. They can be omitted unless you need to support AmazonPay.
-     */
-    applepay?: ApplePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AmazonPayV2 payment
-     * method. They can be omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the BlueSnapV2 payment method.
-     * They can be omitted unless you need to support BlueSnapV2.
-     */
-    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
-    /**
-     * The options that allow Bolt to load the client script and handle the checkout.
-     * They can be omitted if Bolt's full checkout take over is intended.
-     */
-    bolt?: BoltPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Braintree payment method.
-     * They can be omitted unless you need to support Braintree.
-     */
-    braintree?: BraintreePaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Visa Checkout payment
-     * method provided by Braintree. They can be omitted unless you need to
-     * support Visa Checkout.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Digital River payment method.
-     * They can be omitted unless you need to support Digital River.
-     */
-    digitalriver?: DigitalRiverPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Klarna payment method.
-     * They can be omitted unless you need to support Klarna.
-     */
-    klarna?: KlarnaPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the KlarnaV2 payment method.
-     * They can be omitted unless you need to support KlarnaV2.
-     */
-    klarnav2?: KlarnaV2PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Masterpass payment method.
-     * They can be omitted unless you need to support Masterpass.
-     */
-    masterpass?: MasterpassPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Moneris payment method.
-     * They can be omitted unless you need to support Moneris.
-     */
-    moneris?: MonerisPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Opy payment
-     * method. They can be omitted unless you need to support Opy.
-     */
-    opy?: OpyPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the PayPal Express payment method.
-     * They can be omitted unless you need to support PayPal Express.
-     */
-    paypalexpress?: PaypalExpressPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the PayPal Commerce payment method.
-     * They can be omitted unless you need to support PayPal Commerce.
-     */
-    paypalcommerce?: PaypalCommerceInitializeOptions;
-    /**
-     * The options that are required to initialize the Square payment method.
-     * They can be omitted unless you need to support Square.
-     */
-    square?: SquarePaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Braintree payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybraintree?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Checkout.com payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay CybersourceV2 payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayorbital?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripe?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Stripe payment method.
-     * They can be omitted unless you need to support StripeV3.
-     */
-    stripev3?: StripeV3PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the StripeUPE payment method.
-     * They can be omitted unless you need to support StripeUPE.
-     */
-    stripeupe?: StripeUPEPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Mollie payment method.
-     * They can be omitted unless you need to support Mollie.
-     */
-    mollie?: MolliePaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Worldpay payment method.
-     * They can be omitted unless you need to support Worldpay.
-     */
-    worldpay?: WorldpayPaymentInitializeOptions;
-}
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithApplePayPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7119,6 +7132,26 @@ declare interface WechatState_2 {
 
 declare interface WithAccountCreation {
     shouldCreateAccount?: boolean;
+}
+
+declare interface WithApplePayButtonInitializeOptions {
+    applepay?: ApplePayButtonInitializeOptions_2;
+}
+
+declare interface WithApplePayCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using ApplePay.
+     */
+    applepay?: ApplePayCustomerInitializeOptions;
+}
+
+declare interface WithApplePayPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    applepay?: ApplePayPaymentInitializeOptions;
 }
 
 declare interface WithCheckoutcomFawryInstrument {
