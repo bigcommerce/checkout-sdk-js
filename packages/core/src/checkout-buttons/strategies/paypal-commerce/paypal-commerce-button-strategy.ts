@@ -18,7 +18,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _currentShippingAddress?: AddressRequestBody;
     private _isVenmoEnabled?: boolean;
     private _isVenmo?: boolean;
-    private _onAuthorizeCallback = noop;
+    private _onPaymentApproveCallback = noop;
 
     constructor(
         private _store: CheckoutStore,
@@ -52,10 +52,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             style: options?.paypalCommerce?.style,
         };
 
-        const onPaymentAuthorize  = options.paypalCommerce?.onPaymentAuthorize;
+        const onPaymentApprove  = options.paypalCommerce?.onPaymentApprove;
 
-        if (onPaymentAuthorize) {
-            this._onAuthorizeCallback = onPaymentAuthorize;
+        if (onPaymentApprove) {
+            this._onPaymentApproveCallback = onPaymentApprove;
         }
 
         const messagingContainer = options.paypalCommerce?.messagingContainer;
@@ -136,6 +136,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private async _onHostedMethodApprove(data: ApproveDataOptions, actions: ApproveActions) {
         try {
+            const consignments = this._store.getState().consignments.getConsignmentsOrThrow();
+            const lineItems = this._getLineItems();
             const orderDetails = await actions.order.get();
             if (!this._paymentMethod?.id) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -151,9 +153,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     address1: orderDetails.purchase_units[0].shipping.address.address_line_1,
                 };
 
+                const consignment = {
+                    id: consignments[0].id,
+                    shippingAddress,
+                    lineItems,
+                };
+
                 await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
-                await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
+                await this._store.dispatch(this._consignmentActionCreator.updateConsignment(consignment));
 
                 const submitOrderPayload = {};
                 const submitOrderOptions = {
@@ -176,7 +184,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     },
                 };
                 await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
-                this._onAuthorizeCallback();
+                this._onPaymentApproveCallback();
             }
         } catch (e) {
             throw new RequestError(e);
