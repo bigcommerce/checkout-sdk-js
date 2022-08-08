@@ -114,6 +114,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 height: 45,
             },
             messagingContainer: 'paypal-commerce-cart-messaging-banner',
+            onPaymentAuthorize: () =>{}
         };
 
         options = {
