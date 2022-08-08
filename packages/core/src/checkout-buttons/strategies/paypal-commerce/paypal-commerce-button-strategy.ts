@@ -72,7 +72,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private async _handleOnCancel(_data: OnCancelData) {
-        const lineItems = this._getLineItems();
         const existingConsignments = this._store.getState().consignments.getConsignmentsOrThrow();
         const { email } = this._store.getState().billingAddress.getBillingAddressOrThrow();
         const { firstName, lastName, address1 } = existingConsignments?.[0].shippingAddress || {};
@@ -84,16 +83,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 address1: address1 !== 'Fake street' ? address1 : '',
                 email: email !== 'fake@fake.fake' ? email : '',
             };
-            const consignment = {
-                shippingAddress,
-                lineItems,
-            };
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
-            if (existingConsignments[0]) {
-                await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
-            } else {
-                await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
-            }
+            await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
         }
     }
 
