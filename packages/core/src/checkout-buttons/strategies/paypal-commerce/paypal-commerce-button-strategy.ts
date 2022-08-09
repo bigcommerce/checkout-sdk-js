@@ -136,14 +136,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private async _onHostedMethodApprove(data: ApproveDataOptions, actions: ApproveActions) {
         try {
-            // const consignments = this._store.getState().consignments.getConsignmentsOrThrow();
-            // const lineItems = this._getLineItems();
             const orderDetails = await actions.order.get();
+            console.log('ON APPROVE');
             if (!this._paymentMethod?.id) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
             const methodId = this._paymentMethod?.id;
-
             if (this._currentShippingAddress) {
                 const shippingAddress = {
                     ...this._currentShippingAddress,
@@ -153,15 +151,29 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     address1: orderDetails.purchase_units[0].shipping.address.address_line_1,
                 };
 
-                // const consignment = {
-                //     id: consignments[0].id,
-                //     shippingAddress,
-                //     lineItems,
-                // };
-
                 await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
                 await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
+            } else {
+                console.log('ON APPROVE1');
+                const shippingAddress = {
+                    firstName: orderDetails.payer.name.given_name,
+                    lastName: orderDetails.payer.name.surname,
+                    email: orderDetails.payer.email_address,
+                    city: 'Digital item',
+                    postalCode: 'digital item',
+                    countryCode: 'digital item',
+                    address2: '',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                    phone: '',
+                    company: '',
+                    customFields: []
+                };
+
+                console.log('ON APPROVE2', shippingAddress);
+                await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
+            }
 
                 const submitOrderPayload = {};
                 const submitOrderOptions = {
@@ -185,7 +197,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 };
                 await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
                 this._onPaymentApproveCallback();
-            }
         } catch (e) {
             throw new RequestError(e);
         }
@@ -197,15 +208,14 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const { id: selectedShippingOptionId } = data.selected_shipping_option || {};
         const shippingAddress = await this._transformToAddress(data.shipping_address);
         this._currentShippingAddress = shippingAddress;
-        // const lineItems = this._getLineItems();
-        // const consignment = { shippingAddress, lineItems };
-        // const existingConsignments = state.consignments.getConsignmentsOrThrow();
-        // if (existingConsignments[0]) {
-        //     await this._store.dispatch(this._consignmentActionCreator.updateConsignment({id: existingConsignments[0].id, ...consignment}));
-        // } else {
-        //     await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
-        // }
-        await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
+        const lineItems = this._getLineItems();
+        const consignment = { shippingAddress, lineItems };
+        const existingConsignments = state.consignments.getConsignmentsOrThrow();
+        if (existingConsignments[0]) {
+            await this._store.dispatch(this._consignmentActionCreator.updateConsignment({id: existingConsignments[0].id, ...consignment}));
+        } else {
+            await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
+        }
         const updatedConsignment = state.consignments.getConsignmentsOrThrow()[0];
         const { availableShippingOptions } = updatedConsignment;
         const { id: recommendedShippingOptionId } = availableShippingOptions?.find(option => option.isRecommended) || {};
@@ -254,13 +264,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return shippingData;
     }
 
-    // private _getLineItems(): ConsignmentLineItem[] {
-    //     const state = this._store.getState();
-    //     const cart = state.cart.getCartOrThrow();
-    //     const { digitalItems, physicalItems  } = cart.lineItems;
-    //     return [...digitalItems, ...physicalItems].map(({ id, quantity }) => ({
-    //         itemId: id,
-    //         quantity,
-    //     }));
-    // }
+    private _getLineItems(): ConsignmentLineItem[] {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const { digitalItems, physicalItems  } = cart.lineItems;
+        return [...digitalItems, ...physicalItems].map(({ id, quantity }) => ({
+            itemId: id,
+            quantity,
+        }));
+    }
 }
