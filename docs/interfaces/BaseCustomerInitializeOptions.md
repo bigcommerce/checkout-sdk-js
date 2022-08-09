@@ -16,6 +16,10 @@ information in order to initialize the customer step of checkout.
 
   ↳ **`BaseCustomerInitializeOptions`**
 
+## Indexable
+
+▪ [key: `string`]: `unknown`
+
 ## Table of contents
 
 ### Properties
