@@ -136,8 +136,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private async _onHostedMethodApprove(data: ApproveDataOptions, actions: ApproveActions) {
         try {
-            const consignments = this._store.getState().consignments.getConsignmentsOrThrow();
-            const lineItems = this._getLineItems();
+            // const consignments = this._store.getState().consignments.getConsignmentsOrThrow();
+            // const lineItems = this._getLineItems();
             const orderDetails = await actions.order.get();
             if (!this._paymentMethod?.id) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -153,15 +153,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                     address1: orderDetails.purchase_units[0].shipping.address.address_line_1,
                 };
 
-                const consignment = {
-                    id: consignments[0].id,
-                    shippingAddress,
-                    lineItems,
-                };
+                // const consignment = {
+                //     id: consignments[0].id,
+                //     shippingAddress,
+                //     lineItems,
+                // };
 
                 await this._store.dispatch(this._billingAddressActionCreator.updateAddress(shippingAddress));
 
-                await this._store.dispatch(this._consignmentActionCreator.updateConsignment(consignment));
+                await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
 
                 const submitOrderPayload = {};
                 const submitOrderOptions = {
