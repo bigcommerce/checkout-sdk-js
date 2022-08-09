@@ -11,7 +11,7 @@ export default interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
-    consignments: OrderConsignment[];
+    consignments: OrderConsignment;
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
