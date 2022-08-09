@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.275.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.274.0...v1.275.0) (2022-08-09)
+
+
+### Features
+
+* **payment:** INT-6128 AmazonPayV2: Introduce the new API V2 config ([#1502](https://github.com/bigcommerce/checkout-sdk-js/issues/1502)) ([11bbe8b](https://github.com/bigcommerce/checkout-sdk-js/commit/11bbe8b4ec82d063cc13d9fdf3d8f59c282b7109))
+
 ## [1.274.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.273.0...v1.274.0) (2022-08-08)
 
 

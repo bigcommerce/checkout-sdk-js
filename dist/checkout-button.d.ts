@@ -24,20 +24,17 @@ declare interface AddressRequestBody {
     }>;
 }
 
-/**
- * The required config to render the AmazonPayV2 buttton.
- */
-declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParams;
+declare enum AmazonPayV2ButtonColor {
+    Gold = "Gold",
+    LightGray = "LightGray",
+    DarkGray = "DarkGray"
+}
 
-declare interface AmazonPayV2ButtonParams {
+declare interface AmazonPayV2ButtonConfig {
     /**
      * Amazon Pay merchant account identifier.
      */
     merchantId: string;
-    /**
-     * Configuration for calling the endpoint to Create Checkout Session.
-     */
-    createCheckoutSession: AmazonPayV2CheckoutSession;
     /**
      * Placement of the Amazon Pay button on your website.
      */
@@ -51,13 +48,32 @@ declare interface AmazonPayV2ButtonParams {
      */
     productType?: AmazonPayV2PayOptions;
     /**
+     * Color of the Amazon Pay button.
+     */
+    buttonColor?: AmazonPayV2ButtonColor;
+    /**
      * Language used to render the button and text on Amazon Pay hosted pages.
      */
     checkoutLanguage?: AmazonPayV2CheckoutLanguage;
     /**
-     * Sets button to Sandbox environment. Default is false.
+     * Sets button to Sandbox environment. You do not have to set this parameter
+     * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
+}
+
+/**
+ * The required config to render the AmazonPayV2 buttton.
+ */
+declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters;
+
+declare type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
+
+declare interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
+    /**
+     * Configuration for calling the endpoint to Create Checkout Session.
+     */
+    createCheckoutSession: AmazonPayV2CheckoutSession;
 }
 
 declare enum AmazonPayV2CheckoutLanguage {
@@ -85,11 +101,39 @@ declare interface AmazonPayV2CheckoutSession {
     extractAmazonCheckoutSessionId?: string;
 }
 
+declare interface AmazonPayV2CheckoutSessionConfig {
+    /**
+     * A payload that Amazon Pay will use to create a Checkout Session object.
+     */
+    payloadJSON: string;
+    /**
+     * Payload's signature.
+     */
+    signature: string;
+    /**
+     * Credential provided by Amazon Pay. You do not have to set this parameter
+     * if your `publicKeyId` has an environment prefix.
+     */
+    publicKeyId?: string;
+}
+
 declare enum AmazonPayV2LedgerCurrency {
     USD = "USD",
     EUR = "EUR",
     GBP = "GBP",
     JPY = "JPY"
+}
+
+declare interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
+    /**
+     * Credential provided by Amazon Pay. You must also set the `sandbox`
+     * parameter if your `publicKeyId` does not have an environment prefix.
+     */
+    publicKeyId?: string;
+    /**
+     * Create Checkout Session configuration.
+     */
+    createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
 }
 
 declare enum AmazonPayV2PayOptions {

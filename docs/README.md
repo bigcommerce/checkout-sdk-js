@@ -8,6 +8,7 @@
 
 - [AdyenV2CardFields](enums/AdyenV2CardFields.md)
 - [AdyenV3CardFields](enums/AdyenV3CardFields.md)
+- [AmazonPayV2ButtonColor](enums/AmazonPayV2ButtonColor.md)
 - [AmazonPayV2CheckoutLanguage](enums/AmazonPayV2CheckoutLanguage.md)
 - [AmazonPayV2LedgerCurrency](enums/AmazonPayV2LedgerCurrency.md)
 - [AmazonPayV2PayOptions](enums/AmazonPayV2PayOptions.md)
@@ -76,9 +77,12 @@
 - [AmazonPayOrderReference](interfaces/AmazonPayOrderReference.md)
 - [AmazonPayPaymentInitializeOptions](interfaces/AmazonPayPaymentInitializeOptions.md)
 - [AmazonPayShippingInitializeOptions](interfaces/AmazonPayShippingInitializeOptions.md)
+- [AmazonPayV2ButtonConfig](interfaces/AmazonPayV2ButtonConfig.md)
 - [AmazonPayV2ButtonParams](interfaces/AmazonPayV2ButtonParams.md)
 - [AmazonPayV2CheckoutSession](interfaces/AmazonPayV2CheckoutSession.md)
+- [AmazonPayV2CheckoutSessionConfig](interfaces/AmazonPayV2CheckoutSessionConfig.md)
 - [AmazonPayV2CustomerInitializeOptions](interfaces/AmazonPayV2CustomerInitializeOptions.md)
+- [AmazonPayV2NewButtonParams](interfaces/AmazonPayV2NewButtonParams.md)
 - [AmazonPayV2PaymentInitializeOptions](interfaces/AmazonPayV2PaymentInitializeOptions.md)
 - [AmazonPayV2ShippingInitializeOptions](interfaces/AmazonPayV2ShippingInitializeOptions.md)
 - [AmazonPayWidgetError](interfaces/AmazonPayWidgetError.md)
@@ -364,6 +368,7 @@
 - [AdyenComponentState](README.md#adyencomponentstate)
 - [AdyenV3ComponentState](README.md#adyenv3componentstate)
 - [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
+- [AmazonPayV2ButtonParameters](README.md#amazonpayv2buttonparameters)
 - [AnalyticStepType](README.md#analyticsteptype)
 - [BraintreeFormFieldBlurEventData](README.md#braintreeformfieldblureventdata)
 - [BraintreeFormFieldEnterEventData](README.md#braintreeformfieldentereventdata)
@@ -441,9 +446,15 @@ ___
 
 ### AmazonPayV2ButtonInitializeOptions
 
-Ƭ **AmazonPayV2ButtonInitializeOptions**: [`AmazonPayV2ButtonParams`](interfaces/AmazonPayV2ButtonParams.md)
+Ƭ **AmazonPayV2ButtonInitializeOptions**: [`AmazonPayV2ButtonParameters`](README.md#amazonpayv2buttonparameters)
 
 The required config to render the AmazonPayV2 buttton.
+
+___
+
+### AmazonPayV2ButtonParameters
+
+Ƭ **AmazonPayV2ButtonParameters**: [`AmazonPayV2ButtonParams`](interfaces/AmazonPayV2ButtonParams.md) \| [`AmazonPayV2NewButtonParams`](interfaces/AmazonPayV2NewButtonParams.md)
 
 ___
 
