@@ -4,6 +4,7 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { of } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -17,6 +18,7 @@ import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPayme
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import createCustomerStrategyRegistry from '../../create-customer-strategy-registry';
+import createCustomerStrategyRegistryV2 from '../../create-customer-strategy-registry-v2';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import { CustomerStrategyActionType } from '../../customer-strategy-actions';
@@ -68,6 +70,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         formPoster = createFormPoster();
 
         const registry = createCustomerStrategyRegistry(store, paymentClient, requestSender, '');
+        const paymentIntegrationService = createPaymentIntegrationService(store);
+        const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -76,7 +80,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
-        customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
+        customerStrategyActionCreator = new CustomerStrategyActionCreator(registry, customerRegistryV2);
 
         strategy = new BraintreeVisaCheckoutCustomerStrategy(
             store,

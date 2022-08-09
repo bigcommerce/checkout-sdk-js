@@ -32,6 +32,8 @@ export interface CustomerRequestOptions extends RequestOptions {
  * information in order to initialize the customer step of checkout.
  */
 export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
+    [key: string]: unknown;
+
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Amazon Pay.

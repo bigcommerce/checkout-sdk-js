@@ -9,6 +9,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
@@ -21,6 +22,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
+import createCustomerStrategyRegistryV2 from './create-customer-strategy-registry-v2';
 
 import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
@@ -64,6 +66,9 @@ export default function createCustomerStrategyRegistry(
         checkoutActionCreator,
         spamProtectionActionCreator
     );
+
+    const paymentIntegrationService = createPaymentIntegrationService(store);
+    const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
     registry.register('googlepayadyenv2', () =>
         new GooglePayCustomerStrategy(
@@ -113,7 +118,7 @@ export default function createCustomerStrategyRegistry(
             store,
             checkoutActionCreator,
             paymentMethodActionCreator,
-            new CustomerStrategyActionCreator(registry),
+            new CustomerStrategyActionCreator(registry, customerRegistryV2),
             remoteCheckoutActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
             new VisaCheckoutScriptLoader(scriptLoader),

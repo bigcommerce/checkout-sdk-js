@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { CustomerStrategy as CustomerStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration';
 import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -7,11 +8,13 @@ import { Registry } from '../common/registry';
 import CustomerCredentials from './customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from './customer-request-options';
 import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyExecutePaymentMethodCheckoutAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
+import CustomerStrategyRegistryV2 from './customer-strategy-registry-v2';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
     constructor(
-        private _strategyRegistry: Registry<CustomerStrategy>
+        private _strategyRegistry: Registry<CustomerStrategy>,
+        private _strategyRegistryV2: CustomerStrategyRegistryV2
     ) {}
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Observable<CustomerStrategySignInAction> {
@@ -21,15 +24,15 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignInRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .signIn(credentials, options)
-                .then(() => {
-                    observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
-                    observer.complete();
-                })
-                .catch(error => {
-                    observer.error(createErrorAction(CustomerStrategyActionType.SignInFailed, error, meta));
-                });
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).signIn(credentials, options);
+
+            promise.then(() => {
+                observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
+                observer.complete();
+            })
+            .catch(error => {
+                observer.error(createErrorAction(CustomerStrategyActionType.SignInFailed, error, meta));
+            });
         });
     }
 
@@ -40,8 +43,9 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.SignOutRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .signOut(options)
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).signOut(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.SignOutSucceeded, undefined, meta));
                     observer.complete();
@@ -59,8 +63,9 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .executePaymentMethodCheckout(options)
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).executePaymentMethodCheckout(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded, undefined, meta));
                     observer.complete();
@@ -83,8 +88,9 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.InitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .initialize(options)
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).initialize(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, meta));
                     observer.complete();
@@ -107,8 +113,9 @@ export default class CustomerStrategyActionCreator {
 
             observer.next(createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(methodId)
-                .deinitialize(options)
+            const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(methodId).deinitialize(options);
+
+            promise
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, meta));
                     observer.complete();
@@ -134,5 +141,17 @@ export default class CustomerStrategyActionCreator {
                 observer.error(createErrorAction(CustomerStrategyActionType.WidgetInteractionFailed, error, meta));
             });
         });
+    }
+
+    private _getStrategy(methodId?: string): CustomerStrategy | CustomerStrategyV2 {
+        let strategy: CustomerStrategy | CustomerStrategyV2;
+
+        try {
+            strategy = this._strategyRegistryV2.get({ id: methodId || '' });
+        } catch {
+            strategy = this._strategyRegistry.get(methodId)
+        }
+
+        return strategy;
     }
 }

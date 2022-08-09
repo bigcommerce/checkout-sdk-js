@@ -7,7 +7,7 @@ import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState, ConfigWindow } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, createCustomerStrategyRegistryV2, CustomerActionCreator, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -81,6 +81,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+    const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
     return new CheckoutService(
         store,
@@ -98,7 +99,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
-        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, paymentClient, requestSender, locale)),
+        new CustomerStrategyActionCreator(
+            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale),
+            customerRegistryV2
+        ),
         new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
