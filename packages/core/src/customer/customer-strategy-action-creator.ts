@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { CustomerStrategy as CustomerStrategyV2, MissingDataError, MissingDataErrorType } from '@bigcommerce/checkout-sdk/payment-integration';
+import { CustomerStrategy as CustomerStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration';
 import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
@@ -144,13 +144,10 @@ export default class CustomerStrategyActionCreator {
     }
 
     private _getStrategy(methodId?: string): CustomerStrategy | CustomerStrategyV2 {
-        if (!methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
         let strategy: CustomerStrategy | CustomerStrategyV2;
 
         try {
-            strategy = this._strategyRegistryV2.get({ id: methodId });
+            strategy = this._strategyRegistryV2.get({ id: methodId || '' });
         } catch {
             strategy = this._strategyRegistry.get(methodId)
         }
