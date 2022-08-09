@@ -2,12 +2,11 @@ const path = require('path');
 const { DefinePlugin } = require('webpack');
 
 const { getNextVersion } = require('./scripts/webpack');
-
-const coreSrcPath = path.join(__dirname, 'packages/core/src');
-const appleSrcPath = path.join(__dirname, 'packages/apple-pay/src');
-const paymentIntegrationSrcPath = path.join(__dirname, 'packages/payment-integration/src');
+const packages = require('./package-loader-rule');
 
 const libraryName = 'checkoutKit';
+
+const coreSrcPath = path.join(__dirname, 'packages/core/src');
 
 const libraryEntries = {
     'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
@@ -45,21 +44,7 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                {
-                    test: /\.[tj]s$/,
-                    include: coreSrcPath,
-                    loader: 'ts-loader',                    
-                },
-                {
-                    test: /\.[tj]s$/,
-                    include: appleSrcPath,
-                    loader: 'ts-loader',
-                },
-                {
-                    test: /\.[tj]s$/,
-                    include: paymentIntegrationSrcPath,
-                    loader: 'ts-loader',
-                },
+                ...packages
             ],
         },
         plugins: [
