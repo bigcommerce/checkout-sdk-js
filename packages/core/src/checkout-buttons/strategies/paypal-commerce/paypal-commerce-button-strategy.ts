@@ -197,14 +197,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const { id: selectedShippingOptionId } = data.selected_shipping_option || {};
         const shippingAddress = await this._transformToAddress(data.shipping_address);
         this._currentShippingAddress = shippingAddress;
-        const lineItems = this._getLineItems();
-        const consignment = { shippingAddress, lineItems };
-        const existingConsignments = state.consignments.getConsignmentsOrThrow();
-        if (existingConsignments[0]) {
-            await this._store.dispatch(this._consignmentActionCreator.updateConsignment({id: existingConsignments[0].id, ...consignment}));
-        } else {
-            await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
-        }
+        // const lineItems = this._getLineItems();
+        // const consignment = { shippingAddress, lineItems };
+        // const existingConsignments = state.consignments.getConsignmentsOrThrow();
+        // if (existingConsignments[0]) {
+        //     await this._store.dispatch(this._consignmentActionCreator.updateConsignment({id: existingConsignments[0].id, ...consignment}));
+        // } else {
+        //     await this._store.dispatch(this._consignmentActionCreator.createConsignments([consignment]));
+        // }
+        await this._store.dispatch(this._consignmentActionCreator.updateAddress(shippingAddress));
         const updatedConsignment = state.consignments.getConsignmentsOrThrow()[0];
         const { availableShippingOptions } = updatedConsignment;
         const { id: recommendedShippingOptionId } = availableShippingOptions?.find(option => option.isRecommended) || {};
@@ -253,13 +254,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         return shippingData;
     }
 
-    private _getLineItems(): ConsignmentLineItem[] {
-        const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
-        const { digitalItems, physicalItems  } = cart.lineItems;
-        return [...digitalItems, ...physicalItems].map(({ id, quantity }) => ({
-            itemId: id,
-            quantity,
-        }));
-    }
+    // private _getLineItems(): ConsignmentLineItem[] {
+    //     const state = this._store.getState();
+    //     const cart = state.cart.getCartOrThrow();
+    //     const { digitalItems, physicalItems  } = cart.lineItems;
+    //     return [...digitalItems, ...physicalItems].map(({ id, quantity }) => ({
+    //         itemId: id,
+    //         quantity,
+    //     }));
+    // }
 }
