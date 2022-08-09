@@ -15,6 +15,7 @@ const state = {
 
 const getState = jest.fn(() => state);
 const loadCheckout = jest.fn();
+const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
@@ -31,6 +32,7 @@ const PaymentIntegrationServiceMock = jest
             subscribe,
             getState,
             loadCheckout,
+            loadDefaultCheckout,
             loadPaymentMethod,
             submitOrder,
             submitPayment,
