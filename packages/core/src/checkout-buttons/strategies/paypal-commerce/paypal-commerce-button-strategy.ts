@@ -100,6 +100,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         if (!this._paymentMethod?.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const { digitalItems, physicalItems  } = cart.lineItems;
+        console.log(digitalItems, physicalItems);
 
         const { isHostedCheckoutEnabled } = this._paymentMethod.initializationData;
         return isHostedCheckoutEnabled
