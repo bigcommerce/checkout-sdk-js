@@ -8,6 +8,10 @@
 
   ↳ **`BaseCheckoutButtonInitializeOptions`**
 
+## Indexable
+
+▪ [key: `string`]: `unknown`
+
 ## Table of contents
 
 ### Properties

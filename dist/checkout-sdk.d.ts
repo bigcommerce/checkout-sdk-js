@@ -945,6 +945,7 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 }
 
 declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+    [key: string]: unknown;
     /**
      * The options that are required to initialize the ApplePay payment method.
      * They can be omitted unless you need to support ApplePay in cart.
