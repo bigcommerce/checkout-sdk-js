@@ -103,10 +103,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const { digitalItems, physicalItems  } = cart.lineItems;
-        console.log(digitalItems, physicalItems);
+        const isOnlyDigitalItem = digitalItems.length && !physicalItems.length
 
         const { isHostedCheckoutEnabled } = this._paymentMethod.initializationData;
-        return isHostedCheckoutEnabled
+        return isHostedCheckoutEnabled && !isOnlyDigitalItem
             ? this._onHostedMethodApprove(data, actions)
             : this._tokenizePayment(data);
     }
