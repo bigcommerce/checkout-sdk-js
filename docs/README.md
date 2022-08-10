@@ -191,6 +191,7 @@
 - [DigitalRiverElementClasses](interfaces/DigitalRiverElementClasses.md)
 - [DigitalRiverPaymentInitializeOptions](interfaces/DigitalRiverPaymentInitializeOptions.md)
 - [Discount](interfaces/Discount.md)
+- [DisplaySettings](interfaces/DisplaySettings.md)
 - [EmbeddedCheckoutCompleteEvent](interfaces/EmbeddedCheckoutCompleteEvent.md)
 - [EmbeddedCheckoutError](interfaces/EmbeddedCheckoutError.md)
 - [EmbeddedCheckoutErrorEvent](interfaces/EmbeddedCheckoutErrorEvent.md)

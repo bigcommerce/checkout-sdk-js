@@ -4583,6 +4583,10 @@ declare interface Discount {
     discountedAmount: number;
 }
 
+declare interface DisplaySettings {
+    hidePriceFromGuests: boolean;
+}
+
 declare class EmbeddedCheckout {
     private _iframeCreator;
     private _messageListener;
@@ -5733,7 +5737,7 @@ declare interface Order {
     billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
-    consignments: OrderConsignment[];
+    consignments: OrderConsignment;
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
@@ -6705,6 +6709,7 @@ declare interface StoreConfig {
     checkoutSettings: CheckoutSettings;
     currency: StoreCurrency;
     displayDateFormat: string;
+    displaySettings: DisplaySettings;
     inputDateFormat: string;
     /**
      * @deprecated Please use instead the data selectors

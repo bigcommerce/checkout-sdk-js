@@ -55,7 +55,7 @@ ___
 
 ### consignments
 
-• **consignments**: [`OrderConsignment`](OrderConsignment.md)[]
+• **consignments**: [`OrderConsignment`](OrderConsignment.md)
 
 ___
 

@@ -10,6 +10,7 @@
 - [checkoutSettings](StoreConfig.md#checkoutsettings)
 - [currency](StoreConfig.md#currency)
 - [displayDateFormat](StoreConfig.md#displaydateformat)
+- [displaySettings](StoreConfig.md#displaysettings)
 - [formFields](StoreConfig.md#formfields)
 - [imageDirectory](StoreConfig.md#imagedirectory)
 - [inputDateFormat](StoreConfig.md#inputdateformat)
@@ -43,6 +44,12 @@ ___
 ### displayDateFormat
 
 • **displayDateFormat**: `string`
+
+___
+
+### displaySettings
+
+• **displaySettings**: [`DisplaySettings`](DisplaySettings.md)
 
 ___
 

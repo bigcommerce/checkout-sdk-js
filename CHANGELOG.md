@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.276.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.275.1...v1.276.0) (2022-08-10)
+
+
+### Features
+
+* **checkout:** STRF-9829 Add hidePriceFromGuests to StoreConfig interface ([#1521](https://github.com/bigcommerce/checkout-sdk-js/issues/1521)) ([b31963b](https://github.com/bigcommerce/checkout-sdk-js/commit/b31963bdeaa8cadca8acec9113417b188989203c))
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-000 update order consignments interface ([#1552](https://github.com/bigcommerce/checkout-sdk-js/issues/1552)) ([4644e37](https://github.com/bigcommerce/checkout-sdk-js/commit/4644e3784f6be26a476ddd0850c713382421cb1e))
+
 ### [1.275.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.275.0...v1.275.1) (2022-08-09)
 
 ## [1.275.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.274.0...v1.275.0) (2022-08-09)
