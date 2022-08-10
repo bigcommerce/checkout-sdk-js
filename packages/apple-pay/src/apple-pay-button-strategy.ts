@@ -29,7 +29,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions): Promise<void> {
-
         const { methodId, containerId , applepay}  = options;
 
         assertApplePayWindow(window);
@@ -45,9 +44,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
-        await this._paymentIntegrationService.loadCheckout();
+        await this._paymentIntegrationService.loadDefaultCheckout();
 
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
         const state = this._paymentIntegrationService.getState();
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 

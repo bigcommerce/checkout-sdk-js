@@ -12,12 +12,16 @@ import { getPaymentMethod } from '../payment/payment-methods.mock';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
 import { CheckoutButtonInitializeOptions } from './checkout-button-options';
+import CheckoutButtonRegistryV2 from './checkout-button-strategy-registry-v2';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
+import createCheckoutButtonRegistryV2 from './create-checkout-button-registry-v2';
+import { createPaymentIntegrationService } from '../payment-integration';
 
 describe('CheckoutButtonStrategyActionCreator', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let registry: Registry<CheckoutButtonStrategy>;
+    let registryV2: CheckoutButtonRegistryV2;
     let options: CheckoutButtonInitializeOptions;
     let strategyActionCreator: CheckoutButtonStrategyActionCreator;
     let strategy: CheckoutButtonStrategy;
@@ -38,6 +42,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         strategy = new MockButtonStrategy();
         store = createCheckoutStore();
+        registryV2 = createCheckoutButtonRegistryV2(createPaymentIntegrationService(store)),
 
         registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () => strategy);
 
@@ -54,6 +59,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         strategyActionCreator = new CheckoutButtonStrategyActionCreator(
             registry,
+            registryV2,
             paymentMethodActionCreator
         );
     });

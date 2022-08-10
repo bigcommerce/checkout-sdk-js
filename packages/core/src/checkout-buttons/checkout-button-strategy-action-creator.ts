@@ -1,4 +1,5 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { CheckoutButtonStrategy as CheckoutButtonStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration';
 import { concat, defer, empty, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -9,11 +10,13 @@ import { PaymentMethodActionCreator } from '../payment';
 
 import { CheckoutButtonActionType, DeinitializeButtonAction, InitializeButtonAction } from './checkout-button-actions';
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
-import { CheckoutButtonStrategy } from './strategies';
+import CheckoutButtonRegistryV2 from './checkout-button-strategy-registry-v2';
+import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 
 export default class CheckoutButtonStrategyActionCreator {
     constructor(
         private _registry: Registry<CheckoutButtonStrategy>,
+        private _registryV2: CheckoutButtonRegistryV2,
         private _paymentMethodActionCreator: PaymentMethodActionCreator
     ) {}
 
@@ -28,7 +31,7 @@ export default class CheckoutButtonStrategyActionCreator {
             return concat(
                 of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
                 this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, { timeout: options.timeout, useCache: true })(store),
-                defer(() => this._registry.get(options.methodId).initialize(options)
+                defer(() => this._getStrategy(options.methodId).initialize(options)
                     .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
             ).pipe(
                 catchError(error => throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta))
@@ -46,11 +49,23 @@ export default class CheckoutButtonStrategyActionCreator {
 
             return concat(
                 of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested, undefined, meta)),
-                defer(() => this._registry.get(options.methodId).deinitialize()
+                defer(() => this._getStrategy(options.methodId).deinitialize()
                     .then(() => createAction(CheckoutButtonActionType.DeinitializeButtonSucceeded, undefined, meta)))
             ).pipe(
                 catchError(error => throwErrorAction(CheckoutButtonActionType.DeinitializeButtonFailed, error, meta))
             );
         };
+    }
+
+    private _getStrategy(methodId: CheckoutButtonMethodType): CheckoutButtonStrategy | CheckoutButtonStrategyV2 {
+        let strategy: CheckoutButtonStrategy | CheckoutButtonStrategyV2;
+
+        try {
+            strategy = this._registryV2.get({ id: methodId });
+        } catch {
+            strategy = this._registry.get(methodId)
+        }
+
+        return strategy;
     }
 }
