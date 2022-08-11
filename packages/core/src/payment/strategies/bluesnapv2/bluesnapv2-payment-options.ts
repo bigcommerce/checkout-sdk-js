@@ -30,6 +30,7 @@ import { BlueSnapV2StyleProps } from './bluesnapv2';
  *         },
  *     },
  * });
+ * ```
  */
 export interface BlueSnapV2PaymentInitializeOptions {
     /**

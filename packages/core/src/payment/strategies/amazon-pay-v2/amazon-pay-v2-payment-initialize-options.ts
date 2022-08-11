@@ -18,6 +18,7 @@
  *         editButtonId: 'edit-button',
  *     },
  * });
+ * ```
  */
 export default interface AmazonPayV2PaymentInitializeOptions {
     /**
