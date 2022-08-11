@@ -108,19 +108,25 @@ describe('AmazonPayV2PaymentProcessor', () => {
     });
 
     describe('#renderAmazonPayButton', () => {
+        const CONTAINER_ID = 'foo';
+        const renderAmazonPayButton = (containerId = CONTAINER_ID) => {
+            processor.renderAmazonPayButton(containerId, store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+        };
+
         let store: CheckoutStore;
 
         beforeAll(() => {
             const container = document.createElement('div');
-            container.id = 'foo';
+            container.id = CONTAINER_ID;
             document.body.appendChild(container);
         });
 
-        beforeEach(() => {
+        beforeEach(async () => {
             store = createCheckoutStore(getCheckoutStoreState());
+            await processor.initialize(getAmazonPayV2());
         });
 
-        it('should render an Amazon Pay button and validate if cart contains physical items', async () => {
+        it('should render an Amazon Pay button and validate if cart contains physical items', () => {
             const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
             expectedOptions.productType = AmazonPayV2PayOptions.PayOnly;
@@ -131,13 +137,12 @@ describe('AmazonPayV2PaymentProcessor', () => {
             jest.spyOn(store.getState().cart, 'getCart')
                 .mockReturnValueOnce(cartMock);
 
-            await processor.initialize(getAmazonPayV2());
-            processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+            renderAmazonPayButton();
 
             expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
         });
 
-        it('should provide a relative URL to create a checkout session', async () => {
+        it('should provide a relative URL to create a checkout session', () => {
             const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
             expectedOptions.createCheckoutSession.url = `/remote-checkout/amazonpay/payment-session`;
 
@@ -149,8 +154,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
             jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
                 .mockReturnValueOnce(storeConfigMock);
 
-            await processor.initialize(getAmazonPayV2());
-            processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+            renderAmazonPayButton()
 
             expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
         });
@@ -166,16 +170,15 @@ describe('AmazonPayV2PaymentProcessor', () => {
                     .mockReturnValueOnce(storeConfigMock);
             });
 
-            test('publicKeyId has an environment prefix', async () => {
+            test('publicKeyId has an environment prefix', () => {
                 const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock();
 
-                await processor.initialize(getAmazonPayV2());
-                processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+                renderAmazonPayButton();
 
                 expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
             });
 
-            test('publicKeyId does not have an environment prefix', async () => {
+            test('publicKeyId does not have an environment prefix', () => {
                 const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
                 delete expectedOptions.publicKeyId;
                 expectedOptions.sandbox = true;
@@ -190,63 +193,73 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValueOnce(amazonPayV2Mock);
 
-                await processor.initialize(getAmazonPayV2());
-                processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+                renderAmazonPayButton();
+
+                expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
+            });
+
+            test('estimatedOrderAmount is not set if there is no total', () => {
+                const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
+                delete expectedOptions.estimatedOrderAmount;
+
+                jest.spyOn(store.getState().checkout, 'getCheckout')
+                    .mockReturnValueOnce(undefined);
+
+                renderAmazonPayButton();
+
+                expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
+            });
+
+            test('estimatedOrderAmount is not set if there is no currency code', () => {
+                const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
+                delete expectedOptions.estimatedOrderAmount;
+
+                jest.spyOn(store.getState().cart, 'getCart')
+                    .mockReturnValueOnce(undefined);
+
+                renderAmazonPayButton();
 
                 expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith('#foo', expectedOptions);
             });
         });
 
         describe('should fail...', () => {
-            test('if an invalid containerId is provided', async () => {
-                await processor.initialize(getAmazonPayV2());
-                const renderAmazonPayButton = () => processor.renderAmazonPayButton('bar', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
+            test('if an invalid containerId is provided', () => {
+                const renderAmazonPayButtonToAnInvalidContainer = () => renderAmazonPayButton('bar');
 
-                expect(renderAmazonPayButton).toThrowError(InvalidArgumentError);
+                expect(renderAmazonPayButtonToAnInvalidContainer).toThrowError(InvalidArgumentError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
             });
 
-            test('if there is no payment methods data', async () => {
+            test('if there is no payment methods data', () => {
                 const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
                 const state = { ...getCheckoutStoreState(), paymentMethods };
                 store = createCheckoutStore(state);
 
-                await processor.initialize(getAmazonPayV2());
-                const renderAmazonPayButton = () => processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
-
                 expect(renderAmazonPayButton).toThrowError(MissingDataError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
             });
 
-            test('if there is no store config data', async () => {
+            test('if there is no store config data', () => {
                 const config = { ...getConfigState(), data: undefined };
                 const state = { ...getCheckoutStoreState(), config };
                 store = createCheckoutStore(state);
 
-                await processor.initialize(getAmazonPayV2());
-                const renderAmazonPayButton = () => processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
-
                 expect(renderAmazonPayButton).toThrowError(MissingDataError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
             });
 
-            test('if merchantId is undefined', async () => {
+            test('if merchantId is undefined', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getPaymentMethodMockUndefinedMerchant());
 
-                await processor.initialize(getAmazonPayV2());
-                const renderAmazonPayButton = () => processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
-
                 expect(renderAmazonPayButton).toThrowError(MissingDataError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
             });
 
-            test('if ledgerCurrency is undefined', async () => {
+            test('if ledgerCurrency is undefined', () => {
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                     .mockReturnValue(getPaymentMethodMockUndefinedLedgerCurrency());
-
-                await processor.initialize(getAmazonPayV2());
-                const renderAmazonPayButton = () => processor.renderAmazonPayButton('foo', store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout);
 
                 expect(renderAmazonPayButton).toThrowError(MissingDataError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();

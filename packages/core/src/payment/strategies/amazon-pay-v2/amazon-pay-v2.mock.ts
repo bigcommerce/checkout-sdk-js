@@ -36,6 +36,10 @@ export function getAmazonPayV2Ph4ButtonParamsMock(): AmazonPayV2ButtonParameters
         productType: AmazonPayV2PayOptions.PayAndShip,
         placement: AmazonPayV2Placement.Checkout,
         buttonColor: AmazonPayV2ButtonColor.Gold,
+        estimatedOrderAmount: {
+            amount: '190',
+            currencyCode: 'USD',
+        },
         createCheckoutSessionConfig: {
             payloadJSON: 'payload',
             signature: 'xxxx',
