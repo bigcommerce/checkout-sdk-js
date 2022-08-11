@@ -14,7 +14,7 @@ import PaymentStrategy from '../payment-strategy';
 import KlarnaPayments, { KlarnaAddress, KlarnaAuthorizationResponse, KlarnaLoadResponse, KlarnaUpdateSessionParams } from './klarna-payments';
 import { supportedCountries, supportedCountriesRequiringStates } from './klarna-supported-countries';
 import KlarnaV2ScriptLoader from './klarnav2-script-loader';
-import PaymentMethodRequestSender from "../../payment-method-request-sender";
+import KlarnaV2TokenUpdater from './klarnav2-token-updater';
 
 export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     private _klarnaPayments?: KlarnaPayments;
@@ -25,7 +25,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _klarnav2ScriptLoader: KlarnaV2ScriptLoader,
-        private _requestSender: PaymentMethodRequestSender
+        private _klarnav2TokenUpdater: KlarnaV2TokenUpdater
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -107,10 +107,10 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
         const cartId = state.cart.getCartOrThrow().id;
         const params = { 'params': cartId };
 
-        this._requestSender.loadPaymentMethod(gatewayId, { params })
+        await this._klarnav2TokenUpdater.updateClientToken(gatewayId, { params })
             .catch(() => {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod)
-                });
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod)
+            });
 
         return new Promise<KlarnaLoadResponse>(resolve => {
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
