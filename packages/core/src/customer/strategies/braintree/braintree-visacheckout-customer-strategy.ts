@@ -152,7 +152,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
     }
 
     private _insertVisaCheckoutButton(container: Element, buttonClass: string): HTMLElement {
-        const buttonSource = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png?acceptCanadianVisaDebit=false&cobrand=true&size=154';
+        const buttonSource = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png?acceptCanadianVisaDebit=false&cobrand=true&height=34&width=178';
         const buttonTemplate = `
             <img
                 alt="Visa Checkout"
