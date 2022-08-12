@@ -61,6 +61,7 @@ enum PaymentStrategyType {
     BRAINTREE_GOOGLE_PAY = 'googlepaybraintree',
     CHASE_PAY = 'chasepay',
     WE_PAY = 'wepay',
+    WORLDPAYACCESS = 'worldpayaccess',
     MASTERPASS = 'masterpass',
     STRIPE_GOOGLE_PAY = 'googlepaystripe',
     SEZZLE = 'sezzle',
