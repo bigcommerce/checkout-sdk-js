@@ -2,7 +2,7 @@ const path = require('path');
 const { DefinePlugin } = require('webpack');
 
 const { getNextVersion } = require('./scripts/webpack');
-const packages = require('./package-loader-rule');
+const { aliasMap: alias, tsSrcPackages } = require('./package-loader-rule');
 
 const libraryName = 'checkoutKit';
 
@@ -26,11 +26,7 @@ async function getBaseConfig() {
         mode: 'production',
         resolve: {
             extensions: ['.ts', '.js'],
-            alias: {
-                '@bigcommerce/checkout-sdk/payment-integration': path.resolve(__dirname, '/packages/payment-integration/src'),
-                '@bigcommerce/checkout-sdk/apple-pay': path.resolve(__dirname, '/packages/apple-pay/src'),
-                '@bigcommerce/checkout-sdk/test-utils': path.resolve(__dirname, '/packages/test-utils/src'),
-            }
+            alias,
         },
         module: {
             rules: [
@@ -44,7 +40,7 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                ...packages
+                ...tsSrcPackages
             ],
         },
         plugins: [
