@@ -23,6 +23,7 @@ import { HostedFormOptions } from '../../../hosted-form';
  *          }
  *      }
  * });
+ * ```
  */
 export default interface MolliePaymentInitializeOptions {
     /**
