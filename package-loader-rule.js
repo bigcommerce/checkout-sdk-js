@@ -1,4 +1,5 @@
 const path = require('path');
+const { projects } = require('./workspace.json');
 
 const packages = [
     'core',
@@ -6,14 +7,16 @@ const packages = [
     'payment-integration',
 ];
 
-const getPackagesWithPath = packages.map(package => {
-    const packageSrcPath =  path.join(__dirname, `packages/${package}/src`);
+const tsSrcPackages = [];
 
-    return {
+for (const [, packagePath] of Object.entries(projects)) {
+    const packageSrcPath =  path.join(__dirname, `${packagePath}/src`);
+
+    tsSrcPackages.push({
         test: /\.[tj]s$/,
         include: packageSrcPath,
         loader: 'ts-loader',
-    };
-});
+    });
+}
 
-module.exports = getPackagesWithPath;
+module.exports = tsSrcPackages;
