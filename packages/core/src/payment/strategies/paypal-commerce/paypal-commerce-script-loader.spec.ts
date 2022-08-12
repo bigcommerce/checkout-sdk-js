@@ -87,7 +87,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -108,7 +108,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'EUR',
             intent: 'capture',
         }
@@ -130,7 +130,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -157,7 +157,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'venmo'],
             'enable-funding': ['credit', 'paylater'],
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -184,7 +184,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -211,7 +211,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater'],
             'enable-funding': ['venmo'],
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -238,7 +238,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -266,7 +266,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo', 'mybank', 'sofort', 'sepa'],
             'enable-funding': ['bancontact', 'giropay', 'ideal'],
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -288,7 +288,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
@@ -307,7 +307,7 @@ describe('PaypalCommerceScriptLoader', () => {
             'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
             'enable-funding': undefined,
             commit: false,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
         }
