@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.277.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.276.2...v1.277.0) (2022-08-12)
+
+
+### Features
+
+* **checkout-button:** INT-6023 Resize VCO button for Discover cards ([#1489](https://github.com/bigcommerce/checkout-sdk-js/issues/1489)) ([24e78e6](https://github.com/bigcommerce/checkout-sdk-js/commit/24e78e6d40944037611aaf7fe83b6059da574c8b))
+
 ### [1.276.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.276.1...v1.276.2) (2022-08-12)
 
 
