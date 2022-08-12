@@ -786,6 +786,7 @@ declare enum AmazonPayV2PayOptions {
  *         editButtonId: 'edit-button',
  *     },
  * });
+ * ```
  */
 declare interface AmazonPayV2PaymentInitializeOptions {
     /**
@@ -1333,7 +1334,7 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
      */
-    worldpay?: WorldpayPaymentInitializeOptions;
+    worldpay?: WorldpayAccessPaymentInitializeOptions;
 }
 
 declare interface BillingAddress extends Address {
@@ -1382,6 +1383,7 @@ declare interface BlockElementStyles extends InlineElementStyles {
  *         },
  *     },
  * });
+ * ```
  */
 declare interface BlueSnapV2PaymentInitializeOptions {
     /**
@@ -5526,6 +5528,7 @@ declare interface MasterpassPaymentInitializeOptions {
  *          }
  *      }
  * });
+ * ```
  */
 declare interface MolliePaymentInitializeOptions {
     /**
@@ -7230,7 +7233,7 @@ declare interface WithMollieIssuerInstrument {
     shopper_locale: string;
 }
 
-declare interface WorldpayPaymentInitializeOptions {
+declare interface WorldpayAccessPaymentInitializeOptions {
     /**
      * A callback that gets called when the iframe is ready to be added to the
      * current page. It is responsible for determining where the iframe should

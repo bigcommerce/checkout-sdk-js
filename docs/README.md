@@ -359,7 +359,7 @@
 - [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
-- [WorldpayPaymentInitializeOptions](interfaces/WorldpayPaymentInitializeOptions.md)
+- [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
 
 ### Type aliases

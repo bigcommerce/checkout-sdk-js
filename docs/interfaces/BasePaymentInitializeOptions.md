@@ -390,7 +390,7 @@ ___
 
 ### worldpay
 
-• `Optional` **worldpay**: [`WorldpayPaymentInitializeOptions`](WorldpayPaymentInitializeOptions.md)
+• `Optional` **worldpay**: [`WorldpayAccessPaymentInitializeOptions`](WorldpayAccessPaymentInitializeOptions.md)
 
 The options that are required to initialize the Worldpay payment method.
 They can be omitted unless you need to support Worldpay.

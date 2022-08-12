@@ -21,6 +21,7 @@ service.initializePayment({
         editButtonId: 'edit-button',
     },
 });
+```
 
 ## Table of contents
 

@@ -1,12 +1,12 @@
-[@bigcommerce/checkout-sdk](../README.md) / WorldpayPaymentInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / WorldpayAccessPaymentInitializeOptions
 
-# Interface: WorldpayPaymentInitializeOptions
+# Interface: WorldpayAccessPaymentInitializeOptions
 
 ## Table of contents
 
 ### Methods
 
-- [onLoad](WorldpayPaymentInitializeOptions.md#onload)
+- [onLoad](WorldpayAccessPaymentInitializeOptions.md#onload)
 
 ## Methods
 

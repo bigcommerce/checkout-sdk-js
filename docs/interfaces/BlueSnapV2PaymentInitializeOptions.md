@@ -31,6 +31,7 @@ service.initializePayment({
         },
     },
 });
+```
 
 ## Table of contents
 
