@@ -37,11 +37,6 @@ service.initializePayment({
 - [containerId](MolliePaymentInitializeOptions.md#containerid)
 - [form](MolliePaymentInitializeOptions.md#form)
 - [styles](MolliePaymentInitializeOptions.md#styles)
-- [unsupportedMethodMessage](MolliePaymentInitializeOptions.md#unsupportedmethodmessage)
-
-### Methods
-
-- [disableButton](MolliePaymentInitializeOptions.md#disablebutton)
 
 ## Properties
 
@@ -100,19 +95,3 @@ ___
 • **styles**: `object`
 
 A set of styles required for the mollie components
-
-___
-
-### unsupportedMethodMessage
-
-• `Optional` **unsupportedMethodMessage**: `string`
-
-## Methods
-
-### disableButton
-
-▸ **disableButton**(): `void`
-
-#### Returns
-
-`void`
