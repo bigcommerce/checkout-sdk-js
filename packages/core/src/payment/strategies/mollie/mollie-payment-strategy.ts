@@ -20,11 +20,6 @@ export enum MolliePaymentMethodType {
     creditcard = 'credit_card',
 }
 
-const methodsNotAllowedWhenDigitalOrder = [
-    'klarnapaylater',
-    'klarnasliceit'
-]
-
 export default class MolliePaymentStrategy implements PaymentStrategy {
     private _initializeOptions?: MolliePaymentInitializeOptions;
     private _mollieClient?: MollieClient;
@@ -83,29 +78,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         } else if (this.isCreditCard(methodId)) {
             this._mollieClient = await this._loadMollieJs(merchantId, storeConfig.storeProfile.storeLanguage, testMode);
             this._mountElements();
-        }
-
-        if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
-            const cart = state.cart.getCartOrThrow();
-            const cartDigitalItems = cart.lineItems.digitalItems;
-
-            if (cartDigitalItems && cartDigitalItems.length > 0) {
-                const { containerId } = this._getInitializeOptions();
-
-                if (containerId) {
-                    const container = document.getElementById(containerId);
-
-                    if (container) {
-                        const paragraph = document.createElement('p') ;
-
-                        if (mollie.unsupportedMethodMessage) {
-                            paragraph.innerText = mollie.unsupportedMethodMessage;
-                            container.appendChild(paragraph);
-                            mollie.disableButton();
-                        }
-                    }
-                }
-            }
         }
 
         return Promise.resolve(this._store.getState());
