@@ -15,25 +15,22 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentMethodActionType } from '../../payment-method-actions';
-import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getKlarna } from '../../payment-methods.mock';
 
 import KlarnaPayments from './klarna-payments';
 import KlarnaV2PaymentStrategy from './klarnav2-payment-strategy';
 import KlarnaV2ScriptLoader from './klarnav2-script-loader';
+import KlarnaV2TokenUpdater from './klarnav2-token-updater';
 import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getEUShippingAddress, getKlarnaV2UpdateSessionParams, getKlarnaV2UpdateSessionParamsForOC, getKlarnaV2UpdateSessionParamsPhone, getOCBillingAddress } from './klarnav2.mock';
+import { getResponse } from "../../../common/http-request/responses.mock";
 
 describe('KlarnaV2PaymentStrategy', () => {
     let checkoutActionCreator: CheckoutActionCreator;
     let initializePaymentAction: Observable<Action>;
     let klarnaPayments: KlarnaPayments;
-    let loadPaymentMethodAction: Observable<Action>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let orderActionCreator: OrderActionCreator;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
     let scriptLoader: KlarnaV2ScriptLoader;
@@ -41,6 +38,7 @@ describe('KlarnaV2PaymentStrategy', () => {
     let store: CheckoutStore;
     let strategy: KlarnaV2PaymentStrategy;
     let paymentMethodMock: PaymentMethod;
+    let klarnav2TokenUpdater: KlarnaV2TokenUpdater;
 
     beforeEach(() => {
         paymentMethodMock = { ...getKlarna(), id: 'pay_now', gateway: 'klarna'};
@@ -57,7 +55,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -69,12 +66,13 @@ describe('KlarnaV2PaymentStrategy', () => {
             checkoutActionCreator
         );
         scriptLoader = new KlarnaV2ScriptLoader(createScriptLoader());
+        klarnav2TokenUpdater = new KlarnaV2TokenUpdater(requestSender);
         strategy = new KlarnaV2PaymentStrategy(
             store,
             orderActionCreator,
-            paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
+            klarnav2TokenUpdater
         );
 
         klarnaPayments = {
@@ -95,7 +93,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             useStoreCredit: true,
         });
 
-        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
         initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
@@ -104,14 +101,14 @@ describe('KlarnaV2PaymentStrategy', () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(loadPaymentMethodAction);
-
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockReturnValue(initializePaymentAction);
 
         jest.spyOn(scriptLoader, 'load')
             .mockImplementation(() => Promise.resolve(klarnaPayments));
+
+        jest.spyOn(klarnav2TokenUpdater, 'updateClientToken')
+            .mockResolvedValue(getResponse(getKlarna()));
 
         jest.spyOn(store, 'subscribe');
     });
@@ -159,7 +156,8 @@ describe('KlarnaV2PaymentStrategy', () => {
             strategy.execute(payload);
             expect(klarnaPayments.authorize)
                 .toHaveBeenCalledWith({ payment_method_category: paymentMethod.id }, getKlarnaV2UpdateSessionParamsPhone(), expect.any(Function));
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway);
+            expect(klarnav2TokenUpdater.updateClientToken)
+                .toHaveBeenCalledWith(paymentMethod.gateway, { params: { params: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7'} });
         });
 
         it('loads widget in EU', async () => {
@@ -170,9 +168,9 @@ describe('KlarnaV2PaymentStrategy', () => {
             strategy = new KlarnaV2PaymentStrategy(
                 store,
                 orderActionCreator,
-                paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
-                scriptLoader
+                scriptLoader,
+                klarnav2TokenUpdater
             );
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
@@ -192,9 +190,9 @@ describe('KlarnaV2PaymentStrategy', () => {
             strategy = new KlarnaV2PaymentStrategy(
                 store,
                 orderActionCreator,
-                paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
-                scriptLoader
+                scriptLoader,
+                klarnav2TokenUpdater
             );
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
@@ -214,9 +212,9 @@ describe('KlarnaV2PaymentStrategy', () => {
             strategy = new KlarnaV2PaymentStrategy(
                 store,
                 orderActionCreator,
-                paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
-                scriptLoader
+                scriptLoader,
+                klarnav2TokenUpdater
             );
             jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
@@ -237,9 +235,9 @@ describe('KlarnaV2PaymentStrategy', () => {
             strategy = new KlarnaV2PaymentStrategy(
                 store,
                 orderActionCreator,
-                paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
-                scriptLoader
+                scriptLoader,
+                klarnav2TokenUpdater
             );
 
             strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway, klarnav2: { container: '#container' } });

@@ -8,13 +8,13 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import KlarnaPayments, { KlarnaAddress, KlarnaAuthorizationResponse, KlarnaLoadResponse, KlarnaUpdateSessionParams } from './klarna-payments';
 import { supportedCountries, supportedCountriesRequiringStates } from './klarna-supported-countries';
 import KlarnaV2ScriptLoader from './klarnav2-script-loader';
+import KlarnaV2TokenUpdater from './klarnav2-token-updater';
 
 export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     private _klarnaPayments?: KlarnaPayments;
@@ -23,9 +23,9 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _klarnav2ScriptLoader: KlarnaV2ScriptLoader
+        private _klarnav2ScriptLoader: KlarnaV2ScriptLoader,
+        private _klarnav2TokenUpdater: KlarnaV2TokenUpdater
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -103,7 +103,14 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed because "payload.payment.gatewayId" argument is not provided.');
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId));
+        const state = this._store.getState();
+        const cartId = state.cart.getCartOrThrow().id;
+        const params = { 'params': cartId };
+
+        await this._klarnav2TokenUpdater.updateClientToken(gatewayId, { params })
+            .catch(() => {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod)
+            });
 
         return new Promise<KlarnaLoadResponse>(resolve => {
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);

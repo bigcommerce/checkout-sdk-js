@@ -51,7 +51,7 @@ import { ExternalPaymentStrategy } from './strategies/external';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAdyenV3Initializer, GooglePayAdyenV3PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCheckoutcomPaymentProcessor, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
-import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
+import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader, KlarnaV2TokenUpdater } from './strategies/klarnav2';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
@@ -535,9 +535,9 @@ export default function createPaymentStrategyRegistry(
         new KlarnaV2PaymentStrategy(
             store,
             orderActionCreator,
-            paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            new KlarnaV2ScriptLoader(scriptLoader)
+            new KlarnaV2ScriptLoader(scriptLoader),
+            new KlarnaV2TokenUpdater(requestSender)
         )
     );
 
