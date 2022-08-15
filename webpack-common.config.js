@@ -1,13 +1,11 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
-const { getNextVersion } = require('./scripts/webpack');
-
-const coreSrcPath = path.join(__dirname, 'packages/core/src');
-const appleSrcPath = path.join(__dirname, 'packages/apple-pay/src');
-const paymentIntegrationSrcPath = path.join(__dirname, 'packages/payment-integration/src');
+const { getNextVersion, packageLoaderRules : { aliasMap: alias, tsSrcPackages } } = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
+
+const coreSrcPath = path.join(__dirname, 'packages/core/src');
 
 const libraryEntries = {
     'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
@@ -27,11 +25,7 @@ async function getBaseConfig() {
         mode: 'production',
         resolve: {
             extensions: ['.ts', '.js'],
-            alias: {
-                '@bigcommerce/checkout-sdk/payment-integration': path.resolve(__dirname, '/packages/payment-integration/src'),
-                '@bigcommerce/checkout-sdk/apple-pay': path.resolve(__dirname, '/packages/apple-pay/src'),
-                '@bigcommerce/checkout-sdk/test-utils': path.resolve(__dirname, '/packages/test-utils/src'),
-            }
+            alias,
         },
         module: {
             rules: [
@@ -45,21 +39,7 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                {
-                    test: /\.[tj]s$/,
-                    include: coreSrcPath,
-                    loader: 'ts-loader',                    
-                },
-                {
-                    test: /\.[tj]s$/,
-                    include: appleSrcPath,
-                    loader: 'ts-loader',
-                },
-                {
-                    test: /\.[tj]s$/,
-                    include: paymentIntegrationSrcPath,
-                    loader: 'ts-loader',
-                },
+                ...tsSrcPackages
             ],
         },
         plugins: [
