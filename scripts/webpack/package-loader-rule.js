@@ -1,11 +1,13 @@
 const path = require('path');
-const { projects } = require('./workspace.json');
+const { projects } = require('../../workspace.json');
+
+console.log('projects',projects);
 
 const tsSrcPackages = [];
 const aliasMap = {};
 
 for (const [packageName, packagePath] of Object.entries(projects)) {
-    const packageSrcPath =  path.join(__dirname, `${packagePath}/src`);
+    const packageSrcPath =  path.join(__dirname, '../../', `${packagePath}/src`);
 
     tsSrcPackages.push({
         test: /\.[tj]s$/,

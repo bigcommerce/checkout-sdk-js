@@ -1,8 +1,7 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
-const { getNextVersion } = require('./scripts/webpack');
-const { aliasMap: alias, tsSrcPackages } = require('./package-loader-rule');
+const { getNextVersion, packageLoaderRules : { aliasMap: alias, tsSrcPackages } } = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
 
