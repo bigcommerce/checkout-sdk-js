@@ -124,5 +124,5 @@
             }
         }
     },
-    "tags": []
+    "tags": ["scope:core"]
 }
