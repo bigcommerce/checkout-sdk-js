@@ -1,5 +1,5 @@
 enum ApplePayButtonMethodType {
-    APPLEPAY = 'applepay',
+    APPLEPAY = "applepay",
 }
 
 export default ApplePayButtonMethodType;

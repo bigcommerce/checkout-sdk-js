@@ -10,7 +10,7 @@ export function assertApplePayWindow(
     window: Window
 ): asserts window is ApplePayWindow {
     if (!isApplePayWindow(window)) {
-        throw new Error('Apple pay is not supported');
+        throw new Error("Apple pay is not supported");
     }
 }
 

@@ -19,7 +19,7 @@ import {
 } from "@bigcommerce/checkout-sdk/payment-integration";
 
 import ApplePaySessionFactory from "./apple-pay-session-factory";
-import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+import { WithApplePayPaymentInitializeOptions } from "./apple-pay-payment-initialize-options";
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -45,7 +45,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions & WithApplePayPaymentInitializeOptions
+        options?: PaymentInitializeOptions &
+            WithApplePayPaymentInitializeOptions
     ): Promise<void> {
         if (!options?.methodId) {
             throw new InvalidArgumentError(

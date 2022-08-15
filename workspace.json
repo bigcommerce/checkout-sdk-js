@@ -1,7 +1,7 @@
 {
     "version": 2,
     "projects": {
-        "apple-pay": "packages/apple-pay",
+        "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
         "payment-integration": "packages/payment-integration",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",

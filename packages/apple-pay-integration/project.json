@@ -1,20 +1,20 @@
 {
-    "root": "packages/apple-pay",
-    "sourceRoot": "packages/apple-pay/src",
+    "root": "packages/apple-pay-integration",
+    "sourceRoot": "packages/apple-pay-integration/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/apple-pay/**/*.ts"]
+                "lintFilePatterns": ["packages/apple-pay-integration/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/apple-pay"],
+            "outputs": ["coverage/packages/apple-pay-integration"],
             "options": {
-                "jestConfig": "packages/apple-pay/jest.config.js"
+                "jestConfig": "packages/apple-pay-integration/jest.config.js"
             }
         }
     },

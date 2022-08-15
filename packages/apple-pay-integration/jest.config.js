@@ -8,5 +8,5 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ["../../jest-setup.js"],
-    coverageDirectory: "../../coverage/packages/apple-pay",
+    coverageDirectory: "../../coverage/packages/apple-pay-integration",
 };
