@@ -1,8 +1,6 @@
 const path = require('path');
 const { projects } = require('../../workspace.json');
 
-console.log('projects',projects);
-
 const tsSrcPackages = [];
 const aliasMap = {};
 

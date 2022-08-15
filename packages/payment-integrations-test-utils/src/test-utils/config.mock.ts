@@ -1,4 +1,4 @@
-import { Config } from "@bigcommerce/checkout-sdk/payment-integration";
+import { Config } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 export default function getConfig(): Config {
     return {

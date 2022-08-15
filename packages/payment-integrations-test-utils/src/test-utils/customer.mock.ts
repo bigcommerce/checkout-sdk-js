@@ -1,4 +1,4 @@
-import { Customer } from "@bigcommerce/checkout-sdk/payment-integration";
+import { Customer } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { getAddress } from "./address.mock";
 
