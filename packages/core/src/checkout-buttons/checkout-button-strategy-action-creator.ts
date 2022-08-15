@@ -20,6 +20,14 @@ import {
 import CheckoutButtonRegistryV2 from "./checkout-button-strategy-registry-v2";
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from "./strategies";
 
+const methodMap: { [key: string]: CheckoutButtonMethodType | undefined } = {
+    [CheckoutButtonMethodType.PAYPALCOMMERCEV2]: CheckoutButtonMethodType.PAYPALCOMMERCE, // TODO: should be removed after PaypalCommerceButtonStrategy deprecation
+};
+
+const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {
+    return methodMap[methodId] || methodId;
+};
+
 export default class CheckoutButtonStrategyActionCreator {
     constructor(
         private _registry: Registry<CheckoutButtonStrategy>,
@@ -56,7 +64,7 @@ export default class CheckoutButtonStrategyActionCreator {
                     )
                 ),
                 this._paymentMethodActionCreator.loadPaymentMethod(
-                    options.methodId,
+                    mapCheckoutButtonMethodId(options.methodId),
                     { timeout: options.timeout, useCache: true }
                 )(store),
                 defer(() =>
