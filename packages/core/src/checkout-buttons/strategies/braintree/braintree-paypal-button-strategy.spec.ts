@@ -10,7 +10,6 @@ import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, Checkou
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getBraintree } from '../../../payment/payment-methods.mock';
@@ -61,11 +60,6 @@ describe('BraintreePaypalButtonStrategy', () => {
     };
 
     beforeEach(() => {
-        const storeConfigMock = getConfig().storeConfig;
-        storeConfigMock.checkoutSettings.features = {
-            'PAYPAL-1149.braintree-new-card-below-totals-banner-placement': false,
-        };
-
         braintreePaypalCheckoutMock = getPaypalCheckoutMock();
         braintreePaypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(braintreePaypalCheckoutMock, false);
         dataCollector = getDataCollectorMock();
@@ -107,7 +101,6 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfigMock);
         jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
         jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue(dataCollector);
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(braintreePaypalCheckoutCreatorMock);
@@ -237,12 +230,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         it('renders PayPal checkout message', async () => {
             const cartMock = getCart();
-            const storeConfigMock = getConfig().storeConfig;
-            storeConfigMock.checkoutSettings.features = {
-                'PAYPAL-1149.braintree-new-card-below-totals-banner-placement': true,
-            };
 
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfigMock);
             jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
 
             await strategy.initialize(initializationOptions);
