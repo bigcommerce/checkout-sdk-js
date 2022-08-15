@@ -3,7 +3,7 @@
     "projects": {
         "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
-        "payment-integration": "packages/payment-integration",
+        "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
         "workspace-tools": "packages/workspace-tools"
     }

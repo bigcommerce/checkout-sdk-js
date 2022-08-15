@@ -1,4 +1,4 @@
-import { Cart } from "@bigcommerce/checkout-sdk/payment-integration";
+import { Cart } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { getCoupon } from "./coupons.mock";
 import { getCurrency } from "./currency.mock";

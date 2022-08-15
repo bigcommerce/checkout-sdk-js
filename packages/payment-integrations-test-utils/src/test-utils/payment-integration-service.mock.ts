@@ -1,4 +1,4 @@
-import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import getCart from "./carts.mock";
 import getCheckout from "./checkouts.mock";

@@ -17,13 +17,13 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
+            "@bigcommerce/checkout-sdk/payment-integration-api": [
+                "packages/payment-integration-api/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"],
-            "@bigcommerce/checkout-sdk/payment-integration": [
-                "packages/payment-integration/src/index.ts"
-            ],
             "@bigcommerce/checkout-sdk/payment-integrations-test-utils": [
                 "packages/payment-integrations-test-utils/src/index.ts"
             ],

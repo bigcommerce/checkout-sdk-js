@@ -2,7 +2,7 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
     MissingDataError,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 import {
     PaymentIntegrationServiceMock,
     getCheckout,

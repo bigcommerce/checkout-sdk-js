@@ -1,7 +1,7 @@
 import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createRequestSender } from "@bigcommerce/request-sender";
 
 import ApplePayButtonStrategy from "./apple-pay-button-strategy";

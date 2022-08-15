@@ -1,4 +1,4 @@
-import { CustomerInitializeOptions } from "@bigcommerce/checkout-sdk/payment-integration";
+import { CustomerInitializeOptions } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { WithApplePayCustomerInitializeOptions } from "../apple-pay-customer-initialize-options";
 
 export function getApplePayCustomerInitializationOptions(): CustomerInitializeOptions &

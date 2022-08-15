@@ -5,7 +5,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 import {
     PaymentIntegrationServiceMock,
     getOrderRequestBody,

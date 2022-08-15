@@ -13,7 +13,7 @@ import {
     PaymentMethodCancelledError,
     ShippingOption,
     StoreConfig,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { RequestSender } from "@bigcommerce/request-sender";
 import { noop } from "lodash";
 import { WithApplePayButtonInitializeOptions } from "./apple-pay-button-initialize-options";

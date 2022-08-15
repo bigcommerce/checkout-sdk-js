@@ -1,7 +1,13 @@
-import { CheckoutButtonStrategy, CheckoutButtonStrategyResolveId } from '@bigcommerce/checkout-sdk/payment-integration';
+import {
+    CheckoutButtonStrategy,
+    CheckoutButtonStrategyResolveId,
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 
-import { ResolveIdRegistry } from '../common/registry';
+import { ResolveIdRegistry } from "../common/registry";
 
-type CheckoutButtonRegistry = ResolveIdRegistry<CheckoutButtonStrategy, CheckoutButtonStrategyResolveId>;
+type CheckoutButtonRegistry = ResolveIdRegistry<
+    CheckoutButtonStrategy,
+    CheckoutButtonStrategyResolveId
+>;
 
 export default CheckoutButtonRegistry;

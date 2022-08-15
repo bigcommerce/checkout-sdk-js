@@ -1,4 +1,4 @@
-import { CheckoutButtonInitializeOptions } from "@bigcommerce/checkout-sdk/payment-integration";
+import { CheckoutButtonInitializeOptions } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { WithApplePayButtonInitializeOptions } from "../apple-pay-button-initialize-options";
 import ApplePayButtonMethodType from "../apple-pay-button-method-type";
 

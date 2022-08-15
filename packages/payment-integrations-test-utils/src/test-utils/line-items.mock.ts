@@ -2,7 +2,7 @@ import {
     PhysicalItem,
     DigitalItem,
     GiftCertificateItem,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 export function getPhysicalItem(): PhysicalItem {
     return {

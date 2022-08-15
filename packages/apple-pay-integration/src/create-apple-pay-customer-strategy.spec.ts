@@ -1,4 +1,4 @@
-import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration";
+import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { PaymentIntegrationServiceMock } from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
 
 import ApplePayCustomerStrategy from "./apple-pay-customer-strategy";

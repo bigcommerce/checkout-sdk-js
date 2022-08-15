@@ -1,7 +1,7 @@
 import {
     CreditCardInstrument,
     Payment,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 export function getPayment(): Payment {
     return {

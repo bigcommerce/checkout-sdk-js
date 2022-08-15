@@ -15,7 +15,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     ShippingOption,
     AddressRequestBody,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { RequestSender } from "@bigcommerce/request-sender";
 import { noop } from "lodash";
 import { WithApplePayCustomerInitializeOptions } from "./apple-pay-customer-initialize-options";

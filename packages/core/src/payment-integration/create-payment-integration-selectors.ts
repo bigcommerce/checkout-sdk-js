@@ -1,42 +1,16 @@
-import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration';
-import { cloneResult as clone } from '../common/utility';
-import { InternalCheckoutSelectors } from '../checkout';
+import { PaymentIntegrationSelectors } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { cloneResult as clone } from "../common/utility";
+import { InternalCheckoutSelectors } from "../checkout";
 
 export default function createPaymentIntegrationSelectors({
-    billingAddress: {
-        getBillingAddress,
-        getBillingAddressOrThrow,
-    },
-    cart: {
-        getCart,
-        getCartOrThrow,
-    },
-    checkout: {
-        getCheckout,
-        getCheckoutOrThrow,
-    },
-    config: {
-        getHost,
-        getLocale,
-        getStoreConfig,
-        getStoreConfigOrThrow,
-    },
-    consignments: {
-        getConsignments,
-        getConsignmentsOrThrow,
-    },
-    customer: {
-        getCustomer,
-        getCustomerOrThrow,
-    },
-    instruments: {
-        getCardInstrument,
-        getCardInstrumentOrThrow,
-    },
-    order: {
-        getOrder,
-        getOrderOrThrow,
-    },
+    billingAddress: { getBillingAddress, getBillingAddressOrThrow },
+    cart: { getCart, getCartOrThrow },
+    checkout: { getCheckout, getCheckoutOrThrow },
+    config: { getHost, getLocale, getStoreConfig, getStoreConfigOrThrow },
+    consignments: { getConsignments, getConsignmentsOrThrow },
+    customer: { getCustomer, getCustomerOrThrow },
+    instruments: { getCardInstrument, getCardInstrumentOrThrow },
+    order: { getOrder, getOrderOrThrow },
     payment: {
         getPaymentToken,
         getPaymentTokenOrThrow,
@@ -48,17 +22,9 @@ export default function createPaymentIntegrationSelectors({
         getPaymentRedirectUrlOrThrow,
         isPaymentDataRequired,
     },
-    paymentMethods: {
-        getPaymentMethod,
-        getPaymentMethodOrThrow,
-    },
-    paymentStrategies: {
-        isInitialized: isPaymentMethodInitialized,
-    },
-    shippingAddress: {
-        getShippingAddress,
-        getShippingAddressOrThrow,
-    },
+    paymentMethods: { getPaymentMethod, getPaymentMethodOrThrow },
+    paymentStrategies: { isInitialized: isPaymentMethodInitialized },
+    shippingAddress: { getShippingAddress, getShippingAddressOrThrow },
 }: InternalCheckoutSelectors): PaymentIntegrationSelectors {
     return {
         getHost: clone(getHost),

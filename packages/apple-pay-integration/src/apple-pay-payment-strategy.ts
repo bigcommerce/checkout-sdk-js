@@ -16,7 +16,7 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
     StoreConfig,
-} from "@bigcommerce/checkout-sdk/payment-integration";
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import ApplePaySessionFactory from "./apple-pay-session-factory";
 import { WithApplePayPaymentInitializeOptions } from "./apple-pay-payment-initialize-options";
