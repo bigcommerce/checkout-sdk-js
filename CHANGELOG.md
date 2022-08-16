@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.279.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.278.1...v1.279.0) (2022-08-16)
+
+
+### Features
+
+* **payment:** INT-6342 fix klarna issue adding klarna v1 payment_method ([#1522](https://github.com/bigcommerce/checkout-sdk-js/issues/1522)) ([b2097c9](https://github.com/bigcommerce/checkout-sdk-js/commit/b2097c9402d3f13fea5ff52039035a49967ca46a))
+
 ### [1.278.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.278.0...v1.278.1) (2022-08-13)
 
 ## [1.278.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.277.0...v1.278.0) (2022-08-12)
