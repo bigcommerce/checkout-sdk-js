@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.279.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.279.1...v1.279.2) (2022-08-16)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1611 removed PAYPAL-1149.braintree-new-card-below-totals-banner-placement experiment ([#1564](https://github.com/bigcommerce/checkout-sdk-js/issues/1564)) ([52ca958](https://github.com/bigcommerce/checkout-sdk-js/commit/52ca9583bd641fc1ad8b25b9b864f4ca8d8bdd19))
+
 ### [1.279.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.279.0...v1.279.1) (2022-08-16)
 
 
