@@ -5561,6 +5561,8 @@ declare interface MolliePaymentInitializeOptions {
      * Hosted Form Validation Options
      */
     form?: HostedFormOptions;
+    unsupportedMethodMessage?: string;
+    disableButton(): void;
 }
 
 /**
