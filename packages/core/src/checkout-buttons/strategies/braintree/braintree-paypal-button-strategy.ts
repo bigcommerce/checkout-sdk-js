@@ -122,14 +122,12 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     private _renderPayPalMessages(messagingContainerId?: string): void {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
-        const storeConfig = state.config.getStoreConfigOrThrow();
 
-        const isMessageContainerAvailable = messagingContainerId && !!document.getElementById(messagingContainerId);
-        const isMessagesRenderingFeatureOn = storeConfig.checkoutSettings.features['PAYPAL-1149.braintree-new-card-below-totals-banner-placement'];
+        const isMessageContainerAvailable = messagingContainerId && Boolean(document.getElementById(messagingContainerId));
 
         const { paypal } = this._window;
 
-        if (paypal && isMessagesRenderingFeatureOn && messagingContainerId && isMessageContainerAvailable) {
+        if (paypal && isMessageContainerAvailable) {
             const paypalMessagesRender = paypal.Messages({ amount: cart.cartAmount, placement: 'cart' });
             paypalMessagesRender.render(`#${messagingContainerId}`);
         } else {
