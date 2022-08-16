@@ -20,6 +20,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import isIndividualCardElementOptions, { PaymentIntent, PaymentMethod as StripePaymentMethod, StripeAdditionalAction, StripeAddress, StripeBillingDetails, StripeCardElements, StripeConfirmIdealPaymentData, StripeConfirmPaymentData, StripeConfirmSepaPaymentData, StripeElement, StripeElements, StripeElementOptions, StripeElementType, StripeError, StripePaymentMethodType, StripeV3Client } from './stripev3';
+import StripeV3Error, { StripeV3ErrorType } from './stripev3-error';
 import StripeV3PaymentInitializeOptions from './stripev3-initialize-options';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 
@@ -164,6 +165,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
     private _isCancellationError(stripeError: StripeError | undefined) {
         return stripeError && stripeError.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1;
+    }
+
+    private _isAuthError(stripeError: StripeError | undefined){
+        return stripeError?.code  === 'payment_intent_authentication_failure'
     }
 
     private _isCreditCard(methodId: string): boolean {
@@ -492,6 +497,11 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 if (this._isCancellationError(result.error)) {
                     throw new PaymentMethodCancelledError();
                 }
+
+                if (this._isAuthError(result.error)) {
+                    throw new StripeV3Error(StripeV3ErrorType.AuthFailure);
+                }
+
                 throw new Error(result.error.message);
             }
 

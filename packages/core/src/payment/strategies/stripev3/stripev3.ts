@@ -91,6 +91,11 @@ export interface StripeError {
      * The PaymentIntent object.
      */
     payment_intent: PaymentIntent;
+
+    /**
+     * A human-readable code for the error obtained
+     */
+    code?: string;
 }
 
 /**
