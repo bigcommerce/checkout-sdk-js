@@ -101,7 +101,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                         mollie.disableButton(false);
                     }
 
-                    await this._validateDigitalOrder(mollie, methodId, gatewayId, state);
+                    await this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
                 }
             },
             state => {
@@ -116,9 +116,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             }
         );
 
-        await this._validateDigitalOrder(mollie, methodId, gatewayId, state);
-
-        return Promise.resolve(this._store.getState());
+        return this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -356,7 +354,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         }, 0);
     }
 
-    private async _validateDigitalOrder(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
+    private async _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
         if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
             const cart = state.cart.getCartOrThrow();
             const cartDigitalItems = cart.lineItems.digitalItems;
@@ -380,5 +378,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 }
             }
         }
+
+        return state;
     }
 }
