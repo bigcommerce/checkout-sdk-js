@@ -41,9 +41,9 @@ export default class PaypalCommerceV2ButtonStrategy implements CheckoutButtonStr
         const updatedMethodId = methodId === 'paypalcommercev2' ? 'paypalcommerce' : methodId;
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        const currency = state.cart.getCartOrThrow().currency.code;
+        const currencyCode = state.cart.getCartOrThrow().currency.code;
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(updatedMethodId);
-        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currency, initializesOnCheckoutPage);
+        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currencyCode, initializesOnCheckoutPage);
 
         this._renderButton(containerId, updatedMethodId, initializesOnCheckoutPage, style);
     }
