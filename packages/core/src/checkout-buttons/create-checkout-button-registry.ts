@@ -28,7 +28,7 @@ import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, Bra
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
+import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceV2ButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -263,6 +263,16 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             formPoster,
             paypalCommercePaymentProcessor
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCEV2, () =>
+        new PaypalCommerceV2ButtonStrategy(
+            store,
+            checkoutActionCreator,
+            formPoster,
+            paypalScriptLoader,
+            paypalCommerceRequestSender
         )
     );
 
