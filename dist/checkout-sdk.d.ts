@@ -1032,6 +1032,16 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     paypalCommerce?: PaypalCommerceButtonInitializeOptions;
     /**
+     * The options that are required to facilitate PayPal Commerce V2. They can be omitted
+     * unless you need to support Paypal Commerce.
+     */
+    paypalcommerce?: PaypalCommerceV2ButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support PayPal Commerce Credit / PayLater.
+     */
+    paypalcommercecredit?: PaypalCommerceCreditButtonInitializeOptions;
+    /**
      * The options that are required to facilitate PayPal Commerce. They can be omitted
      * unless you need to support PayPal Commerce Alternative Payment Methods.
      */
@@ -2211,6 +2221,8 @@ declare enum CheckoutButtonMethodType {
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
     PAYPALCOMMERCE = "paypalcommerce",
+    PAYPALCOMMERCEV2 = "paypalcommercev2",
+    PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
     PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
@@ -6037,6 +6049,21 @@ declare interface PaypalCommerceButtonInitializeOptions {
     messagingContainer?: string;
 }
 
+declare interface PaypalCommerceCreditButtonInitializeOptions {
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page
+     */
+    initializesOnCheckoutPage?: boolean;
+    /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
+}
+
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its credit card form.
@@ -6360,6 +6387,17 @@ declare interface PaypalCommerceStoredCardFieldOptions extends PaypalCommerceFor
 declare interface PaypalCommerceStoredCardFieldsMap {
     [PaypalCommerceFormFieldType.CardCodeVerification]?: PaypalCommerceStoredCardFieldOptions;
     [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceStoredCardFieldOptions;
+}
+
+declare interface PaypalCommerceV2ButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page
+     */
+    initializesOnCheckoutPage?: boolean;
 }
 
 declare interface PaypalCommerceVenmoButtonInitializeOptions {
