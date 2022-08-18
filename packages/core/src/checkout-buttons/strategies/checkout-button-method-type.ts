@@ -17,6 +17,7 @@ export enum BaseCheckoutButtonMethodType {
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
     PAYPALCOMMERCE = 'paypalcommerce',
+    PAYPALCOMMERCE_CREDIT = 'paypalcommercecredit',
     PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods',
     PAYPALCOMMERCE_VENMO = 'paypalcommercevenmo',
 }

@@ -214,6 +214,7 @@ export interface PaypalCommerceSDK {
     Buttons(params: ButtonsOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
+    isFundingEligible(fundingSource: string): boolean;
 }
 
 export interface PaypalCommerceHostWindow extends Window {
@@ -240,7 +241,7 @@ export interface PaypalCommerceInitializationData {
     isVenmoEnabled?: boolean;
 }
 
-export type ComponentsScriptType = Array<'buttons' | 'messages' | 'hosted-fields' | 'payment-fields'>;
+export type ComponentsScriptType = Array<'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'>;
 
 export interface PaypalCommerceScriptParams  {
     'client-id'?: string;

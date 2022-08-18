@@ -6,7 +6,7 @@ import { ApplePayButtonInitializeOptions } from './strategies/apple-pay';
 import { BraintreePaypalButtonInitializeOptions, BraintreePaypalCreditButtonInitializeOptions, BraintreeVenmoButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
-import { PaypalCommerceAlternativeMethodsButtonOptions, PaypalCommerceButtonInitializeOptions, PaypalCommerceVenmoButtonInitializeOptions } from './strategies/paypal-commerce';
+import { PaypalCommerceAlternativeMethodsButtonOptions, PaypalCommerceButtonInitializeOptions, PaypalCommerceCreditButtonInitializeOptions, PaypalCommerceVenmoButtonInitializeOptions } from './strategies/paypal-commerce';
 
 export { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
 
@@ -123,6 +123,12 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
      * unless you need to support Paypal.
      */
     paypalCommerce?: PaypalCommerceButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support PayPal Commerce Credit / PayLater.
+     */
+    paypalcommercecredit?: PaypalCommerceCreditButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate PayPal Commerce. They can be omitted
