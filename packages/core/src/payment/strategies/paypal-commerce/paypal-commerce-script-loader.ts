@@ -17,10 +17,10 @@ export default class PaypalCommerceScriptLoader {
 
     async loadPaypalCommerce(
         paymentMethod: PaymentMethod<PaypalCommerceInitializationData>,
-        currency: string,
+        currencyCode: string,
         initializesOnCheckoutPage?: boolean,
     ): Promise<PaypalCommerceSDK> {
-        const paypalSdkScriptConfig = this._getPayPalSdkScriptConfigOrThrow(paymentMethod, currency, initializesOnCheckoutPage);
+        const paypalSdkScriptConfig = this._getPayPalSdkScriptConfigOrThrow(paymentMethod, currencyCode, initializesOnCheckoutPage);
 
         if (!this._window.paypalLoadScript) {
             const PAYPAL_SDK_VERSION = '5.0.5';
@@ -44,7 +44,7 @@ export default class PaypalCommerceScriptLoader {
 
     private _getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PaypalCommerceInitializationData>,
-        currency: string,
+        currencyCode: string,
         initializesOnCheckoutPage = true,
     ): PaypalCommerceScriptParams {
         const { id, clientToken, initializationData } = paymentMethod;
@@ -97,7 +97,7 @@ export default class PaypalCommerceScriptLoader {
             'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
             commit,
             components: ['buttons', 'funding-eligibility', 'hosted-fields', 'messages', 'payment-fields'],
-            currency,
+            currency: currencyCode,
             intent,
         };
     }
