@@ -94,7 +94,6 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
-        jest.spyOn(paypalSdkMock, 'isFundingEligible').mockImplementation(() => true);
         jest.spyOn(paypalSdkMock, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
                 eventEmitter.on('createOrder', () => {
@@ -111,6 +110,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
 
                 return {
                     render: jest.fn(),
+                    isEligible: jest.fn(() => true),
                 };
             });
 
@@ -190,11 +190,16 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 });
             });
 
-            it('initializes PayPal Credit button to render', async () => {
-                jest.spyOn(paypalSdkMock, 'isFundingEligible')
-                    .mockImplementation((fundingSource: string) => {
-                        return fundingSource === 'credit';
-                    })
+            it('initializes PayPal Credit button to render if PayPal PayLater is not eligible', async () => {
+                jest.spyOn(paypalSdkMock, 'Buttons')
+                    .mockImplementation((options: ButtonsOptions) => {
+                        return {
+                            render: jest.fn(),
+                            isEligible: jest.fn(() => {
+                                return options.fundingSource === paypalSdkMock.FUNDING.CREDIT;
+                            }),
+                        };
+                    });
 
                 await strategy.initialize(initializationOptions);
 
@@ -212,6 +217,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 jest.spyOn(paypalSdkMock, 'Buttons')
                     .mockImplementation(() => ({
                         render: paypalCommerceSdkRenderMock,
+                        isEligible: jest.fn(() => true),
                     }));
 
                 await strategy.initialize(initializationOptions);
@@ -222,12 +228,10 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
             it('removes PayPal Commerce Credit button container if the funding sources are not eligible', async () => {
                 const paypalCommerceSdkRenderMock = jest.fn();
 
-                jest.spyOn(paypalSdkMock, 'isFundingEligible')
-                    .mockImplementation(() => false);
-
                 jest.spyOn(paypalSdkMock, 'Buttons')
                     .mockImplementation(() => ({
                         render: paypalCommerceSdkRenderMock,
+                        isEligible: jest.fn(() => false),
                     }));
 
                 await strategy.initialize(initializationOptions);
@@ -284,6 +288,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
 
                         return {
                             render: jest.fn(),
+                            isEligible: jest.fn(() => true),
                         };
                     });
 

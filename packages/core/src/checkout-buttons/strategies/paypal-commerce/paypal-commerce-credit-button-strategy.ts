@@ -51,27 +51,31 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
 
     private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
-        const primaryFundingSource = paypalCommerceSdk.FUNDING.PAYLATER;
-        const secondaryFundingSource = paypalCommerceSdk.FUNDING.CREDIT;
+        const fundingSources = [paypalCommerceSdk.FUNDING.PAYLATER, paypalCommerceSdk.FUNDING.CREDIT];
 
-        if (!paypalCommerceSdk.isFundingEligible(primaryFundingSource) && !paypalCommerceSdk.isFundingEligible(secondaryFundingSource)) {
+        let hasRenderedSmartButton = false;
+
+        fundingSources.forEach(fundingSource => {
+            if (!hasRenderedSmartButton) {
+                const buttonRenderOptions: ButtonsOptions = {
+                    fundingSource,
+                    style: style ? this._getButtonStyle(style) : {},
+                    createOrder: () => this._createOrder(initializesOnCheckoutPage),
+                    onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
+                };
+
+                const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
+
+                if (paypalButton.isEligible()) {
+                    paypalButton.render(`#${containerId}`);
+                    hasRenderedSmartButton = true;
+                }
+            }
+        });
+
+        if (!hasRenderedSmartButton) {
             this._removeElement(containerId);
         }
-
-        const fundingSource = paypalCommerceSdk.isFundingEligible(primaryFundingSource)
-            ? primaryFundingSource
-            : secondaryFundingSource;
-
-        const buttonRenderOptions: ButtonsOptions = {
-            fundingSource,
-            style: style ? this._getButtonStyle(style) : {},
-            createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
-        };
-
-        const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
-
-        paypalButton.render(`#${containerId}`);
     }
 
     private _renderMessages(messagingContainerId?: string): void {

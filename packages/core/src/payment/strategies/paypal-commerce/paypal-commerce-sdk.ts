@@ -214,7 +214,6 @@ export interface PaypalCommerceSDK {
     Buttons(params: ButtonsOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
-    isFundingEligible(fundingSource: string): boolean;
 }
 
 export interface PaypalCommerceHostWindow extends Window {
