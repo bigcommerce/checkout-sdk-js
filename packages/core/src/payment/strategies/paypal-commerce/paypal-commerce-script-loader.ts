@@ -8,6 +8,7 @@ import { FundingType, PaypalCommerceHostWindow, PaypalCommerceInitializationData
 
 export default class PaypalCommerceScriptLoader {
     private _window: PaypalCommerceHostWindow;
+    private _paypalSdk?: Promise<PaypalCommerceSDK>;
 
     constructor(
         private _scriptLoader: ScriptLoader
@@ -15,13 +16,21 @@ export default class PaypalCommerceScriptLoader {
         this._window = window;
     }
 
-    async loadPaypalCommerce(
+    async getPayPalSDK(
         paymentMethod: PaymentMethod<PaypalCommerceInitializationData>,
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
     ): Promise<PaypalCommerceSDK> {
-        const paypalSdkScriptConfig = this._getPayPalSdkScriptConfigOrThrow(paymentMethod, currencyCode, initializesOnCheckoutPage);
+        if (!this._paypalSdk) {
+            this._paypalSdk = this.loadPayPalSDK(
+                this._getPayPalSdkScriptConfigOrThrow(paymentMethod, currencyCode, initializesOnCheckoutPage)
+            );
+        }
 
+        return this._paypalSdk;
+    }
+
+    private async loadPayPalSDK(paypalSdkScriptConfig: PaypalCommerceScriptParams): Promise<PaypalCommerceSDK> {
         if (!this._window.paypalLoadScript) {
             const PAYPAL_SDK_VERSION = '5.0.5';
             const scriptSrc = `https://unpkg.com/@paypal/paypal-js@${PAYPAL_SDK_VERSION}/dist/iife/paypal-js.min.js`;

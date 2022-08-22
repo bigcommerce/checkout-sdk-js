@@ -73,7 +73,7 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
         paymentActionCreator = {} as PaymentActionCreator;
         paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
             .mockReturnValue(Promise.resolve(paypal));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')

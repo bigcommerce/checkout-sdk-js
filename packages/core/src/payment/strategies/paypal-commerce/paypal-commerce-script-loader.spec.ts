@@ -54,7 +54,7 @@ describe('PaypalCommerceScriptLoader', () => {
         };
 
         try {
-            await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+            await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
         } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
@@ -70,14 +70,14 @@ describe('PaypalCommerceScriptLoader', () => {
         };
 
         try {
-            await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+            await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
         } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 
     it('loads PayPalSDK script with default configuration', async () => {
-        const output = await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD');
+        const output = await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -97,8 +97,21 @@ describe('PaypalCommerceScriptLoader', () => {
         expect(output).toEqual(paypalSdk);
     });
 
+    it('loads PayPalSDK script only once even if it calls couple times', async () => {
+        const paypalCommerceCreditPaymentMethod = {
+            ...paymentMethod,
+            id: 'paypalcommercecredit',
+        };
+
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
+        await paypalLoader.getPayPalSDK(paypalCommerceCreditPaymentMethod, 'USD');
+
+        expect(loader.loadScript).toHaveBeenCalledTimes(1);
+        expect(paypalLoadScript).toHaveBeenCalledTimes(1);
+    });
+
     it('loads PayPalSDK script with EUR currency', async () => {
-        await paypalLoader.loadPaypalCommerce(paymentMethod, 'EUR');
+        await paypalLoader.getPayPalSDK(paymentMethod, 'EUR');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -120,7 +133,7 @@ describe('PaypalCommerceScriptLoader', () => {
     // it('loads PayPalCommerce script with enabled card funding', async () => {});
 
     it('loads PayPalCommerce script with disabled card funding', async () => {
-        await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -147,7 +160,7 @@ describe('PaypalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -174,7 +187,7 @@ describe('PaypalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -201,7 +214,7 @@ describe('PaypalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -228,7 +241,7 @@ describe('PaypalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -256,7 +269,7 @@ describe('PaypalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.loadPaypalCommerce(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -278,7 +291,7 @@ describe('PaypalCommerceScriptLoader', () => {
     // it('loads PayPalCommerce script with disabled all APMs', async () => {});
 
     it('loads PayPalSDK script with commit flag as true', async () => {
-        await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD', true);
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', true);
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -297,7 +310,7 @@ describe('PaypalCommerceScriptLoader', () => {
     });
 
     it('loads PayPalSDK script with commit flag as false', async () => {
-        await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD', false);
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', false);
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -326,7 +339,7 @@ describe('PaypalCommerceScriptLoader', () => {
         });
 
         try {
-            await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD');
+            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
         } catch (error) {
             expect(error).toEqual(expectedError);
         }
@@ -341,7 +354,7 @@ describe('PaypalCommerceScriptLoader', () => {
             });
 
         try {
-            await paypalLoader.loadPaypalCommerce(paymentMethod, 'USD');
+            await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
         } catch (error) {
             expect(error).toEqual(new PaymentMethodClientUnavailableError());
         }

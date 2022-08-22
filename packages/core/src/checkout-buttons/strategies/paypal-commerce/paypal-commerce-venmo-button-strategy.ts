@@ -39,7 +39,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currency = state.cart.getCartOrThrow().currency.code;
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        this._paypalCommerceSdk = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currency, initializesOnCheckoutPage);
+        this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currency, initializesOnCheckoutPage);
 
         this._renderButton(containerId, methodId, initializesOnCheckoutPage, style);
     }
