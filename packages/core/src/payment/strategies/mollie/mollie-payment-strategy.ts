@@ -90,18 +90,15 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         this._unsubscribe = this._store.subscribe(
             async state => {
                 if (state.paymentStrategies.isInitialized(methodId)) {
+                    const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
 
-                    if (methodId && gatewayId && mollie) {
-                        const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
-
-                        if (element) {
-                            element.remove();
-                        }
-
-                        mollie.disableButton(false);
+                    if (element) {
+                        element.remove();
                     }
 
-                    await this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+                    mollie.disableButton(false);
+
+                    this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
                 }
             },
             state => {
@@ -116,7 +113,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             }
         );
 
-        return this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+        this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+        return Promise.resolve(this._store.getState());
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -354,7 +352,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         }, 0);
     }
 
-    private async _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
+    private _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
         if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
             const cart = state.cart.getCartOrThrow();
             const cartDigitalItems = cart.lineItems.digitalItems;
@@ -378,7 +376,5 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 }
             }
         }
-
-        return state;
     }
 }
