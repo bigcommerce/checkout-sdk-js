@@ -111,7 +111,13 @@ ___
 
 ### disableButton
 
-▸ **disableButton**(): `void`
+▸ **disableButton**(`disabled`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `disabled` | `boolean` |
 
 #### Returns
 
