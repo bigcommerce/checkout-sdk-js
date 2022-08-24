@@ -36,7 +36,26 @@ describe('WorldpayaccessPaymetStrategy', () => {
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
 
+    const errorResponse = new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        errors: [
+            { code: 'additional_action_required' },
+        ],
+        additional_action_required: {
+            type: 'unknown_action',
+            data: {
+                redirect_url: 'http://url.com'
+            }
+        },
+        provider_data: {
+            source_id: '5313',
+            data: 'jwt_token'
+        },
+        status: 'error',
+    }));
+
     beforeEach(() => {
+
         store = createCheckoutStore(getCheckoutStoreState());
 
         paymentActionCreator = new PaymentActionCreator(
@@ -110,13 +129,16 @@ describe('WorldpayaccessPaymetStrategy', () => {
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
 
+
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
             };
+
             initializeOptions = {
+                methodId: 'worldpayaccess',
                 creditCard: {
                     form: {
                         fields: {
@@ -126,9 +148,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
                         },
                     },
                 },
-                methodId: 'worldpayaccess',
                 worldpay: {
-                    onLoad: jest.fn()
+                    onLoad: jest.fn(),
                 }
             };
 
@@ -206,6 +227,47 @@ describe('WorldpayaccessPaymetStrategy', () => {
             expect(store.dispatch)
                 .toHaveBeenCalledWith(loadOrderAction);
         });
+
+        it('rejects error with collection data required with the url with hosted', async () => {
+            HTMLFormElement.prototype.submit = () => jest.fn(() => Promise.resolve());
+            window.fetch = jest.fn(() => Promise.resolve({ok: false}));
+
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow('Payment cannot continue');
+        })
+
+        it('submit with collection data required with hosted', async () => {
+            jest.spyOn(HTMLFormElement.prototype, 'submit')
+                .mockReturnValueOnce(jest.fn(() => Promise.resolve()))
+                .mockReturnValueOnce(window.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*'))
+
+
+            window.fetch = jest.fn(() => Promise.resolve({ok: true}));
+
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(getOrderRequestBody());
+
+            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
+            expect(form.submit)
+                .toHaveBeenCalledTimes(2);
+        })
+
+        it('rejects error with collection data required with the url with hosted', async () => {
+            HTMLFormElement.prototype.submit = () => jest.fn(() => Promise.resolve());
+            window.fetch = jest.fn(() => Promise.resolve({ok: false}));
+
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow('Payment cannot continue');
+        })
     });
 
     describe('when hosted form is enabled but hosted fields are not present for rendering', () => {
@@ -213,26 +275,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
         let initializeOptions: PaymentInitializeOptions;
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
-
-        const errorResponse = new RequestError(getResponse({
-            ...getErrorPaymentResponseBody(),
-            errors: [
-                { code: 'additional_action_required' },
-            ],
-            additional_action_required: {
-                type: 'unknown_action',
-                data: {
-                    redirect_url: 'http://url.com'
-                }
-            },
-            provider_data: {
-                source_id: '5313',
-                data: 'jwt_token'
-            },
-            status: 'error',
-        }));
-
-        const onLoad = jest.fn()
 
         beforeEach(() => {
             form = {
@@ -248,7 +290,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 },
                 methodId: 'worldpayaccess',
                 worldpay: {
-                    onLoad: onLoad
+                    onLoad: jest.fn()
                 }
             };
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
@@ -284,20 +326,35 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 .not.toHaveBeenCalled();
         });
 
-        it('submit with collection data required', async () => {
+        it('throws error when initialize with worldpay data is required', async () => {
             initializeOptions = {
-                creditCard: {
-                    form: {
-                        fields: {},
-                    },
-                },
                 methodId: 'worldpayaccess'
             };
 
             await expect(strategy.initialize(initializeOptions)).rejects.toThrowError(NotInitializedError);
         })
+    });
 
-        it('submit with collection data required', async () => {
+    describe('when hosted is disable', () => {
+        const initializeOptions: PaymentInitializeOptions= {
+            methodId: 'worldpayaccess',
+            worldpay: {
+                onLoad: jest.fn()
+            }
+        };
+        let state: InternalCheckoutSelectors;
+
+        beforeEach(() => {
+            state = store.getState();
+
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(merge(
+                    getPaymentMethod(),
+                    { config: { isHostedFormEnabled: false } }
+                ));
+        });
+
+        it('submit with collection data required without hosted', async () => {
             HTMLFormElement.prototype.submit = () => window.parent.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*');
             window.fetch = jest.fn(() => Promise.resolve({ok: true}));
 
@@ -313,6 +370,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
         })
 
         it('rejects error with collection data required with the url', async () => {
+            HTMLFormElement.prototype.submit = () => window.parent.postMessage('invalid url', '*');
             window.fetch = jest.fn(() => Promise.resolve({ok: false}));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')

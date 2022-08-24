@@ -56,13 +56,17 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                 }
 
                 if (typeof event.data !== 'string' || event.data === INVALID_URL) {
-                    reject(new Error('Payment cannot continue'));
+                    return reject(new Error('Payment cannot continue'));
                 }
 
                 const data = JSON.parse(event.data);
                 const paymentPayload = merge({}, payment, { paymentData: { threeDSecure: { token: data.SessionId } } });
 
                 try {
+                    if (this._shouldRenderHostedForm) {
+                        await this._hostedForm?.submit(paymentPayload);
+                        return resolve(this._store.getState());
+                    }
                     return resolve(await this._store.dispatch(this._paymentActionCreator.submitPayment( paymentPayload )));
                 } catch (error) {
                     if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'three_d_secure_required'})) {
