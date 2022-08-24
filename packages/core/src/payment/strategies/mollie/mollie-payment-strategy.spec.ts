@@ -166,6 +166,7 @@ describe('MolliePaymentStrategy', () => {
                 }
                 const paragraph = {
                     innerText: '',
+                    setAttribute: jest.fn(),
                 }
 
                 const mollieMethod = {
@@ -188,8 +189,9 @@ describe('MolliePaymentStrategy', () => {
                 expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).toHaveBeenCalledWith(options.mollie?.containerId);
                 expect(document.createElement).toHaveBeenCalledWith('p');
+                expect(paragraph.setAttribute).toHaveBeenCalled();
                 expect(container.appendChild).toHaveBeenCalled();
-                expect(disableButtonMock).toHaveBeenCalled();
+                expect(disableButtonMock).toHaveBeenCalledWith(true);
             });
 
             it('does not display a message when the cart contains no digital items',  async () => {
@@ -226,8 +228,13 @@ describe('MolliePaymentStrategy', () => {
                     }
                 }
 
+                const paragraph = {
+                    innerText: '',
+                    setAttribute: jest.fn(),
+                }
+
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue( mollieMethod);
+                    .mockReturnValue(mollieMethod);
                 jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
@@ -237,10 +244,11 @@ describe('MolliePaymentStrategy', () => {
                 expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
+                expect(paragraph.setAttribute).not.toHaveBeenCalled();
                 expect(disableButtonMock).not.toHaveBeenCalled();
             });
 
-            it('throws MissingDataError when the state.cart is not available',  () => {
+            it('throws MissingDataError when the state.cart is not available',  async () => {
                 const disableButtonMock = jest.fn();
 
                 const optionsMock = {
@@ -262,23 +270,65 @@ describe('MolliePaymentStrategy', () => {
                     ...getMollie(),
                     config: {
                         ...getMollie().config,
-                        isHostedFormEnabled : false,
+                        isHostedFormEnabled: false,
                     }
                 }
 
+                const rejection = new MissingDataError(MissingDataErrorType.MissingCart);
+
+                const paragraph = {
+                    innerText: '',
+                    setAttribute: jest.fn(),
+                }
+
                 jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue( mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(null);
+                    .mockReturnValue(mollieMethod);
+                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(rejection);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
+
                 const response = strategy.initialize(optionsMock)
 
-                expect(response).rejects.toThrowError(new MissingDataError(MissingDataErrorType.MissingCart));
+                expect(response).rejects.toThrowError(rejection);
                 expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
+                expect(paragraph.setAttribute).not.toHaveBeenCalled();
                 expect(disableButtonMock).not.toHaveBeenCalled();
+            });
+
+            it('loads klarnapaylater or klarnasliceit when widget was updated', async () => {
+                const disableButtonMock = jest.fn();
+
+                const optionsMock = {
+                    ...getInitializeOptions(),
+                    methodId: 'klarnapaylater',
+                    mollie: {
+                        containerId: 'mollie-element',
+                        cardCvcId: 'mollie-card-cvc-component-field',
+                        cardExpiryId: 'mollie-card-expiry-component-field',
+                        cardHolderId: 'mollie-card-holder-component-field',
+                        cardNumberId: 'mollie-card-number-component-field',
+                        styles: {valid: '#0f0'},
+                        unsupportedMethodMessage: 'This payment method is not supported',
+                        disableButton: disableButtonMock,
+                    }
+                }
+
+                const container = {
+                    remove: jest.fn(),
+                    appendChild: jest.fn(),
+                }
+
+                jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+                jest.spyOn(document, 'getElementById').mockReturnValue(container);
+
+                await strategy.initialize(optionsMock);
+
+                expect(document.getElementById).toHaveBeenCalledWith(`${optionsMock.gatewayId}-${optionsMock.methodId}-paragraph`);
+                expect(container.remove).toHaveBeenCalled();
+                expect(disableButtonMock).toHaveBeenCalledWith(false);
             });
         });
 

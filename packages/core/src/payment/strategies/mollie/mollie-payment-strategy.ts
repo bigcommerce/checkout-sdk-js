@@ -36,6 +36,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
     private _hostedForm?: HostedForm;
 
+    private _unsubscribe?: (() => void);
+
     constructor(
         private _hostedFormFactory: HostedFormFactory,
         private _store: CheckoutStore,
@@ -85,29 +87,33 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             this._mountElements();
         }
 
-        if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
-            const cart = state.cart.getCartOrThrow();
-            const cartDigitalItems = cart.lineItems.digitalItems;
+        this._unsubscribe = this._store.subscribe(
+            async state => {
+                if (state.paymentStrategies.isInitialized(methodId)) {
+                    const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
 
-            if (cartDigitalItems && cartDigitalItems.length > 0) {
-                const { containerId } = this._getInitializeOptions();
-
-                if (containerId) {
-                    const container = document.getElementById(containerId);
-
-                    if (container) {
-                        const paragraph = document.createElement('p') ;
-
-                        if (mollie.unsupportedMethodMessage) {
-                            paragraph.innerText = mollie.unsupportedMethodMessage;
-                            container.appendChild(paragraph);
-                            mollie.disableButton();
-                        }
+                    if (element) {
+                        element.remove();
                     }
-                }
-            }
-        }
 
+                    mollie.disableButton(false);
+
+                    this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+                }
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.outstandingBalance;
+            },
+            state => {
+                const checkout = state.checkout.getCheckout();
+
+                return checkout && checkout.coupons;
+            }
+        );
+
+        this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
         return Promise.resolve(this._store.getState());
     }
 
@@ -142,6 +148,10 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
+
         if (this._hostedForm) {
             this._hostedForm.detach();
         }
@@ -340,5 +350,31 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 this._expiryDateElement.mount(`#${cardExpiryId}`);
             }
         }, 0);
+    }
+
+    private _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
+        if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
+            const cart = state.cart.getCartOrThrow();
+            const cartDigitalItems = cart.lineItems.digitalItems;
+
+            if (cartDigitalItems && cartDigitalItems.length > 0) {
+                const { containerId } = this._getInitializeOptions();
+
+                if (containerId) {
+                    const container = document.getElementById(containerId);
+
+                    if (container) {
+                        const paragraph = document.createElement('p') ;
+                        paragraph.setAttribute("id",`${gatewayId}-${methodId}-paragraph`)
+
+                        if (mollie.unsupportedMethodMessage) {
+                            paragraph.innerText = mollie.unsupportedMethodMessage;
+                            container.appendChild(paragraph);
+                            mollie.disableButton(true);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
