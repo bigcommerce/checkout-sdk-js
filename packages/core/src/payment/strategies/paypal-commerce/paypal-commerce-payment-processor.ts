@@ -57,7 +57,7 @@ export default class PaypalCommercePaymentProcessor {
     ) {}
 
     async initialize(paymentMethod: PaymentMethod<PaypalCommerceInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean): Promise<PaypalCommerceSDK> {
-        this._paypal = await this._paypalScriptLoader.loadPaypalCommerce(paymentMethod, currencyCode, initializesOnCheckoutPage);
+        this._paypal = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
         this._gatewayId = paymentMethod.gateway;
         this._isVenmoEnabled = paymentMethod.initializationData?.isVenmoEnabled;
 

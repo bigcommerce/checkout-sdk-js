@@ -119,7 +119,7 @@ describe('PaypalCommercePaymentProcessor', () => {
                 };
             });
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
             .mockReturnValue(Promise.resolve(paypal));
 
         hostedFormOptions = {
@@ -176,13 +176,13 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('initializes PaypalCommerce and PayPal JS clients', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
 
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalledWith(paymentMethodMock, 'USD', undefined);
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(paymentMethodMock, 'USD', undefined);
         });
 
         it('throws error if unable to initialize PaypalCommerce or PayPal JS client', async () => {
             const expectedError = new Error('Unable to load JS client');
 
-            jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce')
+            jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
                 .mockReturnValue(Promise.reject(expectedError));
 
             try {

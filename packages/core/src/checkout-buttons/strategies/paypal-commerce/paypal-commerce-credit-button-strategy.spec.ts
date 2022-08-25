@@ -91,7 +91,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce').mockReturnValue(paypalSdkMock);
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
         jest.spyOn(paypalSdkMock, 'Buttons')
@@ -175,7 +175,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalled();
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalled();
         });
 
         describe('PayPal Commerce Credit buttons logic', () => {

@@ -83,7 +83,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
-        jest.spyOn(paypalScriptLoader, 'loadPaypalCommerce').mockReturnValue(paypalSdkMock);
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
         jest.spyOn(paypalSdkMock, 'Buttons')
@@ -174,7 +174,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalScriptLoader.loadPaypalCommerce).toHaveBeenCalled();
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalled();
         });
 
         it('initializes APM button to render', async () => {
