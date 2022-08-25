@@ -12,7 +12,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
 import { getBlueSnapV2 } from '../../payment-methods.mock';
@@ -23,6 +23,7 @@ import * as paymentStatusTypes from '../../payment-status-types';
 import { getPaymentRequestBody } from '../../payments.mock';
 
 import BlueSnapV2PaymentStrategy from './bluesnapv2-payment-strategy';
+import { NotInitializedError } from "../../../common/error/errors";
 
 describe('BlueSnapV2PaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
@@ -201,5 +202,45 @@ describe('BlueSnapV2PaymentStrategy', () => {
         await strategy.initialize(initializeOptions);
 
         return expect(strategy.execute(payload, options)).resolves.toEqual(store.getState());
+    });
+    it('throws error is unable to execute due to invalid payment', async () => {
+        await strategy.initialize(initializeOptions);
+        payload.payment = undefined;
+
+        return expect(strategy.execute(payload)).rejects.toBeInstanceOf(PaymentArgumentInvalidError);
+    });
+    it('throws error is unable to execute due to _initializeOptions un set', async () => {
+        await strategy.initialize();
+
+        return expect(strategy.execute(payload)).rejects.toBeInstanceOf(NotInitializedError);
+    });
+    it('deinitialize payment strategy', async () => {
+        await strategy.initialize(initializeOptions);
+        const promise = strategy.deinitialize();
+
+        return expect(promise).resolves.toBe(store.getState());
+    });
+    it('create iframe with styleprops', async () => {
+        const _iframe:HTMLIFrameElement = strategy['_createIframe'].call('','bluesnapv2_hosted_payment_page', {border: '1px solid gray', height: '40vh', width: '100%',padding: '3px',});
+        expect(_iframe).toHaveProperty('style');
+        expect(_iframe.name).toEqual('bluesnapv2_hosted_payment_page');
+        expect(_iframe.style.height).toEqual('40vh');
+        expect(_iframe.style.border).toEqual('1px solid gray');
+        expect(_iframe.style.width).toEqual('100%');
+        expect(_iframe.style.padding).toBeFalsy();
+    });
+    it('execute with styleprops', async () => {
+        initializeOptions = merge(initializeOptions, {
+            bluesnapv2: {
+                style: {
+                    border: '1px solid gray', height: '40vh', width: '100%',
+                }
+            },
+        });
+        await strategy.initialize(initializeOptions);
+
+        const iframeCreator = jest.spyOn(BlueSnapV2PaymentStrategy.prototype as any, '_createIframe');
+        await expect(strategy.execute(payload, options)).resolves.toEqual(store.getState());
+        expect(iframeCreator).toHaveBeenCalledWith('bluesnapv2_hosted_payment_page', { border: '1px solid gray', height: '40vh', width: '100%' });
     });
 });
