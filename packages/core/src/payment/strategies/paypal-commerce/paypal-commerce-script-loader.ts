@@ -87,7 +87,7 @@ export default class PaypalCommerceScriptLoader {
 
         const disableFunding: FundingType = [...disableCardFunding, ...disableCreditFunding, ...disableVenmoFunding, ...disableAPMsFunding];
         const enableFunding: FundingType = [...enableCardFunding, ...enableCreditFunding, ...enableVenmoFunding, ...enableAPMsFunding];
-
+        console.log('Enable', enableFunding);
         return {
             'client-id': clientId,
             'data-partner-attribution-id': attributionId,
