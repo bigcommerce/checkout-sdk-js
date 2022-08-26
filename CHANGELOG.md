@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.280.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.2...v1.280.3) (2022-08-26)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-000 upgrade @braintree/browser-detection from 1.12.1 to 1.14.0 ([#1571](https://github.com/bigcommerce/checkout-sdk-js/issues/1571)) ([108c44d](https://github.com/bigcommerce/checkout-sdk-js/commit/108c44da2e66c792c46b88b37f88acd1e96746ac))
+* **common:** CHECKOUT-000 upgrade core-js from 3.23.4 to 3.24.0 ([#1572](https://github.com/bigcommerce/checkout-sdk-js/issues/1572)) ([c820f3d](https://github.com/bigcommerce/checkout-sdk-js/commit/c820f3dfb8681e5950d3542fb1d7225160e35ddf))
+* **common:** CHECKOUT-000 upgrade local-storage-fallback from 4.1.1 to 4.1.2 ([#1574](https://github.com/bigcommerce/checkout-sdk-js/issues/1574)) ([24b72c5](https://github.com/bigcommerce/checkout-sdk-js/commit/24b72c5f7409b2bd7ce8c8a94cf4f3f2389f9b3b))
+* **common:** CHECKOUT-000 upgrade reselect from 4.1.5 to 4.1.6 ([#1573](https://github.com/bigcommerce/checkout-sdk-js/issues/1573)) ([c7c49e8](https://github.com/bigcommerce/checkout-sdk-js/commit/c7c49e8cb3ab88f7b5736bb5e084b0efffd90f5b))
+* **payment:** PAYPAL-1639 fixed paypal commerce zoid issue ([#1577](https://github.com/bigcommerce/checkout-sdk-js/issues/1577)) ([2e993d3](https://github.com/bigcommerce/checkout-sdk-js/commit/2e993d3158c038cf07bb1a1b0969588d67b3a640))
+
 ### [1.280.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.1...v1.280.2) (2022-08-24)
 
 
