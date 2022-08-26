@@ -103,11 +103,11 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                             this._tokenizePayment(authorizeData, braintreePaypalCheckout, methodId, shouldProcessPayment, onAuthorizeError),
                     });
                     console.log('Is Eligible', paypalButtonRender.isEligible(), fundingSource);
-                    // if (paypalButtonRender.isEligible()) {
+                    if (paypalButtonRender.isEligible()) {
                         console.log('ELIGIBLE');
                         paypalButtonRender.render(`#${containerId}`);
                         hasRenderedSmartButton = true;
-                    // }
+                    }
                 }
             });
         }
