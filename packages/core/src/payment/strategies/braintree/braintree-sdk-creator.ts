@@ -72,7 +72,6 @@ export default class BraintreeSDKCreator {
             const paypalSdkLoadConfig = {
                 currency: config.currency,
                 components: PAYPAL_COMPONENTS.toString(),
-                'enable-funding':['paylater'],
             };
 
             if (!this._window.paypal) {
