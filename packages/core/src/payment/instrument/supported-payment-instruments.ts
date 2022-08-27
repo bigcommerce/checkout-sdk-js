@@ -133,6 +133,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'cba_mpgs',
         method: 'credit_card',
     },
+    worldpayaccess: {
+        provider: 'worldpayaccess',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
