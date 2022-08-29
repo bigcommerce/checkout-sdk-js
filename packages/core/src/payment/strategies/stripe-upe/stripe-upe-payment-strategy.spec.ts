@@ -636,6 +636,15 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                     });
 
+                    it('throws stripe error when confirm fails but 3DS is accepted', async () => {
+                        stripeUPEJsMock.confirmCardPayment = jest.fn(() => Promise.reject(new Error('Error with 3ds')));
+
+                        await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                        
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+                    });
+
                     it('call confirmCardPayment to shopper auth with stored card and complete the payment', async () => {
                         const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
                             ...getErrorPaymentResponseBody(),
@@ -782,6 +791,43 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                         expect(stripeUPEJsMock.confirmCardPayment).not.toHaveBeenCalled();
+                    });
+
+                    it('throws stripe error when confirmCardPayment fails using stored card but 3DS is accepted', async () => {
+                        const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            errors: [
+                                { code: 'three_d_secure_required' },
+                            ],
+                            three_ds_result: {
+                                token: 'token',
+                            },
+                        }));
+    
+                        jest.spyOn(paymentActionCreator, 'submitPayment')
+                            .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
+                            .mockReturnValueOnce(submitPaymentAction);
+    
+                            stripeUPEJsMock.confirmCardPayment = jest.fn(() => Promise.reject(new Error('Error with 3ds')));
+    
+                        await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
+    
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                formattedPayload: expect.objectContaining({
+                                    bigpay_token: { token: 'token' },
+                                }),
+                            }),
+                        }));
+                        expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                            paymentData: expect.objectContaining({
+                                formattedPayload: expect.objectContaining({
+                                    credit_card_token: { token: 'token' },
+                                }),
+                            }),
+                        }));
+                        expect(stripeUPEJsMock.confirmCardPayment).toHaveBeenCalled();
                     });
                 });
 

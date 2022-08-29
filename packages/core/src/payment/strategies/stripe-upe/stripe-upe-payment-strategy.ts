@@ -124,14 +124,23 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return await this._executeWithAPM(payment.methodId);
         }
 
-        const { paymentIntent, error } = await this._stripeUPEClient.confirmPayment(this._mapStripePaymentData());
+        let result;
+        let catchedConfirmError = false;
+        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
+        const stripePaymentData = this._mapStripePaymentData();
 
-        if (error) {
-            this._throwDisplayableStripeError(error);
+        try {
+            result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
+        } catch (error) {
+            catchedConfirmError = true;
+        }
+
+        if (result?.error) {
+            this._throwDisplayableStripeError(result.error);
             throw new PaymentMethodFailedError();
         }
 
-        if (!paymentIntent) {
+        if (!result?.paymentIntent && !catchedConfirmError) {
             throw new RequestError();
         }
 
@@ -141,7 +150,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             methodId,
             paymentData: {
                 formattedPayload: {
-                    credit_card_token: { token: paymentIntent.id},
+                    credit_card_token: { token: catchedConfirmError ? paymentMethod.clientToken : result?.paymentIntent?.id },
                     vault_payment_instrument: shouldSaveInstrument,
                     confirm: false,
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
@@ -323,17 +332,23 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         if (some(error.body.errors, { code: 'three_d_secure_required' }) && methodId) {
             const clientSecret = error.body.three_ds_result.token;
+            let result;
+            let catchedConfirmError = false;
 
-            const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmCardPayment(clientSecret);
+            try {
+                result = await this._stripeUPEClient.confirmCardPayment(clientSecret);
+            } catch (error) {
+                catchedConfirmError = true;
+            }
 
-            if (stripeError) {
-                this._throwDisplayableStripeError(stripeError);
-                if (this._isCancellationError(stripeError)) {
+            if (result?.error) {
+                this._throwDisplayableStripeError(result.error);
+                if (this._isCancellationError(result.error)) {
                     throw new PaymentMethodCancelledError();
                 }
                 throw new PaymentMethodFailedError();
             }
-            if (!paymentIntent) {
+            if (!result?.paymentIntent && !catchedConfirmError) {
                 throw new RequestError();
             }
 
@@ -341,7 +356,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 methodId,
                 paymentData: {
                     formattedPayload: {
-                        credit_card_token: { token: paymentIntent.id },
+                        credit_card_token: { token: catchedConfirmError ? clientSecret : result?.paymentIntent?.id },
                         confirm: false,
                         set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                     },
