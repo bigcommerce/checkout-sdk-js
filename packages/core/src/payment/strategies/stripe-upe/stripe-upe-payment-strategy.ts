@@ -263,7 +263,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         email: StripeStringConstants.NEVER,
                         address: {
                             country: StripeStringConstants.NEVER,
-                            postalCode: StripeStringConstants.NEVER,
                             city: StripeStringConstants.NEVER,
                         },
                     },
@@ -359,10 +358,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             const {
                 city,
                 countryCode: country,
-                postalCode,
             } = address;
 
-            return { city, country, postal_code: postalCode };
+            return { city, country };
         }
 
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
@@ -378,7 +376,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        if (!email || !address || !address.city || !address.country || !address.postal_code) {
+        if (!email || !address || !address.city || !address.country) {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
