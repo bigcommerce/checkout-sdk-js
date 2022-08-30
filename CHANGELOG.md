@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.280.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.3...v1.280.4) (2022-08-30)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-130 Stripe UPE making postal code not always required to make purchase ([#1565](https://github.com/bigcommerce/checkout-sdk-js/issues/1565)) ([6e0bb16](https://github.com/bigcommerce/checkout-sdk-js/commit/6e0bb1676647600da55b776b832d1bb3626f4079))
+
 ### [1.280.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.2...v1.280.3) (2022-08-26)
 
 
