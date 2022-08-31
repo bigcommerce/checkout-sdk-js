@@ -64,25 +64,23 @@ export default class AmazonPayV2PaymentProcessor {
 
     private _getAmazonPayV2ButtonOptions(
         {
-            paymentMethods: { getPaymentMethodOrThrow },
-            config: { getStoreConfigOrThrow },
             cart: { getCart },
+            checkout: { getCheckout },
+            config: { getStoreConfigOrThrow },
+            paymentMethods: { getPaymentMethodOrThrow },
         }: InternalCheckoutSelectors,
         methodId: string,
         placement: AmazonPayV2Placement
     ): AmazonPayV2ButtonParameters {
         const {
-            config: {
-                merchantId,
-                testMode,
-            },
+            config: { merchantId, testMode },
             initializationData: {
                 checkoutLanguage,
-                ledgerCurrency,
                 checkoutSessionMethod,
-                extractAmazonCheckoutSessionId,
-                publicKeyId,
                 createCheckoutSessionConfig,
+                extractAmazonCheckoutSessionId,
+                ledgerCurrency,
+                publicKeyId,
             },
         } = getPaymentMethodOrThrow(methodId);
 
@@ -109,7 +107,9 @@ export default class AmazonPayV2PaymentProcessor {
         };
 
         if (features['PROJECT-3483.amazon_pay_ph4']) {
-            return /^(SANDBOX|LIVE)/.test(publicKeyId)
+            const amount = getCheckout()?.outstandingBalance.toString();
+            const currencyCode = cart?.currency.code;
+            const buttonOptions = /^(SANDBOX|LIVE)/.test(publicKeyId)
                 ? {
                       ...buttonBaseConfig,
                       publicKeyId,
@@ -123,6 +123,16 @@ export default class AmazonPayV2PaymentProcessor {
                           publicKeyId,
                       },
                   };
+
+            return amount && currencyCode
+                ? {
+                      ...buttonOptions,
+                      estimatedOrderAmount: {
+                          amount,
+                          currencyCode,
+                      },
+                  }
+                : buttonOptions;
         }
 
         const createCheckoutSession = {

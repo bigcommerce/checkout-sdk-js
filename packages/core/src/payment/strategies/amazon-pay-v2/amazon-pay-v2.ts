@@ -90,6 +90,14 @@ export interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
     publicKeyId?: string;
 
     /**
+     * It does not have to match the final order amount if the buyer updates
+     * their order after starting checkout. Amazon Pay will use this value to
+     * assess transaction risk and prevent buyers from selecting payment methods
+     * that can't be used to process the order.
+     */
+    estimatedOrderAmount?: AmazonPayV2Price;
+
+    /**
      * Create Checkout Session configuration.
      */
     createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
@@ -128,6 +136,18 @@ export interface AmazonPayV2CheckoutSessionConfig {
      * if your `publicKeyId` has an environment prefix.
      */
     publicKeyId?: string;
+}
+
+export interface AmazonPayV2Price {
+    /**
+     * Transaction amount.
+     */
+    amount: string;
+
+    /**
+     * Transaction currency code in ISO 4217 format. Example: USD.
+     */
+    currencyCode: string;
 }
 
 export type AmazonPayV2ChangeActionType = 'changeAddress' | 'changePayment';

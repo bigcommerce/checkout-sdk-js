@@ -13,6 +13,7 @@ import { AdyenV3PaymentStrategy } from './strategies/adyenv3';
 import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
+import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
@@ -89,6 +90,11 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate amazon', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.AMAZON);
         expect(paymentStrategy).toBeInstanceOf(AmazonPayPaymentStrategy);
+    });
+
+    it('can instantiate amazonpay', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.AMAZONPAYV2);
+        expect(paymentStrategy).toBeInstanceOf(AmazonPayV2PaymentStrategy);
     });
 
     it('can instantiate afterpay', () => {
