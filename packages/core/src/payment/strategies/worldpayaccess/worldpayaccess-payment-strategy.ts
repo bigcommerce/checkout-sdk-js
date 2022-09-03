@@ -9,20 +9,22 @@ import { WorldpayAccess3DSOptions, WorldpayAccessAdditionalAction, WorldpayAcces
 
 const IFRAME_NAME = 'worldpay_hosted_payment_page';
 const IFRAME_HIDDEN_NAME = 'worldpay_hosted_hidden_payment_page';
-const INVALID_URL = 'invalid url';
+const PAYMENT_CANNOT_CONTINUE = 'Payment cannot continue';
+
+let submit: (paymentPayload: OrderPaymentRequestBody) => Promise<InternalCheckoutSelectors>;
 
 export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrategy {
 
     private _initializeOptions?: WorldpayAccessPaymentInitializeOptions;
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (!options?.worldpay) {
+        this._initializeOptions = options && options.worldpay;
+
+        if (!this._initializeOptions) {
             throw new NotInitializedError(
                 NotInitializedErrorType.PaymentNotInitialized
             );
         }
-
-        this._initializeOptions = options.worldpay;
 
         return super.initialize(options);
     }
@@ -30,76 +32,99 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
     async execute(orderRequest: OrderRequestBody, options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { payment } = orderRequest;
 
+        submit = this._submitAdditionalAction();
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
         try {
             return await super.execute(orderRequest, options);
-        } catch(error){
+        } catch (error) {
             return await this._processAdditionalAction(error, payment);
         }
     }
 
     private async _processAdditionalAction(error: unknown, payment: OrderPaymentRequestBody): Promise<InternalCheckoutSelectors> {
-        if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
+        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'additional_action_required' })) {
             return Promise.reject(error);
         }
 
-        const iframe = this._createHiddenIframe(error.body);
+
         return new Promise((resolve, reject) => {
-            const message_event = async (event: MessageEvent) => {
-                window.removeEventListener('message', message_event);
-
-                if (iframe) {
-                    iframe.remove();
+             const messageEvent = async (event: MessageEvent) => {
+                if (typeof event.data !== 'string' || !this._isValidJsonWithSessionId(event.data)) {
+                    return reject(new Error(PAYMENT_CANNOT_CONTINUE));
                 }
 
-                if (typeof event.data !== 'string' || event.data === INVALID_URL) {
-                    return reject(new Error('Payment cannot continue'));
-                }
+                window.removeEventListener('message', messageEvent);
+                window.removeEventListener('remove_event_message', removeEvent);
+                iframeHidden.remove();
 
                 const data = JSON.parse(event.data);
                 const paymentPayload = merge({}, payment, { paymentData: { threeDSecure: { token: data.SessionId } } });
 
                 try {
-                    if (this._shouldRenderHostedForm) {
-                        await this._hostedForm?.submit(paymentPayload);
-                        return resolve(this._store.getState());
-                    }
-                    return resolve(await this._store.dispatch(this._paymentActionCreator.submitPayment( paymentPayload )));
+                    resolve(await submit(paymentPayload));
                 } catch (error) {
-                    if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'three_d_secure_required'})) {
+                    if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
                         return reject(error);
                     }
 
-                    this._3dsrequired(error.body.three_ds_result, reject);
-                }
+                    if (!this._initializeOptions) {
+                        return reject(new NotInitializedError(
+                            NotInitializedErrorType.PaymentNotInitialized
+                        ));
+                    }
 
+                    const { onLoad } = this._initializeOptions;
+                    const frame = this._createIframe(error.body.three_ds_result);
+
+                    try {
+                        onLoad(frame, () => reject(new Error('Payment was cancelled')));
+                    } catch (e) {
+                        reject(new Error(PAYMENT_CANNOT_CONTINUE));
+                    }
+                }
             }
 
-            window.addEventListener('message', message_event);
+            const removeEvent = () => {
+                window.removeEventListener('remove_event_message', removeEvent);
+                window.removeEventListener('message', messageEvent);
+                iframeHidden.remove();
+
+                return reject(new Error(PAYMENT_CANNOT_CONTINUE));
+            }
+
+            window.addEventListener('message', messageEvent);
+            window.addEventListener('remove_event_message', removeEvent);
+
+
+            let iframeHidden: HTMLIFrameElement;
+            try {
+                iframeHidden = this._createHiddenIframe(error.body);
+            } catch (e) {
+                window.removeEventListener('remove_event_message', removeEvent);
+                window.removeEventListener('message', messageEvent);
+                throw new Error(PAYMENT_CANNOT_CONTINUE);
+            }
         });
-    }
-
-    private _3dsrequired(data: WorldpayAccess3DSOptions, reject: Function):void {
-        if (!this._initializeOptions) {
-            throw new NotInitializedError(
-                NotInitializedErrorType.PaymentNotInitialized
-            );
-        }
-
-        const { onLoad } = this._initializeOptions;
-        const frame = this._createIframe(data);
-        onLoad(frame, () => reject());
     }
 
     private _createHiddenIframe(body: WorldpayAccessAdditionalAction): HTMLIFrameElement {
         const iframe = document.createElement('iframe');
+        if (!iframe) {
+            throw new Error();
+        }
+
+        document.body.appendChild(iframe);
+
+        if (!iframe.contentWindow) {
+            throw new Error();
+        }
+
         iframe.id = IFRAME_HIDDEN_NAME;
         iframe.height = '0px';
         iframe.width = '0px';
-        document.body.appendChild(iframe);
 
         const form = document.createElement('form');
         const formId = 'collectionForm';
@@ -126,7 +151,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
         button.id = 'btnsubmit';
         form.appendChild(button);
 
-        iframe.contentWindow?.document.body.appendChild(form);
+        iframe.contentWindow.document.body.appendChild(form);
 
         const script = document.createElement('script');
         script.innerHTML = `
@@ -140,17 +165,17 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                 body: data
             })
             .then((response) => {
-                if(!response.ok) {
-                    window.parent.postMessage('${INVALID_URL}', '*')
+                if (!response.ok) {
+                    window.parent.dispatchEvent(new Event('remove_event_message'));
+                } else {
+                    document.getElementById('${formId}').submit();
                 }
-
-                document.getElementById('${formId}').submit();
             })
             .catch((error) =>  {
-                window.parent.postMessage('${INVALID_URL}', '*')
+                window.parent.dispatchEvent(new Event('remove_event_message'));
             })
         `;
-        iframe.contentWindow?.document.body.appendChild(script);
+        iframe.contentWindow.document.body.appendChild(script);
 
         return iframe;
     }
@@ -176,7 +201,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
 
         const script = document.createElement('script');
         script.type = 'text/javascript';
-        script.innerHTML = "window.onload = function() { document.getElementById('challengeForm').submit(); }"
+        script.innerHTML = "window.onload = function() { document.getElementById('challengeForm').submit(); }";
 
         const iframe = document.createElement('iframe');
         iframe.name = IFRAME_NAME;
@@ -185,5 +210,40 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
         iframe.srcdoc = `${form.outerHTML} ${script.outerHTML}`;
 
         return iframe;
+    }
+
+    private _submitAdditionalAction() {
+        if (this._shouldRenderHostedForm) {
+            if (!this._hostedForm || !this._hostedForm.submit) {
+                throw new NotInitializedError(
+                    NotInitializedErrorType.PaymentNotInitialized
+                );
+            }
+
+            const hostedForm = this._hostedForm;
+
+            return async (paymentPayload: OrderPaymentRequestBody) => {
+                await hostedForm.submit(paymentPayload);
+                return this._store.getState();
+            }
+        } else {
+            return async (paymentPayload: OrderPaymentRequestBody) => {
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            }
+        }
+    }
+
+    private _isValidJsonWithSessionId(str:string) {
+        try {
+            const data = JSON.parse(str);
+
+            if (data.SessionId) {
+                return true;
+            }
+
+            return false;
+        } catch (e) {
+            return false;
+        }
     }
 }
