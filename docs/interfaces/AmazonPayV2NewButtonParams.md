@@ -15,6 +15,7 @@
 - [buttonColor](AmazonPayV2NewButtonParams.md#buttoncolor)
 - [checkoutLanguage](AmazonPayV2NewButtonParams.md#checkoutlanguage)
 - [createCheckoutSessionConfig](AmazonPayV2NewButtonParams.md#createcheckoutsessionconfig)
+- [estimatedOrderAmount](AmazonPayV2NewButtonParams.md#estimatedorderamount)
 - [ledgerCurrency](AmazonPayV2NewButtonParams.md#ledgercurrency)
 - [merchantId](AmazonPayV2NewButtonParams.md#merchantid)
 - [placement](AmazonPayV2NewButtonParams.md#placement)
@@ -53,6 +54,17 @@ ___
 • **createCheckoutSessionConfig**: [`AmazonPayV2CheckoutSessionConfig`](AmazonPayV2CheckoutSessionConfig.md)
 
 Create Checkout Session configuration.
+
+___
+
+### estimatedOrderAmount
+
+• `Optional` **estimatedOrderAmount**: [`AmazonPayV2Price`](AmazonPayV2Price.md)
+
+It does not have to match the final order amount if the buyer updates
+their order after starting checkout. Amazon Pay will use this value to
+assess transaction risk and prevent buyers from selecting payment methods
+that can't be used to process the order.
 
 ___
 

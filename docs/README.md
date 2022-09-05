@@ -84,6 +84,7 @@
 - [AmazonPayV2CustomerInitializeOptions](interfaces/AmazonPayV2CustomerInitializeOptions.md)
 - [AmazonPayV2NewButtonParams](interfaces/AmazonPayV2NewButtonParams.md)
 - [AmazonPayV2PaymentInitializeOptions](interfaces/AmazonPayV2PaymentInitializeOptions.md)
+- [AmazonPayV2Price](interfaces/AmazonPayV2Price.md)
 - [AmazonPayV2ShippingInitializeOptions](interfaces/AmazonPayV2ShippingInitializeOptions.md)
 - [AmazonPayWidgetError](interfaces/AmazonPayWidgetError.md)
 - [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)

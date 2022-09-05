@@ -754,6 +754,13 @@ declare interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
      */
     publicKeyId?: string;
     /**
+     * It does not have to match the final order amount if the buyer updates
+     * their order after starting checkout. Amazon Pay will use this value to
+     * assess transaction risk and prevent buyers from selecting payment methods
+     * that can't be used to process the order.
+     */
+    estimatedOrderAmount?: AmazonPayV2Price;
+    /**
      * Create Checkout Session configuration.
      */
     createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
@@ -808,6 +815,17 @@ declare enum AmazonPayV2Placement {
     Checkout = "Checkout",
     /** Any page that doesn't fit the previous descriptions. */
     Other = "Other"
+}
+
+declare interface AmazonPayV2Price {
+    /**
+     * Transaction amount.
+     */
+    amount: string;
+    /**
+     * Transaction currency code in ISO 4217 format. Example: USD.
+     */
+    currencyCode: string;
 }
 
 /**

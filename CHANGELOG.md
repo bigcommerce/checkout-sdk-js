@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.281.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.4...v1.281.0) (2022-09-05)
+
+
+### Features
+
+* **payment:** INT-6407 AmazonPayV2: Add the new `estimatedOrderAmount` parameter ([#1555](https://github.com/bigcommerce/checkout-sdk-js/issues/1555)) ([8defc3b](https://github.com/bigcommerce/checkout-sdk-js/commit/8defc3bcf099a3caac9ebb26a97716a6f2a73e07))
+
+
+### Bug Fixes
+
+* **payment:** INT-6115 Payment with hosted credit card ([#1583](https://github.com/bigcommerce/checkout-sdk-js/issues/1583)) ([a491acf](https://github.com/bigcommerce/checkout-sdk-js/commit/a491acf699e86fd52e1ee45e4125e463c002e451))
+
 ### [1.280.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.280.3...v1.280.4) (2022-08-30)
 
 
