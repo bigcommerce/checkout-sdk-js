@@ -33,11 +33,17 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
     }
 
     async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { stripeupe: { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries } = {} } = options;
+       if (!options.stripeupe) {
+           throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
+       }
 
-        if (!methodId || !gatewayId) {
-            throw new InvalidArgumentError('Unable to proceed because "methodId " or "gatewayId" argument is not provided.');
-        }
+       const { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries } = options.stripeupe;
+
+       Object.entries(options.stripeupe).forEach(([key, value]) => {
+           if (!value) {
+               throw new InvalidArgumentError(`Unable to proceed because "${key}" argument is not provided.`);
+           }
+       });
 
         const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { params: { method: methodId } }));
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
@@ -83,25 +89,24 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
         this._stripeElements = this._stripeUPEScriptLoader.getElements(this._stripeUPEClient, {
                 clientSecret: paymentMethod.clientToken,
-                appearance: appearance,
+                appearance,
             });
 
         const shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING) ||
-            this._stripeElements.create(StripeElementType.SHIPPING, {allowedCountries: [availableCountries]});
+            this._stripeElements.create(StripeElementType.SHIPPING, { allowedCountries: [availableCountries] });
 
         shippingAddressElement.on('change', (event: StripeEventType) => {
             if (!('isNewAddress' in event)) {
-                throw new MissingDataError(MissingDataErrorType.MissingCustomer);
-            } else {
-                if ((event.complete || event.isNewAddress) && onChangeShipping && typeof onChangeShipping === 'function') {
-                    if (this.sendData) {
-                        clearTimeout(this.sendData)
-                    }
-
-                    this.sendData = setTimeout(() => {
-                        onChangeShipping(event)
-                    }, 1000);
+                throw new MissingDataError(MissingDataErrorType.MissingShippingAddress);
+            }
+            if ((event.complete || event.isNewAddress)) {
+                if (this.sendData) {
+                    clearTimeout(this.sendData)
                 }
+
+                this.sendData = setTimeout(() => {
+                    onChangeShipping(event)
+                }, 1000);
             }
         });
 

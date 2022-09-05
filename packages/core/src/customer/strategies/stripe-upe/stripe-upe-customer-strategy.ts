@@ -18,12 +18,18 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { stripeupe: { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } = {} } = options;
         let stripeUPEClient: StripeUPEClient;
-
-        if (!methodId || !gatewayId) {
-            throw new InvalidArgumentError('Unable to proceed because "methodId " or "gatewayId" argument is not provided.');
+        if (!options.stripeupe) {
+            throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
         }
+
+        const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } = options.stripeupe;
+
+        Object.entries(options.stripeupe).forEach(([key, value]) => {
+            if (!value) {
+                throw new InvalidArgumentError(`Unable to proceed because "${key}" argument is not provided.`);
+            }
+        });
 
         const {
             paymentMethods: { getPaymentMethodOrThrow }, customer: { getCustomerOrThrow },
@@ -77,13 +83,12 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
-                } else {
-                    if (onEmailChange) {
-                        event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
-                    }
-                    if (isLoading) {
-                        isLoading(false);
-                    }
+                }
+
+                event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
+
+                if (isLoading) {
+                    isLoading(false);
                 }
             });
 
