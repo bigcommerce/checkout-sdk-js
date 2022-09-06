@@ -7,7 +7,7 @@ export interface PaypalCommerceButtonInitializeOptions {
     style?: PaypalButtonStyleOptions;
 
     /**
-     * Container id for messaging banner container
+     * Flag which helps to detect that the strategy initializes on Checkout page
      */
-    messagingContainer?: string;
+    initializesOnCheckoutPage?: boolean;
 }

@@ -1,15 +1,8 @@
 /**
- * Common PayPal Commerce strategy what contains the logic for all PayPal Commerce modules (paypal, credit, paylater, venmo and all APMs)
- * TODO: this strategy should be removed when PAYPAL-1389.paypal_commerce_button_strategies_update will be turned on for all stores
+ * PayPal Commerce strategy
  */
 export { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 export { default as PaypalCommerceButtonStrategy } from './paypal-commerce-button-strategy';
-
-/**
- * PayPal Commerce V2 strategy
- */
-export { PaypalCommerceV2ButtonInitializeOptions } from './paypal-commerce-v2-button-options';
-export { default as PaypalCommerceV2ButtonStrategy } from './paypal-commerce-v2-button-strategy';
 
 /**
  * PayPal Commerce Credit Payment Methods
