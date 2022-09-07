@@ -32,6 +32,7 @@ import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
+import { BNZPaymentStrategy } from './strategies/bnz';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
@@ -407,6 +408,20 @@ export default function createPaymentStrategyRegistry(
 
     registry.register(PaymentStrategyType.CYBERSOURCEV2, () =>
         new CyberSourceV2PaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory,
+            new CardinalThreeDSecureFlowV2(
+                store,
+                paymentActionCreator,
+                new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.BNZ, () =>
+        new BNZPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
