@@ -1,6 +1,6 @@
-import { CustomFont, PaymentIntent, StripeConfigurationOptions, StripeElement } from '../stripev3';
+import { CustomFont, PaymentIntent, StripeConfigurationOptions } from '../stripev3';
 
-export { StripeAdditionalAction, StripeElement } from '../stripev3';
+export { StripeAdditionalAction } from '../stripev3';
 
 export interface StripeError {
     /**
@@ -17,6 +17,63 @@ export interface StripeError {
      */
     payment_intent: PaymentIntent;
 }
+
+export interface StripeElement {
+    /**
+     * The `element.mount` method attaches your element to the DOM.
+     */
+    mount(domElement: string | HTMLElement): void;
+
+    /**
+     * Removes the element from the DOM and destroys it.
+     * A destroyed element can not be re-activated or re-mounted to the DOM.
+     */
+    destroy(): void;
+
+    /**
+     * Unmounts the element from the DOM.
+     * Call `element.mount` to re-attach it to the DOM.
+     */
+    unmount(): void;
+
+    /**
+     * The change event is triggered when the Element's value changes. The event payload always contains certain keys,
+     * in addition to some Element-specific keys.
+     * https://stripe.com/docs/js/element/events/on_change?type=paymentElement
+     */
+    on(event: 'change', handler: (event: StripeEventType) => void): void;
+}
+
+export interface StripeEvent {
+    complete: boolean;
+    elementType: string;
+    empty: boolean;
+}
+
+export interface StripeCustomerEvent extends StripeEvent {
+    collapsed?: boolean;
+    authenticated: boolean;
+    value: {
+        email: string;
+    };
+}
+
+export interface StripeShippingEvent extends StripeEvent {
+    isNewAddress?: boolean;
+    value: {
+        address: {
+            city: string;
+            country: string;
+            line1: string;
+            line2?: string;
+            postal_code: string;
+            state: string;
+        };
+        name: string;
+    };
+}
+
+export type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
@@ -120,18 +177,35 @@ export interface WalletOptions {
 export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
     wallets?: WalletOptions;
+    allowedCountries?: any;
 }
 
 export interface StripeElements {
     /**
-     * Creates a `payment` element.
+     * Creates an Elements instance, which manages a group of elements.
+     * https://stripe.com/docs/js/elements_object/create
      */
-    create(elementType: StripeStringConstants.PAYMENT, options?: StripeElementsCreateOptions): StripeElement;
+    create(elementType: StripeElementType, options?: StripeElementsCreateOptions): StripeElement;
 
     /**
-     * Looks up a previously created `payment` element.
+     * Looks up a previously created element.
+     * https://stripe.com/docs/js/elements_object/get_payment_element or
+     * https://stripe.com/docs/js/elements_object/get_link_authentication_element
      */
-    getElement(elementType: StripeStringConstants.PAYMENT): StripeElement | null;
+    getElement(elementType: StripeElementType): StripeElement | null;
+
+    /**
+     * Updates options on an existing instance of Elements.
+     * https://stripe.com/docs/js/elements_object/update
+     */
+    update(options?: StripeUpdateElementsOptions): StripeElement;
+
+    /**
+     * Fetches updates from the associated PaymentIntent or SetupIntent on an existing instance of Elements,
+     * and reflects these updates in the Payment Element.
+     * https://stripe.com/docs/js/elements_object/fetch_updates
+     */
+    fetchUpdates(): void;
 }
 
 /**
@@ -148,6 +222,8 @@ export interface StripeUPEAppearanceOptions {
         colorIcon?: string;
         colorIconCardError?: string;
         colorIconRedirect?: string;
+        spacingUnit?: string;
+        borderRadius?: string;
     };
 
     rules?: {
@@ -191,6 +267,22 @@ export interface StripeElementsOptions {
     appearance?: StripeUPEAppearanceOptions;
 }
 
+export interface StripeUpdateElementsOptions {
+    /**
+     * A [locale](https://stripe.com/docs/js/appendix/supported_locales) to display placeholders and
+     * error strings in. Default is auto (Stripe detects the locale of the browser).
+     * Setting the locale does not affect the behavior of postal code validation—a valid postal code
+     * for the billing country of the card is still required.
+     */
+    locale?: string;
+
+    /**
+     * Match the design of your site with the appearance option.
+     * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
+     */
+    appearance?: StripeUPEAppearanceOptions;
+}
+
 export interface StripeUPEClient {
     /**
      * Use confirmPayment to confirm a PaymentIntent using data collected by the Payment Element.
@@ -211,6 +303,8 @@ export interface StripeUPEClient {
 }
 
 export interface StripeHostWindow extends Window {
+    bcStripeClient?: StripeUPEClient;
+    bcStripeElements?: StripeElements;
     Stripe?(
         stripePublishableKey: string,
         options?: StripeConfigurationOptions
@@ -237,4 +331,10 @@ export enum StripeStringConstants {
     ALWAYS = 'always',
     PAYMENT = 'payment',
     IF_REQUIRED = 'if_required',
+}
+
+export enum StripeElementType {
+    PAYMENT = 'payment',
+    AUTHENTICATION = 'linkAuthentication',
+    SHIPPING = 'shippingAddress',
 }

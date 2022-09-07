@@ -15,7 +15,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import formatLocale from './format-locale';
-import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripeError, StripePaymentMethodType, StripeStringConstants, StripeUPEAppearanceOptions, StripeUPEClient } from './stripe-upe';
+import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripeElementType, StripeError, StripePaymentMethodType, StripeStringConstants, StripeUPEAppearanceOptions, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const APM_REDIRECT = [
@@ -56,7 +56,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this._unsubscribe = await this._store.subscribe(
             async _state => {
-                const payment = this._stripeElements?.getElement(StripeStringConstants.PAYMENT);
+                const payment = this._stripeElements?.getElement(StripeElementType.PAYMENT);
                 if (payment) {
                     let error;
                     await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { params: { method: methodId } })).catch(err => error = err);
@@ -68,6 +68,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         stripeupe.onError?.(error);
                     } else {
                         if (!this._isMounted) {
+                            await this._stripeElements?.fetchUpdates();
                             payment.mount(`#${stripeupe.containerId}`);
                             this._isMounted = true;
                         }
@@ -160,7 +161,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (this._unsubscribe) {
             this._unsubscribe();
         }
-        this._stripeElements?.getElement(StripeStringConstants.PAYMENT)?.unmount();
+        this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this._isMounted = false;
 
         return Promise.resolve(this._store.getState());
@@ -250,13 +251,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             };
         }
 
-        this._stripeElements = this._stripeElements ?? this._stripeUPEClient.elements({
+        this._stripeElements = this._stripeScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
             appearance,
         });
 
-        const stripeElement: StripeElement = this._stripeElements.getElement(StripeStringConstants.PAYMENT) || this._stripeElements.create(StripeStringConstants.PAYMENT,
+        const stripeElement: StripeElement = this._stripeElements.getElement(StripeElementType.PAYMENT) || this._stripeElements.create(StripeElementType.PAYMENT,
             {
                 fields: {
                     billingDetails: {
@@ -400,7 +401,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return this._stripeUPEClient;
         }
 
-        return await this._stripeScriptLoader.load(
+        return await this._stripeScriptLoader.getStripeClient(
             stripePublishableKey,
             stripeConnectedAccount
         );

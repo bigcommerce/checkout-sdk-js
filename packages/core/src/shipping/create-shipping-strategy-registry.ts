@@ -8,6 +8,7 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
+import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
 import ConsignmentActionCreator from './consignment-action-creator';
@@ -17,6 +18,7 @@ import { ShippingStrategy } from './strategies';
 import { AmazonPayShippingStrategy } from './strategies/amazon';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
 import { DefaultShippingStrategy } from './strategies/default';
+import { StripeUPEShippingStrategy } from './strategies/stripe-upe';
 
 export default function createShippingStrategyRegistry(
     store: CheckoutStore,
@@ -26,6 +28,8 @@ export default function createShippingStrategyRegistry(
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+    const scriptLoader = getScriptLoader();
 
     registry.register('amazon', () =>
         new AmazonPayShippingStrategy(
@@ -50,6 +54,15 @@ export default function createShippingStrategyRegistry(
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
             createAmazonPayV2PaymentProcessor(),
             new ShippingStrategyActionCreator(registry)
+        )
+    );
+
+    registry.register('stripeupe', () =>
+        new StripeUPEShippingStrategy(
+            store,
+            new StripeScriptLoader(scriptLoader),
+            consignmentActionCreator,
+            paymentMethodActionCreator
         )
     );
 

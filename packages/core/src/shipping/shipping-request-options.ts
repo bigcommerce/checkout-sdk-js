@@ -2,6 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayShippingInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2ShippingInitializeOptions } from './strategies/amazon-pay-v2';
+import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
 
 /**
  * A set of options for configuring any requests related to the shipping step of
@@ -38,4 +39,10 @@ export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOption
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2ShippingInitializeOptions;
+
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Stripe Upe Link.
+     */
+    stripeupe?: StripeUPEShippingInitializeOptions;
 }
