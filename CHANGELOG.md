@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.282.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.281.2...v1.282.0) (2022-09-07)
+
+
+### Features
+
+* **payment:** INT-6310 added bank of new zealand strategy ([#1530](https://github.com/bigcommerce/checkout-sdk-js/issues/1530)) ([c696a22](https://github.com/bigcommerce/checkout-sdk-js/commit/c696a22411e8443526a7a3d144a039a775ec6989))
+
 ### [1.281.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.281.1...v1.281.2) (2022-09-07)
 
 ### [1.281.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.281.0...v1.281.1) (2022-09-05)

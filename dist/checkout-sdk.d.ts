@@ -1157,6 +1157,11 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripeupe?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Customer Stripe Upe payment method.
+     * They can be omitted unless you need to support Customer Stripe Upe.
+     */
+    stripeupe?: StripeUPECustomerInitializeOptions;
 }
 
 declare interface BaseElementOptions {
@@ -6598,6 +6603,11 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2ShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Stripe Upe Link.
+     */
+    stripeupe?: StripeUPEShippingInitializeOptions;
 }
 
 declare interface ShippingOption {
@@ -6824,6 +6834,14 @@ declare interface StoreProfile {
     storeLanguage: string;
 }
 
+declare interface StripeCustomerEvent extends StripeEvent {
+    collapsed?: boolean;
+    authenticated: boolean;
+    value: {
+        email: string;
+    };
+}
+
 /**
  * CSS properties supported by Stripe.js.
  */
@@ -6971,6 +6989,62 @@ declare interface StripeElementStyleVariant extends StripeElementCSSProperties {
     };
 }
 
+declare interface StripeEvent {
+    complete: boolean;
+    elementType: string;
+    empty: boolean;
+}
+
+declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
+
+declare interface StripeShippingEvent extends StripeEvent {
+    isNewAddress?: boolean;
+    value: {
+        address: {
+            city: string;
+            country: string;
+            line1: string;
+            line2?: string;
+            postal_code: string;
+            state: string;
+        };
+        name: string;
+    };
+}
+
+declare interface StripeUPECustomerInitializeOptions {
+    /**
+     * The ID of a container which the stripe iframe should be inserted.
+     */
+    container: string;
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Stripeupe and Klarna.
+     */
+    gatewayId: string;
+    /**
+     * A callback that gets called whenever the Stripe Link Authentication Element's value changes.
+     * @param authenticated - if the email is authenticated on Stripe.
+     * @param email - The new value of the email.
+     */
+    onEmailChange(authenticated: boolean, email: string): void;
+    /**
+     * A callback that gets called when Stripe Link Authentication Element is Loaded.
+     */
+    isLoading(mounted: boolean): void;
+    /**
+     * get styles from store theme
+     */
+    getStyles?(): {
+        [key: string]: string;
+    };
+}
+
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -7004,6 +7078,44 @@ declare interface StripeUPEPaymentInitializeOptions {
         [key: string]: string;
     };
     onError?(error?: Error): void;
+}
+
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support StripeUpe.
+ *
+ * When StripeUpe is initialized, an iframe will be inserted into the DOM. The
+ * iframe has a list of shipping addresses for the customer to choose from.
+ */
+declare interface StripeUPEShippingInitializeOptions {
+    /**
+     * The ID of a container which the stripe iframe should be inserted.
+     */
+    container?: string;
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Stripeupe and Klarna.
+     */
+    gatewayId: string;
+    /**
+     * A callback that gets called whenever the Stripe Link Shipping Element's object is completed.
+     */
+    onChangeShipping(shipping: StripeEventType): void;
+    /**
+     * Available countries configured on BC shipping setup.
+     */
+    availableCountries: string;
+    /**
+     * get styles from store theme
+     */
+    getStyles?(): {
+        [key: string]: string;
+    };
 }
 
 /**

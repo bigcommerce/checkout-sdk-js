@@ -330,11 +330,16 @@
 - [StoreCurrency](interfaces/StoreCurrency.md)
 - [StoreLinks](interfaces/StoreLinks.md)
 - [StoreProfile](interfaces/StoreProfile.md)
+- [StripeCustomerEvent](interfaces/StripeCustomerEvent.md)
 - [StripeElementCSSProperties](interfaces/StripeElementCSSProperties.md)
 - [StripeElementClasses](interfaces/StripeElementClasses.md)
 - [StripeElementStyle](interfaces/StripeElementStyle.md)
 - [StripeElementStyleVariant](interfaces/StripeElementStyleVariant.md)
+- [StripeEvent](interfaces/StripeEvent.md)
+- [StripeShippingEvent](interfaces/StripeShippingEvent.md)
+- [StripeUPECustomerInitializeOptions](interfaces/StripeUPECustomerInitializeOptions.md)
 - [StripeUPEPaymentInitializeOptions](interfaces/StripeUPEPaymentInitializeOptions.md)
+- [StripeUPEShippingInitializeOptions](interfaces/StripeUPEShippingInitializeOptions.md)
 - [StripeV3PaymentInitializeOptions](interfaces/StripeV3PaymentInitializeOptions.md)
 - [StyleOptions](interfaces/StyleOptions.md)
 - [StyleOptions_2](interfaces/StyleOptions_2.md)
@@ -411,6 +416,7 @@
 - [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
 - [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 - [StripeElementOptions](README.md#stripeelementoptions)
+- [StripeEventType](README.md#stripeeventtype)
 
 ### Functions
 
@@ -697,6 +703,12 @@ ___
 ### StripeElementOptions
 
 Ƭ **StripeElementOptions**: [`CardElementOptions`](interfaces/CardElementOptions.md) \| [`CardExpiryElementOptions`](interfaces/CardExpiryElementOptions.md) \| [`CardNumberElementOptions`](interfaces/CardNumberElementOptions.md) \| [`CardCvcElementOptions`](interfaces/CardCvcElementOptions.md) \| [`IdealElementOptions`](interfaces/IdealElementOptions.md) \| [`IbanElementOptions`](interfaces/IbanElementOptions.md) \| [`ZipCodeElementOptions`](interfaces/ZipCodeElementOptions.md)
+
+___
+
+### StripeEventType
+
+Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
 
 ## Functions
 

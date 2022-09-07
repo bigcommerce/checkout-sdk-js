@@ -31,6 +31,7 @@ step of checkout.
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
+- [stripeupe](ShippingInitializeOptions.md#stripeupe)
 - [timeout](ShippingInitializeOptions.md#timeout)
 
 ## Properties
@@ -72,6 +73,15 @@ The parameters of the request, if required.
 #### Inherited from
 
 [ShippingRequestOptions](ShippingRequestOptions.md).[params](ShippingRequestOptions.md#params)
+
+___
+
+### stripeupe
+
+• `Optional` **stripeupe**: [`StripeUPEShippingInitializeOptions`](StripeUPEShippingInitializeOptions.md)
+
+The options that are required to initialize the shipping step of checkout
+when using Stripe Upe Link.
 
 ___
 
