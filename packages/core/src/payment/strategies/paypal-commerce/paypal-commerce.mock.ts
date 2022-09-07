@@ -9,6 +9,7 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
             render: jest.fn(),
         }),
         FUNDING: {
+            CARD: 'card',
             PAYPAL: 'paypal',
             CREDIT: 'credit',
             PAYLATER: 'paylater',

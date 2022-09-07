@@ -1,7 +1,4 @@
-
-export interface ApproveDataOptions {
-    orderID?: string;
-}
+import { ShippingOption } from '../../../shipping';
 
 export interface ClickDataOptions {
     fundingSource: string;
@@ -54,8 +51,88 @@ export interface PaypalButtonStyleOptions {
     height?: number;
     label?: StyleButtonLabel;
     tagline?: boolean;
+    custom?: {
+        label?: string;
+        css?: {
+            background?: string;
+            color?: string;
+            width?: string;
+        };
+    };
 }
 
+export interface PayPalAddress {
+    city: string;
+    country_code: string;
+    postal_code: string;
+    state: string;
+}
+
+export interface ShippingAddressChangeCallbackPayload {
+    orderId: string;
+    shippingAddress: PayPalAddress;
+}
+
+export interface PayPalSelectedShippingOption {
+    amount: {
+        currency_code: string;
+        value: string;
+    };
+    id: string;
+    label: string;
+    selected: boolean;
+    type: string;
+}
+
+export interface ShippingOptionChangeCallbackPayload {
+    orderId: string;
+    selectedShippingOption: PayPalSelectedShippingOption,
+}
+
+export interface ApproveDataOptions {
+    orderID?: string;
+}
+
+export interface ApproveCallbackPayload {
+    orderID: string;
+}
+
+export interface ApproveCallbackActions {
+    order: {
+        get: () => PayPalOrderDetails;
+    }
+}
+
+export interface CompleteCallbackDataPayload {
+    intent: string;
+    orderID: string;
+}
+
+export interface PayPalOrderAddress {
+    address_line_1: string;
+    admin_area_2: string;
+    admin_area_1?: string;
+    postal_code: string;
+    country_code: string;
+}
+
+export interface PayPalOrderDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        },
+        email_address: string;
+        address: PayPalOrderAddress;
+    };
+    purchase_units: Array<{
+        shipping: {
+            address: PayPalOrderAddress;
+        };
+    }>;
+}
+
+// TODO: this type should be merged with PayPalCheckoutButtonOptions in the future
 export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
@@ -64,6 +141,18 @@ export interface ButtonsOptions {
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;
+}
+
+export interface PaypalCheckoutButtonOptions {
+    experience?: string;
+    style?: PaypalButtonStyleOptions;
+    fundingSource?: string;
+    createOrder?(): Promise<string>;
+    onError?(error: Error): void;
+    onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+    onApprove?(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<boolean>;
+    onComplete?(data: CompleteCallbackDataPayload): void;
 }
 
 export interface PaypalFieldsStyleOptions {
@@ -185,6 +274,7 @@ export interface PaypalCommerceMessages {
 }
 
 export interface PaypalCommerceSDKFunding {
+    CARD: string;
     PAYPAL: string;
     CREDIT: string;
     PAYLATER: string;
@@ -211,7 +301,7 @@ export interface PaypalCommerceSDK {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons(params: ButtonsOptions): PaypalCommerceButtons;
+    Buttons(params: ButtonsOptions | PaypalCheckoutButtonOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
@@ -254,4 +344,10 @@ export interface PaypalCommerceScriptParams  {
     commit?: boolean;
     intent?: 'capture' | 'authorize';
     components?: ComponentsScriptType;
+}
+
+export interface UpdateOrderPayload {
+    availableShippingOptions?: ShippingOption[];
+    cartId: string;
+    selectedShippingOption?: ShippingOption;
 }
