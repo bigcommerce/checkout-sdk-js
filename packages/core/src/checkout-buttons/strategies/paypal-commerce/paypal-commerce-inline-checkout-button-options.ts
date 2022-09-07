@@ -23,11 +23,11 @@ export interface PaypalCommerceInlineCheckoutButtonInitializeOptions {
     buttonContainerClassName?: string;
 
     /**
-     * Used by Accelerated Checkout strategy to hide primary action button before rendering PayPal inline checkout button
+     * Used by Accelerated Checkout strategy to hide native action button before rendering PayPal inline checkout button
      * Example: 'data-checkout-now-button'
      * Info: we are using data attributes as an identifier because the buttons can be rendered in several places on the page
      */
-    checkoutNowElementDataId: string;
+    nativeCheckoutButtonDataId: string;
 
     /**
      * A set of styling options for the checkout button.

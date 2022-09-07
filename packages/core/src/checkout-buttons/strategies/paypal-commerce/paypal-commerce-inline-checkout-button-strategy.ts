@@ -5,10 +5,11 @@ import { OrderActionCreator } from '../../../order';
 import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalButtonStyleOptions, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
+import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+import { PaypalCommerceInlineCheckoutButtonInitializeOptions } from './paypal-commerce-inline-checkout-button-options';
 
 export default class PaypalCommerceInlineCheckoutButtonStrategy implements CheckoutButtonStrategy {
     constructor(
@@ -24,57 +25,27 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { methodId, paypalcommerceinline } = options;
-        const {
-            acceleratedCheckoutContainerDataId,
-            buttonContainerDataId,
-            buttonContainerClassName,
-            checkoutNowElementDataId,
-            style,
-            onComplete,
-        } = paypalcommerceinline || {};
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }
 
-        if (!acceleratedCheckoutContainerDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.acceleratedCheckoutContainerDataId" argument is not provided.`);
-        }
-
-        if (!buttonContainerDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.buttonContainerDataId" argument is not provided.`);
-        }
-
-        if (!checkoutNowElementDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.checkoutNowElementDataId" argument is not provided.`);
-        }
-
-        if (!onComplete || typeof onComplete !== 'function') {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.onComplete" argument is not provided or it is not a function.`);
+        if (!paypalcommerceinline) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerceinline" argument is not provided.');
         }
 
         await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        await this._store.dispatch(this._consignmentActionCreator.loadShippingOptions());
 
         const state = this._store.getState();
-        const currency = state.cart.getCartOrThrow().currency.code;
+        const currencyCode = state.cart.getCartOrThrow().currency.code;
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currency, false);
+        const paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, false);
 
         if (!paypalCommerceSdk) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        this._renderButton(
-            methodId,
-            paypalCommerceSdk,
-            onComplete,
-            acceleratedCheckoutContainerDataId,
-            checkoutNowElementDataId,
-            buttonContainerDataId,
-            buttonContainerClassName,
-            style,
-        );
+        this._renderButton(methodId, paypalCommerceSdk, paypalcommerceinline);
     }
 
     deinitialize(): Promise<void> {
@@ -84,13 +55,33 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
     private _renderButton(
         methodId: string,
         paypalCommerceSdk: PaypalCommerceSDK,
-        onComplete: () => void,
-        acceleratedCheckoutContainerDataId: string,
-        checkoutNowElementDataId: string,
-        buttonContainerDataId: string,
-        buttonContainerClassName?: string,
-        style?: PaypalButtonStyleOptions,
+        paypalcommerceinline: PaypalCommerceInlineCheckoutButtonInitializeOptions,
     ): void {
+        const {
+            acceleratedCheckoutContainerDataId,
+            buttonContainerDataId,
+            buttonContainerClassName,
+            nativeCheckoutButtonDataId,
+            style,
+            onComplete,
+        } = paypalcommerceinline;
+
+        if (!acceleratedCheckoutContainerDataId) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.acceleratedCheckoutContainerDataId" argument is not provided.`);
+        }
+
+        if (!buttonContainerDataId) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.buttonContainerDataId" argument is not provided.`);
+        }
+
+        if (!nativeCheckoutButtonDataId) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.nativeCheckoutButtonDataId" argument is not provided.`);
+        }
+
+        if (!onComplete || typeof onComplete !== 'function') {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.onComplete" argument is not provided or it is not a function.`);
+        }
+
         const fundingSource = paypalCommerceSdk.FUNDING.CARD;
 
         const buttonRenderOptions: PaypalCheckoutButtonOptions = {
@@ -102,13 +93,13 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onApprove(data, actions, methodId),
             onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId, onComplete),
-            onError: (error: Error) => this._onError(error, buttonContainerDataId, checkoutNowElementDataId),
+            onError: (error: Error) => this._onError(error, buttonContainerDataId, nativeCheckoutButtonDataId),
         };
 
         const paypalButtonRender = paypalCommerceSdk.Buttons(buttonRenderOptions);
 
         if (paypalButtonRender.isEligible()) {
-            this._hideCheckoutNowButton(checkoutNowElementDataId);
+            this._hideNativeCheckoutButton(nativeCheckoutButtonDataId);
 
             this._createPayPalButtonContainer(acceleratedCheckoutContainerDataId, buttonContainerDataId, buttonContainerClassName);
             paypalButtonRender.render(`[${buttonContainerDataId}]`);
@@ -197,9 +188,9 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         }
     }
 
-    private _onError(error: Error, buttonContainerDataId: string, checkoutNowElementDataId: string): void {
+    private _onError(error: Error, buttonContainerDataId: string, nativeCheckoutButtonDataId: string): void {
         this._removePayPalContainer(buttonContainerDataId);
-        this._showCheckoutNowButton(checkoutNowElementDataId);
+        this._showNativeCheckoutButton(nativeCheckoutButtonDataId);
 
         throw new Error(error.message);
     }
@@ -308,27 +299,27 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         }
     }
 
-    private _showCheckoutNowButton(checkoutNowButtonDataId: string): void {
-        const checkoutNowButton = this._getElementByDataId(checkoutNowButtonDataId);
+    private _showNativeCheckoutButton(nativeCheckoutButtonDataId: string): void {
+        const nativeCheckoutButton = this._getElementByDataId(nativeCheckoutButtonDataId);
 
-        if (checkoutNowButton) {
-            checkoutNowButton.removeAttribute('style');
+        if (nativeCheckoutButton) {
+            nativeCheckoutButton.removeAttribute('style');
         }
     }
 
-    private _hideCheckoutNowButton(checkoutNowButtonDataId: string): void {
-        const checkoutNowButton = this._getElementByDataId(checkoutNowButtonDataId);
+    private _hideNativeCheckoutButton(nativeCheckoutButtonDataId: string): void {
+        const nativeCheckoutButton = this._getElementByDataId(nativeCheckoutButtonDataId);
 
-        if (checkoutNowButton) {
-            checkoutNowButton.setAttribute('style', 'display: none');
+        if (nativeCheckoutButton) {
+            nativeCheckoutButton.setAttribute('style', 'display: none');
         }
     }
 
     private _removePayPalContainer(buttonContainerDataId: string): void {
-        const buttonContainer = this._getElementByDataId(buttonContainerDataId);
+        const paypalButtonContainer = this._getElementByDataId(buttonContainerDataId);
 
-        if (buttonContainer?.parentNode) {
-            buttonContainer.parentNode.removeChild(buttonContainer);
+        if (paypalButtonContainer?.parentNode) {
+            paypalButtonContainer.parentNode.removeChild(paypalButtonContainer);
         }
     }
 }

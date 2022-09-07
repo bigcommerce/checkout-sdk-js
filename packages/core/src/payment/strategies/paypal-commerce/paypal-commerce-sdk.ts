@@ -144,15 +144,15 @@ export interface ButtonsOptions {
 }
 
 export interface PaypalCheckoutButtonOptions {
-    experience?: string;
+    experience: string;
     style?: PaypalButtonStyleOptions;
-    fundingSource?: string;
-    createOrder?(): Promise<string>;
-    onError?(error: Error): void;
-    onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
-    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
-    onApprove?(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<boolean>;
-    onComplete?(data: CompleteCallbackDataPayload): void;
+    fundingSource: string;
+    createOrder(): Promise<string>;
+    onError(error: Error): void;
+    onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+    onApprove(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<boolean>;
+    onComplete(data: CompleteCallbackDataPayload): void;
 }
 
 export interface PaypalFieldsStyleOptions {
