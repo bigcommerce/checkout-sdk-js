@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.283.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.283.0...v1.283.1) (2022-09-08)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-000 Remove token strings from test files ([#1589](https://github.com/bigcommerce/checkout-sdk-js/issues/1589)) ([164bbaa](https://github.com/bigcommerce/checkout-sdk-js/commit/164bbaa961ca306a3c59719fc986d747a8b0334a))
+
 ## [1.283.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.282.0...v1.283.0) (2022-09-08)
 
 
