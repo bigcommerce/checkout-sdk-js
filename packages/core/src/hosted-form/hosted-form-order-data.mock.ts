@@ -7,7 +7,7 @@ import HostedFormOrderData from './hosted-form-order-data';
 
 export function getHostedFormOrderData(): HostedFormOrderData {
     return {
-        authToken: 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+        authToken: 'auth-token',
         checkout: getCheckoutWithGiftCertificates(),
         config: getConfig(),
         order: getOrder(),

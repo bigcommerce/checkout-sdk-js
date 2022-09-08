@@ -43,7 +43,7 @@ export function getVaultedInstrument(): VaultedInstrument {
 
 export function getPaymentRequestBody(): PaymentRequestBody {
     return {
-        authToken: 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+        authToken: 'auth-token',
         billingAddress: mapToInternalAddress(getBillingAddress()),
         cart: mapToInternalCart(getCheckoutWithGiftCertificates()),
         customer: mapToInternalCustomer(getCustomer(), getBillingAddress()),
