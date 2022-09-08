@@ -7,6 +7,7 @@
 ### Properties
 
 - [color](PaypalButtonStyleOptions_2.md#color)
+- [custom](PaypalButtonStyleOptions_2.md#custom)
 - [height](PaypalButtonStyleOptions_2.md#height)
 - [label](PaypalButtonStyleOptions_2.md#label)
 - [layout](PaypalButtonStyleOptions_2.md#layout)
@@ -18,6 +19,22 @@
 ### color
 
 • `Optional` **color**: [`gold`](../enums/StyleButtonColor.md#gold) \| [`blue`](../enums/StyleButtonColor.md#blue) \| [`silver`](../enums/StyleButtonColor.md#silver) \| [`black`](../enums/StyleButtonColor.md#black) \| [`white`](../enums/StyleButtonColor.md#white)
+
+___
+
+### custom
+
+• `Optional` **custom**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `css?` | `Object` |
+| `css.background?` | `string` |
+| `css.color?` | `string` |
+| `css.width?` | `string` |
+| `label?` | `string` |
 
 ___
 

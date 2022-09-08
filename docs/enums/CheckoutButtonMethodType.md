@@ -25,6 +25,7 @@
 - [PAYPALCOMMERCEV2](CheckoutButtonMethodType.md#paypalcommercev2)
 - [PAYPALCOMMERCE_APMS](CheckoutButtonMethodType.md#paypalcommerce_apms)
 - [PAYPALCOMMERCE_CREDIT](CheckoutButtonMethodType.md#paypalcommerce_credit)
+- [PAYPALCOMMERCE_INLINE](CheckoutButtonMethodType.md#paypalcommerce_inline)
 - [PAYPALCOMMERCE_VENMO](CheckoutButtonMethodType.md#paypalcommerce_venmo)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
@@ -141,6 +142,12 @@ ___
 ### PAYPALCOMMERCE\_CREDIT
 
 • **PAYPALCOMMERCE\_CREDIT** = `"paypalcommercecredit"`
+
+___
+
+### PAYPALCOMMERCE\_INLINE
+
+• **PAYPALCOMMERCE\_INLINE** = `"paypalcommerceinline"`
 
 ___
 

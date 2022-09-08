@@ -310,6 +310,11 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
     /**
+     * The options that are required to facilitate PayPal Commerce Inline Checkout. They can be omitted
+     * unless you need to support PayPal Commerce Inline(Accelerated) Checkout.
+     */
+    paypalcommerceinline?: PaypalCommerceInlineCheckoutButtonInitializeOptions;
+    /**
      * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
      * unless you need to support PayPal Commerce Venmo.
      */
@@ -525,6 +530,7 @@ declare enum CheckoutButtonMethodType {
     PAYPALCOMMERCEV2 = "paypalcommercev2",
     PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
+    PAYPALCOMMERCE_INLINE = "paypalcommerceinline",
     PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
 
@@ -636,6 +642,14 @@ declare interface PaypalButtonStyleOptions_2 {
     height?: number;
     label?: StyleButtonLabel;
     tagline?: boolean;
+    custom?: {
+        label?: string;
+        css?: {
+            background?: string;
+            color?: string;
+            width?: string;
+        };
+    };
 }
 
 declare enum PaypalButtonStyleShapeOption {
@@ -689,6 +703,41 @@ declare interface PaypalCommerceCreditButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: PaypalButtonStyleOptions_2;
+}
+
+declare interface PaypalCommerceInlineCheckoutButtonInitializeOptions {
+    /**
+     * Accelerated Checkout Buttons container - is a generic container for all AC buttons
+     * Used as a container where the button will be rendered with its own container
+     * Example: 'data-cart-accelerated-checkout-buttons'
+     * Info: we are using data attributes as an identifier because the buttons can be rendered in several places on the page
+     */
+    acceleratedCheckoutContainerDataId: string;
+    /**
+     * A container identifier what used to add special class for container where the button will be generated in
+     * Example: 'data-paypal-commerce-inline-button'
+     * Info: we are using data attributes as an identifier because the buttons can be rendered in several places on the page
+     */
+    buttonContainerDataId: string;
+    /**
+     * A class name used to add special class for container where the button will be generated in
+     * Default: 'PaypalCommerceInlineButton'
+     */
+    buttonContainerClassName?: string;
+    /**
+     * Used by Accelerated Checkout strategy to hide native action button before rendering PayPal inline checkout button
+     * Example: 'data-checkout-now-button'
+     * Info: we are using data attributes as an identifier because the buttons can be rendered in several places on the page
+     */
+    nativeCheckoutButtonDataId: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PaypalButtonStyleOptions_2;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete(): void;
 }
 
 declare interface PaypalCommerceV2ButtonInitializeOptions {
