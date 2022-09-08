@@ -60,7 +60,7 @@ describe('InstrumentRequestSender', () => {
             expect(output).toEqual({
                 ...response,
                 body: {
-                    vaultAccessToken: 'VAT f4k3v4ul74cc3sst0k3n',
+                    vaultAccessToken: 'vault-token',
                     vaultAccessExpiry: 1516097476098,
                 },
             });
