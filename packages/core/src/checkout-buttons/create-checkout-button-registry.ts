@@ -28,7 +28,7 @@ import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, Bra
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceV2ButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
+import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceInlineCheckoutButtonStrategy, PaypalCommerceV2ButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -40,12 +40,12 @@ export default function createCheckoutButtonRegistry(
 ): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
     const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutActionCreator = new CheckoutActionCreator(
-        new CheckoutRequestSender(requestSender),
+        checkoutRequestSender,
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
-    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
@@ -59,6 +59,12 @@ export default function createCheckoutButtonRegistry(
     const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
     const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
     const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
+    const subscriptionsRequestSender = new SubscriptionsRequestSender(requestSender);
+    const subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender)
+    const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
+    const billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender, subscriptionsActionCreator);
+    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
+    const consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
 
     registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
         new ApplePayButtonStrategy(
@@ -66,30 +72,11 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             requestSender,
             paymentMethodActionCreator,
-            new ConsignmentActionCreator(
-                new ConsignmentRequestSender(requestSender),
-                new CheckoutRequestSender(requestSender)
-            ),
-            new BillingAddressActionCreator(
-                new BillingAddressRequestSender(requestSender),
-                new SubscriptionsActionCreator(
-                    new SubscriptionsRequestSender(requestSender)
-                )
-            ),
-            new PaymentActionCreator(
-                new PaymentRequestSender(paymentClient),
-                new OrderActionCreator(
-                    new OrderRequestSender(requestSender),
-                    new CheckoutValidator(checkoutRequestSender)
-                ),
-                new PaymentRequestTransformer(),
-                new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
-            ),
+            consignmentActionCreator,
+            billingAddressActionCreator,
+            paymentActionCreator,
             remoteCheckoutActionCreator,
-            new OrderActionCreator(
-                new OrderRequestSender(requestSender),
-                new CheckoutValidator(checkoutRequestSender)
-            ),
+            orderActionCreator,
             new ApplePaySessionFactory()
         )
     );
@@ -293,6 +280,19 @@ export default function createCheckoutButtonRegistry(
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE, () =>
+        new PaypalCommerceInlineCheckoutButtonStrategy(
+            store,
+            checkoutActionCreator,
+            paypalScriptLoader,
+            paypalCommerceRequestSender,
+            orderActionCreator,
+            consignmentActionCreator,
+            billingAddressActionCreator,
+            paymentActionCreator
         )
     );
 
