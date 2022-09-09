@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.284.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.283.1...v1.284.0) (2022-09-09)
+
+
+### Features
+
+* **checkout:** STRF-9858 Bodl Service: Checkout Begin and Order Purchased ([#1587](https://github.com/bigcommerce/checkout-sdk-js/issues/1587)) ([1e7e054](https://github.com/bigcommerce/checkout-sdk-js/commit/1e7e0546d2f24e7f1fb37a0fd42b84d59f40cf57))
+
 ### [1.283.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.283.0...v1.283.1) (2022-09-08)
 
 

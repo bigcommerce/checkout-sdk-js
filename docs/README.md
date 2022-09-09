@@ -106,6 +106,7 @@
 - [BlockElementStyles](interfaces/BlockElementStyles.md)
 - [BlueSnapV2PaymentInitializeOptions](interfaces/BlueSnapV2PaymentInitializeOptions.md)
 - [BlueSnapV2StyleProps](interfaces/BlueSnapV2StyleProps.md)
+- [BodlService](interfaces/BodlService.md)
 - [BodyStyles](interfaces/BodyStyles.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
@@ -421,6 +422,7 @@
 
 ### Functions
 
+- [createBodlService](README.md#createbodlservice)
 - [createCheckoutButtonInitializer](README.md#createcheckoutbuttoninitializer)
 - [createCheckoutService](README.md#createcheckoutservice)
 - [createCurrencyService](README.md#createcurrencyservice)
@@ -712,6 +714,34 @@ ___
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
 
 ## Functions
+
+### createBodlService
+
+▸ **createBodlService**(`subscribe`): [`BodlService`](interfaces/BodlService.md)
+
+Creates an instance of `BodlService`.
+
+**`remarks`**
+
+```js
+const bodlService = BodlService();
+bodlService.checkoutBegin();
+
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `subscribe` | (`subscriber`: (`state`: [`CheckoutSelectors`](interfaces/CheckoutSelectors.md)) => `void`) => `void` |
+
+#### Returns
+
+[`BodlService`](interfaces/BodlService.md)
+
+an instance of `BodlService`.
+
+___
 
 ### createCheckoutButtonInitializer
 

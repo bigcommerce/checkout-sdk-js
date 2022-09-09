@@ -1447,6 +1447,11 @@ declare interface BlueSnapV2StyleProps {
     width?: string;
 }
 
+declare interface BodlService {
+    checkoutBegin(): void;
+    orderPurchased(): void;
+}
+
 declare interface BodyStyles {
     backgroundColor?: string;
 }
@@ -7467,6 +7472,22 @@ declare interface WorldpayAccessPaymentInitializeOptions {
 declare interface ZipCodeElementOptions {
     containerId: string;
 }
+
+/**
+ * Creates an instance of `BodlService`.
+ *
+ * @remarks
+ *
+ * ```js
+ * const bodlService = BodlService();
+ * bodlService.checkoutBegin();
+ *
+ * ```
+ *
+ * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * @returns an instance of `BodlService`.
+ */
+export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.
