@@ -34,6 +34,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _stripeCardElements?: StripeCardElements;
     private _useIndividualCardFields?: boolean;
     private _hostedForm?: HostedForm;
+    private _isDesinitialize = false;
 
     constructor(
         private _store: CheckoutStore,
@@ -54,6 +55,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         this._initializeOptions = stripev3;
+        this._isDesinitialize = false;
 
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
         const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
@@ -146,6 +148,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             this._hostedForm.detach();
         }
 
+        this._isDesinitialize = false;
         this._unmountElement();
 
         return Promise.resolve(this._store.getState());
@@ -385,6 +388,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
     private _mountCardFields(methodId: string): Promise<StripeElement> {
         const { options, containerId } = this._getInitializeOptions();
+        
 
         let stripeElement: StripeElement;
 
@@ -417,6 +421,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                         try {
                             stripeElement.mount(`#${containerId}`);
+                            this._isDesinitialize = true;
                         } catch (error) {
                             reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                         }
@@ -429,6 +434,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                     try {
                         stripeElement.mount(`#${containerId}`);
+                        this._isDesinitialize = true;
                     } catch (error) {
                         reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                     }
