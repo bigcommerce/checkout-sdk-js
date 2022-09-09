@@ -7,3 +7,4 @@ export { createEmbeddedCheckoutMessenger } from '../embedded-checkout/iframe-con
 export { createLanguageService } from '../locale';
 export { createCurrencyService } from '../currency';
 export { createStepTracker } from '../analytics';
+export { createBodlService } from '../bodl';
