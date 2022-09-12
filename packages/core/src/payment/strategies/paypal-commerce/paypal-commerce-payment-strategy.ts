@@ -16,6 +16,7 @@ const ORDER_STATUS_CREATED = 'CREATED';
 const PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
 const POLLING_INTERVAL = 3000;
 const POLLING_MAX_TIME = 600000;
+const cond = true;
 
 export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     private _orderId?: string;
@@ -74,6 +75,9 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
             },
             onClick: async (_, actions) => {
+                if (cond) {
+                    submitForm();
+                } else {
                 this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
 
                 const onValidationPassed = () => {
@@ -83,7 +87,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 };
 
                 return onValidate(onValidationPassed, actions.reject);
-            },
+            }},
             onCancel: () => {
                 this._deinitializePollingTimer(gatewayId);
                 this._loadingIndicator?.hide();
