@@ -22,7 +22,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { paypalcommerce, containerId, methodId } = options;
-        const { initializesOnCheckoutPage, style } = paypalcommerce || {};
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
@@ -36,12 +35,15 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce" argument is not provided.`);
         }
 
+        const { initializesOnCheckoutPage, style } = paypalcommerce;
+
         // Info: it's a temporary decision until we have v1 and v2 version methodIds.
         // TODO: should be removed when PAYPAL-1539 hits Tier3
         const updatedMethodId = methodId === 'paypalcommercev2' ? 'paypalcommerce' : methodId;
 
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currencyCode = state.cart.getCartOrThrow().currency.code;
+
         // TODO: should be updated when PAYPAL-1539 hits Tier3
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(updatedMethodId);
         this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
