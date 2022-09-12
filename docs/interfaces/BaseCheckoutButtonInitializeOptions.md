@@ -222,7 +222,7 @@ ___
 
 ### paypalcommerce
 
-• `Optional` **paypalcommerce**: [`PaypalCommerceV2ButtonInitializeOptions`](PaypalCommerceV2ButtonInitializeOptions.md)
+• `Optional` **paypalcommerce**: [`PaypalCommerceButtonInitializeOptions`](PaypalCommerceButtonInitializeOptions.md)
 
 The options that are required to facilitate PayPal Commerce V2. They can be omitted
 unless you need to support Paypal Commerce.

@@ -6,16 +6,16 @@
 
 ### Properties
 
-- [messagingContainer](PaypalCommerceButtonInitializeOptions.md#messagingcontainer)
+- [initializesOnCheckoutPage](PaypalCommerceButtonInitializeOptions.md#initializesoncheckoutpage)
 - [style](PaypalCommerceButtonInitializeOptions.md#style)
 
 ## Properties
 
-### messagingContainer
+### initializesOnCheckoutPage
 
-• `Optional` **messagingContainer**: `string`
+• `Optional` **initializesOnCheckoutPage**: `boolean`
 
-Container id for messaging banner container
+Flag which helps to detect that the strategy initializes on Checkout page
 
 ___
 

@@ -300,7 +300,6 @@
 - [PaypalCommercePaymentInitializeOptions](interfaces/PaypalCommercePaymentInitializeOptions.md)
 - [PaypalCommerceStoredCardFieldOptions](interfaces/PaypalCommerceStoredCardFieldOptions.md)
 - [PaypalCommerceStoredCardFieldsMap](interfaces/PaypalCommerceStoredCardFieldsMap.md)
-- [PaypalCommerceV2ButtonInitializeOptions](interfaces/PaypalCommerceV2ButtonInitializeOptions.md)
 - [PaypalCommerceVenmoButtonInitializeOptions](interfaces/PaypalCommerceVenmoButtonInitializeOptions.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalFieldsStyleOptions](interfaces/PaypalFieldsStyleOptions.md)
