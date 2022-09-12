@@ -1,89 +1,123 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { ApproveDataOptions, ButtonsOptions, ClickDataOptions, PaypalCommercePaymentProcessor } from '../../../payment/strategies/paypal-commerce';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
+import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
+import getValidButtonStyle from './get-valid-button-style';
+
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
-    private _isCredit?: boolean;
-    private _isVenmo?: boolean;
-    private _isVenmoEnabled?: boolean;
+    private _paypalCommerceSdk?: PaypalCommerceSDK;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _formPoster: FormPoster,
-        private _paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor
+        private _paypalScriptLoader: PaypalCommerceScriptLoader,
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        let state = this._store.getState();
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
-        const { initializationData } = paymentMethod;
+        const { paypalcommerce, containerId, methodId } = options;
 
-        if (!initializationData.clientId) {
-            throw new InvalidArgumentError();
+        if (!methodId) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }
 
-        this._isVenmoEnabled = initializationData.isVenmoEnabled;
-        state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        const cart = state.cart.getCartOrThrow();
-        const buttonParams: ButtonsOptions = {
-            onApprove: data => this._tokenizePayment(data),
-            onClick: data => this._handleClickButtonProvider(data),
-        };
-
-        if (options.paypalCommerce && options.paypalCommerce.style) {
-            buttonParams.style = options.paypalCommerce.style;
+        if (!containerId) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
         }
 
-        const messagingContainer = options.paypalCommerce?.messagingContainer;
-        const isMessagesAvailable = Boolean(messagingContainer && document.getElementById(messagingContainer));
-
-        await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code, false);
-
-        this._paypalCommercePaymentProcessor.renderButtons(cart.id, `#${options.containerId}`, buttonParams);
-
-        if (isMessagesAvailable) {
-            this._paypalCommercePaymentProcessor.renderMessages(cart.cartAmount, `#${messagingContainer}`);
+        if (!paypalcommerce) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce" argument is not provided.`);
         }
 
-        return Promise.resolve();
+        const { initializesOnCheckoutPage, style } = paypalcommerce;
+
+        // Info: it's a temporary decision until we have v1 and v2 version methodIds.
+        // TODO: should be removed when PAYPAL-1539 hits Tier3
+        const updatedMethodId = methodId === 'paypalcommercev2' ? 'paypalcommerce' : methodId;
+
+        const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+        const currencyCode = state.cart.getCartOrThrow().currency.code;
+
+        // TODO: should be updated when PAYPAL-1539 hits Tier3
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(updatedMethodId);
+        this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
+
+        // TODO: should be updated when PAYPAL-1539 hits Tier3
+        this._renderButton(containerId, updatedMethodId, initializesOnCheckoutPage, style);
     }
 
     deinitialize(): Promise<void> {
-        this._isCredit = undefined;
-        this._isVenmo = undefined;
-
         return Promise.resolve();
     }
 
-    private _handleClickButtonProvider({ fundingSource }: ClickDataOptions): void {
-        this._isCredit = fundingSource === 'credit' || fundingSource === 'paylater';
-        this._isVenmo = fundingSource === 'venmo';
+    private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
+        const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
+
+        const buttonRenderOptions: ButtonsOptions = {
+            fundingSource: paypalCommerceSdk.FUNDING.PAYPAL,
+            style: style ? this._getButtonStyle(style) : {},
+            createOrder: () => this._createOrder(initializesOnCheckoutPage),
+            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
+        };
+
+        const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
+
+        if (paypalButton.isEligible()) {
+            paypalButton.render(`#${containerId}`);
+        } else {
+            this._removeElement(containerId);
+        }
     }
 
-    private _tokenizePayment({ orderID }: ApproveDataOptions) {
-        if (!orderID) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
-        }
-        let provider;
+    private async _createOrder(initializesOnCheckoutPage?: boolean): Promise<string> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
 
-        if (this._isVenmo && this._isVenmoEnabled) {
-            provider = 'paypalcommercevenmo';
-        } else if (this._isCredit) {
-            provider = 'paypalcommercecredit';
-        } else {
-            provider = 'paypalcommerce';
+        const providerId = initializesOnCheckoutPage ? 'paypalcommercecheckout': 'paypalcommerce';
+
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, providerId);
+
+        return orderId;
+    }
+
+    private _tokenizePayment(methodId: string, orderId?: string): void {
+        if (!orderId) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
         return this._formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
-            provider,
-            order_id: orderID,
+            provider: methodId,
+            order_id: orderId,
         });
+    }
+
+    private _getPayPalCommerceSdkOrThrow(): PaypalCommerceSDK {
+        if (!this._paypalCommerceSdk) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this._paypalCommerceSdk;
+    }
+
+    private _getButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+        const { color, height, label, layout, shape } = getValidButtonStyle(style);
+
+        return { color, height, label, layout, shape };
+    }
+
+    private _removeElement(elementId?: string): void {
+        const element = elementId && document.getElementById(elementId);
+
+        if (element) {
+            element.remove();
+        }
     }
 }

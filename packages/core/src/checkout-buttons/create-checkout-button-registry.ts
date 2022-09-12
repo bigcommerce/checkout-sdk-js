@@ -15,7 +15,7 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
-import { createPaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
+import { PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
@@ -28,7 +28,7 @@ import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, Bra
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceInlineCheckoutButtonStrategy, PaypalCommerceV2ButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
+import { PaypalCommerceAlternativeMethodsButtonStrategy, PaypalCommerceButtonStrategy, PaypalCommerceCreditButtonStrategy, PaypalCommerceInlineCheckoutButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -56,7 +56,6 @@ export default function createCheckoutButtonRegistry(
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer, paymentHumanVerificationHandler);
     const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
-    const paypalCommercePaymentProcessor = createPaypalCommercePaymentProcessor(scriptLoader, requestSender, store, orderActionCreator, paymentActionCreator);
     const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
     const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
     const subscriptionsRequestSender = new SubscriptionsRequestSender(requestSender);
@@ -249,12 +248,14 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             formPoster,
-            paypalCommercePaymentProcessor
+            paypalScriptLoader,
+            paypalCommerceRequestSender
         )
     );
 
+    // TODO: should be removed when PAYPAL-1539 hits Tier3
     registry.register(CheckoutButtonMethodType.PAYPALCOMMERCEV2, () =>
-        new PaypalCommerceV2ButtonStrategy(
+        new PaypalCommerceButtonStrategy(
             store,
             checkoutActionCreator,
             formPoster,

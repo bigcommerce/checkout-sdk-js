@@ -11,7 +11,7 @@ import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
-import { PaypalCommerceButtonStrategy, PaypalCommerceV2ButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
+import { PaypalCommerceButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -78,8 +78,9 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('paypalcommerce')).toEqual(expect.any(PaypalCommerceButtonStrategy));
     });
 
+    // TODO: should be removed when PAYPAL-1539 hits Tier3
     it('returns registry with PayPal Commerce V2 registered', () => {
-        expect(registry.get('paypalcommercev2')).toEqual(expect.any(PaypalCommerceV2ButtonStrategy));
+        expect(registry.get('paypalcommercev2')).toEqual(expect.any(PaypalCommerceButtonStrategy));
     });
 
     it('returns registry with PayPal Commerce Venmo registered', () => {
