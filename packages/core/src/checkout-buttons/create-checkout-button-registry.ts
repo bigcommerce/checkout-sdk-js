@@ -10,20 +10,17 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
-import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 import { PaypalCommerceRequestSender, PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
-import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
@@ -47,8 +44,6 @@ export default function createCheckoutButtonRegistry(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
-    const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender, checkoutActionCreator);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
@@ -64,21 +59,6 @@ export default function createCheckoutButtonRegistry(
     const billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender, subscriptionsActionCreator);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
-
-    registry.register(CheckoutButtonMethodType.APPLEPAY, () =>
-        new ApplePayButtonStrategy(
-            store,
-            checkoutActionCreator,
-            requestSender,
-            paymentMethodActionCreator,
-            consignmentActionCreator,
-            billingAddressActionCreator,
-            paymentActionCreator,
-            remoteCheckoutActionCreator,
-            orderActionCreator,
-            new ApplePaySessionFactory()
-        )
-    );
 
     registry.register(CheckoutButtonMethodType.AMAZON_PAY_V2, () =>
         new AmazonPayV2ButtonStrategy(

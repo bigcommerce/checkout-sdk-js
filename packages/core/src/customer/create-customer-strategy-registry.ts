@@ -1,18 +1,15 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import { OrderActionCreator, OrderRequestSender } from '../order';
-import { PaymentActionCreator, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
+import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
-import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BoltScriptLoader } from '../payment/strategies/bolt';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
@@ -20,9 +17,7 @@ import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePay
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
-import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
-import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import createCustomerStrategyRegistryV2 from './create-customer-strategy-registry-v2';
 
 import CustomerActionCreator from './customer-action-creator';
@@ -31,7 +26,6 @@ import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
-import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
@@ -43,7 +37,6 @@ import { StripeUPECustomerStrategy } from './strategies/stripe-upe';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
-    paymentClient: any,
     requestSender: RequestSender,
     locale: string
 ): Registry<CustomerStrategy> {
@@ -250,40 +243,6 @@ export default function createCustomerStrategyRegistry(
                 new GooglePayStripeUPEInitializer()
             ),
             formPoster
-        )
-    );
-
-    registry.register('applepay', () =>
-        new ApplePayCustomerStrategy(
-            store,
-            checkoutActionCreator,
-            requestSender,
-            paymentMethodActionCreator,
-            new ConsignmentActionCreator(
-                new ConsignmentRequestSender(requestSender),
-                new CheckoutRequestSender(requestSender)
-            ),
-            new BillingAddressActionCreator(
-                new BillingAddressRequestSender(requestSender),
-                new SubscriptionsActionCreator(
-                    new SubscriptionsRequestSender(requestSender)
-                )
-            ),
-            new PaymentActionCreator(
-                new PaymentRequestSender(paymentClient),
-                new OrderActionCreator(
-                    new OrderRequestSender(requestSender),
-                    new CheckoutValidator(checkoutRequestSender)
-                ),
-                new PaymentRequestTransformer(),
-                new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
-            ),
-            remoteCheckoutActionCreator,
-            new OrderActionCreator(
-                new OrderRequestSender(requestSender),
-                new CheckoutValidator(checkoutRequestSender)
-            ),
-            new ApplePaySessionFactory()
         )
     );
 
