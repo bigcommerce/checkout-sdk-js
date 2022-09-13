@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.284.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.284.1...v1.284.2) (2022-09-13)
+
+
+### Bug Fixes
+
+* **payment:** ADYEN-540 fixed adyen 3ds2 challenge on googlepay ([3b2bec4](https://github.com/bigcommerce/checkout-sdk-js/commit/3b2bec451615fbaecdeab92ea6f1381b02707c78))
+
 ### [1.284.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.284.0...v1.284.1) (2022-09-12)
 
 
