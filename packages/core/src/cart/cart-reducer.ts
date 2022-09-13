@@ -1,4 +1,4 @@
-import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
@@ -8,6 +8,7 @@ import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateA
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import Cart from './cart';
+import { CartAction, CartActionType } from './cart-actions';
 import CartState, { CartErrorsState, CartStatusesState, DEFAULT_STATE } from './cart-state';
 
 export default function cartReducer(
@@ -25,10 +26,11 @@ export default function cartReducer(
 
 function dataReducer(
     data: Cart | undefined,
-    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CouponAction | GiftCertificateAction
+    action: BillingAddressAction | CartAction | CheckoutAction | ConsignmentAction | CouponAction | GiftCertificateAction
 ): Cart | undefined {
     switch (action.type) {
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
+    case CartActionType.CreateCartSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
     case ConsignmentActionType.DeleteConsignmentSucceeded:
@@ -48,12 +50,15 @@ function dataReducer(
 
 function statusesReducer(
     statuses: CartStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction
+    action: CartAction | CheckoutAction
 ): CartStatusesState {
     switch (action.type) {
+    case CartActionType.CreateCartRequested:
     case CheckoutActionType.LoadCheckoutRequested:
         return objectSet(statuses, 'isLoading', true);
 
+    case CartActionType.CreateCartFailed:
+    case CartActionType.CreateCartSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
     case CheckoutActionType.LoadCheckoutSucceeded:
         return objectSet(statuses, 'isLoading', false);
@@ -65,13 +70,16 @@ function statusesReducer(
 
 function errorsReducer(
     errors: CartErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction
+    action: CartAction | CheckoutAction
 ): CartErrorsState {
     switch (action.type) {
+    case CartActionType.CreateCartRequested:
+    case CartActionType.CreateCartSucceeded:
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
         return objectSet(errors, 'loadError', undefined);
 
+    case CartActionType.CreateCartFailed:
     case CheckoutActionType.LoadCheckoutFailed:
         return objectSet(errors, 'loadError', action.payload);
 

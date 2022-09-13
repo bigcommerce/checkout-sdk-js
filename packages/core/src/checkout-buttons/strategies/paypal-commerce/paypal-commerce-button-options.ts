@@ -1,3 +1,5 @@
+import { CartRequestBody } from '../../../cart';
+
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal-commerce';
 
 export interface PaypalCommerceButtonInitializeOptions {
@@ -7,7 +9,15 @@ export interface PaypalCommerceButtonInitializeOptions {
     style?: PaypalButtonStyleOptions;
 
     /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
+     * Flag which helps to detect that the strategy initializes on Checkout page.
      */
     initializesOnCheckoutPage?: boolean;
+
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitialiseOptions?: {
+        currencyCode: string;
+        getCartRequestBody?(): CartRequestBody | void;
+    }
 }
