@@ -122,7 +122,7 @@ describe('HostedInput', () => {
     it('configures input with expected attributes', () => {
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         expect(element.id)
@@ -133,6 +133,32 @@ describe('HostedInput', () => {
             .toEqual('cc-name');
         expect(element.getAttribute('aria-label'))
             .toEqual('Cardholder name');
+        expect(element.inputMode)
+            .toEqual('text');
+    });
+
+    it('configures card number input with numeric inputmode', () => {
+        const cardNumberInput = new HostedInput(
+            HostedFieldType.CardNumber,
+            container,
+            'Full name',
+            'Cardholder name',
+            'cc-name',
+            styles,
+            fontUrls,
+            eventListener as IframeEventListener<HostedFieldEventMap>,
+            eventPoster as IframeEventPoster<HostedInputEvent>,
+            inputAggregator as HostedInputAggregator,
+            inputValidator as HostedInputValidator,
+            paymentHandler as HostedInputPaymentHandler
+        );
+        cardNumberInput.attach();
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        expect(container.querySelector('input')!.inputMode)
+            .toEqual('numeric');
+
+        cardNumberInput.detach();
     });
 
     it('sets target for event poster', () => {
@@ -152,7 +178,7 @@ describe('HostedInput', () => {
     it('applies default styles to input', () => {
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         expect(element.style.color)
@@ -184,7 +210,7 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '123';
@@ -204,7 +230,7 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('focus', { bubbles: true }));
@@ -223,7 +249,7 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));
@@ -240,7 +266,7 @@ describe('HostedInput', () => {
     it('validates form when input loses focus', () => {
         input.attach();
 
-        // tslint:disable-next-line:no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));
