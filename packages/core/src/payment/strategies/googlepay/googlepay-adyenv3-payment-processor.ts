@@ -23,7 +23,7 @@ export default class GooglePayAdyenV3PaymentProcessor implements GooglePayProvid
         }
 
         this._adyenClient = await this._scriptLoader.load({
-            environment: paymentMethod.config.testMode ? 'TEST' : ' PRODUCTION',
+            environment: paymentMethod.config.testMode ? 'test' : 'live',
             locale: storeConfig.storeProfile.storeLanguage,
             clientKey: paymentMethod.initializationData.clientKey,
             paymentMethodsResponse: paymentMethod.initializationData.paymentMethodsResponse,
