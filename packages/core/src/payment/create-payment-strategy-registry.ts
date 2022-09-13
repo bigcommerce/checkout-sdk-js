@@ -51,7 +51,7 @@ import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { ExternalPaymentStrategy } from './strategies/external';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAdyenV3Initializer, GooglePayAdyenV3PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCheckoutcomPaymentProcessor, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAdyenV3Initializer, GooglePayAdyenV3PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBNZInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCheckoutcomPaymentProcessor, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader, KlarnaV2TokenUpdater } from './strategies/klarnav2';
@@ -448,6 +448,21 @@ export default function createPaymentStrategyRegistry(
             createGooglePayPaymentProcessor(
                 store,
                 new GooglePayCybersourceV2Initializer()
+            )
+        )
+    );
+
+    registry.register(PaymentStrategyType.BNZ_GOOGLEPAY, () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBNZInitializer()
             )
         )
     );

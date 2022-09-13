@@ -188,6 +188,11 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
     });
 
+    it('can instantiate googlepaybnz', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BNZ_GOOGLEPAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
     it('can instantiate digitalRiver', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.DIGITALRIVER);
 

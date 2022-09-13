@@ -100,6 +100,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             return options.googlepayauthorizenet;
         }
 
+        if (options.methodId === MethodType.GOOGLEPAY_BNZ && options.googlepaybnz) {
+            return options.googlepaybnz;
+        }
+
         if (options.methodId === MethodType.GOOGLEPAY_BRAINTREE && options.googlepaybraintree) {
             return options.googlepaybraintree;
         }

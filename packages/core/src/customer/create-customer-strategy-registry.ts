@@ -16,7 +16,7 @@ import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BoltScriptLoader } from '../payment/strategies/bolt';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
-import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV3Initializer, GooglePayAuthorizeNetInitializer, GooglePayBNZInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -172,6 +172,18 @@ export default function createCustomerStrategyRegistry(
             createGooglePayPaymentProcessor(
                 store,
                 new GooglePayAuthorizeNetInitializer()
+            ),
+            formPoster
+        )
+    );
+
+    registry.register('googlepaybnz', () =>
+        new GooglePayCustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBNZInitializer()
             ),
             formPoster
         )

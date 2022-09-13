@@ -87,6 +87,26 @@ export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): Cus
      }
 }
 
+export function getBNZCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepaybnz' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayBNZ = { googlepaybnz: { ...container } };
+    const googlepayBNZWithInvalidContainer = { googlepaybnz: { ...invalidContainer } };
+
+    switch (mode) {
+        case Mode.Incomplete:
+            return { ...methodId };
+        case Mode.UndefinedMethodId:
+            return { ...undefinedMethodId, ...googlepayBNZ };
+        case Mode.InvalidContainer:
+            return { ...methodId, ...googlepayBNZWithInvalidContainer };
+        default:
+            return { ...methodId, ...googlepayBNZ };
+     }
+}
+
 export function getBraintreeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaybraintree' };
     const undefinedMethodId = { methodId: undefined };
