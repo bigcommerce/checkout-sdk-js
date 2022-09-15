@@ -17,7 +17,6 @@ export enum BaseCheckoutButtonMethodType {
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
     PAYPALCOMMERCE = 'paypalcommerce',
-    PAYPALCOMMERCEV2 = 'paypalcommercev2', // TODO: should be removed when PAYPAL-1539 hits Tier3
     PAYPALCOMMERCE_CREDIT = 'paypalcommercecredit',
     PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods',
     PAYPALCOMMERCE_INLINE = 'paypalcommerceinline',

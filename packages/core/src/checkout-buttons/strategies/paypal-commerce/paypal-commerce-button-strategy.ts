@@ -37,19 +37,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const { initializesOnCheckoutPage, style } = paypalcommerce;
 
-        // Info: it's a temporary decision until we have v1 and v2 version methodIds.
-        // TODO: should be removed when PAYPAL-1539 hits Tier3
-        const updatedMethodId = methodId === 'paypalcommercev2' ? 'paypalcommerce' : methodId;
-
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currencyCode = state.cart.getCartOrThrow().currency.code;
-
-        // TODO: should be updated when PAYPAL-1539 hits Tier3
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(updatedMethodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
 
-        // TODO: should be updated when PAYPAL-1539 hits Tier3
-        this._renderButton(containerId, updatedMethodId, initializesOnCheckoutPage, style);
+        this._renderButton(containerId, methodId, initializesOnCheckoutPage, style);
     }
 
     deinitialize(): Promise<void> {

@@ -20,16 +20,6 @@ import {
 import CheckoutButtonRegistryV2 from "./checkout-button-strategy-registry-v2";
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from "./strategies";
 
-// TODO: should be removed when PAYPAL-1539 hits Tier3
-const methodMap: { [key: string]: CheckoutButtonMethodType | undefined } = {
-    [CheckoutButtonMethodType.PAYPALCOMMERCEV2]: CheckoutButtonMethodType.PAYPALCOMMERCE,
-};
-
-// TODO: should be removed when PAYPAL-1539 hits Tier3
-const mapCheckoutButtonMethodId = (methodId: CheckoutButtonMethodType) => {
-    return methodMap[methodId] || methodId;
-};
-
 export default class CheckoutButtonStrategyActionCreator {
     constructor(
         private _registry: Registry<CheckoutButtonStrategy>,
@@ -66,7 +56,7 @@ export default class CheckoutButtonStrategyActionCreator {
                     )
                 ),
                 this._paymentMethodActionCreator.loadPaymentMethod(
-                    mapCheckoutButtonMethodId(options.methodId), // TODO: the line should be updated with 'options.methodId,' when PAYPAL-1539 hits Tier3
+                    options.methodId,
                     { timeout: options.timeout, useCache: true }
                 )(store),
                 defer(() =>

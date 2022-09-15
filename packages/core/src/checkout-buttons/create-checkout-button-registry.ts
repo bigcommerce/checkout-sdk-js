@@ -253,17 +253,6 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    // TODO: should be removed when PAYPAL-1539 hits Tier3
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCEV2, () =>
-        new PaypalCommerceButtonStrategy(
-            store,
-            checkoutActionCreator,
-            formPoster,
-            paypalScriptLoader,
-            paypalCommerceRequestSender
-        )
-    );
-
     registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_CREDIT, () =>
         new PaypalCommerceCreditButtonStrategy(
             store,
