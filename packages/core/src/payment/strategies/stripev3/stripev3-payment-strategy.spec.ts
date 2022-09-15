@@ -728,6 +728,44 @@ describe('StripeV3PaymentStrategy', () => {
                     expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
                 });
 
+                it('throws stripe error when confirm fails but 3DS is accepted', async () => {
+                    const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [
+                            { code: 'three_d_secure_required' },
+                        ],
+                        three_ds_result: {
+                            token: 'token',
+                        },
+                    }));
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
+                        .mockReturnValueOnce(submitPaymentAction);
+
+                    stripeV3JsMock.confirmCardPayment = jest.fn(() => Promise.reject(new Error('Error with 3ds')));
+
+                    await strategy.initialize(options);
+                    await strategy.execute(getStripeV3OrderRequestBodyVaultMock());
+
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                bigpay_token: { token: 'token' },
+                            }),
+                        }),
+                    }));
+                    expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                credit_card_token: { token: 'token' },
+                            }),
+                        }),
+                    }));
+                    expect(stripeV3JsMock.confirmCardPayment).toHaveBeenCalled();
+                });
+
                 it('throws stripe error when user closes the auth modal', async () => {
                     const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
                         ...getErrorPaymentResponseBody(),
@@ -794,6 +832,17 @@ describe('StripeV3PaymentStrategy', () => {
                     await strategy.initialize(options);
 
                     await expect(strategy.execute(getStripeV3OrderRequestBodyVaultMock())).rejects.toThrow('User did not authenticate');
+                });
+
+                it('throws unknown error when process additional action', async () => {
+                    const unknownError = new Error('Unknown error');
+
+                    jest.spyOn(paymentActionCreator, 'submitPayment')
+                        .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, unknownError)));
+
+                    await strategy.initialize(options);
+
+                    await expect(strategy.execute(getStripeV3OrderRequestBodyVaultMock())).rejects.toThrow('Unknown error');
                 });
 
                 it('throws unknown stripe error when user closes the auth modal', async () => {

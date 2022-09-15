@@ -488,12 +488,16 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         if (isThreeDSecureRequiredError) {
             const clientSecret = error.body.three_ds_result.token;
             const needsConfirm = false;
+            let catchedConfirmError = false;
+            let result;
 
-            const result = await this._getStripeJs().confirmCardPayment(clientSecret);
+            try {
+                result = await this._getStripeJs().confirmCardPayment(clientSecret);
+            } catch (error) {
+                catchedConfirmError = true;
+            }
 
-            const { id: token } = result.paymentIntent || { id: '' };
-
-            if (result.error) {
+            if (result?.error) {
                 if (this._isCancellationError(result.error)) {
                     throw new PaymentMethodCancelledError();
                 }
@@ -504,6 +508,8 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
                 throw new Error(result.error.message);
             }
+
+            const token = this._getPaymentToken(result?.paymentIntent, clientSecret, catchedConfirmError);
 
             const formattedPayload = {
                 credit_card_token: { token },
@@ -516,11 +522,19 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             try {
                 return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
             } catch (error) {
-                throw this._handleEmptyPaymentIntentError(error, result.error);
+                throw this._handleEmptyPaymentIntentError(error, result?.error);
             }
         }
 
         throw error;
+    }
+
+    private _getPaymentToken(paymentIntent: PaymentIntent | undefined, clientSecret: string, catchedConfirmError: boolean): string {
+        if (!paymentIntent || catchedConfirmError) {
+            return clientSecret;
+        }
+
+        return paymentIntent.id;
     }
 
     private _shouldShowTSVHostedForm(methodId: string, gatewayId: string): boolean {
