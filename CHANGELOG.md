@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.285.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.285.0...v1.285.1) (2022-09-15)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-106 Added a catch in case an exception occurs when confirming the payment using 3DS2 ([#1576](https://github.com/bigcommerce/checkout-sdk-js/issues/1576)) ([c60f7af](https://github.com/bigcommerce/checkout-sdk-js/commit/c60f7affc6f7506d785178051c1fa294f1b6b153))
+
 ## [1.285.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.284.2...v1.285.0) (2022-09-15)
 
 
