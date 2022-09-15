@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.285.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.284.2...v1.285.0) (2022-09-15)
+
+
+### Features
+
+* **payment:** INT-5494 Worldpayaccess - Support vaulting ([#1584](https://github.com/bigcommerce/checkout-sdk-js/issues/1584)) ([c441bd8](https://github.com/bigcommerce/checkout-sdk-js/commit/c441bd8967f5becf33c3bf5faa956470c8f44e9c))
+
 ### [1.284.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.284.1...v1.284.2) (2022-09-13)
 
 
