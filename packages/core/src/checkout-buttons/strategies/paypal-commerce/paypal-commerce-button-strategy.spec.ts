@@ -45,7 +45,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
-        methodId: CheckoutButtonMethodType.PAYPALCOMMERCEV2,
+        methodId: CheckoutButtonMethodType.PAYPALCOMMERCE,
         containerId: defaultButtonContainerId,
         paypalcommerce: paypalCommerceOptions,
     };
@@ -53,7 +53,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     beforeEach(() => {
         cartMock = getCart();
         eventEmitter = new EventEmitter();
-        paymentMethodMock = { ...getPaypalCommerce(), id: 'paypalcommercev2' }; // TODO: remove paypalcommercev2 id when the strategy will be removed to PayPalCommerceButtonStrategy
+        paymentMethodMock = getPaypalCommerce();
         paypalSdkMock = getPaypalCommerceMock();
 
         store = createCheckoutStore(getCheckoutStoreState());
@@ -133,7 +133,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         });
 
         it('throws an error if containerId is not provided', async () => {
-            const options = { methodId: CheckoutButtonMethodType.PAYPALCOMMERCEV2 } as CheckoutButtonInitializeOptions;
+            const options = { methodId: CheckoutButtonMethodType.PAYPALCOMMERCE } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -145,7 +145,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         it('throws an error if paypalcommerce is not provided', async () => {
             const options = {
                 containerId: defaultButtonContainerId,
-                methodId: CheckoutButtonMethodType.PAYPALCOMMERCEV2,
+                methodId: CheckoutButtonMethodType.PAYPALCOMMERCE,
             } as CheckoutButtonInitializeOptions;
 
             try {
@@ -286,8 +286,7 @@ describe('PaypalCommerceButtonStrategy', () => {
                 action: 'set_external_checkout',
                 order_id: approveDataOrderId,
                 payment_type: 'paypal',
-                // provider: paymentMethodMock.id,
-                provider: 'paypalcommerce', // TODO: should be updated to paymentMethodMock.id when 'paypalcommercev2' will be updated with 'paypalcommerce'
+                provider: paymentMethodMock.id,
             }));
         });
     });

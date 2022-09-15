@@ -78,11 +78,6 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('paypalcommerce')).toEqual(expect.any(PaypalCommerceButtonStrategy));
     });
 
-    // TODO: should be removed when PAYPAL-1539 hits Tier3
-    it('returns registry with PayPal Commerce V2 registered', () => {
-        expect(registry.get('paypalcommercev2')).toEqual(expect.any(PaypalCommerceButtonStrategy));
-    });
-
     it('returns registry with PayPal Commerce Venmo registered', () => {
         expect(registry.get('paypalcommercevenmo')).toEqual(expect.any(PaypalCommerceVenmoButtonStrategy));
     });
