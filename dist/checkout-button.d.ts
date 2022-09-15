@@ -290,11 +290,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     paypal?: PaypalButtonInitializeOptions;
     /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support Paypal.
-     */
-    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
-    /**
      * The options that are required to facilitate PayPal Commerce V2. They can be omitted
      * unless you need to support Paypal Commerce.
      */
@@ -527,7 +522,6 @@ declare enum CheckoutButtonMethodType {
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
     PAYPALCOMMERCE = "paypalcommerce",
-    PAYPALCOMMERCEV2 = "paypalcommercev2",
     PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
     PAYPALCOMMERCE_INLINE = "paypalcommerceinline",

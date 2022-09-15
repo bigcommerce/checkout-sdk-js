@@ -34,7 +34,6 @@
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
 - [params](BaseCheckoutButtonInitializeOptions.md#params)
 - [paypal](BaseCheckoutButtonInitializeOptions.md#paypal)
-- [paypalCommerce](BaseCheckoutButtonInitializeOptions.md#paypalcommerce)
 - [paypalcommerce](BaseCheckoutButtonInitializeOptions.md#paypalcommerce)
 - [paypalcommercealternativemethods](BaseCheckoutButtonInitializeOptions.md#paypalcommercealternativemethods)
 - [paypalcommercecredit](BaseCheckoutButtonInitializeOptions.md#paypalcommercecredit)
@@ -207,15 +206,6 @@ ___
 • `Optional` **paypal**: [`PaypalButtonInitializeOptions`](PaypalButtonInitializeOptions.md)
 
 The options that are required to facilitate PayPal. They can be omitted
-unless you need to support Paypal.
-
-___
-
-### paypalCommerce
-
-• `Optional` **paypalCommerce**: [`PaypalCommerceButtonInitializeOptions`](PaypalCommerceButtonInitializeOptions.md)
-
-The options that are required to facilitate PayPal Commerce. They can be omitted
 unless you need to support Paypal.
 
 ___
