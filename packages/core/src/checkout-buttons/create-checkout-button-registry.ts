@@ -249,7 +249,10 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             formPoster,
             paypalScriptLoader,
-            paypalCommerceRequestSender
+            paypalCommerceRequestSender,
+            consignmentActionCreator,
+            billingAddressActionCreator,
+            // paymentActionCreator
         )
     );
 
