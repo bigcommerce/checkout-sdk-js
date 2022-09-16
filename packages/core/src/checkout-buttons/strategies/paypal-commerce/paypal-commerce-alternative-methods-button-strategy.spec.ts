@@ -281,34 +281,34 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, 'paypalcommercealternativemethodscheckout');
         });
 
-        // it('throws an error if orderId is not provided by PayPal on approve', async () => {
-        //     jest.spyOn(paypalSdkMock, 'Buttons')
-        //         .mockImplementation((options: ButtonsOptions) => {
-        //             eventEmitter.on('createOrder', () => {
-        //                 if (options.createOrder) {
-        //                     options.createOrder().catch(() => {});
-        //                 }
-        //             });
-        //
-        //             eventEmitter.on('onApprove', () => {
-        //                 if (options.onApprove) {
-        //                     options.onApprove({ orderID: undefined });
-        //                 }
-        //             });
-        //
-        //             return {
-        //                 isEligible: jest.fn(() => true),
-        //                 render: jest.fn(),
-        //             };
-        //         });
-        //
-        //     try {
-        //         await strategy.initialize(initializationOptions);
-        //         eventEmitter.emit('onApprove');
-        //     } catch (error) {
-        //         expect(error).toBeInstanceOf(MissingDataError);
-        //     }
-        // });
+        it('throws an error if orderId is not provided by PayPal on approve', async () => {
+            jest.spyOn(paypalSdkMock, 'Buttons')
+                .mockImplementation((options: ButtonsOptions) => {
+                    eventEmitter.on('createOrder', () => {
+                        if (options.createOrder) {
+                            options.createOrder().catch(() => {});
+                        }
+                    });
+
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({ orderID: undefined });
+                        }
+                    });
+
+                    return {
+                        isEligible: jest.fn(() => true),
+                        render: jest.fn(),
+                    };
+                });
+
+            try {
+                await strategy.initialize(initializationOptions);
+                eventEmitter.emit('onApprove');
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
 
         it('tokenizes payment on paypal approve', async () => {
             await strategy.initialize(initializationOptions);
