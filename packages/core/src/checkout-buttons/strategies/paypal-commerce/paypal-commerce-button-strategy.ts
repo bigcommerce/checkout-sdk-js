@@ -3,22 +3,13 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import {
-    ApproveDataOptions,
-    ButtonsOptions1, CompleteCallbackDataPayload,
-    PaypalButtonStyleOptions,
-    PaypalCommerceRequestSender,
-    PaypalCommerceScriptLoader,
-    PaypalCommerceSDK,
-    ShippingAddressChangeCallbackPayload,
-    ShippingOptionChangeCallbackPayload
-} from "../../../payment/strategies/paypal-commerce";
+import { ButtonsOptions1, CompleteCallbackDataPayload, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from "../../../payment/strategies/paypal-commerce";
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import getValidButtonStyle from './get-valid-button-style';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
-// import { PaymentActionCreator } from '../../../payment';
+import { PaymentActionCreator } from '../../../payment';
 import { ConsignmentActionCreator, ShippingOption } from "../../../shipping";
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
@@ -32,7 +23,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        // private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -75,8 +66,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
         ...(isHostedCheckoutEnabled && { onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data)}),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onComplete: (data: CompleteCallbackDataPayload) => console.log(data),
-            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
+            onComplete: (data: CompleteCallbackDataPayload) => this._onCompleteHandler(data, methodId, isHostedCheckoutEnabled),
         };
 
         const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -86,6 +76,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         } else {
             this._removeElement(containerId);
         }
+    }
+
+    private async _onCompleteHandler(data: CompleteCallbackDataPayload, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
+        const { orderID } = data;
+        isHostedCheckoutEnabled ?
+           await this._onComplete(data, methodId):
+           this._tokenizePayment(methodId, orderID);
     }
 
     private async _onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void> {
@@ -114,33 +111,33 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         await this._updateOrder();
     }
 
-    // private async _onComplete(
-    //     data: CompleteCallbackDataPayload,
-    //     methodId: string,
-    //     callback?: () => void
-    // ): Promise<void> {
-    //     await this._submitPayment(methodId, data.orderID);
-    //
-    //     if (callback) {
-    //         callback();
-    //     }
-    // }
+    private async _onComplete(
+        data: CompleteCallbackDataPayload,
+        methodId: string,
+        callback?: () => void
+    ): Promise<void> {
+        await this._submitPayment(methodId, data.orderID);
 
-    // private async _submitPayment(methodId: string, orderId: string): Promise<void> {
-    //     const paymentData =  {
-    //         formattedPayload: {
-    //             vault_payment_instrument: null,
-    //             set_as_default_stored_instrument: null,
-    //             device_info: null,
-    //             method_id: methodId,
-    //             paypal_account: {
-    //                 order_id: orderId,
-    //             },
-    //         },
-    //     };
-    //
-    //     await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
-    // }
+        if (callback) {
+            callback();
+        }
+    }
+
+    private async _submitPayment(methodId: string, orderId: string): Promise<void> {
+        const paymentData =  {
+            formattedPayload: {
+                vault_payment_instrument: null,
+                set_as_default_stored_instrument: null,
+                device_info: null,
+                method_id: methodId,
+                paypal_account: {
+                    order_id: orderId,
+                },
+            },
+        };
+
+        await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
+    }
 
     private async _updateOrder(): Promise<void> {
         const state = this._store.getState();
