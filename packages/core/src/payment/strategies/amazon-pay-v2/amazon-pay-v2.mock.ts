@@ -6,7 +6,10 @@ import { AmazonPayV2ButtonColor, AmazonPayV2CheckoutLanguage, AmazonPayV2LedgerC
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
         Pay: {
-            renderButton: jest.fn(),
+            renderButton: jest.fn().mockReturnValue({
+                onClick: jest.fn(),
+                initCheckout: jest.fn(),
+            }),
             bindChangeAction: jest.fn(),
             signout: jest.fn(),
         },

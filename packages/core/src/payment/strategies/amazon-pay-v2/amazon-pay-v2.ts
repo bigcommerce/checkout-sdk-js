@@ -8,6 +8,18 @@ export interface AmazonPayV2SDK {
     Pay: AmazonPayV2Client;
 }
 
+export interface AmazonPayV2Button {
+    /**
+     * Allows you to define custom actions.
+     */
+    onClick: (callback: () => void) => void;
+
+    /**
+     * Initiates the Amazon Pay checkout.
+     */
+    initCheckout(requestConfig: { createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig }): void;
+}
+
 export type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
 
 export interface AmazonPayV2Client {
@@ -17,7 +29,7 @@ export interface AmazonPayV2Client {
      * @param containerId - HTML element id.
      * @param params - Button rendering params.
      */
-    renderButton(containerId: string, params: AmazonPayV2ButtonParameters): HTMLElement;
+    renderButton(containerId: string, params: AmazonPayV2ButtonParameters): AmazonPayV2Button;
 
     /**
      * Bind click events to HTML elements, so that when the element is clicked, the buyer can select a different shipping address or payment method.
@@ -100,7 +112,7 @@ export interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
     /**
      * Create Checkout Session configuration.
      */
-    createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
+    createCheckoutSessionConfig?: AmazonPayV2CheckoutSessionConfig;
 }
 
 export interface AmazonPayV2CheckoutSession {
