@@ -15,7 +15,7 @@ import {
     createCheckoutStore
 } from "../../../checkout";
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentActionCreator, PaymentMethod, PaymentRequestSender, PaymentRequestTransformer } from "../../../payment";
@@ -28,9 +28,8 @@ import CheckoutButtonMethodType from '../checkout-button-method-type';
 import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from "../../../subscription";
-import { OrderActionCreator } from "@bigcommerce/checkout-sdk/core";
 import { createSpamProtection, PaymentHumanVerificationHandler } from "../../../spam-protection";
-import { OrderRequestSender } from "../../../order";
+import { OrderActionCreator, OrderRequestSender } from "../../../order";
 
 describe('PaypalCommerceButtonStrategy', () => {
     let cartMock: Cart;
