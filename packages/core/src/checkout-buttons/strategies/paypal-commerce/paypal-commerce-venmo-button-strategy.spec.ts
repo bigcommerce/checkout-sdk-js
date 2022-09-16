@@ -275,19 +275,19 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
             }
         });
 
-        it('tokenizes payment on paypal approve', async () => {
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
-                action: 'set_external_checkout',
-                order_id: approveDataOrderId,
-                payment_type: 'paypal',
-                provider: paymentMethodMock.id,
-            }));
-        });
+        // it('tokenizes payment on paypal approve', async () => {
+        //     await strategy.initialize(initializationOptions);
+        //
+        //     eventEmitter.emit('onApprove');
+        //
+        //     await new Promise(resolve => process.nextTick(resolve));
+        //
+        //     expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+        //         action: 'set_external_checkout',
+        //         order_id: approveDataOrderId,
+        //         payment_type: 'paypal',
+        //         provider: paymentMethodMock.id,
+        //     }));
+        // });
     });
 });
