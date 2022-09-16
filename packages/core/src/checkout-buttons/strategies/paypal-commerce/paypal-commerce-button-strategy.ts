@@ -5,7 +5,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '.
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import {
     ApproveDataOptions,
-    ButtonsOptions, CompleteCallbackDataPayload,
+    ButtonsOptions1, CompleteCallbackDataPayload,
     PaypalButtonStyleOptions,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
@@ -67,7 +67,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
 
-        const buttonRenderOptions: ButtonsOptions = {
+        const buttonRenderOptions: ButtonsOptions1 = {
             fundingSource: paypalCommerceSdk.FUNDING.PAYPAL,
             style: style ? this._getButtonStyle(style) : {},
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
