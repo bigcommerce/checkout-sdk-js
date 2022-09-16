@@ -10,19 +10,16 @@ import {
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
     PaypalCommerceSDK,
-    ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload
+    ShippingAddressChangeCallbackPayload,
+    ShippingOptionChangeCallbackPayload
 } from "../../../payment/strategies/paypal-commerce";
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import getValidButtonStyle from './get-valid-button-style';
-import {
-    BillingAddressActionCreator,
-    BillingAddressRequestBody,
-    ConsignmentActionCreator,
-    // PaymentActionCreator
-} from "@bigcommerce/checkout-sdk/core";
-import { ShippingOption } from "../../../shipping";
+import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
+// import { PaymentActionCreator } from '../../../payment';
+import { ConsignmentActionCreator, ShippingOption } from "../../../shipping";
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCommerceSdk?: PaypalCommerceSDK;
