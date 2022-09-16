@@ -55,23 +55,25 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         const currencyCode = state.cart.getCartOrThrow().currency.code;
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { initializationData } = paymentMethod;
+        const { isHostedCheckoutEnabled } = initializationData;
         this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
 
-        this._renderButton(containerId, methodId, initializesOnCheckoutPage, style);
+        this._renderButton(containerId, methodId, initializesOnCheckoutPage, style, isHostedCheckoutEnabled);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
+    private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions, isHostedCheckoutEnabled?: boolean): void {
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
 
         const buttonRenderOptions: ButtonsOptions1 = {
             fundingSource: paypalCommerceSdk.FUNDING.PAYPAL,
             style: style ? this._getButtonStyle(style) : {},
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
+        ...(isHostedCheckoutEnabled && { onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data)}),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
             onComplete: (data: CompleteCallbackDataPayload) => console.log(data),
             onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),

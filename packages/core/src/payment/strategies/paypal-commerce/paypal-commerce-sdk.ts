@@ -161,7 +161,7 @@ export interface ButtonsOptions1 {
     createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
     onApprove?(data: ApproveDataOptions): void;
     onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void>;
-    onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onComplete(data: CompleteCallbackDataPayload): void;
