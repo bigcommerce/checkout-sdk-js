@@ -102,11 +102,18 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
            this._tokenizePayment(methodId, orderID);
     }
 
-    private _onCancel() {
-        this._resetAddress(this._shippingAddress);
+    private async _onCancel() {
+      const resetAddress = this._resetAddress(this._shippingAddress);
+        await this._store.dispatch(this._billingAddressActionCreator.updateAddress(resetAddress));
+        await this._store.dispatch(this._consignmentActionCreator.updateAddress(resetAddress));
+
+        const shippingOption = this._getShippingOptionOrThrow();
+
+        await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
+        await this._updateOrder();
     }
 
-    private _resetAddress(address: Partial<BillingAddressRequestBody>) {
+    private _resetAddress(address: BillingAddressRequestBody) {
         const { firstName, lastName, address1, email } = address;
 
         return {
