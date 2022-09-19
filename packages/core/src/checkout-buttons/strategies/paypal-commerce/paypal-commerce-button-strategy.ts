@@ -133,6 +133,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
         await this._submitPayment(methodId, data.orderID);
+        window.location.assign('/checkout/order-confirmation');
 
         return true;
     }
