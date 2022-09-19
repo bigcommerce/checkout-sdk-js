@@ -156,16 +156,15 @@ export interface PaypalCheckoutButtonOptions {
 }
 
 export interface ButtonsOptions1 {
+    experience?: string;
     style?: PaypalButtonStyleOptions;
-    fundingSource?: string;
-    createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
-    onApprove(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<void>;
-    onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void>;
-    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
-    onClick?(data: ClickDataOptions, actions: ClickActions): void;
-    onCancel?(): void;
-    onComplete(data: CompleteCallbackDataPayload): void;
+    fundingSource: string;
+    createOrder(): Promise<string>;
     onError?(error: Error): void;
+    onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+    onApprove(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<void>;
+    onComplete(data: CompleteCallbackDataPayload): void;
 }
 
 
@@ -315,7 +314,7 @@ export interface PaypalCommerceSDK {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons(params: ButtonsOptions1 | PaypalCheckoutButtonOptions): PaypalCommerceButtons;
+    Buttons(params: ButtonsOptions1 | PaypalCheckoutButtonOptions | ButtonsOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
