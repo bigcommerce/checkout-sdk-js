@@ -105,7 +105,8 @@ describe('PaypalCommerceButtonStrategy', () => {
             paypalCommerceRequestSender,
             consignmentActionCreator,
             billingAddressActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
+            orderActionCreator
         );
 
         paypalButtonElement = document.createElement('div');
