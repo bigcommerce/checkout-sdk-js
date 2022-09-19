@@ -3,7 +3,19 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ButtonsOptions1, CompleteCallbackDataPayload, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from "../../../payment/strategies/paypal-commerce";
+import {
+    ApproveCallbackActions,
+    ApproveCallbackPayload,
+    ButtonsOptions1,
+    CompleteCallbackDataPayload,
+    PaypalButtonStyleOptions,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK, PayPalOrderAddress,
+    PayPalOrderDetails,
+    ShippingAddressChangeCallbackPayload,
+    ShippingOptionChangeCallbackPayload
+} from "../../../payment/strategies/paypal-commerce";
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -11,6 +23,7 @@ import getValidButtonStyle from './get-valid-button-style';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
 import { PaymentActionCreator } from '../../../payment';
 import { ConsignmentActionCreator, ShippingOption } from "../../../shipping";
+import { OrderActionCreator } from "@bigcommerce/checkout-sdk/core";
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCommerceSdk?: PaypalCommerceSDK;
@@ -23,7 +36,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
+        private _orderActionCreator: OrderActionCreator,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -66,7 +80,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
         ...(isHostedCheckoutEnabled && { onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data)}),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onComplete: (data: CompleteCallbackDataPayload) => this._onCompleteHandler(data, methodId, isHostedCheckoutEnabled),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onAproveHandler(data, actions,methodId, isHostedCheckoutEnabled),
+            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId)
         };
 
         const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -78,11 +93,63 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private async _onCompleteHandler(data: CompleteCallbackDataPayload, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
+    private async _onAproveHandler(data: ApproveCallbackPayload, actions: ApproveCallbackActions, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
         const { orderID } = data;
         isHostedCheckoutEnabled ?
-           await this._onComplete(data, methodId):
+            await this._onApprove(data, actions, methodId):
            this._tokenizePayment(methodId, orderID);
+    }
+
+    private async _onApprove(
+        data: ApproveCallbackPayload,
+        actions: ApproveCallbackActions,
+        methodId: string,
+    ): Promise<boolean> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const orderDetails = await actions.order.get();
+
+        if (cart.lineItems.physicalItems.length > 0) {
+            const address = this._getValidAddress(
+                orderDetails.payer.name,
+                orderDetails.payer.email_address,
+                orderDetails.purchase_units[0].shipping.address
+            );
+
+            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
+            await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
+            await this._updateOrder();
+        } else {
+            const address = this._getValidAddress(
+                orderDetails.payer.name,
+                orderDetails.payer.email_address,
+                orderDetails.payer.address
+            );
+
+            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
+        }
+
+        await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
+        await this._submitPayment(methodId, data.orderID);
+
+        return true;
+    }
+
+    private _getValidAddress(
+        payerName: PayPalOrderDetails['payer']['name'],
+        email: string,
+        address: PayPalOrderAddress,
+    ) {
+        return this._transformAddress({
+            firstName: payerName.given_name,
+            lastName: payerName.surname,
+            email,
+            address1: address?.address_line_1,
+            city: address?.admin_area_2,
+            countryCode: address?.country_code,
+            postalCode: address?.postal_code,
+            stateOrProvinceCode: address?.admin_area_1,
+        });
     }
 
     private async _onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void> {

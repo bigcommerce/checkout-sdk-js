@@ -159,7 +159,7 @@ export interface ButtonsOptions1 {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
-    onApprove?(data: ApproveDataOptions): void;
+    onApprove(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<void>;
     onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void>;
     onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
@@ -315,7 +315,7 @@ export interface PaypalCommerceSDK {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons(params: ButtonsOptions | PaypalCheckoutButtonOptions): PaypalCommerceButtons;
+    Buttons(params: ButtonsOptions1 | PaypalCheckoutButtonOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
