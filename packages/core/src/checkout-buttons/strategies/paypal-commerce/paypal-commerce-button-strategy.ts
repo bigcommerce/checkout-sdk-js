@@ -23,7 +23,7 @@ import getValidButtonStyle from './get-valid-button-style';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
 import { PaymentActionCreator } from '../../../payment';
 import { ConsignmentActionCreator, ShippingOption } from "../../../shipping";
-import { OrderActionCreator } from "@bigcommerce/checkout-sdk/core";
+import { OrderActionCreator } from '../../../order';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCommerceSdk?: PaypalCommerceSDK;
