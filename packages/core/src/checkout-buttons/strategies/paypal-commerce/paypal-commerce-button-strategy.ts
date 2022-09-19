@@ -42,7 +42,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const { paypalcommerce, containerId, methodId } = options
+        const { paypalcommerce, containerId, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
@@ -103,7 +103,19 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private _onCancel() {
-        console.log('ADDRESS', this._shippingAddress);
+        this._resetAddress(this._shippingAddress);
+    }
+
+    private _resetAddress(address: Partial<BillingAddressRequestBody>) {
+        const { firstName, lastName, address1, email } = address;
+
+        return {
+            ...address,
+            firstName: firstName !== 'Fake' ? firstName : '',
+            lastName: lastName !== 'Fake' ? lastName : '',
+            address1: address1 !== 'Fake street' ? address1 : '',
+            email: email !== 'fake@fake.fake' ? email : '',
+        }
     }
 
     private async _onApprove(
