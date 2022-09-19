@@ -259,20 +259,6 @@ describe('PaypalCommerceButtonStrategy', () => {
             expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalled();
         });
 
-        // it('initializes PayPal button to render', async () => {
-        //     await strategy.initialize(initializationOptions);
-        //
-        //     expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-        //         fundingSource: paypalSdkMock.FUNDING.PAYPAL,
-        //         style: paypalCommerceOptions.style,
-        //         createOrder: expect.any(Function),
-        //         onApprove: expect.any(Function),
-        //         onComplete: expect.any(Function),
-        //         onShippingAddressChange: expect.any(Function),
-        //         onShippingOptionsChange: expect.any(Function),
-        //     });
-        // });
-
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 

@@ -26,6 +26,7 @@ import { ConsignmentActionCreator, ShippingOption } from "../../../shipping";
 import { OrderActionCreator } from '../../../order';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
+    private _shippingAddress: any;
     private _paypalCommerceSdk?: PaypalCommerceSDK;
 
     constructor(
@@ -81,7 +82,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         ...(isHostedCheckoutEnabled && { onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data)}),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onApproveHandler(data, actions,methodId, isHostedCheckoutEnabled),
-            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId)
+            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId),
+            onCancel: () => this._onCancel(),
         };
 
         const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -95,10 +97,13 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private async _onApproveHandler(data: ApproveCallbackPayload, actions: ApproveCallbackActions, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
         const { orderID } = data;
-        console.log('isHostedCheckoutEnabled', isHostedCheckoutEnabled);
         isHostedCheckoutEnabled ?
             await this._onApprove(data, actions, methodId):
            this._tokenizePayment(methodId, orderID);
+    }
+
+    private _onCancel() {
+        console.log('ADDRESS', this._shippingAddress);
     }
 
     private async _onApprove(
@@ -106,7 +111,6 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         actions: ApproveCallbackActions,
         methodId: string,
     ): Promise<boolean> {
-        console.log('ONAPPROVE');
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const orderDetails = await actions.order.get();
@@ -128,6 +132,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 orderDetails.payer.address
             );
 
+
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
         }
 
@@ -137,6 +142,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
         return true;
     }
+
+
 
     private _getValidAddress(
         payerName: PayPalOrderDetails['payer']['name'],
@@ -162,6 +169,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             postalCode: data.shippingAddress.postal_code,
             stateOrProvinceCode: data.shippingAddress.state,
         });
+
+        this._shippingAddress = address;
 
         // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
         // on this stage we don't have access to valid customer's address accept shipping data
