@@ -80,7 +80,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
         ...(isHostedCheckoutEnabled && { onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data)}),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onAproveHandler(data, actions,methodId, isHostedCheckoutEnabled),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onApproveHandler(data, actions,methodId, isHostedCheckoutEnabled),
             onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId)
         };
 
@@ -93,7 +93,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private async _onAproveHandler(data: ApproveCallbackPayload, actions: ApproveCallbackActions, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
+    private async _onApproveHandler(data: ApproveCallbackPayload, actions: ApproveCallbackActions, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
         const { orderID } = data;
         isHostedCheckoutEnabled ?
             await this._onApprove(data, actions, methodId):
