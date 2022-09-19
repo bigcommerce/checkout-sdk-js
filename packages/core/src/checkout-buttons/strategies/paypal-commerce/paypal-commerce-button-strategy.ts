@@ -95,6 +95,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private async _onApproveHandler(data: ApproveCallbackPayload, actions: ApproveCallbackActions, methodId: string, isHostedCheckoutEnabled: boolean | undefined) {
         const { orderID } = data;
+        console.log('isHostedCheckoutEnabled', isHostedCheckoutEnabled);
         isHostedCheckoutEnabled ?
             await this._onApprove(data, actions, methodId):
            this._tokenizePayment(methodId, orderID);
@@ -105,6 +106,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         actions: ApproveCallbackActions,
         methodId: string,
     ): Promise<boolean> {
+        console.log('ONAPPROVE');
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const orderDetails = await actions.order.get();
