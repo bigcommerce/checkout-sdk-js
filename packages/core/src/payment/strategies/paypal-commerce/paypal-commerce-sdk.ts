@@ -316,7 +316,7 @@ export interface PaypalCommerceSDK {
         isEligible(): boolean;
         render(data: PaypalCommerceHostedFieldsRenderOptions): Promise<PaypalCommerceHostedFields>;
     };
-    Buttons(params: ButtonsOptions1 | PaypalCheckoutButtonOptions): PaypalCommerceButtons;
+    Buttons(params: ButtonsOptions1 | PaypalCheckoutButtonOptions | ButtonsOptions): PaypalCommerceButtons;
     PaymentFields(params: FieldsOptions): PaypalCommerceFields;
     Messages(params: MessagesOptions): PaypalCommerceMessages;
 }
