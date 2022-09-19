@@ -22,7 +22,7 @@ import { PaymentActionCreator, PaymentMethod, PaymentRequestSender, PaymentReque
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
 import {
-    ButtonsOptions,
+    // ButtonsOptions,
     ButtonsOptions1, PayPalAddress,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
