@@ -808,7 +808,7 @@ export interface SubInputDetail {
 }
 
 export interface ThreeDS2ChallengeComponentOptions {
-    size?: string;
+    challengeWindowSize?: string;
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
     onError(error: AdyenError): void;
 }
