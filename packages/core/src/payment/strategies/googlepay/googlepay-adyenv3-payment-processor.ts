@@ -59,7 +59,7 @@ export default class GooglePayAdyenV3PaymentProcessor implements GooglePayProvid
 
                     resolve(paymentPayload);
                 },
-                size: '05',
+                challengeWindowSize: '05',
                 onError: (error: AdyenError) => reject(error),
             });
 

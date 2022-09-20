@@ -195,7 +195,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
                     resolve(paymentPayload);
                 },
-                size: widgetSize || '05',
+                challengeWindowSize: widgetSize || '05',
                 onError: (error: AdyenError) => reject(error),
             });
 
