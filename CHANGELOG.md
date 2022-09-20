@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.287.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.286.0...v1.287.0) (2022-09-20)
+
+
+### Features
+
+* **payment:** PAYPAL-1673 updated 'experience' button option in PayPalCommerceInlineCheckoutButtonStrategy ([#1606](https://github.com/bigcommerce/checkout-sdk-js/issues/1606)) ([85c7384](https://github.com/bigcommerce/checkout-sdk-js/commit/85c73848d8427aad02fbf4197c75eda7968760b3))
+
 ## [1.286.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.285.2...v1.286.0) (2022-09-20)
 
 
