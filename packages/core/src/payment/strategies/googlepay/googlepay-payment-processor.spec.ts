@@ -7,7 +7,7 @@ import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
@@ -159,6 +159,25 @@ describe('GooglePayPaymentProcessor', () => {
             await expect(processor.initialize('googlepay'))
                 .rejects
                 .toBeInstanceOf(PaymentMethodInvalidError);
+        });
+
+        it('should pass hostname as param when loading googlepay', async () => {
+            const origin = 'my.alternate-domain.com';
+            Object.defineProperty(window, 'location', {
+                value: new URL(`https://${origin}`)
+            });
+            const storeConfigMock = getConfig().storeConfig;
+            storeConfigMock.checkoutSettings.features = {
+                'INT-5826.google_hostname_alias': true,
+            };
+            jest.spyOn(store.getState().config, 'getStoreConfig')
+                .mockReturnValueOnce(storeConfigMock);
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+                .mockResolvedValue(store.getState());
+
+            await processor.initialize('googlepay');
+
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('googlepay', { params: { origin } });
         });
     });
 
