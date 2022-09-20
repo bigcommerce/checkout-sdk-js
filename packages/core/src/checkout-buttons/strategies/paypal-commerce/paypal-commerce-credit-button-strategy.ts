@@ -2,12 +2,16 @@ import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
+import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
+import { OrderActionCreator } from '../../../order';
+import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ApproveCallbackActions, ApproveCallbackPayload, ButtonsOptions, CompleteCallbackDataPayload, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from "../../../payment/strategies/paypal-commerce";
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
 
 import getValidButtonStyle from './get-valid-button-style';
 import { PaypalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit-button-options';
@@ -22,7 +26,11 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         private _cartRequestSender: CartRequestSender,
         private _formPoster: FormPoster,
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private _orderActionCreator: OrderActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _paymentActionCreator: PaymentActionCreator
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -67,9 +75,27 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
     }
 
     private _renderButton(containerId: string, methodId: string, paypalcommercecredit: PaypalCommerceCreditButtonInitializeOptions): void {
-        const { buyNowInitializeOptions, initializesOnCheckoutPage, style } = paypalcommercecredit;
+        const { buyNowInitializeOptions, initializesOnCheckoutPage, style, onComplete } = paypalcommercecredit;
 
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { initializationData } = paymentMethod;
+        const { isHostedCheckoutEnabled } = initializationData;
+
+        const hostedCheckoutCallbacks = {
+            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
+            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onHostedCheckoutApprove(data, actions, methodId),
+            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId, onComplete),
+            onCancel: () => this._onCancel(),
+        };
+
+        const regularCallbacks = {
+            onApprove: ({ orderID }: ApproveCallbackPayload) => this._tokenizePayment(methodId, orderID),
+        };
+        const paypalCallbacks = isHostedCheckoutEnabled ? hostedCheckoutCallbacks : regularCallbacks;
+
         const fundingSources = [paypalCommerceSdk.FUNDING.PAYLATER, paypalCommerceSdk.FUNDING.CREDIT];
 
         let hasRenderedSmartButton = false;
@@ -81,7 +107,7 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
                     style: style ? this._getButtonStyle(style) : {},
                     onClick: () => this._handleClick(buyNowInitializeOptions),
                     createOrder: () => this._createOrder(initializesOnCheckoutPage),
-                    onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
+                    ...paypalCallbacks,
                 };
 
                 const paypalButton = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -96,6 +122,183 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         if (!hasRenderedSmartButton) {
             this._removeElement(containerId);
         }
+    }
+
+    private async _onCancel() {
+        const state = this._store.getState();
+        const billingAddress = state.billingAddress.getBillingAddressOrThrow();
+        const resetAddress = this._resetAddress(billingAddress);
+        await this._store.dispatch(this._billingAddressActionCreator.updateAddress(resetAddress));
+        await this._store.dispatch(this._consignmentActionCreator.updateAddress(resetAddress));
+        await this._updateOrder();
+    }
+
+    private _resetAddress(address: BillingAddressRequestBody) {
+        const { firstName, lastName, address1, email } = address;
+
+        return {
+            ...address,
+            firstName: firstName !== 'Fake' ? firstName : '',
+            lastName: lastName !== 'Fake' ? lastName : '',
+            address1: address1 !== 'Fake street' ? address1 : '',
+            email: email !== 'fake@fake.fake' ? email : '',
+        }
+    }
+
+    private async _onHostedCheckoutApprove(
+        data: ApproveCallbackPayload,
+        actions: ApproveCallbackActions,
+        methodId: string,
+    ): Promise<boolean> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const orderDetails = await actions.order.get();
+
+        if (cart.lineItems.physicalItems.length > 0) {
+            const address = this._getValidAddress(
+                orderDetails.payer.name,
+                orderDetails.payer.email_address,
+                orderDetails.purchase_units[0].shipping.address
+            );
+
+            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
+            await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
+            await this._updateOrder();
+        } else {
+            const address = this._getValidAddress(
+                orderDetails.payer.name,
+                orderDetails.payer.email_address,
+                orderDetails.payer.address
+            );
+
+            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
+        }
+
+        await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
+        await this._submitPayment(methodId, data.orderID);
+
+        return true;
+    }
+
+    private async _onComplete(
+        data: CompleteCallbackDataPayload,
+        methodId: string,
+        callback?: () => void
+    ): Promise<void> {
+        await this._submitPayment(methodId, data.orderID);
+
+        if (callback) {
+            callback();
+        }
+    }
+
+    private async _onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void> {
+        const shippingOption = this._getShippingOptionOrThrow(data.selectedShippingOption?.id);
+
+        await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
+        await this._updateOrder();
+    }
+
+    private async _submitPayment(methodId: string, orderId: string): Promise<void> {
+        const paymentData =  {
+            formattedPayload: {
+                vault_payment_instrument: null,
+                set_as_default_stored_instrument: null,
+                device_info: null,
+                method_id: methodId,
+                paypal_account: {
+                    order_id: orderId,
+                },
+            },
+        };
+
+        await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
+    }
+
+    private async _onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void> {
+        const address = this._transformAddress({
+            city: data.shippingAddress.city,
+            countryCode: data.shippingAddress.country_code,
+            postalCode: data.shippingAddress.postal_code,
+            stateOrProvinceCode: data.shippingAddress.state,
+        });
+
+        // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
+        // on this stage we don't have access to valid customer's address accept shipping data
+        await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
+        await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
+
+        const shippingOption = this._getShippingOptionOrThrow();
+
+        await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
+        await this._updateOrder();
+    }
+
+    private async _updateOrder(): Promise<void> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const consignment = state.consignments.getConsignmentsOrThrow()[0];
+
+        await this._paypalCommerceRequestSender.updateOrder({
+            availableShippingOptions: consignment?.availableShippingOptions,
+            cartId: cart.id,
+            selectedShippingOption: consignment?.selectedShippingOption,
+        });
+    }
+
+    private _getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
+        const state = this._store.getState();
+        const consignment = state.consignments.getConsignmentsOrThrow()[0];
+
+        const availableShippingOptions = consignment?.availableShippingOptions || [];
+
+        const recommendedShippingOption = availableShippingOptions.find(option => option.isRecommended);
+        const selectedShippingOption = selectedShippingOptionId
+            ? availableShippingOptions.find(option => option.id === selectedShippingOptionId)
+            : availableShippingOptions.find(option => option.id === consignment?.selectedShippingOption?.id);
+
+        const shippingOptionToSelect = selectedShippingOption || recommendedShippingOption;
+
+        if (!shippingOptionToSelect) {
+            throw new Error('Your order can\'t be shipped to this address');
+        }
+
+        return shippingOptionToSelect;
+    }
+
+    private _transformAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
+        return {
+            firstName: address?.firstName || 'Fake',
+            lastName: address?.lastName || 'Fake',
+            email: address?.email || 'fake@fake.fake',
+            phone: '',
+            company: '',
+            address1: address?.address1 || 'Fake street',
+            address2: '',
+            city: address?.city || '',
+            countryCode: address?.countryCode || '',
+            postalCode: address?.postalCode || '',
+            stateOrProvince: '',
+            stateOrProvinceCode: address?.stateOrProvinceCode || '',
+            customFields: [],
+        };
+    }
+
+    private _getValidAddress(
+        payerName: PayPalOrderDetails['payer']['name'],
+        email: string,
+        address: PayPalOrderAddress,
+    ) {
+        return this._transformAddress({
+            firstName: payerName.given_name,
+            lastName: payerName.surname,
+            email,
+            address1: address?.address_line_1,
+            city: address?.admin_area_2,
+            countryCode: address?.country_code,
+            postalCode: address?.postal_code,
+            stateOrProvinceCode: address?.admin_area_1,
+        });
     }
 
     private _renderMessages(messagingContainerId?: string): void {

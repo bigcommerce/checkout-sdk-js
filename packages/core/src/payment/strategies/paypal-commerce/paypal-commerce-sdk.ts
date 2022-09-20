@@ -89,10 +89,6 @@ export interface ShippingOptionChangeCallbackPayload {
     selectedShippingOption: PayPalSelectedShippingOption,
 }
 
-export interface ApproveDataOptions {
-    orderID?: string;
-}
-
 export interface ApproveCallbackPayload {
     orderID: string;
 }
@@ -137,7 +133,10 @@ export interface ButtonsOptions {
     style?: PaypalButtonStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
-    onApprove?(data: ApproveDataOptions): void;
+    onApprove?(data: ApproveCallbackPayload, actions?: ApproveCallbackActions): void;
+    onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
+    onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+    onComplete?(data: CompleteCallbackDataPayload): void;
     onClick?(data: ClickDataOptions, actions: ClickActions): void;
     onCancel?(): void;
     onError?(error: Error): void;
