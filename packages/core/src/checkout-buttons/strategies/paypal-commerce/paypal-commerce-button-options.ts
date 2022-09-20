@@ -24,4 +24,9 @@ export interface PaypalCommerceButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     }
+
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
 }
