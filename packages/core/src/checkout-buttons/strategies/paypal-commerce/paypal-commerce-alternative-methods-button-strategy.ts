@@ -5,7 +5,7 @@ import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ApproveDataOptions, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ApproveCallbackPayload, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -91,7 +91,7 @@ export default class PaypalCommerceAlternativeMethodsButtonStrategy implements C
             style: validButtonStyle,
             onClick: () => this._handleClick(buyNowInitializeOptions),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
+            onApprove: ({ orderID }: ApproveCallbackPayload) => this._tokenizePayment(methodId, orderID),
         };
 
         const paypalButtonRender = paypalCommerceSdk.Buttons(buttonRenderOptions);
