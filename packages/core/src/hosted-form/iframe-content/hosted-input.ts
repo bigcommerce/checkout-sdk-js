@@ -122,6 +122,21 @@ export default class HostedInput {
         this._input.setAttribute('aria-label', this._accessibilityLabel);
 
         this._applyStyles(this._styles.default);
+
+        switch (this._input.id) {
+            case 'card-code':
+            case 'card-expiry':
+            case 'card-number':
+                this._input.type = 'text';
+                this._input.inputMode = 'numeric';
+                this._input.pattern = "[0-9]*";
+                break;
+            case 'card-name':
+                this._input.type = 'text';
+                this._input.inputMode = 'text';
+                break;
+        }
+
     }
 
     private _applyStyles(styles: HostedInputStyles = {}): void {
