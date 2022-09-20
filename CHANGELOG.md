@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.286.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.285.2...v1.286.0) (2022-09-20)
+
+
+### Features
+
+* **checkout:** CHECKOUT-6860 Use numeric keypad ([#1595](https://github.com/bigcommerce/checkout-sdk-js/issues/1595)) ([4a96115](https://github.com/bigcommerce/checkout-sdk-js/commit/4a96115e42a35c5b096249f4c76b34417a0798e3))
+
 ### [1.285.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.285.1...v1.285.2) (2022-09-15)
 
 
