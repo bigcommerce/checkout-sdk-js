@@ -286,7 +286,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-                experience: 'inline',
+                experience: 'accelerated',
                 fundingSource: paypalSdkMock.FUNDING.CARD,
                 style: paypalCommerceButtonStyle,
                 createOrder: expect.any(Function),

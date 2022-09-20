@@ -85,7 +85,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const fundingSource = paypalCommerceSdk.FUNDING.CARD;
 
         const buttonRenderOptions: PaypalCheckoutButtonOptions = {
-            experience: "inline",
+            experience: 'accelerated',
             fundingSource,
             style,
             createOrder: () => this._createOrder(methodId),
