@@ -1,5 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
+import { CartRequestSender } from '../../../cart';
+import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
@@ -8,13 +10,16 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import getValidButtonStyle from './get-valid-button-style';
+import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
+    private _buyNowCartId?: string;
     private _paypalCommerceSdk?: PaypalCommerceSDK;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
+        private _cartRequestSender: CartRequestSender,
         private _formPoster: FormPoster,
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender
@@ -35,26 +40,37 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce" argument is not provided.`);
         }
 
-        const { initializesOnCheckoutPage, style } = paypalcommerce;
+        if (paypalcommerce.buyNowInitializeOptions) {
+            const state = this._store.getState();
+            const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
-        const currencyCode = state.cart.getCartOrThrow().currency.code;
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
+            if (!paypalcommerce.currencyCode) {
+                throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.currency" argument is not provided.`);
+            }
 
-        this._renderButton(containerId, methodId, initializesOnCheckoutPage, style);
+            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, paypalcommerce.currencyCode, paypalcommerce.initializesOnCheckoutPage);
+        } else {
+            const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+            const currencyCode = state.cart.getCartOrThrow().currency.code;
+            const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, paypalcommerce.initializesOnCheckoutPage);
+        }
+
+        this._renderButton(containerId, methodId, paypalcommerce);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    private _renderButton(containerId: string, methodId: string, initializesOnCheckoutPage?: boolean, style?: PaypalButtonStyleOptions): void {
+    private _renderButton(containerId: string, methodId: string, paypalcommerce: PaypalCommerceButtonInitializeOptions): void {
+        const { buyNowInitializeOptions, initializesOnCheckoutPage, style } = paypalcommerce;
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
 
         const buttonRenderOptions: ButtonsOptions = {
             fundingSource: paypalCommerceSdk.FUNDING.PAYPAL,
             style: style ? this._getButtonStyle(style) : {},
+            onClick: () => this._handleClick(buyNowInitializeOptions),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
             onApprove: ({ orderID }: ApproveDataOptions) => this._tokenizePayment(methodId, orderID),
         };
@@ -68,13 +84,32 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         }
     }
 
+    private async _handleClick(
+        buyNowInitializeOptions: PaypalCommerceButtonInitializeOptions['buyNowInitializeOptions'],
+    ): Promise<void> {
+        if (buyNowInitializeOptions && typeof buyNowInitializeOptions.getBuyNowCartRequestBody === 'function') {
+            const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
+
+            if (!cartRequestBody) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
+
+            try {
+                const { body: card } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
+
+                this._buyNowCartId = card.id;
+            } catch (error) {
+                throw new BuyNowCartCreationError();
+            }
+        }
+    }
+
     private async _createOrder(initializesOnCheckoutPage?: boolean): Promise<string> {
-        const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
+        const cartId = this._buyNowCartId || this._store.getState().cart.getCartOrThrow().id;
 
         const providerId = initializesOnCheckoutPage ? 'paypalcommercecheckout': 'paypalcommerce';
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, providerId);
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cartId, providerId);
 
         return orderId;
     }
@@ -89,6 +124,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             action: 'set_external_checkout',
             provider: methodId,
             order_id: orderId,
+            ...this._buyNowCartId && { cart_id: this._buyNowCartId },
         });
     }
 

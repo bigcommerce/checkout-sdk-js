@@ -18,4 +18,5 @@ export default interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
+    source?: 'BUY_NOW';
 }
