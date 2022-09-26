@@ -1,5 +1,4 @@
-import { includes, some } from 'lodash';
-
+import {includes, some} from 'lodash';
 import { isHostedInstrumentLike } from '../..';
 import { Address } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
@@ -12,11 +11,22 @@ import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethod
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import {PaymentInitializeOptions, PaymentRequestOptions} from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import formatLocale from './format-locale';
-import { AddressOptions, StripeConfirmPaymentData, StripeElement, StripeElements, StripeElementType, StripeError, StripePaymentMethodType, StripeStringConstants, StripeUPEAppearanceOptions, StripeUPEClient } from './stripe-upe';
+import {
+    AddressOptions,
+    StripeConfirmPaymentData,
+    StripeElement,
+    StripeElements,
+    StripeElementType,
+    StripeError,
+    StripePaymentMethodType,
+    StripeStringConstants,
+    StripeUPEAppearanceOptions,
+    StripeUPEClient
+} from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const APM_REDIRECT = [
@@ -284,6 +294,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             appearance,
         });
 
+        const { postalCode } = state.shippingAddress.getShippingAddressOrThrow();
+
         const stripeElement: StripeElement = this._stripeElements.getElement(StripeElementType.PAYMENT) || this._stripeElements.create(StripeElementType.PAYMENT,
             {
                 fields: {
@@ -292,6 +304,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         address: {
                             country: StripeStringConstants.NEVER,
                             city: StripeStringConstants.NEVER,
+                            postalCode: postalCode ? StripeStringConstants.NEVER : StripeStringConstants.AUTO,
                         },
                     },
                 },
@@ -394,9 +407,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             const {
                 city,
                 countryCode: country,
+                postalCode,
             } = address;
 
-            return { city, country };
+            return { city, country, postalCode };
         }
 
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
