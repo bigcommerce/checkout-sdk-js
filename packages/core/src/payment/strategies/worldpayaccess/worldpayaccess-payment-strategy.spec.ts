@@ -6,6 +6,7 @@ import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { NotInitializedError } from '../../../common/error/errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
@@ -35,8 +36,13 @@ describe('WorldpayaccessPaymetStrategy', () => {
     let strategy: WorldpayaccessPaymetStrategy;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
+    let initializeOptions: PaymentInitializeOptions;
+    let state: InternalCheckoutSelectors;
 
-    const errorResponse = new RequestError(getResponse({
+    const payload = getOrderRequestBody();
+    const PAYMENT_CANNOT_CONTINUE = 'Payment cannot continue';
+
+    const errorResponseAdditionalAction = new RequestError(getResponse({
         ...getErrorPaymentResponseBody(),
         errors: [
             { code: 'additional_action_required' },
@@ -55,8 +61,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
     }));
 
     beforeEach(() => {
-
         store = createCheckoutStore(getCheckoutStoreState());
+        state = store.getState();
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -89,11 +95,29 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
             .mockReturnValue(submitPaymentAction);
+
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+            .mockReturnValue(merge(
+                getPaymentMethod(),
+                { config: { isHostedFormEnabled: true } }
+            ));
+
+        HTMLFormElement.prototype.submit = () => window.parent.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*');
+    });
+
+    it('throws error when initialize with worldpay data is required', async () => {
+        initializeOptions = { methodId: 'worldpayaccess' };
+
+        await expect(strategy.initialize(initializeOptions)).rejects.toThrowError(NotInitializedError);
+    })
+
+    it('throws error when is missing payment data', async () => {
+        const payloadWithoutPayment = omit(payload, 'payment');
+
+        await expect(strategy.execute(payloadWithoutPayment)).rejects.toThrow(PaymentArgumentInvalidError)
     });
 
     it('submits order without payment data', async () => {
-        const payload = getOrderRequestBody();
-
         await strategy.execute(payload);
 
         expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
@@ -101,8 +125,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
     });
 
     it('submits payment separately', async () => {
-        const payload = getOrderRequestBody();
-
         await strategy.execute(payload);
 
         expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payload.payment);
@@ -110,7 +132,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
     });
 
     it('returns checkout state', async () => {
-        const output = await strategy.execute(getOrderRequestBody());
+        const output = await strategy.execute(payload);
 
         expect(output).toEqual(store.getState());
     });
@@ -125,10 +147,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
     describe('when hosted form is enabled', () => {
         let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
-        let initializeOptions: PaymentInitializeOptions;
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
-        let state: InternalCheckoutSelectors;
-
 
         beforeEach(() => {
             form = {
@@ -154,19 +173,24 @@ describe('WorldpayaccessPaymetStrategy', () => {
             };
 
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            state = store.getState();
-
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(merge(
-                    getPaymentMethod(),
-                    { config: { isHostedFormEnabled: true } }
-                ));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')
                 .mockReturnValue(loadOrderAction);
 
             jest.spyOn(formFactory, 'create')
                 .mockReturnValue(form);
+        });
+
+        it('throws error when HostedForm.submit is missing', async () => {
+            const form: Pick<HostedForm, 'attach' | 'validate'> = {
+                attach: jest.fn(() => Promise.resolve()),
+                validate: jest.fn(() => Promise.resolve()),
+            };
+
+            jest.spyOn(formFactory, 'create').mockReturnValue(form);
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError)
         });
 
         it('creates hosted form', async () => {
@@ -187,9 +211,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 .toHaveBeenCalled();
         });
 
-        it('submits payment data with hosted form', async () => {
-            const payload = getOrderRequestBody();
-
+        it('submits payment', async () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
@@ -199,7 +221,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
         it('validates user input before submitting data', async () => {
             await strategy.initialize(initializeOptions);
-            await strategy.execute(getOrderRequestBody());
+            await strategy.execute(payload);
 
             expect(form.validate)
                 .toHaveBeenCalled();
@@ -219,8 +241,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
         });
 
         it('loads current order after payment submission', async () => {
-            const payload = getOrderRequestBody();
-
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
@@ -228,124 +248,82 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 .toHaveBeenCalledWith(loadOrderAction);
         });
 
-        it('rejects error with collection data required with the url with hosted', async () => {
-            HTMLFormElement.prototype.submit = () => jest.fn(() => Promise.resolve());
-            window.fetch = jest.fn(() => Promise.resolve({ok: false}));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
-
-            await strategy.initialize(initializeOptions);
-            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow('Payment cannot continue');
-        })
-
-        it('submit with collection data required with hosted', async () => {
-            jest.spyOn(HTMLFormElement.prototype, 'submit')
-                .mockReturnValueOnce(jest.fn(() => Promise.resolve()))
-                .mockReturnValueOnce(window.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*'))
-
-
+        it('submit with collection data required hosted', async () => {
             window.fetch = jest.fn(() => Promise.resolve({ok: true}));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
 
             await strategy.initialize(initializeOptions);
-            await strategy.execute(getOrderRequestBody());
+            await strategy.execute(payload);
 
             expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
             expect(form.submit)
                 .toHaveBeenCalledTimes(2);
         })
 
-        it('rejects error with collection data required with the url with hosted', async () => {
-            HTMLFormElement.prototype.submit = () => jest.fn(() => Promise.resolve());
+        it('throws error when url in hidden ifreme is invalid', async () => {
             window.fetch = jest.fn(() => Promise.resolve({ok: false}));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
 
             await strategy.initialize(initializeOptions);
-            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow('Payment cannot continue');
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
         })
+
+        describe('when hosted fields are not present for rendering', () => {
+            beforeEach(() => {
+                form = {
+                    attach: jest.fn(() => Promise.resolve()),
+                    submit: jest.fn(() => Promise.resolve()),
+                    validate: jest.fn(() => Promise.resolve()),
+                };
+                initializeOptions = {
+                    creditCard: {
+                        form: {
+                            fields: {},
+                        },
+                    },
+                    methodId: 'worldpayaccess',
+                    worldpay: {
+                        onLoad: jest.fn()
+                    }
+                };
+                loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
+
+                jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                    .mockReturnValue(loadOrderAction);
+
+                jest.spyOn(formFactory, 'create')
+                    .mockReturnValue(form);
+            });
+
+            it('does not create hosted form', async () => {
+                await strategy.initialize(initializeOptions);
+
+                expect(formFactory.create)
+                    .not.toHaveBeenCalled();
+            });
+
+            it('does not submit with hosted form', async () => {
+                await strategy.initialize(initializeOptions);
+                await strategy.execute(payload);
+
+                expect(form.submit)
+                    .not.toHaveBeenCalled();
+            });
+        });
     });
 
-    describe('when hosted form is enabled but hosted fields are not present for rendering', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
-        let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
-        let state: InternalCheckoutSelectors;
-
+    describe('when hosted form is disable', () => {
         beforeEach(() => {
-            form = {
-                attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
-                validate: jest.fn(() => Promise.resolve()),
-            };
             initializeOptions = {
-                creditCard: {
-                    form: {
-                        fields: {},
-                    },
-                },
                 methodId: 'worldpayaccess',
                 worldpay: {
                     onLoad: jest.fn()
                 }
             };
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            state = store.getState();
-
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(merge(
-                    getPaymentMethod(),
-                    { config: { isHostedFormEnabled: true } }
-                ));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
-
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
-        });
-
-        it('does not create hosted form', async () => {
-            await strategy.initialize(initializeOptions);
-
-            expect(formFactory.create)
-                .not.toHaveBeenCalled();
-        });
-
-        it('does not submit with hosted form', async () => {
-            const payload = getOrderRequestBody();
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(form.submit)
-                .not.toHaveBeenCalled();
-        });
-
-        it('throws error when initialize with worldpay data is required', async () => {
-            initializeOptions = {
-                methodId: 'worldpayaccess'
-            };
-
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrowError(NotInitializedError);
-        })
-    });
-
-    describe('when hosted is disable', () => {
-        const initializeOptions: PaymentInitializeOptions= {
-            methodId: 'worldpayaccess',
-            worldpay: {
-                onLoad: jest.fn()
-            }
-        };
-        let state: InternalCheckoutSelectors;
-
-        beforeEach(() => {
-            state = store.getState();
 
             jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(merge(
@@ -354,30 +332,238 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 ));
         });
 
-        it('submit with collection data required without hosted', async () => {
-            HTMLFormElement.prototype.submit = () => window.parent.postMessage('{"MessageType":"profile.completed","SessionId":"token","Status":true}', '*');
+        it('submit with collection data required', async () => {
             window.fetch = jest.fn(() => Promise.resolve({ok: true}));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
 
             await strategy.initialize(initializeOptions);
-            await strategy.execute(getOrderRequestBody());
+            await strategy.execute(payload);
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining({
                 paymentData: expect.objectContaining({threeDSecure: expect.objectContaining({token: 'token'})})
             }));
         })
 
-        it('rejects error with collection data required with the url', async () => {
-            HTMLFormElement.prototype.submit = () => window.parent.postMessage('invalid url', '*');
+        it("stop event execution when the event message string isn't a json", async () => {
+            HTMLFormElement.prototype.submit = () => window.parent.postMessage('invalid string', '*');
+            window.fetch = jest.fn(() => Promise.resolve({ok: true}));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+        })
+
+        it("stop event execution when the event message string isn't a valid json with SessionId", async () => {
+            HTMLFormElement.prototype.submit = () => window.parent.postMessage('{"MessageType":"profile.completed","Status":true}', '*');
+            window.fetch = jest.fn(() => Promise.resolve({ok: true}));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+        })
+
+        it("stop event execution when the event message isn't string", async () => {
+            HTMLFormElement.prototype.submit = () => window.parent.postMessage({}, '*');
+            window.fetch = jest.fn(() => Promise.resolve({ok: true}));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+        })
+
+        it('throws error with collection data required with the url', async () => {
             window.fetch = jest.fn(() => Promise.resolve({ok: false}));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
 
             await strategy.initialize(initializeOptions);
-            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrowError('Payment cannot continue');
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+        })
+
+        it("throws error when hidden iframe isn't created", async () => {
+            const createElement = window.document.createElement;
+            window.document.createElement = jest.fn().mockImplementationOnce(() => { return undefined });
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+
+            window.document.createElement = createElement;
+        })
+
+        it("throws error when hidden iframe hasn't contentWindow", async () => {
+            const append = window.document.body.appendChild;
+            window.document.body.appendChild = jest.fn().mockImplementationOnce(() => { return undefined });
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(PAYMENT_CANNOT_CONTINUE);
+
+            window.document.body.appendChild  = append
         })
     });
-});
+
+    describe('when 3DS is required', () => {
+        let threeDSecureRequiredErrorResponse: RequestError;
+        let onLoad = jest.fn().mockImplementation(() => { throw new Error(); });
+
+        beforeEach(() => {
+            threeDSecureRequiredErrorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    acs_url: 'acs_url',
+                    payer_auth_request: 'payer_auth_request',
+                    merchant_data: 'merchant_data'
+                },
+            }));
+
+            window.fetch = jest.fn(() => Promise.resolve({ok: true}));
+
+            initializeOptions = {
+                methodId: 'worldpayaccess',
+                worldpay: {
+                    onLoad: onLoad
+                }
+            };
+
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(merge(
+                    getPaymentMethod(),
+                    { config: { isHostedFormEnabled: false } }
+                ));
+        });
+
+        it('throws error when three_d_secure_required code is missing', async () => {
+            threeDSecureRequiredErrorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'other_error' },
+                ]
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)))
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
+
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrow(RequestError)
+        });
+
+        it('throws error when initializeOptions is missing', async () => {
+            const threeDSecureRequiredErrorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    acs_url: 'acs_url',
+                    payer_auth_request: 'payer_auth_request',
+                    merchant_data: 'merchant_data'
+                },
+            }));
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)))
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
+
+            await expect(strategy.execute(payload)).rejects.toThrowError(NotInitializedError);
+        })
+
+        it('validate iframe to open modal', async () => {
+            const onLoad = jest.fn().mockImplementation(() => { throw new Error(); });
+            initializeOptions = {
+                ...initializeOptions,
+                worldpay: {
+                    onLoad: onLoad
+                }
+            };
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)))
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
+
+            const form = document.createElement('form');
+            form.id = 'challengeForm';
+            form.method = 'POST';
+            form.action = threeDSecureRequiredErrorResponse.body.three_ds_result.acs_url;
+
+            const inputJWT = document.createElement('input');
+            inputJWT.name = 'JWT';
+            inputJWT.type = 'hidden';
+            inputJWT.value = threeDSecureRequiredErrorResponse.body.three_ds_result.payer_auth_request;
+            form.appendChild(inputJWT);
+
+            const merchant = document.createElement('input');
+            merchant.name = 'MD';
+            merchant.type = 'hidden';
+            merchant.value = 'merchantSessionId=' + threeDSecureRequiredErrorResponse.body.three_ds_result.merchant_data;
+            form.appendChild(merchant);
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.innerHTML = "window.onload = function() { document.getElementById('challengeForm').submit(); }"
+
+            const iframe = document.createElement('iframe');
+            iframe.name = 'worldpay_hosted_payment_page';
+            iframe.height = '400';
+            iframe.width = '100%';
+            iframe.srcdoc = `${form.outerHTML} ${script.outerHTML}`;
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrowError(Error);
+            expect(onLoad).toHaveBeenCalledWith(iframe, expect.any(Function))
+        });
+
+        it('throws error when is 3ds authentication is cancelled', async () => {
+            onLoad = jest.fn((_, b) => b());
+
+            initializeOptions = {
+                ...initializeOptions,
+                worldpay: {
+                    onLoad: onLoad
+                }
+            };
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)))
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(Error);
+        })
+
+        it('throws error when the modal failed', async () => {
+            const onLoad = jest.fn().mockImplementation(() => { throw new Error(); });
+            initializeOptions = {
+                ...initializeOptions,
+                worldpay: {
+                    onLoad: onLoad
+                }
+            };
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponseAdditionalAction)))
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)));
+
+            await strategy.initialize(initializeOptions);
+            await expect(strategy.execute(payload)).rejects.toThrowError(Error);
+        })
+    });
+})
