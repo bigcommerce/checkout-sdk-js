@@ -1896,6 +1896,14 @@ declare enum ButtonType {
     Short = "short"
 }
 
+/**
+ * An object that contains the information required for creating 'Buy now' cart.
+ */
+declare interface BuyNowCartRequestBody {
+    source: 'BUY_NOW';
+    lineItems: LineItem_2[];
+}
+
 declare interface CardCvcElementOptions extends BaseIndividualElementOptions {
     placeholder?: string;
 }
@@ -2005,6 +2013,7 @@ declare interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
+    source?: 'BUY_NOW';
 }
 
 declare class CartChangedError extends StandardError {
@@ -5496,6 +5505,15 @@ declare interface LineItemSocialData {
     link: string;
 }
 
+declare interface LineItem_2 {
+    productId: number;
+    quantity: number;
+    optionSelections?: {
+        optionId: number;
+        optionValue: number | string;
+    };
+}
+
 declare interface LinkStyles extends InlineElementStyles {
     active?: InlineElementStyles;
     focus?: InlineElementStyles;
@@ -6080,9 +6098,19 @@ declare interface PaypalCommerceButtonInitializeOptions {
      */
     style?: PaypalButtonStyleOptions_2;
     /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
+     * Flag which helps to detect that the strategy initializes on Checkout page.
      */
     initializesOnCheckoutPage?: boolean;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface PaypalCommerceCreditButtonInitializeOptions {

@@ -406,6 +406,14 @@ declare enum ButtonType {
     Short = "short"
 }
 
+/**
+ * An object that contains the information required for creating 'Buy now' cart.
+ */
+declare interface BuyNowCartRequestBody {
+    source: 'BUY_NOW';
+    lineItems: LineItem[];
+}
+
 declare class CheckoutButtonErrorSelector {
     private _checkoutButton;
     getInitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
@@ -571,6 +579,15 @@ declare interface GooglePayButtonInitializeOptions {
     buttonType?: ButtonType;
 }
 
+declare interface LineItem {
+    productId: number;
+    quantity: number;
+    optionSelections?: {
+        optionId: number;
+        optionValue: number | string;
+    };
+}
+
 declare interface PaypalButtonInitializeOptions {
     /**
      * The Client ID of the Paypal App
@@ -679,9 +696,19 @@ declare interface PaypalCommerceButtonInitializeOptions {
      */
     style?: PaypalButtonStyleOptions_2;
     /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
+     * Flag which helps to detect that the strategy initializes on Checkout page.
      */
     initializesOnCheckoutPage?: boolean;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface PaypalCommerceCreditButtonInitializeOptions {

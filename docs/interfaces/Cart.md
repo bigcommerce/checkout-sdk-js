@@ -18,6 +18,7 @@
 - [id](Cart.md#id)
 - [isTaxIncluded](Cart.md#istaxincluded)
 - [lineItems](Cart.md#lineitems)
+- [source](Cart.md#source)
 - [updatedTime](Cart.md#updatedtime)
 
 ## Properties
@@ -91,6 +92,12 @@ ___
 ### lineItems
 
 • **lineItems**: [`LineItemMap`](LineItemMap.md)
+
+___
+
+### source
+
+• `Optional` **source**: ``"BUY_NOW"``
 
 ___
 
