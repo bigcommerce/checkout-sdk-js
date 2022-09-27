@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.290.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.289.0...v1.290.0) (2022-09-27)
+
+
+### Features
+
+* **payment:** BOLT-282 fixed analytics feature for Bolt Checkout ([fdc975e](https://github.com/bigcommerce/checkout-sdk-js/commit/fdc975efc5042fa09762055548a624e7dd908020))
+
 ## [1.289.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.288.1...v1.289.0) (2022-09-27)
 
 
