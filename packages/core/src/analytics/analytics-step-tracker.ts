@@ -7,6 +7,7 @@ import { ShopperCurrency, StoreProfile } from '../config';
 import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
+import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 
 import { isGoogleAnalyticsAvailable, isPayloadSizeLimitReached, sendGoogleAnalytics } from './analytics-tracker-ga';
 import { AnalyticsTracker } from './analytics-tracker-window';
@@ -17,8 +18,6 @@ export interface StepTrackerConfig {
 }
 
 export type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
-
-const ORDER_ITEMS_STORAGE_KEY = 'ORDER_ITEMS';
 
 export enum AnalyticStepId {
     CUSTOMER = 1,
@@ -47,7 +46,7 @@ export default class AnalyticsStepTracker implements StepTracker {
 
     constructor(
         private checkoutService: CheckoutService,
-        private storage: StorageFallback,
+        private analyticsExtraItemsManager: AnalyticsExtraItemsManager,
         private analytics: AnalyticsTracker,
         { checkoutSteps }: StepTrackerConfig = {}
     ) {
@@ -85,7 +84,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             },
         } = checkout;
 
-        const extraItemsData = this.saveExtraItemsData(id, lineItems);
+        const extraItemsData = this.analyticsExtraItemsManager.saveExtraItemsData(id, lineItems);
 
         this.analytics.track('Checkout Started', this.getTrackingPayload({
             revenue: grandTotal,
@@ -123,7 +122,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             return;
         }
 
-        const extraItemsData = this.readExtraItemsData(cartId);
+        const extraItemsData = this.analyticsExtraItemsManager.readExtraItemsData(cartId);
 
         if (extraItemsData === null) {
             return;
@@ -171,12 +170,12 @@ export default class AnalyticsStepTracker implements StepTracker {
             });
 
             // TODO: decide how to send large orders to Segment without sending to GA again
-            return this.clearExtraItemData(cartId);
+            return this.analyticsExtraItemsManager.clearExtraItemData(cartId);
         }
 
         this.analytics.track('Order Completed', payload);
 
-        this.clearExtraItemData(cartId);
+        this.analyticsExtraItemsManager.clearExtraItemData(cartId);
     }
 
     trackStepViewed(step: AnalyticStepType): void {
@@ -362,50 +361,6 @@ export default class AnalyticsStepTracker implements StepTracker {
         const { exchangeRate = 1 } = this.getShopperCurrency() || {};
 
         return Math.round(amount * exchangeRate * 100) / 100;
-    }
-
-    private saveExtraItemsData(id: string, lineItems: LineItemMap): ExtraItemsData {
-        const data = [
-            ...lineItems.physicalItems,
-            ...lineItems.digitalItems,
-        ].reduce((result, item) => {
-            result[item.productId] = {
-                brand: item.brand ? item.brand : '',
-                category: item.categoryNames ? item.categoryNames.join(', ') : '',
-            };
-
-            return result;
-        }, {} as ExtraItemsData);
-
-        try {
-            this.storage.setItem(this.getStorageKey(id), JSON.stringify(data));
-
-            return data;
-        } catch (err) {
-            return {};
-        }
-    }
-
-    private getStorageKey(id: string): string {
-        return id ? `${ORDER_ITEMS_STORAGE_KEY}_${id}` : '';
-    }
-
-    private readExtraItemsData(id: string): ExtraItemsData | null {
-        try {
-            const item = this.storage.getItem(this.getStorageKey(id));
-
-            return item ? JSON.parse(item) : null;
-        } catch (err) {
-            return null;
-        }
-    }
-
-    private clearExtraItemData(id: string): void {
-        try {
-            this.storage.removeItem(this.getStorageKey(id));
-        } catch (err) {
-            // silently ignore the failure
-        }
     }
 
     private getSelectedShippingOption(): ShippingOption | null {

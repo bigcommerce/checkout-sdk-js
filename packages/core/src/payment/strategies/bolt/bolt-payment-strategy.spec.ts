@@ -2,11 +2,13 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+import localStorageFallback from 'local-storage-fallback';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
 import { getConfig } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -165,7 +167,8 @@ describe('BoltPaymentStrategy', () => {
             paymentActionCreator,
             paymentMethodActionCreator,
             storeCreditActionCreator,
-            boltScriptLoader
+            boltScriptLoader,
+            new AnalyticsExtraItemsManager(localStorageFallback)
         );
     });
 

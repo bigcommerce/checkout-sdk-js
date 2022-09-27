@@ -1,5 +1,6 @@
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { createCheckoutService, CheckoutService } from '../checkout';
+import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../common/error/errors';
 import { ShopperCurrency } from '../config';
@@ -65,7 +66,7 @@ describe('AnalyticsStepTracker', () => {
 
         analyticsStepTracker = new AnalyticsStepTracker(
             checkoutService,
-            sessionStorage,
+            new AnalyticsExtraItemsManager(sessionStorage),
             analytics
         );
     });
@@ -357,7 +358,7 @@ describe('AnalyticsStepTracker', () => {
 
                 analyticsStepTracker = new AnalyticsStepTracker(
                     checkoutService,
-                    sessionStorage,
+                    new AnalyticsExtraItemsManager(sessionStorage),
                     analytics
                 );
 
@@ -398,7 +399,7 @@ describe('AnalyticsStepTracker', () => {
 
                 analyticsStepTracker = new AnalyticsStepTracker(
                     checkoutService,
-                    sessionStorage,
+                    new AnalyticsExtraItemsManager(sessionStorage),
                     analytics
                 );
 
@@ -460,7 +461,7 @@ describe('AnalyticsStepTracker', () => {
             beforeEach(() => {
                 analyticsStepTrackerCustomOrder = new AnalyticsStepTracker(
                     checkoutService,
-                    sessionStorage,
+                    new AnalyticsExtraItemsManager(sessionStorage),
                     analytics,
                     {
                         checkoutSteps: ['shipping', 'billing', 'payment', 'customer'],
@@ -491,7 +492,7 @@ describe('AnalyticsStepTracker', () => {
             beforeEach(() => {
                 analyticsStepTrackerNoBackfill = new AnalyticsStepTracker(
                     checkoutService,
-                    sessionStorage,
+                    new AnalyticsExtraItemsManager(sessionStorage),
                     analytics,
                     { checkoutSteps: [] }
                 );
