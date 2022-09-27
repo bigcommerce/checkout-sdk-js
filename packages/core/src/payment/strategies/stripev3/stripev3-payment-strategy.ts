@@ -34,7 +34,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     private _stripeCardElements?: StripeCardElements;
     private _useIndividualCardFields?: boolean;
     private _hostedForm?: HostedForm;
-    private _isDesinitialize?: boolean;
+    private _isDeinitialize?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -55,7 +55,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         this._initializeOptions = stripev3;
-        this._isDesinitialize = false;
+        this._isDeinitialize = false;
         const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
         const { initializationData: { stripePublishableKey, stripeConnectedAccount, useIndividualCardFields } } = paymentMethod;
         const form = this._getInitializeOptions().form;
@@ -147,7 +147,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             this._hostedForm.detach();
         }
 
-        this._isDesinitialize = true;
+        this._isDeinitialize = true;
         this._unmountElement();
 
         return Promise.resolve(this._store.getState());
@@ -412,7 +412,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                             cardExpiryElement.mount(`#${cardExpiryElementOptions.containerId}`);
                             cardCvcElement.mount(`#${cardCvcElementOptions.containerId}`);
                         } catch (error) {
-                            if(!this._isDesinitialize){
+                            if(!this._isDeinitialize){
                                 reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                             }
                         }
@@ -422,7 +422,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                         try {
                             stripeElement.mount(`#${containerId}`);
                         } catch (error) {
-                            if(!this._isDesinitialize){
+                            if(!this._isDeinitialize){
                             reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                             }
                         }
@@ -436,7 +436,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                     try {
                         stripeElement.mount(`#${containerId}`);
                     } catch (error) {
-                        if(!this._isDesinitialize){
+                        if(!this._isDeinitialize){
                         reject(new InvalidArgumentError('Unable to mount Stripe component without valid container ID.'));
                         }
                     }
