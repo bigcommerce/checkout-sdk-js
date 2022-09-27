@@ -6,6 +6,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -50,13 +51,17 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         return new Promise(async (resolve, reject) => {
             const state = this._store.getState();
             const { config: { testMode } } = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
-            const createSquareForm = await this._scriptLoader.load(testMode);
+            try {
+                const createSquareForm = await this._scriptLoader.load(testMode);
 
-            this._paymentForm = createSquareForm(
-                this._getFormOptions({ resolve, reject })
-            );
+                this._paymentForm = createSquareForm(
+                    this._getFormOptions({ resolve, reject })
+                );
 
-            this._getPaymentForm().build();
+                this._getPaymentForm().build();
+            } catch (e: unknown) {
+                reject(new PaymentMethodClientUnavailableError());
+            }
         }).then(() => this._store.getState());
     }
 
