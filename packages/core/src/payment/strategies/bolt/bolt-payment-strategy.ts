@@ -1,6 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { isAnalyticsTrackerWindow } from '../../../analytics/is-analytics-step-tracker-window';
+import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
@@ -28,7 +30,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _boltScriptLoader: BoltScriptLoader
+        private _boltScriptLoader: BoltScriptLoader,
+        private _analyticsExtraItemsManager: AnalyticsExtraItemsManager
     ) { }
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -92,6 +95,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        this._setExtraItemsForAnalytics();
+
         if (this._useBoltClient) {
             return this._executeWithBoltClient(payload, options);
         }
@@ -349,6 +354,25 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             || isNaN(expirationYear)
         ) {
             throw new PaymentArgumentInvalidError();
+        }
+    }
+
+    private _setExtraItemsForAnalytics() {
+        const state = this._store.getState();
+        const config = state.config.getConfig();
+        const checkout = state.checkout.getCheckout();
+
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        if (
+            config?.storeConfig.checkoutSettings.isAnalyticsEnabled &&
+            isAnalyticsTrackerWindow(window)
+        ) {
+            const { cart: { id, lineItems } } = checkout;
+
+            this._analyticsExtraItemsManager.saveExtraItemsData(id, lineItems)
         }
     }
 }

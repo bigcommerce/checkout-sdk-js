@@ -2,6 +2,7 @@ import localStorageFallback from 'local-storage-fallback';
 
 import { CheckoutService } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 
 import AnalyticsStepTracker, { StepTrackerConfig } from './analytics-step-tracker';
 import { isAnalyticsTrackerWindow } from './is-analytics-step-tracker-window';
@@ -40,7 +41,7 @@ export default function createStepTracker(
     if (isAnalyticsEnabled && isAnalyticsTrackerWindow(window)) {
         return new AnalyticsStepTracker(
             checkoutService,
-            localStorageFallback,
+            new AnalyticsExtraItemsManager(localStorageFallback),
             window.analytics,
             stepTrackerConfig
         );

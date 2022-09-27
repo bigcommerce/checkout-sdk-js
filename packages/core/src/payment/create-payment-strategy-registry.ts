@@ -1,6 +1,7 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
+import localStorageFallback from 'local-storage-fallback';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
@@ -16,6 +17,7 @@ import { createSpamProtection, GoogleRecaptcha, PaymentHumanVerificationHandler,
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
+import AnalyticsExtraItemsManager from '../analytics/analytics-extra-items-manager';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -343,7 +345,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             paymentMethodActionCreator,
             storeCreditActionCreator,
-            new BoltScriptLoader(scriptLoader)
+            new BoltScriptLoader(scriptLoader),
+            new AnalyticsExtraItemsManager(localStorageFallback),
         )
     );
 
