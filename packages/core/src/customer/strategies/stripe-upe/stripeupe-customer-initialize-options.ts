@@ -34,6 +34,6 @@ export default interface StripeUPECustomerInitializeOptions {
      */
     getStyles?(): {
         [key: string]: string;
-    };
+    } | undefined;
 
 }
