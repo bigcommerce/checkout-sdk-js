@@ -293,6 +293,7 @@ export default function createCheckoutButtonRegistry(
         new PaypalCommerceVenmoButtonStrategy(
             store,
             checkoutActionCreator,
+            cartRequestSender,
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender
