@@ -45,7 +45,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
             if (!paypalcommerce.currencyCode) {
-                throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.currency" argument is not provided.`);
+                throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.currencyCode" argument is not provided.`);
             }
 
             this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, paypalcommerce.currencyCode, paypalcommerce.initializesOnCheckoutPage);
