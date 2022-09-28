@@ -42,10 +42,15 @@ function getValidTagline(tagline?: boolean, layout?: string): boolean | undefine
 }
 
 function getValidHeight(height?: number): number {
+    const defaultHeight = 40;
     const minHeight = 25;
     const maxHeight = 55;
 
-    if (typeof height !== 'number' || height > maxHeight) {
+    if (!height || typeof height !== 'number') {
+        return defaultHeight;
+    }
+
+    if (height > maxHeight) {
         return maxHeight;
     }
 

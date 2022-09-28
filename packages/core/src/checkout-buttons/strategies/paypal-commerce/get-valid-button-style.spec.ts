@@ -104,6 +104,21 @@ describe('#getValidButtonStyle()', () => {
         expect(getValidButtonStyle(stylesMock)).toEqual(expects);
     });
 
+    it('returns styles with default height if height value not provided', () => {
+        const stylesMock = {
+            color: StyleButtonColor.silver,
+            height: undefined,
+            shape: StyleButtonShape.rect,
+        };
+
+        const expects = {
+            ...stylesMock,
+            height: 40,
+        };
+
+        expect(getValidButtonStyle(stylesMock)).toEqual(expects);
+    });
+
     it('returns styles without tagline for vertical layout', () => {
         const stylesMock = {
             color: StyleButtonColor.silver,
