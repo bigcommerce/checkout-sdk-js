@@ -4,6 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore } from '../checkout';
 import { createSpamProtection } from '../spam-protection';
+import { getConfig } from '../config/configs.mock';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
@@ -41,6 +42,7 @@ import { PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
+import { SquareV2PaymentStrategy } from './strategies/squarev2';
 import { StripeUPEPaymentStrategy } from './strategies/stripe-upe';
 import { StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy } from './strategies/wepay';
@@ -255,6 +257,26 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate square', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.SQUARE);
         expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
+    });
+
+    it('can instantiate squarev2', () => {
+        const storeConfigMock = getConfig().storeConfig;
+        storeConfigMock.checkoutSettings.features = {
+            'PROJECT-4113.squarev2_web_payments_sdk': true,
+        };
+        const store = createCheckoutStore();
+        jest.spyOn(store.getState().config, 'getStoreConfig')
+            .mockReturnValue(storeConfigMock);
+        registry = createPaymentStrategyRegistry(
+            store,
+            createPaymentClient(),
+            createRequestSender(),
+            createSpamProtection(createScriptLoader()),
+            'en_US'
+        );
+
+        const paymentStrategy = registry.get(PaymentStrategyType.SQUARE);
+        expect(paymentStrategy).toBeInstanceOf(SquareV2PaymentStrategy);
     });
 
     it('can instantiate nopaymentdatarequired', () => {
