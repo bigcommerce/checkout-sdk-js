@@ -1,7 +1,7 @@
-import { StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { StripeElement, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 
-export function getCustomerStripeUPEJsMock(): StripeUPEClient {
+export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): StripeUPEClient {
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({
@@ -9,7 +9,7 @@ export function getCustomerStripeUPEJsMock(): StripeUPEClient {
                 unmount: jest.fn(),
                 on: jest.fn(),
             })),
-            getElement: jest.fn().mockReturnValue(null),
+            getElement: jest.fn(() => returnElement),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
         })),
