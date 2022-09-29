@@ -91,7 +91,7 @@ export default class PaymentStrategyActionCreator {
 
                         try {
                             strategy = this._strategyRegistryV2.get({
-                                id: method.id,
+                                id: method.id, gateway: method.gateway, type: method.type,
                             });
                         } catch {
                             strategy =
@@ -154,7 +154,7 @@ export default class PaymentStrategyActionCreator {
 
                     try {
                         strategy = this._strategyRegistryV2.get({
-                            id: method.id,
+                            id: method.id, gateway: method.gateway, type: method.type,
                         });
                     } catch {
                         strategy = this._strategyRegistry.getByMethod(method);
@@ -215,7 +215,9 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    strategy = this._strategyRegistryV2.get({ id: method.id });
+                    strategy = this._strategyRegistryV2.get({
+                        id: method.id, gateway: method.gateway, type: method.type,
+                    });
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }
@@ -282,7 +284,9 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    strategy = this._strategyRegistryV2.get({ id: method.id });
+                    strategy = this._strategyRegistryV2.get({
+                        id: method.id, gateway: method.gateway, type: method.type,
+                    });
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }
