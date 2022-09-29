@@ -11,7 +11,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { LoadPaymentMethodAction, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getStripeUPE } from '../../../payment/payment-methods.mock';
-import { StripeScriptLoader, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { StripeCustomerEvent, StripeElement, StripeHostWindow, StripeScriptLoader, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
 import { getQuote } from '../../../quote/internal-quotes.mock';
 import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import CustomerActionCreator from '../../customer-action-creator';
@@ -39,6 +39,18 @@ describe('StripeUpeCustomerStrategy', () => {
     let stripeScriptLoader: StripeScriptLoader;
     let stripeUPEJsMock: StripeUPEClient;
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
+
+    const stripeCustomerEvent = (auth = false, complete = false): StripeCustomerEvent => {
+        return {
+            authenticated: auth,
+            complete: complete,
+            elementType: '',
+            empty: false,
+            value: {
+                email: 'foo@bar',
+            }
+        }
+    };
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -92,6 +104,7 @@ describe('StripeUpeCustomerStrategy', () => {
         });
 
         afterEach(() => {
+            delete (window as StripeHostWindow).bcStripeElements;
             jest.resetAllMocks();
         });
 
@@ -100,6 +113,82 @@ describe('StripeUpeCustomerStrategy', () => {
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
+        it('triggers onChange event callback, dispatches correct action and mounts component', async () => {
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
+            };
+
+            const expectedAction = { type: CustomerActionType.StripeLinkAuthenticated, payload: true };
+
+            const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
+
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
+                .mockResolvedValueOnce(stripeUPEJsMockWithElement);
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toEqual(store.getState());
+
+            expect(store.dispatch).toHaveBeenNthCalledWith(2, expectedAction);
+            expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(true, 'foo@bar');
+            expect(customerInitialization.stripeupe?.isLoading).toHaveBeenCalled(), 
+            expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
+        });
+
+        it('triggers onChange event callback and throws error if event data is missing', async () => {
+            const missingAuthEvent =  {
+                complete: true,
+                elementType: '',
+                empty: false,
+                value: {
+                    email: 'foo@bar',
+                }
+            };
+
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(missingAuthEvent)),
+            };
+
+            const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
+
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
+                .mockResolvedValue(stripeUPEJsMockWithElement);
+
+            await expect(strategy.initialize(customerInitialization)).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        it('triggers onChange event callback without email if event is not complete', async () => {
+            const missingCompletionEvent =  {
+                authenticated: true,
+                complete: false,
+                elementType: '',
+                empty: false,
+                value: {
+                    email: 'foo@bar',
+                }
+            };
+
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(missingCompletionEvent)),
+            };
+
+            const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
+
+            jest.spyOn(stripeScriptLoader, 'getStripeClient')
+                .mockResolvedValue(stripeUPEJsMockWithElement);
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toEqual(store.getState());
+
+            expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(false, '');
         });
 
         it('returns an error when methodId is not present', () => {

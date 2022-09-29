@@ -22,6 +22,8 @@ export enum CustomerActionType {
     CreateCustomerAddressRequested = 'CREATE_CUSTOMER_ADDRESS_REQUESTED',
     CreateCustomerAddressSucceeded = 'CREATE_CUSTOMER_ADDRESS_SUCCEEDED',
     CreateCustomerAddressFailed = 'CREATE_CUSTOMER_ADDRESS_FAILED',
+
+    StripeLinkAuthenticated = 'STRIPE_LINK_AUTHENTICATED',
 }
 
 export type CustomerAction =
@@ -57,6 +59,10 @@ export type SignOutCustomerAction =
 
 export interface SignInCustomerRequestedAction extends Action {
     type: CustomerActionType.SignInCustomerRequested;
+}
+
+export interface StripeLinkAuthenticatedAction extends Action {
+    type: CustomerActionType.StripeLinkAuthenticated;
 }
 
 export interface SignInCustomerSucceededAction extends Action<InternalCustomerResponseData> {

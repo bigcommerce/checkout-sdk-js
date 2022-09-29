@@ -6,14 +6,16 @@ import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
 import Customer from './customer';
-import { CustomerAction, CustomerActionType } from './customer-actions';
+import { CustomerAction, CustomerActionType, StripeLinkAuthenticatedAction } from './customer-actions';
 import CustomerState, { CustomerErrorsState, CustomerStatusesState, DEFAULT_STATE } from './customer-state';
+
+type ReducerActionType = CheckoutAction | ContinueAsGuestAction | CustomerAction | StripeLinkAuthenticatedAction;
 
 export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,
-    action: CheckoutAction | ContinueAsGuestAction | CustomerAction
+    action: ReducerActionType
 ): CustomerState {
-    const reducer = combineReducers<CustomerState, CheckoutAction | CustomerAction | ContinueAsGuestAction>({
+    const reducer = combineReducers<CustomerState, ReducerActionType>({
         data: dataReducer,
         errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
@@ -24,7 +26,7 @@ export default function customerReducer(
 
 function dataReducer(
     data: Customer | undefined,
-    action: CheckoutAction | ContinueAsGuestAction | CustomerAction
+    action: ReducerActionType
 ): Customer | undefined {
     switch (action.type) {
     case BillingAddressActionType.ContinueAsGuestSucceeded:
@@ -33,6 +35,8 @@ function dataReducer(
 
     case CustomerActionType.CreateCustomerAddressSucceeded:
             return objectMerge(data, action.payload);
+    case CustomerActionType.StripeLinkAuthenticated:
+            return objectSet(data, 'isStripeLinkAuthenticated', action.payload);
 
     default:
         return data;
@@ -41,7 +45,7 @@ function dataReducer(
 
 function errorsReducer(
     errors: CustomerErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction | ContinueAsGuestAction | CustomerAction
+    action: ReducerActionType
 ): CustomerErrorsState {
     switch (action.type) {
     case CustomerActionType.CreateCustomerRequested:
@@ -65,7 +69,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: CustomerStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction | ContinueAsGuestAction | CustomerAction
+    action: ReducerActionType
 ): CustomerStatusesState {
     switch (action.type) {
     case CustomerActionType.CreateCustomerRequested:
