@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.291.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.291.0...v1.291.1) (2022-09-29)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-000 Update get params to get registeries ([#1623](https://github.com/bigcommerce/checkout-sdk-js/issues/1623)) ([f626b5d](https://github.com/bigcommerce/checkout-sdk-js/commit/f626b5d7fd935aac13309a425bd748723dd82f12))
+
 ## [1.291.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.290.0...v1.291.0) (2022-09-29)
 
 
