@@ -270,6 +270,7 @@ export default function createCheckoutButtonRegistry(
         new PaypalCommerceAlternativeMethodsButtonStrategy(
             store,
             checkoutActionCreator,
+            cartRequestSender,
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender
