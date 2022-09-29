@@ -171,6 +171,7 @@ declare interface Customer {
      * Note: You need to enable "Prompt existing accounts to sign in" in your Checkout Settings.
      */
     shouldEncourageSignIn: boolean;
+    isStripeLinkAuthenticated?: boolean;
     customerGroup?: CustomerGroup;
 }
 
