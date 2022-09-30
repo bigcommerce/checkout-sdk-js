@@ -14,7 +14,8 @@ describe('BodlEmitterService', () => {
 
     beforeEach(() => {
         bodlEvents = {
-            emit: jest.fn(),
+            emitOrderPurchasedEvent: jest.fn(),
+            emitCheckoutBeginEvent: jest.fn(),
         };
 
         checkoutService = createCheckoutService();
@@ -44,12 +45,11 @@ describe('BodlEmitterService', () => {
             bodlEmitterService.checkoutBegin();
             bodlEmitterService.checkoutBegin();
 
-            expect(bodlEvents.emit).toBeCalledTimes(1);
+            expect(bodlEvents.emitCheckoutBeginEvent).toBeCalledTimes(1);
         });
 
         it('tracks the id', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_checkout_begin',
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 })
@@ -57,8 +57,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the currency', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_checkout_begin',
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     currency: 'USD',
                 })
@@ -66,8 +65,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the cart value', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_checkout_begin',
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     cart_value: 190,
                 })
@@ -75,8 +73,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the coupon string', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_checkout_begin',
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     coupon: 'SAVEBIG2015,279F507D817E3E7',
                 })
@@ -84,8 +81,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks products', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_checkout_begin',
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     coupon: 'SAVEBIG2015,279F507D817E3E7',
                     cart_value: 190,
@@ -138,8 +134,7 @@ describe('BodlEmitterService', () => {
 
 
         it('tracks the id', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 })
@@ -147,8 +142,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the currency', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     currency: 'USD',
                 })
@@ -156,8 +150,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the transaction id', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     transaction_id: 295,
                 })
@@ -165,8 +158,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the cart amount', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     cart_value: 190,
                 })
@@ -174,8 +166,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the coupon amount, single field, comma separated', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     coupon: 'SAVEBIG2015,279F507D817E3E7',
                 })
@@ -183,8 +174,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks the shipping cost', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     shipping_cost: 15,
                 })
@@ -192,8 +182,7 @@ describe('BodlEmitterService', () => {
         });
 
         it('tracks products', () => {
-            expect(bodlEvents.emit).toHaveBeenCalledWith(
-                'create_order_purchased',
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     line_items: [{
                         product_id: 103,

@@ -41,7 +41,8 @@ export interface OrderPurchasedData {
 }
 
 export interface BodlEventsCheckout { 
-    emit(eventName: string , data: CheckoutBeginData | OrderPurchasedData): boolean;
+    emitCheckoutBeginEvent(data: CheckoutBeginData): boolean;
+    emitOrderPurchasedEvent(data: OrderPurchasedData): boolean;
 }
 
 export interface BodlEvents {

@@ -49,7 +49,7 @@ export default class BodlEmitterService implements BodlService {
             },
         } = checkout;
 
-        this.bodlEvents.emit('create_checkout_begin', {
+        this.bodlEvents.emitCheckoutBeginEvent({
             id,
             currency: currency.code,
             cart_value: cartAmount,
@@ -82,7 +82,7 @@ export default class BodlEmitterService implements BodlService {
             return;
         }
 
-        this.bodlEvents.emit('create_order_purchased', {
+        this.bodlEvents.emitOrderPurchasedEvent({
             id: cartId,
             currency: currency.code,
             transaction_id: orderId,
