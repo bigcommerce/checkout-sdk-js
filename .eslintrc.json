@@ -20,7 +20,7 @@
                   "depConstraints": [
                     {
                       "sourceTag": "scope:core",
-                      "onlyDependOnLibsWithTags": ["scope:shared"]
+                      "onlyDependOnLibsWithTags": ["scope:shared", "scope:integration"]
                     },
                     {
                       "sourceTag": "scope:shared",

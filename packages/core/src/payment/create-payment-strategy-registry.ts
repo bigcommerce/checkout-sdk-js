@@ -28,7 +28,7 @@ import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
-import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv2';
+import { AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AdyenV3PaymentStrategy, AdyenV3ScriptLoader } from './strategies/adyenv3';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
@@ -121,16 +121,6 @@ export default function createPaymentStrategyRegistry(
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-
-    registry.register(PaymentStrategyType.ADYENV2, () =>
-        new AdyenV2PaymentStrategy(
-            store,
-            paymentActionCreator,
-            orderActionCreator,
-            new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()),
-            locale
-        )
-    );
 
     registry.register(PaymentStrategyType.ADYENV2_GOOGLEPAY, () =>
         new GooglePayPaymentStrategy(

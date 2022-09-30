@@ -1,6 +1,6 @@
-import { Omit } from '../../../common/types';
+import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { AdyenV2ValidationState } from '.';
+import { AdyenV2ValidationState } from './adyenv2';
 import { AdyenAdditionalActionOptions, AdyenCreditCardComponentOptions, AdyenIdealComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 
 /**
@@ -107,3 +107,12 @@ export default interface AdyenV2PaymentInitializeOptions {
 
     validateCardFields(validateState: AdyenV2ValidationState): void;
 }
+
+export interface WithAdyenV2PaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
+}
+

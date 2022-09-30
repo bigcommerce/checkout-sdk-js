@@ -8,6 +8,8 @@ export {
 } from "./checkout-buttons";
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from "./cart";
 export { Checkout } from "./checkout";
+export { BrowserInfo, getBrowserInfo } from './common/browser-info';
+export { Omit, PartialDeep } from './common/types';
 export { Config, StoreConfig } from "./config";
 export { Coupon } from "./coupon";
 export { Currency } from "./currency";
@@ -30,12 +32,18 @@ export {
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
+    PaymentInvalidFormError,
+    PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
+    PaymentMethodClientUnavailableError,
+    RequestError,
 } from "./errors";
 export { Order, OrderPaymentRequestBody, OrderRequestBody } from "./order";
 export {
     CardInstrument,
     CreditCardInstrument,
+    isVaultedInstrument,
+    HostedInstrument,
     Payment,
     PaymentInitializeOptions,
     PaymentMethod,
