@@ -1,3 +1,5 @@
+import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
+
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 
 export interface AmazonPayV2Options {
@@ -229,4 +231,13 @@ export enum AmazonPayV2ButtonColor {
     Gold = 'Gold',
     LightGray = 'LightGray',
     DarkGray = 'DarkGray',
+}
+
+export interface AmazonPayV2ButtonRenderingOptions {
+    checkoutState: InternalCheckoutSelectors;
+    containerId: string;
+    decoupleCheckoutInitiation?: boolean;
+    methodId: string;
+    options?: AmazonPayV2ButtonParameters;
+    placement: AmazonPayV2Placement;
 }

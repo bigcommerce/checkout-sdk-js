@@ -32,12 +32,12 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
         await this._amazonPayV2PaymentProcessor.initialize(getPaymentMethodOrThrow(methodId));
 
         this._walletButton =
-            this._amazonPayV2PaymentProcessor.renderAmazonPayButton(
-                amazonpay.container,
-                this._store.getState(),
+            this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+                checkoutState: this._store.getState(),
+                containerId: amazonpay.container,
                 methodId,
-                AmazonPayV2Placement.Checkout
-            );
+                placement: AmazonPayV2Placement.Checkout,
+            });
 
         return this._store.getState();
     }

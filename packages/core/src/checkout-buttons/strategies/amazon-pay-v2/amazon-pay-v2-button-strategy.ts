@@ -28,13 +28,14 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         }
 
-        this._walletButton = this._amazonPayV2PaymentProcessor.renderAmazonPayButton(
-            containerId,
-            this._store.getState(),
-            methodId,
-            AmazonPayV2Placement.Cart,
-            amazonpay
-        );
+        this._walletButton =
+            this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+                checkoutState: this._store.getState(),
+                containerId,
+                methodId,
+                options: amazonpay,
+                placement: AmazonPayV2Placement.Cart,
+            });
     }
 
     deinitialize(): Promise<void> {

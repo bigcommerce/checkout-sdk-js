@@ -13,7 +13,7 @@ import PaymentStrategy from '../payment-strategy';
 import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor, AmazonPayV2Placement } from '.';
 
 import { guard } from '../../../../src/common/utility';
-import { CheckoutSettings } from '../../../config/config';
+import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
@@ -46,14 +46,14 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             const { id: containerId } = this._createContainer();
 
             this._walletButton =
-                this._amazonPayV2PaymentProcessor.renderAmazonPayButton(
+                this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+                    checkoutState: this._store.getState(),
                     containerId,
-                    this._store.getState(),
+                    decoupleCheckoutInitiation:
+                        this._isOneTimeTransaction(features),
                     methodId,
-                    AmazonPayV2Placement.Checkout,
-                    undefined,
-                    this._isOneTimeTransaction(features)
-                );
+                    placement: AmazonPayV2Placement.Checkout,
+                });
         }
 
         return this._store.getState();

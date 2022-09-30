@@ -1,1 +1,1 @@
-export { default as Config, StoreConfig } from "./config";
+export { default as Config, StoreConfig, CheckoutSettings } from "./config";

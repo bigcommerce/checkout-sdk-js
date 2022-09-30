@@ -3,7 +3,7 @@ import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
 import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters, AmazonPayV2Button, AmazonPayV2NewButtonParams, AmazonPayV2CheckoutSessionConfig } from './amazon-pay-v2';
+import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters, AmazonPayV2Button, AmazonPayV2NewButtonParams, AmazonPayV2CheckoutSessionConfig, AmazonPayV2ButtonRenderingOptions } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
 import { guard } from '../../../../src/common/utility';
@@ -59,15 +59,15 @@ export default class AmazonPayV2PaymentProcessor {
         return Promise.resolve();
     }
 
-    renderAmazonPayButton(
-        containerId: string,
-        checkoutState: InternalCheckoutSelectors,
-        methodId: string,
-        placement: AmazonPayV2Placement,
-        options?: AmazonPayV2ButtonParameters,
-        decoupleCheckoutInitiation = false
-    ): HTMLElement {
-        const container = document.getElementById(containerId);
+    renderAmazonPayButton({
+        checkoutState,
+        containerId,
+        decoupleCheckoutInitiation = false,
+        methodId,
+        options,
+        placement,
+    }: AmazonPayV2ButtonRenderingOptions): HTMLElement {
+        const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
             throw new InvalidArgumentError('Unable to render the Amazon Pay button to an invalid HTML container element.');

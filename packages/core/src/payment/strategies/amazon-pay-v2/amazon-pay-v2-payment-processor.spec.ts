@@ -176,7 +176,13 @@ describe('AmazonPayV2PaymentProcessor', () => {
     describe('#renderAmazonPayButton', () => {
         const CONTAINER_ID = 'foo';
         const renderAmazonPayButton = (containerId = CONTAINER_ID, decoupleCheckoutInitiation = false) => {
-            processor.renderAmazonPayButton(containerId, store.getState(), 'amazonpay', AmazonPayV2Placement.Checkout, undefined, decoupleCheckoutInitiation);
+            processor.renderAmazonPayButton({
+                checkoutState: store.getState(),
+                containerId,
+                decoupleCheckoutInitiation,
+                methodId: 'amazonpay',
+                placement: AmazonPayV2Placement.Checkout,
+            });
         };
 
         let store: CheckoutStore;
