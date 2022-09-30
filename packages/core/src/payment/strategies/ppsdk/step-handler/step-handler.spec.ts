@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { RequestError } from '../../../../common/error/errors';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
 
 import { ContinueHandler } from './continue-handler';

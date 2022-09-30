@@ -1,4 +1,4 @@
-import { RequestError } from '../../../../common/error/errors';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
 export const handleUnsupported = (response: PaymentsAPIResponse) =>

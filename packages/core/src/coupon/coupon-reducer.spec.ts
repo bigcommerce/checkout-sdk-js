@@ -1,9 +1,9 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { CheckoutActionType } from '../checkout';
 import { getCheckout, getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { StorefrontErrorResponseBody } from '../common/error';
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';

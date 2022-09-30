@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
@@ -8,7 +9,7 @@ import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRe
 import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getCustomerState } from '../../../customer/customers.mock';

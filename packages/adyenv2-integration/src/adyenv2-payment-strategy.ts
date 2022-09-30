@@ -380,7 +380,6 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     private async _processAdditionalAction(error: unknown, promise: AdyenV2Promise, shouldSaveInstrument?: boolean, shouldSetAsDefaultInstrument?: boolean): Promise<PaymentIntegrationSelectors | void> {
-        console.log({'1': error instanceof RequestError, error });
         if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
             return promise.reject(error);
         }

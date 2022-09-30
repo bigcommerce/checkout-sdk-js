@@ -1,3 +1,4 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
@@ -5,7 +6,6 @@ import { createPaymentClient, PaymentActionCreator, PaymentRequestSender, Paymen
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { RequestError } from '../../../common/error/errors';
 import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator } from '../../../order';

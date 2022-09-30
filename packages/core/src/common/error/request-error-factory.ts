@@ -1,8 +1,9 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Response } from '@bigcommerce/request-sender';
 import { last } from 'lodash';
 
 import ErrorResponseBody, { InternalErrorResponseBody, StorefrontErrorResponseBody } from './error-response-body';
-import { mapFromInternalErrorResponse, mapFromPaymentErrorResponse, mapFromStorefrontErrorResponse, RequestError, TimeoutError } from './errors';
+import { mapFromInternalErrorResponse, mapFromPaymentErrorResponse, mapFromStorefrontErrorResponse, TimeoutError } from './errors';
 
 export default class RequestErrorFactory {
     private _factoryMethods: { [key: string]: ErrorFactoryMethod } = {};

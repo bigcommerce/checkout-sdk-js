@@ -1,6 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import PaymentMethodSelector, { createPaymentMethodSelectorFactory, PaymentMethodSelectorFactory } from './payment-method-selector';

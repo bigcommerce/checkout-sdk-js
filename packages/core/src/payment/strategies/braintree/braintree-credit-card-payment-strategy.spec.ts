@@ -1,4 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -8,7 +9,7 @@ import { from, of, Observable } from 'rxjs';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, RequestError } from '../../../common/error/errors';
+import { MissingDataError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';

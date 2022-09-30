@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { memoizeOne } from '@bigcommerce/memoize';
 
 import { CartChangedError } from '../cart/errors';
-import { RequestError } from '../common/error/errors';
 import { createSelector, createShallowEqualSelector } from '../common/selector';
 import { Omit } from '../common/types';
 

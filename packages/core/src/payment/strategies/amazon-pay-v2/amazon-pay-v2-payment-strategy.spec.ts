@@ -1,4 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
@@ -8,7 +9,7 @@ import { of, Observable } from 'rxjs';
 import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../..';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfig } from '../../../config/configs.mock';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';

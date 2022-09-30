@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { merge, some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { RequestError } from '../../../common/error/errors';
 import { HostedForm } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import isVaultedInstrument from '../../is-vaulted-instrument';

@@ -1,6 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createAction } from '@bigcommerce/data-store';
 
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { SignInEmail } from './signin-email';

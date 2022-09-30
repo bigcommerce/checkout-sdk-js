@@ -1,5 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { InternalCheckoutSelectors } from '../../../checkout';
-import { NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';

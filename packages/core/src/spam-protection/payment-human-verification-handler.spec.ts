@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { ScriptLoader } from '@bigcommerce/script-loader';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 
 import { PaymentHumanVerificationHandler } from '.';

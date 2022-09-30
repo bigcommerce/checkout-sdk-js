@@ -1,9 +1,10 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { merge } from 'lodash';
 
 import { PaymentMethodInvalidError } from '../../payment/errors';
 import { getErrorResponse, getErrorResponseBody, getTimeoutResponse } from '../http-request/responses.mock';
 
-import { RequestError, TimeoutError, UnrecoverableError } from './errors';
+import { TimeoutError, UnrecoverableError } from './errors';
 import RequestErrorFactory from './request-error-factory';
 
 describe('RequestErrorFactory', () => {

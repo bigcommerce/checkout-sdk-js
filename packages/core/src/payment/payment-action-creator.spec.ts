@@ -1,3 +1,4 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
@@ -6,7 +7,6 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { CancellablePromise } from '../common/utility';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';

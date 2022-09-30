@@ -1,6 +1,5 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Response } from '@bigcommerce/request-sender';
-
-import RequestError from './request-error';
 
 /**
  * Throw this error if there is an unexpected error and it is not possible to

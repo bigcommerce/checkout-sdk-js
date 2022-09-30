@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';

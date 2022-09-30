@@ -1,8 +1,9 @@
 import { some } from 'lodash';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { Address } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';

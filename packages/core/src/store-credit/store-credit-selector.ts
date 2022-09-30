@@ -1,6 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { memoizeOne } from '@bigcommerce/memoize';
 
-import { RequestError } from '../common/error/errors';
 import { createSelector } from '../common/selector';
 
 import StoreCreditState, { DEFAULT_STATE } from './store-credit-state';

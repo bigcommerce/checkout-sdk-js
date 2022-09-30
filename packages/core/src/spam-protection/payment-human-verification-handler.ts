@@ -1,6 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { switchMap, take } from 'rxjs/operators';
 
-import { RequestError } from '../common/error/errors';
 import { PaymentAdditionalAction } from '../payment';
 
 import { CardingProtectionChallengeNotCompletedError, CardingProtectionFailedError, SpamProtectionChallengeNotCompletedError } from './errors';

@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../../../checkout';
-import { RequestError } from '../../../common/error/errors';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
 import { GooglePayProviderProcessor } from './googlepay';

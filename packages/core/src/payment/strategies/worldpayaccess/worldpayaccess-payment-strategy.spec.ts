@@ -1,4 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -26,7 +27,6 @@ import WorldpayaccessPaymetStrategy from './worldpayaccess-payment-strategy';
 
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
-import { RequestError } from '../../../common/error/errors';
 
 describe('WorldpayaccessPaymetStrategy', () => {
     let formFactory: HostedFormFactory;

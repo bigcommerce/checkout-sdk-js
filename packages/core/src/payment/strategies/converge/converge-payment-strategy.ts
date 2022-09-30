@@ -1,8 +1,8 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { FormPoster } from '@bigcommerce/form-poster';
 import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { RequestError } from '../../../common/error/errors';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';

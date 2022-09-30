@@ -1,8 +1,8 @@
 import { set } from 'lodash';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { GatewayOrderPayment } from '.';

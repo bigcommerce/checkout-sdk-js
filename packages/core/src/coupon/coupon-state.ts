@@ -1,5 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { StorefrontErrorResponseBody } from '../common/error';
-import { RequestError } from '../common/error/errors';
 
 import Coupon from './coupon';
 

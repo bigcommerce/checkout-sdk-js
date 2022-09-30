@@ -1,6 +1,8 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { noop } from 'lodash';
+
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotCompletedError } from '../../../order/errors';

@@ -1,5 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { DetachmentObserver } from '../common/dom';
-import { RequestError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { getErrorPaymentResponseBody } from '../payment/payments.mock';

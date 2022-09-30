@@ -1,6 +1,5 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Response } from '@bigcommerce/request-sender';
-
-import RequestError from './request-error';
 
 /**
  * Throw this error if a request fails to complete within its required timeframe

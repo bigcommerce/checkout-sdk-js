@@ -1,4 +1,4 @@
-import { RequestError } from '../../common/error/errors';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 /**
  * This error should be thrown when the subscriptions fails to be updated

@@ -1,3 +1,4 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Response } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { of } from 'rxjs';
@@ -5,7 +6,6 @@ import { of } from 'rxjs';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
-import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { HostedForm } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';

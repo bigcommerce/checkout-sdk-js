@@ -1,4 +1,4 @@
-import { RequestError } from '../common/error/errors';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import StoreCreditSelector, { createStoreCreditSelectorFactory, StoreCreditSelectorFactory } from './store-credit-selector';
 import StoreCreditState from './store-credit-state';

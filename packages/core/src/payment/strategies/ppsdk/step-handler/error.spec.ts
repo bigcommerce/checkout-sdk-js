@@ -1,4 +1,4 @@
-import { RequestError } from '../../../../common/error/errors';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
 import { handleError, isError, ErrorResponse } from './error';
 

@@ -1,6 +1,6 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { get, isString } from 'lodash';
 
-import { RequestError } from '../../../../common/error/errors';
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
 export interface FailureResponse extends PaymentsAPIResponse {

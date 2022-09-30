@@ -1,6 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
-import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 import { IframeEventListener } from '../common/iframe';
 import { PaymentAdditionalAction } from '../payment';

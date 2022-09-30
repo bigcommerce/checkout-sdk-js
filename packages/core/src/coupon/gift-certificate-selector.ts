@@ -1,7 +1,7 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { memoizeOne } from '@bigcommerce/memoize';
 
 import { StorefrontErrorResponseBody } from '../common/error';
-import { RequestError } from '../common/error/errors';
 import { createSelector } from '../common/selector';
 
 import GiftCertificate from './gift-certificate';

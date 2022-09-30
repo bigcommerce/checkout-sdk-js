@@ -1,8 +1,9 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { some } from 'lodash';
 
 import { Payment, PaymentActionCreator, PaymentInitializeOptions } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethodCancelledError } from '../../errors';
 import { AdyenAction, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenError, AdyenV3ScriptLoader } from '../adyenv3';
 

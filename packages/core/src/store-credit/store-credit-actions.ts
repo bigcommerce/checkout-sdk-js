@@ -1,8 +1,8 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Action } from '@bigcommerce/data-store';
 
 import { Checkout } from '../checkout';
 import { StorefrontErrorResponseBody } from '../common/error';
-import { RequestError } from '../common/error/errors';
 
 export enum StoreCreditActionType {
     ApplyStoreCreditRequested = 'APPLY_STORE_CREDIT_REQUESTED',

@@ -1,10 +1,10 @@
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { Response } from '@bigcommerce/request-sender';
 
 import { getErrorResponse } from '../../http-request/responses.mock';
 import { StorefrontErrorResponseBody } from '../error-response-body';
 
 import mapFromStorefrontErrorResponse from './map-from-storefront-error-response';
-import RequestError from './request-error';
 
 describe('mapFromStorefrontErrorResponse()', () => {
     let error: RequestError<StorefrontErrorResponseBody>;

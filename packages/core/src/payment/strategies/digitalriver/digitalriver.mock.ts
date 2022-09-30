@@ -1,4 +1,5 @@
-import { RequestError } from '../../../common/error/errors';
+import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
