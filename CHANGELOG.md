@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.292.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.292.0...v1.292.1) (2022-09-30)
+
+
+### Code Refactoring
+
+* **checkout:** STRF-10042 Incapsulate BODL event names into public methods ([#1625](https://github.com/bigcommerce/checkout-sdk-js/issues/1625)) ([93bfa5c](https://github.com/bigcommerce/checkout-sdk-js/commit/93bfa5c411bd20b014559fe6d1014c029f738048))
+
 ## [1.292.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.291.1...v1.292.0) (2022-09-29)
 
 
