@@ -211,6 +211,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepayauthorizenet;
         }
 
+        if (options.methodId === PaymentStrategyType.BNZ_GOOGLEPAY && options.googlepaybnz) {
+            return options.googlepaybnz;
+        }
+
+
         if (options.methodId === PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY && options.googlepaycheckoutcom) {
             return options.googlepaycheckoutcom;
         }

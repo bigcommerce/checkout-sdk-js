@@ -71,6 +71,12 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
     googlepayadyenv3?: GooglePayButtonInitializeOptions;
 
     /**
+     * The options that are required to facilitate BNZ GooglePay. They can be
+     * omitted unless you need to support BNZ GooglePay.
+     */
+     googlepaybnz?: GooglePayButtonInitializeOptions;
+
+    /**
      * The options that are required to facilitate Braintree GooglePay. They can be
      * omitted unless you need to support Braintree GooglePay.
      */

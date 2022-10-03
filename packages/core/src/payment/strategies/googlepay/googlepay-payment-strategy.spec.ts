@@ -472,6 +472,45 @@ describe('GooglePayPaymentStrategy', () => {
                 });
             });
 
+            it('submits json encoded nonce for BNZ', async () => {
+                googlePayOptions = {
+                    methodId: 'googlepaybnz',
+                    googlepaybnz: {
+                        walletButton: 'mockButton',
+                        onError: noop,
+                        onPaymentSelect: noop,
+                    },
+                };
+
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                    initializationData: {
+                        nonce: 'token',
+                        card_information: 'ci',
+                        isThreeDSecureEnabled: true,
+                    },
+                });
+
+                await strategy.initialize({
+                    methodId: 'googlepaybnz',
+                    googlepaybnz: googlePayOptions.googlepaybnz,
+                });
+
+                await strategy.execute({
+                    ...getGoogleOrderRequestBody(),
+                    payment: { methodId: 'googlepaybnz' },
+                });
+
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    methodId: 'googlepaybnz',
+                    paymentData: {
+                        nonce: 'token',
+                        method: 'googlepaybnz',
+                        cardInformation: 'ci',
+                    },
+                });
+            });
+
             it('submits json encoded nonce for stripe', async () => {
                 googlePayOptions = {
                     methodId: 'googlepaystripe',

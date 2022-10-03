@@ -21,6 +21,7 @@ export enum Mode {
     GooglePayAdyenV2,
     GooglePayAdyenV3,
     GooglePayAuthorizeNet,
+    GooglePayBNZ,
     GooglePayBraintree,
     GooglePayCheckoutcom,
     GooglePayCybersourceV2,
@@ -36,6 +37,7 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
     const googlepayadyenv2 = { googlepayadyenv2: { buttonType: ButtonType.Short } };
     const googlepayadyenv3 = { googlepayadyenv3: { buttonType: ButtonType.Short } };
     const googlepayauthorizenet = { googlepayauthorizenet: { buttonType: ButtonType.Short } };
+    const googlepaybnz = { googlepaybnz: { buttonType: ButtonType.Short } };
     const googlepaybraintree = { googlepaybraintree: { buttonType: ButtonType.Short } };
     const googlepaycheckoutcom = { googlepaycheckoutcom: { buttonType: ButtonType.Short } };
     const googlepaycybersourcev2 = { googlepaycybersourcev2: { buttonType: ButtonType.Short } };
@@ -58,6 +60,9 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
         }
         case Mode.GooglePayAuthorizeNet: {
             return { methodId, containerId, ...googlepayauthorizenet };
+        }
+        case Mode.GooglePayBNZ: {
+            return { methodId, containerId, ...googlepaybnz };
         }
         case Mode.GooglePayBraintree: {
             return { methodId, containerId, ...googlepaybraintree };
