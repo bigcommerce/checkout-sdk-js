@@ -20,10 +20,13 @@ export {
     WithMollieIssuerInstrument,
 } from "./payment";
 
+export { default as isHostedInstrumentLike } from './is-hosted-intrument-like'
+
 export { default as isVaultedInstrument,
     isHostedVaultedInstrument,
     isFormattedVaultedInstrument,
 } from "./is-vaulted-instrument";
+
 export { PaymentInitializeOptions } from "./payment-initialize-options";
 export { PaymentRequestOptions } from "./payment-request-options";
 export { default as PaymentMethod } from "./payment-method";

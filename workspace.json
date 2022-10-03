@@ -1,7 +1,7 @@
 {
     "version": 2,
     "projects": {
-        "adyenv2-integration": "packages/adyenv2-integration",
+        "adyen-integration": "packages/adyen-integration",
         "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
         "payment-integration-api": "packages/payment-integration-api",

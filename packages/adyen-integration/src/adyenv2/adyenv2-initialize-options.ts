@@ -1,12 +1,11 @@
-import { Omit } from '../../../common/types';
+import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { AdyenV3ValidationState } from '.';
-import { AdyenAdditionalActionOptions, AdyenV3CreditCardComponentOptions } from './adyenv3';
+import { AdyenV2ValidationState, AdyenAdditionalActionOptions, AdyenCreditCardComponentOptions, AdyenIdealComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 
 /**
- * A set of options that are required to initialize the Adyenv3 payment method.
+ * A set of options that are required to initialize the AdyenV2 payment method.
  *
- * Once Adyenv3 payment is initialized, credit card form fields, provided by the
+ * Once AdyenV2 payment is initialized, credit card form fields, provided by the
  * payment provider as IFrames, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
  *
@@ -20,8 +19,8 @@ import { AdyenAdditionalActionOptions, AdyenV3CreditCardComponentOptions } from 
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'adyenv3',
- *     adyenv3: {
+ *     methodId: 'adyenv2',
+ *     adyenv2: {
  *         containerId: 'container',
  *         additionalActionOptions: {
  *             containerId: 'additional-action-container',
@@ -35,8 +34,8 @@ import { AdyenAdditionalActionOptions, AdyenV3CreditCardComponentOptions } from 
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'adyenv3',
- *     adyenv3: {
+ *     methodId: 'adyenv2',
+ *     adyenv2: {
  *         containerId: 'container',
  *         additionalActionOptions: {
  *             containerId: 'additional-action-container',
@@ -54,16 +53,28 @@ import { AdyenAdditionalActionOptions, AdyenV3CreditCardComponentOptions } from 
  *             scheme: {
  *                 hasHolderName: true,
  *             },
+ *             bcmc: {
+ *                 hasHolderName: true,
+ *             },
+ *             ideal: {
+ *                 showImage: true,
+ *             },
  *         },
  *     },
  * });
  * ```
  */
-export default interface AdyenV3PaymentInitializeOptions {
+export default interface AdyenV2PaymentInitializeOptions {
     /**
      * The location to insert the Adyen component.
      */
     containerId: string;
+
+    /**
+     * @deprecated The location to insert the Adyen 3DS V2 component.
+     * Use additionalActionOptions instead as this property will be removed in the future
+     */
+    threeDS2ContainerId: string;
 
     /**
      * The location to insert the Adyen custom card component
@@ -76,6 +87,12 @@ export default interface AdyenV3PaymentInitializeOptions {
     hasVaultedInstruments?: boolean;
 
     /**
+     * @deprecated
+     * Use additionalActionOptions instead as this property will be removed in the future
+     */
+    threeDS2Options?: AdyenThreeDS2Options;
+
+    /**
      * A set of options that are required to initialize additional payment actions.
      */
     additionalActionOptions: AdyenAdditionalActionOptions;
@@ -83,9 +100,18 @@ export default interface AdyenV3PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit<AdyenV3CreditCardComponentOptions, 'onChange'>;
+    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
 
     shouldShowNumberField?: boolean;
 
-    validateCardFields(validateState: AdyenV3ValidationState): void;
+    validateCardFields(validateState: AdyenV2ValidationState): void;
 }
+
+export interface WithAdyenV2PaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
+}
+

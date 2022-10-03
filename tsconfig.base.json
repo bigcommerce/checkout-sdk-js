@@ -17,8 +17,8 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
-            "@bigcommerce/checkout-sdk/adyenv2-integration": [
-                "packages/adyenv2-integration/src/index.ts"
+            "@bigcommerce/checkout-sdk/adyen-integration": [
+                "packages/adyen-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"

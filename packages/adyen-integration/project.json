@@ -1,20 +1,20 @@
 {
-    "root": "packages/adyenv2-integration",
-    "sourceRoot": "packages/adyenv2-integration/src",
+    "root": "packages/adyen-integration",
+    "sourceRoot": "packages/adyen-integration/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/adyenv2-integration/**/*.ts"]
+                "lintFilePatterns": ["packages/adyen-integration/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/adyenv2-integration"],
+            "outputs": ["coverage/packages/adyen-integration"],
             "options": {
-                "jestConfig": "packages/adyenv2-integration/jest.config.js",
+                "jestConfig": "packages/adyen-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }

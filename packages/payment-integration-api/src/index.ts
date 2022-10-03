@@ -43,6 +43,7 @@ export {
     CardInstrument,
     CreditCardInstrument,
     isVaultedInstrument,
+    isHostedInstrumentLike,
     HostedInstrument,
     Payment,
     PaymentInitializeOptions,
