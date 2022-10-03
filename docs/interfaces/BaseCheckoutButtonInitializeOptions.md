@@ -25,6 +25,7 @@
 - [googlepayadyenv2](BaseCheckoutButtonInitializeOptions.md#googlepayadyenv2)
 - [googlepayadyenv3](BaseCheckoutButtonInitializeOptions.md#googlepayadyenv3)
 - [googlepayauthorizenet](BaseCheckoutButtonInitializeOptions.md#googlepayauthorizenet)
+- [googlepaybnz](BaseCheckoutButtonInitializeOptions.md#googlepaybnz)
 - [googlepaybraintree](BaseCheckoutButtonInitializeOptions.md#googlepaybraintree)
 - [googlepaycheckoutcom](BaseCheckoutButtonInitializeOptions.md#googlepaycheckoutcom)
 - [googlepaycybersourcev2](BaseCheckoutButtonInitializeOptions.md#googlepaycybersourcev2)
@@ -120,6 +121,15 @@ ___
 
 The options that are required to facilitate Authorize.Net GooglePay.
 They can be omitted unless you need to support Authorize.Net GooglePay.
+
+___
+
+### googlepaybnz
+
+• `Optional` **googlepaybnz**: [`GooglePayButtonInitializeOptions`](GooglePayButtonInitializeOptions.md)
+
+The options that are required to facilitate BNZ GooglePay. They can be
+omitted unless you need to support BNZ GooglePay.
 
 ___
 

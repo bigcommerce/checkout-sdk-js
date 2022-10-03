@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.293.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.292.1...v1.293.0) (2022-10-03)
+
+
+### Features
+
+* **payment:** INT-6297 BNZ Googlepay ([#1598](https://github.com/bigcommerce/checkout-sdk-js/issues/1598)) ([066e9da](https://github.com/bigcommerce/checkout-sdk-js/commit/066e9da58531be9ae65d07ce53b39a07ec28a051))
+
 ### [1.292.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.292.0...v1.292.1) (2022-09-30)
 
 

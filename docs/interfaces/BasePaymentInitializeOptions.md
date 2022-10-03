@@ -30,6 +30,7 @@ current checkout flow.
 - [googlepayadyenv2](BasePaymentInitializeOptions.md#googlepayadyenv2)
 - [googlepayadyenv3](BasePaymentInitializeOptions.md#googlepayadyenv3)
 - [googlepayauthorizenet](BasePaymentInitializeOptions.md#googlepayauthorizenet)
+- [googlepaybnz](BasePaymentInitializeOptions.md#googlepaybnz)
 - [googlepaybraintree](BasePaymentInitializeOptions.md#googlepaybraintree)
 - [googlepaycheckoutcom](BasePaymentInitializeOptions.md#googlepaycheckoutcom)
 - [googlepaycybersourcev2](BasePaymentInitializeOptions.md#googlepaycybersourcev2)
@@ -191,6 +192,15 @@ ___
 ### googlepayauthorizenet
 
 • `Optional` **googlepayauthorizenet**: [`GooglePayPaymentInitializeOptions`](GooglePayPaymentInitializeOptions.md)
+
+The options that are required to initialize the GooglePay Authorize.Net
+payment method. They can be omitted unless you need to support GooglePay.
+
+___
+
+### googlepaybnz
+
+• `Optional` **googlepaybnz**: [`GooglePayPaymentInitializeOptions`](GooglePayPaymentInitializeOptions.md)
 
 The options that are required to initialize the GooglePay Authorize.Net
 payment method. They can be omitted unless you need to support GooglePay.

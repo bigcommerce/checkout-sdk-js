@@ -250,6 +250,11 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     googlepayadyenv3?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate BNZ GooglePay. They can be
+     * omitted unless you need to support BNZ GooglePay.
+     */
+    googlepaybnz?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Braintree GooglePay. They can be
      * omitted unless you need to support Braintree GooglePay.
      */
@@ -521,6 +526,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
     GOOGLEPAY_ADYENV3 = "googlepayadyenv3",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
+    GOOGLEPAY_BNZ = "googlepaybnz",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",

@@ -1005,6 +1005,11 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     googlepayadyenv3?: GooglePayButtonInitializeOptions;
     /**
+     * The options that are required to facilitate BNZ GooglePay. They can be
+     * omitted unless you need to support BNZ GooglePay.
+     */
+    googlepaybnz?: GooglePayButtonInitializeOptions;
+    /**
      * The options that are required to facilitate Braintree GooglePay. They can be
      * omitted unless you need to support Braintree GooglePay.
      */
@@ -1127,6 +1132,11 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaybnz?: GooglePayCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
@@ -1318,6 +1328,11 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * payment method. They can be omitted unless you need to support GooglePay.
      */
     googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay Authorize.Net
+     * payment method. They can be omitted unless you need to support GooglePay.
+     */
+    googlepaybnz?: GooglePayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay Braintree payment method.
      * They can be omitted unless you need to support GooglePay.
@@ -2249,6 +2264,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_ADYENV2 = "googlepayadyenv2",
     GOOGLEPAY_ADYENV3 = "googlepayadyenv3",
     GOOGLEPAY_AUTHORIZENET = "googlepayauthorizenet",
+    GOOGLEPAY_BNZ = "googlepaybnz",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     GOOGLEPAY_CHECKOUTCOM = "googlepaycheckoutcom",
     GOOGLEPAY_CYBERSOURCEV2 = "googlepaycybersourcev2",

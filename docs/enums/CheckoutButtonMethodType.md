@@ -14,6 +14,7 @@
 - [GOOGLEPAY_ADYENV2](CheckoutButtonMethodType.md#googlepay_adyenv2)
 - [GOOGLEPAY_ADYENV3](CheckoutButtonMethodType.md#googlepay_adyenv3)
 - [GOOGLEPAY_AUTHORIZENET](CheckoutButtonMethodType.md#googlepay_authorizenet)
+- [GOOGLEPAY_BNZ](CheckoutButtonMethodType.md#googlepay_bnz)
 - [GOOGLEPAY_BRAINTREE](CheckoutButtonMethodType.md#googlepay_braintree)
 - [GOOGLEPAY_CHECKOUTCOM](CheckoutButtonMethodType.md#googlepay_checkoutcom)
 - [GOOGLEPAY_CYBERSOURCEV2](CheckoutButtonMethodType.md#googlepay_cybersourcev2)
@@ -75,6 +76,12 @@ ___
 ### GOOGLEPAY\_AUTHORIZENET
 
 • **GOOGLEPAY\_AUTHORIZENET** = `"googlepayauthorizenet"`
+
+___
+
+### GOOGLEPAY\_BNZ
+
+• **GOOGLEPAY\_BNZ** = `"googlepaybnz"`
 
 ___
 
