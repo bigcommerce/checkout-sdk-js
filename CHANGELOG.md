@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.294.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.293.0...v1.294.0) (2022-10-04)
+
+
+### Features
+
+* **payment:** PAYPAL-1626 made PayPalCommerceCredit competible with Buy Now ([#1620](https://github.com/bigcommerce/checkout-sdk-js/issues/1620)) ([1b523f4](https://github.com/bigcommerce/checkout-sdk-js/commit/1b523f429e589f5de49126053d24e3bc351cf2c3))
+
 ## [1.293.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.292.1...v1.293.0) (2022-10-03)
 
 
