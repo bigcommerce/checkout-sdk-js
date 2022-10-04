@@ -3,8 +3,10 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
-import { Cart } from '../../../cart';
+import { Cart, CartRequestSender } from '../../../cart';
+import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getCart } from '../../../cart/carts.mock';
+import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
@@ -22,6 +24,7 @@ import PaypalCommerceCreditButtonStrategy from './paypal-commerce-credit-button-
 
 describe('PaypalCommerceCreditButtonStrategy', () => {
     let cartMock: Cart;
+    let cartRequestSender: CartRequestSender;
     let checkoutActionCreator: CheckoutActionCreator;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
@@ -53,6 +56,36 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         paypalcommercecredit: paypalCommerceCreditOptions,
     };
 
+    const buyNowCartMock = {
+        ...getCart(),
+        id: 999,
+        source: 'BUY_NOW',
+    };
+
+    const buyNowCartRequestBody: BuyNowCartRequestBody = {
+        source: 'BUY_NOW',
+        lineItems: [{
+            productId: 1,
+            quantity: 2,
+            optionSelections: {
+                optionId: 11,
+                optionValue: 11,
+            },
+        }],
+    };
+
+    const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
+        methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_CREDIT,
+        containerId: defaultButtonContainerId,
+        paypalcommercecredit: {
+            ...paypalCommerceCreditOptions,
+            currencyCode: 'USD',
+            buyNowInitializeOptions: {
+                getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
+            },
+        }
+    };
+
     beforeEach(() => {
         cartMock = getCart();
         eventEmitter = new EventEmitter();
@@ -62,6 +95,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
         formPoster = createFormPoster();
+        cartRequestSender = new CartRequestSender(requestSender);
         paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
 
@@ -74,6 +108,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         strategy = new PaypalCommerceCreditButtonStrategy(
             store,
             checkoutActionCreator,
+            cartRequestSender,
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender,
@@ -88,6 +123,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
         document.body.appendChild(paypalCommerceCreditMessageElement);
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
 
@@ -101,6 +137,29 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                         options.createOrder().catch(() => {});
                     }
                 });
+
+                eventEmitter.on('onClick', async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
+                    try {
+                        if (options.onClick) {
+                            await options.onClick(
+                                { fundingSource: 'paylater' },
+                                {
+                                    reject: jest.fn(),
+                                    resolve: jest.fn(),
+                                },
+                            );
+
+                            if (jestSuccessExpectationsCallback && typeof jestSuccessExpectationsCallback === 'function') {
+                                jestSuccessExpectationsCallback();
+                            }
+                        }
+                    } catch (error) {
+                        if (jestFailureExpectationsCallback && typeof jestFailureExpectationsCallback === 'function') {
+                            jestFailureExpectationsCallback(error);
+                        }
+                    }
+                });
+
 
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
@@ -172,10 +231,36 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
             }
         });
 
+        it('loads default checkout', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
+        });
+
+        it ('does not load default checkout for Buy Now flow', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+
+            expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
+        });
+
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalled();
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                paymentMethodMock,
+                cartMock.currency.code,
+                initializationOptions.paypalcommercecredit?.initializesOnCheckoutPage
+            );
+        });
+
+        it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                paymentMethodMock,
+                buyNowInitializationOptions.paypalcommercecredit?.currencyCode,
+                buyNowInitializationOptions.paypalcommercecredit?.initializesOnCheckoutPage
+            );
         });
 
         describe('PayPal Commerce Credit buttons logic', () => {
@@ -186,7 +271,8 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                     fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                     style: paypalCommerceCreditOptions.style,
                     createOrder: expect.any(Function),
-                    onApprove: expect.any(Function)
+                    onApprove: expect.any(Function),
+                    onClick: expect.any(Function),
                 });
             });
 
@@ -207,7 +293,8 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                     fundingSource: paypalSdkMock.FUNDING.CREDIT,
                     style: paypalCommerceCreditOptions.style,
                     createOrder: expect.any(Function),
-                    onApprove: expect.any(Function)
+                    onApprove: expect.any(Function),
+                    onClick: expect.any(Function),
                 });
             });
 
@@ -237,6 +324,53 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 await strategy.initialize(initializationOptions);
 
                 expect(document.getElementById(defaultButtonContainerId)).toBeNull();
+            });
+
+            it('throws an error if buy now cart request body data is not provided on button click (Buy Now flow)', async () => {
+                const buyNowInitializationOptionsMock = {
+                    ...buyNowInitializationOptions,
+                    paypalcommercecredit: {
+                        ...buyNowInitializationOptions.paypalcommercecredit,
+                        buyNowInitializeOptions: {
+                            getBuyNowCartRequestBody: jest.fn().mockReturnValue(undefined),
+                        },
+                    },
+                };
+
+                await strategy.initialize(buyNowInitializationOptionsMock);
+                eventEmitter.emit(
+                    'onClick',
+                    undefined,
+                    (error: Error) => {
+                        expect(error).toBeInstanceOf(MissingDataError);
+                    },
+                );
+            });
+
+            it('creates buy now cart (Buy Now Flow)', async () => {
+                jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+
+                await strategy.initialize(buyNowInitializationOptions);
+
+                eventEmitter.emit(
+                    'onClick',
+                    () => {
+                        expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(buyNowCartRequestBody);
+                    },
+                );
+            });
+
+            it('throws an error if failed to create buy now cart (Buy Now Flow)', async () => {
+                jest.spyOn(cartRequestSender, 'createBuyNowCart').mockImplementation(() => Promise.reject());
+
+                await strategy.initialize(buyNowInitializationOptions);
+                eventEmitter.emit(
+                    'onClick',
+                    undefined,
+                    (error: Error) => {
+                        expect(error).toBeInstanceOf(BuyNowCartCreationError);
+                    }
+                );
             });
 
             it('creates an order with paypalcommercecredit as provider id if its initializes outside checkout page', async () => {
@@ -269,6 +403,23 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 await new Promise(resolve => process.nextTick(resolve));
 
                 expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, 'paypalcommercecreditcheckout');
+            });
+
+            it('creates order with Buy Now cart id (Buy Now flow)', async () => {
+                jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+                jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
+
+                await strategy.initialize(buyNowInitializationOptions);
+
+                eventEmitter.emit('onClick');
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                eventEmitter.emit('createOrder');
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(buyNowCartMock.id, 'paypalcommercecredit');
             });
 
             it('throws an error if orderId is not provided by PayPal on approve', async () => {
@@ -312,6 +463,29 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                     order_id: approveDataOrderId,
                     payment_type: 'paypal',
                     provider: paymentMethodMock.id,
+                }));
+            });
+
+            it('provides buy now cart_id on payment tokenization on paypal approve', async () => {
+                jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+                jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('111');
+
+                await strategy.initialize(buyNowInitializationOptions);
+
+                eventEmitter.emit('onClick');
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                eventEmitter.emit('createOrder');
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+                    cart_id: buyNowCartMock.id,
                 }));
             });
         });
