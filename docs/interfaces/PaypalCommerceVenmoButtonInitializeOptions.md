@@ -6,10 +6,34 @@
 
 ### Properties
 
+- [buyNowInitializeOptions](PaypalCommerceVenmoButtonInitializeOptions.md#buynowinitializeoptions)
+- [currencyCode](PaypalCommerceVenmoButtonInitializeOptions.md#currencycode)
 - [initializesOnCheckoutPage](PaypalCommerceVenmoButtonInitializeOptions.md#initializesoncheckoutpage)
 - [style](PaypalCommerceVenmoButtonInitializeOptions.md#style)
 
 ## Properties
+
+### buyNowInitializeOptions
+
+• `Optional` **buyNowInitializeOptions**: `Object`
+
+The options that are required to initialize Buy Now functionality.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |
+
+___
+
+### currencyCode
+
+• `Optional` **currencyCode**: `string`
+
+The option that used to initialize a PayPal script with provided currency code.
+
+___
 
 ### initializesOnCheckoutPage
 
