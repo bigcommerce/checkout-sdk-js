@@ -8,7 +8,7 @@ export {
 } from "./checkout-buttons";
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from "./cart";
 export { Checkout } from "./checkout";
-export { Config, StoreConfig } from "./config";
+export { Config, StoreConfig, CheckoutSettings } from "./config";
 export { Coupon } from "./coupon";
 export { Currency } from "./currency";
 export {
