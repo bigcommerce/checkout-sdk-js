@@ -763,7 +763,7 @@ declare interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
     /**
      * Create Checkout Session configuration.
      */
-    createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
+    createCheckoutSessionConfig?: AmazonPayV2CheckoutSessionConfig;
 }
 
 declare enum AmazonPayV2PayOptions {

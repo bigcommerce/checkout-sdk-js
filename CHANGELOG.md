@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.296.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.295.0...v1.296.0) (2022-10-05)
+
+
+### Features
+
+* **payment:** INT-6092 AmazonPayV2: Add an additional payment button… ([#1605](https://github.com/bigcommerce/checkout-sdk-js/issues/1605)) ([a4c24cd](https://github.com/bigcommerce/checkout-sdk-js/commit/a4c24cd2542604dbee615fbbd8cfa9a1bd0505e3))
+
 ## [1.295.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.294.0...v1.295.0) (2022-10-05)
 
 

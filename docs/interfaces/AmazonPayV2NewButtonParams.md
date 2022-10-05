@@ -51,7 +51,7 @@ ___
 
 ### createCheckoutSessionConfig
 
-• **createCheckoutSessionConfig**: [`AmazonPayV2CheckoutSessionConfig`](AmazonPayV2CheckoutSessionConfig.md)
+• `Optional` **createCheckoutSessionConfig**: [`AmazonPayV2CheckoutSessionConfig`](AmazonPayV2CheckoutSessionConfig.md)
 
 Create Checkout Session configuration.
 
