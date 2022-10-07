@@ -1,7 +1,12 @@
 import { isNil, omitBy } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    MissingDataError, MissingDataErrorType,
+    NotImplementedError,
+    NotInitializedError,
+    NotInitializedErrorType
+} from "../../../common/error/errors";
 import { OrderActionCreator } from '../../../order';
 import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../errors';
@@ -140,7 +145,11 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypalFields;
     }
 
-    getOrderId() {
+    getOrderId(): string {
+        if (!this._orderId) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
+        }
+
         return this._orderId;
     }
 
