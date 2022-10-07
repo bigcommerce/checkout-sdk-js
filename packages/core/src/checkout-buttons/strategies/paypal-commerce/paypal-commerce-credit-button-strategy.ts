@@ -4,11 +4,11 @@ import { CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ApproveCallbackActions, ApproveCallbackPayload, ButtonsOptions, CompleteCallbackDataPayload, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from "../../../payment/strategies/paypal-commerce";
+import { ApproveCallbackActions, ApproveCallbackPayload, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from "../../../payment/strategies/paypal-commerce";
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
@@ -77,17 +77,19 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
     private _renderButton(containerId: string, methodId: string, paypalcommercecredit: PaypalCommerceCreditButtonInitializeOptions): void {
         const { buyNowInitializeOptions, initializesOnCheckoutPage, style, onComplete } = paypalcommercecredit;
 
+        if (!onComplete || typeof onComplete !== 'function') {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.onComplete" argument is not provided or it is not a function.`);
+        }
+
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData } = paymentMethod;
-        const { isHostedCheckoutEnabled } = initializationData;
+        const { initializationData: { isHostedCheckoutEnabled } } = paymentMethod;
 
         const hostedCheckoutCallbacks = {
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
             onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onHostedCheckoutApprove(data, actions, methodId),
-            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId, onComplete),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onHostedCheckoutApprove(data, actions, methodId, onComplete),
             onCancel: () => this._onCancel(),
         };
 
@@ -149,10 +151,11 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
         methodId: string,
+        onComplete: () => void
     ): Promise<boolean> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
-        const orderDetails = await actions.order.get();
+        const orderDetails = await this.getActionsOrThrow(actions);
 
         if (cart.lineItems.physicalItems.length > 0) {
             const address = this._getValidAddress(
@@ -176,20 +179,18 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
         await this._submitPayment(methodId, data.orderID);
+        onComplete();
 
         return true;
     }
 
-    private async _onComplete(
-        data: CompleteCallbackDataPayload,
-        methodId: string,
-        callback?: () => void
-    ): Promise<void> {
-        await this._submitPayment(methodId, data.orderID);
+    private async getActionsOrThrow(actions: ApproveCallbackActions) {
 
-        if (callback) {
-            callback();
+        if (!actions) {
+           throw new RequestError();
         }
+
+        return actions.order.get();
     }
 
     private async _onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void> {
@@ -239,11 +240,15 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         const cart = state.cart.getCartOrThrow();
         const consignment = state.consignments.getConsignmentsOrThrow()[0];
 
-        await this._paypalCommerceRequestSender.updateOrder({
-            availableShippingOptions: consignment?.availableShippingOptions,
-            cartId: cart.id,
-            selectedShippingOption: consignment?.selectedShippingOption,
-        });
+        try {
+            await this._paypalCommerceRequestSender.updateOrder({
+                availableShippingOptions: consignment?.availableShippingOptions,
+                cartId: cart.id,
+                selectedShippingOption: consignment?.selectedShippingOption,
+            });
+        } catch (_error) {
+            throw new RequestError();
+        }
     }
 
     private _getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
@@ -293,11 +298,11 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
             firstName: payerName.given_name,
             lastName: payerName.surname,
             email,
-            address1: address?.address_line_1,
-            city: address?.admin_area_2,
-            countryCode: address?.country_code,
-            postalCode: address?.postal_code,
-            stateOrProvinceCode: address?.admin_area_1,
+            address1: address.address_line_1,
+            city: address.admin_area_2,
+            countryCode: address.country_code,
+            postalCode: address.postal_code,
+            stateOrProvinceCode: address.admin_area_1,
         });
     }
 

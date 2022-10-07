@@ -179,7 +179,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
 
                 if (status === ORDER_STATUS_APPROVED) {
                     this._deinitializePollingTimer(gatewayId);
-                    this._tokenizePayment({ orderID: this._paypalCommercePaymentProcessor.getOrderId() || '' }, submitForm);
+                    this._tokenizePayment({ orderID: this._paypalCommercePaymentProcessor.getOrderId() }, submitForm);
                 } else if (
                     (status === ORDER_STATUS_CREATED || status === PAYER_ACTION_REQUIRED) &&
                     this._pollingTimer < POLLING_MAX_TIME
