@@ -18,6 +18,7 @@ import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { PaypalCommerceInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
+import { SquareV2PaymentInitializeOptions } from './strategies/squarev2';
 import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 import { WorldpayAccessPaymentInitializeOptions } from './strategies/worldpayaccess';
@@ -145,6 +146,12 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Square payment method.
+     * They can be omitted unless you need to support Square.
+     */
+    squarev2?: SquareV2PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Chasepay payment method.
