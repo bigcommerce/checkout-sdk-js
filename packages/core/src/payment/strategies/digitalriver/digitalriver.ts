@@ -202,7 +202,20 @@ export interface OnSuccessResponse {
         browserInfo?: {
             browserIp?: string;
         };
-    };
+        owner: {
+            email: string;
+            firstName: string;
+            lastName: string;
+            phoneNumber: string;
+            address: {
+                city: string;
+                country: string;
+                line1: string;
+                postalCode: string;
+                state: string;
+            }
+        }
+    }
 
     /**
      * Indicates whether the source has been enabled for future use.

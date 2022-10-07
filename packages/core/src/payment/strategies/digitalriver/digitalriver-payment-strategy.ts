@@ -11,6 +11,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
+import { BillingAddressActionCreator } from '@bigcommerce/checkout-sdk/core';
 
 import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverElementOptions, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverError from './digitalriver-error';
@@ -32,7 +33,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _digitalRiverScriptLoader: DigitalRiverScriptLoader
+        private _digitalRiverScriptLoader: DigitalRiverScriptLoader,
+        private _billingAddressActionCreator: BillingAddressActionCreator
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -167,20 +169,43 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
         const error = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (data && this._submitFormEvent) {
-                const { browserInfo } = data.source;
+                const { browserInfo, owner } = data.source;
+
+                const billingAddressPayPal = {
+                    firstName: owner.firstName,
+                    lastName: owner.lastName,
+                    city: owner.address.city,
+                    company: '',
+                    address1: owner.address.line1,
+                    address2: '',
+                    postalCode: owner.address.postalCode,
+                    countryCode: owner.address.country,
+                    phone: owner.phoneNumber,
+                    stateOrProvince: owner.address.state,
+                    stateOrProvinceCode: owner.address.country,
+                    customFields: [],
+                    email: owner.email || owner.email,
+                };
+
+                await this._store.dispatch(
+                    this._billingAddressActionCreator.updateAddress(billingAddressPayPal)
+                );
+
                 this._loadSuccessResponse = browserInfo ? {
                     source: {
                         id: data.source.id,
                         reusable: data.source.reusable,
                         ...browserInfo,
+                        owner: data.source.owner
                     },
                     readyForStorage: data.readyForStorage,
                 } : {
                     source: {
                         id: data.source.id,
                         reusable: data.source.reusable,
+                        owner: data.source.owner
                     },
                     readyForStorage: data.readyForStorage,
                 };
