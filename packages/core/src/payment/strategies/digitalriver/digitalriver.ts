@@ -202,7 +202,7 @@ export interface OnSuccessResponse {
         browserInfo?: {
             browserIp?: string;
         };
-        owner: {
+        owner?: {
             email: string;
             firstName: string;
             lastName: string;
