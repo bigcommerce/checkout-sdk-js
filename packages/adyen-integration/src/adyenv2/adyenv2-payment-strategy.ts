@@ -92,17 +92,17 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const shouldSetAsDefaultInstrument = paymentData && (paymentData as HostedInstrument).shouldSetAsDefaultInstrument;
 
         if (!payment) {
-            throw new PaymentArgumentInvalidError(['payment']);
+            return Promise.reject(new PaymentArgumentInvalidError(['payment']));
         }
 
         this._validateCardData();
 
         await this._paymentIntegrationService.submitOrder(order, options);
-        
+
         return new Promise(async (resolve, reject) => {
             const componentState = this._componentState;
             if (!componentState) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
             }
             if (paymentData && isVaultedInstrument(paymentData)) {
                 let bigpayToken = {};
@@ -286,6 +286,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const adyenClient = this._getAdyenClient();
         let cardVerificationComponent: AdyenComponent;
 
+        console.log('mock2 in code');
         return new Promise((resolve, reject) => {
             if (adyenv2.cardVerificationContainerId) {
                 cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
@@ -317,7 +318,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 case AdyenPaymentMethodType.ACH:
                 case AdyenPaymentMethodType.Bancontact: {
                     const billingAddress = this._paymentIntegrationService.getState().getBillingAddress();
-
+                    console.log('mock in code', adyenClient.create);
                     paymentComponent = adyenClient.create(paymentMethod.method, {
                         ...adyenv2.options,
                         onChange: componentState => this._updateComponentState(componentState),

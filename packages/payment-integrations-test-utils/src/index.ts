@@ -6,4 +6,8 @@ export {
     getConsignment,
     getOrderRequestBody,
     getShippingOption,
+    getPayment,
+    getCreditCardInstrument,
+    getVaultedInstrument,
+    getErrorPaymentResponseBody,
 } from "./test-utils";

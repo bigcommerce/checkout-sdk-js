@@ -1,10 +1,15 @@
-import { RequestError } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import {
+    getResponse,
+    OrderRequestBody,
+    OrderPaymentRequestBody,
+    Payment,
+    PaymentInitializeOptions,
+    RequestError,
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
+import {
+    getCreditCardInstrument, getErrorPaymentResponseBody, getVaultedInstrument,
+} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
 
-import { getResponse } from '../../../common/http-request/responses.mock';
-import { OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
-import Payment from '../../payment';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import { getCreditCardInstrument, getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
 import { AdyenAdditionalActionErrorResponse, AdyenClient, AdyenComponent, AdyenConfiguration, AdyenError, AdyenPaymentMethodType, AdyenV3ComponentState, ResultCode } from './adyenv3';
 

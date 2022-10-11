@@ -9,6 +9,7 @@ export {
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from "./cart";
 export { Checkout } from "./checkout";
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
+export { getResponse } from './common/http-request/responses.mock';
 export { Omit, PartialDeep } from './common/types';
 export { Config, StoreConfig } from "./config";
 export { Coupon } from "./coupon";
@@ -46,12 +47,16 @@ export {
     isHostedInstrumentLike,
     HostedInstrument,
     Payment,
+    PaymentActionType,
+    SubmitPaymentAction,
     PaymentInitializeOptions,
     PaymentMethod,
     PaymentRequestOptions,
+    PaymentResponseBody,
     PaymentStrategy,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
+    VaultedInstrument,
 } from "./payment";
 export { default as PaymentIntegrationSelectors } from "./payment-integration-selectors";
 export { default as PaymentIntegrationService } from "./payment-integration-service";

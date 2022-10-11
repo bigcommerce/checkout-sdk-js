@@ -27,9 +27,12 @@ export { default as isVaultedInstrument,
     isFormattedVaultedInstrument,
 } from "./is-vaulted-instrument";
 
+export { PaymentActionType, SubmitPaymentAction } from './payment-actions';
 export { PaymentInitializeOptions } from "./payment-initialize-options";
 export { PaymentRequestOptions } from "./payment-request-options";
 export { default as PaymentMethod } from "./payment-method";
+export { default as PaymentResponse } from './payment-response';
+export { default as PaymentResponseBody} from './payment-response-body';
 export { default as PaymentStrategy } from "./payment-strategy";
 export { default as PaymentStrategyFactory } from "./payment-strategy-factory";
 export { default as PaymentStrategyResolveId } from "./payment-strategy-resolve-id";

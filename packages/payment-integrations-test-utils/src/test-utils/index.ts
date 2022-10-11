@@ -5,3 +5,10 @@ export { default as getConfig } from "./config.mock";
 export { default as getConsignment } from "./consignment.mock";
 export { default as getOrderRequestBody } from "./internal-orders.mock";
 export { default as getShippingOption } from "./shipping-option.mock";
+export {
+    getPayment,
+    getCreditCardInstrument,
+    getVaultedInstrument,
+    getErrorPaymentResponseBody,
+} from './payments.mock';
+
