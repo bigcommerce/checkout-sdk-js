@@ -25,7 +25,7 @@ import { getAdyenV2 } from './adyenv2-method.mock';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 import AdyenV2PaymentStrategy from './adyenv2-payment-strategy';
 
-import { AdyenAdditionalActionState, AdyenComponent, AdyenComponentState, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
+import { AdyenAdditionalActionState, AdyenComponent, AdyenComponentState, AdyenComponentType, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
 import { getAdditionalActionError, getAdyenClient, getAdyenError, getComponentState, getFailingComponent, getInitializeOptions, getInitializeOptionsWithNoCallbacks, getInitializeOptionsWithUndefinedWidgetSize, getOrderRequestBody, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithVaultedInstrument, getUnknownError } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
@@ -89,20 +89,15 @@ describe('AdyenV2PaymentStrategy', () => {
             jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn((_method, options) => {
-                    const { onChange } = options;
-                    console.log('mock');
-                    handleOnChange = onChange;
-
-                    return paymentComponent;
-                }))
-                .mockImplementationOnce(jest.fn((_method, options) => {
+                .mockImplementation(jest.fn((_method, options) => {
                     const { onChange, onError } = options;
                     console.log('mock 2');
                     handleOnChange = onChange;
                     handleOnError = onError;
 
-                    return cardVerificationComponent;
+                    return _method === AdyenComponentType.SecuredFields
+                        ? cardVerificationComponent
+                        : paymentComponent;
                 }));
         });
 
@@ -244,7 +239,8 @@ describe('AdyenV2PaymentStrategy', () => {
                     unmount: jest.fn(),
                 };
                 jest.spyOn(adyenCheckout, 'create')
-                    .mockReturnValue(adyenInvalidPaymentComponent);
+                    .mockReturnValueOnce(adyenInvalidPaymentComponent)
+                    .mockReturnValueOnce(adyenInvalidPaymentComponent);
 
                 await strategy.initialize(options);
 
@@ -271,6 +267,7 @@ describe('AdyenV2PaymentStrategy', () => {
                     },
                 };
                 jest.spyOn(adyenCheckout, 'create')
+                    .mockReturnValueOnce(adyenInvalidPaymentComponent)
                     .mockReturnValueOnce(adyenInvalidPaymentComponent);
                 // jest.spyOn(paymentIntegrationService, 'submitOrder')
                 //     .mockReturnValue(submitOrderAction);
@@ -298,6 +295,7 @@ describe('AdyenV2PaymentStrategy', () => {
                     },
                 };
                 jest.spyOn(adyenCheckout, 'create')
+                    .mockReturnValueOnce(adyenInvalidPaymentComponent)
                     .mockReturnValueOnce(adyenInvalidPaymentComponent);
 
                 await strategy.initialize(options);

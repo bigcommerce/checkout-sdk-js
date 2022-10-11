@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: "<package-name>",
+    displayName: "adyen-integration",
     preset: "../../jest.preset.js",
     globals: {
         "ts-jest": {
@@ -8,5 +8,5 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ["../../jest-setup.js"],
-    coverageDirectory: "../../coverage/packages/<package-name>",
+    coverageDirectory: "../../coverage/packages/adyen-integration",
 };
