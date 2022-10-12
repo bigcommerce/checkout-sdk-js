@@ -25,7 +25,7 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getVaultedInstrument } from '../../payments.mock';
-import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock'
+import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock';
 
 import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverError from './digitalriver-error';

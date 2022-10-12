@@ -166,55 +166,51 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         return errors.map(e => 'code: ' + e.code + ' message: ' + e.message).join('\n');
     }
 
-    private _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
+    private async _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
         const error = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
 
-        return new Promise((resolve, reject) => {
-            if (data && this._submitFormEvent) {
-                const { browserInfo, owner } = data.source;
+        if (data && this._submitFormEvent) {
+            const { browserInfo, owner } = data.source;
 
-                this._loadSuccessResponse = browserInfo ? {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                        ...browserInfo,
-                    },
-                    readyForStorage: data.readyForStorage,
-                } : {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                    },
-                    readyForStorage: data.readyForStorage,
+            this._loadSuccessResponse = browserInfo ? {
+                source: {
+                    id: data.source.id,
+                    reusable: data.source.reusable,
+                    ...browserInfo,
+                },
+                readyForStorage: data.readyForStorage,
+            } : {
+                source: {
+                    id: data.source.id,
+                    reusable: data.source.reusable,
+                },
+                readyForStorage: data.readyForStorage,
+            };
+
+            if (owner) {
+                const billingAddressPayPal = {
+                    firstName: owner.firstName,
+                    lastName: owner.lastName,
+                    city: owner.address.city,
+                    company: '',
+                    address1: owner.address.line1,
+                    address2: '',
+                    postalCode: owner.address.postalCode,
+                    countryCode: owner.address.country,
+                    phone: owner.phoneNumber,
+                    stateOrProvince: owner.address.state,
+                    stateOrProvinceCode: owner.address.country,
+                    customFields: [],
+                    email: owner.email || owner.email,
                 };
-
-                if (owner) {
-                    const billingAddressPayPal = {
-                        firstName: owner.firstName,
-                        lastName: owner.lastName,
-                        city: owner.address.city,
-                        company: '',
-                        address1: owner.address.line1,
-                        address2: '',
-                        postalCode: owner.address.postalCode,
-                        countryCode: owner.address.country,
-                        phone: owner.phoneNumber,
-                        stateOrProvince: owner.address.state,
-                        stateOrProvinceCode: owner.address.country,
-                        customFields: [],
-                        email: owner.email || owner.email,
-                    };
-                    this._loadSuccessResponse.source.owner = data.source.owner;
-                    this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddressPayPal)).then();
-                }
-
-                resolve();
-                this._submitFormEvent();
-            } else {
-                reject(error);
-                this._getDigitalRiverInitializeOptions().onError?.(error);
+                this._loadSuccessResponse.source.owner = data.source.owner;
+                await this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddressPayPal))
             }
-        });
+
+            return this._submitFormEvent();
+        } else {
+            return this._getDigitalRiverInitializeOptions().onError?.(error);
+        }
     }
 
     private _onReadyResponse(data?: OnReadyResponse): void {
