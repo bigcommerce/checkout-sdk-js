@@ -1,6 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
@@ -31,7 +31,8 @@ import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse 
 import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
-import { BillingAddressActionCreator } from '../../../billing';
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from "../../../subscription";
 
 describe('DigitalRiverPaymentStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
@@ -50,12 +51,17 @@ describe('DigitalRiverPaymentStrategy', () => {
     let storeCreditActionCreator: StoreCreditActionCreator;
     let applyStoreCreditAction: Observable<Action>;
     let billingAddressActionCreator: BillingAddressActionCreator;
+    let requestSender: RequestSender;
+    let billingAddressRequestSender: BillingAddressRequestSender;
+    let updateAddressAction: Observable<Action>;
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
         const stylesheetLoader = createStylesheetLoader();
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        requestSender = createRequestSender();
+        billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
@@ -74,6 +80,10 @@ describe('DigitalRiverPaymentStrategy', () => {
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(createRequestSender())
         );
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            billingAddressRequestSender,
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
+        );
 
         paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: JSON.stringify(getClientMock())};
         digitalRiverScriptLoader = new DigitalRiverScriptLoader(scriptLoader, stylesheetLoader);
@@ -83,6 +93,8 @@ describe('DigitalRiverPaymentStrategy', () => {
         loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
+        updateAddressAction = of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
+
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
@@ -96,8 +108,12 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
             .mockReturnValue(applyStoreCreditAction);
+
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
             .mockReturnValue(paymentMethodMock);
+
+        jest.spyOn(billingAddressActionCreator, 'updateAddress')
+            .mockReturnValue(updateAddressAction);
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
@@ -400,6 +416,88 @@ describe('DigitalRiverPaymentStrategy', () => {
                 }
             );
         });
+
+        it('creates the order and should update the billing address', async () => {
+            const payPalOptions = {
+                ...payload,
+                payment: {
+                    ...payload.payment,
+                    methodId: 'paypal'
+                }
+            }
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
+                onSuccessCallback = configuration.onSuccess;
+
+                return digitalRiverComponent;
+            });
+
+            await strategy.initialize(options);
+            onSuccessCallback({
+                source: {
+                    id: '1',
+                    reusable: false,
+                    owner: {
+                        address: {
+                            city: "Minnetonka",
+                            country: "US",
+                            line1: "10380 Bren Road W",
+                            postalCode: "55343",
+                            state: "MN"
+                        },
+                        email: "test@digitalriver.com",
+                        firstName: "John",
+                        lastName: "Doe",
+                        phoneNumber: "000-000-0000"
+                    }
+                },
+                readyForStorage: true,
+            });
+
+            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
+            expect(await strategy.execute(payPalOptions)).toEqual(store.getState());
+            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
+            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                {
+                    methodId: 'paypal',
+                    paymentData: {
+                        formattedPayload: {
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    checkoutId: '12345676543',
+                                    source: {
+                                        source: {
+                                            id: '1',
+                                            reusable: false,
+                                            owner: {
+                                                address: {
+                                                    city: "Minnetonka",
+                                                    country: "US",
+                                                    line1: "10380 Bren Road W",
+                                                    postalCode: "55343",
+                                                    state: "MN"
+                                                },
+                                                email: "test@digitalriver.com",
+                                                firstName: "John",
+                                                lastName: "Doe",
+                                                phoneNumber: "000-000-0000"
+                                            }
+                                        },
+                                        readyForStorage: true,
+                                    },
+                                    sessionId: '1234',
+                                }),
+                            },
+                            set_as_default_stored_instrument: false,
+                            vault_payment_instrument: true,
+                        },
+                    },
+                }
+            );
+        });
+
 
         it('executes the strategy successfully and applies the store credit', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onSuccess}) => {

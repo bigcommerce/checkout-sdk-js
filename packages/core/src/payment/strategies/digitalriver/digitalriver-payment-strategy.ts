@@ -169,9 +169,24 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
         const error = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
 
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (data && this._submitFormEvent) {
                 const { browserInfo, owner } = data.source;
+
+                this._loadSuccessResponse = browserInfo ? {
+                    source: {
+                        id: data.source.id,
+                        reusable: data.source.reusable,
+                        ...browserInfo,
+                    },
+                    readyForStorage: data.readyForStorage,
+                } : {
+                    source: {
+                        id: data.source.id,
+                        reusable: data.source.reusable,
+                    },
+                    readyForStorage: data.readyForStorage,
+                };
 
                 if (owner) {
                     const billingAddressPayPal = {
@@ -189,26 +204,10 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                         customFields: [],
                         email: owner.email || owner.email,
                     };
-
+                    this._loadSuccessResponse.source.owner = data.source.owner;
                     this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddressPayPal)).then();
                 }
 
-                this._loadSuccessResponse = browserInfo ? {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                        ...browserInfo,
-                        ...owner
-                    },
-                    readyForStorage: data.readyForStorage,
-                } : {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                        ...owner
-                    },
-                    readyForStorage: data.readyForStorage,
-                };
                 resolve();
                 this._submitFormEvent();
             } else {
