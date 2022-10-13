@@ -37,7 +37,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
            throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
        }
 
-       const { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries } = options.stripeupe;
+       const { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries, getStripeState } = options.stripeupe;
 
        Object.entries(options.stripeupe).forEach(([key, value]) => {
            if (!value) {
@@ -92,8 +92,32 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 appearance,
             });
 
+        const shipping = this._store.getState().shippingAddress.getShippingAddress();
+        const stripeState = shipping?.stateOrProvinceCode && shipping?.countryCode?
+            getStripeState(shipping?.countryCode, shipping?.stateOrProvinceCode) : shipping?.stateOrProvinceCode;
+        const option = {
+            allowedCountries: [availableCountries],
+            defaultValues: {
+                name: shipping?.lastName? `${shipping.firstName} ${shipping.lastName}`: shipping?.firstName  || '',
+                address: {
+                    line1: shipping?.address1 || '',
+                    line2: shipping?.address2  || '',
+                    city: shipping?.city  || '',
+                    state: stripeState  || '',
+                    postal_code: shipping?.postalCode  || '',
+                    country: shipping?.countryCode  || '',
+                }
+            }
+        };
+
+        if (shipping?.address1 && sessionStorage.getItem('stripeLink') == 'customerReloaded') {
+            sessionStorage.setItem('stripeLink', 'shippingReloaded');
+        } else {
+            sessionStorage.setItem('stripeLink', 'shipping');
+        }
+
         const shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING) ||
-            this._stripeElements.create(StripeElementType.SHIPPING, { allowedCountries: [availableCountries] });
+            this._stripeElements.create(StripeElementType.SHIPPING, option);
 
         shippingAddressElement.on('change', (event: StripeEventType) => {
             if (!('isNewAddress' in event)) {

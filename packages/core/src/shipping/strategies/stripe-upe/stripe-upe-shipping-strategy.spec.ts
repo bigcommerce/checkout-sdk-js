@@ -17,7 +17,7 @@ import {
     PaymentMethodActionType, PaymentMethodRequestSender
 } from '../../../payment';
 import { getStripeUPE } from '../../../payment/payment-methods.mock';
-import { StripeScriptLoader, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { StripeHostWindow, StripeScriptLoader, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ConsignmentActionType } from '../../consignment-actions';
 import ConsignmentRequestSender from '../../consignment-request-sender';
@@ -79,10 +79,21 @@ describe('StripeUPEShippingStrategy', () => {
         });
 
         afterEach(() => {
+            delete (window as StripeHostWindow).bcStripeElements;
             jest.resetAllMocks();
         });
 
         it('loads a single instance of StripeUPEClient and StripeElements', async () => {
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(store.getState());
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
+        it('loads a single instance of StripeUPEClient and StripeElements when shipping data is provided', async () => {
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress')
+                .mockReturnValue(getShippingAddress());
+
             await expect(strategy.initialize(shippingInitialization)).resolves.toBe(store.getState());
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);

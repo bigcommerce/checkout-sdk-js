@@ -41,4 +41,11 @@ export default interface StripeUPEShippingInitializeOptions {
     getStyles?(): {
         [key: string]: string;
     };
+
+    /**
+     * get the state code needed for shipping stripe element
+     * @param country
+     * @param state
+     */
+    getStripeState(country: string, state: string): string;
 }
