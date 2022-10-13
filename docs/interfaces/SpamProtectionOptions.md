@@ -6,7 +6,7 @@ The set of options for configuring any requests related to spam protection.
 
 ## Hierarchy
 
-- `RequestOptions_2`
+- `default`
 
   ↳ **`SpamProtectionOptions`**
 

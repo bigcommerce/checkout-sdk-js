@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [CheckoutComplete](EmbeddedCheckoutEventType.md#checkoutcomplete)
 - [CheckoutError](EmbeddedCheckoutEventType.md#checkouterror)
@@ -13,38 +13,38 @@
 - [FrameLoaded](EmbeddedCheckoutEventType.md#frameloaded)
 - [SignedOut](EmbeddedCheckoutEventType.md#signedout)
 
-## Enumeration members
+## Enumeration Members
 
 ### CheckoutComplete
 
-• **CheckoutComplete** = `"CHECKOUT_COMPLETE"`
+• **CheckoutComplete**
 
 ___
 
 ### CheckoutError
 
-• **CheckoutError** = `"CHECKOUT_ERROR"`
+• **CheckoutError**
 
 ___
 
 ### CheckoutLoaded
 
-• **CheckoutLoaded** = `"CHECKOUT_LOADED"`
+• **CheckoutLoaded**
 
 ___
 
 ### FrameError
 
-• **FrameError** = `"FRAME_ERROR"`
+• **FrameError**
 
 ___
 
 ### FrameLoaded
 
-• **FrameLoaded** = `"FRAME_LOADED"`
+• **FrameLoaded**
 
 ___
 
 ### SignedOut
 
-• **SignedOut** = `"SIGNED_OUT"`
+• **SignedOut**

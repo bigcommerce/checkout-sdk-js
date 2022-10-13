@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [PILL](PaypalButtonStyleShapeOption.md#pill)
 - [RECT](PaypalButtonStyleShapeOption.md#rect)
 
-## Enumeration members
+## Enumeration Members
 
 ### PILL
 
-• **PILL** = `"pill"`
+• **PILL**
 
 ___
 
 ### RECT
 
-• **RECT** = `"rect"`
+• **RECT**

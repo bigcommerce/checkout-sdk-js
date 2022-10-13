@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Black](ButtonColor.md#black)
 - [Default](ButtonColor.md#default)
 - [White](ButtonColor.md#white)
 
-## Enumeration members
+## Enumeration Members
 
 ### Black
 
-• **Black** = `"black"`
+• **Black**
 
 ___
 
 ### Default
 
-• **Default** = `"default"`
+• **Default**
 
 ___
 
 ### White
 
-• **White** = `"white"`
+• **White**

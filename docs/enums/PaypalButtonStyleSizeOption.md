@@ -4,33 +4,33 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [LARGE](PaypalButtonStyleSizeOption.md#large)
 - [MEDIUM](PaypalButtonStyleSizeOption.md#medium)
 - [RESPONSIVE](PaypalButtonStyleSizeOption.md#responsive)
 - [SMALL](PaypalButtonStyleSizeOption.md#small)
 
-## Enumeration members
+## Enumeration Members
 
 ### LARGE
 
-• **LARGE** = `"large"`
+• **LARGE**
 
 ___
 
 ### MEDIUM
 
-• **MEDIUM** = `"medium"`
+• **MEDIUM**
 
 ___
 
 ### RESPONSIVE
 
-• **RESPONSIVE** = `"responsive"`
+• **RESPONSIVE**
 
 ___
 
 ### SMALL
 
-• **SMALL** = `"small"`
+• **SMALL**

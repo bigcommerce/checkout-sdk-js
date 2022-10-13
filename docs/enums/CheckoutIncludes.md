@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [AvailableShippingOptions](CheckoutIncludes.md#availableshippingoptions)
 - [DigitalItemsCategoryNames](CheckoutIncludes.md#digitalitemscategorynames)
 - [PhysicalItemsCategoryNames](CheckoutIncludes.md#physicalitemscategorynames)
 
-## Enumeration members
+## Enumeration Members
 
 ### AvailableShippingOptions
 
-• **AvailableShippingOptions** = `"consignments.availableShippingOptions"`
+• **AvailableShippingOptions**
 
 ___
 
 ### DigitalItemsCategoryNames
 
-• **DigitalItemsCategoryNames** = `"cart.lineItems.digitalItems.categoryNames"`
+• **DigitalItemsCategoryNames**
 
 ___
 
 ### PhysicalItemsCategoryNames
 
-• **PhysicalItemsCategoryNames** = `"cart.lineItems.physicalItems.categoryNames"`
+• **PhysicalItemsCategoryNames**

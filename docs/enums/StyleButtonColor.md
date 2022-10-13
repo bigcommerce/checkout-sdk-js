@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [black](StyleButtonColor.md#black)
 - [blue](StyleButtonColor.md#blue)
@@ -12,32 +12,32 @@
 - [silver](StyleButtonColor.md#silver)
 - [white](StyleButtonColor.md#white)
 
-## Enumeration members
+## Enumeration Members
 
 ### black
 
-• **black** = `"black"`
+• **black**
 
 ___
 
 ### blue
 
-• **blue** = `"blue"`
+• **blue**
 
 ___
 
 ### gold
 
-• **gold** = `"gold"`
+• **gold**
 
 ___
 
 ### silver
 
-• **silver** = `"silver"`
+• **silver**
 
 ___
 
 ### white
 
-• **white** = `"white"`
+• **white**

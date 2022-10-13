@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [CardCode](PaypalCommerceFormFieldType.md#cardcode)
 - [CardCodeVerification](PaypalCommerceFormFieldType.md#cardcodeverification)
@@ -13,38 +13,38 @@
 - [CardNumber](PaypalCommerceFormFieldType.md#cardnumber)
 - [CardNumberVerification](PaypalCommerceFormFieldType.md#cardnumberverification)
 
-## Enumeration members
+## Enumeration Members
 
 ### CardCode
 
-• **CardCode** = `"cardCode"`
+• **CardCode**
 
 ___
 
 ### CardCodeVerification
 
-• **CardCodeVerification** = `"cardCodeVerification"`
+• **CardCodeVerification**
 
 ___
 
 ### CardExpiry
 
-• **CardExpiry** = `"cardExpiry"`
+• **CardExpiry**
 
 ___
 
 ### CardName
 
-• **CardName** = `"cardName"`
+• **CardName**
 
 ___
 
 ### CardNumber
 
-• **CardNumber** = `"cardNumber"`
+• **CardNumber**
 
 ___
 
 ### CardNumberVerification
 
-• **CardNumberVerification** = `"cardNumberVerification"`
+• **CardNumberVerification**

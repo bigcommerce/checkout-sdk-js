@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [CardCode](BraintreeFormFieldType.md#cardcode)
 - [CardCodeVerification](BraintreeFormFieldType.md#cardcodeverification)
@@ -13,38 +13,38 @@
 - [CardNumber](BraintreeFormFieldType.md#cardnumber)
 - [CardNumberVerification](BraintreeFormFieldType.md#cardnumberverification)
 
-## Enumeration members
+## Enumeration Members
 
 ### CardCode
 
-• **CardCode** = `"cardCode"`
+• **CardCode**
 
 ___
 
 ### CardCodeVerification
 
-• **CardCodeVerification** = `"cardCodeVerification"`
+• **CardCodeVerification**
 
 ___
 
 ### CardExpiry
 
-• **CardExpiry** = `"cardExpiry"`
+• **CardExpiry**
 
 ___
 
 ### CardName
 
-• **CardName** = `"cardName"`
+• **CardName**
 
 ___
 
 ### CardNumber
 
-• **CardNumber** = `"cardNumber"`
+• **CardNumber**
 
 ___
 
 ### CardNumberVerification
 
-• **CardNumberVerification** = `"cardNumberVerification"`
+• **CardNumberVerification**

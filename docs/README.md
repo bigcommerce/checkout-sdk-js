@@ -373,7 +373,7 @@
 - [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
 
-### Type aliases
+### Type Aliases
 
 - [AccountInstrument](README.md#accountinstrument)
 - [AddressKey](README.md#addresskey)
@@ -432,7 +432,7 @@
 - [createStepTracker](README.md#createsteptracker)
 - [embedCheckout](README.md#embedcheckout)
 
-## Type aliases
+## Type Aliases
 
 ### AccountInstrument
 

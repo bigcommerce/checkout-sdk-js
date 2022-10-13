@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [BUYNOW](PaypalButtonStyleLabelOption.md#buynow)
 - [CHECKOUT](PaypalButtonStyleLabelOption.md#checkout)
@@ -12,32 +12,32 @@
 - [PAY](PaypalButtonStyleLabelOption.md#pay)
 - [PAYPAL](PaypalButtonStyleLabelOption.md#paypal)
 
-## Enumeration members
+## Enumeration Members
 
 ### BUYNOW
 
-• **BUYNOW** = `"buynow"`
+• **BUYNOW**
 
 ___
 
 ### CHECKOUT
 
-• **CHECKOUT** = `"checkout"`
+• **CHECKOUT**
 
 ___
 
 ### CREDIT
 
-• **CREDIT** = `"credit"`
+• **CREDIT**
 
 ___
 
 ### PAY
 
-• **PAY** = `"pay"`
+• **PAY**
 
 ___
 
 ### PAYPAL
 
-• **PAYPAL** = `"paypal"`
+• **PAYPAL**

@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Long](ButtonType.md#long)
 - [Short](ButtonType.md#short)
 
-## Enumeration members
+## Enumeration Members
 
 ### Long
 
-• **Long** = `"long"`
+• **Long**
 
 ___
 
 ### Short
 
-• **Short** = `"short"`
+• **Short**

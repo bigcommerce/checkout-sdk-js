@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [CardNumber](AdyenV2CardFields.md#cardnumber)
 - [ExpiryDate](AdyenV2CardFields.md#expirydate)
 - [SecurityCode](AdyenV2CardFields.md#securitycode)
 
-## Enumeration members
+## Enumeration Members
 
 ### CardNumber
 
-• **CardNumber** = `"encryptedCardNumber"`
+• **CardNumber**
 
 ___
 
 ### ExpiryDate
 
-• **ExpiryDate** = `"encryptedExpiryDate"`
+• **ExpiryDate**
 
 ___
 
 ### SecurityCode
 
-• **SecurityCode** = `"encryptedSecurityCode"`
+• **SecurityCode**

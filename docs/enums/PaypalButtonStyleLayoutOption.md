@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [HORIZONTAL](PaypalButtonStyleLayoutOption.md#horizontal)
 - [VERTICAL](PaypalButtonStyleLayoutOption.md#vertical)
 
-## Enumeration members
+## Enumeration Members
 
 ### HORIZONTAL
 
-• **HORIZONTAL** = `"horizontal"`
+• **HORIZONTAL**
 
 ___
 
 ### VERTICAL
 
-• **VERTICAL** = `"vertical"`
+• **VERTICAL**

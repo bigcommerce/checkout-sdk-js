@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Cart](AmazonPayV2Placement.md#cart)
 - [Checkout](AmazonPayV2Placement.md#checkout)
@@ -12,11 +12,11 @@
 - [Other](AmazonPayV2Placement.md#other)
 - [Product](AmazonPayV2Placement.md#product)
 
-## Enumeration members
+## Enumeration Members
 
 ### Cart
 
-• **Cart** = `"Cart"`
+• **Cart**
 
 Cart review page before buyer starts checkout.
 
@@ -24,7 +24,7 @@ ___
 
 ### Checkout
 
-• **Checkout** = `"Checkout"`
+• **Checkout**
 
 Any page after buyer starts checkout.
 
@@ -32,7 +32,7 @@ ___
 
 ### Home
 
-• **Home** = `"Home"`
+• **Home**
 
 Initial or main page.
 
@@ -40,7 +40,7 @@ ___
 
 ### Other
 
-• **Other** = `"Other"`
+• **Other**
 
 Any page that doesn't fit the previous descriptions.
 
@@ -48,6 +48,6 @@ ___
 
 ### Product
 
-• **Product** = `"Product"`
+• **Product**
 
 Product details page.

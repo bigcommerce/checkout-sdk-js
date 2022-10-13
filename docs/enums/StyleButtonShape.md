@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [pill](StyleButtonShape.md#pill)
 - [rect](StyleButtonShape.md#rect)
 
-## Enumeration members
+## Enumeration Members
 
 ### pill
 
-• **pill** = `"pill"`
+• **pill**
 
 ___
 
 ### rect
 
-• **rect** = `"rect"`
+• **rect**

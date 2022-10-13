@@ -4,33 +4,33 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [BLACK](PaypalButtonStyleColorOption.md#black)
 - [BLUE](PaypalButtonStyleColorOption.md#blue)
 - [GOLD](PaypalButtonStyleColorOption.md#gold)
 - [SIlVER](PaypalButtonStyleColorOption.md#silver)
 
-## Enumeration members
+## Enumeration Members
 
 ### BLACK
 
-• **BLACK** = `"black"`
+• **BLACK**
 
 ___
 
 ### BLUE
 
-• **BLUE** = `"blue"`
+• **BLUE**
 
 ___
 
 ### GOLD
 
-• **GOLD** = `"gold"`
+• **GOLD**
 
 ___
 
 ### SIlVER
 
-• **SIlVER** = `"silver"`
+• **SIlVER**

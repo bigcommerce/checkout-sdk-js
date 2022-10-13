@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [KM](RadiusUnit.md#km)
 - [MI](RadiusUnit.md#mi)
 
-## Enumeration members
+## Enumeration Members
 
 ### KM
 
-• **KM** = `"KM"`
+• **KM**
 
 ___
 
 ### MI
 
-• **MI** = `"MI"`
+• **MI**

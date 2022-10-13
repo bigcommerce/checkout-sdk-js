@@ -4,26 +4,26 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [DarkGray](AmazonPayV2ButtonColor.md#darkgray)
 - [Gold](AmazonPayV2ButtonColor.md#gold)
 - [LightGray](AmazonPayV2ButtonColor.md#lightgray)
 
-## Enumeration members
+## Enumeration Members
 
 ### DarkGray
 
-• **DarkGray** = `"DarkGray"`
+• **DarkGray**
 
 ___
 
 ### Gold
 
-• **Gold** = `"Gold"`
+• **Gold**
 
 ___
 
 ### LightGray
 
-• **LightGray** = `"LightGray"`
+• **LightGray**

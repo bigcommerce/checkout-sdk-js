@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [buynow](StyleButtonLabel.md#buynow)
 - [checkout](StyleButtonLabel.md#checkout)
@@ -12,32 +12,32 @@
 - [pay](StyleButtonLabel.md#pay)
 - [paypal](StyleButtonLabel.md#paypal)
 
-## Enumeration members
+## Enumeration Members
 
 ### buynow
 
-• **buynow** = `"buynow"`
+• **buynow**
 
 ___
 
 ### checkout
 
-• **checkout** = `"checkout"`
+• **checkout**
 
 ___
 
 ### installment
 
-• **installment** = `"installment"`
+• **installment**
 
 ___
 
 ### pay
 
-• **pay** = `"pay"`
+• **pay**
 
 ___
 
 ### paypal
 
-• **paypal** = `"paypal"`
+• **paypal**

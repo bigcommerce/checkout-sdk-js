@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [Default](IconStyle.md#default)
 - [Solid](IconStyle.md#solid)
 
-## Enumeration members
+## Enumeration Members
 
 ### Default
 
-• **Default** = `"default"`
+• **Default**
 
 ___
 
 ### Solid
 
-• **Solid** = `"solid"`
+• **Solid**

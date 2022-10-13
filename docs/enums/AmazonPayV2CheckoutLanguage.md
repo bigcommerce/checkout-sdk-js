@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [de_DE](AmazonPayV2CheckoutLanguage.md#de_de)
 - [en_GB](AmazonPayV2CheckoutLanguage.md#en_gb)
@@ -14,44 +14,44 @@
 - [it_IT](AmazonPayV2CheckoutLanguage.md#it_it)
 - [ja_JP](AmazonPayV2CheckoutLanguage.md#ja_jp)
 
-## Enumeration members
+## Enumeration Members
 
 ### de\_DE
 
-• **de\_DE** = `"de_DE"`
+• **de\_DE**
 
 ___
 
 ### en\_GB
 
-• **en\_GB** = `"en_GB"`
+• **en\_GB**
 
 ___
 
 ### en\_US
 
-• **en\_US** = `"en_US"`
+• **en\_US**
 
 ___
 
 ### es\_ES
 
-• **es\_ES** = `"es_ES"`
+• **es\_ES**
 
 ___
 
 ### fr\_FR
 
-• **fr\_FR** = `"fr_FR"`
+• **fr\_FR**
 
 ___
 
 ### it\_IT
 
-• **it\_IT** = `"it_IT"`
+• **it\_IT**
 
 ___
 
 ### ja\_JP
 
-• **ja\_JP** = `"ja_JP"`
+• **ja\_JP**

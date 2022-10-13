@@ -4,19 +4,19 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [horizontal](StyleButtonLayout.md#horizontal)
 - [vertical](StyleButtonLayout.md#vertical)
 
-## Enumeration members
+## Enumeration Members
 
 ### horizontal
 
-• **horizontal** = `"horizontal"`
+• **horizontal**
 
 ___
 
 ### vertical
 
-• **vertical** = `"vertical"`
+• **vertical**

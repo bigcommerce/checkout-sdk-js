@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
 - [AMAZON_PAY_V2](CheckoutButtonMethodType.md#amazon_pay_v2)
 - [APPLEPAY](CheckoutButtonMethodType.md#applepay)
@@ -29,134 +29,134 @@
 - [PAYPALCOMMERCE_VENMO](CheckoutButtonMethodType.md#paypalcommerce_venmo)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
-## Enumeration members
+## Enumeration Members
 
 ### AMAZON\_PAY\_V2
 
-• **AMAZON\_PAY\_V2** = `"amazonpay"`
+• **AMAZON\_PAY\_V2**
 
 ___
 
 ### APPLEPAY
 
-• **APPLEPAY** = `"applepay"`
+• **APPLEPAY**
 
 ___
 
 ### BRAINTREE\_PAYPAL
 
-• **BRAINTREE\_PAYPAL** = `"braintreepaypal"`
+• **BRAINTREE\_PAYPAL**
 
 ___
 
 ### BRAINTREE\_PAYPAL\_CREDIT
 
-• **BRAINTREE\_PAYPAL\_CREDIT** = `"braintreepaypalcredit"`
+• **BRAINTREE\_PAYPAL\_CREDIT**
 
 ___
 
 ### BRAINTREE\_VENMO
 
-• **BRAINTREE\_VENMO** = `"braintreevenmo"`
+• **BRAINTREE\_VENMO**
 
 ___
 
 ### GOOGLEPAY\_ADYENV2
 
-• **GOOGLEPAY\_ADYENV2** = `"googlepayadyenv2"`
+• **GOOGLEPAY\_ADYENV2**
 
 ___
 
 ### GOOGLEPAY\_ADYENV3
 
-• **GOOGLEPAY\_ADYENV3** = `"googlepayadyenv3"`
+• **GOOGLEPAY\_ADYENV3**
 
 ___
 
 ### GOOGLEPAY\_AUTHORIZENET
 
-• **GOOGLEPAY\_AUTHORIZENET** = `"googlepayauthorizenet"`
+• **GOOGLEPAY\_AUTHORIZENET**
 
 ___
 
 ### GOOGLEPAY\_BNZ
 
-• **GOOGLEPAY\_BNZ** = `"googlepaybnz"`
+• **GOOGLEPAY\_BNZ**
 
 ___
 
 ### GOOGLEPAY\_BRAINTREE
 
-• **GOOGLEPAY\_BRAINTREE** = `"googlepaybraintree"`
+• **GOOGLEPAY\_BRAINTREE**
 
 ___
 
 ### GOOGLEPAY\_CHECKOUTCOM
 
-• **GOOGLEPAY\_CHECKOUTCOM** = `"googlepaycheckoutcom"`
+• **GOOGLEPAY\_CHECKOUTCOM**
 
 ___
 
 ### GOOGLEPAY\_CYBERSOURCEV2
 
-• **GOOGLEPAY\_CYBERSOURCEV2** = `"googlepaycybersourcev2"`
+• **GOOGLEPAY\_CYBERSOURCEV2**
 
 ___
 
 ### GOOGLEPAY\_ORBITAL
 
-• **GOOGLEPAY\_ORBITAL** = `"googlepayorbital"`
+• **GOOGLEPAY\_ORBITAL**
 
 ___
 
 ### GOOGLEPAY\_STRIPE
 
-• **GOOGLEPAY\_STRIPE** = `"googlepaystripe"`
+• **GOOGLEPAY\_STRIPE**
 
 ___
 
 ### GOOGLEPAY\_STRIPEUPE
 
-• **GOOGLEPAY\_STRIPEUPE** = `"googlepaystripeupe"`
+• **GOOGLEPAY\_STRIPEUPE**
 
 ___
 
 ### MASTERPASS
 
-• **MASTERPASS** = `"masterpass"`
+• **MASTERPASS**
 
 ___
 
 ### PAYPALCOMMERCE
 
-• **PAYPALCOMMERCE** = `"paypalcommerce"`
+• **PAYPALCOMMERCE**
 
 ___
 
 ### PAYPALCOMMERCE\_APMS
 
-• **PAYPALCOMMERCE\_APMS** = `"paypalcommercealternativemethods"`
+• **PAYPALCOMMERCE\_APMS**
 
 ___
 
 ### PAYPALCOMMERCE\_CREDIT
 
-• **PAYPALCOMMERCE\_CREDIT** = `"paypalcommercecredit"`
+• **PAYPALCOMMERCE\_CREDIT**
 
 ___
 
 ### PAYPALCOMMERCE\_INLINE
 
-• **PAYPALCOMMERCE\_INLINE** = `"paypalcommerceinline"`
+• **PAYPALCOMMERCE\_INLINE**
 
 ___
 
 ### PAYPALCOMMERCE\_VENMO
 
-• **PAYPALCOMMERCE\_VENMO** = `"paypalcommercevenmo"`
+• **PAYPALCOMMERCE\_VENMO**
 
 ___
 
 ### PAYPALEXPRESS
 
-• **PAYPALEXPRESS** = `"paypalexpress"`
+• **PAYPALEXPRESS**
