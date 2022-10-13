@@ -107,7 +107,7 @@
     "request": "^2.83.0",
     "semver": "^7.1.1",
     "source-map-loader": "^0.2.4",
-    "standard-version": "^8.0.1",
+    "standard-version": "^9.5.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^9.2.9",
     "typedoc": "^0.22.0",
