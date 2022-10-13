@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.296.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.296.0...v1.296.1) (2022-10-13)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-000 upgrade @types/lodash from 4.14.182 to 4.14.184 ([#1592](https://github.com/bigcommerce/checkout-sdk-js/issues/1592)) ([8873f50](https://github.com/bigcommerce/checkout-sdk-js/commit/8873f5065ce07b322711488de827e243da7fad21))
+* **common:** CHECKOUT-000 upgrade core-js from 3.24.1 to 3.25.0 ([#1601](https://github.com/bigcommerce/checkout-sdk-js/issues/1601)) ([ed31162](https://github.com/bigcommerce/checkout-sdk-js/commit/ed31162c981d52ea518ba0e0ac2fe4f498bde4ad))
+
 ## [1.296.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.295.0...v1.296.0) (2022-10-05)
 
 
