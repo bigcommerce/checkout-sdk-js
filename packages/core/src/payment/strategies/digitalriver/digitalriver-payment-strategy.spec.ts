@@ -9,6 +9,7 @@ import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { getCustomer } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -216,6 +217,95 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
             expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
+
+        it('loads DigitalRiver and disable PayPal when feature is off', async () => {
+            const storeConfigMock = getConfig().storeConfig;
+            storeConfigMock.checkoutSettings.features = {
+                'PROJECT-4802.digital_river_paypal_support': false,
+            };
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValueOnce(storeConfigMock);
+
+            await strategy.initialize(options);
+
+            const billingAddressMock = getBillingAddress();
+            const digitalRiverConfigurationExpected = {
+                sessionId: '',
+                options: {
+                    ...options.digitalriver?.configuration,
+                    showSavePaymentAgreement: Boolean(customer.email) && options.digitalriver?.configuration.showSavePaymentAgreement,
+                },
+                billingAddress: {
+                    firstName: billingAddressMock.firstName,
+                    lastName: billingAddressMock.lastName,
+                    email: billingAddressMock.email || customer.email,
+                    phoneNumber: billingAddressMock.phone,
+                    address: {
+                        line1: billingAddressMock.address1,
+                        line2: billingAddressMock.address2,
+                        city: billingAddressMock.city,
+                        state: billingAddressMock.stateOrProvinceCode,
+                        postalCode: billingAddressMock.postalCode,
+                        country: billingAddressMock.countryCode,
+                    },
+                },
+                paymentMethodConfiguration: {
+                    disabledPaymentMethods: ['payPal']
+                },
+                onSuccess: jest.fn(),
+                onReady: jest.fn(),
+                onError: jest.fn(),
+            };
+
+            expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(digitalRiverConfigurationExpected);
+        });
+
+        it('loads DigitalRiver and does not disabled PayPal when feature is on', async () => {
+            const storeConfigMock = getConfig().storeConfig;
+            storeConfigMock.checkoutSettings.features = {
+                'PROJECT-4802.digital_river_paypal_support': true,
+            };
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
+                .mockReturnValueOnce(storeConfigMock);
+
+            await strategy.initialize(options);
+
+            const billingAddressMock = getBillingAddress();
+            const digitalRiverConfigurationExpected = {
+                sessionId: '',
+                options: {
+                    ...options.digitalriver?.configuration,
+                    showSavePaymentAgreement: Boolean(customer.email) && options.digitalriver?.configuration.showSavePaymentAgreement,
+                },
+                billingAddress: {
+                    firstName: billingAddressMock.firstName,
+                    lastName: billingAddressMock.lastName,
+                    email: billingAddressMock.email || customer.email,
+                    phoneNumber: billingAddressMock.phone,
+                    address: {
+                        line1: billingAddressMock.address1,
+                        line2: billingAddressMock.address2,
+                        city: billingAddressMock.city,
+                        state: billingAddressMock.stateOrProvinceCode,
+                        postalCode: billingAddressMock.postalCode,
+                        country: billingAddressMock.countryCode,
+                    },
+                },
+                paymentMethodConfiguration: {
+                    disabledPaymentMethods: []
+                },
+                onSuccess: jest.fn(),
+                onReady: jest.fn(),
+                onError: jest.fn(),
+            };
+
+            expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(digitalRiverConfigurationExpected);
+        });
+
 
         it('calls onSuccess callback from DigitalRiver', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
