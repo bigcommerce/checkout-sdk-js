@@ -433,7 +433,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
 
                         eventEmitter.on('onApprove', () => {
                             if (options.onApprove) {
-                                options.onApprove({ orderID: undefined });
+                                options.onApprove({ orderID: '' });
                             }
                         });
 

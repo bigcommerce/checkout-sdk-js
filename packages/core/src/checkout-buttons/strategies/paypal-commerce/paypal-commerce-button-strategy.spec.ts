@@ -1,41 +1,55 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { Cart, CartRequestSender } from '../../../cart';
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getCart } from '../../../cart/carts.mock';
 import { BuyNowCartCreationError } from '../../../cart/errors';
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { PaymentMethod } from '../../../payment';
+import { PaymentActionCreator, PaymentMethod, PaymentRequestSender, PaymentRequestTransformer } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
-import { ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { ButtonsOptions, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderDetails } from "../../../payment/strategies/paypal-commerce";
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
+import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
+import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
 describe('PaypalCommerceButtonStrategy', () => {
+    let billingAddressActionCreator: BillingAddressActionCreator;
     let cartMock: Cart;
     let cartRequestSender: CartRequestSender;
+    let checkoutValidator: CheckoutValidator;
     let checkoutActionCreator: CheckoutActionCreator;
+    let checkoutRequestSender: CheckoutRequestSender;
+    let consignmentActionCreator: ConsignmentActionCreator;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
     let requestSender: RequestSender;
     let paymentMethodMock: PaymentMethod;
+    let orderActionCreator: OrderActionCreator;
+    let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let paypalCommerceRequestSender: PaypalCommerceRequestSender;
     let paypalScriptLoader: PaypalCommerceScriptLoader;
     let store: CheckoutStore;
     let strategy: PaypalCommerceButtonStrategy;
     let paypalSdkMock: PaypalCommerceSDK;
     let paypalButtonElement: HTMLDivElement;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentRequestSender: PaymentRequestSender;
+    let subscriptionsActionCreator: SubscriptionsActionCreator;
 
     const defaultButtonContainerId = 'paypal-commerce-button-mock-id';
     const approveDataOrderId = 'ORDER_ID';
@@ -45,6 +59,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         style: {
             height: 45,
         },
+        onComplete: () => {}
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -102,6 +117,15 @@ describe('PaypalCommerceButtonStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
+        checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+        orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
+        subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
+        consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender);
+        billingAddressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender), subscriptionsActionCreator);
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, new PaymentRequestTransformer(), paymentHumanVerificationHandler);
+
         strategy = new PaypalCommerceButtonStrategy(
             store,
             checkoutActionCreator,
@@ -109,6 +133,10 @@ describe('PaypalCommerceButtonStrategy', () => {
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender,
+            consignmentActionCreator,
+            billingAddressActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
         );
 
         paypalButtonElement = document.createElement('div');
@@ -120,6 +148,13 @@ describe('PaypalCommerceButtonStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
         jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
+        jest.spyOn(billingAddressActionCreator, 'updateAddress').mockReturnValue(true);
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockReturnValue(true);
+        jest.spyOn(consignmentActionCreator, 'loadShippingOptions').mockReturnValue(true);
+        jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(true);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(true);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(true);
+        jest.spyOn(paypalCommerceRequestSender, 'updateOrder').mockReturnValue(true);
 
         jest.spyOn(paypalSdkMock, 'Buttons')
             .mockImplementation((options: ButtonsOptions) => {
@@ -154,6 +189,44 @@ describe('PaypalCommerceButtonStrategy', () => {
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
                         options.onApprove({ orderID: approveDataOrderId });
+                    }
+                });
+
+                eventEmitter.on('onCancel', () => {
+                    if (options.onCancel) {
+                        options.onCancel();
+                    }
+                });
+
+                eventEmitter.on('onShippingAddressChange', () => {
+                    if (options.onShippingAddressChange) {
+                        options.onShippingAddressChange({
+                                orderId: approveDataOrderId,
+                                shippingAddress: {
+                                    city: 'New York',
+                                    country_code: 'US',
+                                    postal_code: '07564',
+                                    state: 'New York',
+                                }
+                            });
+                    }
+                });
+
+                eventEmitter.on('onShippingOptionsChange', () => {
+                    if (options.onShippingOptionsChange) {
+                        options.onShippingOptionsChange({
+                            orderId: approveDataOrderId,
+                            selectedShippingOption: {
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: '100',
+                                },
+                                id: '1',
+                                label: 'Free shipping',
+                                selected: true,
+                                type: 'type_shipping'
+                            }
+                        });
                     }
                 });
 
@@ -405,7 +478,7 @@ describe('PaypalCommerceButtonStrategy', () => {
 
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
-                            options.onApprove({ orderID: undefined });
+                            options.onApprove({ orderID: '' });
                         }
                     });
 
@@ -461,4 +534,335 @@ describe('PaypalCommerceButtonStrategy', () => {
             }));
         });
     });
+
+    describe('#_onApprove button callback', () => {
+        const paypalOrderDetails: PayPalOrderDetails = {
+            purchase_units: [
+                {
+                    shipping: {
+                        address: {
+                            address_line_1: "2 E 61st St",
+                            admin_area_2: "New York",
+                            admin_area_1: "NY",
+                            postal_code: "10065",
+                            country_code: "US"
+                        },
+                    },
+                },
+            ],
+            payer: {
+                name: {
+                    given_name: "John",
+                    surname: "Doe",
+                },
+                email_address: "john@doe.com",
+                address: {
+                    address_line_1: "1 Main St",
+                    admin_area_2: "San Jose",
+                    admin_area_1: "CA",
+                    postal_code: "95131",
+                    country_code: "US",
+                },
+            },
+        };
+
+        beforeEach(() => {
+            jest.spyOn(paypalSdkMock, 'Buttons')
+                .mockImplementation((options: PaypalCheckoutButtonOptions) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({ orderID: approveDataOrderId }, {
+                                order: {
+                                    get: jest.fn(() => paypalOrderDetails),
+                                }
+                            });
+                        }
+                    });
+
+                    return {
+                        render: jest.fn(),
+                        isEligible: jest.fn(() => true),
+                    };
+                });
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+
+            }
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        });
+
+        it('takes order details data from paypal', async () => {
+            const getOrderActionMock = jest.fn(() => paypalOrderDetails);
+
+            jest.spyOn(paypalSdkMock, 'Buttons')
+                .mockImplementation((options: PaypalCheckoutButtonOptions) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({ orderID: approveDataOrderId }, {
+                                order: {
+                                    get: getOrderActionMock,
+                                }
+                            });
+                        }
+                    });
+
+                    return {
+                        render: jest.fn(),
+                        isEligible: jest.fn(() => true),
+                    };
+                });
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(getOrderActionMock).toHaveBeenCalled();
+            expect(getOrderActionMock).toReturnWith(paypalOrderDetails);
+        });
+
+        it('updates only billing address with valid customers data from order details if there is no shipping needed', async () => {
+            const defaultCart = getCart();
+            const cartWithoutShipping = {
+                ...defaultCart,
+                lineItems: {
+                    ...defaultCart.lineItems,
+                    physicalItems: [],
+                },
+            };
+
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartWithoutShipping);
+
+            const address = {
+                firstName: paypalOrderDetails.payer.name.given_name,
+                lastName: paypalOrderDetails.payer.name.surname,
+                email: paypalOrderDetails.payer.email_address,
+                phone: '',
+                company: '',
+                address1: paypalOrderDetails.payer.address.address_line_1,
+                address2: '',
+                city: paypalOrderDetails.payer.address.admin_area_2,
+                countryCode: paypalOrderDetails.payer.address.country_code,
+                postalCode: paypalOrderDetails.payer.address.postal_code,
+                stateOrProvince: '',
+                stateOrProvinceCode: paypalOrderDetails.payer.address.admin_area_1,
+                customFields: [],
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
+        });
+
+        it('submits BC order with provided methodId', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                {},
+                {
+                    params: {
+                        methodId: initializationOptions.methodId,
+                    },
+                },
+            );
+        });
+
+        it('submits BC payment to update BC order data', async () => {
+            const methodId = initializationOptions.methodId;
+            const paymentData =  {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    device_info: null,
+                    method_id: methodId,
+                    paypal_account: {
+                        order_id: approveDataOrderId,
+                    },
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId, paymentData });
+        });
+    });
+
+    describe('#_onCancel button callback', () => {
+        it('calls billingAddressActionCreator when isHostedCheckoutEnabled true', async () => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+
+            }
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalled();
+        });
+
+        it('calls consignmentActionCreator when isHostedCheckoutEnabled true', async () => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+
+            }
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(consignmentActionCreator.updateAddress).toHaveBeenCalled();
+        });
+
+        it('calls paypalCommerceRequestSender updateOrder when isHostedCheckoutEnabled true', async () => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+
+            }
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalled();
+        });
+
+        it('does not updateOrder when isHostedCheckoutEnabled false', async () => {
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paypalCommerceRequestSender.updateOrder).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#_onShippingAddressChange button callback', () => {
+        beforeEach(() => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+            }
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
+            jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        });
+
+        it('calls billingAddressActionCreator.updateAddress', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingAddressChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalled();
+        });
+
+        it('calls consignmentActionCreator.updateAddress', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingAddressChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(consignmentActionCreator.updateAddress).toHaveBeenCalled();
+        });
+
+        it('calls consignmentActionCreator.selectShippingOption', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingAddressChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalled();
+        });
+
+        it('calls updateOrder', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingAddressChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#_onShippingOptionsChange button callback', () => {
+        beforeEach(() => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                }
+            }
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
+            jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(Promise.resolve());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        });
+
+        it('calls consignmentActionCreator.selectShippingOption', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingOptionsChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalled();
+        });
+
+        it('calls updateOrder', async () => {
+            await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise(resolve => process.nextTick(resolve));
+            eventEmitter.emit('onShippingOptionsChange');
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalled();
+        });
+    })
 });
