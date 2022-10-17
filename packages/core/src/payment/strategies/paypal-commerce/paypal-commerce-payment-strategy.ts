@@ -9,7 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { ApproveDataOptions, ButtonsOptions, NON_INSTANT_PAYMENT_METHODS, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender } from './index';
+import { ApproveCallbackPayload, ButtonsOptions, NON_INSTANT_PAYMENT_METHODS, PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceFundingKeyResolver, PaypalCommercePaymentInitializeOptions, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender } from './index';
 
 const ORDER_STATUS_APPROVED = 'APPROVED';
 const ORDER_STATUS_CREATED = 'CREATED';
@@ -213,7 +213,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return !!(options as PaypalCommercePaymentInitializeOptions).container;
     }
 
-    private _tokenizePayment({ orderID }: ApproveDataOptions, submitForm: () => void) {
+    private _tokenizePayment({ orderID }: ApproveCallbackPayload, submitForm: () => void) {
         this._orderId = orderID;
         submitForm();
     }

@@ -89,10 +89,6 @@ export interface ShippingOptionChangeCallbackPayload {
     selectedShippingOption: PayPalSelectedShippingOption,
 }
 
-export interface ApproveDataOptions {
-    orderID?: string;
-}
-
 export interface ApproveCallbackPayload {
     orderID: string;
 }
