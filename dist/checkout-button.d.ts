@@ -725,6 +725,10 @@ declare interface PaypalCommerceButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
 }
 
 declare interface PaypalCommerceCreditButtonInitializeOptions {
@@ -750,6 +754,10 @@ declare interface PaypalCommerceCreditButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
 }
 
 declare interface PaypalCommerceInlineCheckoutButtonInitializeOptions {

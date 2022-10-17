@@ -12,6 +12,10 @@
 - [messagingContainerId](PaypalCommerceCreditButtonInitializeOptions.md#messagingcontainerid)
 - [style](PaypalCommerceCreditButtonInitializeOptions.md#style)
 
+### Methods
+
+- [onComplete](PaypalCommerceCreditButtonInitializeOptions.md#oncomplete)
+
 ## Properties
 
 ### buyNowInitializeOptions
@@ -57,3 +61,15 @@ ___
 • `Optional` **style**: [`PaypalButtonStyleOptions_2`](PaypalButtonStyleOptions_2.md)
 
 A set of styling options for the checkout button.
+
+## Methods
+
+### onComplete
+
+▸ `Optional` **onComplete**(): `void`
+
+A callback that gets called when payment complete on paypal side.
+
+#### Returns
+
+`void`
