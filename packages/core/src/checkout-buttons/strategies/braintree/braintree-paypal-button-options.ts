@@ -1,4 +1,5 @@
 import { Address } from '../../../address';
+import { BuyNowCartRequestBody } from '../../../cart';
 import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
@@ -46,4 +47,16 @@ export interface BraintreePaypalButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    }
 }
