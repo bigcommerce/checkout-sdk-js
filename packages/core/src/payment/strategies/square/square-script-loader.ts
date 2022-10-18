@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { SquareFormOptions, SquareScriptCallBack } from './square-form';
+import SquarePaymentForm, { SquareFormOptions, SquareScriptCallBack } from './square-form';
 import SquareWindow from './square-window';
 
 export default class SquareScriptLoader {
@@ -23,7 +23,7 @@ export default class SquareScriptLoader {
                 '//js.squareupsandbox.com/v2/paymentform' :
                 '//js.squareup.com/v2/paymentform');
 
-        return (options: SquareFormOptions) => {
+        return (options: SquareFormOptions): SquarePaymentForm => {
             if (!this._isSquareWindow(this._window)) {
                 throw new PaymentMethodClientUnavailableError();
             }
