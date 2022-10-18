@@ -113,6 +113,7 @@ export function getPaypalCommerce(): PaymentMethod {
             isPayPalCreditAvailable: false,
             isVenmoEnabled: false,
             shouldRenderFields: true,
+            isHostedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
     };

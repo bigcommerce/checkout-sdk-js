@@ -59,7 +59,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         style: {
             height: 45,
         },
-        onComplete: () => {}
+        onComplete: () => {},
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -327,6 +327,52 @@ describe('PaypalCommerceButtonStrategy', () => {
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
             });
+        });
+
+        it('does not throw an error if onComplete method is not provided for default flow', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: false,
+                },
+            });
+
+            const options = {
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...initializationOptions.paypalcommerce,
+                    onComplete: undefined,
+                },
+            };
+
+            await strategy.initialize(options);
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalled();
+        });
+
+        it('throws an error if onComplete method is not provided for shippingOptions flow', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            });
+
+            const options = {
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...initializationOptions.paypalcommerce,
+                    onComplete: undefined,
+                },
+            };
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
         });
 
         it('renders PayPal button if it is eligible', async () => {
