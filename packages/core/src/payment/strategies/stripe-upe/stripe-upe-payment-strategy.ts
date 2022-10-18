@@ -34,6 +34,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeElements?: StripeElements;
     private _isMounted = false;
     private _unsubscribe?: (() => void);
+    private _isDeinitialize?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -53,6 +54,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (!gatewayId) {
             throw new InvalidArgumentError('Unable to initialize payment because "gatewayId" argument is not provided.');
         }
+
+        this._isDeinitialize = false;
 
         this._unsubscribe = await this._store.subscribe(
             async _state => {
@@ -172,6 +175,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
         this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this._isMounted = false;
+        this._isDeinitialize = true;
 
         return Promise.resolve(this._store.getState());
     }
@@ -287,7 +291,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripeElement.mount(`#${containerId}`);
             this._isMounted = true;
         } catch (error) {
-            throw new InvalidArgumentError('Unable to mount Stripe component without valid container ID.');
+            if(!this._isDeinitialize){
+                throw new InvalidArgumentError('Unable to mount Stripe component without valid container ID.');
+            }
         }
     }
 
