@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.298.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.297.0...v1.298.0) (2022-10-18)
+
+
+### Features
+
+* **payment:** STRIPE-99 Add flag to validate unmount ([ad8c627](https://github.com/bigcommerce/checkout-sdk-js/commit/ad8c6274f26260936f52389b484bd0c88745966c))
+* **payment:** STRIPE-99 Add flag to validate unmount ([8981bea](https://github.com/bigcommerce/checkout-sdk-js/commit/8981bea6091b200961787a99cc156a3343538489))
+* **payment:** STRIPE-99 Add Stripe UPE fix ([4b4ed77](https://github.com/bigcommerce/checkout-sdk-js/commit/4b4ed77f747ebe5d081f5fd5cffaae0c1b93f8a2))
+* **payment:** STRIPE-99 Fix flag for validation ([419c37c](https://github.com/bigcommerce/checkout-sdk-js/commit/419c37c268b1501697071dec9b8aaa345932ba1a))
+* **payment:** STRIPE-99 Fix name of variables ([127412d](https://github.com/bigcommerce/checkout-sdk-js/commit/127412dffaf2e2b1b4a4c84acdf5a43e25ab5be5))
+
+
+### Bug Fixes
+
+* **payment:** INT-6478 SquareV2 - Fail Gracefully when payment provider unavailable ([bc136cc](https://github.com/bigcommerce/checkout-sdk-js/commit/bc136ccfcbcdbc2ce361055e7991d0c66d7697e3))
+
 ## [1.297.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.296.2...v1.297.0) (2022-10-17)
 
 
