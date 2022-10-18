@@ -262,7 +262,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 .toHaveBeenCalledTimes(2);
         })
 
-        it('throws error when url in hidden ifreme is invalid', async () => {
+        it('throws error when url in hidden iframe is invalid', async () => {
             window.fetch = jest.fn(() => Promise.resolve({ok: false}));
 
             jest.spyOn(orderActionCreator, 'loadCurrentOrder')
