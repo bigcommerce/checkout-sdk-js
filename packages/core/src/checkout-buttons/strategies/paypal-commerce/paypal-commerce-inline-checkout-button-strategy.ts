@@ -110,6 +110,8 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
 
+        await this._resetCustomersAddress();
+
         const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, methodId);
 
         return orderId;
@@ -243,6 +245,17 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         return shippingOptionToSelect;
     }
 
+    private async _resetCustomersAddress(): Promise<void> {
+        const emptyAddress = this._getEmptyAddress();
+
+        try {
+            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(emptyAddress));
+            await this._store.dispatch(this._consignmentActionCreator.updateAddress(emptyAddress));
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     private _transformAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
         return {
             firstName: address?.firstName || 'Fake',
@@ -276,6 +289,24 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             postalCode: address?.postal_code,
             stateOrProvinceCode: address?.admin_area_1,
         });
+    }
+
+    private _getEmptyAddress(): BillingAddressRequestBody {
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            company: '',
+            address1: '',
+            address2: '',
+            city: '',
+            countryCode: '',
+            postalCode: '',
+            stateOrProvince: '',
+            stateOrProvinceCode: '',
+            customFields: [],
+        };
     }
 
     private _getElementByDataId(dataId: string): HTMLElement | null {
