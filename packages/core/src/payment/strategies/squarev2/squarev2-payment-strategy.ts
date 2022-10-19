@@ -1,12 +1,13 @@
-import PaymentStrategy from '../payment-strategy';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import SquareV2PaymentProcessor from './squarev2-payment-processor';
+import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions } from '../../payment-request-options';
-import { InvalidArgumentError } from '../../../common/error/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import PaymentStrategy from '../payment-strategy';
+
+import SquareV2PaymentProcessor from './squarev2-payment-processor';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(

@@ -1,12 +1,14 @@
-import { BillingContact, Card, CardInputEvent, CardInputEventTypes, ChargeVerifyBuyerDetails, Payments, SqEvent } from './types';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import SquareV2ScriptLoader from './squarev2-script-loader';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+
+import { BillingAddress } from '../../../../src/billing';
+import { guard } from '../../../../src/common/utility';
 import { CheckoutStore } from '../../../checkout';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { guard } from '../../../../src/common/utility';
+
 import SquareV2PaymentInitializeOptions from './squarev2-payment-initialize-options';
-import { distinctUntilChanged, map } from 'rxjs/operators';
-import { BillingAddress } from '../../../../src/billing';
+import SquareV2ScriptLoader from './squarev2-script-loader';
+import { BillingContact, Card, CardInputEvent, CardInputEventTypes, ChargeVerifyBuyerDetails, Payments, SqEvent } from './types';
 
 export interface SquareV2PaymentProcessorOptions {
     applicationId: string;

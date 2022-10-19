@@ -1,5 +1,6 @@
-import type { Square } from './types';
 import { PaymentMethodClientUnavailableError } from '../../errors';
+
+import type { Square } from './types';
 
 export interface SquareV2HostWindow extends Window {
     Square: Square;

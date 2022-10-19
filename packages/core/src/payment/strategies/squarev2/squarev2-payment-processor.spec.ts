@@ -1,7 +1,9 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { NotInitializedError } from '../../../common/error/errors';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { NotInitializedError } from '../../../common/error/errors';
+
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2ScriptLoader from './squarev2-script-loader';
 import { Card, Payments, Square } from './types';

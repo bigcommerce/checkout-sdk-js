@@ -1,5 +1,7 @@
-import { ScriptLoader, createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+
 import { PaymentMethodClientUnavailableError } from '../../errors';
+
 import SquareV2ScriptLoader, { SquareV2WebPaymentsSdkEnv } from './squarev2-script-loader';
 import { Square } from './types';
 

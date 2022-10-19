@@ -1,20 +1,22 @@
-import { createCheckoutStore, CheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../../../checkout';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
-import SquareV2PaymentStrategy from './squarev2-payment-strategy';
-import SquareV2PaymentProcessor from './squarev2-payment-processor';
-import { createScriptLoader } from '@bigcommerce/script-loader';
-import SquareV2ScriptLoader from './squarev2-script-loader';
-import { createPaymentClient, PaymentActionCreator, PaymentInitializeOptions, PaymentRequestSender, PaymentRequestTransformer } from '../..';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { Observable, of } from 'rxjs';
 import { createAction } from '@bigcommerce/data-store';
-import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
+import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
+import { Observable, of } from 'rxjs';
+
+import { createPaymentClient, PaymentActionCreator, PaymentInitializeOptions, PaymentRequestSender, PaymentRequestTransformer } from '../..';
+import { CheckoutRequestSender, CheckoutStore, CheckoutValidator, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { getConfig } from '../../../config/configs.mock';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
+
+import SquareV2PaymentProcessor from './squarev2-payment-processor';
+import SquareV2PaymentStrategy from './squarev2-payment-strategy';
+import SquareV2ScriptLoader from './squarev2-script-loader';
 
 describe('SquareV2PaymentStrategy', () => {
     let store: CheckoutStore;
