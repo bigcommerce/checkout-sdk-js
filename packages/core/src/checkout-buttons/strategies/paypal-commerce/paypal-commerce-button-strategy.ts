@@ -73,9 +73,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private _renderButton(containerId: string, methodId: string, paypalcommerce: PaypalCommerceButtonInitializeOptions): void {
         const { buyNowInitializeOptions, initializesOnCheckoutPage, style, onComplete } = paypalcommerce;
-
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
-
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
