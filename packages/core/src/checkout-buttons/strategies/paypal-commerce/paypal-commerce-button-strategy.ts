@@ -73,12 +73,12 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     private _renderButton(containerId: string, methodId: string, paypalcommerce: PaypalCommerceButtonInitializeOptions): void {
         const { buyNowInitializeOptions, initializesOnCheckoutPage, style, onComplete } = paypalcommerce;
+        const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
-        const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
 
-        if (!onComplete || typeof onComplete !== 'function') {
+        if (isHostedCheckoutEnabled && (!onComplete || typeof onComplete !== 'function')) {
             throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.onComplete" argument is not provided or it is not a function.`);
         }
 
@@ -159,7 +159,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
         methodId: string,
-        onComplete: () => void
+        onComplete?: () => void
     ): Promise<boolean> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
@@ -191,7 +191,10 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
             await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
             await this._submitPayment(methodId, data.orderID);
-            onComplete();
+
+            if (onComplete) {
+                onComplete();
+            }
 
             return true;
         } catch (error) {

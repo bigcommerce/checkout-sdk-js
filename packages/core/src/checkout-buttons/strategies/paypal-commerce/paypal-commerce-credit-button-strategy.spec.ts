@@ -152,7 +152,6 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
         jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([getConsignment()]);
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
@@ -350,6 +349,52 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                     onApprove: expect.any(Function),
                     onClick: expect.any(Function),
                 });
+            });
+
+            it('does not throw an error if onComplete method is not provided for default flow', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                    ...paymentMethodMock,
+                    initializationData: {
+                        ...paymentMethodMock.initializationData,
+                        isHostedCheckoutEnabled: false,
+                    },
+                });
+
+                const options = {
+                    ...initializationOptions,
+                    paypalcommercecredit: {
+                        ...initializationOptions.paypalcommercecredit,
+                        onComplete: undefined,
+                    },
+                };
+
+                await strategy.initialize(options);
+
+                expect(paypalSdkMock.Buttons).toHaveBeenCalled();
+            });
+
+            it('throws an error if onComplete method is not provided for shippingOptions flow', async () => {
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                    ...paymentMethodMock,
+                    initializationData: {
+                        ...paymentMethodMock.initializationData,
+                        isHostedCheckoutEnabled: true,
+                    },
+                });
+
+                const options = {
+                    ...initializationOptions,
+                    paypalcommercecredit: {
+                        ...initializationOptions.paypalcommercecredit,
+                        onComplete: undefined,
+                    },
+                };
+
+                try {
+                    await strategy.initialize(options);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                }
             });
 
             it('initializes PayPal Credit button to render if PayPal PayLater is not eligible', async () => {

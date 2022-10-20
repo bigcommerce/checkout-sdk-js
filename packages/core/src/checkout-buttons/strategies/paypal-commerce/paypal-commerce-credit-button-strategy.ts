@@ -76,15 +76,14 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
 
     private _renderButton(containerId: string, methodId: string, paypalcommercecredit: PaypalCommerceCreditButtonInitializeOptions): void {
         const { buyNowInitializeOptions, initializesOnCheckoutPage, style, onComplete } = paypalcommercecredit;
-
-        if (!onComplete || typeof onComplete !== 'function') {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerce.onComplete" argument is not provided or it is not a function.`);
-        }
-
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { isHostedCheckoutEnabled } } = paymentMethod;
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
+
+        if (isHostedCheckoutEnabled && (!onComplete || typeof onComplete !== 'function')) {
+            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommercecredit.onComplete" argument is not provided or it is not a function.`);
+        }
 
         const hostedCheckoutCallbacks = {
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
@@ -96,6 +95,7 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         const regularCallbacks = {
             onApprove: ({ orderID }: ApproveCallbackPayload) => this._tokenizePayment(methodId, orderID),
         };
+
         const paypalCallbacks = isHostedCheckoutEnabled ? hostedCheckoutCallbacks : regularCallbacks;
 
         const fundingSources = [paypalCommerceSdk.FUNDING.PAYLATER, paypalCommerceSdk.FUNDING.CREDIT];
@@ -151,7 +151,7 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
         methodId: string,
-        onComplete: () => void
+        onComplete?: () => void
     ): Promise<boolean> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
@@ -179,7 +179,10 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
 
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
         await this._submitPayment(methodId, data.orderID);
-        onComplete();
+
+        if (onComplete) {
+            onComplete();
+        }
 
         return true;
     }
