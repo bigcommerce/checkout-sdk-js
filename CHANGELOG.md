@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.298.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.1...v1.298.2) (2022-10-20)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1725 fixed the issue with passing fake data as customer address from last session in PayPalCommerceInlineCheckoutButtonStrategy ([#1648](https://github.com/bigcommerce/checkout-sdk-js/issues/1648)) ([f27cd84](https://github.com/bigcommerce/checkout-sdk-js/commit/f27cd848f1fd3bad3132dcf7963728c4c6b4d741))
+* **payment:** PAYPAL-1730 fixed the issue with passing onComplete method for non hosted paypal flows ([#1645](https://github.com/bigcommerce/checkout-sdk-js/issues/1645)) ([b8b695f](https://github.com/bigcommerce/checkout-sdk-js/commit/b8b695f0958397788df138128473b664dbc15011))
+
 ### [1.298.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.0...v1.298.1) (2022-10-20)
 
 
