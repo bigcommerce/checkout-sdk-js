@@ -425,6 +425,21 @@ describe('DigitalRiverPaymentStrategy', () => {
                     methodId: 'paypal'
                 }
             }
+
+            const owner = {
+                address: {
+                    city: "Minnetonka",
+                    country: "US",
+                    line1: "10380 Bren Road W",
+                    postalCode: "55343",
+                    state: "MN"
+                },
+                email: "test@digitalriver.com",
+                firstName: "John",
+                lastName: "Doe",
+                phoneNumber: "000-000-0000"
+            };
+
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
                 onSuccessCallback = configuration.onSuccess;
 
@@ -436,19 +451,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                 source: {
                     id: '1',
                     reusable: false,
-                    owner: {
-                        address: {
-                            city: "Minnetonka",
-                            country: "US",
-                            line1: "10380 Bren Road W",
-                            postalCode: "55343",
-                            state: "MN"
-                        },
-                        email: "test@digitalriver.com",
-                        firstName: "John",
-                        lastName: "Doe",
-                        phoneNumber: "000-000-0000"
-                    }
+                    owner: owner,
                 },
                 readyForStorage: true,
             });
@@ -471,19 +474,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                                         source: {
                                             id: '1',
                                             reusable: false,
-                                            owner: {
-                                                address: {
-                                                    city: "Minnetonka",
-                                                    country: "US",
-                                                    line1: "10380 Bren Road W",
-                                                    postalCode: "55343",
-                                                    state: "MN"
-                                                },
-                                                email: "test@digitalriver.com",
-                                                firstName: "John",
-                                                lastName: "Doe",
-                                                phoneNumber: "000-000-0000"
-                                            }
+                                            owner: owner,
                                         },
                                         readyForStorage: true,
                                     },

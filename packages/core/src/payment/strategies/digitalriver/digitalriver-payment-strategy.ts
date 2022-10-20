@@ -7,11 +7,11 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { isVaultedInstrument, HostedInstrument } from '../../index';
+import { BillingAddressActionCreator } from '../../../billing';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
-import { BillingAddressActionCreator } from '../../../billing';
 
 import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverElementOptions, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
 import DigitalRiverError from './digitalriver-error';
