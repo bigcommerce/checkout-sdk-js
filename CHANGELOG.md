@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.298.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.0...v1.298.1) (2022-10-20)
+
+
+### Bug Fixes
+
+* **payment:** INT-6539 GooglePay: Pass `hostname` as param when loading googlepay ([#1611](https://github.com/bigcommerce/checkout-sdk-js/issues/1611)) ([328fd82](https://github.com/bigcommerce/checkout-sdk-js/commit/328fd826fb5a04e41c4e9a67b288a36529182755))
+
 ## [1.298.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.297.0...v1.298.0) (2022-10-18)
 
 
