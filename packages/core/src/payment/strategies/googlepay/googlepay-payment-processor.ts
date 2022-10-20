@@ -76,9 +76,11 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _configureWallet(): Promise<void> {
+        const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
+        const options = features && features['INT-5826.google_hostname_alias'] ? { params: { origin: window.location.hostname } } : undefined;
         const methodId = this._getMethodId();
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options))
             .then(state => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
                 const checkout = state.checkout.getCheckout();
