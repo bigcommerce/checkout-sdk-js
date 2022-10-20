@@ -231,9 +231,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
             this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
 
-            const disabledPaymentMethods: string[] = [
-                features['PROJECT-4802.digital_river_paypal_support'] ? null : 'payPal'
-            ].filter((x): x is string => x !== null);
+            const disabledPaymentMethods: string[] = features['PROJECT-4802.digital_river_paypal_support'] ? [] : ['payPal'];
 
             const digitalRiverConfiguration = {
                 sessionId: this._digitalRiverCheckoutData.sessionId,
