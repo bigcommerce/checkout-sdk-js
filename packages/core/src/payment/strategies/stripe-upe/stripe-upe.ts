@@ -355,3 +355,10 @@ export enum StripeElementType {
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'shippingAddress',
 }
+
+export enum StripeSessionStorageKey {
+    CUSTOMER_RELOADED = 'customerReloaded',
+    CUSTOMER = 'customer',
+    SHIPPING = 'shipping',
+    SHIPPING_RELOADED = 'shippingReloaded',
+}

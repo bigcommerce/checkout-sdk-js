@@ -3,7 +3,7 @@ import { PaymentMethodActionCreator } from '../../../payment';
 import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { StripeElements, StripeElementType, StripeEventType, StripeScriptLoader, StripeUPEAppearanceOptions, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+import { StripeElements, StripeElementType, StripeEventType, StripeScriptLoader, StripeSessionStorageKey, StripeUPEAppearanceOptions, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
@@ -110,10 +110,10 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             }
         };
 
-        if (shipping?.address1 && sessionStorage.getItem('stripeLink') == 'customerReloaded') {
-            sessionStorage.setItem('stripeLink', 'shippingReloaded');
+        if (shipping?.address1 && sessionStorage.getItem('stripeLink') == StripeSessionStorageKey.CUSTOMER_RELOADED) {
+            sessionStorage.setItem('stripeLink', StripeSessionStorageKey.SHIPPING_RELOADED);
         } else {
-            sessionStorage.setItem('stripeLink', 'shipping');
+            sessionStorage.setItem('stripeLink', StripeSessionStorageKey.SHIPPING);
         }
 
         const shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING) ||
