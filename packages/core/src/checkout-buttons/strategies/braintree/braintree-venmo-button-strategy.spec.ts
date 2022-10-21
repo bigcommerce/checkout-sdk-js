@@ -1,7 +1,10 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { CartRequestSender } from '../../../cart';
+import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
+import { getCart } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
@@ -14,11 +17,13 @@ import CheckoutButtonMethodType from '../checkout-button-method-type';
 import BraintreeVenmoButtonStrategy from './braintree-venmo-button-strategy';
 
 describe('BraintreeVenmoButtonStrategy', () => {
+    let cartRequestSender: CartRequestSender;
     let braintreeSDKCreator: BraintreeSDKCreator;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
     let braintreeVenmoCheckoutCreatorMock: BraintreeVenmoCheckoutCreator;
     let formPoster: FormPoster;
+    let requestSender: RequestSender;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
     let venmoButtonElement: HTMLDivElement;
@@ -27,11 +32,41 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
     const defaultContainerId = 'braintree-venmo-button-mock-id';
 
+    const buyNowCartMock = {
+        ...getCart(),
+        id: 999,
+        source: 'BUY_NOW',
+    };
+
+    const buyNowCartRequestBody: BuyNowCartRequestBody = {
+        source: 'BUY_NOW',
+        lineItems: [{
+            productId: 1,
+            quantity: 2,
+            optionSelections: {
+                optionId: 11,
+                optionValue: 11,
+            },
+        }],
+    };
+
     const getBraintreeVenmoButtonOptionsMock = () => ({
         methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
         containerId: defaultContainerId,
         braintreevenmo: {
             onError: jest.fn(),
+        },
+    });
+
+    const getBuyNowBraintreeVenmoButtonOptionsMock = () => ({
+        methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
+        containerId: defaultContainerId,
+        braintreevenmo: {
+            onError: jest.fn(),
+            currencyCode: 'USD',
+            buyNowInitializeOptions: {
+                getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody)
+            }
         },
     });
 
@@ -64,14 +99,17 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+        requestSender = createRequestSender();
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader());
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         formPoster = createFormPoster();
+        cartRequestSender = new CartRequestSender(requestSender);
 
         strategy = new BraintreeVenmoButtonStrategy(
             store,
             paymentMethodActionCreator,
+            cartRequestSender,
             braintreeSDKCreator,
             formPoster
         );
@@ -248,6 +286,33 @@ describe('BraintreeVenmoButtonStrategy', () => {
             expect(venmoButton).toBeInstanceOf(HTMLDivElement);
         });
 
+        it('successfully creates Buy Now cart on venmo button click', async () => {
+            const options = getBuyNowBraintreeVenmoButtonOptionsMock();
+
+            braintreeVenmoCheckoutMock = {
+                isBrowserSupported: jest.fn().mockReturnValue(true),
+                teardown: jest.fn(),
+                tokenize: jest.fn(),
+            };
+
+            braintreeVenmoCheckoutCreatorMock = {
+                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+
+            const venmoButton = document.getElementById(options.containerId);
+
+            await strategy.initialize(options);
+
+            if (venmoButton) {
+                venmoButton.click();
+
+                expect(cartRequestSender.createBuyNowCart).toHaveBeenCalled();
+            }
+        });
+
         it('successfully tokenize braintreeVenmoCheckout on venmo button click', async () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
@@ -268,6 +333,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             if (venmoButton) {
                 venmoButton.click();
+
+                await new Promise(resolve => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
             }
@@ -307,6 +374,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
+                await new Promise(resolve => process.nextTick(resolve));
+
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
                 await new Promise(resolve => process.nextTick(resolve));
@@ -319,6 +388,60 @@ describe('BraintreeVenmoButtonStrategy', () => {
                     provider: 'braintreevenmo',
                     billing_address: JSON.stringify(expectedAddress),
                     shipping_address: JSON.stringify(expectedAddress),
+                });
+            }
+        });
+
+        it('successfully sends data through formPoster on venmo button click with Buy Now cart id', async () => {
+            const tokenizationPayload = {
+                nonce: 'tokenization_nonce',
+                type: 'VenmoAccount',
+                details: {
+                    email: 'test@test.com',
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    phone: '123456789',
+                    billingAddress: billingAddressPayload,
+                    shippingAddress: shippingAddressPayload,
+                },
+            };
+
+            braintreeVenmoCheckoutMock = {
+                isBrowserSupported: jest.fn().mockReturnValue(true),
+                teardown: jest.fn(),
+                tokenize: jest.fn(callback => callback(undefined, tokenizationPayload)),
+            };
+
+            braintreeVenmoCheckoutCreatorMock = {
+                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+
+            const options = getBuyNowBraintreeVenmoButtonOptionsMock();
+            const venmoButton = document.getElementById(options.containerId);
+
+            await strategy.initialize(options);
+
+            if (venmoButton) {
+                venmoButton.click();
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
+
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
+                    action: 'set_external_checkout',
+                    device_data: { device: 'something' },
+                    nonce: 'tokenization_nonce',
+                    payment_type: 'paypal',
+                    provider: 'braintreevenmo',
+                    billing_address: JSON.stringify(expectedAddress),
+                    shipping_address: JSON.stringify(expectedAddress),
+                    cart_id: buyNowCartMock.id
                 });
             }
         });
@@ -355,6 +478,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             if (venmoButton) {
                 venmoButton.click();
+
+                await new Promise(resolve => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
