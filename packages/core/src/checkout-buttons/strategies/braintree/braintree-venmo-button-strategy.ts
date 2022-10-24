@@ -1,6 +1,8 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { noop } from 'lodash';
 
+import { BuyNowCartRequestBody, CartRequestSender } from '../../../cart';
+import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, UnsupportedBrowserError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
@@ -31,12 +33,15 @@ const venmoButtonStyleHover = {
     backgroundColor: '#0a7fc2',
 };
 
+type BuyNowInitializeOptions = { getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void; }
+
 export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrategy {
     private _onError = noop;
 
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _cartRequestSender: CartRequestSender,
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _formPoster: FormPoster
     ) {}
@@ -63,7 +68,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
         await this._braintreeSDKCreator.getVenmoCheckout(
-            braintreeVenmoCheckout => this._handleInitializationVenmoSuccess(braintreeVenmoCheckout, containerId),
+            braintreeVenmoCheckout => this._handleInitializationVenmoSuccess(braintreeVenmoCheckout, containerId, braintreevenmo?.buyNowInitializeOptions),
             error => this._handleInitializationVenmoError(error, containerId)
         );
     }
@@ -78,8 +83,8 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         throw new Error(error.message);
     }
 
-    private _handleInitializationVenmoSuccess(braintreeVenmoCheckout: BraintreeVenmoCheckout, parentContainerId: string): void {
-        return this._renderVenmoButton(braintreeVenmoCheckout, parentContainerId);
+    private _handleInitializationVenmoSuccess(braintreeVenmoCheckout: BraintreeVenmoCheckout, parentContainerId: string, buyNowInitializeOptions?: BuyNowInitializeOptions): void {
+        return this._renderVenmoButton(braintreeVenmoCheckout, parentContainerId, buyNowInitializeOptions);
     }
 
     private _handleInitializationVenmoError(error: BraintreeError | UnsupportedBrowserError, containerId: string): void {
@@ -96,7 +101,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private _renderVenmoButton(braintreeVenmoCheckout: BraintreeVenmoCheckout, containerId: string): void {
+    private _renderVenmoButton(braintreeVenmoCheckout: BraintreeVenmoCheckout, containerId: string, buyNowInitializeOptions?: BuyNowInitializeOptions): void {
         const venmoButton = document.getElementById(containerId);
 
         if (!venmoButton) {
@@ -106,8 +111,10 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         venmoButton.setAttribute('aria-label', 'Venmo');
         Object.assign(venmoButton.style, venmoButtonStyle);
 
-        venmoButton.addEventListener('click', () =>  {
+        venmoButton.addEventListener('click', async () => {
             venmoButton.setAttribute('disabled', 'true');
+
+            const buyBowCart = await this._createBuyNowCart(buyNowInitializeOptions);
 
             if (braintreeVenmoCheckout.tokenize) {
                 braintreeVenmoCheckout.tokenize(async (error: BraintreeError, payload: BraintreeTokenizePayload) => {
@@ -117,7 +124,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                         return this._onError(error);
                     }
 
-                    await this._handlePostForm(payload);
+                    await this._handlePostForm(payload, buyBowCart?.id);
                 });
             }
         });
@@ -131,7 +138,25 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         });
     }
 
-    private async _handlePostForm(payload: BraintreeTokenizePayload): Promise<void> {
+    private async _createBuyNowCart(buyNowInitializeOptions?: BuyNowInitializeOptions) {
+        if (typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
+            const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
+
+            if (!cartRequestBody) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
+
+            try {
+                const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
+
+                return buyNowCart;
+            } catch (error) {
+                throw new BuyNowCartCreationError();
+            }
+        }
+    }
+
+    private async _handlePostForm(payload: BraintreeTokenizePayload, buyNowCartId?: string): Promise<void> {
         const { deviceData } = await this._braintreeSDKCreator.getDataCollector();
         const { nonce, details } = payload;
 
@@ -143,6 +168,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             action: 'set_external_checkout',
             billing_address: JSON.stringify(mapToLegacyBillingAddress(details)),
             shipping_address: JSON.stringify(mapToLegacyShippingAddress(details)),
+            ...buyNowCartId && { cart_id: buyNowCartId },
         });
     }
 }
