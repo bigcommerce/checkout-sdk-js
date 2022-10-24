@@ -1,5 +1,7 @@
+import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { noop } from 'lodash';
 
+import { guard } from '../../../../src/common/utility';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -10,10 +12,8 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor, AmazonPayV2Placement } from '.';
-
-import { guard } from '../../../../src/common/utility';
-import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { AmazonPayV2ChangeActionType, AmazonPayV2Placement } from './amazon-pay-v2';
+import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 

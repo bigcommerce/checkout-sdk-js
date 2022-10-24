@@ -3,10 +3,10 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod } from '../..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { CheckoutRequestSender, CheckoutStore, CheckoutValidator, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
@@ -14,8 +14,8 @@ import { getConfig } from '../../../config/configs.mock';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { createPaymentIntegrationService } from '../../../payment-integration';
+import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -26,12 +26,12 @@ import PaymentStrategyActionCreator from '../../payment-strategy-action-creator'
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { AmazonPayV2PaymentProcessor } from '.';
+import { AmazonPayV2ButtonParams, AmazonPayV2NewButtonParams } from './amazon-pay-v2';
 import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
+import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
 import { getAmazonPayV2ButtonParamsMock, getAmazonPayV2Ph4ButtonParamsMock } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
-import { AmazonPayV2ButtonParams, AmazonPayV2NewButtonParams } from './amazon-pay-v2';
 
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;

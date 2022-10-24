@@ -1,13 +1,13 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor, AmazonPayV2Placement, AmazonPayV2ButtonParams } from '../../../payment/strategies/amazon-pay-v2';
+import { AmazonPayV2ButtonParams, AmazonPayV2PaymentProcessor, AmazonPayV2Placement, createAmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 

@@ -2,12 +2,12 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getConfig, getConfigState } from '../../../../src/config/configs.mock';
 import { getCart } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
 
-import { AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters, AmazonPayV2NewButtonParams, AmazonPayV2ButtonParams, AmazonPayV2CheckoutSessionConfig, AmazonPayV2Button } from './amazon-pay-v2';
+import { AmazonPayV2Button, AmazonPayV2ButtonParameters, AmazonPayV2ButtonParams, AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 import { getAmazonPayV2ButtonParamsMock, getAmazonPayV2Ph4ButtonParamsMock, getAmazonPayV2SDKMock, getPaymentMethodMockUndefinedLedgerCurrency, getPaymentMethodMockUndefinedMerchant } from './amazon-pay-v2.mock';

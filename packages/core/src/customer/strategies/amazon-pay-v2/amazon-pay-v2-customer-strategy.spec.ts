@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotImplementedError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -10,12 +10,12 @@ import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor, AmazonPayV2ButtonParams } from '../../../payment/strategies/amazon-pay-v2';
+import { AmazonPayV2ButtonParams, AmazonPayV2PaymentProcessor, createAmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 
-import { AmazonPayV2CustomerInitializeOptions } from '.';
+import AmazonPayV2CustomerInitializeOptions from './amazon-pay-v2-customer-initialize-options';
 import AmazonPayV2CustomerStrategy from './amazon-pay-v2-customer-strategy';
 import { getAmazonPayV2CustomerInitializeOptions, Mode } from './amazon-pay-v2-customer.mock';
 

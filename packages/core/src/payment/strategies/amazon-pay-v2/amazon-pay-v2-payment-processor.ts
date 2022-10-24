@@ -1,12 +1,11 @@
 import { PaymentMethod } from '../..';
 import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
 import { getShippableItemsCount } from '../../../../../core/src/shipping';
+import { guard } from '../../../../src/common/utility';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import { AmazonPayV2ButtonColor, AmazonPayV2ChangeActionType, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters, AmazonPayV2Button, AmazonPayV2NewButtonParams, AmazonPayV2CheckoutSessionConfig, AmazonPayV2ButtonRenderingOptions } from './amazon-pay-v2';
+import { AmazonPayV2Button, AmazonPayV2ButtonColor, AmazonPayV2ButtonParameters, AmazonPayV2ButtonRenderingOptions, AmazonPayV2ChangeActionType, AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
-
-import { guard } from '../../../../src/common/utility';
 
 export default class AmazonPayV2PaymentProcessor {
     private _amazonPayV2SDK?: AmazonPayV2SDK;
