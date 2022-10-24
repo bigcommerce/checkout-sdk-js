@@ -232,7 +232,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
             const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
             const billing = state.billingAddress.getBillingAddressOrThrow();
             const customer = state.customer.getCustomerOrThrow();
-            const {features} = state.config.getStoreConfigOrThrow().checkoutSettings;
+            const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
             const {paymentMethodConfiguration} = this._getDigitalRiverInitializeOptions().configuration;
             const {containerId, configuration} = this._getDigitalRiverInitializeOptions();
             const {clientToken} = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
@@ -251,7 +251,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
             this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
 
-            const disabledPaymentMethods: string[] = features['PROJECT-4802.digital_river_paypal_support'] ? [] : ['payPal'];
+            const disabledPaymentMethods = features['PROJECT-4802.digital_river_paypal_support'] ? [] : ['payPal'];
 
             const digitalRiverConfiguration = {
                 sessionId: this._digitalRiverCheckoutData.sessionId,
