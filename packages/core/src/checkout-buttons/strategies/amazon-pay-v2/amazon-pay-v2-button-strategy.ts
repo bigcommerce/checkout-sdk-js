@@ -5,8 +5,6 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy {
-    private _walletButton?: HTMLElement;
-
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
@@ -28,22 +26,16 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         }
 
-        this._walletButton =
-            this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
-                checkoutState: this._store.getState(),
-                containerId,
-                methodId,
-                options: amazonpay,
-                placement: AmazonPayV2Placement.Cart,
-            });
+        this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+            checkoutState: this._store.getState(),
+            containerId,
+            methodId,
+            options: amazonpay,
+            placement: AmazonPayV2Placement.Cart,
+        });
     }
 
     deinitialize(): Promise<void> {
-        if (this._walletButton && this._walletButton.parentNode) {
-            this._walletButton.parentNode.removeChild(this._walletButton);
-            this._walletButton = undefined;
-        }
-
-        return Promise.resolve();
+        return this._amazonPayV2PaymentProcessor.deinitialize();
     }
 }

@@ -26,7 +26,7 @@ import PaymentStrategyActionCreator from '../../payment-strategy-action-creator'
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { AmazonPayV2ButtonParams, AmazonPayV2NewButtonParams } from './amazon-pay-v2';
+import { AmazonPayV2ButtonParams, AmazonPayV2NewButtonParams, AmazonPayV2Placement } from './amazon-pay-v2';
 import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
@@ -94,13 +94,13 @@ describe('AmazonPayV2PaymentStrategy', () => {
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'initialize')
-            .mockReturnValue(Promise.resolve());
+            .mockResolvedValue(undefined);
+
+        jest.spyOn(amazonPayV2PaymentProcessor, 'renderAmazonPayButton')
+            .mockImplementation(({ containerId }) => document.getElementById(containerId));
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize')
-            .mockReturnValue(Promise.resolve());
-
-        jest.spyOn(amazonPayV2PaymentProcessor, 'createButton')
-            .mockReturnValue(undefined);
+            .mockResolvedValue(undefined);
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'prepareCheckout')
             .mockReturnValue(undefined);
@@ -132,8 +132,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
     });
 
     afterEach(async () => {
-        await strategy.deinitialize();
-
         if (editMethodButton.parentElement === document.body) {
             document.body.removeChild(editMethodButton);
         } else {
@@ -144,11 +142,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         }
     });
 
-    it('creates an instance of AmazonPayV2PaymentStrategy', () => {
-        expect(strategy).toBeInstanceOf(AmazonPayV2PaymentStrategy);
-    });
-
-    describe('#initialize()', () => {
+    describe('#initialize', () => {
         let amazonpayv2InitializeOptions: AmazonPayV2PaymentInitializeOptions;
         let initializeOptions: PaymentInitializeOptions;
         const paymentToken = 'abc123';
@@ -159,10 +153,10 @@ describe('AmazonPayV2PaymentStrategy', () => {
             initializeOptions = { methodId: 'amazonpay', amazonpay: amazonpayv2InitializeOptions };
         });
 
-        it('it should initialize the payment processor', async () => {
+        it('should initialize the processor', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenNthCalledWith(1, paymentMethodMock);
+            expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
         });
 
         it('binds edit method button if paymentToken is present on initializationData', async () => {
@@ -173,7 +167,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(changeMethodId, paymentToken, 'changePayment');
-            expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
+            expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).not.toHaveBeenCalled();
         });
 
         it('creates a signin button if no paymentToken is present on initializationData', async () => {
@@ -183,7 +177,12 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`AmazonPayButton`, expectedOptions);
+            expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).toHaveBeenCalledWith({
+                checkoutState: store.getState(),
+                containerId: 'AmazonPayButton',
+                methodId: 'amazonpay',
+                placement: AmazonPayV2Placement.Checkout,
+            });
         });
 
         it('creates an additional payment button for one-time transactions', async () => {
@@ -202,7 +201,13 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
-            expect(amazonPayV2PaymentProcessor.createButton).toHaveBeenCalledWith(`AmazonPayButton`, expectedOptions);
+            expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).toHaveBeenCalledWith({
+                checkoutState: store.getState(),
+                containerId: 'AmazonPayButton',
+                decoupleCheckoutInitiation: true,
+                methodId: 'amazonpay',
+                placement: AmazonPayV2Placement.Checkout,
+            });
         });
 
         it('dispatches widgetInteraction when clicking previously binded edit method button if region not US', async () => {
@@ -247,7 +252,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
-            expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
+            expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).not.toHaveBeenCalled();
 
             document.body.appendChild(editMethodButton);
         });
@@ -278,7 +283,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         });
     });
 
-    describe('#execute()', () => {
+    describe('#execute', () => {
         let amazonpayv2InitializeOptions: AmazonPayV2PaymentInitializeOptions;
         let initializeOptions: PaymentInitializeOptions;
         let orderRequestBody: OrderRequestBody;
@@ -325,7 +330,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('clicks sign-in button if no paymentToken is found on intializationData', async () => {
             const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click');
+            jest.spyOn(walletButton, 'click').mockClear();
 
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise(resolve => process.nextTick(resolve));
@@ -356,7 +361,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             window.location.assign = jest.fn();
 
             const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click');
+            jest.spyOn(walletButton, 'click').mockClear();
 
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise(resolve => process.nextTick(resolve));
@@ -395,7 +400,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 .mockReturnValue(paymentFailedErrorAction);
 
             const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click');
+            jest.spyOn(walletButton, 'click').mockClear();
 
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise(resolve => process.nextTick(resolve));
@@ -417,7 +422,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(MissingDataError);
             });
 
-            test('strategy is not initialized', async () => {
+            test('buttonContainer has not yet been initialized', async () => {
                 await strategy.deinitialize();
 
                 await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(NotInitializedError);
@@ -445,7 +450,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         });
     });
 
-    describe('#finalize()', () => {
+    describe('#finalize', () => {
         it('throws an error to inform that order finalization is not required', async () => {
             const promise = strategy.finalize();
 
@@ -453,7 +458,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         });
     });
 
-    describe('#deinitialize()', () => {
+    describe('#deinitialize', () => {
         let amazonpayv2InitializeOptions: AmazonPayV2PaymentInitializeOptions;
         let initializeOptions: PaymentInitializeOptions;
 
@@ -463,16 +468,16 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
         });
 
-        it('expect to deinitialize the payment processor', async () => {
+        it('deinitializes the strategy successfully', async () => {
+            const deinitialize = strategy.deinitialize();
+
+            await expect(deinitialize).resolves.toBe(store.getState());
+        });
+
+        it('should deinitialize the processor', async () => {
             await strategy.deinitialize();
 
             expect(amazonPayV2PaymentProcessor.deinitialize).toHaveBeenCalled();
-        });
-
-        it('deinitializes strategy', async () => {
-            expect(document.getElementById('AmazonPayButton')).not.toBeNull();
-            await expect(strategy.deinitialize()).resolves.toEqual(store.getState());
-            expect(document.getElementById('AmazonPayButton')).toBeNull();
         });
     });
 });

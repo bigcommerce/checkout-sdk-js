@@ -7,8 +7,6 @@ import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethod
 import CustomerStrategy from '../customer-strategy';
 
 export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
-    private _walletButton?: HTMLElement;
-
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -31,24 +29,20 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
 
         await this._amazonPayV2PaymentProcessor.initialize(getPaymentMethodOrThrow(methodId));
 
-        this._walletButton =
-            this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
-                checkoutState: this._store.getState(),
-                containerId: amazonpay.container,
-                methodId,
-                placement: AmazonPayV2Placement.Checkout,
-            });
+        this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+            checkoutState: this._store.getState(),
+            containerId: amazonpay.container,
+            methodId,
+            placement: AmazonPayV2Placement.Checkout,
+        });
 
         return this._store.getState();
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._walletButton && this._walletButton.parentNode) {
-            this._walletButton.parentNode.removeChild(this._walletButton);
-            this._walletButton = undefined;
-        }
+    async deinitialize(): Promise<InternalCheckoutSelectors> {
+        await this._amazonPayV2PaymentProcessor.deinitialize();
 
-        return Promise.resolve(this._store.getState());
+        return this._store.getState();
     }
 
     signIn(): Promise<InternalCheckoutSelectors> {

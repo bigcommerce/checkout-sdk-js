@@ -16,8 +16,7 @@ import { AmazonPayV2ChangeActionType, AmazonPayV2Placement } from './amazon-pay-
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
-
-    private _walletButton?: HTMLElement;
+    private _buttonContainer?: HTMLElement;
 
     constructor(
         private _store: CheckoutStore,
@@ -45,7 +44,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         } else {
             const { id: containerId } = this._createContainer();
 
-            this._walletButton =
+            this._buttonContainer =
                 this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
                     checkoutState: this._store.getState(),
                     containerId,
@@ -96,7 +95,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             }
         }
 
-        this._getWalletButton().click();
+        this._getButtonContainer().click();
 
         // Focus of parent window used to try and detect the user cancelling the Amazon log in modal
         // Should be refactored if/when Amazon add a modal close hook to their SDK
@@ -119,14 +118,11 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._walletButton && this._walletButton.parentNode) {
-            this._walletButton.parentNode.removeChild(this._walletButton);
-            this._walletButton = undefined;
-        }
-
         await this._amazonPayV2PaymentProcessor.deinitialize();
 
-        return Promise.resolve(this._store.getState());
+        this._buttonContainer = undefined;
+
+        return this._store.getState();
     }
 
     private _bindEditButton(buttonId: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, isModalFlow: boolean): void {
@@ -171,8 +167,8 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return document.body.appendChild(container);
     }
 
-    private _getWalletButton() {
-        return guard(this._walletButton, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+    private _getButtonContainer() {
+        return guard(this._buttonContainer, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
     }
 
     private _isOneTimeTransaction(features: CheckoutSettings['features']): boolean {

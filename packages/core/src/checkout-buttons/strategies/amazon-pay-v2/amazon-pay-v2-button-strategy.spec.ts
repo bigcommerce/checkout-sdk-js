@@ -4,11 +4,9 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createChec
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { AmazonPayV2ButtonParams, AmazonPayV2PaymentProcessor, AmazonPayV2Placement, createAmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
-import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
+import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { AmazonPayV2PaymentProcessor, AmazonPayV2Placement, createAmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import AmazonPayV2ButtonStrategy from './amazon-pay-v2-button-strategy';
@@ -23,6 +21,8 @@ describe('AmazonPayV2ButtonStrategy', () => {
     let strategy: AmazonPayV2ButtonStrategy;
 
     beforeEach(() => {
+        checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions();
+
         store = createCheckoutStore(getCheckoutStoreState());
 
         requestSender = createRequestSender();
@@ -33,83 +33,75 @@ describe('AmazonPayV2ButtonStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
         );
 
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+            .mockResolvedValue(store.getState());
+
         paymentProcessor = createAmazonPayV2PaymentProcessor();
+
+        jest.spyOn(paymentProcessor, 'initialize')
+            .mockResolvedValue(undefined);
+
+        jest.spyOn(paymentProcessor, 'renderAmazonPayButton')
+            .mockResolvedValue('foo');
+
+        jest.spyOn(paymentProcessor, 'deinitialize')
+            .mockResolvedValue(undefined);
 
         strategy = new AmazonPayV2ButtonStrategy(
             store,
             checkoutActionCreator,
             paymentProcessor
         );
-
-        checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedAmazonPay);
-
-        jest.spyOn(paymentProcessor, 'initialize')
-            .mockReturnValue(Promise.resolve());
-
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockResolvedValue(store.getState());
-
-        const buttonContainer = document.createElement('div');
-        buttonContainer.setAttribute('id', 'amazonpayCheckoutButton');
-        document.body.appendChild(buttonContainer);
-
-        jest.spyOn(paymentProcessor, 'createButton')
-            .mockReturnValue(document.createElement('button'));
     });
 
-    afterEach(() => {
-        const buttonContainer = document.getElementById('amazonpayCheckoutButton');
-
-        if (buttonContainer) {
-            document.body.removeChild(buttonContainer);
-        }
-    });
-
-    describe('#initialize()', () => {
-        it('initialises the payment processor once', async () => {
+    describe('#initialize', () => {
+        it('should initialize the processor', async () => {
             await strategy.initialize(checkoutButtonOptions);
 
-            expect(paymentProcessor.initialize).toHaveBeenCalledTimes(1);
+            expect(paymentProcessor.initialize).toHaveBeenCalledWith(getAmazonPayV2());
         });
 
         it('loads the checkout if AmazonPayV2ButtonInitializeOptions is not provided', async () => {
+            checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedAmazonPay);
+
             await strategy.initialize(checkoutButtonOptions);
 
-            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalledTimes(1);
+            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
         });
 
         it('does not load the checkout if AmazonPayV2ButtonInitializeOptions is provided', async () => {
-            checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions();
-
             await strategy.initialize(checkoutButtonOptions);
 
             expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
         });
 
-        it('creates the button', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
-            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
-            expectedOptions.placement = AmazonPayV2Placement.Cart;
-
+        it('should render the button', async () => {
             await strategy.initialize(checkoutButtonOptions);
 
-            expect(paymentProcessor.createButton).toHaveBeenCalledWith(
-                'amazonpayCheckoutButton',
-                expectedOptions
-            );
+            expect(paymentProcessor.renderAmazonPayButton).toHaveBeenCalledWith({
+                checkoutState: store.getState(),
+                containerId: 'amazonpayCheckoutButton',
+                methodId: 'amazonpay',
+                options: checkoutButtonOptions.amazonpay,
+                placement: AmazonPayV2Placement.Cart,
+            });
         });
 
         describe('should fail...', () => {
             test('if methodId is not provided', async () => {
                 checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedMethodId);
 
-                await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
+                const initialize = strategy.initialize(checkoutButtonOptions);
+
+                await expect(initialize).rejects.toThrow(InvalidArgumentError);
             });
 
             test('if containerId is not provided', async () => {
                 checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedContainer);
 
-                await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
+                const initialize = strategy.initialize(checkoutButtonOptions);
+
+                await expect(initialize).rejects.toThrow(InvalidArgumentError);
             });
 
             test('if there is no payment method data', async () => {
@@ -122,20 +114,18 @@ describe('AmazonPayV2ButtonStrategy', () => {
                     paymentProcessor
                 );
 
-                await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(MissingDataError);
+                const initialize = strategy.initialize(checkoutButtonOptions);
+
+                await expect(initialize).rejects.toThrow(MissingDataError);
             });
         });
-
     });
 
-    describe('#deinitialize()', () => {
+    describe('#deinitialize', () => {
         it('succesfully deinitializes the strategy', async () => {
-            await strategy.initialize(checkoutButtonOptions);
             await strategy.deinitialize();
 
-            const buttonContainer = document.getElementById(checkoutButtonOptions.containerId);
-
-            expect(buttonContainer).toBeNull();
+            expect(paymentProcessor.deinitialize).toHaveBeenCalled();
         });
     });
 });
