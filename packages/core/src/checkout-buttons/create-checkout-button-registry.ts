@@ -105,6 +105,7 @@ export default function createCheckoutButtonRegistry(
         new BraintreePaypalCreditButtonStrategy(
             store,
             checkoutActionCreator,
+            cartRequestSender,
             braintreeSdkCreator,
             formPoster,
             window
