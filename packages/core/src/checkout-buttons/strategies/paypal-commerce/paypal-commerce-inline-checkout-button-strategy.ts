@@ -5,7 +5,7 @@ import { OrderActionCreator } from '../../../order';
 import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderAddress, PayPalOrderDetails, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
+import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -110,15 +110,13 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
 
-        await this._resetCustomersAddress();
-
         const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, methodId);
 
         return orderId;
     }
 
     private async _onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void> {
-        const address = this._transformAddress({
+        const address = this._getAddress({
             city: data.shippingAddress.city,
             countryCode: data.shippingAddress.country_code,
             postalCode: data.shippingAddress.postal_code,
@@ -153,21 +151,36 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const orderDetails = await actions.order.get();
 
         if (cart.lineItems.physicalItems.length > 0) {
-            const address = this._getValidAddress(
-                orderDetails.payer.name,
-                orderDetails.payer.email_address,
-                orderDetails.purchase_units[0].shipping.address
-            );
+            const { payer, purchase_units } = orderDetails;
+            const shippingAddress = purchase_units?.[0]?.shipping?.address || {};
+
+            const address = this._getAddress({
+                firstName: payer.name.given_name,
+                lastName: payer.name.surname,
+                email: payer.email_address,
+                address1: shippingAddress.address_line_1,
+                city: shippingAddress.admin_area_2,
+                countryCode: shippingAddress.country_code,
+                postalCode: shippingAddress.postal_code,
+                stateOrProvinceCode: shippingAddress.admin_area_1,
+            });
 
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
             await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
             await this._updateOrder();
         } else {
-            const address = this._getValidAddress(
-                orderDetails.payer.name,
-                orderDetails.payer.email_address,
-                orderDetails.payer.address
-            );
+            const { payer } = orderDetails;
+
+            const address = this._getAddress({
+                firstName: payer.name.given_name,
+                lastName: payer.name.surname,
+                email: payer.email_address,
+                address1: payer.address.address_line_1,
+                city: payer.address.admin_area_2,
+                countryCode: payer.address.country_code,
+                postalCode: payer.address.postal_code,
+                stateOrProvinceCode: payer.address.admin_area_1,
+            });
 
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
         }
@@ -245,66 +258,20 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         return shippingOptionToSelect;
     }
 
-    private async _resetCustomersAddress(): Promise<void> {
-        const emptyAddress = this._getEmptyAddress();
-
-        try {
-            await this._store.dispatch(this._billingAddressActionCreator.updateAddress(emptyAddress));
-            await this._store.dispatch(this._consignmentActionCreator.updateAddress(emptyAddress));
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-
-    private _transformAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
+    private _getAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
         return {
-            firstName: address?.firstName || 'Fake',
-            lastName: address?.lastName || 'Fake',
-            email: address?.email || 'fake@fake.fake',
+            firstName: address?.firstName || '',
+            lastName: address?.lastName || '',
+            email: address?.email || '',
             phone: '',
             company: '',
-            address1: address?.address1 || 'Fake street',
+            address1: address?.address1 || '',
             address2: '',
             city: address?.city || '',
             countryCode: address?.countryCode || '',
             postalCode: address?.postalCode || '',
             stateOrProvince: '',
             stateOrProvinceCode: address?.stateOrProvinceCode || '',
-            customFields: [],
-        };
-    }
-
-    private _getValidAddress(
-        payerName: PayPalOrderDetails['payer']['name'],
-        email: string,
-        address: PayPalOrderAddress,
-    ) {
-        return this._transformAddress({
-            firstName: payerName.given_name,
-            lastName: payerName.surname,
-            email,
-            address1: address?.address_line_1,
-            city: address?.admin_area_2,
-            countryCode: address?.country_code,
-            postalCode: address?.postal_code,
-            stateOrProvinceCode: address?.admin_area_1,
-        });
-    }
-
-    private _getEmptyAddress(): BillingAddressRequestBody {
-        return {
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            company: '',
-            address1: '',
-            address2: '',
-            city: '',
-            countryCode: '',
-            postalCode: '',
-            stateOrProvince: '',
-            stateOrProvinceCode: '',
             customFields: [],
         };
     }
