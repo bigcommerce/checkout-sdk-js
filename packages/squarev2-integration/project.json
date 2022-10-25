@@ -1,0 +1,22 @@
+{
+    "root": "packages/squarev2-integration",
+    "sourceRoot": "packages/squarev2-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/squarev2-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/squarev2-integration"],
+            "options": {
+                "jestConfig": "packages/squarev2-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

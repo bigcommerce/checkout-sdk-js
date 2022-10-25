@@ -6,6 +6,7 @@
         "core": "packages/core",
         "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
+        "squarev2-integration": "packages/squarev2-integration",
         "workspace-tools": "packages/workspace-tools"
     }
 }
