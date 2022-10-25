@@ -6,6 +6,8 @@
 
 ### Properties
 
+- [buyNowInitializeOptions](BraintreePaypalButtonInitializeOptions.md#buynowinitializeoptions)
+- [currencyCode](BraintreePaypalButtonInitializeOptions.md#currencycode)
 - [messagingContainerId](BraintreePaypalButtonInitializeOptions.md#messagingcontainerid)
 - [shippingAddress](BraintreePaypalButtonInitializeOptions.md#shippingaddress)
 - [style](BraintreePaypalButtonInitializeOptions.md#style)
@@ -17,6 +19,28 @@
 - [onPaymentError](BraintreePaypalButtonInitializeOptions.md#onpaymenterror)
 
 ## Properties
+
+### buyNowInitializeOptions
+
+• `Optional` **buyNowInitializeOptions**: `Object`
+
+The options that are required to initialize Buy Now functionality.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |
+
+___
+
+### currencyCode
+
+• `Optional` **currencyCode**: `string`
+
+The option that used to initialize a PayPal script with provided currency code.
+
+___
 
 ### messagingContainerId
 

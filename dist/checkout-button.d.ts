@@ -359,6 +359,16 @@ declare interface BraintreePaypalButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface BraintreePaypalCreditButtonInitializeOptions {
@@ -389,6 +399,16 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface BraintreeVenmoButtonInitializeOptions {
@@ -398,6 +418,16 @@ declare interface BraintreeVenmoButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare enum ButtonColor {
