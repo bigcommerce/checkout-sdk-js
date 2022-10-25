@@ -74,7 +74,6 @@ import { createStepHandler, createSubStrategyRegistry, PaymentResumer, PPSDKStra
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
-import { SquareV2PaymentProcessor, SquareV2PaymentStrategy, SquareV2ScriptLoader } from './strategies/squarev2';
 import { StripeScriptLoader as StripeUPEScriptLoader, StripeUPEPaymentStrategy } from './strategies/stripe-upe';
 import { StripeScriptLoader as StripeV3ScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
@@ -769,28 +768,16 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(PaymentStrategyType.SQUARE, () =>
-        store.getState().config.getStoreConfig()?.checkoutSettings.features[
-            'PROJECT-4113.squarev2_web_payments_sdk'
-        ]
-            ? new SquareV2PaymentStrategy(
-                  store,
-                  new SquareV2PaymentProcessor(
-                      new SquareV2ScriptLoader(scriptLoader),
-                      store,
-                  ),
-                  orderActionCreator,
-                  paymentActionCreator
-              )
-            : new SquarePaymentStrategy(
-                  store,
-                  checkoutActionCreator,
-                  orderActionCreator,
-                  paymentActionCreator,
-                  paymentMethodActionCreator,
-                  paymentStrategyActionCreator,
-                  requestSender,
-                  new SquareScriptLoader(scriptLoader)
-              )
+        new SquarePaymentStrategy(
+            store,
+            checkoutActionCreator,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            requestSender,
+            new SquareScriptLoader(scriptLoader)
+        )
     );
 
     registry.register(PaymentStrategyType.STRIPE_GOOGLE_PAY, () =>

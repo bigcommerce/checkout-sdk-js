@@ -410,13 +410,6 @@ export function getStripe(): PaymentMethod {
     };
 }
 
-export function getSquareV2(): PaymentMethod {
-    return {
-        ...getSquare(),
-        id: 'squarev2',
-    };
-}
-
 export function getSquare(): PaymentMethod {
     return {
         id: 'square',
@@ -943,7 +936,6 @@ export function getPaymentMethods(): PaymentMethod[] {
         getPPSDK(),
         getQuadpay(),
         getSquare(),
-        getSquareV2(),
         getStripeV3(),
         getStripeUPE(),
         getUnsupportedPPSDK(),
