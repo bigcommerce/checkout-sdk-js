@@ -334,36 +334,6 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     });
 
     describe('#_createOrder button callback', () => {
-        it('resets customers data before creating PayPal order', async () => {
-            const emptyAddress = {
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                company: '',
-                address1: '',
-                address2: '',
-                city: '',
-                countryCode: '',
-                postalCode: '',
-                stateOrProvince: '',
-                stateOrProvinceCode: '',
-                customFields: [],
-            };
-
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({ orderID: paypalOrderId });
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(emptyAddress);
-            expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(emptyAddress);
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, initializationOptions.methodId);
-        });
-
         it('creates PayPal order', async () => {
             jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({ orderID: paypalOrderId });
 
@@ -380,12 +350,12 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     describe('#_onShippingAddressChange button callback', () => {
         it('updates billing and consignment address with data returned from PayPal', async () => {
             const providedAddress = {
-                firstName: 'Fake',
-                lastName: 'Fake',
-                email: 'fake@fake.fake',
+                firstName: '',
+                lastName: '',
+                email: '',
                 phone: '',
                 company: '',
-                address1: 'Fake street',
+                address1: '',
                 address2: '',
                 city: paypalShippingAddressPayloadMock.city,
                 countryCode: paypalShippingAddressPayloadMock.country_code,
