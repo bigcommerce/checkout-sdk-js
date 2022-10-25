@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.298.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.2...v1.298.3) (2022-10-25)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1742 removed Fake data implementation due to BE changes ([#1653](https://github.com/bigcommerce/checkout-sdk-js/issues/1653)) ([a07ddbd](https://github.com/bigcommerce/checkout-sdk-js/commit/a07ddbd5a48bbe34ae854fac7c64443113f8667c))
+
 ### [1.298.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.1...v1.298.2) (2022-10-20)
 
 
