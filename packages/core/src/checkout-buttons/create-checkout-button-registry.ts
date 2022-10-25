@@ -115,6 +115,7 @@ export default function createCheckoutButtonRegistry(
         new BraintreeVenmoButtonStrategy(
             store,
             paymentMethodActionCreator,
+            cartRequestSender,
             braintreeSdkCreator,
             formPoster
         )
