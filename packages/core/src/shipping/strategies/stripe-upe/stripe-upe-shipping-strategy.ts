@@ -98,7 +98,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         const option = {
             allowedCountries: [availableCountries],
             defaultValues: {
-                name: shipping?.lastName? `${shipping.firstName} ${shipping.lastName}`: shipping?.firstName  || '',
+                name: shipping?.lastName ? `${shipping.firstName} ${shipping.lastName}`: shipping?.firstName  || '',
                 address: {
                     line1: shipping?.address1 || '',
                     line2: shipping?.address2  || '',

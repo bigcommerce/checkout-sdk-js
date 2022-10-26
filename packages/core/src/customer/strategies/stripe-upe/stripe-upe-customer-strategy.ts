@@ -91,7 +91,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 }
                 if (event.complete) {
                     onEmailChange(event.authenticated, event.value.email);
-                    if (isStripeLinkAuthenticated === undefined && sessionStorage.getItem('stripeLink') != StripeSessionStorageKey.CUSTOMER_RELOADED) {
+                    if (isStripeLinkAuthenticated === undefined && sessionStorage.getItem('stripeLink') !== StripeSessionStorageKey.CUSTOMER_RELOADED) {
                         sessionStorage.setItem('stripeLink', StripeSessionStorageKey.CUSTOMER);
                     }
                     this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
