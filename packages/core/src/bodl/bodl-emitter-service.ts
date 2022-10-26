@@ -55,10 +55,10 @@ export default class BodlEmitterService implements BodlService {
         } = checkout;
 
         this.bodlEvents.emitCheckoutBeginEvent({
-            id,
+            event_id: id,
             currency: currency.code,
             cart_value: cartAmount,
-            coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
+            coupon_codes: coupons.map(coupon => coupon.code.toUpperCase()),
             line_items: this._getProducts(lineItems, currency.code),
             channel_id: channelId
         });
@@ -91,13 +91,13 @@ export default class BodlEmitterService implements BodlService {
         }
 
         this.bodlEvents.emitOrderPurchasedEvent({
-            id: cartId,
+            event_id: cartId,
             currency: currency.code,
-            transaction_id: orderId,
+            order_id: orderId,
             tax: taxTotal,
             channel_id: channelId,
             cart_value: orderAmount,
-            coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
+            coupon_codes: coupons.map(coupon => coupon.code.toUpperCase()),
             shipping_cost: shippingCostTotal,
             line_items: this._getProducts(lineItems, currency.code),
         });
@@ -213,7 +213,7 @@ export default class BodlEmitterService implements BodlService {
                 discount: item.discountAmount,
                 brand_name: item.brand,
                 currency: currencyCode,
-                category_name: item.categoryNames ? item.categoryNames.join(', ') : '',
+                category_names: item.categoryNames || [],
             };
         });
 
