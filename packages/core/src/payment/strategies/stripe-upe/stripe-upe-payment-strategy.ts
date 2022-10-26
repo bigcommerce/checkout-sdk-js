@@ -85,6 +85,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this._isDeinitialize = false;
 
+        this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
+            stripeupe.onError?.(error),
+        );
+
         this._unsubscribe = await this._store.subscribe(
             async (_state) => {
                 const payment = this._stripeElements?.getElement(StripeElementType.PAYMENT);
@@ -112,10 +116,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         payment.mount(`#${stripeupe.containerId}`);
                         this._isMounted = true;
                     }
-                } else {
-                    this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
-                        stripeupe.onError?.(error),
-                    );
                 }
             },
             (state) => {
