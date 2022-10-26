@@ -14,6 +14,7 @@ const state = {
     getLocale: jest.fn(),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
+    getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
 };
 
 const getState = jest.fn(() => state);
