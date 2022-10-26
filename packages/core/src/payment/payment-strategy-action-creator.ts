@@ -90,9 +90,13 @@ export default class PaymentStrategyActionCreator {
                         }
 
                         try {
-                            strategy = this._strategyRegistryV2.get({
-                                id: method.id, gateway: method.gateway, type: method.type,
-                            });
+                            if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
+                                strategy = this._strategyRegistry.getByMethod(method);
+                            } else {
+                                strategy = this._strategyRegistryV2.get({
+                                    id: method.id, gateway: method.gateway, type: method.type,
+                                });
+                            }
                         } catch {
                             strategy =
                                 this._strategyRegistry.getByMethod(method);
@@ -153,9 +157,13 @@ export default class PaymentStrategyActionCreator {
                     let strategy: PaymentStrategy | PaymentStrategyV2;
 
                     try {
-                        strategy = this._strategyRegistryV2.get({
-                            id: method.id, gateway: method.gateway, type: method.type,
-                        });
+                        if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
+                            strategy = this._strategyRegistry.getByMethod(method);
+                        } else {
+                            strategy = this._strategyRegistryV2.get({
+                                id: method.id, gateway: method.gateway, type: method.type,
+                            });
+                        }
                     } catch {
                         strategy = this._strategyRegistry.getByMethod(method);
                     }
@@ -215,9 +223,13 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    strategy = this._strategyRegistryV2.get({
-                        id: method.id, gateway: method.gateway, type: method.type,
-                    });
+                    if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
+                        strategy = this._strategyRegistry.getByMethod(method);
+                    } else {
+                        strategy = this._strategyRegistryV2.get({
+                            id: method.id, gateway: method.gateway, type: method.type,
+                        });
+                    }
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }
@@ -284,9 +296,13 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    strategy = this._strategyRegistryV2.get({
-                        id: method.id, gateway: method.gateway, type: method.type,
-                    });
+                    if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
+                        strategy = this._strategyRegistry.getByMethod(method);
+                    } else {
+                        strategy = this._strategyRegistryV2.get({
+                            id: method.id, gateway: method.gateway, type: method.type,
+                        });
+                    }
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }

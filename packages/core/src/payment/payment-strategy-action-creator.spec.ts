@@ -152,6 +152,27 @@ describe("PaymentStrategyActionCreator", () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
+        it("finds payment strategy by method when methodId is apple pay and gatewayId is mollie", async () => {
+            const method = {
+                ...getPaymentMethod(),
+                id: 'applepay',
+                gateway: 'mollie'
+            }
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
+            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
+
+
+            await from(
+                actionCreator.initialize({
+                    methodId: method.id,
+                    gatewayId: method.gateway,
+                })(store)
+            ).toPromise();
+
+            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+        });
+
         it("initializes payment strategy", async () => {
             const method = getPaymentMethod();
 
@@ -288,6 +309,27 @@ describe("PaymentStrategyActionCreator", () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
+        it("finds payment strategy by method when methodId is apple pay and gatewayId is mollie", async () => {
+            const method = {
+                ...getPaymentMethod(),
+                id: 'applepay',
+                gateway: 'mollie'
+            }
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
+            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+
+
+            await from(
+                actionCreator.deinitialize({
+                    methodId: method.id,
+                    gatewayId: method.gateway,
+                })(store)
+            ).toPromise();
+
+            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+        });
+
         it("deinitializes payment strategy", async () => {
             await from(
                 actionCreator.deinitialize({
@@ -391,6 +433,24 @@ describe("PaymentStrategyActionCreator", () => {
 
         it("finds payment strategy by method", async () => {
             const method = getPaymentMethod();
+
+            await from(
+                actionCreator.execute(getOrderRequestBody())(store)
+            ).toPromise();
+
+            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+        });
+
+        it("finds payment strategy by method when methodId is apple pay and gatewayId is mollie", async () => {
+            const method = {
+                ...getPaymentMethod(),
+                id: 'applepay',
+                gateway: 'mollie'
+            }
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
+            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
+
 
             await from(
                 actionCreator.execute(getOrderRequestBody())(store)
@@ -569,6 +629,24 @@ describe("PaymentStrategyActionCreator", () => {
             const method = getPaymentMethod();
 
             await from(actionCreator.finalize()(store)).toPromise();
+
+            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+        });
+
+        it("finds payment strategy by method when methodId is apple pay and gatewayId is mollie", async () => {
+            const method = {
+                ...getPaymentMethod(),
+                id: 'applepay',
+                gateway: 'mollie'
+            }
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
+            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
+
+
+            await from(
+                actionCreator.finalize()(store)
+            ).toPromise();
 
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
