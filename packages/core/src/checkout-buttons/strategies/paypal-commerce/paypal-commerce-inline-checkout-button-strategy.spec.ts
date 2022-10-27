@@ -720,7 +720,17 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     });
 
     describe('#_onComplete button callback', () => {
-        it('submits payment', async () => {
+        it('submits payment for authorize & capture transactions', async () => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    intent: 'capture',
+                },
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+
             const methodId = initializationOptions.methodId;
             const paymentData =  {
                 formattedPayload: {
@@ -741,6 +751,26 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId, paymentData });
+        });
+
+        it('do not call submit payment for authorize only transactions', async () => {
+            const paymentMethod = {
+                ...paymentMethodMock,
+                initializationData: {
+                    ...paymentMethodMock.initializationData,
+                    intent: 'authorize',
+                },
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onComplete');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
 
         it('calls callback if its provided', async () => {

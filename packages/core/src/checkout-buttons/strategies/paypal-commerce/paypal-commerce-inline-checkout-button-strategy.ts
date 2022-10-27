@@ -196,7 +196,13 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         methodId: string,
         callback?: () => void
     ): Promise<void> {
-        await this._submitPayment(methodId, data.orderID);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { intent } = paymentMethod.initializationData;
+
+        if (intent === 'capture') {
+            await this._submitPayment(methodId, data.orderID);
+        }
 
         if (callback) {
             callback();
