@@ -151,7 +151,11 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
         button.id = 'btnsubmit';
         form.appendChild(button);
 
-        iframe.contentWindow.document.body.appendChild(form);
+        if (navigator.userAgent.match('Firefox')) {
+            iframe.srcdoc = form.outerHTML
+        } else {
+            iframe.contentWindow.document.body.appendChild(form)
+        }
 
         const script = document.createElement('script');
         script.innerHTML = `
