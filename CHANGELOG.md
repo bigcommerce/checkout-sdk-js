@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.299.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.299.0...v1.299.1) (2022-10-27)
+
+
+### Bug Fixes
+
+* **payment:** INT-6772 Worldpay supported in firefox ([#1647](https://github.com/bigcommerce/checkout-sdk-js/issues/1647)) ([4fdad98](https://github.com/bigcommerce/checkout-sdk-js/commit/4fdad98f7381f58314b69ceb5338c8c1ca9bd7c3))
+
 ## [1.299.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.298.3...v1.299.0) (2022-10-25)
 
 
