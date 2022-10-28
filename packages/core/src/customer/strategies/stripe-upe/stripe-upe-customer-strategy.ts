@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { StripeElements, StripeElementType, StripeScriptLoader, StripeUPEClient, StripeEventType, StripeUPEAppearanceOptions, StripeSessionStorageKey } from '../../../payment/strategies/stripe-upe';
+import { StripeElements, StripeElementType, StripeScriptLoader, StripeUPEClient, StripeEventType, StripeUPEAppearanceOptions } from '../../../payment/strategies/stripe-upe';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
@@ -41,7 +41,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         const {
             clientToken, initializationData: { stripePublishableKey, stripeConnectedAccount } = {}
         } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
+        const { email } = getCustomerOrThrow();
 
         if (!email) {
             if (!stripePublishableKey || !clientToken) {
@@ -89,15 +89,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
-                if (event.complete) {
-                    onEmailChange(event.authenticated, event.value.email);
-                    if (isStripeLinkAuthenticated === undefined && sessionStorage.getItem('stripeLink') !== StripeSessionStorageKey.CUSTOMER_RELOADED) {
-                        sessionStorage.setItem('stripeLink', StripeSessionStorageKey.CUSTOMER);
-                    }
-                    this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
-                } else {
-                    onEmailChange(false, '');
-                }
+                this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
+                event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
 
                 if (isLoading) {
                     isLoading(false);
