@@ -5,6 +5,7 @@
         "core": "packages/core",
         "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
+        "ppsdk": "packages/ppsdk",
         "workspace-tools": "packages/workspace-tools"
     }
 }

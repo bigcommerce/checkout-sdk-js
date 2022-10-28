@@ -1,0 +1,23 @@
+{
+    "root": "packages/ppsdk",
+    "sourceRoot": "packages/ppsdk/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/ppsdk/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/ppsdk"],
+            "options": {
+                "jestConfig": "packages/ppsdk/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}
