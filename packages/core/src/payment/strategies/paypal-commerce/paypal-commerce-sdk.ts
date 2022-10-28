@@ -313,12 +313,17 @@ export interface PaypalCommerceHostWindow extends Window {
 export type FundingType = string[];
 export type EnableFundingType =  FundingType | string;
 
+export enum PayPalCommerceIntent {
+    authorize = 'authorize',
+    capture = 'capture',
+}
+
 export interface PaypalCommerceInitializationData {
     clientId: string;
     merchantId?: string;
     buyerCountry?: string;
     isDeveloperModeApplicable?: boolean;
-    intent?: 'capture' | 'authorize';
+    intent?: PayPalCommerceIntent;
     isHostedCheckoutEnabled?: boolean;
     isInlineCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
@@ -341,7 +346,7 @@ export interface PaypalCommerceScriptParams  {
     'data-partner-attribution-id'?: string;
     currency?: string;
     commit?: boolean;
-    intent?: 'capture' | 'authorize';
+    intent?: PayPalCommerceIntent;
     components?: ComponentsScriptType;
 }
 

@@ -5,7 +5,7 @@ import { OrderActionCreator } from '../../../order';
 import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
+import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PayPalCommerceIntent, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -200,7 +200,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { intent } = paymentMethod.initializationData;
 
-        if (intent === 'capture') {
+        if (intent === PayPalCommerceIntent.capture) {
             await this._submitPayment(methodId, data.orderID);
         }
 
