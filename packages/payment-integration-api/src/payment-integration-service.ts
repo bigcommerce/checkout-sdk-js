@@ -19,6 +19,8 @@ export default interface PaymentIntegrationService {
 
     loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors>;
 
+    loadCurrentOrder(): Promise<PaymentIntegrationSelectors>;
+
     submitOrder(
         payload?: OrderRequestBody,
         options?: RequestOptions

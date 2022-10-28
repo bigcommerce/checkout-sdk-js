@@ -75,6 +75,14 @@ export default class DefaultPaymentIntegrationService
         return this._storeProjection.getState();
     }
 
+    async loadCurrentOrder(): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._orderActionCreator.loadCurrentOrder()
+        );
+
+        return this._storeProjection.getState();
+    }
+
     async submitOrder(
         payload?: OrderRequestBody
     ): Promise<PaymentIntegrationSelectors> {
