@@ -18,11 +18,11 @@ export default function getValidButtonStyle(style: PaypalButtonStyleOptions): Pa
     return omitBy(validStyles, isNil);
 }
 
-function getValidHeight(height?: number): number {
+function getValidHeight(height?: number | string): number {
     const minHeight = 25;
     const maxHeight = 55;
 
-    if (typeof height !== 'number' || height > maxHeight) {
+    if (!height || typeof Number(height) !== 'number' || height > maxHeight) {
         return maxHeight;
     }
 
@@ -30,5 +30,5 @@ function getValidHeight(height?: number): number {
         return minHeight;
     }
 
-    return height;
+    return Number(height);
 }
