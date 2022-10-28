@@ -12,6 +12,7 @@ const state = {
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getHost: jest.fn(),
     getLocale: jest.fn(),
+    getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
