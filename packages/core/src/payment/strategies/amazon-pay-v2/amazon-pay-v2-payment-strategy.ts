@@ -39,8 +39,10 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        if (this._isReadyToPay(features, paymentToken) && amazonpay?.editButtonId) {
-            this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
+        if (this._isReadyToPay(paymentToken)) {
+            if (amazonpay?.editButtonId) {
+                this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
+            }
         } else {
             const { id: containerId } = this._createContainer();
 
@@ -70,7 +72,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
         const { region, paymentToken } = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId).initializationData;
 
-        if (this._isReadyToPay(features, paymentToken) || this._isOneTimeTransaction(features)) {
+        if (this._isReadyToPay(paymentToken) || this._isOneTimeTransaction(features)) {
             const paymentPayload = {
                 methodId,
                 paymentData: { nonce: paymentToken || 'apb' },
@@ -175,11 +177,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return features['PROJECT-3483.amazon_pay_ph4'] && features['INT-6399.amazon_pay_apb'];
     }
 
-    private _isStandardIntegration(features: CheckoutSettings['features']): boolean {
-        return !this._isOneTimeTransaction(features);
-    }
-
-    private _isReadyToPay(features: CheckoutSettings['features'], paymentToken?: string): boolean {
-        return this._isStandardIntegration(features) && !!paymentToken;
+    private _isReadyToPay(paymentToken?: string): boolean {
+        return !!paymentToken;
     }
 }

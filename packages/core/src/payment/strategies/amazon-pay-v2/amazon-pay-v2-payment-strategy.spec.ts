@@ -26,11 +26,11 @@ import PaymentStrategyActionCreator from '../../payment-strategy-action-creator'
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { AmazonPayV2ButtonParams, AmazonPayV2NewButtonParams, AmazonPayV2Placement } from './amazon-pay-v2';
+import { AmazonPayV2NewButtonParams, AmazonPayV2Placement } from './amazon-pay-v2';
 import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
-import { getAmazonPayV2ButtonParamsMock, getAmazonPayV2Ph4ButtonParamsMock } from './amazon-pay-v2.mock';
+import { getAmazonPayV2Ph4ButtonParamsMock } from './amazon-pay-v2.mock';
 import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
 
 describe('AmazonPayV2PaymentStrategy', () => {
@@ -159,7 +159,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
         });
 
-        it('binds edit method button if paymentToken is present on initializationData', async () => {
+        it('should bind edit method button if paymentToken and editButtonId are present', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(paymentMethodMock);
@@ -167,28 +167,39 @@ describe('AmazonPayV2PaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(changeMethodId, paymentToken, 'changePayment');
-            expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).not.toHaveBeenCalled();
         });
 
-        it('creates a signin button if no paymentToken is present on initializationData', async () => {
-            const expectedOptions = getAmazonPayV2ButtonParamsMock() as AmazonPayV2ButtonParams;
-            expectedOptions.createCheckoutSession.url = `${getConfig().storeConfig.storeProfile.shopPath}/remote-checkout/amazonpay/payment-session`;
+        it('should not bind edit method button if paymentToken is not present', async () => {
+            await strategy.initialize(initializeOptions);
 
+            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
+        });
+
+        it('should not bind edit method button if paymentToken is present but editButtonId is not', async () => {
+            paymentMethodMock.initializationData.paymentToken = paymentToken;
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethodMock);
+            delete initializeOptions.amazonpay?.editButtonId;
+
+            await strategy.initialize(initializeOptions);
+
+            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
+        });
+
+        it('creates a signin button if paymentToken is not present on initializationData', async () => {
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
             expect(amazonPayV2PaymentProcessor.renderAmazonPayButton).toHaveBeenCalledWith({
                 checkoutState: store.getState(),
                 containerId: 'AmazonPayButton',
+                decoupleCheckoutInitiation: false,
                 methodId: 'amazonpay',
                 placement: AmazonPayV2Placement.Checkout,
             });
         });
 
         it('creates an additional payment button for one-time transactions', async () => {
-            const expectedOptions = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
-            delete expectedOptions.createCheckoutSessionConfig;
-
             const storeConfigMock = getConfig().storeConfig;
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
