@@ -36,7 +36,9 @@ export { Order, OrderPaymentRequestBody, OrderRequestBody } from "./order";
 export {
     CardInstrument,
     CreditCardInstrument,
+    InitializationStrategy,
     Payment,
+    PaymentAdditionalAction,
     PaymentInitializeOptions,
     PaymentMethod,
     PaymentRequestOptions,

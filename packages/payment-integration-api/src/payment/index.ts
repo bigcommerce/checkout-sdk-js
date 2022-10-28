@@ -20,6 +20,8 @@ export {
     WithMollieIssuerInstrument,
 } from "./payment";
 
+export { default as InitializationStrategy } from "./payment-method-initialization-strategy";
+export { default as PaymentAdditionalAction } from "./payment-additional-action"
 export { PaymentInitializeOptions } from "./payment-initialize-options";
 export { PaymentRequestOptions } from "./payment-request-options";
 export { default as PaymentMethod } from "./payment-method";
