@@ -75,7 +75,7 @@ describe('OrderSelector', () => {
 
                 orderSelector = createOrderSelector(orderState, selectors.billingAddress, selectors.coupons);
 
-                expect(orderSelector.getPaymentId('some-provider-id')).toEqual('abc');
+                expect(orderSelector.getOrderPaymentId('some-provider-id')).toEqual('abc');
             });
         });
 
@@ -83,7 +83,7 @@ describe('OrderSelector', () => {
             it('returns undefined', () => {
                 orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
 
-                expect(orderSelector.getPaymentId('some-non-matching-id')).toBeUndefined();
+                expect(orderSelector.getOrderPaymentId('some-non-matching-id')).toBeUndefined();
             });
         });
     });

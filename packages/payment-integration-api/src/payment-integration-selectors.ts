@@ -36,6 +36,7 @@ export default interface PaymentIntegrationSelectors {
 
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;
+    getOrderPaymentId(methodId: string): string | undefined;
 
     getPaymentToken(): string | undefined;
     getPaymentTokenOrThrow(): string;

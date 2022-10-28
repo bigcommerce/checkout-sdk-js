@@ -134,7 +134,7 @@ describe('PPSDKStrategy', () => {
                 describe('#finalize', () => {
                     it('calls the payment resumer', async () => {
                         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
-                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('abc');
+                        jest.spyOn(store.getState().order, 'getOrderPaymentId').mockReturnValue('abc');
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
                         jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({ orderId: 'some-order-id' });
 
@@ -150,7 +150,7 @@ describe('PPSDKStrategy', () => {
                     describe('when the payment resumer throws an error', () => {
                         it('rethrows the error once per unique paymentId, then throws OrderFinalizationNotRequiredError errors instead', async () => {
                             jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
-                            jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('first-payment-id');
+                            jest.spyOn(store.getState().order, 'getOrderPaymentId').mockReturnValue('first-payment-id');
                             jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({ token: 'some-token' });
                             jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({ orderId: 'some-order-id' });
                             jest.spyOn(paymentResumer, 'resume').mockRejectedValue(new Error());
@@ -163,7 +163,7 @@ describe('PPSDKStrategy', () => {
                             await expect(strategy.finalize({ methodId: 'cabbagepay' }))
                                 .rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
 
-                            jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue('second-payment-id');
+                            jest.spyOn(store.getState().order, 'getOrderPaymentId').mockReturnValue('second-payment-id');
 
                             await expect(strategy.finalize({ methodId: 'cabbagepay' }))
                                 .rejects.toBeInstanceOf(Error);
@@ -179,7 +179,7 @@ describe('PPSDKStrategy', () => {
                 describe('#finalize', () => {
                     it('throws a OrderFinalizationNotRequiredError error, does not call the payment resumer', async () => {
                         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(incompleteOrder);
-                        jest.spyOn(store.getState().order, 'getPaymentId').mockReturnValue(undefined);
+                        jest.spyOn(store.getState().order, 'getOrderPaymentId').mockReturnValue(undefined);
 
                         const resumerSpy = jest.spyOn(paymentResumer, 'resume').mockResolvedValue(undefined);
 
