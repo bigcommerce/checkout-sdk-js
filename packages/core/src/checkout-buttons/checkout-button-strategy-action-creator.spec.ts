@@ -73,6 +73,28 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL, { useCache: true });
     });
 
+    it('loads required payment method for provided currency', async () => {
+        const optionsMock = {
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: 'checkout-button',
+            currencyCode: 'USD',
+        };
+
+        await from(strategyActionCreator.initialize(optionsMock)(store))
+            .pipe(toArray())
+            .toPromise();
+
+        const expectedPaymentMethodOptions = {
+            useCache: true,
+            params: {
+                currencyCode: 'USD',
+            },
+        };
+
+        expect(paymentMethodActionCreator.loadPaymentMethod)
+            .toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL, expectedPaymentMethodOptions);
+    });
+
     it('finds strategy and initializes it', async () => {
         jest.spyOn(registry, 'get');
         jest.spyOn(strategy, 'initialize');

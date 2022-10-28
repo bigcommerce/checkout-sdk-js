@@ -57,7 +57,15 @@ export default class CheckoutButtonStrategyActionCreator {
                 ),
                 this._paymentMethodActionCreator.loadPaymentMethod(
                     options.methodId,
-                    { timeout: options.timeout, useCache: true }
+                    {
+                        ...options.currencyCode && {
+                            params: {
+                                currencyCode: options.currencyCode,
+                            }
+                        },
+                        timeout: options.timeout,
+                        useCache: true,
+                    },
                 )(store),
                 defer(() =>
                     this._getStrategy(options.methodId)
