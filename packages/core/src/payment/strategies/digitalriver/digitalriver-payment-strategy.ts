@@ -7,6 +7,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { isVaultedInstrument, HostedInstrument } from '../../index';
+import { BillingAddressActionCreator } from '../../../billing';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -32,7 +33,8 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _digitalRiverScriptLoader: DigitalRiverScriptLoader
+        private _digitalRiverScriptLoader: DigitalRiverScriptLoader,
+        private _billingAddressActionCreator: BillingAddressActionCreator
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -164,33 +166,51 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         return errors.map(e => 'code: ' + e.code + ' message: ' + e.message).join('\n');
     }
 
-    private _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
+    private async _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
         const error = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
 
-        return new Promise((resolve, reject) => {
-            if (data && this._submitFormEvent) {
-                const { browserInfo } = data.source;
-                this._loadSuccessResponse = browserInfo ? {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                        ...browserInfo,
-                    },
-                    readyForStorage: data.readyForStorage,
-                } : {
-                    source: {
-                        id: data.source.id,
-                        reusable: data.source.reusable,
-                    },
-                    readyForStorage: data.readyForStorage,
+        if (data && this._submitFormEvent) {
+            const { browserInfo, owner } = data.source;
+
+            this._loadSuccessResponse = browserInfo ? {
+                source: {
+                    id: data.source.id,
+                    reusable: data.source.reusable,
+                    ...browserInfo,
+                },
+                readyForStorage: data.readyForStorage,
+            } : {
+                source: {
+                    id: data.source.id,
+                    reusable: data.source.reusable,
+                },
+                readyForStorage: data.readyForStorage,
+            };
+
+            if (owner) {
+                const billingAddressPayPal = {
+                    firstName: owner.firstName,
+                    lastName: owner.lastName,
+                    city: owner.address.city,
+                    company: '',
+                    address1: owner.address.line1,
+                    address2: '',
+                    postalCode: owner.address.postalCode,
+                    countryCode: owner.address.country,
+                    phone: owner.phoneNumber,
+                    stateOrProvince: owner.address.state,
+                    stateOrProvinceCode: owner.address.country,
+                    customFields: [],
+                    email: owner.email || owner.email,
                 };
-                resolve();
-                this._submitFormEvent();
-            } else {
-                reject(error);
-                this._getDigitalRiverInitializeOptions().onError?.(error);
+                this._loadSuccessResponse.source.owner = data.source.owner;
+                await this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddressPayPal))
             }
-        });
+
+            return this._submitFormEvent();
+        } else {
+            return this._getDigitalRiverInitializeOptions().onError?.(error);
+        }
     }
 
     private _onReadyResponse(data?: OnReadyResponse): void {
