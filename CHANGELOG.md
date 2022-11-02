@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.300.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.299.1...v1.300.0) (2022-11-02)
+
+
+### Features
+
+* **payment:** INT-6675 [Digital River] Comment resolved ([da798ad](https://github.com/bigcommerce/checkout-sdk-js/commit/da798ad262bacb4e8f0a1e8e75d493af1aeb1ace))
+* **payment:** INT-6675 [Digital River] improve function ([7a00933](https://github.com/bigcommerce/checkout-sdk-js/commit/7a009333f590023216617513d45e58c84d4615b0))
+* **payment:** INT-6675 [Digital River] Small fix ([6a6f675](https://github.com/bigcommerce/checkout-sdk-js/commit/6a6f675de0f99c227a9335e0aa6d940b3dc22715))
+* **payment:** INT-6675 [Digital River] unit testing ([f84f108](https://github.com/bigcommerce/checkout-sdk-js/commit/f84f1089390c14f11aad5a463e957a7faa3b3af7))
+* **payment:** INT-6675 [Digital River] Update billingAddress from paypal response ([3d9269c](https://github.com/bigcommerce/checkout-sdk-js/commit/3d9269c1a3c25fa054a95a46a8665ce96f4156b1))
+* **payment:** PAYPAL-1737 added currencyCode param to loadPaymentMethod request ([#1665](https://github.com/bigcommerce/checkout-sdk-js/issues/1665)) ([d5763b6](https://github.com/bigcommerce/checkout-sdk-js/commit/d5763b6413fea3c331f8a1df3d4112e8d99fd3e0))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1758 added condition to submit payment in onComplete method for auth&capture transaction only for PayPalInlineCheckoutButton ([#1664](https://github.com/bigcommerce/checkout-sdk-js/issues/1664)) ([8746fdb](https://github.com/bigcommerce/checkout-sdk-js/commit/8746fdbd67da049154a8c5d223901a6604bb18b3))
+
 ### [1.299.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.299.0...v1.299.1) (2022-10-27)
 
 

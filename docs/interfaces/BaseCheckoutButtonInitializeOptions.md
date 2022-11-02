@@ -22,6 +22,7 @@
 - [braintreepaypalcredit](BaseCheckoutButtonInitializeOptions.md#braintreepaypalcredit)
 - [braintreevenmo](BaseCheckoutButtonInitializeOptions.md#braintreevenmo)
 - [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
+- [currencyCode](BaseCheckoutButtonInitializeOptions.md#currencycode)
 - [googlepayadyenv2](BaseCheckoutButtonInitializeOptions.md#googlepayadyenv2)
 - [googlepayadyenv3](BaseCheckoutButtonInitializeOptions.md#googlepayadyenv3)
 - [googlepayauthorizenet](BaseCheckoutButtonInitializeOptions.md#googlepayauthorizenet)
@@ -94,6 +95,14 @@ ___
 • **containerId**: `string`
 
 The ID of a container which the checkout button should be inserted.
+
+___
+
+### currencyCode
+
+• `Optional` **currencyCode**: `string`
+
+The option that is required to load payment method configuration for provided currency code in Buy Now flow.
 
 ___
 
