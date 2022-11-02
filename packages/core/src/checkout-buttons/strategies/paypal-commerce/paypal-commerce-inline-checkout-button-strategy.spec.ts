@@ -29,7 +29,6 @@ import { PaypalCommerceInlineCheckoutButtonInitializeOptions } from './paypal-co
 import PaypalCommerceInlineCheckoutButtonStrategy from './paypal-commerce-inline-checkout-button-strategy';
 
 describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
-    let acceleratedButtonsContainer: HTMLDivElement;
     let billingAddressActionCreator: BillingAddressActionCreator;
     let cartMock: Cart;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -38,7 +37,6 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     let consignmentActionCreator: ConsignmentActionCreator;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
-    let nativeCheckoutElement: HTMLDivElement;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
@@ -52,9 +50,8 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     let strategy: PaypalCommerceInlineCheckoutButtonStrategy;
     let subscriptionsActionCreator: SubscriptionsActionCreator;
 
-    const acceleratedCheckoutContainerDataId = 'data-ac-buttons-mock-id';
-    const buttonContainerDataId = 'data-paypal-inline-button-mock-id';
-    const nativeCheckoutButtonDataId = 'data-checkout-now-button-mock-id';
+    const containerId = 'paypalAcceleratedCheckoutContainerIdMock';
+    const buttonContainerId = `${containerId}-paypal-accelerated-checkout-button`;
 
     const paypalOrderId = 'ORDER_ID';
 
@@ -68,16 +65,14 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     };
 
     const paypalCommerceInlineOptions: PaypalCommerceInlineCheckoutButtonInitializeOptions = {
-        acceleratedCheckoutContainerDataId,
-        buttonContainerDataId,
-        nativeCheckoutButtonDataId,
         onComplete: jest.fn(),
+        onError: jest.fn(),
         style: paypalCommerceButtonStyle,
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
         methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
-        containerId: `[${acceleratedCheckoutContainerDataId}]`,
+        containerId: containerId,
         paypalcommerceinline: paypalCommerceInlineOptions,
     };
 
@@ -135,14 +130,6 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             billingAddressActionCreator,
             paymentActionCreator
         );
-
-        acceleratedButtonsContainer = document.createElement('div');
-        acceleratedButtonsContainer.setAttribute(acceleratedCheckoutContainerDataId, '');
-        document.body.appendChild(acceleratedButtonsContainer);
-
-        nativeCheckoutElement = document.createElement('div');
-        nativeCheckoutElement.setAttribute(nativeCheckoutButtonDataId, '');
-        document.body.appendChild(nativeCheckoutElement);
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
@@ -220,14 +207,6 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         jest.clearAllMocks();
 
         delete (window as PaypalHostWindow).paypal;
-
-        if (document.querySelector(`[${nativeCheckoutButtonDataId}]`)) {
-            document.body.removeChild(nativeCheckoutElement);
-        }
-
-        if (document.querySelector(`[${acceleratedCheckoutContainerDataId}]`)) {
-            document.body.removeChild(acceleratedButtonsContainer);
-        }
     });
 
     it('creates an instance of the PaypalCommerceInlineCheckoutButtonStrategy', () => {
@@ -245,10 +224,20 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             }
         });
 
-        it('throws an error if options.paypalcommerceinline option is not provided', async () => {
+        it('throws an error if containerId is not provided', async () => {
+            const options = { methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE } as CheckoutButtonInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws an error if paypalcommerceinline option is not provided', async () => {
             const options = {
                 methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
-                containerId: `[${acceleratedCheckoutContainerDataId}]`,
+                containerId: initializationOptions.containerId,
             } as CheckoutButtonInitializeOptions;
 
             try {
@@ -298,12 +287,6 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             });
         });
 
-        it('hides primary action element if PayPal button is eligible', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(nativeCheckoutElement.style.display).toEqual('none');
-        });
-
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
@@ -315,7 +298,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceSdkRenderMock).toHaveBeenCalledWith(`[${buttonContainerDataId}]`);
+            expect(paypalCommerceSdkRenderMock).toHaveBeenCalledWith(`#${buttonContainerId}`);
         });
 
         it('does not render PayPal button container if PayPal button is not eligible', async () => {
@@ -329,7 +312,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(document.querySelector(`[${buttonContainerDataId}]`)).toBeNull();
+            expect(document.querySelector(`#${buttonContainerId}`)).toBeNull();
         });
     });
 
@@ -785,21 +768,12 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
     });
 
     describe('#_onError button callback', () => {
-        it('hides Inline Checkout container', async () => {
+        it('calls onError callback if its provided', async () => {
             try {
                 await strategy.initialize(initializationOptions);
                 eventEmitter.emit('onError');
             } catch (_) {
-                expect(document.querySelector(`[${buttonContainerDataId}]`)).toBeNull();
-            }
-        });
-
-        it('shows primary action button if Inline checkout gets an error', async () => {
-            try {
-                await strategy.initialize(initializationOptions);
-                eventEmitter.emit('onError');
-            } catch (_) {
-                expect(nativeCheckoutElement.style.display).toEqual('');
+                expect(paypalCommerceInlineOptions.onError).toHaveBeenCalled();
             }
         });
 
