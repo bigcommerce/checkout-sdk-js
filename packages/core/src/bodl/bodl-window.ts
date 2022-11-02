@@ -1,15 +1,13 @@
 export interface BODLProduct {
     product_id: string | number;
     product_name: string;
-    product_sku?: string;
     variant_id?: number;
-    variant_sku?: string;
+    sku?: string;
     gift_certificate_id?: string | number;
     gift_certificate_name?: string;
     gift_certificate_theme?: string;
-    price: number;
+    base_price: number;
     sale_price?: number;
-    base_price?: number;
     retail_price?: number;
     quantity: number;
     discount?: number;
@@ -23,6 +21,7 @@ export interface BODLProduct {
 export interface CheckoutBeginData {
     id: string
     currency: string,
+    channel_id: number,
     cart_value: number,
     coupon: string,
     line_items: BODLProduct[]
@@ -32,6 +31,8 @@ export interface CheckoutBeginData {
 export interface OrderPurchasedData {
     id: string
     currency: string,
+    tax: number,
+    channel_id: number,
     transaction_id: number,
     cart_value: number,
     coupon: string,

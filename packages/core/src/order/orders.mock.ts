@@ -56,6 +56,7 @@ export function getOrder(): Order {
             },
         ],
         taxTotal: 3,
+        channelId: 1,
     };
 }
 

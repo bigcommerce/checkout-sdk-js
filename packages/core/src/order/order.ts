@@ -33,6 +33,7 @@ export default interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    channelId: number;
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;

@@ -80,6 +80,14 @@ describe('BodlEmitterService', () => {
             );
         });
 
+        it('tracks the channel id', () => {
+            expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    channel_id: 1,
+                })
+            );
+        });
+
         it('tracks products', () => {
             expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -89,9 +97,11 @@ describe('BodlEmitterService', () => {
                     id: "b20deef40f9699e48671bbc3fef6ca44dc80e3c7",
                     line_items: [{
                         product_id: 103,
-                        product_sku: 'CLC',
+                        sku: 'CLC',
                         product_name: 'Canvas Laundry Cart',
-                        price: 190,
+                        base_price: 200,
+                        sale_price: 190,
+                        purchase_price: 190,
                         quantity: 1,
                         brand_name: 'OFS',
                         discount: 10,
@@ -100,9 +110,11 @@ describe('BodlEmitterService', () => {
                         currency: 'USD'
                     }, {
                         product_id: 104,
-                        product_sku: 'CLX',
+                        sku: 'CLX',
                         product_name: 'Digital Book',
-                        price: 200,
+                        base_price: 200,
+                        purchase_price: 200,
+                        sale_price: 200,
                         quantity: 1,
                         discount: 0,
                         brand_name: 'Digitalia',
@@ -114,7 +126,9 @@ describe('BodlEmitterService', () => {
                         gift_certificate_name: "$100 Gift Certificate",
                         gift_certificate_theme: "General",
                         product_name: '$100 Gift Certificate',
-                        price: 100,
+                        base_price: 100,
+                        purchase_price: 100,
+                        sale_price: 100,
                         product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
                         quantity: 1,
                         currency: 'USD'
@@ -181,14 +195,32 @@ describe('BodlEmitterService', () => {
             );
         });
 
+        it('tracks the channel id', () => {
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    channel_id: 1,
+                })
+            );
+        });
+
+        it('tracks total tax', () => {
+            expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    tax: 3,
+                })
+            );
+        });
+
         it('tracks products', () => {
             expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
                     line_items: [{
                         product_id: 103,
-                        product_sku: 'CLC',
+                        sku: 'CLC',
                         product_name: 'Canvas Laundry Cart',
-                        price: 190,
+                        base_price: 200,
+                        sale_price: 190,
+                        purchase_price: 190,
                         quantity: 1,
                         brand_name: 'OFS',
                         discount: 10,
@@ -200,7 +232,9 @@ describe('BodlEmitterService', () => {
                         gift_certificate_name: "$100 Gift Certificate",
                         gift_certificate_theme: "General",
                         product_name: '$100 Gift Certificate',
-                        price: 100,
+                        base_price: 100,
+                        sale_price: 100,
+                        purchase_price: 100,
                         product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
                         quantity: 1,
                         currency: 'USD'

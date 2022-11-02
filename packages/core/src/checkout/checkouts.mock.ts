@@ -65,6 +65,7 @@ export function getCheckout(): Checkout {
                 ],
             },
         ],
+        channelId: 1,
     };
 }
 

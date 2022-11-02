@@ -45,8 +45,9 @@ export default class BodlEmitterService implements BodlService {
                 currency,
                 lineItems,
                 id,
-                coupons
+                coupons,
             },
+            channelId,
         } = checkout;
 
         this.bodlEvents.emitCheckoutBeginEvent({
@@ -54,7 +55,8 @@ export default class BodlEmitterService implements BodlService {
             currency: currency.code,
             cart_value: cartAmount,
             coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
-            line_items: this.getProducts(lineItems, currency.code)
+            line_items: this.getProducts(lineItems, currency.code),
+            channel_id: channelId,
         });
 
         this._checkoutStarted = true;
@@ -75,7 +77,9 @@ export default class BodlEmitterService implements BodlService {
             shippingCostTotal,
             lineItems,
             cartId,
-            coupons
+            coupons,
+            channelId,
+            taxTotal,
         } = order;
 
         if (!isComplete) {
@@ -86,6 +90,8 @@ export default class BodlEmitterService implements BodlService {
             id: cartId,
             currency: currency.code,
             transaction_id: orderId,
+            tax: taxTotal,
+            channel_id: channelId,
             cart_value: orderAmount,
             coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
             shipping_cost: shippingCostTotal,
@@ -96,8 +102,10 @@ export default class BodlEmitterService implements BodlService {
     private getProducts(lineItems: LineItemMap, currencyCode: string): BODLProduct[] {
         const customItems: BODLProduct[] = (lineItems.customItems || []).map(item => ({
             product_id: item.id,
-            product_sku: item.sku,
-            price: item.listPrice,
+            sku: item.sku,
+            base_price: item.listPrice,
+            sale_price: item.listPrice,
+            purchase_price: item.listPrice,
             quantity: item.quantity,
             product_name: item.name,
             currency: currencyCode,
@@ -107,7 +115,9 @@ export default class BodlEmitterService implements BodlService {
             return {
                 product_id: item.id,
                 gift_certificate_id: item.id,
-                price: item.amount,
+                base_price: item.amount,
+                sale_price: item.amount,
+                purchase_price: item.amount,
                 product_name: item.name,
                 gift_certificate_name: item.name,
                 gift_certificate_theme: item.theme,
@@ -131,8 +141,10 @@ export default class BodlEmitterService implements BodlService {
                 product_id: item.productId,
                 quantity: item.quantity,
                 product_name: item.name,
-                price: item.salePrice,
-                product_sku: item.sku,
+                base_price: item.listPrice,
+                sale_price: item.salePrice,
+                purchase_price: item.salePrice > 0 ? item.salePrice : item.listPrice,
+                sku: item.sku,
                 variant_id: item.variantId,
                 discount: item.discountAmount,
                 brand_name: item.brand,
