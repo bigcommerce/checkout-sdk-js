@@ -8,16 +8,18 @@ import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
+import { ShippingStrategy } from 'packages/core/src/shipping/strategies';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
+    private _shippingAddres?: ShippingStrategy
 
     constructor(
         private _store: CheckoutStore,
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator
-    ) {}
+    ) { }
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         let stripeUPEClient: StripeUPEClient;
@@ -41,7 +43,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         const {
             clientToken, initializationData: { stripePublishableKey, stripeConnectedAccount } = {}
         } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { email } = getCustomerOrThrow();
+        const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
 
         if (!email) {
             if (!stripePublishableKey || !clientToken) {
@@ -81,10 +83,29 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) || this._stripeElements.create(StripeElementType.AUTHENTICATION);
+            const shippingAddress = this._shippingAddres;
 
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
+                }
+                if (isStripeLinkAuthenticated && !event.authenticated) {
+                    const address = {
+                        firstName: '',
+                        lastName: '',
+                        company: '',
+                        address1: '',
+                        address2: '',
+                        city: '',
+                        stateOrProvince: '',
+                        stateOrProvinceCode: '',
+                        countryCode: '',
+                        postalCode: '',
+                        phone: '',
+                    }
+                    shippingAddress?.updateAddress(address);
+                    shippingAddress?.initialize();
+
                 }
                 this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
                 event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
