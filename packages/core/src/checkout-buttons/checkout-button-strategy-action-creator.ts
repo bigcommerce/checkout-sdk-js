@@ -47,6 +47,16 @@ export default class CheckoutButtonStrategyActionCreator {
                 return empty();
             }
 
+            const paymentMethodRequestParams = options.currencyCode
+                ? { params: { currencyCode: options.currencyCode } }
+                : {};
+
+            const paymentMethodRequestOptions = {
+                ...paymentMethodRequestParams,
+                timeout: options.timeout,
+                useCache: true,
+            };
+
             return concat(
                 of(
                     createAction(
@@ -57,7 +67,7 @@ export default class CheckoutButtonStrategyActionCreator {
                 ),
                 this._paymentMethodActionCreator.loadPaymentMethod(
                     options.methodId,
-                    { timeout: options.timeout, useCache: true }
+                    paymentMethodRequestOptions,
                 )(store),
                 defer(() =>
                     this._getStrategy(options.methodId)

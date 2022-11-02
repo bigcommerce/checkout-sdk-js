@@ -59,6 +59,11 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
     containerId: string;
 
     /**
+     * The option that is required to load payment method configuration for provided currency code in Buy Now flow.
+     */
+    currencyCode?: string;
+
+    /**
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support adyenv2 GooglePay.
      */
