@@ -1,7 +1,5 @@
 import { RequestOptions } from '../common/http-request';
 
-import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
-import { AdyenV3PaymentInitializeOptions } from './strategies/adyenv3';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
@@ -56,18 +54,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the AdyenV2 payment
-     * method. They can be omitted unless you need to support AdyenV2.
-     */
-    adyenv2?: AdyenV2PaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the AdyenV3 payment
-     * method. They can be omitted unless you need to support AdyenV3.
-     */
-     adyenv3?: AdyenV3PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Amazon Pay payment

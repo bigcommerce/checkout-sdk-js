@@ -8,6 +8,8 @@ export {
 } from "./checkout-buttons";
 export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from "./cart";
 export { Checkout } from "./checkout";
+export { BrowserInfo, getBrowserInfo } from './common/browser-info';
+export { Omit, PartialDeep } from './common/types';
 export { Config, StoreConfig, CheckoutSettings } from "./config";
 export { Coupon } from "./coupon";
 export { Currency } from "./currency";
@@ -30,19 +32,31 @@ export {
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
+    PaymentInvalidFormError,
+    PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
+    PaymentMethodClientUnavailableError,
+    RequestError,
+    isRequestError,
 } from "./errors";
 export { Order, OrderPaymentRequestBody, OrderRequestBody } from "./order";
 export {
     CardInstrument,
     CreditCardInstrument,
+    isVaultedInstrument,
+    isHostedInstrumentLike,
+    HostedInstrument,
     Payment,
+    PaymentActionType,
+    SubmitPaymentAction,
     PaymentInitializeOptions,
     PaymentMethod,
     PaymentRequestOptions,
+    PaymentResponseBody,
     PaymentStrategy,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
+    VaultedInstrument,
 } from "./payment";
 export { default as PaymentIntegrationSelectors } from "./payment-integration-selectors";
 export { default as PaymentIntegrationService } from "./payment-integration-service";
