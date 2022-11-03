@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.300.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.300.0...v1.300.1) (2022-11-03)
+
+
+### Bug Fixes
+
+* **payment:** INT-6848 AmazonPayV2: Render the button in a container created programmatically ([#1655](https://github.com/bigcommerce/checkout-sdk-js/issues/1655)) ([ce21d9f](https://github.com/bigcommerce/checkout-sdk-js/commit/ce21d9f6e58215ebe15237666958cf297e421b19))
+
 ## [1.300.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.299.1...v1.300.0) (2022-11-02)
 
 
