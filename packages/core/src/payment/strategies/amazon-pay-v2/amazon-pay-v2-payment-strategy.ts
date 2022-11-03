@@ -17,7 +17,7 @@ import { AmazonPayV2ChangeActionType, AmazonPayV2Placement } from './amazon-pay-
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
-    private _buttonContainer?: HTMLElement;
+    private _amazonPayButton?: HTMLDivElement;
 
     constructor(
         private _store: CheckoutStore,
@@ -47,7 +47,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         } else {
             const { id: containerId } = this._createContainer();
 
-            this._buttonContainer =
+            this._amazonPayButton =
                 this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
                     checkoutState: this._store.getState(),
                     containerId,
@@ -98,7 +98,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             }
         }
 
-        this._getButtonContainer().click();
+        this._getAmazonPayButton().click();
 
         // Focus of parent window used to try and detect the user cancelling the Amazon log in modal
         // Should be refactored if/when Amazon add a modal close hook to their SDK
@@ -123,7 +123,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     async deinitialize(): Promise<InternalCheckoutSelectors> {
         await this._amazonPayV2PaymentProcessor.deinitialize();
 
-        this._buttonContainer = undefined;
+        this._amazonPayButton = undefined;
 
         return this._store.getState();
     }
@@ -170,8 +170,8 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return document.body.appendChild(container);
     }
 
-    private _getButtonContainer() {
-        return guard(this._buttonContainer, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+    private _getAmazonPayButton() {
+        return guard(this._amazonPayButton, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
     }
 
     private _isOneTimeTransaction(

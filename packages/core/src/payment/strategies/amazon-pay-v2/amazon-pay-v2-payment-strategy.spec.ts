@@ -36,6 +36,7 @@ import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-pr
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;
     let editMethodButton: HTMLDivElement;
+    let amazonPayButton: HTMLDivElement;
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
     let orderActionCreator: OrderActionCreator;
@@ -96,8 +97,12 @@ describe('AmazonPayV2PaymentStrategy', () => {
         jest.spyOn(amazonPayV2PaymentProcessor, 'initialize')
             .mockResolvedValue(undefined);
 
+        amazonPayButton = document.createElement('div');
+
+        jest.spyOn(amazonPayButton, 'click');
+
         jest.spyOn(amazonPayV2PaymentProcessor, 'renderAmazonPayButton')
-            .mockImplementation(({ containerId }) => document.getElementById(containerId));
+            .mockReturnValue(amazonPayButton);
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize')
             .mockResolvedValue(undefined);
@@ -339,16 +344,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'amazonpay', paymentData: { nonce: 'apb' } });
         });
 
-        it('clicks sign-in button if no paymentToken is found on intializationData', async () => {
-            const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click').mockClear();
-
-            strategy.execute(orderRequestBody, initializeOptions);
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(walletButton.click).toHaveBeenCalled();
-        });
-
         it('redirects to Amazon url', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
@@ -371,14 +366,11 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             window.location.assign = jest.fn();
 
-            const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click').mockClear();
-
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(window.location.assign).toBeCalledWith('http://some-url');
-            expect(walletButton.click).not.toHaveBeenCalled();
+            expect(amazonPayButton.click).not.toHaveBeenCalled();
         });
 
         it('should invoke Amazon Pay Pre-Order page', async () => {
@@ -410,14 +402,11 @@ describe('AmazonPayV2PaymentStrategy', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValue(paymentFailedErrorAction);
 
-            const walletButton = document.getElementById('AmazonPayButton') as HTMLDivElement;
-            jest.spyOn(walletButton, 'click').mockClear();
-
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(amazonPayV2PaymentProcessor.prepareCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
-            expect(walletButton.click).toHaveBeenCalledTimes(1);
+            expect(amazonPayButton.click).toHaveBeenCalled();
         });
 
         describe('should fail if...', () => {

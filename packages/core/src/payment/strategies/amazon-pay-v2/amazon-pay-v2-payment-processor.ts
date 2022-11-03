@@ -72,7 +72,7 @@ export default class AmazonPayV2PaymentProcessor {
         methodId,
         options,
         placement,
-    }: AmazonPayV2ButtonRenderingOptions): HTMLElement {
+    }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
@@ -87,7 +87,7 @@ export default class AmazonPayV2PaymentProcessor {
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
 
-        return container;
+        return this._getButtonParentContainer();
     }
 
     /**
