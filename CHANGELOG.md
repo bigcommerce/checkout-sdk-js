@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.301.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.300.1...v1.301.0) (2022-11-03)
+
+
+### Features
+
+* **payment:** INT-5953 Force to use Payment Strategy V1 when Mollie and Apple pay ([#1671](https://github.com/bigcommerce/checkout-sdk-js/issues/1671)) ([1d6d4ee](https://github.com/bigcommerce/checkout-sdk-js/commit/1d6d4ee1e0e3423d33d2e714aeccee381153b72e))
+
 ### [1.300.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.300.0...v1.300.1) (2022-11-03)
 
 
