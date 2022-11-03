@@ -1,4 +1,6 @@
 * @bigcommerce/checkout
+* @bigcommerce/kyiv-payments-team
+/packages/adyen @bigcommerce/kyiv-payments-team
 /packages/apple-pay @bigcommerce/checkout
 /packages/core @bigcommerce/checkout
 /packages/payment-integration @bigcommerce/checkout

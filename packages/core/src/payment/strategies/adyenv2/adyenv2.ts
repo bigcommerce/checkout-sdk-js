@@ -182,9 +182,9 @@ export interface AdyenComponentEvents {
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenV2ValidationState, component: AdyenComponent): void;
+    onError?(state: AdyenV2ValidationStateForLoader, component: AdyenComponent): void;
 
-    onFieldValid?(state: AdyenV2ValidationState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenV2ValidationStateForLoader, component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
@@ -833,7 +833,7 @@ export type AdyenComponentState = (
     CardState | WechatState
 );
 
-export interface AdyenV2ValidationState {
+export interface AdyenV2ValidationStateForLoader {
     valid: boolean;
     fieldType?: AdyenV2CardFields;
     endDigits?: string;

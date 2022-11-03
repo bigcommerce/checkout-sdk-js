@@ -8,3 +8,4 @@ export {
     CustomerInitializeOptions,
     ExecutePaymentMethodCheckoutOptions,
 } from "./customer-request-options";
+export { default as InternalCustomer } from './internal-customer';

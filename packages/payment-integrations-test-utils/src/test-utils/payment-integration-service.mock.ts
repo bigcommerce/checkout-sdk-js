@@ -1,14 +1,17 @@
 import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration-api";
 
+import { getBillingAddress } from './address.mock';
 import getCart from "./carts.mock";
 import getCheckout from "./checkouts.mock";
 import getConfig from "./config.mock";
 
 const subscribe = jest.fn();
 const state = {
+    getBillingAddress: jest.fn(() => getBillingAddress()),
     getCartOrThrow: jest.fn(() => getCart()),
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getHost: jest.fn(),
+    getLocale: jest.fn(),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
 };
