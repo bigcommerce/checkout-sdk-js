@@ -405,4 +405,96 @@ describe('AmazonPayV2PaymentProcessor', () => {
             });
         });
     });
+
+    describe('#isPh4Enabled', () => {
+        describe('should return TRUE if...', () => {
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is OFF, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is OFF, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is ON, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+        });
+
+        describe('should return FALSE if...', () => {
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is OFF, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': false,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is OFF, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': false,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is ON, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is ON, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is ON, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+        });
+    });
 });

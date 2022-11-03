@@ -2,6 +2,7 @@ import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-
 import { noop } from 'lodash';
 
 import { guard } from '../../../../src/common/utility';
+import { StoreProfile } from '../../../../src/config';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -51,7 +52,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                     checkoutState: this._store.getState(),
                     containerId,
                     decoupleCheckoutInitiation:
-                        this._isOneTimeTransaction(features),
+                        this._isOneTimeTransaction(features, region.toUpperCase()),
                     methodId,
                     placement: AmazonPayV2Placement.Checkout,
                 });
@@ -72,7 +73,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
         const { region, paymentToken } = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId).initializationData;
 
-        if (this._isReadyToPay(paymentToken) || this._isOneTimeTransaction(features)) {
+        if (this._isReadyToPay(paymentToken) || this._isOneTimeTransaction(features, region.toUpperCase())) {
             const paymentPayload = {
                 methodId,
                 paymentData: { nonce: paymentToken || 'apb' },
@@ -173,8 +174,16 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return guard(this._buttonContainer, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
     }
 
-    private _isOneTimeTransaction(features: CheckoutSettings['features']): boolean {
-        return features['PROJECT-3483.amazon_pay_ph4'] && features['INT-6399.amazon_pay_apb'];
+    private _isOneTimeTransaction(
+        features: CheckoutSettings['features'],
+        storeCountryCode: StoreProfile['storeCountryCode']
+    ): boolean {
+        return (
+            this._amazonPayV2PaymentProcessor.isPh4Enabled(
+                features,
+                storeCountryCode
+            ) && features['INT-6399.amazon_pay_apb']
+        );
     }
 
     private _isReadyToPay(paymentToken?: string): boolean {
