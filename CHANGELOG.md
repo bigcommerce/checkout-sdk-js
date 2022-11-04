@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.301.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.301.0...v1.301.1) (2022-11-04)
+
+
+### Bug Fixes
+
+* **payment:** INT-6890 AmazonPayV2: Change `isReadyToPay` logic ([#1669](https://github.com/bigcommerce/checkout-sdk-js/issues/1669)) ([632f598](https://github.com/bigcommerce/checkout-sdk-js/commit/632f598f3c6d7692c0f6046c0c820debf6246883))
+
 ## [1.301.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.300.1...v1.301.0) (2022-11-03)
 
 
