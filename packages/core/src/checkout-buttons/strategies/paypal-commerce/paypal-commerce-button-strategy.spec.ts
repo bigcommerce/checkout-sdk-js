@@ -192,12 +192,6 @@ describe('PaypalCommerceButtonStrategy', () => {
                     }
                 });
 
-                eventEmitter.on('onCancel', () => {
-                    if (options.onCancel) {
-                        options.onCancel();
-                    }
-                });
-
                 eventEmitter.on('onShippingAddressChange', () => {
                     if (options.onShippingAddressChange) {
                         options.onShippingAddressChange({
@@ -747,78 +741,6 @@ describe('PaypalCommerceButtonStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId, paymentData });
-        });
-    });
-
-    describe('#_onCancel button callback', () => {
-        it('calls billingAddressActionCreator when isHostedCheckoutEnabled true', async () => {
-            const paymentMethod = {
-                ...paymentMethodMock,
-                initializationData: {
-                    ...paymentMethodMock.initializationData,
-                    isHostedCheckoutEnabled: true,
-                }
-
-            }
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
-            await strategy.initialize(initializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise(resolve => process.nextTick(resolve));
-            eventEmitter.emit('onCancel');
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalled();
-        });
-
-        it('calls consignmentActionCreator when isHostedCheckoutEnabled true', async () => {
-            const paymentMethod = {
-                ...paymentMethodMock,
-                initializationData: {
-                    ...paymentMethodMock.initializationData,
-                    isHostedCheckoutEnabled: true,
-                }
-
-            }
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
-            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
-            await strategy.initialize(initializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise(resolve => process.nextTick(resolve));
-            eventEmitter.emit('onCancel');
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(consignmentActionCreator.updateAddress).toHaveBeenCalled();
-        });
-
-        it('calls paypalCommerceRequestSender updateOrder when isHostedCheckoutEnabled true', async () => {
-            const paymentMethod = {
-                ...paymentMethodMock,
-                initializationData: {
-                    ...paymentMethodMock.initializationData,
-                    isHostedCheckoutEnabled: true,
-                }
-
-            }
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
-            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
-            await strategy.initialize(initializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise(resolve => process.nextTick(resolve));
-            eventEmitter.emit('onCancel');
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalled();
-        });
-
-        it('does not updateOrder when isHostedCheckoutEnabled false', async () => {
-            jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(Promise.resolve());
-            await strategy.initialize(initializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise(resolve => process.nextTick(resolve));
-            eventEmitter.emit('onCancel');
-            await new Promise(resolve => process.nextTick(resolve));
-
-            expect(paypalCommerceRequestSender.updateOrder).not.toHaveBeenCalled();
         });
     });
 
