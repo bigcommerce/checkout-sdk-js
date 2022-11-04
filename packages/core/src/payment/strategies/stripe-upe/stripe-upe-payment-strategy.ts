@@ -2,6 +2,7 @@ import { includes, some } from 'lodash';
 
 import { isHostedInstrumentLike } from '../..';
 import { Address } from '../../../address';
+import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -42,7 +43,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _stripeScriptLoader: StripeUPEScriptLoader,
-        private _storeCreditActionCreator: StoreCreditActionCreator
+        private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _billingAddressActionCreator: BillingAddressActionCreator
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -107,12 +109,24 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { paymentData, methodId } = payment;
+        const { paymentData, methodId, gatewayId } = payment;
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } = isHostedInstrumentLike(paymentData) ? paymentData : {};
         const { isStoreCreditApplied : useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
 
         if (useStoreCredit) {
             await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+        }
+
+        if (gatewayId) {
+            const { customer: { getCustomerOrThrow } } = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {params: {method: methodId}})
+            );
+            const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
+
+            if (isStripeLinkAuthenticated !== undefined && !email) {
+                const billingAddress = this._store.getState().billingAddress.getBillingAddressOrThrow();
+                await this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddress));
+            }
         }
 
         if (isVaultedInstrument(paymentData)) {

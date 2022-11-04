@@ -61,6 +61,18 @@ export function getStripeUPEOrderRequestBodyMock(stripePaymentMethodType: Stripe
     };
 }
 
+export function getStripeUPEWithLinkOrderRequestBodyMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, shouldSaveInstrument = false): OrderRequestBody {
+    return {
+        payment: {
+            gatewayId: 'stripeupe',
+            methodId: stripePaymentMethodType,
+            paymentData: {
+                shouldSaveInstrument,
+            },
+        },
+    };
+}
+
 export function getStripeUPEOrderRequestBodyVaultMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, shouldSetAsDefaultInstrument = false): OrderRequestBody {
     return {
         payment: {
