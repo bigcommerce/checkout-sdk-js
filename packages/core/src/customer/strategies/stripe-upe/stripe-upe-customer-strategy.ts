@@ -1,4 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
+import { AddressRequestBody } from 'packages/core/src/address';
+import ConsignmentActionCreator from 'packages/core/src/shipping/consignment-action-creator';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
@@ -8,17 +10,17 @@ import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
-import { ShippingStrategy } from 'packages/core/src/shipping/strategies';
+
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
-    private _shippingAddres?: ShippingStrategy
 
     constructor(
         private _store: CheckoutStore,
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator
     ) { }
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -83,28 +85,19 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) || this._stripeElements.create(StripeElementType.AUTHENTICATION);
-            const shippingAddress = this._shippingAddres;
 
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
                 if (isStripeLinkAuthenticated && !event.authenticated) {
-                    const address = {
-                        firstName: '',
-                        lastName: '',
-                        company: '',
-                        address1: '',
-                        address2: '',
-                        city: '',
-                        stateOrProvince: '',
-                        stateOrProvinceCode: '',
-                        countryCode: '',
-                        postalCode: '',
-                        phone: '',
-                    }
-                    shippingAddress?.updateAddress(address);
-                    shippingAddress?.initialize();
+                    const state = this._store.getState();
+                    const shippingAddres = state.shippingAddress.getShippingAddressOrThrow();
+                    const resetAddress = this._resetAddress(shippingAddres);
+
+                    return this._store.dispatch(
+                        this._consignmentActionCreator.updateAddress(resetAddress, options)
+                    );
 
                 }
                 this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
@@ -116,6 +109,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             linkAuthenticationElement.mount(`#${container}`);
+
         }
 
         return this._store.getState();
@@ -144,4 +138,25 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
         return Promise.resolve(this._store.getState());
     }
+
+    _resetAddress(address: AddressRequestBody) {
+
+        const { firstName, lastName, company, address1, address2, city, stateOrProvince, stateOrProvinceCode, countryCode, postalCode, phone  } = address;
+
+        return {
+            ...address,
+            firstName: firstName !== 'Fake' ? firstName : '',
+            lastName: lastName !== 'Fake' ? lastName : '',
+            company: company !== 'Fake' ? company : '',
+            address1: address1 !== 'Fake' ? address1 : '',
+            address2: address2 !== 'Fake' ? address2 : '',
+            city: city !== 'Fake' ? city : '',
+            stateOrProvince: stateOrProvince !== 'Fake' ? stateOrProvince : '',
+            stateOrProvinceCode: stateOrProvinceCode !== 'Fake' ? stateOrProvinceCode : '',
+            countryCode: countryCode !== 'Fake' ? countryCode : '',
+            postalCode: postalCode !== 'Fake' ? postalCode : '',
+            phone: phone !== 'Fake' ? phone : '',
+        }
+    }
 }
+
