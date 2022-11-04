@@ -81,7 +81,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-            const options = billingAddress?.email? { defaultValues: { email: billingAddress?.email } } : { } ;
+            const { email: billingEmail }  = billingAddress || {};
+            const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
 
