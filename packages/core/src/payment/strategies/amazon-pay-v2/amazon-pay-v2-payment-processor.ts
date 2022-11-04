@@ -2,6 +2,8 @@ import { PaymentMethod } from '../..';
 import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
 import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { guard } from '../../../../src/common/utility';
+import { StoreProfile } from '../../../../src/config';
+import { CheckoutSettings } from '../../../../src/config/config';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
 import { AmazonPayV2Button, AmazonPayV2ButtonColor, AmazonPayV2ButtonParameters, AmazonPayV2ButtonRenderingOptions, AmazonPayV2ChangeActionType, AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
@@ -70,7 +72,7 @@ export default class AmazonPayV2PaymentProcessor {
         methodId,
         options,
         placement,
-    }: AmazonPayV2ButtonRenderingOptions): HTMLElement {
+    }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
@@ -85,7 +87,24 @@ export default class AmazonPayV2PaymentProcessor {
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
 
-        return container;
+        return this._getButtonParentContainer();
+    }
+
+    /**
+     * @internal
+     */
+    isPh4Enabled(
+        features: CheckoutSettings['features'],
+        storeCountryCode: StoreProfile['storeCountryCode']
+    ): boolean {
+        const isPh4Enabled = !!features['PROJECT-3483.amazon_pay_ph4'];
+        const isPh4UsOnly = !!features['INT-6885.amazon_pay_ph4_us_only'];
+
+        if (isPh4Enabled && isPh4UsOnly) {
+            return storeCountryCode === 'US';
+        }
+
+        return isPh4Enabled;
     }
 
     private _createAmazonPayButtonParentContainer(): HTMLDivElement {
@@ -121,7 +140,7 @@ export default class AmazonPayV2PaymentProcessor {
 
         const {
             checkoutSettings: { features },
-            storeProfile: { shopPath },
+            storeProfile: { shopPath, storeCountryCode },
         } = getStoreConfigOrThrow();
 
         const cart = getCart();
@@ -141,7 +160,7 @@ export default class AmazonPayV2PaymentProcessor {
             buttonColor: AmazonPayV2ButtonColor.Gold,
         };
 
-        if (features['PROJECT-3483.amazon_pay_ph4']) {
+        if (this.isPh4Enabled(features, storeCountryCode)) {
             const amount = getCheckout()?.outstandingBalance.toString();
             const currencyCode = cart?.currency.code;
             const buttonOptions: AmazonPayV2NewButtonParams = { ...buttonBaseConfig };

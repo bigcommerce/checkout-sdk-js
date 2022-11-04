@@ -211,7 +211,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
     describe('#renderAmazonPayButton', () => {
         const CONTAINER_ID = 'container_passed_by_the_client';
-        const renderAmazonPayButton = (containerId = CONTAINER_ID, decoupleCheckoutInitiation = false) => {
+        const renderAmazonPayButton = (containerId = CONTAINER_ID, decoupleCheckoutInitiation = false) =>
             processor.renderAmazonPayButton({
                 checkoutState: store.getState(),
                 containerId,
@@ -219,7 +219,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 methodId: 'amazonpay',
                 placement: AmazonPayV2Placement.Checkout,
             });
-        };
         const expectedContainerId = expect.stringMatching(/^#amazonpay_button_parent_container_[0-9a-f]{4}$/);
 
         let store: CheckoutStore;
@@ -232,6 +231,17 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
         beforeEach(() => {
             store = createCheckoutStore(getCheckoutStoreState());
+        });
+
+        it('should return the buttonParentContainer', async () => {
+            const parentContainer = document.createElement('div');
+            jest.spyOn(document, 'createElement')
+                .mockReturnValueOnce(parentContainer);
+
+            await processor.initialize(amazonPayV2Mock);
+            const amazonPayButton = renderAmazonPayButton();
+
+            expect(amazonPayButton).toBe(parentContainer);
         });
 
         it('should render an Amazon Pay button and validate if cart contains physical items', async () => {
@@ -402,6 +412,98 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
                 expect(renderAmazonPayButton).toThrowError(MissingDataError);
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('#isPh4Enabled', () => {
+        describe('should return TRUE if...', () => {
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is OFF, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is OFF, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is ON, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(true);
+            });
+        });
+
+        describe('should return FALSE if...', () => {
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is OFF, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': false,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is OFF, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': false,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is ON, and country is US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'US');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is OFF, 6885.PH4_US_OLY is ON, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': false,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
+            });
+
+            test('3483.PH4 is ON, 6885.PH4_US_OLY is ON, and country is not US', () => {
+                const features = {
+                    'PROJECT-3483.amazon_pay_ph4': true,
+                    'INT-6885.amazon_pay_ph4_us_only': true,
+                }
+
+                const isPh4Enabled = processor.isPh4Enabled(features, 'FOO');
+
+                expect(isPh4Enabled).toBe(false);
             });
         });
     });

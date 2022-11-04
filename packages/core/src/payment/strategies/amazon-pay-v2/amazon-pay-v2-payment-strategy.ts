@@ -2,6 +2,7 @@ import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-
 import { noop } from 'lodash';
 
 import { guard } from '../../../../src/common/utility';
+import { StoreProfile } from '../../../../src/config';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -16,7 +17,7 @@ import { AmazonPayV2ChangeActionType, AmazonPayV2Placement } from './amazon-pay-
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 
 export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
-    private _buttonContainer?: HTMLElement;
+    private _amazonPayButton?: HTMLDivElement;
 
     constructor(
         private _store: CheckoutStore,
@@ -39,17 +40,19 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
-        if (this._isReadyToPay(features, paymentToken) && amazonpay?.editButtonId) {
-            this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
+        if (this._isReadyToPay(paymentToken)) {
+            if (amazonpay?.editButtonId) {
+                this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
+            }
         } else {
             const { id: containerId } = this._createContainer();
 
-            this._buttonContainer =
+            this._amazonPayButton =
                 this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
                     checkoutState: this._store.getState(),
                     containerId,
                     decoupleCheckoutInitiation:
-                        this._isOneTimeTransaction(features),
+                        this._isOneTimeTransaction(features, region.toUpperCase()),
                     methodId,
                     placement: AmazonPayV2Placement.Checkout,
                 });
@@ -70,7 +73,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
         const { region, paymentToken } = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId).initializationData;
 
-        if (this._isReadyToPay(features, paymentToken) || this._isOneTimeTransaction(features)) {
+        if (this._isReadyToPay(paymentToken) || this._isOneTimeTransaction(features, region.toUpperCase())) {
             const paymentPayload = {
                 methodId,
                 paymentData: { nonce: paymentToken || 'apb' },
@@ -95,7 +98,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             }
         }
 
-        this._getButtonContainer().click();
+        this._getAmazonPayButton().click();
 
         // Focus of parent window used to try and detect the user cancelling the Amazon log in modal
         // Should be refactored if/when Amazon add a modal close hook to their SDK
@@ -120,7 +123,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     async deinitialize(): Promise<InternalCheckoutSelectors> {
         await this._amazonPayV2PaymentProcessor.deinitialize();
 
-        this._buttonContainer = undefined;
+        this._amazonPayButton = undefined;
 
         return this._store.getState();
     }
@@ -167,19 +170,23 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return document.body.appendChild(container);
     }
 
-    private _getButtonContainer() {
-        return guard(this._buttonContainer, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+    private _getAmazonPayButton() {
+        return guard(this._amazonPayButton, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
     }
 
-    private _isOneTimeTransaction(features: CheckoutSettings['features']): boolean {
-        return features['PROJECT-3483.amazon_pay_ph4'] && features['INT-6399.amazon_pay_apb'];
+    private _isOneTimeTransaction(
+        features: CheckoutSettings['features'],
+        storeCountryCode: StoreProfile['storeCountryCode']
+    ): boolean {
+        return (
+            this._amazonPayV2PaymentProcessor.isPh4Enabled(
+                features,
+                storeCountryCode
+            ) && features['INT-6399.amazon_pay_apb']
+        );
     }
 
-    private _isStandardIntegration(features: CheckoutSettings['features']): boolean {
-        return !this._isOneTimeTransaction(features);
-    }
-
-    private _isReadyToPay(features: CheckoutSettings['features'], paymentToken?: string): boolean {
-        return this._isStandardIntegration(features) && !!paymentToken;
+    private _isReadyToPay(paymentToken?: string): boolean {
+        return !!paymentToken;
     }
 }
