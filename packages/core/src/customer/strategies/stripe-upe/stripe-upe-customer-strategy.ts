@@ -92,11 +92,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 }
                 if (isStripeLinkAuthenticated && !event.authenticated) {
                     const state = this._store.getState();
-                    const shippingAddres = state.shippingAddress.getShippingAddressOrThrow();
-                    const resetAddress = this._resetAddress(shippingAddres);
-
+                    const consignmentShipping = state.consignments.getConsignmentsOrThrow();
                     return this._store.dispatch(
-                        this._consignmentActionCreator.updateAddress(resetAddress, options)
+                        this._consignmentActionCreator.deleteConsignment(consignmentShipping[0].id)
                     );
 
                 }
