@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.302.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.301.1...v1.302.0) (2022-11-07)
+
+
+### Features
+
+* **payment:** STRIPE-183 persisting stripe components when reloads the page ([#1649](https://github.com/bigcommerce/checkout-sdk-js/issues/1649)) ([289b5bd](https://github.com/bigcommerce/checkout-sdk-js/commit/289b5bda6ddb0caaa586d2e21efcbf30e14e0d4d))
+
 ### [1.301.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.301.0...v1.301.1) (2022-11-04)
 
 

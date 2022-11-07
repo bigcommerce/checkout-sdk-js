@@ -19,6 +19,7 @@ iframe has a list of shipping addresses for the customer to choose from.
 
 ### Methods
 
+- [getStripeState](StripeUPEShippingInitializeOptions.md#getstripestate)
 - [getStyles](StripeUPEShippingInitializeOptions.md#getstyles)
 - [onChangeShipping](StripeUPEShippingInitializeOptions.md#onchangeshipping)
 
@@ -57,6 +58,25 @@ ___
 The identifier of the payment method.
 
 ## Methods
+
+### getStripeState
+
+▸ **getStripeState**(`country`, `state`): `string`
+
+get the state code needed for shipping stripe element
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `country` | `string` |
+| `state` | `string` |
+
+#### Returns
+
+`string`
+
+___
 
 ### getStyles
 
