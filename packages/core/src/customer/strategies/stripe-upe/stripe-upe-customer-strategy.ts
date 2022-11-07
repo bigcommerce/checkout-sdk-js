@@ -1,5 +1,4 @@
 import { createAction } from '@bigcommerce/data-store';
-import { AddressRequestBody } from 'packages/core/src/address';
 import ConsignmentActionCreator from 'packages/core/src/shipping/consignment-action-creator';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
