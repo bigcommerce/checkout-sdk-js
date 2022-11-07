@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
-
+import { ConsignmentActionCreator } from 'packages/core/src/shipping';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -31,7 +31,8 @@ describe('StripeUpeCustomerStrategy', () => {
     const mutationObserverFactory = new MutationObserverFactory();
     const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
     const requestSender = createRequestSender();
-
+    
+    let consignmentActionCreator: ConsignmentActionCreator;
     let customerActionCreator: CustomerActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -87,7 +88,8 @@ describe('StripeUpeCustomerStrategy', () => {
             store,
             stripeScriptLoader,
             customerActionCreator,
-            paymentMethodActionCreator
+            paymentMethodActionCreator,
+            consignmentActionCreator
         );
     });
 

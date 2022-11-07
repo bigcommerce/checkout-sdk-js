@@ -8,6 +8,7 @@ import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
+import ConsignmentActionCreator from 'packages/core/src/shipping/consignment-action-creator';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
@@ -16,7 +17,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -45,7 +47,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         const {
             clientToken, initializationData: { stripePublishableKey, stripeConnectedAccount } = {}
         } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { email } = getCustomerOrThrow();
+        const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
 
         if (!email) {
             if (!stripePublishableKey || !clientToken) {
@@ -96,7 +98,14 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 }
                 this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
                 event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
+                if (isStripeLinkAuthenticated && !event.authenticated) {
+                    const state = this._store.getState();
+                    const consignmentShipping = state.consignments.getConsignmentsOrThrow();
+                    return this._store.dispatch(
+                        this._consignmentActionCreator.deleteConsignment(consignmentShipping[0].id)
+                    );
 
+                }
                 if (isLoading) {
                     isLoading(false);
                 }
