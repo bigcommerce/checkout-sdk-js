@@ -1,7 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
-
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { Registry } from '../common/registry';
@@ -305,12 +304,10 @@ export default function createCustomerStrategyRegistry(
             new StripeScriptLoader(scriptLoader),
             customerActionCreator,
             paymentMethodActionCreator,
-            paymentMethodActionCreator,
             new ConsignmentActionCreator(
                 new ConsignmentRequestSender(requestSender),
                 new CheckoutRequestSender(requestSender)
             )
-            
         )
     );
 
