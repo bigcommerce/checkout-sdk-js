@@ -9,6 +9,7 @@
 - [balanceDue](Checkout.md#balancedue)
 - [billingAddress](Checkout.md#billingaddress)
 - [cart](Checkout.md#cart)
+- [channelId](Checkout.md#channelid)
 - [consignments](Checkout.md#consignments)
 - [coupons](Checkout.md#coupons)
 - [createdTime](Checkout.md#createdtime)
@@ -50,6 +51,12 @@ ___
 ### cart
 
 • **cart**: [`Cart`](Cart.md)
+
+___
+
+### channelId
+
+• **channelId**: `number`
 
 ___
 

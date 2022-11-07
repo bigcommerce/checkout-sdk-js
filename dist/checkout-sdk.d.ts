@@ -2181,6 +2181,7 @@ declare interface Checkout {
     createdTime: string;
     updatedTime: string;
     payments?: CheckoutPayment[];
+    channelId: number;
 }
 
 declare class CheckoutButtonErrorSelector {
@@ -5866,6 +5867,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    channelId: number;
 }
 
 declare interface OrderConsignment {

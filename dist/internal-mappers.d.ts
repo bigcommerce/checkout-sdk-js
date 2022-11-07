@@ -102,6 +102,7 @@ declare interface Checkout {
     createdTime: string;
     updatedTime: string;
     payments?: CheckoutPayment[];
+    channelId: number;
 }
 
 declare interface CheckoutPayment {
@@ -595,6 +596,7 @@ declare interface Order {
     status: string;
     taxes: Tax[];
     taxTotal: number;
+    channelId: number;
 }
 
 declare interface OrderConsignment {

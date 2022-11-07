@@ -9,6 +9,7 @@
 - [baseAmount](Order.md#baseamount)
 - [billingAddress](Order.md#billingaddress)
 - [cartId](Order.md#cartid)
+- [channelId](Order.md#channelid)
 - [consignments](Order.md#consignments)
 - [coupons](Order.md#coupons)
 - [currency](Order.md#currency)
@@ -50,6 +51,12 @@ ___
 ### cartId
 
 • **cartId**: `string`
+
+___
+
+### channelId
+
+• **channelId**: `number`
 
 ___
 

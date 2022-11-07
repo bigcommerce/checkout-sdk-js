@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.304.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.303.0...v1.304.0) (2022-11-07)
+
+
+### Features
+
+* **checkout:** STRF-10153 Data Layer Updates - Field Additions and Changes ([#1670](https://github.com/bigcommerce/checkout-sdk-js/issues/1670)) ([8184573](https://github.com/bigcommerce/checkout-sdk-js/commit/81845738236a49c41e959f57b5626c35bd6707a1))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1756 removed 'Fake' data implementation from paypal commerce button strategy ([#1659](https://github.com/bigcommerce/checkout-sdk-js/issues/1659)) ([b2f3795](https://github.com/bigcommerce/checkout-sdk-js/commit/b2f37955a7be937608a56e51e3f56ce3ae2d31c9))
+* **payment:** PAYPAL-1757 removed 'Fake' data implementation from paypal commerce credit button strategy ([#1674](https://github.com/bigcommerce/checkout-sdk-js/issues/1674)) ([27a68c1](https://github.com/bigcommerce/checkout-sdk-js/commit/27a68c1a47da3e92d4bc4b8fa802bd8f725bf931))
+
 ## [1.303.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.302.0...v1.303.0) (2022-11-07)
 
 
