@@ -40,6 +40,7 @@ export default interface Checkout {
     createdTime: string;
     updatedTime: string;
     payments?: CheckoutPayment[];
+    channelId: number;
 }
 
 export interface CheckoutRequestBody {

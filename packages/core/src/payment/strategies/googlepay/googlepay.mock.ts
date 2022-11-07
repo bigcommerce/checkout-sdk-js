@@ -52,6 +52,7 @@ export function getCheckoutMock(): Checkout {
         createdTime: '',
         updatedTime: '',
         giftWrappingCostTotal: 0,
+        channelId: 1,
     };
 }
 
