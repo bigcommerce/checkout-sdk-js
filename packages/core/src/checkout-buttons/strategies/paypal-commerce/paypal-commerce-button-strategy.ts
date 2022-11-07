@@ -123,6 +123,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             try {
                 const { body: cart } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
                 this._buyNowCartId = cart.id;
+                await this._store.dispatch(this._checkoutActionCreator.loadCheckout(cart.id));
             } catch (error) {
                 throw new BuyNowCartCreationError();
             }
