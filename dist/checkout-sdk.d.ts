@@ -1,4 +1,5 @@
 /// <reference types="applepayjs" />
+import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
@@ -123,6 +124,7 @@ declare interface AdyenBaseCardComponentOptions_2 {
      * for a list of supported properties.
      */
     styles?: StyleOptions_2;
+    showBrandsUnderCardNumber?: boolean;
 }
 
 declare interface AdyenComponent {
@@ -365,7 +367,7 @@ declare interface AdyenV2PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
+    options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenV2ValidationState): void;
 }
@@ -499,7 +501,7 @@ declare interface AdyenV3PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit<AdyenV3CreditCardComponentOptions, 'onChange'>;
+    options?: Omit_2<AdyenV3CreditCardComponentOptions, 'onChange'>;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenV3ValidationState): void;
 }
@@ -1226,16 +1228,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AdyenV2 payment
-     * method. They can be omitted unless you need to support AdyenV2.
-     */
-    adyenv2?: AdyenV2PaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AdyenV3 payment
-     * method. They can be omitted unless you need to support AdyenV3.
-     */
-    adyenv3?: AdyenV3PaymentInitializeOptions;
     /**
      * The options that are required to initialize the Amazon Pay payment
      * method. They can be omitted unless you need to support AmazonPay.
@@ -5981,7 +5973,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithApplePayPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7516,6 +7508,22 @@ declare interface WechatState_2 {
 
 declare interface WithAccountCreation {
     shouldCreateAccount?: boolean;
+}
+
+declare interface WithAdyenV2PaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
+}
+
+declare interface WithAdyenV3PaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Apple Pay payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    adyenv3?: AdyenV3PaymentInitializeOptions;
 }
 
 declare interface WithApplePayButtonInitializeOptions {

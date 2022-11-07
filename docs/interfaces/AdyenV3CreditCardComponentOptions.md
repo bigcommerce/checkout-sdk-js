@@ -22,6 +22,7 @@
 - [hasHolderName](AdyenV3CreditCardComponentOptions.md#hasholdername)
 - [holderNameRequired](AdyenV3CreditCardComponentOptions.md#holdernamerequired)
 - [placeholders](AdyenV3CreditCardComponentOptions.md#placeholders)
+- [showBrandsUnderCardNumber](AdyenV3CreditCardComponentOptions.md#showbrandsundercardnumber)
 - [styles](AdyenV3CreditCardComponentOptions.md#styles)
 
 ### Methods
@@ -101,6 +102,16 @@ ___
 • `Optional` **placeholders**: [`CreditCardPlaceHolder_2`](CreditCardPlaceHolder_2.md) \| [`SepaPlaceHolder_2`](SepaPlaceHolder_2.md)
 
 Specify the sample values you want to appear for card detail input fields.
+
+___
+
+### showBrandsUnderCardNumber
+
+• `Optional` **showBrandsUnderCardNumber**: `boolean`
+
+#### Inherited from
+
+[AdyenBaseCardComponentOptions_2](AdyenBaseCardComponentOptions_2.md).[showBrandsUnderCardNumber](AdyenBaseCardComponentOptions_2.md#showbrandsundercardnumber)
 
 ___
 

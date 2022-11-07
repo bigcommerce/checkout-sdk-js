@@ -362,6 +362,8 @@
 - [WechatState](interfaces/WechatState.md)
 - [WechatState_2](interfaces/WechatState_2.md)
 - [WithAccountCreation](interfaces/WithAccountCreation.md)
+- [WithAdyenV2PaymentInitializeOptions](interfaces/WithAdyenV2PaymentInitializeOptions.md)
+- [WithAdyenV3PaymentInitializeOptions](interfaces/WithAdyenV3PaymentInitializeOptions.md)
 - [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
 - [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
 - [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
@@ -661,7 +663,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md)
 
 ___
 

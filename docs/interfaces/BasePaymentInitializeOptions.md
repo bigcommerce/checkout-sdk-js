@@ -15,8 +15,6 @@ current checkout flow.
 
 ### Properties
 
-- [adyenv2](BasePaymentInitializeOptions.md#adyenv2)
-- [adyenv3](BasePaymentInitializeOptions.md#adyenv3)
 - [amazon](BasePaymentInitializeOptions.md#amazon)
 - [amazonpay](BasePaymentInitializeOptions.md#amazonpay)
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
@@ -54,24 +52,6 @@ current checkout flow.
 - [worldpay](BasePaymentInitializeOptions.md#worldpay)
 
 ## Properties
-
-### adyenv2
-
-• `Optional` **adyenv2**: [`AdyenV2PaymentInitializeOptions`](AdyenV2PaymentInitializeOptions.md)
-
-The options that are required to initialize the AdyenV2 payment
-method. They can be omitted unless you need to support AdyenV2.
-
-___
-
-### adyenv3
-
-• `Optional` **adyenv3**: [`AdyenV3PaymentInitializeOptions`](AdyenV3PaymentInitializeOptions.md)
-
-The options that are required to initialize the AdyenV3 payment
-method. They can be omitted unless you need to support AdyenV3.
-
-___
 
 ### amazon
 
