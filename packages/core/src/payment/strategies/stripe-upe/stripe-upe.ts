@@ -177,7 +177,24 @@ export interface WalletOptions {
 export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
     wallets?: WalletOptions;
-    allowedCountries?: any;
+    allowedCountries?: string[];
+    defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+}
+
+interface ShippingDefaultValues {
+    name: string;
+    address: {
+        line1: string;
+        line2: string;
+        city: string;
+        state: string;
+        postal_code: string;
+        country: string;
+    };
+}
+
+interface CustomerDefaultValues {
+    email: string;
 }
 
 export interface StripeElements {

@@ -5,6 +5,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -115,6 +116,16 @@ describe('StripeUpeCustomerStrategy', () => {
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
+        it('loads a single instance of StripeUPEClient and StripeElements when email is provided', async () => {
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddress')
+                .mockReturnValue(getBillingAddress());
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toBe(store.getState());
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
         it('triggers onChange event callback, dispatches correct action and mounts component', async () => {
             const stripeMockElement: StripeElement = {
                 destroy: jest.fn(),
@@ -134,7 +145,7 @@ describe('StripeUpeCustomerStrategy', () => {
 
             expect(store.dispatch).toHaveBeenNthCalledWith(2, expectedAction);
             expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(true, 'foo@bar');
-            expect(customerInitialization.stripeupe?.isLoading).toHaveBeenCalled(), 
+            expect(customerInitialization.stripeupe?.isLoading).toHaveBeenCalled();
             expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
         });
 

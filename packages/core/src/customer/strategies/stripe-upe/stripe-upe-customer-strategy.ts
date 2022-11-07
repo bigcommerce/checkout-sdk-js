@@ -80,7 +80,11 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 appearance,
             });
 
-            const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) || this._stripeElements.create(StripeElementType.AUTHENTICATION);
+            const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+            const { email: billingEmail }  = billingAddress || {};
+            const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
+            const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
+                this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
 
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {

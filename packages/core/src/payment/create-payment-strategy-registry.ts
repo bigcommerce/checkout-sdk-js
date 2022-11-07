@@ -850,7 +850,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             new StripeUPEScriptLoader(scriptLoader),
-            storeCreditActionCreator
+            storeCreditActionCreator,
+            billingAddressActionCreator
         )
     );
 

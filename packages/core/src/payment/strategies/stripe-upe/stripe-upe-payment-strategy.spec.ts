@@ -1,9 +1,10 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -16,6 +17,7 @@ import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionT
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -28,9 +30,19 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { StripeElementsOptions, StripeElementType, StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { getConfirmPaymentResponse, getFailingStripeUPEJsMock, getStripeUPEInitializeOptionsMock, getStripeUPEJsMock, getStripeUPEOrderRequestBodyMock, getStripeUPEOrderRequestBodyVaultMock } from './stripe-upe.mock';
+import {
+    getConfirmPaymentResponse,
+    getFailingStripeUPEJsMock,
+    getStripeUPEInitializeOptionsMock,
+    getStripeUPEJsMock,
+    getStripeUPEOrderRequestBodyMock,
+    getStripeUPEOrderRequestBodyVaultMock,
+    getStripeUPEWithLinkOrderRequestBodyMock
+} from './stripe-upe.mock';
 
 describe('StripeUPEPaymentStrategy', () => {
+    let billingAddressActionCreator: BillingAddressActionCreator;
+    let billingAddressRequestSender: BillingAddressRequestSender;
     let checkoutMock: Checkout;
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
@@ -45,10 +57,12 @@ describe('StripeUPEPaymentStrategy', () => {
     let stripeScriptLoader: StripeUPEScriptLoader;
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let updateAddressAction: Observable<Action>;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         const requestSender = createRequestSender();
+        billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const scriptLoader = createScriptLoader();
 
@@ -67,6 +81,11 @@ describe('StripeUPEPaymentStrategy', () => {
             new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader))
         );
 
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            billingAddressRequestSender,
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
+        );
+
         storeCreditActionCreator = new StoreCreditActionCreator(
             new StoreCreditRequestSender(requestSender)
         );
@@ -78,6 +97,7 @@ describe('StripeUPEPaymentStrategy', () => {
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: `stripeupe?method=${paymentMethodMock.id }`}));
         checkoutMock = getCheckout();
+        updateAddressAction = of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
 
         jest.useFakeTimers();
 
@@ -101,6 +121,9 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
             .mockReturnValue(checkoutMock);
 
+        jest.spyOn(billingAddressActionCreator, 'updateAddress')
+            .mockReturnValue(updateAddressAction);
+
         jest.spyOn(store, 'subscribe');
 
         strategy = new StripeUPEPaymentStrategy(
@@ -109,7 +132,8 @@ describe('StripeUPEPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             stripeScriptLoader,
-            storeCreditActionCreator
+            storeCreditActionCreator,
+            billingAddressActionCreator
         );
     });
 
@@ -263,6 +287,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 .mockReturnValue(Promise.resolve(stripeUPEJsMock));
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
                 .mockReturnValue(getStripeUPE());
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
         });
 
         describe('creates the order and submit payment', () => {
@@ -323,6 +348,21 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect(response).toBe(store.getState());
                         });
 
+                        it('with a signed user and using stripeLink', async () => {
+                            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
+                                .mockReturnValue({ ...getCustomer(), isStripeLinkAuthenticated: true });
+                            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
+                                .mockReturnValue(getBillingAddress());
+
+                            const response = await strategy.execute(getStripeUPEWithLinkOrderRequestBodyMock());
+
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+                            expect(response).toBe(store.getState());
+                            expect(billingAddressActionCreator.updateAddress).not.toHaveBeenCalled();
+                        });
+
                         it('with a guest user', async () => {
                             jest.spyOn(store.getState().customer, 'getCustomer')
                                 .mockReturnValue(undefined);
@@ -333,6 +373,23 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
                             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
                             expect(response).toBe(store.getState());
+                        });
+
+                        it('with a guest user and using stripeLink', async () => {
+                            jest.spyOn(store.getState().customer, 'getCustomer')
+                                .mockReturnValue(undefined);
+                            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
+                                .mockReturnValue({ ...getCustomer(), isStripeLinkAuthenticated: false, email: '' });
+                            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
+                                .mockReturnValue(getBillingAddress());
+
+                            const response = await strategy.execute(getStripeUPEWithLinkOrderRequestBodyMock());
+
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+                            expect(response).toBe(store.getState());
+                            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalled();
                         });
                     });
 
@@ -572,7 +629,7 @@ describe('StripeUPEPaymentStrategy', () => {
                         stripeUPEJsMock.confirmCardPayment = jest.fn(() => Promise.reject(new Error('Error with 3ds')));
 
                         await strategy.execute(getStripeUPEOrderRequestBodyMock());
-                        
+
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
                     });
@@ -735,15 +792,15 @@ describe('StripeUPEPaymentStrategy', () => {
                                 token: 'token',
                             },
                         }));
-    
+
                         jest.spyOn(paymentActionCreator, 'submitPayment')
                             .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequiredErrorResponse)))
                             .mockReturnValueOnce(submitPaymentAction);
-    
+
                             stripeUPEJsMock.confirmCardPayment = jest.fn(() => Promise.reject(new Error('Error with 3ds')));
-    
+
                         await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
-    
+
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenNthCalledWith(1, expect.objectContaining({
                             paymentData: expect.objectContaining({
