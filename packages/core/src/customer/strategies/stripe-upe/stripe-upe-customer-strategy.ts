@@ -8,7 +8,7 @@ import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
-import ConsignmentActionCreator from 'packages/core/src/shipping/consignment-action-creator';
+import { ConsignmentActionCreator } from '../../../shipping';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
