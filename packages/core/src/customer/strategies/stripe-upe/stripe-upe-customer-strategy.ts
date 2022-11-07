@@ -136,25 +136,5 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
         return Promise.resolve(this._store.getState());
     }
-
-    _resetAddress(address: AddressRequestBody) {
-
-        const { firstName, lastName, company, address1, address2, city, stateOrProvince, stateOrProvinceCode, countryCode, postalCode, phone  } = address;
-
-        return {
-            ...address,
-            firstName: firstName !== 'Fake' ? firstName : '',
-            lastName: lastName !== 'Fake' ? lastName : '',
-            company: company !== 'Fake' ? company : '',
-            address1: address1 !== 'Fake' ? address1 : '',
-            address2: address2 !== 'Fake' ? address2 : '',
-            city: city !== 'Fake' ? city : '',
-            stateOrProvince: stateOrProvince !== 'Fake' ? stateOrProvince : '',
-            stateOrProvinceCode: stateOrProvinceCode !== 'Fake' ? stateOrProvinceCode : '',
-            countryCode: countryCode !== 'Fake' ? countryCode : '',
-            postalCode: postalCode !== 'Fake' ? postalCode : '',
-            phone: phone !== 'Fake' ? phone : '',
-        }
-    }
 }
 
