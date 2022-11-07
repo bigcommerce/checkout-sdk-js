@@ -1,11 +1,27 @@
 import BodlService from "./bodl-service";
 
 export default class NoopBodlService implements BodlService {
-    checkoutBegin(): void {
-        return;
-    }
+    checkoutBegin(): void {}
 
-    orderPurchased(): void {
-        return;
-    }
+    orderPurchased(): void {}
+
+    stepCompleted(): void {}
+
+    customerEmailEntry(): void {}
+
+    customerSuggestionExecute(): void {};
+
+    customerPaymentMethodExecuted(): void {}
+
+    showShippingMethods(): void {}
+
+    selectedPaymentMethod(): void {}
+
+    clickPayButton(): void {}
+
+    paymentRejected(): void {};
+
+    paymentComplete(): void {};
+
+    exitCheckout(): void {};
 }

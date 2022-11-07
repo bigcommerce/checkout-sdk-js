@@ -150,5 +150,10 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
  *
  */
 export interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
+    checkoutPaymentMethodExecuted?(data?: CheckoutPaymentMethodExecutedOptions): void;
     continueWithCheckoutCallback?(): void;
+}
+
+export interface CheckoutPaymentMethodExecutedOptions {
+    hasBoltAccount?: boolean;
 }

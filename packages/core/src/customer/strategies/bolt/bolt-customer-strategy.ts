@@ -7,7 +7,7 @@ import { PaymentMethodFailedError, PaymentMethodInvalidError } from '../../../pa
 import { BoltCheckout, BoltScriptLoader } from '../../../payment/strategies/bolt';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions, CheckoutPaymentMethodExecutedOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class BoltCustomerStrategy implements CustomerStrategy {
@@ -69,7 +69,11 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
     }
 
     async executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions) {
-        const { continueWithCheckoutCallback = noop, methodId } = options || {};
+        const {
+            continueWithCheckoutCallback = noop,
+            checkoutPaymentMethodExecuted,
+            methodId
+        } = options || {};
         const email = this._getCustomerEmail();
 
         if (!methodId) {
@@ -86,10 +90,15 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
             return Promise.resolve(this._store.getState());
         }
 
-        return this._openBoltCheckoutModal(email, methodId, continueWithCheckoutCallback);
+        return this._openBoltCheckoutModal(email, methodId, continueWithCheckoutCallback, checkoutPaymentMethodExecuted);
     }
 
-    private async _openBoltCheckoutModal(email: string, methodId: string, continueWithCheckoutCallback: () => void): Promise<InternalCheckoutSelectors> {
+    private async _openBoltCheckoutModal(
+        email: string,
+        methodId: string,
+        continueWithCheckoutCallback: () => void,
+        checkoutPaymentMethodExecuted?: (payload: CheckoutPaymentMethodExecutedOptions) => void
+    ): Promise<InternalCheckoutSelectors> {
         const boltClient = this._getBoltClient();
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
@@ -108,6 +117,10 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
                     await boltClient.openCheckout(email, callbacks);
                 } else {
                     continueWithCheckoutCallback();
+                }
+
+                if (typeof checkoutPaymentMethodExecuted === 'function') {
+                    checkoutPaymentMethodExecuted({ hasBoltAccount });
                 }
             } else {
                 continueWithCheckoutCallback();

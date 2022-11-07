@@ -155,7 +155,7 @@ describe('BoltCustomerStrategy', () => {
         it('fails to execute payment method checkout if provided continueWithCheckoutCallback is not a function', async () => {
             try {
                 /* eslint-disable @typescript-eslint/ban-ts-comment */
-                // @ts-ignore 
+                // @ts-ignore
                 await strategy.executePaymentMethodCheckout({ methodId: 'bolt', continueWithCheckoutCallback: 'string' });
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);

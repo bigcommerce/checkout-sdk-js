@@ -4,7 +4,8 @@ import { getConfig } from '../config/configs.mock';
 import { getOrder } from '../order/orders.mock';
 
 import BodlEmitterService from './bodl-emitter-service';
-import { BodlEventsCheckout } from './bodl-window';
+import { BodlEventsCheckout, BodlEventsPayload } from './bodl-window';
+import { AnalyticStepType } from './analytics-steps';
 
 describe('BodlEmitterService', () => {
     let checkoutService: CheckoutService;
@@ -16,6 +17,7 @@ describe('BodlEmitterService', () => {
         bodlEvents = {
             emitOrderPurchasedEvent: jest.fn(),
             emitCheckoutBeginEvent: jest.fn(),
+            emit: jest.fn(),
         };
 
         checkoutService = createCheckoutService();
@@ -29,7 +31,7 @@ describe('BodlEmitterService', () => {
 
         jest.spyOn(checkoutService.getState().data, 'getConfig')
             .mockReturnValue(getConfig().storeConfig);
-    
+
         bodlEmitterService = new BodlEmitterService(
             subscriber,
             bodlEvents
@@ -241,6 +243,150 @@ describe('BodlEmitterService', () => {
                     }],
                 })
             );
+        });
+    });
+
+    describe('#stepCompleted(step)', () => {
+        it('no step has not completed yet', () => {
+            bodlEmitterService.stepCompleted();
+            expect(bodlEvents.emit).not.toHaveBeenCalled();
+        });
+
+        it('First step completed', () => {
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'customer'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'shipping'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'billing'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'payment'});
+        });
+
+        it('Complete the same step three times', () => {
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'customer'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'shipping'});
+        });
+
+        it('Manually complete three steps', () => {
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            bodlEmitterService.stepCompleted('shipping' as AnalyticStepType);
+            bodlEmitterService.stepCompleted('billing' as AnalyticStepType);
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(3);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'customer'});
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'shipping'});
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'billing'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'payment'});
+        });
+
+        it('First and third step completed manually, second - autocompleted', () => {
+            bodlEmitterService.stepCompleted('customer' as AnalyticStepType);
+            bodlEmitterService.stepCompleted('billing' as AnalyticStepType);
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(3);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'customer'});
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'shipping'});
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'billing'});
+            expect(bodlEvents.emit).not.toHaveBeenCalledWith('bodl_checkout_step_completed', {step: 'payment'});
+        });
+    });
+
+    describe('#customerEmailEntry(email)', () => {
+        it('Shopper has not yet entered email', () => {
+            bodlEmitterService.customerEmailEntry();
+            expect(bodlEvents.emit).not.toHaveBeenCalled();
+        });
+
+        it('Shopper begins to enter an email', () => {
+            bodlEmitterService.customerEmailEntry('e');
+            bodlEmitterService.customerEmailEntry('em');
+            bodlEmitterService.customerEmailEntry('ema');
+            bodlEmitterService.customerEmailEntry('emai');
+            bodlEmitterService.customerEmailEntry('email');
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_email_entry_began');
+        });
+    });
+
+    describe('#showShippingMethods()', () => {
+        it('emit show shipping methods', () => {
+            bodlEmitterService.showShippingMethods();
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_show_shipping_options');
+        });
+
+        it('show shipping methods more then once', () => {
+            bodlEmitterService.showShippingMethods();
+            bodlEmitterService.showShippingMethods();
+            bodlEmitterService.showShippingMethods();
+            expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+            expect(bodlEvents.emit).toHaveBeenCalledWith('bodl_checkout_show_shipping_options');
+        });
+    });
+
+    describe('simple bodl events', () => {
+        it('emit simple BODL events', () => {
+            const bodlEventsList: {
+                eventMethod(arg?: string|BodlEventsPayload): void,
+                methodArguments?: string|BodlEventsPayload,
+                expectedData: [string, BodlEventsPayload?],
+            }[] = [
+                {
+                    eventMethod: () => bodlEmitterService.customerSuggestionExecute(),
+                    expectedData: ['bodl_checkout_customer_suggestion_execute']
+                },
+                {
+                    eventMethod: (payload: BodlEventsPayload) => bodlEmitterService.customerPaymentMethodExecuted(payload),
+                    methodArguments: {test: 'data'},
+                    expectedData: [
+                        'bodl_checkout_customer_payment_method_executed',
+                        {test: 'data'}
+                    ]
+                },
+                {
+                    eventMethod: (paymentOption: string) => bodlEmitterService.selectedPaymentMethod(paymentOption),
+                    methodArguments: 'paymentOptionDisplayName',
+                    expectedData: [
+                        'bodl_checkout_payment_method_selected',
+                        {paymentOption: 'paymentOptionDisplayName'}
+                    ]
+                },
+                {
+                    eventMethod: (payload: BodlEventsPayload) => bodlEmitterService.clickPayButton(payload),
+                    methodArguments: {test: 'data'},
+                    expectedData: [
+                        'bodl_checkout_click_pay_button',
+                        {test: 'data'}
+                    ]
+                },
+                {
+                    eventMethod: () => bodlEmitterService.paymentRejected(),
+                    expectedData: ['bodl_checkout_payment_rejected']
+                },
+                {
+                    eventMethod: () => bodlEmitterService.paymentComplete(),
+                    expectedData: ['bodl_checkout_payment_complete']
+                },
+                {
+                    eventMethod: () => bodlEmitterService.exitCheckout(),
+                    expectedData: ['bodl_checkout_exit']
+                },
+            ];
+
+            bodlEventsList.forEach((event) => {
+                const {
+                    eventMethod,
+                    methodArguments,
+                    expectedData
+                } = event;
+
+                bodlEvents.emit = jest.fn();
+
+                eventMethod(methodArguments);
+                expect(bodlEvents.emit).toHaveBeenCalledTimes(1);
+                expect(bodlEvents.emit).toHaveBeenCalledWith(...expectedData);
+            });
         });
     });
 });
