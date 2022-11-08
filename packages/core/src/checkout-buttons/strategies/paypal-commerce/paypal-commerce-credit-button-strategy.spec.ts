@@ -949,5 +949,37 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalled();
             });
         });
+
+        describe('#_handleClick', () => {
+            beforeEach(() => {
+                jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue(new Promise(resolve => resolve({body:{...buyNowCartMock}})));
+                jest.spyOn(checkoutActionCreator, 'loadCheckout').mockReturnValue(true);
+            });
+
+            it('calls _cartRequestSender.createBuyNowCart on button click', async () => {
+                const options = {
+                    ...initializationOptions,
+                    ...buyNowInitializationOptions
+                }
+                await strategy.initialize(options);
+                eventEmitter.emit('onClick');
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(cartRequestSender.createBuyNowCart).toHaveBeenCalled();
+            });
+
+            it('calls loadCheckout with proper cartId on button click', async () => {
+                const options = {
+                    ...initializationOptions,
+                    ...buyNowInitializationOptions
+                }
+                const cartId = buyNowCartMock.id;
+                await strategy.initialize(options);
+                eventEmitter.emit('onClick');
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(checkoutActionCreator.loadCheckout).toHaveBeenCalledWith(cartId);
+            });
+        });
     });
 });
