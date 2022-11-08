@@ -152,41 +152,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return await this._executeWithAPM(payment.methodId);
         }
 
-        let result;
-        let catchedConfirmError = false;
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
-        const stripePaymentData = this._mapStripePaymentData();
-
-        try {
-            result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
-        } catch (error) {
-            catchedConfirmError = true;
-        }
-
-        if (result?.error) {
-            this._throwDisplayableStripeError(result.error);
-            throw new PaymentMethodFailedError();
-        }
-
-        if (!result?.paymentIntent && !catchedConfirmError) {
-            throw new RequestError();
-        }
-
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        const paymentPayload = {
-            methodId,
-            paymentData: {
-                formattedPayload: {
-                    credit_card_token: { token: catchedConfirmError ? paymentMethod.clientToken : result?.paymentIntent?.id },
-                    vault_payment_instrument: shouldSaveInstrument,
-                    confirm: false,
-                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
-                },
-            },
-        };
-
-        return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        return await this._executeWithoutRedirect(payment.methodId, shouldSaveInstrument, shouldSetAsDefaultInstrument);
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -231,6 +199,27 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
             return await this._processAdditionalAction(error);
+        }
+    }
+
+    private async _executeWithoutRedirect(methodId: string, shouldSaveInstrument: boolean, shouldSetAsDefaultInstrument: boolean): Promise<InternalCheckoutSelectors> {
+        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
+        const paymentPayload = {
+            methodId,
+            paymentData: {
+                formattedPayload: {
+                    credit_card_token: { token: paymentMethod.clientToken },
+                    vault_payment_instrument: shouldSaveInstrument,
+                    confirm: false,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                },
+            },
+        };
+
+        try {
+            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+        } catch (error) {
+            return await this._processAdditionalAction(error, shouldSaveInstrument, shouldSetAsDefaultInstrument, methodId);
         }
     }
 
@@ -324,7 +313,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _processAdditionalAction(error: Error): Promise<InternalCheckoutSelectors | never> {
+    private async _processAdditionalAction(error: Error, shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false, methodId?: string): Promise<InternalCheckoutSelectors | never> {
         if (!(error instanceof RequestError)) {
             throw error;
         }
@@ -332,11 +321,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (!this._stripeUPEClient || !this._stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
-        if (some(error.body.errors, { code: 'additional_action_required' })) {
-            const action = error.body.additional_action_required;
 
-            if (action && action.type === 'redirect_to_url' && action.data.redirect_url) {
-                const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmPayment(this._mapStripePaymentData(action.data.redirect_url));
+        if (some(error.body.errors, { code: 'additional_action_required' })) {
+            const { type, data: { token, redirect_url } } = error.body.additional_action_required;
+
+            if (type === 'redirect_to_url' && redirect_url) {
+                const { paymentIntent, error: stripeError } = await this._stripeUPEClient.confirmPayment(this._mapStripePaymentData(redirect_url));
 
                 if (stripeError) {
                     this._throwDisplayableStripeError(stripeError);
@@ -345,6 +335,42 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 if (!paymentIntent) {
                     throw new RequestError();
                 }
+            } else if (methodId && type === 'additional_action_requires_payment_method' && token) {
+                let result;
+                let catchedConfirmError = false;
+                const stripePaymentData = this._mapStripePaymentData();
+                
+                try {
+                    result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
+                } catch (error) {
+                    catchedConfirmError = true;
+                }
+                
+                if (result?.error) {
+                    this._throwDisplayableStripeError(result.error);
+                    if (this._isCancellationError(result.error)) {
+                        throw new PaymentMethodCancelledError();
+                    }
+                    throw new PaymentMethodFailedError();
+                }
+            
+                if (!result?.paymentIntent && !catchedConfirmError) {
+                    throw new RequestError();
+                }
+
+                const paymentPayload = {
+                    methodId,
+                    paymentData: {
+                        formattedPayload: {
+                            credit_card_token: { token: catchedConfirmError ? token : result?.paymentIntent?.id },
+                            confirm: false,
+                            vault_payment_instrument: shouldSaveInstrument,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                        },
+                    },
+                };
+                
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
             }
         }
 
@@ -381,6 +407,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 }
                 throw new PaymentMethodFailedError();
             }
+
             if (!result?.paymentIntent && !catchedConfirmError) {
                 throw new RequestError();
             }
