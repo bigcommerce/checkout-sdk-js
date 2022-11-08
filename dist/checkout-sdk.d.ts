@@ -1453,9 +1453,23 @@ declare interface BlueSnapV2StyleProps {
     width?: string;
 }
 
+declare interface BodlEventsPayload {
+    [key: string]: unknown;
+}
+
 declare interface BodlService {
     checkoutBegin(): void;
     orderPurchased(): void;
+    stepCompleted(step?: string): void;
+    customerEmailEntry(email?: string): void;
+    customerSuggestionExecute(): void;
+    customerPaymentMethodExecuted(payload?: BodlEventsPayload): void;
+    showShippingMethods(): void;
+    selectedPaymentMethod(methodName?: string): void;
+    clickPayButton(payload?: BodlEventsPayload): void;
+    paymentRejected(): void;
+    paymentComplete(): void;
+    exitCheckout(): void;
 }
 
 declare interface BodyStyles {
@@ -2349,6 +2363,10 @@ declare interface CheckoutPayment {
     providerId: string;
     providerType: string;
     gatewayId?: string;
+}
+
+declare interface CheckoutPaymentMethodExecutedOptions {
+    hasBoltAccount?: boolean;
 }
 
 declare interface CheckoutRequestBody {
@@ -4816,6 +4834,7 @@ declare interface EmbeddedContentOptions {
  *
  */
 declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
+    checkoutPaymentMethodExecuted?(data?: CheckoutPaymentMethodExecutedOptions): void;
     continueWithCheckoutCallback?(): void;
 }
 
