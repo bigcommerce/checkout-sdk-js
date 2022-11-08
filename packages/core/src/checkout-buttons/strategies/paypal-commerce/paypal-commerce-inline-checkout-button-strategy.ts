@@ -24,10 +24,14 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const { methodId, paypalcommerceinline } = options;
+        const { containerId, methodId, paypalcommerceinline } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+        }
+
+        if (!containerId) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.containerId" argument is not provided.');
         }
 
         if (!paypalcommerceinline) {
@@ -45,7 +49,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             throw new PaymentMethodClientUnavailableError();
         }
 
-        this._renderButton(methodId, paypalCommerceSdk, paypalcommerceinline);
+        this._renderButton(methodId, containerId, paypalCommerceSdk, paypalcommerceinline);
     }
 
     deinitialize(): Promise<void> {
@@ -54,29 +58,16 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
     private _renderButton(
         methodId: string,
+        containerId: string,
         paypalCommerceSdk: PaypalCommerceSDK,
         paypalcommerceinline: PaypalCommerceInlineCheckoutButtonInitializeOptions,
     ): void {
         const {
-            acceleratedCheckoutContainerDataId,
-            buttonContainerDataId,
             buttonContainerClassName,
-            nativeCheckoutButtonDataId,
             style,
             onComplete,
+            onError,
         } = paypalcommerceinline;
-
-        if (!acceleratedCheckoutContainerDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.acceleratedCheckoutContainerDataId" argument is not provided.`);
-        }
-
-        if (!buttonContainerDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.buttonContainerDataId" argument is not provided.`);
-        }
-
-        if (!nativeCheckoutButtonDataId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.nativeCheckoutButtonDataId" argument is not provided.`);
-        }
 
         if (!onComplete || typeof onComplete !== 'function') {
             throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.onComplete" argument is not provided or it is not a function.`);
@@ -93,16 +84,16 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onApprove(data, actions, methodId),
             onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId, onComplete),
-            onError: (error: Error) => this._onError(error, buttonContainerDataId, nativeCheckoutButtonDataId),
+            onError: (error: Error) => this._onError(error, onError),
         };
 
         const paypalButtonRender = paypalCommerceSdk.Buttons(buttonRenderOptions);
 
         if (paypalButtonRender.isEligible()) {
-            this._hideNativeCheckoutButton(nativeCheckoutButtonDataId);
+            const buttonContainerId = `${containerId}-paypal-accelerated-checkout-button`;
 
-            this._createPayPalButtonContainer(acceleratedCheckoutContainerDataId, buttonContainerDataId, buttonContainerClassName);
-            paypalButtonRender.render(`[${buttonContainerDataId}]`);
+            this._createPayPalButtonContainer(containerId, buttonContainerId, buttonContainerClassName);
+            paypalButtonRender.render(`#${buttonContainerId}`);
         }
     }
 
@@ -209,9 +200,10 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         }
     }
 
-    private _onError(error: Error, buttonContainerDataId: string, nativeCheckoutButtonDataId: string): void {
-        this._removePayPalContainer(buttonContainerDataId);
-        this._showNativeCheckoutButton(nativeCheckoutButtonDataId);
+    private _onError(error: Error, onError?: () => void): void {
+        if (onError && typeof onError === 'function') {
+            onError();
+        }
 
         throw new Error(error.message);
     }
@@ -282,48 +274,20 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         };
     }
 
-    private _getElementByDataId(dataId: string): HTMLElement | null {
-        return document.querySelector(`[${dataId}]`);
-    }
-
     private _createPayPalButtonContainer(
-        acceleratedCheckoutContainerDataId: string,
-        buttonContainerDataId: string,
+        containerId: string,
+        buttonContainerId: string,
         buttonContainerClassName = 'PaypalCommerceInlineButton',
     ): void {
         const paypalButtonContainer = document.createElement('div');
         paypalButtonContainer.setAttribute('class', buttonContainerClassName);
-        paypalButtonContainer.setAttribute(buttonContainerDataId, '');
+        paypalButtonContainer.setAttribute('id', buttonContainerId);
 
-        const container = this._getElementByDataId(acceleratedCheckoutContainerDataId);
+        const container = document.getElementById(containerId);
 
         if (container) {
             container.innerHTML = "";
             container.append(paypalButtonContainer);
-        }
-    }
-
-    private _showNativeCheckoutButton(nativeCheckoutButtonDataId: string): void {
-        const nativeCheckoutButton = this._getElementByDataId(nativeCheckoutButtonDataId);
-
-        if (nativeCheckoutButton) {
-            nativeCheckoutButton.removeAttribute('style');
-        }
-    }
-
-    private _hideNativeCheckoutButton(nativeCheckoutButtonDataId: string): void {
-        const nativeCheckoutButton = this._getElementByDataId(nativeCheckoutButtonDataId);
-
-        if (nativeCheckoutButton) {
-            nativeCheckoutButton.setAttribute('style', 'display: none');
-        }
-    }
-
-    private _removePayPalContainer(buttonContainerDataId: string): void {
-        const paypalButtonContainer = this._getElementByDataId(buttonContainerDataId);
-
-        if (paypalButtonContainer?.parentNode) {
-            paypalButtonContainer.parentNode.removeChild(paypalButtonContainer);
         }
     }
 }
