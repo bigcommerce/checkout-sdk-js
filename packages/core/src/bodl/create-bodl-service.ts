@@ -8,11 +8,11 @@ import { CheckoutSelectors } from "../checkout";
  * Creates an instance of `BodlService`.
  *
  * @remarks
- * 
+ *
  * ```js
  * const bodlService = BodlService();
  * bodlService.checkoutBegin();
- * 
+ *
  * ```
  *
  * @param {CheckoutService} checkoutService - An instance of CheckoutService

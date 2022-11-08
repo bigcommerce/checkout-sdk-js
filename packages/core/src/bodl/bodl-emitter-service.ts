@@ -1,12 +1,16 @@
+import { AnalyticStepOrder, AnalyticStepType } from './analytics-steps';
 import { LineItemMap } from '../cart';
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
 import BodlService from "./bodl-service";
-import { BodlEventsCheckout, BODLProduct } from './bodl-window';
+import { BodlEventsCheckout, BodlEventsPayload, BODLProduct } from './bodl-window';
 
 export default class BodlEmitterService implements BodlService {
     private _checkoutStarted = false;
+    private _emailEntryBegan = false;
+    private _shippingOptionsShown = false;
+    private _completedSteps: { [key: string]: boolean } = {};
     private state?: CheckoutStoreSelector;
 
     constructor(
@@ -55,8 +59,8 @@ export default class BodlEmitterService implements BodlService {
             currency: currency.code,
             cart_value: cartAmount,
             coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
-            line_items: this.getProducts(lineItems, currency.code),
-            channel_id: channelId,
+            line_items: this._getProducts(lineItems, currency.code),
+            channel_id: channelId
         });
 
         this._checkoutStarted = true;
@@ -95,11 +99,71 @@ export default class BodlEmitterService implements BodlService {
             cart_value: orderAmount,
             coupon: coupons.map(coupon => coupon.code.toUpperCase()).join(','),
             shipping_cost: shippingCostTotal,
-            line_items: this.getProducts(lineItems, currency.code),
+            line_items: this._getProducts(lineItems, currency.code),
         });
     }
 
-    private getProducts(lineItems: LineItemMap, currencyCode: string): BODLProduct[] {
+    stepCompleted(currentStep?: AnalyticStepType): void {
+        if (!currentStep) {
+            return;
+        }
+
+        AnalyticStepOrder.some((step: AnalyticStepType) => {
+            if (!this._hasStepCompleted(step)) {
+                this._trackCompletedStep(step);
+            }
+
+            return step === currentStep;
+        });
+    }
+
+    customerEmailEntry(email?: string) {
+        if (this._emailEntryBegan || !email?.length) {
+            return;
+        }
+
+        this._emailEntryBegan = true;
+        this.bodlEvents.emit('bodl_checkout_email_entry_began');
+    }
+
+    customerSuggestionExecute() {
+        this.bodlEvents.emit('bodl_checkout_customer_suggestion_execute');
+    }
+
+    customerPaymentMethodExecuted(payload?: BodlEventsPayload) {
+        this.bodlEvents.emit('bodl_checkout_customer_payment_method_executed', payload);
+    }
+
+    showShippingMethods() {
+        if (this._shippingOptionsShown) {
+            return;
+        }
+
+        this._shippingOptionsShown = true;
+        this.bodlEvents.emit('bodl_checkout_show_shipping_options');
+    }
+
+    selectedPaymentMethod(paymentOption?: string) {
+        this.bodlEvents.emit('bodl_checkout_payment_method_selected', { paymentOption });
+    }
+
+    clickPayButton(payload?: BodlEventsPayload) {
+        this.bodlEvents.emit('bodl_checkout_click_pay_button', payload);
+    }
+
+    paymentRejected() {
+        this.bodlEvents.emit('bodl_checkout_payment_rejected');
+    }
+
+    paymentComplete() {
+        this.bodlEvents.emit('bodl_checkout_payment_complete');
+    }
+
+    exitCheckout() {
+        this.bodlEvents.emit('bodl_checkout_exit');
+    }
+
+    private _getProducts(lineItems: LineItemMap, currencyCode: string): BODLProduct[] {
         const customItems: BODLProduct[] = (lineItems.customItems || []).map(item => ({
             product_id: item.id,
             sku: item.sku,
@@ -160,5 +224,13 @@ export default class BodlEmitterService implements BodlService {
         ];
     }
 
+    private _trackCompletedStep(step: AnalyticStepType) {
+        this._completedSteps[step] = true;
+        this.bodlEvents.emit('bodl_checkout_step_completed', { step });
+    }
+
+    private _hasStepCompleted(step: AnalyticStepType): boolean {
+        return this._completedSteps[step];
+    }
 }
 
