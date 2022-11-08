@@ -27,6 +27,7 @@ to execution method.
 
 ### Methods
 
+- [checkoutPaymentMethodExecuted](ExecutePaymentMethodCheckoutOptions.md#checkoutpaymentmethodexecuted)
 - [continueWithCheckoutCallback](ExecutePaymentMethodCheckoutOptions.md#continuewithcheckoutcallback)
 
 ## Properties
@@ -66,6 +67,22 @@ cancelled.
 [CustomerRequestOptions](CustomerRequestOptions.md).[timeout](CustomerRequestOptions.md#timeout)
 
 ## Methods
+
+### checkoutPaymentMethodExecuted
+
+▸ `Optional` **checkoutPaymentMethodExecuted**(`data?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data?` | [`CheckoutPaymentMethodExecutedOptions`](CheckoutPaymentMethodExecutedOptions.md) |
+
+#### Returns
+
+`void`
+
+___
 
 ### continueWithCheckoutCallback
 
