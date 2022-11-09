@@ -60,6 +60,7 @@ export interface StripeCustomerEvent extends StripeEvent {
 
 export interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
+    phoneFieldRequired: boolean
     value: {
         address: {
             city: string;
@@ -70,6 +71,7 @@ export interface StripeShippingEvent extends StripeEvent {
             state: string;
         };
         name: string;
+        phone: string;
     };
 }
 
@@ -166,6 +168,7 @@ export interface StripeConfirmPaymentData {
 
 export interface FieldsOptions {
     billingDetails?: AutoOrNever | BillingDetailsProperties;
+    phone?: string;
 }
 
 export interface WalletOptions {
@@ -356,5 +359,5 @@ export enum StripeStringConstants {
 export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
-    SHIPPING = 'shippingAddress',
+    SHIPPING = 'address',
 }

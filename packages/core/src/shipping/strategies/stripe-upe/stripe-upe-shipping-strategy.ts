@@ -97,6 +97,12 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         let appearance: StripeUPEAppearanceOptions;
         const styles = getStyles && getStyles();
 
+        const {
+            form: { getShippingAddressFields }, shippingAddress: { getShippingAddress }
+        } = this._store.getState();
+
+        const shippingFields = getShippingAddressFields([], '');
+
         if (styles) {
             appearance = {
                 variables: {
@@ -131,26 +137,37 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             appearance,
         });
 
-        const shipping = this._store.getState().shippingAddress.getShippingAddress();
+        const shipping = getShippingAddress();
         const stripeState =
-            shipping?.stateOrProvinceCode && shipping.countryCode
-                ? getStripeState(shipping.countryCode, shipping.stateOrProvinceCode)
+            shipping?.stateOrProvinceCode && shipping?.countryCode
+                ? getStripeState(shipping?.countryCode, shipping?.stateOrProvinceCode)
                 : shipping?.stateOrProvinceCode;
+        const shippingPhoneField = shippingFields.find(field => field.name === 'phone');
         const option = {
+            mode: 'shipping',
             allowedCountries: [availableCountries],
             defaultValues: {
                 name: shipping?.lastName
                     ? `${shipping.firstName} ${shipping.lastName}`
                     : shipping?.firstName || '',
+                phone: shipping?.phone || '',
                 address: {
                     line1: shipping?.address1 || '',
-                    line2: shipping?.address2 || '',
-                    city: shipping?.city || '',
-                    state: stripeState || '',
-                    postal_code: shipping?.postalCode || '',
-                    country: shipping?.countryCode || '',
-                },
+                    line2: shipping?.address2  || '',
+                    city: shipping?.city  || '',
+                    state: stripeState  || '',
+                    postal_code: shipping?.postalCode  || '',
+                    country: shipping?.countryCode  || ''
+                }
             },
+            fields: {
+                phone: 'always'
+            },
+            validation: {
+                phone: {
+                    required: shippingPhoneField && shippingPhoneField.required ? 'always' : 'never'
+                }
+            }
         };
 
         let shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING);
@@ -172,7 +189,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 }
 
                 this.sendData = setTimeout(() => {
-                    onChangeShipping(event);
+                    onChangeShipping({ ...event, phoneFieldRequired: shippingPhoneField ? shippingPhoneField.required : false });
                 }, 1000);
             }
         });

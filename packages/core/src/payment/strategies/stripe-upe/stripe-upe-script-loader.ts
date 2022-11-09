@@ -30,6 +30,7 @@ export default class StripeUPEScriptLoader {
                     'alipay_pm_beta_1',
                     'link_default_integration_beta_1',
                     'shipping_address_element_beta_1',
+                    'address_element_beta_1',
                 ],
                 apiVersion: '2020-03-02;alipay_beta=v1;link_beta=v1',
             });
