@@ -173,6 +173,7 @@ describe('StripeUPEPaymentStrategy', () => {
                     locale: 'en',
                     clientSecret: 'myToken',
                     appearance: {
+                        labels: 'floating',
                         rules: {
                             '.Input': {
                                 borderColor: testColor,

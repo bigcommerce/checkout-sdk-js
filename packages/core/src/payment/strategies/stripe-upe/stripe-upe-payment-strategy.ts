@@ -259,6 +259,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (style) {
             const styles = style;
             appearance = {
+                labels: 'floating',
                 variables: {
                     colorPrimary: styles.fieldInnerShadow,
                     colorBackground: styles.fieldBackground,
