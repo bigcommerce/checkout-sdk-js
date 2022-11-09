@@ -86,12 +86,14 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 appearance,
             });
 
-            const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-            const { email: billingEmail }  = billingAddress || {};
+            const {
+                billingAddress: { getBillingAddress }, consignments: { getConsignmentsOrThrow },
+            } = this._store.getState();
+            const { email: billingEmail }  = getBillingAddress() || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
-
+            
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
@@ -99,12 +101,10 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
                 event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
                 if (isStripeLinkAuthenticated && !event.authenticated) {
-                    const state = this._store.getState();
-                    const consignmentShipping = state.consignments.getConsignmentsOrThrow();
                     return this._store.dispatch(
-                        this._consignmentActionCreator.deleteConsignment(consignmentShipping[0].id)
+                        this._consignmentActionCreator.deleteConsignment(getConsignmentsOrThrow()[0].id)
                     );
-
+            
                 }
                 if (isLoading) {
                     isLoading(false);
