@@ -229,6 +229,8 @@ export interface StripeElements {
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
 export interface StripeUPEAppearanceOptions {
+    labels?: 'floating'
+
     variables?: {
         colorPrimary?: string;
         colorBackground?: string;

@@ -60,6 +60,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
         if (styles) {
             appearance = {
+                labels: 'floating',
                 variables: {
                     colorPrimary: styles.fieldInnerShadow,
                     colorBackground: styles.fieldBackground,

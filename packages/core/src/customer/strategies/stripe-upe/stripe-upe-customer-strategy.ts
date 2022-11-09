@@ -53,6 +53,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             if (styles) {
                 appearance = {
+                    labels: 'floating',
                     variables: {
                         colorPrimary: styles.fieldInnerShadow,
                         colorBackground: styles.fieldBackground,
@@ -67,7 +68,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                             color: styles.fieldText,
                             boxShadow: styles.fieldInnerShadow,
                         },
-                    }
+                    },
                 };
             } else {
                 appearance = {}
