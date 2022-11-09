@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.306.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.305.1...v1.306.0) (2022-11-09)
+
+
+### Features
+
+* **payment:** PAYPAL-1723 added skip checkout functionality to PDP paypalcommerce ([#1667](https://github.com/bigcommerce/checkout-sdk-js/issues/1667)) ([0fe4ae2](https://github.com/bigcommerce/checkout-sdk-js/commit/0fe4ae2a29bdcf5f06dd7f09dae661c119f2af44))
+
 ### [1.305.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.305.0...v1.305.1) (2022-11-08)
 
 
