@@ -1185,6 +1185,10 @@ declare interface BaseElementOptions {
      * Set custom class names on the container DOM element when the Digital River element is in a particular state.
      */
     classes?: DigitalRiverElementClasses;
+    /**
+     * Use disabledPaymentMethods to disable specific payment methods.
+     */
+    disabledPaymentMethods?: string[];
 }
 
 declare interface BaseElementOptions_2 {

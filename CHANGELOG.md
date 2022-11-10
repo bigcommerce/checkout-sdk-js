@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.307.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.306.0...v1.307.0) (2022-11-10)
+
+
+### Features
+
+* **payment:** INT-6443 Hide payPal onDigital River behind an experiment ([2ad1c42](https://github.com/bigcommerce/checkout-sdk-js/commit/2ad1c42d330a58e9b4b0e25c3f8b614ab26ba8d3))
+* **payment:** INT-6443 reviewed change by Animesh ([3f0292b](https://github.com/bigcommerce/checkout-sdk-js/commit/3f0292b055abef210c7eefb4e3248468b9f7c148))
+* **payment:** INT-6443 reviewed change by Peng Zhou ([c756ee3](https://github.com/bigcommerce/checkout-sdk-js/commit/c756ee3ae10e9b872c431d0b5b5984b6968fe61c))
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-167 Adding Postal Code to stripe card elemnt if not obtained in billing ([d3f6aa8](https://github.com/bigcommerce/checkout-sdk-js/commit/d3f6aa8309fc5a5f6c31f622e789203d234e2e94))
+
 ## [1.306.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.305.1...v1.306.0) (2022-11-09)
 
 
