@@ -13,29 +13,29 @@ export interface BODLProduct {
     discount?: number;
     index?: number;
     brand_name?: string;
-    category_name?: string;
+    category_names?: string[];
     currency?: string;
 }
 
 
 export interface CheckoutBeginData {
-    id: string
+    event_id: string
     currency: string,
     channel_id: number,
     cart_value: number,
-    coupon: string,
+    coupon_codes: string[],
     line_items: BODLProduct[]
 }
 
 
 export interface OrderPurchasedData {
-    id: string
+    event_id: string
     currency: string,
     tax: number,
     channel_id: number,
-    transaction_id: number,
+    order_id: number,
     cart_value: number,
-    coupon: string,
+    coupon_codes: string[],
     shipping_cost: number,
     line_items: BODLProduct[]
 

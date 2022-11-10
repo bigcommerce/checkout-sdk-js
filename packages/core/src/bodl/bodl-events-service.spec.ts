@@ -50,10 +50,10 @@ describe('BodlEmitterService', () => {
             expect(bodlEvents.emitCheckoutBeginEvent).toBeCalledTimes(1);
         });
 
-        it('tracks the id', () => {
+        it('tracks the event id', () => {
             expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    event_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 })
             );
         });
@@ -74,10 +74,10 @@ describe('BodlEmitterService', () => {
             );
         });
 
-        it('tracks the coupon string', () => {
+        it('tracks the coupon_codes array', () => {
             expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    coupon: 'SAVEBIG2015,279F507D817E3E7',
+                    coupon_codes: ['SAVEBIG2015', '279F507D817E3E7'],
                 })
             );
         });
@@ -93,10 +93,10 @@ describe('BodlEmitterService', () => {
         it('tracks products', () => {
             expect(bodlEvents.emitCheckoutBeginEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    coupon: 'SAVEBIG2015,279F507D817E3E7',
+                    coupon_codes: ['SAVEBIG2015', '279F507D817E3E7'],
                     cart_value: 190,
                     currency: 'USD',
-                    id: "b20deef40f9699e48671bbc3fef6ca44dc80e3c7",
+                    event_id: "b20deef40f9699e48671bbc3fef6ca44dc80e3c7",
                     line_items: [{
                         product_id: 103,
                         sku: 'CLC',
@@ -107,7 +107,7 @@ describe('BodlEmitterService', () => {
                         quantity: 1,
                         brand_name: 'OFS',
                         discount: 10,
-                        category_name: 'Cat 1',
+                        category_names: ['Cat 1'],
                         variant_id: 71,
                         currency: 'USD'
                     }, {
@@ -120,7 +120,7 @@ describe('BodlEmitterService', () => {
                         quantity: 1,
                         discount: 0,
                         brand_name: 'Digitalia',
-                        category_name: 'Ebooks, Audio Books',
+                        category_names: ['Ebooks', 'Audio Books'],
                         variant_id: 72,
                         currency: 'USD'
                     }, {
@@ -149,10 +149,10 @@ describe('BodlEmitterService', () => {
         });
 
 
-        it('tracks the id', () => {
+        it('tracks the event id', () => {
             expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    event_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 })
             );
         });
@@ -168,7 +168,7 @@ describe('BodlEmitterService', () => {
         it('tracks the transaction id', () => {
             expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    transaction_id: 295,
+                    order_id: 295,
                 })
             );
         });
@@ -184,7 +184,7 @@ describe('BodlEmitterService', () => {
         it('tracks the coupon amount, single field, comma separated', () => {
             expect(bodlEvents.emitOrderPurchasedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    coupon: 'SAVEBIG2015,279F507D817E3E7',
+                    coupon_codes: ['SAVEBIG2015', '279F507D817E3E7'],
                 })
             );
         });
@@ -226,7 +226,7 @@ describe('BodlEmitterService', () => {
                         quantity: 1,
                         brand_name: 'OFS',
                         discount: 10,
-                        category_name: 'Cat 1',
+                        category_names: ['Cat 1'],
                         variant_id: 71,
                         currency: 'USD'
                     }, {
