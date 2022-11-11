@@ -9,6 +9,7 @@ import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 import { ConsignmentActionCreator } from '../../../shipping';
+import BillingAddressActionCreator from "../../../billing/billing-address-action-creator"
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
@@ -18,8 +19,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _consignmentActionCreator: ConsignmentActionCreator
-    ) {}
+        private _consignmentActionCreator: ConsignmentActionCreator,
+        private _createOrUpdateBillingAddress: BillingAddressActionCreator
+    ) { }
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         let stripeUPEClient: StripeUPEClient;
@@ -89,11 +91,24 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             const {
                 billingAddress: { getBillingAddress }, consignments: { getConsignmentsOrThrow },
             } = this._store.getState();
-            const { email: billingEmail }  = getBillingAddress() || {};
+            const { email: billingEmail } = getBillingAddress() || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
-            
+            const address = {
+                firstName: '',
+                lastName: '',
+                company: '',
+                address1: '',
+                address2: '',
+                city: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                countryCode: '',
+                postalCode: '',
+                phone: ''
+            }
+
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
@@ -104,8 +119,14 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     return this._store.dispatch(
                         this._consignmentActionCreator.deleteConsignment(getConsignmentsOrThrow()[0].id)
                     );
-            
+
+                } else if (isStripeLinkAuthenticated && !event.authenticated) {
+                    return this._store.dispatch(
+                        this._createOrUpdateBillingAddress.updateAddress(address)
+                    );
+
                 }
+                console.log(getConsignmentsOrThrow())
                 if (isLoading) {
                     isLoading(false);
                 }

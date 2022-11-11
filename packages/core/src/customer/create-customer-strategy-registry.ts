@@ -307,6 +307,12 @@ export default function createCustomerStrategyRegistry(
             new ConsignmentActionCreator(
                 new ConsignmentRequestSender(requestSender),
                 new CheckoutRequestSender(requestSender)
+            ),
+            new BillingAddressActionCreator(
+                new BillingAddressRequestSender(requestSender),
+                new SubscriptionsActionCreator(
+                    new SubscriptionsRequestSender(requestSender)
+                )
             )
         )
     );

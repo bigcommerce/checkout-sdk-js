@@ -24,6 +24,8 @@ import CustomerStrategy from '../customer-strategy';
 
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import { getCustomerStripeUPEJsMock, getStripeUPECustomerInitializeOptionsMock } from './stripe-upe-customer.mock';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { BillingAddressActionCreator } from 'packages/core/src/billing';
 
 describe('StripeUpeCustomerStrategy', () => {
     const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
@@ -33,6 +35,7 @@ describe('StripeUpeCustomerStrategy', () => {
     const requestSender = createRequestSender();
 
     let consignmentActionCreator: ConsignmentActionCreator;
+    let billingAddressActionCreator: BillingAddressActionCreator
     let customerActionCreator: CustomerActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -89,7 +92,8 @@ describe('StripeUpeCustomerStrategy', () => {
             stripeScriptLoader,
             customerActionCreator,
             paymentMethodActionCreator,
-            consignmentActionCreator
+            consignmentActionCreator,
+            billingAddressActionCreator
         );
     });
 
