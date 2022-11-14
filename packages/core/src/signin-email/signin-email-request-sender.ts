@@ -25,9 +25,11 @@ export default class SignInEmailRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
+        const href = window.top ? window.top.location.href : '';
+
         return this._requestSender.post(url, { body: {
             email,
-            redirect_url: redirectUrl || parseUrl(window.top.location.href).pathname,
+            redirect_url: redirectUrl || parseUrl(href).pathname, 
         }, headers, timeout });
     }
 }

@@ -29,7 +29,9 @@ export default async function extendInterface({
     const mergableMemberNames = importDeclarations.map(statement => statement?.importClause?.namedBindings)
         .filter(exists)
         .filter(ts.isNamedImports)
-        .flatMap(namedImports => namedImports.elements.map(element => element.name.escapedText.toString()));
+        .flatMap(namedImports => namedImports.elements.map(element => {
+            return element.name && element.name.escapedText.toString();
+        }));
 
     return ts.createPrinter()
         .printList(
@@ -80,7 +82,9 @@ async function createImportDeclaration(
 
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
-        .map(element => element.name.escapedText.toString())
+        .map(element => {
+                return element.name && element.name.escapedText.toString()
+        })
         .filter(memberName => memberName?.match(new RegExp(memberPattern)));
 
     if (memberNames.length === 0) {
@@ -94,12 +98,13 @@ async function createImportDeclaration(
             false,
             undefined,
             ts.factory.createNamedImports(
-                memberNames.map(memberName =>
-                    ts.factory.createImportSpecifier(
+                memberNames.map(memberName => {
+                    return ts.factory.createImportSpecifier(
+                        false,
                         undefined,
-                        ts.factory.createIdentifier(memberName)
+                        ts.factory.createIdentifier(memberName || '')
                     )
-                )
+                })
             )
         ),
         ts.factory.createStringLiteral(getImportPath(filePath, outputPath), true)
