@@ -70,7 +70,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                 .then(state => {
                     const redirectUrl = state.payment.getPaymentRedirectUrl();
 
-                    if (redirectUrl) {
+                    if (redirectUrl && this._window.top) {
                         this._window.top.location.href = redirectUrl;
                     }
 

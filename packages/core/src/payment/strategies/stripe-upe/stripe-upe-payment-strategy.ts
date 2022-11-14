@@ -230,7 +230,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
-            return await this._processAdditionalAction(error);
+            if (error instanceof Error) {
+                return await this._processAdditionalAction(error);
+            }
+
+            return Promise.reject(this._store.getState());
         }
     }
 
@@ -251,7 +255,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
-            return await this._processVaultedAdditionalAction(error, methodId, shouldSetAsDefaultInstrument);
+            if (error instanceof Error) {
+                return await this._processVaultedAdditionalAction(error, methodId, shouldSetAsDefaultInstrument);
+            }
+
+            return Promise.reject(this._store.getState());
         }
     }
 

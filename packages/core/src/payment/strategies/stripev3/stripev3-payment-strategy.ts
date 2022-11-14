@@ -129,12 +129,16 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         } catch (error) {
-            return await this._processAdditionalAction(
-                this._handleEmptyPaymentIntentError(error, stripeError),
-                methodId,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument
-            );
+            if (error instanceof Error) {
+                return await this._processAdditionalAction(
+                    this._handleEmptyPaymentIntentError(error, stripeError),
+                    methodId,
+                    shouldSaveInstrument,
+                    shouldSetAsDefaultInstrument
+                );
+            }
+
+            return Promise.resolve(this._store.getState());
         }
     }
 
@@ -530,7 +534,9 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             try {
                 return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
             } catch (error) {
-                throw this._handleEmptyPaymentIntentError(error, result?.error);
+                if (error instanceof Error) {
+                    throw this._handleEmptyPaymentIntentError(error, result?.error);
+                }
             }
         }
 
