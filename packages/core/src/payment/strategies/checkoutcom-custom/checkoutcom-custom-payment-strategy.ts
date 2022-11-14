@@ -44,7 +44,7 @@ export default class CheckoutcomCustomPaymentStrategy extends CreditCardPaymentS
         return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
     }
 
-    protected _processResponse(error: RequestError): Promise<InternalCheckoutSelectors> {
+    protected _processResponse(error: unknown): Promise<InternalCheckoutSelectors> {
         if (!(error instanceof RequestError)) {
             return Promise.reject(error);
         }

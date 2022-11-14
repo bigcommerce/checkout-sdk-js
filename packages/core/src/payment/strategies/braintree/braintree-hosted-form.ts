@@ -10,6 +10,7 @@ import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldSty
 import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { isBraintreeFormFieldsMap } from './is-braintree-form-fields-map';
+import isBraintreeHostedFormError from './is-braintree-hosted-form-error';
 
 enum BraintreeHostedFormType {
     CreditCard,
@@ -234,28 +235,30 @@ export default class BraintreeHostedForm {
     }
 
     private _mapTokenizeError(
-        error: BraintreeHostedFormError
+        error: unknown
     ): BraintreeFormFieldValidateEventData['errors'] | undefined {
-        if (error.code === 'HOSTED_FIELDS_FIELDS_EMPTY') {
-            return {
-                [this._mapFieldType('cvv')]: [
-                    this._createRequiredError(this._mapFieldType('cvv')),
+        if (isBraintreeHostedFormError(error)) {
+            if (error.code === 'HOSTED_FIELDS_FIELDS_EMPTY') {
+                return {
+                    [this._mapFieldType('cvv')]: [
+                        this._createRequiredError(this._mapFieldType('cvv')),
+                    ],
+                    [this._mapFieldType('expirationDate')]: [
+                        this._createRequiredError(this._mapFieldType('expirationDate')),
+                    ],
+                    [this._mapFieldType('number')]: [
+                        this._createRequiredError(this._mapFieldType('number')),
+                    ],
+                };
+            }
+    
+            return error?.details?.invalidFieldKeys?.reduce((result, fieldKey) => ({
+                ...result,
+                [this._mapFieldType(fieldKey)]: [
+                    this._createInvalidError(this._mapFieldType(fieldKey)),
                 ],
-                [this._mapFieldType('expirationDate')]: [
-                    this._createRequiredError(this._mapFieldType('expirationDate')),
-                ],
-                [this._mapFieldType('number')]: [
-                    this._createRequiredError(this._mapFieldType('number')),
-                ],
-            };
+            }), {});
         }
-
-        return error?.details?.invalidFieldKeys?.reduce((result, fieldKey) => ({
-            ...result,
-            [this._mapFieldType(fieldKey)]: [
-                this._createInvalidError(this._mapFieldType(fieldKey)),
-            ],
-        }), {});
     }
 
     private _createRequiredError(fieldType: BraintreeFormFieldType): BraintreeFormFieldValidateErrorData {

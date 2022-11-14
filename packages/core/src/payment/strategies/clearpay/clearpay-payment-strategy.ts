@@ -1,3 +1,4 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { noop } from 'lodash';
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
@@ -103,7 +104,8 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             await this._remoteCheckoutRequestSender.forgetCheckout();
             await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
 
-            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            const typedError = isRequestError(error) ? error : new RequestError();
+            throw new OrderFinalizationNotCompletedError(typedError.body?.errors?.[0]?.message);
         }
     }
 
