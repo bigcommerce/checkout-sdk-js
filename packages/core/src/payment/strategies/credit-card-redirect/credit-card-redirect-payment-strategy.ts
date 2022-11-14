@@ -1,3 +1,4 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { FormPoster } from '@bigcommerce/form-poster';
 import { some } from 'lodash';
 
@@ -56,11 +57,15 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                 return Promise.reject(error);
             }
 
-            return new Promise(() => this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                PaReq: error.body.three_ds_result.payer_auth_request || null,
-                TermUrl: error.body.three_ds_result.callback_url || null,
-                MD: error.body.three_ds_result.merchant_data || null,
-            }));
+            return new Promise(() => {
+                if (isRequestError(error)) {
+                    return this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                        PaReq: error.body.three_ds_result.payer_auth_request || null,
+                        TermUrl: error.body.three_ds_result.callback_url || null,
+                        MD: error.body.three_ds_result.merchant_data || null,
+                    });
+                }
+            });
         }
     }
 
@@ -85,11 +90,15 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                 return Promise.reject(error);
             }
 
-            return new Promise(() => this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                PaReq: error.body.three_ds_result.payer_auth_request || null,
-                TermUrl: error.body.three_ds_result.callback_url || null,
-                MD: error.body.three_ds_result.merchant_data || null,
-            }));
+            return new Promise(() => {
+                if (isRequestError(error)) {
+                    return this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                        PaReq: error.body.three_ds_result.payer_auth_request || null,
+                        TermUrl: error.body.three_ds_result.callback_url || null,
+                        MD: error.body.three_ds_result.merchant_data || null,
+                    })
+                }
+            });
         }
 
         return await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());

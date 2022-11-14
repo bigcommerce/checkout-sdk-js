@@ -31,13 +31,19 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
         try {
             return await this._store.dispatch(this._paymentActionCreator.submitPayment({...payment, paymentData}));
         } catch (error) {
-            if (!this._isAdditionalActionRequired(error)) {
-                return Promise.reject(error);
+            if (error instanceof RequestError) {
+                if (!this._isAdditionalActionRequired(error)) {
+                    return Promise.reject(error);
+                }
+
+                return new Promise(() => {
+                    if (error instanceof RequestError) {
+                        this._formPoster.postForm(error.body.additional_action_required.data.redirect_url, { });
+                    }
+                });
             }
 
-            return new Promise(() => {
-                this._formPoster.postForm(error.body.additional_action_required.data.redirect_url, { });
-            });
+            return Promise.reject(this._store.getState());
         }
     }
 
