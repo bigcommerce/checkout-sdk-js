@@ -88,6 +88,7 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                 return Promise.reject(error);
             }
 
+<<<<<<< HEAD
             const { body: { three_ds_result } } = error;
 
             return new Promise(() => {
@@ -96,6 +97,14 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                         PaReq: three_ds_result.payer_auth_request || null,
                         TermUrl: three_ds_result.callback_url || null,
                         MD: three_ds_result.merchant_data || null,
+=======
+            return new Promise(() => {
+                if (isRequestError(error)) {
+                    return this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                        PaReq: error.body.three_ds_result.payer_auth_request || null,
+                        TermUrl: error.body.three_ds_result.callback_url || null,
+                        MD: error.body.three_ds_result.merchant_data || null,
+>>>>>>> bfa3de3b (chore(common): CHECKOUT-7058 Wrap in request error typeguard)
                     })
                 }
             });
