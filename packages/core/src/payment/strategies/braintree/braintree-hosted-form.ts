@@ -5,7 +5,7 @@ import { NotInitializedError, NotInitializedErrorType } from '../../../common/er
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState, BraintreeHostedFormError } from './braintree';
+import { BraintreeBillingAddressRequestData, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeHostedFieldsState } from './braintree';
 import { BraintreeFormFieldsMap, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap, BraintreeFormFieldType, BraintreeFormFieldValidateErrorData, BraintreeFormFieldValidateEventData, BraintreeFormOptions, BraintreeStoredCardFieldsMap } from './braintree-payment-options';
 import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';

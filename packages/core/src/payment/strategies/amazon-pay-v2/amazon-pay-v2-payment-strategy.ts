@@ -86,9 +86,11 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             } catch (error) {
                 if (error instanceof RequestError && error.body.status === 'additional_action_required') {
                     if (paymentToken) {
-                        return new Promise(() =>
-                            window.location.assign(error.body.additional_action_required.data.redirect_url)
-                        );
+                        return new Promise(() => {
+                            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+                                return window.location.assign(error.body.additional_action_required.data.redirect_url)
+                            }
+                        });
                     }
 
                     this._amazonPayV2PaymentProcessor.prepareCheckout(JSON.parse(error.body.additional_action_required.data.redirect_url));

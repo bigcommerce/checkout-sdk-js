@@ -42,11 +42,16 @@ export default class PaymentActionCreator {
                         this._paymentRequestTransformer.transform(payment, store.getState())
                     );
                 } catch (error) {
-                    const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+                    if (error instanceof Error) {
+                        const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+                    
 
-                    return await this._paymentRequestSender.submitPayment(
-                        this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
-                    );
+                        return await this._paymentRequestSender.submitPayment(
+                            this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
+                        );
+                    }
+
+                    return Promise.resolve({ body: {} });
                 }
             })
                 .pipe(
