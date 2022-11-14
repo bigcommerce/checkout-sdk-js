@@ -143,7 +143,7 @@ describe('ApplePayButtonStrategy', () => {
             orderActionCreator,
             applePayFactory
         );
-
+console.log('MASTER');
         container = document.createElement('div');
         container.setAttribute('id', 'applePayCheckoutButton');
         document.body.appendChild(container);
