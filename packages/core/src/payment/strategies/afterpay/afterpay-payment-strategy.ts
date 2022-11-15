@@ -113,6 +113,8 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             if (isRequestError(error)) {
                 throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
             }
+
+            return this._store.getState();
         }
     }
 
