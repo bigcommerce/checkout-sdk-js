@@ -59,7 +59,7 @@ describe('GooglePayBraintreeInitializer', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(error).toBeTruthy();
-                expect(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message).toEqual(error.message);
+                expect(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message).toEqual((error as Error).message);
             }
         });
     });

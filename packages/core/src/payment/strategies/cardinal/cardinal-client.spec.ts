@@ -250,7 +250,7 @@ describe('CardinalClient', () => {
                 await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
-                expect(error.message).toBe('User failed authentication or an error was encountered while processing the transaction.');
+                expect((error as Error).message).toBe('User failed authentication or an error was encountered while processing the transaction.');
             }
         });
 
@@ -305,7 +305,7 @@ describe('CardinalClient', () => {
                 await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
-                expect(error.message).toBe('An error was encountered while processing the transaction.');
+                expect((error as Error).message).toBe('An error was encountered while processing the transaction.');
             }
         });
     });
