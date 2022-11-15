@@ -62,21 +62,19 @@ export default class HostedForm {
         });
     }
 
-    async submit(payload: OrderPaymentRequestBody, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent | void> {
+    async submit(payload: OrderPaymentRequestBody, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent> {
         try {
             return await this._getFirstField().submitForm(
                 this._fields.map(field => field.getType()),
                 this._payloadTransformer.transform(payload, additionalActionData)
             );
         } catch (error) {
-            if (error instanceof Error) {
-                const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+            const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
 
-                return await this._getFirstField().submitForm(
-                    this._fields.map(field => field.getType()),
-                    this._payloadTransformer.transform(payload, additionalAction)
-                );
-            }
+            return await this._getFirstField().submitForm(
+                this._fields.map(field => field.getType()),
+                this._payloadTransformer.transform(payload, additionalAction)
+            );
         }
     }
 
