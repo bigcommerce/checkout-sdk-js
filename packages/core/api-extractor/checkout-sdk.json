@@ -1,22 +1,51 @@
 {
     "compiler": {
-        "configType": "tsconfig",
-        "rootFolder": "."
+        "tsconfigFilePath": "../tsconfig.json"
     },
-    "project": {
-        "entryPointSourceFile": "../../temp/core/src/bundles/checkout-sdk.d.ts"
-    },
-    "validationRules": {
-        "missingReleaseTags": "allow"
-    },
-    "apiReviewFile": {
+    "projectFolder": "../../../",
+    "mainEntryPointFilePath": "<projectFolder>/temp/core/src/bundles/checkout-sdk.d.ts",
+    "newlineKind": "lf",
+    "docModel": {
         "enabled": false
     },
-    "apiJsonFile": {
+    "apiReport": {
         "enabled": false
+    },
+    "messages": {
+        "extractorMessageReporting": {
+            "default": {
+                "logLevel": "none"
+            },
+            "ae-forgotten-export": {
+                "logLevel": "none"
+            },
+            "ae-incompatible-release-tags": {
+                "logLevel": "none"
+            },
+            "ae-internal-missing-underscore": {
+                "logLevel": "none"
+            },
+            "ae-internal-mixed-release-tag": {
+                "logLevel": "none"
+            },
+            "ae-unresolved-inheritdoc-reference": {
+                "logLevel": "none"
+            },
+            "ae-unresolved-inheritdoc-base": {
+                "logLevel": "none"
+            },
+            "ae-wrong-input-file-type": {
+                "logLevel": "none"
+            }
+        },
+        "tsdocMessageReporting": {
+            "default": {
+                "logLevel": "none"
+            }
+        }
     },
     "dtsRollup": {
         "enabled": true,
-        "mainDtsRollupPath": "checkout-sdk.d.ts"
+        "publicTrimmedFilePath": "<projectFolder>/dist/checkout-sdk.d.ts"
     }
 }

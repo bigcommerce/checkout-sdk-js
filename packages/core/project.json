@@ -62,8 +62,7 @@
                 "parallel": false,
                 "commands": [
                     "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
-                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
-                    "rm -rf ../../temp"
+                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json"
                 ]
             }
         },
