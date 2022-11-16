@@ -70,7 +70,6 @@
     "reselect": "^4.1.6",
     "rxjs": "^6.6.7",
     "shallowequal": "^1.1.0",
-    "tslib": "^1.10.0",
     "yup": "^0.27.0"
   },
   "devDependencies": {
@@ -110,6 +109,7 @@
     "standard-version": "^9.5.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^9.2.9",
+    "tslib": "^2.4.0",
     "typedoc": "^0.22.0",
     "typedoc-plugin-markdown": "^3.11.0",
     "typescript": "^4.7.4",
