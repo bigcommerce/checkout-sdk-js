@@ -145,7 +145,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             }
             await this._onPaymentSelectComplete();
         } catch (error) {
-            if (error && error.message !== 'CANCELED') {
+            if (error instanceof Error && error.message !== 'CANCELED') {
                 throw error;
             }
         }
