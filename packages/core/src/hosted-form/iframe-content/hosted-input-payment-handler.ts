@@ -1,3 +1,4 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
 
