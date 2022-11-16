@@ -60,6 +60,7 @@ async function createExportDeclaration(
         ts.factory.createNamedExports(
             memberNames.map(memberName =>
                 ts.factory.createExportSpecifier(
+                    false,
                     undefined,
                     ts.factory.createIdentifier(memberName)
                 )

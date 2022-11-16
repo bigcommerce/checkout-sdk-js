@@ -30,7 +30,7 @@ export default async function extendInterface({
         .filter(exists)
         .filter(ts.isNamedImports)
         .flatMap(namedImports => namedImports.elements.map(element => {
-            return element.name && element.name.escapedText.toString();
+            return element.name.escapedText.toString();
         }));
 
     return ts.createPrinter()
@@ -83,7 +83,7 @@ async function createImportDeclaration(
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
         .map(element => {
-                return element.name && element.name.escapedText.toString()
+            return element.name.escapedText.toString();
         })
         .filter(memberName => memberName?.match(new RegExp(memberPattern)));
 
@@ -95,14 +95,14 @@ async function createImportDeclaration(
         undefined,
         undefined,
         ts.factory.createImportClause(
-            false,
+            true,
             undefined,
             ts.factory.createNamedImports(
                 memberNames.map(memberName => {
                     return ts.factory.createImportSpecifier(
                         false,
                         undefined,
-                        ts.factory.createIdentifier(memberName || '')
+                        ts.factory.createIdentifier(memberName)
                     )
                 })
             )
