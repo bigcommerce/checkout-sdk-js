@@ -410,7 +410,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 postalCode,
             } = address;
 
-            return { city, country, postalCode };
+            return { city, country, postal_code: postalCode };
         }
 
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);

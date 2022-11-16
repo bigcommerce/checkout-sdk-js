@@ -82,7 +82,7 @@ export interface AddressOptions {
     city?: string;
     country?: string;
     state?: string;
-    postalCode?: string;
+    postal_code?: string;
     line1?: string;
     line2?: string;
 }
