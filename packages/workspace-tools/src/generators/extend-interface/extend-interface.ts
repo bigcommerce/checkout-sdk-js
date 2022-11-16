@@ -30,7 +30,7 @@ export default async function extendInterface({
         .filter(exists)
         .filter(ts.isNamedImports)
         .flatMap(namedImports => namedImports.elements.map(element => {
-            return element.name && element.name.escapedText.toString();
+            return element.name.escapedText.toString();
         }));
 
     return ts.createPrinter()
@@ -100,7 +100,7 @@ async function createImportDeclaration(
                     return ts.factory.createImportSpecifier(
                         false,
                         undefined,
-                        ts.factory.createIdentifier(memberName || '')
+                        ts.factory.createIdentifier(memberName)
                     )
                 })
             )
