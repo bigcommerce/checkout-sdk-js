@@ -101,10 +101,10 @@ describe('StripeUPEShippingStrategy', () => {
         });
 
         it('returns an error when methodId is not present', () => {
-            const promise = strategy.initialize({ ...getStripeUPEShippingInitializeOptionsMock(), methodId: '' });
+            const options = { ...getStripeUPEShippingInitializeOptionsMock(), methodId: undefined };
+            const promise = strategy.initialize(options);
 
             expect(promise).rejects.toBeInstanceOf(InvalidArgumentError);
-
         });
 
         it('returns an error when stripePublishableKey, or clientToken is not present', () => {
@@ -114,7 +114,6 @@ describe('StripeUPEShippingStrategy', () => {
             const promise = strategy.initialize(shippingInitialization);
 
             expect(promise).rejects.toBeInstanceOf(MissingDataError);
-
         });
     });
 

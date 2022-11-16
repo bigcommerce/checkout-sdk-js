@@ -5,8 +5,7 @@ const isRequestError = (error: any): error is RequestError => {
         error !== null &&
         'body' in error &&
         typeof error.body === "object" && error.body !== null &&
-        'errors' in error.body &&
-        'provider_data' in error.body);
+        'errors' in error.body);
 }
 
 export default isRequestError;

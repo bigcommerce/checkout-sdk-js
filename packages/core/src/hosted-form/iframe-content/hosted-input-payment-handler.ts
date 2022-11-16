@@ -1,3 +1,4 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
 
@@ -56,7 +57,7 @@ export default class HostedInputPaymentHandler {
                 payload: { response },
             });
         } catch (error) {
-            if (error instanceof Error) {
+            if (isRequestError(error)) {
                 this._eventPoster.post({
                     type: HostedInputEventType.SubmitFailed,
                     payload: this._isPaymentErrorResponse(error) ?
