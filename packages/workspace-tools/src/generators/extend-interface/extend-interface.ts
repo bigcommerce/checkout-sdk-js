@@ -29,9 +29,7 @@ export default async function extendInterface({
     const mergableMemberNames = importDeclarations.map(statement => statement?.importClause?.namedBindings)
         .filter(exists)
         .filter(ts.isNamedImports)
-        .flatMap(namedImports => namedImports.elements.map(element => {
-            return element.name.escapedText.toString();
-        }));
+        .flatMap(namedImports => namedImports.elements.map(element => element.name.escapedText.toString()));
 
     return ts.createPrinter()
         .printList(

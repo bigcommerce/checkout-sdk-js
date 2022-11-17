@@ -52,7 +52,7 @@ export default class PaymentActionCreator {
                         );
                     }
 
-                    return Promise.resolve({ body: {} });
+                    throw error;
                 }
             })
                 .pipe(

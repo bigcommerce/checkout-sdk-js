@@ -138,7 +138,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 );
             }
 
-            return Promise.resolve(this._store.getState());
+            throw error;
         }
     }
 

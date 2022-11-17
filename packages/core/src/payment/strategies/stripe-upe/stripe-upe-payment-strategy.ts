@@ -234,7 +234,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 return await this._processAdditionalAction(error);
             }
 
-            return Promise.reject(this._store.getState());
+            throw error;
         }
     }
 

@@ -52,6 +52,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             if (error instanceof Error) {
                 this._handleError(error);
             }
+
+            throw error;
         }
 
         return this._store.getState();
@@ -93,7 +95,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 return this._processAdditionalAction(error, payment, orderAmount);
             }
 
-            return this._store.getState();
+            throw error;
         }
     }
 
@@ -204,7 +206,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 return this._handleError(error);
             }
 
-            return this._store.getState();
+            throw error;
         }
     }
 

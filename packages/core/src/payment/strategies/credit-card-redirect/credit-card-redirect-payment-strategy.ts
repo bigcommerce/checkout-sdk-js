@@ -57,15 +57,13 @@ export default class CreditCardRedirectPaymentStrategy extends CreditCardPayment
                 return Promise.reject(error);
             }
 
-            return new Promise(() => {
-                if (isRequestError(error)) {
-                    return this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                        PaReq: error.body.three_ds_result.payer_auth_request || null,
-                        TermUrl: error.body.three_ds_result.callback_url || null,
-                        MD: error.body.three_ds_result.merchant_data || null,
-                    });
-                }
-            });
+            const { three_ds_result } = error.body;
+
+            return new Promise(() => this._formPoster.postForm(three_ds_result.acs_url, {
+                PaReq: three_ds_result.payer_auth_request || null,
+                TermUrl: three_ds_result.callback_url || null,
+                MD: three_ds_result.merchant_data || null,
+            }));
         }
     }
 

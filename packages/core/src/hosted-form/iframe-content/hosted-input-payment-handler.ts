@@ -1,4 +1,3 @@
-import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
 
@@ -9,7 +8,7 @@ import { InvalidHostedFormValueError } from '../errors';
 import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
-import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
+import { HostedInputEvent, HostedInputEventType, HostedInputSubmitErrorEvent } from './hosted-input-events';
 import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -57,14 +56,20 @@ export default class HostedInputPaymentHandler {
                 payload: { response },
             });
         } catch (error) {
-            if (isRequestError(error)) {
-                this._eventPoster.post({
-                    type: HostedInputEventType.SubmitFailed,
-                    payload: this._isPaymentErrorResponse(error) ?
-                        { error: error.body.errors[0], response: error } :
-                        { error: { code: snakeCase(error.name), message: error.message } },
-                });
+            let payload: HostedInputSubmitErrorEvent['payload'];
+            
+            if (this._isPaymentErrorResponse(error)) {
+                payload = { error: error.body.errors[0], response: error };
+            } else if ((error instanceof Error)) {
+                payload = { error: { code: snakeCase(error.name), message: error.message } };
+            } else {
+                payload = { error: { code: 'unknown' } };
             }
+
+            this._eventPoster.post({
+                type: HostedInputEventType.SubmitFailed,
+                payload,
+            });
         }
     };
 
