@@ -50,7 +50,6 @@ import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redi
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
-import { ExternalPaymentStrategy } from './strategies/external';
 import { createGooglePayPaymentProcessor, GooglePayAdyenV2Initializer, GooglePayAdyenV2PaymentProcessor, GooglePayAdyenV3Initializer, GooglePayAdyenV3PaymentProcessor, GooglePayAuthorizeNetInitializer, GooglePayBNZInitializer, GooglePayBraintreeInitializer, GooglePayCheckoutcomInitializer, GooglePayCheckoutcomPaymentProcessor, GooglePayCybersourceV2Initializer, GooglePayOrbitalInitializer,  GooglePayPaymentStrategy, GooglePayStripeInitializer, GooglePayStripeUPEInitializer } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
@@ -564,15 +563,6 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register(PaymentStrategyType.LAYBUY, () =>
-        new ExternalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            formPoster
-        )
-    );
-
     registry.register(PaymentStrategyType.LEGACY, () =>
         new LegacyPaymentStrategy(
             store,
@@ -851,15 +841,6 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory
-        )
-    );
-
-    registry.register(PaymentStrategyType.SEZZLE, () =>
-        new ExternalPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            formPoster
         )
     );
 
