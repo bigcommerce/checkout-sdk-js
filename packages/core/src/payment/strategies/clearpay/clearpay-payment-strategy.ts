@@ -104,8 +104,11 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             await this._remoteCheckoutRequestSender.forgetCheckout();
             await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
 
-            const typedError = isRequestError(error) ? error : new RequestError();
-            throw new OrderFinalizationNotCompletedError(typedError.body?.errors?.[0]?.message);
+            if (isRequestError(error)) {
+                throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            }
+
+            throw new OrderFinalizationNotCompletedError();
         }
     }
 
