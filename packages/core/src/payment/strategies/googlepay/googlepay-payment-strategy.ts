@@ -336,8 +336,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    
-
     private async _displayWallet(methodId: string, onPaymentSelect = noop, onError = noop ): Promise<void> {
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
