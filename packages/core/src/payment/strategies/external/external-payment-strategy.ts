@@ -36,7 +36,7 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
                     return Promise.reject(error);
                 }
 
-                const { body: { additional_action_required : { redirect_url } } } = error;
+                const { body: { additional_action_required : { data: { redirect_url } } } } = error;
 
                 return new Promise(() => {
                     if (error instanceof RequestError) {

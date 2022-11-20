@@ -86,7 +86,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             } catch (error) {
                 if (error instanceof RequestError && error.body.status === 'additional_action_required') {
                     if (paymentToken) {
-                        const { body: { additional_action_required: { redirect_url } } } = error;
+                        const { body: { additional_action_required: { data: { redirect_url } } } } = error;
 
                         return new Promise(() => {
                             if (error instanceof RequestError && error.body.status === 'additional_action_required') {
