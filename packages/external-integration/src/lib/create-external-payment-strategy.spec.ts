@@ -15,6 +15,7 @@ describe("createExternalPaymentStrategy", () => {
         const strategy = createExternalPaymentStrategy(
             paymentIntegrationService
         );
+
         expect(strategy).toBeInstanceOf(ExternalPaymentStrategy);
     });
 });

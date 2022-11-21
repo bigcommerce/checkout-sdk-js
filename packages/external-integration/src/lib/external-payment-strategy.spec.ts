@@ -1,11 +1,5 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { omit, noop } from "lodash";
-import {
-    PaymentIntegrationServiceMock,
-    getOrderRequestBody,
-    getResponse,
-    getErrorPaymentResponseBody,
-} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
 
 import {
     OrderFinalizationNotRequiredError,
@@ -13,13 +7,18 @@ import {
     PaymentIntegrationService,
     PaymentArgumentInvalidError
 } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import {
+    PaymentIntegrationServiceMock,
+    getOrderRequestBody,
+    getResponse,
+    getErrorPaymentResponseBody,
+} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
 
 import ExternalPaymentStrategy from './external-payment-strategy';
 
 describe('ExternalPaymentStrategy', () => {
     let formPoster: FormPoster;
     let strategy: ExternalPaymentStrategy;
-
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
@@ -91,6 +90,7 @@ describe('ExternalPaymentStrategy', () => {
     describe('#initialize()', () => {
         it("initializes the strategy successfully", async () => {
             const result = await strategy.initialize();
+
             expect(result).toBeUndefined();
         });
     });

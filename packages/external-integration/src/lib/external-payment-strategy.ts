@@ -1,3 +1,5 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import {
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
@@ -7,10 +9,8 @@ import {
     PaymentStrategy,
     RequestError,
 } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { FormPoster } from '@bigcommerce/form-poster';
 
 export default class ExternalPaymentStrategy implements PaymentStrategy   {
-
     constructor(
         private _formPoster: FormPoster,
         private _paymentIntegrationService: PaymentIntegrationService,
@@ -30,6 +30,7 @@ export default class ExternalPaymentStrategy implements PaymentStrategy   {
         await this._paymentIntegrationService.submitOrder(
             order, options
         );
+
         try {
             await this._paymentIntegrationService.submitPayment({...payment, paymentData});
         } catch (error) {
