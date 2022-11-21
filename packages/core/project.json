@@ -73,7 +73,7 @@
                 "parallel": false,
                 "commands": [
                     "mkdir -p src/generated && cp ../../dist/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
-                    "typedoc --plugin typedoc-plugin-markdown --options typedoc.json --tsconfig tsconfig.json src/generated/checkout-sdk.d.ts"
+                    "typedoc --plugin typedoc-plugin-markdown --plugin typedoc-plugin-missing-exports --options typedoc.json src/generated/checkout-sdk.d.ts"
                 ]
             },
             "dependsOn": [
