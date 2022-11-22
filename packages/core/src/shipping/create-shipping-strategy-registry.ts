@@ -1,21 +1,16 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
-import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
 import ConsignmentActionCreator from './consignment-action-creator';
 import ConsignmentRequestSender from './consignment-request-sender';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategy } from './strategies';
-import { AmazonPayShippingStrategy } from './strategies/amazon';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
 import { DefaultShippingStrategy } from './strategies/default';
 import { StripeUPEShippingStrategy } from './strategies/stripe-upe';
@@ -35,25 +30,6 @@ export default function createShippingStrategyRegistry(
         new PaymentMethodRequestSender(requestSender),
     );
     const scriptLoader = getScriptLoader();
-
-    registry.register(
-        'amazon',
-        () =>
-            new AmazonPayShippingStrategy(
-                store,
-                consignmentActionCreator,
-                new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
-                new RemoteCheckoutActionCreator(
-                    new RemoteCheckoutRequestSender(requestSender),
-                    new CheckoutActionCreator(
-                        new CheckoutRequestSender(requestSender),
-                        new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-                        new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
-                    ),
-                ),
-                new AmazonPayScriptLoader(getScriptLoader()),
-            ),
-    );
 
     registry.register(
         'amazonpay',

@@ -323,28 +323,6 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
     };
 }
 
-export function getAmazonPay(): PaymentMethod {
-    return {
-        id: 'amazon',
-        logoUrl: '',
-        method: 'widget',
-        supportedCards: [],
-        config: {
-            displayName: 'AmazonPay',
-            is3dsEnabled: false,
-            merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
-            testMode: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        initializationData: {
-            clientId: '087eccf4-7f68-4384-b0a9-5f2fd6b0d344',
-            region: 'US',
-            redirectUrl: '/remote-checkout/amazon/redirect',
-            tokenPrefix: 'ABCD|',
-        },
-    };
-}
-
 export function getClearpay(): PaymentMethod {
     return {
         id: 'PAY_BY_INSTALLMENT',
@@ -857,7 +835,6 @@ export function getPaymentMethods(): PaymentMethod[] {
         getAdyenAmex(),
         getAffirm(),
         getAfterpay(),
-        getAmazonPay(),
         getAmazonPayV2(),
         getAuthorizenet(),
         getBlueSnapV2(),

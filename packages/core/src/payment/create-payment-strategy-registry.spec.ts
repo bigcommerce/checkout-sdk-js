@@ -10,7 +10,6 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
-import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
@@ -86,12 +85,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.AFFIRM);
 
         expect(paymentStrategy).toBeInstanceOf(AffirmPaymentStrategy);
-    });
-
-    it('can instantiate amazon', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.AMAZON);
-
-        expect(paymentStrategy).toBeInstanceOf(AmazonPayPaymentStrategy);
     });
 
     it('can instantiate amazonpay', () => {
