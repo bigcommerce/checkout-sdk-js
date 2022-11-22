@@ -1,10 +1,4 @@
-interface ApplePayWindow extends Window {
-    ApplePaySession: ApplePaySession;
-}
-
-function isApplePayWindow(window: Window): window is ApplePayWindow {
-    return "ApplePaySession" in window;
-}
+import { isApplePayWindow, ApplePayWindow } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function assertApplePayWindow(
     window: Window

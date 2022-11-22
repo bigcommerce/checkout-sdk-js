@@ -410,7 +410,6 @@ describe("CheckoutService", () => {
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(
                 store,
-                paymentClient,
                 requestSender,
                 locale
             ),

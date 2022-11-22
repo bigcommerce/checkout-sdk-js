@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { isApplePayWindow } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { filter } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
@@ -9,7 +10,6 @@ import { RequestOptions } from '../common/http-request';
 import { PaymentMethod } from '.';
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
-import { isApplePayWindow } from './strategies/apple-pay';
 
 const APPLEPAYID = 'applepay';
 
