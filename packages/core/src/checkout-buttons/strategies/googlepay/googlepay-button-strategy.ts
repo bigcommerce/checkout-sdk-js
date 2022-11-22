@@ -12,7 +12,7 @@ import {
 } from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
-import { GooglePayPaymentProcessor, } from '../../../payment/strategies/googlepay';
+import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
