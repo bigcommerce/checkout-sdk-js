@@ -2,7 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator, BillingAddressUpdateRequestBody } from '../../../billing';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
@@ -10,7 +10,18 @@ import { ConsignmentActionCreator } from '../../../shipping';
 import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
-import { ButtonColor, ButtonType, EnvironmentType, GooglePaymentData, GooglePayAddress, GooglePayClient, GooglePayInitializer, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
+import {
+    ButtonColor,
+    ButtonType,
+    EnvironmentType,
+    GooglePaymentData,
+    GooglePayAddress,
+    GooglePayClient,
+    GooglePayInitializer,
+    GooglePayPaymentDataRequestV2,
+    GooglePaySDK,
+    TokenizePayload,
+} from './googlepay';
 import { getFirstAndLastName } from './googlepay-get-first-and-last-name';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
@@ -18,6 +29,7 @@ export default class GooglePayPaymentProcessor {
     private _googlePayClient?: GooglePayClient;
     private _methodId?: string;
     private _paymentDataRequest?: GooglePayPaymentDataRequestV2;
+    private _isBuyNowFlow = false;
 
     constructor(
         private _store: CheckoutStore,
@@ -55,6 +67,15 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
+    updatePaymentDataRequest(payloadToUpdate: { currencyCode: string; totalPrice: string; }) {
+        const paymentDataRequest = this._getPaymentDataRequest();
+
+        paymentDataRequest.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
+        paymentDataRequest.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
+
+        this._paymentDataRequest = paymentDataRequest;
+    }
+
     displayWallet(): Promise<GooglePaymentData> {
         if (!this._googlePayClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -63,7 +84,7 @@ export default class GooglePayPaymentProcessor {
         return this._googlePayClient.loadPaymentData(this._getPaymentDataRequest());
     }
 
-    handleSuccess(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> {
+    handleSuccess(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> | Promise<any> {
         return this._googlePayInitializer.parseResponse(paymentData)
             .then(tokenizePayload => this._postForm(tokenizePayload))
             .then(() => this._updateBillingAddress(paymentData));
@@ -75,6 +96,10 @@ export default class GooglePayPaymentProcessor {
         );
     }
 
+    updateBuyNowFlowFlag(isBuyNowFlow: boolean): void {
+        this._isBuyNowFlow = isBuyNowFlow;
+    }
+
     private _configureWallet(): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options = features && features['INT-5826.google_hostname_alias'] ? { params: { origin: window.location.hostname } } : undefined;
@@ -82,16 +107,12 @@ export default class GooglePayPaymentProcessor {
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options))
             .then(state => {
+                const checkout = this._getCheckout(state);
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-                const checkout = state.checkout.getCheckout();
                 const hasShippingAddress = !!state.shippingAddress.getShippingAddress();
 
                 if (!paymentMethod) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                if (!checkout) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
                 const { testMode } = paymentMethod.config;
@@ -131,6 +152,18 @@ export default class GooglePayPaymentProcessor {
             type: cardInformation.cardType,
             number: cardInformation.lastFour,
         };
+    }
+
+    private _getCheckout(state: InternalCheckoutSelectors): Checkout | undefined {
+        if (this._isBuyNowFlow) return;
+
+        const checkout = state.checkout.getCheckout();
+
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        return checkout;
     }
 
     private _getPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
@@ -223,22 +256,22 @@ export default class GooglePayPaymentProcessor {
                 tokenFormat: postPaymentData.tokenFormat,
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
-                card_information: this._getCardInformation(cardInformation),
+                card_information: this._getCardInformation(cardInformation)
             },
         });
     }
 
-    private _updateBillingAddress(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> {
-        const remoteBillingAddress = this._store.getState().billingAddress.getBillingAddress();
+    private _updateBillingAddress(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> | undefined {
+            const remoteBillingAddress = this._store.getState().billingAddress.getBillingAddress();
 
-        if (!remoteBillingAddress) {
-            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
-        }
+            if (!remoteBillingAddress) {
+                throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+            }
 
-        const googlePayAddressMapped = this._mapGooglePayAddressToBillingAddress(paymentData, remoteBillingAddress.id, remoteBillingAddress.email);
+            const googlePayAddressMapped = this._mapGooglePayAddressToBillingAddress(paymentData, remoteBillingAddress.id, remoteBillingAddress.email);
 
-        return this._store.dispatch(
-            this._billingAddressActionCreator.updateAddress(googlePayAddressMapped)
-        );
+            return this._store.dispatch(
+                this._billingAddressActionCreator.updateAddress(googlePayAddressMapped)
+            );
     }
 }

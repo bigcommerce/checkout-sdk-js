@@ -2,7 +2,7 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { Cart } from '../../../cart';
+import { Cart, CartRequestSender } from '../../../cart';
 import { getCart, getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
@@ -26,6 +26,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
     let cart: Cart;
     let container: HTMLDivElement;
     let formPoster: FormPoster;
+    let cartRequestSender: CartRequestSender;
     let checkoutButtonOptions: CheckoutButtonInitializeOptions;
     let paymentMethod: PaymentMethod;
     let paymentProcessor: GooglePayPaymentProcessor;
@@ -34,6 +35,12 @@ describe('GooglePayCheckoutButtonStrategy', () => {
     let store: CheckoutStore;
     let strategy: GooglePayButtonStrategy;
     let walletButton: HTMLAnchorElement;
+
+    const buyNowCartMock = {
+        ...getCart(),
+        id: 999,
+        source: 'BUY_NOW',
+    };
 
     beforeEach(() => {
         paymentMethod = getPaymentMethod();
@@ -64,17 +71,20 @@ describe('GooglePayCheckoutButtonStrategy', () => {
             )
         );
 
+        cartRequestSender = new CartRequestSender(createRequestSender());
+
         formPoster = createFormPoster();
 
         strategy = new GooglePayButtonStrategy(
             store,
             formPoster,
             checkoutActionCreator,
-            paymentProcessor
+            paymentProcessor,
+            cartRequestSender
         );
 
         jest.spyOn(formPoster, 'postForm')
-            .mockReturnValue(Promise.resolve());
+            .mockImplementation(() => {});
         jest.spyOn(store, 'dispatch')
             .mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
@@ -84,6 +94,8 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         jest.spyOn(paymentProcessor, 'initialize')
             .mockReturnValue(Promise.resolve());
         jest.spyOn(paymentProcessor, 'deinitialize');
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+            .mockImplementation(() => {});
 
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
@@ -130,6 +142,37 @@ describe('GooglePayCheckoutButtonStrategy', () => {
             checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, Mode.InvalidContainer);
 
             await expect(strategy.initialize(checkoutButtonOptions)).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('initialize the strategy does not load default checkout for Buy Now Flow', async () => {
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, Mode.GooglePayBraintreeWithBuyNow);
+
+            await strategy.initialize(checkoutButtonOptions);
+
+            expect(paymentProcessor.initialize).toHaveBeenCalledWith(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE);
+            expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
+        });
+
+        it('creates order with Buy Now cart id (Buy Now flow)', async () => {
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(paymentProcessor, 'displayWallet').mockResolvedValue(getGooglePaymentDataMock());
+            jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(Promise.resolve());
+            jest.spyOn(paymentProcessor, 'updatePaymentDataRequest').mockReturnValue(Promise.resolve());
+
+            checkoutButtonOptions = getCheckoutButtonOptions(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, Mode.GooglePayBraintreeWithBuyNow);
+
+            await strategy.initialize(checkoutButtonOptions);
+
+            walletButton.click();
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+                cart_id: buyNowCartMock.id,
+                action: 'set_external_checkout',
+                provider: 'googlepaybraintree'
+            }))
         });
     });
 

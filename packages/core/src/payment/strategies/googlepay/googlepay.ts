@@ -7,7 +7,7 @@ export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
 export interface GooglePayInitializer {
-    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV2>;
+    initialize(checkout: Checkout | undefined, paymentMethod: PaymentMethod, hasShippingAddress: boolean): Promise<GooglePayPaymentDataRequestV2>;
     teardown(): Promise<void>;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
@@ -194,3 +194,5 @@ export interface GooglePayPaymentDataRequestV2 {
         phoneNumberRequired?: boolean;
     };
 }
+
+export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>

@@ -178,7 +178,8 @@ export default function createCheckoutButtonRegistry(
             createGooglePayPaymentProcessor(
                 store,
                 new GooglePayBraintreeInitializer(braintreeSdkCreator)
-            )
+            ),
+            cartRequestSender
         )
     );
 

@@ -1,3 +1,4 @@
+import { BuyNowCartRequestBody } from '../../../cart';
 import { PaymentMethod } from '../../../payment';
 import { getGooglePay } from '../../../payment/payment-methods.mock';
 import { ButtonType } from '../../../payment/strategies/googlepay';
@@ -28,7 +29,27 @@ export enum Mode {
     GooglePayOrbital,
     GooglePayStripe,
     GooglePayStripeUPE,
+    GooglePayBraintreeWithBuyNow,
 }
+
+const buyNowCartRequestBody: BuyNowCartRequestBody = {
+    source: 'BUY_NOW',
+    lineItems: [{
+        productId: 1,
+        quantity: 2,
+        optionSelections: {
+            optionId: 11,
+            optionValue: 11,
+        },
+    }],
+};
+
+const buyNowOptions = {
+    buyNowInitializeOptions: {
+        getBuyNowCartRequestBody: () => buyNowCartRequestBody,
+    },
+};
+
 
 export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
     const containerId = 'googlePayCheckoutButton';
@@ -39,6 +60,7 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
     const googlepayauthorizenet = { googlepayauthorizenet: { buttonType: ButtonType.Short } };
     const googlepaybnz = { googlepaybnz: { buttonType: ButtonType.Short } };
     const googlepaybraintree = { googlepaybraintree: { buttonType: ButtonType.Short } };
+    const googlepaybraintreeWithBuyNow = { googlepaybraintree: { buttonType: ButtonType.Short, ...buyNowOptions }, currencyCode: 'USD' };
     const googlepaycheckoutcom = { googlepaycheckoutcom: { buttonType: ButtonType.Short } };
     const googlepaycybersourcev2 = { googlepaycybersourcev2: { buttonType: ButtonType.Short } };
     const googlepayorbital = { googlepayorbital: { buttonType: ButtonType.Short } };
@@ -66,6 +88,9 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
         }
         case Mode.GooglePayBraintree: {
             return { methodId, containerId, ...googlepaybraintree };
+        }
+        case Mode.GooglePayBraintreeWithBuyNow: {
+            return { methodId, containerId, ...googlepaybraintreeWithBuyNow };
         }
         case Mode.GooglePayCheckoutcom: {
             return { methodId, containerId, ...googlepaycheckoutcom };

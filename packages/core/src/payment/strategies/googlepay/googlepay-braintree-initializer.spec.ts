@@ -62,6 +62,19 @@ describe('GooglePayBraintreeInitializer', () => {
                 expect(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message).toEqual(error.message);
             }
         });
+
+        it('initializes the google pay configuration for braintree with Buy Now Flow', async () => {
+            const paymentDataRequest = getBraintreePaymentDataPayload();
+            paymentDataRequest.transactionInfo.currencyCode = '';
+            paymentDataRequest.transactionInfo.totalPrice = '';
+
+            await googlePayInitializer.initialize(undefined, getPaymentMethodMock(), false)
+                .then(() => {
+                    expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalled();
+                    expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalledTimes(1);
+                    expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalledWith(paymentDataRequest);
+                });
+        });
     });
 
     describe('#teardown', () => {
