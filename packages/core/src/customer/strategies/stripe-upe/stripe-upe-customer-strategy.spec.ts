@@ -2,7 +2,6 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
-
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -21,6 +20,7 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomer, getGuestCustomer } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
+import { ConsignmentActionCreator } from '../../../shipping';
 
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import { getCustomerStripeUPEJsMock, getStripeUPECustomerInitializeOptionsMock } from './stripe-upe-customer.mock';
@@ -32,6 +32,7 @@ describe('StripeUpeCustomerStrategy', () => {
     const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
     const requestSender = createRequestSender();
 
+    let consignmentActionCreator: ConsignmentActionCreator;
     let customerActionCreator: CustomerActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -87,7 +88,8 @@ describe('StripeUpeCustomerStrategy', () => {
             store,
             stripeScriptLoader,
             customerActionCreator,
-            paymentMethodActionCreator
+            paymentMethodActionCreator,
+            consignmentActionCreator,
         );
     });
 
