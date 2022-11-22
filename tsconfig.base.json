@@ -24,6 +24,9 @@
                 "packages/apple-pay-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"],
+            "@bigcommerce/checkout-sdk/external-integration": [
+                "packages/external-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/payment-integration-api": [
                 "packages/payment-integration-api/src/index.ts"
             ],
