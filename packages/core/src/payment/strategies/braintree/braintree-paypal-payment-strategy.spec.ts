@@ -311,7 +311,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
 
                     expect(error).toBeInstanceOf(InvalidArgumentError);
-                    expect(error.message).toEqual('Vaulting is disabled but a vaulted instrument was being used for this transaction');
+                    expect((error as Error).message).toEqual('Vaulting is disabled but a vaulted instrument was being used for this transaction');
                 }
             });
         });

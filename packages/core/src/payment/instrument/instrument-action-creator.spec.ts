@@ -1,3 +1,4 @@
+import { RequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { from, of } from 'rxjs';
@@ -158,7 +159,7 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toEqual('missing_data');
+                expect((e as RequestError).type).toEqual('missing_data');
             }
         });
     });
@@ -259,7 +260,7 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toEqual('missing_data');
+                expect((e as RequestError).type).toEqual('missing_data');
             }
         });
     });

@@ -5,17 +5,14 @@ import { isBodlEnabled } from "./is-bodl-enabled";
 import { CheckoutSelectors } from "../checkout";
 
 /**
- * Creates an instance of `BodlService`.
- *
+ * Creates an instance of BodlService.
+ * 
  * @remarks
- *
  * ```js
  * const bodlService = BodlService();
  * bodlService.checkoutBegin();
- *
  * ```
- *
- * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * 
  * @returns an instance of `BodlService`.
  */
 export default function createBodlService(

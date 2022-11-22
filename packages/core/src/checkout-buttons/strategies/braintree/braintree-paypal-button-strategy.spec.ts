@@ -446,6 +446,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         it('triggers error callback if unable to set up payment flow', async () => {
             const expectedError = new Error('Unable to set up payment flow');
+            expectedError.name = 'BraintreeError';
 
             jest.spyOn(braintreePaypalCheckoutMock, 'createPayment')
                 .mockImplementation(() => Promise.reject(expectedError));
@@ -555,6 +556,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         it('triggers error callback if unable to tokenize payment', async () => {
             const expectedError = new Error('Unable to tokenize');
+            expectedError.name = 'BraintreeError';
 
             jest.spyOn(braintreePaypalCheckoutMock, 'tokenizePayment')
                 .mockReturnValue(Promise.reject(expectedError));

@@ -185,7 +185,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
             return true;
         } catch (error) {
-            throw new Error(error);
+            const updatedError = typeof error === 'string' ? error : ''; 
+            throw new Error(updatedError);
         }
     }
 
@@ -216,7 +217,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
             await this._updateOrder();
         } catch (error) {
-            throw new Error(error);
+            const updatedError = typeof error === 'string' ? error : ''; 
+            throw new Error(updatedError);
         }
     }
 
@@ -227,7 +229,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
             await this._updateOrder();
         } catch (error) {
-            throw new Error(error);
+            const updatedError = typeof error === 'string' ? error : ''; 
+            throw new Error(updatedError);
         }
     }
 

@@ -107,7 +107,7 @@ describe('ExternalPaymentStrategy', () => {
                 ...getErrorPaymentResponseBody(),
                 additional_action_required: {
                     data : {
-                        redirect_url: 'https://sandbox-payment.laybuy..com',
+                        redirect_url: 'https://sandbox-payment.laybuy.com',
                     },
                     type: 'offsite_redirect',
                 },
@@ -121,7 +121,7 @@ describe('ExternalPaymentStrategy', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.laybuy..com', {});
+            expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.laybuy.com', {});
         });
 
         it('reject payment when error is different to additional_action_required', async () => {

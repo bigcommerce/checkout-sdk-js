@@ -5,7 +5,7 @@ import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import PaymentMethod from '../../../payment/payment-method';
-import { mapToBraintreeShippingAddressOverride, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
+import { mapToBraintreeShippingAddressOverride, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload, isBraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -191,7 +191,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             });
         } catch (error) {
             if (onPaymentError) {
-                onPaymentError(error);
+                if (isBraintreeError(error) || error instanceof StandardError) {
+                    onPaymentError(error);
+                }
             }
 
             throw error;
@@ -243,7 +245,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             return tokenizePayload;
         } catch (error) {
             if (onError) {
-                onError(error);
+                if (isBraintreeError(error) || error instanceof StandardError) {
+                    onError(error);
+                }
             }
 
             throw error;
