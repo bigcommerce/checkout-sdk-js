@@ -16,7 +16,11 @@ A set of options for configuring an asynchronous request.
 
 - **`RequestOptions`**
 
-  ↳ [`CheckoutButtonOptions`](internal_.CheckoutButtonOptions.md)
+  ↳ [`PaymentRequestOptions`](internal_.PaymentRequestOptions.md)
+
+  ↳ [`CustomerRequestOptions`](internal_.CustomerRequestOptions.md)
+
+  ↳ [`ShippingRequestOptions`](internal_.ShippingRequestOptions.md)
 
 ## Table of contents
 
