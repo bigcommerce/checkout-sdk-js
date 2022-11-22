@@ -40,4 +40,15 @@ export default class BillingAddressRequestSender {
 
         return this._requestSender.put(url, { params: DEFAULT_PARAMS, body, headers, timeout });
     }
+
+    deleteAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+        const { id } = address;
+        const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        return this._requestSender.delete(url, { params: DEFAULT_PARAMS, headers, timeout });
+    }
 }

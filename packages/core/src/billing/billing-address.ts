@@ -12,3 +12,7 @@ export interface BillingAddressRequestBody extends AddressRequestBody {
 export interface BillingAddressUpdateRequestBody extends BillingAddressRequestBody {
     id: string;
 }
+
+export interface BillingAddressDeleteRequestBody extends BillingAddressRequestBody {
+    id: string;
+}
