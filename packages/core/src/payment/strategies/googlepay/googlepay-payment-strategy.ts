@@ -17,9 +17,13 @@ import { AdyenPaymentMethodType } from '../adyenv2';
 import { BraintreeGooglePayThreeDSecure, BraintreeSDKCreator, BraintreeVerifyPayload } from '../braintree';
 import PaymentStrategy from '../payment-strategy';
 
-import { GooglePaymentData, GooglePayProviderProcessor, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
+import { GooglePaymentData, GooglePaymentsError, GooglePayProviderProcessor, GooglePayVerifyPayload, PaymentMethodData } from './googlepay';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
+
+function isGooglePaymentsError(error: unknown): error is GooglePaymentsError {
+    return typeof error === 'object' && error !== null;
+}
 
 export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _googlePayOptions?: GooglePayPaymentInitializeOptions;
@@ -339,7 +343,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
             return onPaymentSelect();
         } catch (error) {
-            if (error.statusCode === 'CANCELED') {
+            if (isGooglePaymentsError(error) && error.statusCode === 'CANCELED') {
                 throw new Error('CANCELED');
             }
             onError(error);

@@ -1,3 +1,4 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { RequestOptions } from '../../../common/http-request';
@@ -109,7 +110,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._remoteCheckoutRequestSender.forgetCheckout();
             await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
 
-            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            if (isRequestError(error)) {
+                throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            }
+
+            throw new OrderFinalizationNotCompletedError();
         }
     }
 

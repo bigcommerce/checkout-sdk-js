@@ -17,6 +17,7 @@ import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProvi
 import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _digitalRiverJS?: DigitalRiverJS;
@@ -118,7 +119,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     throw error;
                 }
 
-                const confirm = await this._authenticateSource(error.body.provider_data);
+                const confirm = isRequestError(error) ? await this._authenticateSource(error.body.provider_data) : false;
 
                 return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutData.checkoutId, shouldSetAsDefaultInstrument, confirm);
             }

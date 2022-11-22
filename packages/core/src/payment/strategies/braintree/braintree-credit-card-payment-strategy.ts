@@ -49,7 +49,11 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this._is3dsEnabled = this._paymentMethod.config.is3dsEnabled;
             this._deviceSessionId = await this._braintreePaymentProcessor.getSessionId();
         } catch (error) {
-            this._handleError(error);
+            if (error instanceof Error) {
+                this._handleError(error);
+            }
+
+            throw error;
         }
 
         return this._store.getState();
@@ -87,7 +91,11 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                     : await this._preparePaymentData(payment, billingAddress, orderAmount),
             }));
         } catch (error) {
-            return this._processAdditionalAction(error, payment, orderAmount);
+            if (error instanceof Error) {
+                return this._processAdditionalAction(error, payment, orderAmount);
+            }
+
+            throw error;
         }
     }
 
@@ -194,7 +202,11 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 },
             }));
         } catch (error) {
-            return this._handleError(error);
+            if (error instanceof Error) {
+                return this._handleError(error);
+            }
+
+            throw error;
         }
     }
 

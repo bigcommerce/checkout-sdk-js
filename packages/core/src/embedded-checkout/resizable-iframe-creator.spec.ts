@@ -107,7 +107,7 @@ describe('ResizableIframeCreator', () => {
 
         const frame = await iframeCreator.createFrame(url, 'checkout');
 
-        expect(frame.allowPaymentRequest).toEqual(true);
+        expect((frame as any).allowPaymentRequest).toEqual(true);
     });
 
     it('removes message listener if iframe is loaded successfully', async () => {
@@ -154,7 +154,7 @@ describe('ResizableIframeCreator', () => {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
             expect(error).toBeInstanceOf(NotEmbeddableError);
-            expect(error.message).toEqual(event.payload.message);
+            expect((error as Error).message).toEqual(event.payload.message);
         }
     });
 

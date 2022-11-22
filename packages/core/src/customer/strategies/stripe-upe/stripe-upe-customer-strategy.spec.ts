@@ -203,7 +203,7 @@ describe('StripeUpeCustomerStrategy', () => {
         });
 
         it('returns an error when methodId is not present', () => {
-            const promise = strategy.initialize({ ...getStripeUPECustomerInitializeOptionsMock(), methodId: '' });
+            const promise = strategy.initialize({ ...getStripeUPECustomerInitializeOptionsMock(), methodId: undefined });
 
             expect(promise).rejects.toBeInstanceOf(InvalidArgumentError);
 

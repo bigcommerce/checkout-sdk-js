@@ -663,7 +663,7 @@ describe('StripeV3PaymentStrategy', () => {
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                         expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
-                        expect(error.message).toEqual(unexpectedError && unexpectedError.message);
+                        expect((error as Error).message).toEqual(unexpectedError && unexpectedError.message);
                     }
                 });
 
