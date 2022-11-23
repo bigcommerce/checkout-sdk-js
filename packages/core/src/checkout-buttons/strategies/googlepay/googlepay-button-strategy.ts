@@ -1,15 +1,16 @@
 import { FormPoster } from '@bigcommerce/form-poster';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutButtonMethodType } from '../';
 import { Cart, CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError, MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType
-} from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
