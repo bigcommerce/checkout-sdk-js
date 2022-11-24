@@ -1,4 +1,6 @@
 import { BillingAddressRequestBody } from "./billing";
+import { HostedForm } from "./hosted-form";
+import HostedFormOptions from "./hosted-form/hosted-form-options";
 import { OrderRequestBody } from "./order";
 import { Payment } from "./payment";
 import PaymentIntegrationSelectors from "./payment-integration-selectors";
@@ -6,6 +8,11 @@ import { RequestOptions } from "./util-types";
 import { ShippingAddressRequestBody } from "./shipping";
 
 export default interface PaymentIntegrationService {
+    createHostedForm(
+        host: string,
+        options: HostedFormOptions
+    ): HostedForm;
+
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
         ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>

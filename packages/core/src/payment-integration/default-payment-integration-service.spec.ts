@@ -1,4 +1,5 @@
 import {
+    HostedFieldType,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
 } from "@bigcommerce/checkout-sdk/payment-integration-api";
@@ -12,6 +13,7 @@ import {
     CheckoutActionCreator,
 } from "../checkout";
 import { DataStoreProjection } from "../common/data-store";
+import HostedForm from "../hosted-form/hosted-form";
 import { OrderActionCreator } from "../order";
 import { getOrder } from "../order/orders.mock";
 import PaymentActionCreator from "../payment/payment-action-creator";
@@ -149,6 +151,21 @@ describe("DefaultPaymentIntegrationService", () => {
                 checkoutActionCreator.loadCurrentCheckout()
             );
             expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe("#hostedForm", () => {
+        it("creates hosted form", async () => {
+            const output = await subject.createHostedForm('http://www.example.com',{
+                fields: {
+                    [HostedFieldType.CardCode]: { containerId: 'card-code' },
+                    [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                    [HostedFieldType.CardName]: { containerId: 'card-name' },
+                    [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                },
+            });
+
+            expect(output).toBeInstanceOf(HostedForm);
         });
     });
 

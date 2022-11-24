@@ -1,4 +1,6 @@
 import {
+    HostedForm,
+    HostedFormOptions,
     PaymentIntegrationService,
     PaymentIntegrationSelectors,
     BillingAddressRequestBody,
@@ -10,11 +12,11 @@ import {
 import { BillingAddressActionCreator } from "../billing";
 import { CheckoutStore, CheckoutActionCreator } from "../checkout";
 import { DataStoreProjection } from "../common/data-store";
+import { HostedFormFactory } from "../hosted-form";
 import { OrderActionCreator } from "../order";
 import PaymentActionCreator from "../payment/payment-action-creator";
 import PaymentMethodActionCreator from "../payment/payment-method-action-creator";
 import { ConsignmentActionCreator } from "../shipping";
-
 import PaymentIntegrationStoreProjectionFactory from "./payment-integration-store-projection-factory";
 
 export default class DefaultPaymentIntegrationService
@@ -35,6 +37,12 @@ export default class DefaultPaymentIntegrationService
         this._storeProjection = this._storeProjectionFactory.create(
             this._store
         );
+    }
+
+    createHostedForm(host: string, options: HostedFormOptions): HostedForm {
+        const hostedFormFactory = new HostedFormFactory(this._store);
+
+        return hostedFormFactory.create(host,options);
     }
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
