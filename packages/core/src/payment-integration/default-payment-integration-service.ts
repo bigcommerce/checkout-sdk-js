@@ -17,6 +17,7 @@ import { OrderActionCreator } from "../order";
 import PaymentActionCreator from "../payment/payment-action-creator";
 import PaymentMethodActionCreator from "../payment/payment-method-action-creator";
 import { ConsignmentActionCreator } from "../shipping";
+
 import PaymentIntegrationStoreProjectionFactory from "./payment-integration-store-projection-factory";
 
 export default class DefaultPaymentIntegrationService
