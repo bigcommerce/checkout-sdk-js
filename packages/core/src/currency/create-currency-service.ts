@@ -5,6 +5,7 @@ import CurrencyService from './currency-service';
 /**
  * Creates an instance of `CurrencyService`.
  *
+ * @alpha
  * @remarks
  * ```js
  * const { data } = checkoutService.getState();

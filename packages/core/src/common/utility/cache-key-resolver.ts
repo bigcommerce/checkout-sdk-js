@@ -15,6 +15,9 @@ interface ResolveResult {
     map?: TerminalCacheKeyMap;
 }
 
+/**
+ * @internal
+ */
 export default class CacheKeyResolver {
     private _lastId = 0;
     private _map: RootCacheKeyMap = { maps: [] };

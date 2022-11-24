@@ -16,6 +16,7 @@ const STORAGE_PREFIX = 'BigCommerce.EmbeddedCheckout';
 /**
  * Embed the checkout form in an iframe.
  *
+ * @public
  * @remarks
  * Once the iframe is embedded, it will automatically resize according to the
  * size of the checkout form. It will also notify the parent window when certain

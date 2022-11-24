@@ -1,4 +1,4 @@
-import { RequestOptions } from "@bigcommerce/request-sender";
+import { RequestOptions } from '../util-types';
 
 export interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;

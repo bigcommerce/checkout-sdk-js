@@ -61,8 +61,11 @@
                 "cwd": "packages/core",
                 "parallel": false,
                 "commands": [
-                    "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
-                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json"
+                    "tsc --outDir ../../temp --declaration --declarationMap",
+                    "api-extractor run --config api-extractor/embedded-checkout.json --typescript-compiler-folder ../../node_modules/typescript",
+                    "api-extractor run --config api-extractor/checkout-button.json --typescript-compiler-folder ../../node_modules/typescript",
+                    "api-extractor run --config api-extractor/checkout-sdk.json --typescript-compiler-folder ../../node_modules/typescript",
+                    "rm -rf ../../temp"
                 ]
             }
         },

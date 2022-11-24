@@ -29,6 +29,7 @@ import createCheckoutStore from './create-checkout-store';
 /**
  * Creates an instance of `CheckoutService`.
  *
+ * @public
  * @remarks
  * ```js
  * const service = createCheckoutService();

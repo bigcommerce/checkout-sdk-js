@@ -5,6 +5,7 @@ import mapGiftCertificateToInternalLineItem from './map-gift-certificate-to-inte
 import mapToInternalLineItem from './map-to-internal-line-item';
 
 /**
+ * @internal
  * @deprecated This mapper is only for internal use only. It is required during
  * the transition period as we are moving to adopt the new storefront API object
  * schema.

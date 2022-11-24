@@ -1,4 +1,4 @@
-import RequestOptions from "../util-types/request-options";
+import { RequestOptions } from '../util-types';
 
 /**
  * The set of options for configuring the checkout button.
