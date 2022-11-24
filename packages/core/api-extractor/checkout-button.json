@@ -1,7 +1,9 @@
 {
     "extends": "./checkout-sdk.json",
-    "mainEntryPointFilePath": "<projectFolder>/temp/core/src/bundles/checkout-button.d.ts",
+    "project": {
+        "entryPointSourceFile": "../../temp/core/src/bundles/checkout-button.d.ts"
+    },
     "dtsRollup": {
-        "publicTrimmedFilePath": "<projectFolder>/dist/checkout-button.d.ts"
+        "mainDtsRollupPath": "checkout-button.d.ts"
     }
 }

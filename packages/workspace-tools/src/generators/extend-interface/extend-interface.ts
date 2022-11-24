@@ -80,9 +80,7 @@ async function createImportDeclaration(
 
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
-        .map(element => {
-            return element.name.escapedText.toString();
-        })
+        .map(element => element.name.escapedText.toString())
         .filter(memberName => memberName?.match(new RegExp(memberPattern)));
 
     if (memberNames.length === 0) {
@@ -93,16 +91,15 @@ async function createImportDeclaration(
         undefined,
         undefined,
         ts.factory.createImportClause(
-            true,
+            false,
             undefined,
             ts.factory.createNamedImports(
-                memberNames.map(memberName => {
-                    return ts.factory.createImportSpecifier(
-                        false,
+                memberNames.map(memberName =>
+                    ts.factory.createImportSpecifier(
                         undefined,
                         ts.factory.createIdentifier(memberName)
                     )
-                })
+                )
             )
         ),
         ts.factory.createStringLiteral(getImportPath(filePath, outputPath), true)

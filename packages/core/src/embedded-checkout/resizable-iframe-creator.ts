@@ -26,10 +26,7 @@ export default class ResizableIframeCreator {
         iframe.style.border = 'none';
         iframe.style.display = 'none';
         iframe.style.width = '100%';
-        /* allowPaymentRequest is not supported in a few browsers, and hence it's not a property of the typescript interface
-         * hence adding the any here. This field is required for enabling https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API
-        */
-        (iframe as any).allowPaymentRequest = true;
+        iframe.allowPaymentRequest = true;
 
         container.appendChild(iframe);
 

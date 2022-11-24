@@ -25,10 +25,6 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
         }
 
-        if (!options.methodId) {
-            throw new InvalidArgumentError(`Unable to proceed because "methodId" argument is not provided.`);
-        }
-
         const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {

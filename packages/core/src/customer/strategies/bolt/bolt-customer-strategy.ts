@@ -126,7 +126,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
                 continueWithCheckoutCallback();
             }
         } catch (error) {
-            if (error instanceof Error && error.name !== 'MissingDataError' && error.name !== 'NotInitializedError') {
+            if (error.name !== 'MissingDataError' && error.name !== 'NotInitializedError') {
                 throw new PaymentMethodFailedError(error.message);
             }
 

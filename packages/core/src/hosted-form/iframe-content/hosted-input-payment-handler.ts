@@ -8,7 +8,7 @@ import { InvalidHostedFormValueError } from '../errors';
 import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
-import { HostedInputEvent, HostedInputEventType, HostedInputSubmitErrorEvent } from './hosted-input-events';
+import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -56,19 +56,11 @@ export default class HostedInputPaymentHandler {
                 payload: { response },
             });
         } catch (error) {
-            let payload: HostedInputSubmitErrorEvent['payload'];
-            
-            if (this._isPaymentErrorResponse(error)) {
-                payload = { error: error.body.errors[0], response: error };
-            } else if ((error instanceof Error)) {
-                payload = { error: { code: snakeCase(error.name), message: error.message } };
-            } else {
-                payload = { error: { code: 'unknown' } };
-            }
-
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitFailed,
-                payload,
+                payload: this._isPaymentErrorResponse(error) ?
+                    { error: error.body.errors[0], response: error } :
+                    { error: { code: snakeCase(error.name), message: error.message } },
             });
         }
     };

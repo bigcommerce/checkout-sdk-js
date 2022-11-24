@@ -626,7 +626,7 @@ describe('StripeUPEPaymentStrategy', () => {
                         } catch (error) {
                             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                             expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
-                            expect((error as Error).message).toEqual(unexpectedError && unexpectedError.message);
+                            expect(error.message).toEqual(unexpectedError && unexpectedError.message);
                         }
                     });
 

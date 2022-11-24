@@ -130,7 +130,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             }
             await this._onPaymentSelectComplete();
         } catch (error) {
-            if (error instanceof Error && error.message !== 'CANCELED') {
+            if (error && error.message !== 'CANCELED') {
                 throw error;
             }
         }

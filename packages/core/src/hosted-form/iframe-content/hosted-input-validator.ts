@@ -60,7 +60,7 @@ export default class HostedInputValidator {
 
             return results;
         } catch (error) {
-            if (error instanceof Error && error.name !== 'ValidationError') {
+            if (error.name !== 'ValidationError') {
                 throw error;
             }
 
