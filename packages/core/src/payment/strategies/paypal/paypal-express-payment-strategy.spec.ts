@@ -246,7 +246,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect((mockWindow.top as Window).location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toEqual('/checkout');
             });
         });
 
@@ -297,7 +297,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect((mockWindow.top as Window).location.href).toEqual(order.payment.redirectUrl);
+                expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
             });
 
             it('does not redirect shopper if payment is already acknowledged', async () => {
@@ -320,7 +320,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect((mockWindow.top as Window).location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toEqual('/checkout');
             });
 
             it('does not redirect shopper if payment is already finalized', async () => {
@@ -343,7 +343,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect((mockWindow.top as Window).location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toEqual('/checkout');
             });
         });
 
@@ -368,7 +368,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect((mockWindow.top as Window).location.href).toEqual(order.payment.redirectUrl);
+                expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
             });
         });
     });

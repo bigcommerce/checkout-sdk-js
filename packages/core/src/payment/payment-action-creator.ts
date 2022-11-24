@@ -1,4 +1,3 @@
-import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat, defer, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -43,16 +42,11 @@ export default class PaymentActionCreator {
                         this._paymentRequestTransformer.transform(payment, store.getState())
                     );
                 } catch (error) {
-                    if (isRequestError(error)) {
-                        const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
-                    
+                    const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
 
-                        return await this._paymentRequestSender.submitPayment(
-                            this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
-                        );
-                    }
-
-                    throw error;
+                    return await this._paymentRequestSender.submitPayment(
+                        this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
+                    );
                 }
             })
                 .pipe(

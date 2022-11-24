@@ -3,7 +3,7 @@ import {
     PaymentStrategy as PaymentStrategyV2,
     PaymentStrategyResolveId,
 } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { Action, createAction } from "@bigcommerce/data-store";
+import { createAction } from "@bigcommerce/data-store";
 import {
     createRequestSender,
     RequestSender,
@@ -276,7 +276,7 @@ describe("PaymentStrategyActionCreator", () => {
                     actionCreator.initialize({ methodId: "unknown" })(store)
                 ).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -415,7 +415,7 @@ describe("PaymentStrategyActionCreator", () => {
                     actionCreator.deinitialize({ methodId: "unknown" })(store)
                 ).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -566,7 +566,7 @@ describe("PaymentStrategyActionCreator", () => {
                     actionCreator.execute(getOrderRequestBody())(store)
                 ).toPromise();
             } catch (action) {
-                expect((action as any).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
 
@@ -728,7 +728,7 @@ describe("PaymentStrategyActionCreator", () => {
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(
+                expect(action.payload).toBeInstanceOf(
                     OrderFinalizationNotRequiredError
                 );
             }
@@ -761,7 +761,7 @@ describe("PaymentStrategyActionCreator", () => {
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(
+                expect(action.payload).toBeInstanceOf(
                     OrderFinalizationNotRequiredError
                 );
             }

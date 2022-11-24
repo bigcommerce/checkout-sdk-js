@@ -12,9 +12,9 @@ export default class PaymentHumanVerificationHandler {
         private _googleRecaptcha: GoogleRecaptcha
     ) {}
 
-    handle(error: unknown): Promise<PaymentAdditionalAction>;
+    handle(error: Error): Promise<PaymentAdditionalAction>;
     handle(id: string, key: string): Promise<PaymentAdditionalAction>;
-    async handle(errorOrId: unknown | string, key?: string): Promise<PaymentAdditionalAction> {
+    async handle(errorOrId: Error | string, key?: string): Promise<PaymentAdditionalAction> {
         if (typeof errorOrId === 'string') {
             return this.handleWithRecaptchaSitekey(errorOrId, key);
         }
@@ -22,7 +22,7 @@ export default class PaymentHumanVerificationHandler {
         return this.handleWithPaymentHumanVerificationRequestError(errorOrId);
     }
 
-    private async handleWithPaymentHumanVerificationRequestError(error: unknown): Promise<PaymentAdditionalAction> {
+    private async handleWithPaymentHumanVerificationRequestError(error: Error): Promise<PaymentAdditionalAction> {
         if (!this._isPaymentHumanVerificationRequest(error)) {
             throw error;
         }
@@ -82,7 +82,7 @@ export default class PaymentHumanVerificationHandler {
         return this._googleRecaptcha.load(cardingProtectionElementId, recaptchaSitekey);
     }
 
-    private _isPaymentHumanVerificationRequest(error: unknown): error is RequestError {
+    private _isPaymentHumanVerificationRequest(error: Error): error is RequestError {
         const { additional_action_required, status } = (error as RequestError).body || {};
 
         return status === 'additional_action_required'

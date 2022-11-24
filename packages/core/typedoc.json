@@ -3,8 +3,6 @@
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "entryPoints": ["src/generated/checkout-sdk.d.ts"],
     "out": "../../docs",
-    "readme": "none",
-    "requiredToBeDocumented": ["Enum", "Class", "Interface"]
+    "readme": "none"
 }

@@ -33,15 +33,11 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
     }
 
     async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (!options.stripeupe) {
-            throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
-        }
+       if (!options.stripeupe) {
+           throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
+       }
 
-        if (!options.methodId) {
-            throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
-        }
-
-        const { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries, getStripeState } = options.stripeupe;
+       const { container, gatewayId, methodId, onChangeShipping, getStyles, availableCountries, getStripeState } = options.stripeupe;
 
        Object.entries(options.stripeupe).forEach(([key, value]) => {
            if (!value) {

@@ -782,7 +782,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 await strategy.initialize(initializationOptions);
                 eventEmitter.emit('onError');
             } catch (error) {
-                expect((error as Error).message).toBe('Error message');
+                expect(error.message).toBe('Error message');
             }
         });
     });

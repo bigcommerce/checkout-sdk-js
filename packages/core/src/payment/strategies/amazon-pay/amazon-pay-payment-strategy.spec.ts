@@ -304,7 +304,7 @@ describe('AmazonPayPaymentStrategy', () => {
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
-    it.skip('reinitializes payment method before submitting order', async () => {
+    it('reinitializes payment method before submitting order', async () => {
         const payload = omit(getOrderRequestBody(), 'useStoreCredit');
         const options = { methodId: paymentMethod.id };
         const { referenceId = '' } = getRemoteCheckoutStateData().amazon || {};
@@ -331,7 +331,7 @@ describe('AmazonPayPaymentStrategy', () => {
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
-    it.skip('refreshes wallet when there is provider widget error', async () => {
+    it('refreshes wallet when there is provider widget error', async () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(createErrorAction(
                 OrderActionType.SubmitOrderFailed,
@@ -349,7 +349,7 @@ describe('AmazonPayPaymentStrategy', () => {
         }
     });
 
-    it.skip('returns error response if order submission fails', async () => {
+    it('returns error response if order submission fails', async () => {
         const response = getErrorResponse();
 
         jest.spyOn(orderActionCreator, 'submitOrder')
@@ -361,7 +361,7 @@ describe('AmazonPayPaymentStrategy', () => {
             await strategy.execute(getOrderRequestBody());
         } catch (error) {
             expect(error).toBeInstanceOf(RequestError);
-            expect((error as RequestError).body).toEqual(response.body);
+            expect(error.body).toEqual(response.body);
         }
     });
 
