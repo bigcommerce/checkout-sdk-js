@@ -17,7 +17,7 @@
                 "logLevel": "none"
             },
             "ae-forgotten-export": {
-                "logLevel": "none"
+                "logLevel": "warning"
             },
             "ae-incompatible-release-tags": {
                 "logLevel": "none"
