@@ -8,8 +8,6 @@
 
 - **`AddressRequestBody`**
 
-  ↳ [`BillingAddressRequestBody`](internal_.BillingAddressRequestBody.md)
-
   ↳ [`Address`](internal_.Address.md)
 
 ## Table of contents

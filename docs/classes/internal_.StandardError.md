@@ -13,10 +13,6 @@ all custom errors thrown in this library.
 
   ↳ **`StandardError`**
 
-  ↳↳ [`CartChangedError`](internal_.CartChangedError.md)
-
-  ↳↳ [`RequestError`](internal_.RequestError.md)
-
 ## Implements
 
 - [`CustomError`](../interfaces/internal_.CustomError.md)

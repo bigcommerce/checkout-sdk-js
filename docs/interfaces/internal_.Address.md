@@ -10,10 +10,6 @@
 
   ↳ **`Address`**
 
-  ↳↳ [`BillingAddress`](internal_.BillingAddress.md)
-
-  ↳↳ [`CustomerAddress`](internal_.CustomerAddress.md)
-
 ## Table of contents
 
 ### Properties
