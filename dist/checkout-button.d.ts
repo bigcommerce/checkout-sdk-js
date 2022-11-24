@@ -1,5 +1,5 @@
-import { createTimeout } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
+import { createTimeout } from '@bigcommerce/request-sender';
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -597,9 +597,6 @@ declare class CheckoutButtonStatusSelector {
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
-/* Excluded from this release type: createCheckoutButtonInitializer */
-export { createTimeout }
-
 declare interface CustomError extends Error {
     message: string;
     type: string;
@@ -894,4 +891,27 @@ declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions_2;
 }
 
-export { }
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * @remarks
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;

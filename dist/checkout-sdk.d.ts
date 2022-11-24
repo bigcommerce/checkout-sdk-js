@@ -1,9 +1,9 @@
 /// <reference types="applepayjs" />
-
-import { createTimeout } from '@bigcommerce/request-sender';
+import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
-import { Response as Response_2 } from '@bigcommerce/request-sender';
+import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
+import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument;
 
@@ -139,18 +139,6 @@ declare interface AdyenComponent {
     unmount(): void;
 }
 
-declare interface AdyenComponent_2 {
-    componentRef?: {
-        showValidation(): void;
-    };
-    props?: {
-        type?: string;
-    };
-    state?: CardState_2;
-    mount(containerId: string): HTMLElement;
-    unmount(): void;
-}
-
 declare interface AdyenComponentEvents {
     /**
      * Called when the shopper enters data in the card input fields.
@@ -180,6 +168,18 @@ declare interface AdyenComponentEvents_2 {
 }
 
 declare type AdyenComponentState = (CardState | WechatState);
+
+declare interface AdyenComponent_2 {
+    componentRef?: {
+        showValidation(): void;
+    };
+    props?: {
+        type?: string;
+    };
+    state?: CardState_2;
+    mount(containerId: string): HTMLElement;
+    unmount(): void;
+}
 
 declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
@@ -367,7 +367,7 @@ declare interface AdyenV2PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit_3<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
+    options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenV2ValidationState): void;
 }
@@ -501,7 +501,7 @@ declare interface AdyenV3PaymentInitializeOptions {
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit_3<AdyenV3CreditCardComponentOptions, 'onChange'>;
+    options?: Omit_2<AdyenV3CreditCardComponentOptions, 'onChange'>;
     shouldShowNumberField?: boolean;
     validateCardFields(validateState: AdyenV3ValidationState): void;
 }
@@ -768,6 +768,13 @@ declare interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
     createCheckoutSessionConfig?: AmazonPayV2CheckoutSessionConfig;
 }
 
+declare enum AmazonPayV2PayOptions {
+    /** Select this product type if you need the buyer's shipping details. */
+    PayAndShip = "PayAndShip",
+    /** Select this product type if you do not need the buyer's shipping details. */
+    PayOnly = "PayOnly"
+}
+
 /**
  * A set of options that are required to initialize the payment step of
  * checkout in order to support AmazonPayV2.
@@ -797,13 +804,6 @@ declare interface AmazonPayV2PaymentInitializeOptions {
      * clicking on a button. It should be an HTML element.
      */
     editButtonId?: string;
-}
-
-declare enum AmazonPayV2PayOptions {
-    /** Select this product type if you need the buyer's shipping details. */
-    PayAndShip = "PayAndShip",
-    /** Select this product type if you do not need the buyer's shipping details. */
-    PayOnly = "PayOnly"
 }
 
 declare enum AmazonPayV2Placement {
@@ -1580,13 +1580,6 @@ declare interface BraintreeFormFieldOptions {
     placeholder?: string;
 }
 
-declare interface BraintreeFormFieldsMap {
-    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
-    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
-}
-
 declare type BraintreeFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
 
 declare interface BraintreeFormFieldStylesMap {
@@ -1620,6 +1613,13 @@ declare interface BraintreeFormFieldValidateEventData {
         [BraintreeFormFieldType.CardNumberVerification]?: BraintreeFormFieldValidateErrorData[];
     };
     isValid: boolean;
+}
+
+declare interface BraintreeFormFieldsMap {
+    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
 }
 
 declare interface BraintreeFormOptions {
@@ -2041,6 +2041,14 @@ declare interface CardState {
     errors?: CardStateErrors;
 }
 
+declare interface CardStateErrors {
+    [key: string]: string;
+}
+
+declare interface CardStateErrors_2 {
+    [key: string]: string;
+}
+
 declare interface CardState_2 {
     data: CardDataPaymentMethodState_2;
     isValid?: boolean;
@@ -2048,14 +2056,6 @@ declare interface CardState_2 {
         [key: string]: boolean;
     };
     errors?: CardStateErrors_2;
-}
-
-declare interface CardStateErrors {
-    [key: string]: string;
-}
-
-declare interface CardStateErrors_2 {
-    [key: string]: string;
 }
 
 declare interface Cart {
@@ -4252,8 +4252,6 @@ declare interface ConsignmentPickupOption {
     pickupMethodId: number;
 }
 
-declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
-
 declare interface ConsignmentUpdateRequestBody {
     id: string;
     address?: AddressRequestBody;
@@ -4261,6 +4259,8 @@ declare interface ConsignmentUpdateRequestBody {
     lineItems?: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
 }
+
+declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 declare interface Coordinates {
     latitude: number;
@@ -4282,145 +4282,6 @@ declare interface Coupon {
     couponType: string;
     discountedAmount: number;
 }
-
-/**
- * Creates an instance of BodlService.
- *
- * @remarks
- * ```js
- * const bodlService = BodlService();
- * bodlService.checkoutBegin();
- * ```
- *
- * @returns an instance of `BodlService`.
- */
-export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
-
-/**
- * Creates an instance of `CheckoutButtonInitializer`.
- *
- * @remarks
- * ```js
- * const initializer = createCheckoutButtonInitializer();
- *
- * initializer.initializeButton({
- *     methodId: 'braintreepaypal',
- *     braintreepaypal: {
- *         container: '#checkoutButton',
- *     },
- * });
- * ```
- *
- * @alpha
- * Please note that `CheckoutButtonInitializer` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutButtonInitializer`.
- */
-export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
-
-/**
- * Creates an instance of `CheckoutService`.
- *
- * @remarks
- * ```js
- * const service = createCheckoutService();
- *
- * service.subscribe(state => {
- *     console.log(state);
- * });
- *
- * service.loadCheckout();
- * ```
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutService`.
- */
-export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
-
-/**
- * Creates an instance of `CurrencyService`.
- *
- * @remarks
- * ```js
- * const { data } = checkoutService.getState();
- * const config = data.getConfig();
- * const checkout = data.getCheckout();
- * const currencyService = createCurrencyService(config);
- *
- * currencyService.toStoreCurrency(checkout.grandTotal);
- * currencyService.toCustomerCurrency(checkout.grandTotal);
- * ```
- *
- * @param config - The config object containing the currency configuration
- * @returns an instance of `CurrencyService`.
- */
-export declare function createCurrencyService(config: StoreConfig): CurrencyService;
-
-/**
- * Create an instance of `EmbeddedCheckoutMessenger`.
- *
- * @remarks
- * The object is responsible for posting messages to the parent window from the
- * iframe when certain events have occurred. For example, when the checkout
- * form is first loaded, you should notify the parent window about it.
- *
- * The iframe can only be embedded in domains that are allowed by the store.
- *
- * ```ts
- * const messenger = createEmbeddedCheckoutMessenger({
- *     parentOrigin: 'https://some/website',
- * });
- *
- * messenger.postFrameLoaded();
- * ```
- *
- * @alpha
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
- *
- * @param options - Options for creating `EmbeddedCheckoutMessenger`
- * @returns - An instance of `EmbeddedCheckoutMessenger`
- */
-export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
-
-/**
- * Creates an instance of `LanguageService`.
- *
- * @remarks
- * ```js
- * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
- * const service = createLanguageService(language);
- *
- * console.log(service.translate('address.city_label'));
- * ```
- *
- * @param config - A configuration object.
- * @returns An instance of `LanguageService`.
- */
-export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
-
-/**
- * Creates an instance of `StepTracker`.
- *
- * @remarks
- * ```js
- * const checkoutService = createCheckoutService();
- * await checkoutService.loadCheckout();
- * const stepTracker = createStepTracker(checkoutService);
- *
- * stepTracker.trackCheckoutStarted();
- * ```
- *
- * @param CheckoutService - An instance of CheckoutService
- * @param StepTrackerConfig - A step tracker config object
- * @returns an instance of `StepTracker`.
- */
-export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
-
-export { createTimeout }
 
 declare interface CreditCardInstrument {
     ccCustomerCode?: string;
@@ -4613,6 +4474,21 @@ declare class CurrencyService {
     toStoreCurrency(amount: number): string;
 }
 
+declare interface CustomError extends Error {
+    message: string;
+    type: string;
+    subtype?: string;
+}
+
+declare interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
+}
+
 declare interface Customer {
     id: number;
     addresses: CustomerAddress[];
@@ -4683,21 +4559,6 @@ declare interface CustomerPasswordRequirements {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
-}
-
-declare interface CustomError extends Error {
-    message: string;
-    type: string;
-    subtype?: string;
-}
-
-declare interface CustomItem {
-    id: string;
-    listPrice: number;
-    extendedListPrice: number;
-    name: string;
-    quantity: number;
-    sku: string;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -4843,26 +4704,6 @@ declare interface Discount {
 declare interface DisplaySettings {
     hidePriceFromGuests: boolean;
 }
-
-/**
- * Embed the checkout form in an iframe.
- *
- * @remarks
- * Once the iframe is embedded, it will automatically resize according to the
- * size of the checkout form. It will also notify the parent window when certain
- * events have occurred. i.e.: when the form is loaded and ready to be used.
- *
- * ```js
- * embedCheckout({
- *     url: 'https://checkout/url',
- *     containerId: 'container-id',
- * });
- * ```
- *
- * @param options - Options for embedding the checkout form.
- * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
- */
-export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
 
 declare class EmbeddedCheckout {
     private _iframeCreator;
@@ -5040,13 +4881,13 @@ declare interface FormFieldOptions {
     rows?: number;
 }
 
+declare type FormFieldType = 'array' | 'date' | 'integer' | 'string';
+
 declare interface FormFields {
     customerAccount: FormField[];
     shippingAddress: FormField[];
     billingAddress: FormField[];
 }
-
-declare type FormFieldType = 'array' | 'date' | 'integer' | 'string';
 
 declare interface GatewayOrderPayment extends OrderPayment {
     detail: {
@@ -5206,7 +5047,7 @@ declare interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-declare type HostedCreditCardInstrument = Omit_2<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
+declare type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
 
 declare type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
 
@@ -5330,7 +5171,7 @@ declare interface HostedStoredCardFieldOptionsMap {
     [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
 }
 
-declare type HostedVaultedInstrument = Omit_2<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
+declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
 declare interface IbanElementOptions extends BaseElementOptions_2 {
     /**
@@ -5706,15 +5547,6 @@ declare interface LineItem {
     parentId?: string | null;
 }
 
-declare interface LineItem_2 {
-    productId: number;
-    quantity: number;
-    optionSelections?: {
-        optionId: number;
-        optionValue: number | string;
-    };
-}
-
 declare interface LineItemCategory {
     name: string;
 }
@@ -5738,6 +5570,15 @@ declare interface LineItemSocialData {
     code: string;
     text: string;
     link: string;
+}
+
+declare interface LineItem_2 {
+    productId: number;
+    quantity: number;
+    optionSelections?: {
+        optionId: number;
+        optionValue: number | string;
+    };
 }
 
 declare interface LinkStyles extends InlineElementStyles {
@@ -5946,11 +5787,9 @@ declare interface NonceInstrument {
     deviceSessionId?: string;
 }
 
-declare type Omit_2<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-declare type Omit_3<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-declare interface Option_2 {
+declare interface Option {
     pickupMethod: PickupMethod;
     itemQuantities: Item;
 }
@@ -6153,6 +5992,10 @@ declare interface PasswordRequirements {
     numeric: string;
     minlength: number;
     error: string;
+}
+
+declare interface PayPalInstrument extends BaseAccountInstrument {
+    method: 'paypal';
 }
 
 declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions;
@@ -6481,13 +6324,6 @@ declare interface PaypalCommerceFormFieldOptions {
     placeholder?: string;
 }
 
-declare interface PaypalCommerceFormFieldsMap {
-    [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardExpiry]: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardName]: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardNumber]: PaypalCommerceFormFieldOptions;
-}
-
 declare type PaypalCommerceFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
 
 declare interface PaypalCommerceFormFieldStylesMap {
@@ -6521,6 +6357,13 @@ declare interface PaypalCommerceFormFieldValidateEventData {
         [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceFormFieldValidateErrorData[];
     };
     isValid: boolean;
+}
+
+declare interface PaypalCommerceFormFieldsMap {
+    [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardExpiry]: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardName]: PaypalCommerceFormFieldOptions;
+    [PaypalCommerceFormFieldType.CardNumber]: PaypalCommerceFormFieldOptions;
 }
 
 declare interface PaypalCommerceFormOptions {
@@ -6796,10 +6639,6 @@ declare interface PaypalFieldsStyleOptions {
     };
 }
 
-declare interface PayPalInstrument extends BaseAccountInstrument {
-    method: 'paypal';
-}
-
 declare interface PhysicalItem extends LineItem {
     isShippingRequired: boolean;
     giftWrapping?: {
@@ -6823,7 +6662,7 @@ declare interface PickupOptionRequestBody {
 }
 
 declare interface PickupOptionResult {
-    options: Option_2[];
+    options: Option[];
 }
 
 declare interface Promotion {
@@ -6859,7 +6698,7 @@ declare class RequestError<TBody = any> extends StandardError {
         message?: string;
     }>;
     status: number;
-    constructor(response?: Response_2<TBody | {}>, { message, errors }?: {
+    constructor(response?: Response<TBody | {}>, { message, errors }?: {
         message?: string;
         errors?: Array<{
             code: string;
@@ -7159,34 +6998,6 @@ declare interface StripeCustomerEvent extends StripeEvent {
     };
 }
 
-declare interface StripeElementClasses {
-    /**
-     * The base class applied to the container. Defaults to StripeElement.
-     */
-    base?: string;
-    /**
-     * The class name to apply when the Element is complete. Defaults to StripeElement--complete.
-     */
-    complete?: string;
-    /**
-     * The class name to apply when the Element is empty. Defaults to StripeElement--empty.
-     */
-    empty?: string;
-    /**
-     * The class name to apply when the Element is focused. Defaults to StripeElement--focus.
-     */
-    focus?: string;
-    /**
-     * The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
-     */
-    invalid?: string;
-    /**
-     * The class name to apply when the Element has its value autofilled by the browser
-     * (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.
-     */
-    webkitAutoFill?: string;
-}
-
 /**
  * CSS properties supported by Stripe.js.
  */
@@ -7265,6 +7076,34 @@ declare interface StripeElementCSSProperties {
      * The [text-transform](https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform) CSS property.
      */
     textTransform?: string;
+}
+
+declare interface StripeElementClasses {
+    /**
+     * The base class applied to the container. Defaults to StripeElement.
+     */
+    base?: string;
+    /**
+     * The class name to apply when the Element is complete. Defaults to StripeElement--complete.
+     */
+    complete?: string;
+    /**
+     * The class name to apply when the Element is empty. Defaults to StripeElement--empty.
+     */
+    empty?: string;
+    /**
+     * The class name to apply when the Element is focused. Defaults to StripeElement--focus.
+     */
+    focus?: string;
+    /**
+     * The class name to apply when the Element is invalid. Defaults to StripeElement--invalid.
+     */
+    invalid?: string;
+    /**
+     * The class name to apply when the Element has its value autofilled by the browser
+     * (only on Chrome and Safari). Defaults to StripeElement--webkit-autofill.
+     */
+    webkitAutoFill?: string;
 }
 
 declare type StripeElementOptions = CardElementOptions | CardExpiryElementOptions | CardNumberElementOptions | CardCvcElementOptions | IdealElementOptions | IbanElementOptions | ZipCodeElementOptions;
@@ -7722,12 +7561,12 @@ declare interface WithCheckoutcomFawryInstrument {
     customerEmail: string;
 }
 
-declare interface WithCheckoutcomiDealInstrument {
+declare interface WithCheckoutcomSEPAInstrument {
+    iban: string;
     bic: string;
 }
 
-declare interface WithCheckoutcomSEPAInstrument {
-    iban: string;
+declare interface WithCheckoutcomiDealInstrument {
     bic: string;
 }
 
@@ -7758,4 +7597,162 @@ declare interface ZipCodeElementOptions {
     containerId: string;
 }
 
-export { }
+/**
+ * Creates an instance of `BodlService`.
+ *
+ * @remarks
+ *
+ * ```js
+ * const bodlService = BodlService();
+ * bodlService.checkoutBegin();
+ *
+ * ```
+ *
+ * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * @returns an instance of `BodlService`.
+ */
+export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
+
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * @remarks
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
+
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * @remarks
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
+export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
+
+/**
+ * Creates an instance of `CurrencyService`.
+ *
+ * @remarks
+ * ```js
+ * const { data } = checkoutService.getState();
+ * const config = data.getConfig();
+ * const checkout = data.getCheckout();
+ * const currencyService = createCurrencyService(config);
+ *
+ * currencyService.toStoreCurrency(checkout.grandTotal);
+ * currencyService.toCustomerCurrency(checkout.grandTotal);
+ * ```
+ *
+ * @param config - The config object containing the currency configuration
+ * @returns an instance of `CurrencyService`.
+ */
+export declare function createCurrencyService(config: StoreConfig): CurrencyService;
+
+/**
+ * Create an instance of `EmbeddedCheckoutMessenger`.
+ *
+ * @remarks
+ * The object is responsible for posting messages to the parent window from the
+ * iframe when certain events have occurred. For example, when the checkout
+ * form is first loaded, you should notify the parent window about it.
+ *
+ * The iframe can only be embedded in domains that are allowed by the store.
+ *
+ * ```ts
+ * const messenger = createEmbeddedCheckoutMessenger({
+ *     parentOrigin: 'https://some/website',
+ * });
+ *
+ * messenger.postFrameLoaded();
+ * ```
+ *
+ * @alpha
+ * Please note that this feature is currently in an early stage of development.
+ * Therefore the API is unstable and not ready for public consumption.
+ *
+ * @param options - Options for creating `EmbeddedCheckoutMessenger`
+ * @returns - An instance of `EmbeddedCheckoutMessenger`
+ */
+export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
+
+/**
+ * Creates an instance of `LanguageService`.
+ *
+ * @remarks
+ * ```js
+ * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+ * const service = createLanguageService(language);
+ *
+ * console.log(service.translate('address.city_label'));
+ * ```
+ *
+ * @param config - A configuration object.
+ * @returns An instance of `LanguageService`.
+ */
+export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Creates an instance of `StepTracker`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const stepTracker = createStepTracker(checkoutService);
+ *
+ * stepTracker.trackCheckoutStarted();
+ * ```
+ *
+ * @param CheckoutService - An instance of CheckoutService
+ * @param StepTrackerConfig - A step tracker config object
+ * @returns an instance of `StepTracker`.
+ */
+export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
+
+/**
+ * Embed the checkout form in an iframe.
+ *
+ * @remarks
+ * Once the iframe is embedded, it will automatically resize according to the
+ * size of the checkout form. It will also notify the parent window when certain
+ * events have occurred. i.e.: when the form is loaded and ready to be used.
+ *
+ * ```js
+ * embedCheckout({
+ *     url: 'https://checkout/url',
+ *     containerId: 'container-id',
+ * });
+ * ```
+ *
+ * @param options - Options for embedding the checkout form.
+ * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
+ */
+export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
