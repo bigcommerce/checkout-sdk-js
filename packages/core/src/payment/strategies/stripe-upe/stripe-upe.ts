@@ -77,18 +77,20 @@ export type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
+ * https://stripe.com/docs/api/payment_intents/confirm#confirm_payment_intent-shipping
  */
 export interface AddressOptions {
     city?: string;
     country?: string;
     state?: string;
-    postalCode?: string;
+    postal_code?: string;
     line1?: string;
     line2?: string;
 }
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
+ * https://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface AddressProperties {
     city?: AutoOrNever;
