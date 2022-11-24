@@ -243,6 +243,11 @@ export default class GooglePayPaymentProcessor {
 
     private _postForm(postPaymentData: TokenizePayload): Promise<Response<void>> {
         const cardInformation = postPaymentData.details;
+        let buyNowCartId: string | undefined;
+
+        if (this._isBuyNowFlow) {
+            buyNowCartId = this._store.getState().cart.getCartOrThrow().id;
+        }
 
         return this._requestSender.post('/checkout.php', {
             headers: {
@@ -256,7 +261,8 @@ export default class GooglePayPaymentProcessor {
                 tokenFormat: postPaymentData.tokenFormat,
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
-                card_information: this._getCardInformation(cardInformation)
+                card_information: this._getCardInformation(cardInformation),
+                ...buyNowCartId && { cart_id: buyNowCartId }
             },
         });
     }
