@@ -7,6 +7,7 @@ export {
     getOrderRequestBody,
     getShippingOption,
     getPayment,
+    getPaymentMethod,
     getResponse,
     getCreditCardInstrument,
     getVaultedInstrument,

@@ -71,20 +71,13 @@ export default class PaymentStrategyActionCreator {
                         }
 
                         try {
-                            if (
-                                method.id == PaymentStrategyType.APPLEPAY &&
-                                method.gateway == PaymentStrategyType.MOLLIE
-                            ) {
-                                strategy = this._strategyRegistry.getByMethod(method);
-                            } else {
-                                strategy = this._strategyRegistryV2.get({
-                                    id: method.id,
-                                    gateway: method.gateway,
-                                    type: method.type,
-                                });
-                            }
-                        } catch {
                             strategy = this._strategyRegistry.getByMethod(method);
+                        } catch {
+                            strategy = this._strategyRegistryV2.get({
+                                id: method.id,
+                                gateway: method.gateway,
+                                type: method.type,
+                            });
                         }
                     } else {
                         strategy = this._strategyRegistryV2.get({
@@ -132,20 +125,13 @@ export default class PaymentStrategyActionCreator {
                     let strategy: PaymentStrategy | PaymentStrategyV2;
 
                     try {
-                        if (
-                            method.id == PaymentStrategyType.APPLEPAY &&
-                            method.gateway == PaymentStrategyType.MOLLIE
-                        ) {
-                            strategy = this._strategyRegistry.getByMethod(method);
-                        } else {
-                            strategy = this._strategyRegistryV2.get({
-                                id: method.id,
-                                gateway: method.gateway,
-                                type: method.type,
-                            });
-                        }
-                    } catch {
                         strategy = this._strategyRegistry.getByMethod(method);
+                    } catch {
+                        strategy = this._strategyRegistryV2.get({
+                            id: method.id,
+                            gateway: method.gateway,
+                            type: method.type,
+                        });
                     }
 
                     await strategy.finalize({
@@ -191,20 +177,13 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    if (
-                        method.id == PaymentStrategyType.APPLEPAY &&
-                        method.gateway == PaymentStrategyType.MOLLIE
-                    ) {
-                        strategy = this._strategyRegistry.getByMethod(method);
-                    } else {
-                        strategy = this._strategyRegistryV2.get({
-                            id: method.id,
-                            gateway: method.gateway,
-                            type: method.type,
-                        });
-                    }
-                } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
+                } catch {
+                    strategy = this._strategyRegistryV2.get({
+                        id: method.id,
+                        gateway: method.gateway,
+                        type: method.type,
+                    });
                 }
 
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({
@@ -255,20 +234,13 @@ export default class PaymentStrategyActionCreator {
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    if (
-                        method.id == PaymentStrategyType.APPLEPAY &&
-                        method.gateway == PaymentStrategyType.MOLLIE
-                    ) {
-                        strategy = this._strategyRegistry.getByMethod(method);
-                    } else {
-                        strategy = this._strategyRegistryV2.get({
-                            id: method.id,
-                            gateway: method.gateway,
-                            type: method.type,
-                        });
-                    }
-                } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
+                } catch {
+                    strategy = this._strategyRegistryV2.get({
+                        id: method.id,
+                        gateway: method.gateway,
+                        type: method.type,
+                    });
                 }
 
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize({

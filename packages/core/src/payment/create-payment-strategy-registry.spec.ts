@@ -28,7 +28,6 @@ import {
 } from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
@@ -188,12 +187,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
 
         expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
-    });
-
-    it('can instantiate creditcard', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CREDIT_CARD);
-
-        expect(paymentStrategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     it('can instantiate cybersource', () => {

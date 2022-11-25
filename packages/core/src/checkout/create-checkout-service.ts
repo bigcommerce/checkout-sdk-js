@@ -20,6 +20,7 @@ import {
     CustomerStrategyActionCreator,
 } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
+import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import {
@@ -126,7 +127,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         formFieldsActionCreator,
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+    const registryV2 = createPaymentStrategyRegistryV2(
+        paymentIntegrationService,
+        defaultPaymentStrategyFactories,
+        { useFallback: true },
+    );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
     return new CheckoutService(

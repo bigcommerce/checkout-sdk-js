@@ -82,7 +82,6 @@ import {
 } from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
@@ -468,17 +467,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 hostedFormFactory,
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CREDIT_CARD,
-        () =>
-            new CreditCardPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
             ),
     );
 

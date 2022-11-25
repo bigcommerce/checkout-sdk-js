@@ -8,6 +8,7 @@ export { getResponse } from './responses.mock';
 export { default as getShippingOption } from './shipping-option.mock';
 export {
     getPayment,
+    getPaymentMethod,
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
