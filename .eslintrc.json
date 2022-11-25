@@ -1,49 +1,53 @@
 {
-    "extends": [
-        "@bigcommerce/eslint-config"
-    ],
+    "extends": ["@bigcommerce/eslint-config"],
+    "parser": "@typescript-eslint/parser",
     "root": true,
-    "ignorePatterns": ["**/*"],
     "plugins": ["@nrwl/nx"],
     "env": {
         "browser": true
     },
+    "settings": {
+        "import/resolver": {
+            "typescript": {
+                "project": "./tsconfig.*?.json"
+            }
+        }
+    },
+    "parserOptions": {
+        "project": "./tsconfig.*?.json"
+    },
     "overrides": [
         {
-          "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-          "rules": {
-            "@nrwl/nx/enforce-module-boundaries": [
-                "error",
-                {
-                  "enforceBuildableLibDependency": false,
-                  "allow": [],
-                  "depConstraints": [
+            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+            "rules": {
+                "prettier/prettier": [
+                    "error",
                     {
-                      "sourceTag": "scope:core",
-                      "onlyDependOnLibsWithTags": ["scope:shared"]
-                    },
-                    {
-                      "sourceTag": "scope:shared",
-                      "onlyDependOnLibsWithTags": ["scope:shared"]
-                    },
-                    {
-                      "sourceTag": "scope:integration",
-                      "onlyDependOnLibsWithTags": ["scope:shared"]
+                        "tabWidth": 4
                     }
-                  ]
-                }
-              ]
-          }
-        },
-        {
-          "files": ["*.ts", "*.tsx"],
-          "extends": ["plugin:@nrwl/nx/typescript"],
-          "rules": {}
-        },
-        {
-          "files": ["*.js", "*.jsx"],
-          "extends": ["plugin:@nrwl/nx/javascript"],
-          "rules": {}
+                ],
+                "@nrwl/nx/enforce-module-boundaries": [
+                    "error",
+                    {
+                        "enforceBuildableLibDependency": false,
+                        "allow": [],
+                        "depConstraints": [
+                            {
+                                "sourceTag": "scope:core",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            },
+                            {
+                                "sourceTag": "scope:shared",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            },
+                            {
+                                "sourceTag": "scope:integration",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            }
+                        ]
+                    }
+                ]
+            }
         }
-      ]
+    ]
 }

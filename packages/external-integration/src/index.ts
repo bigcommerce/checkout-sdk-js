@@ -1,1 +1,1 @@
-export { default as createExternalPaymentStrategy} from "./lib/create-external-payment-strategy";
+export { default as createExternalPaymentStrategy } from './create-external-payment-strategy';
