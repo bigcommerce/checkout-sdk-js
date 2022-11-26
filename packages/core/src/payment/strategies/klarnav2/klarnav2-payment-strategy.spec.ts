@@ -5,20 +5,29 @@ import { merge, noop, omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
 import {
+    Checkout,
     CheckoutActionCreator,
     CheckoutRequestSender,
     CheckoutStore,
     CheckoutValidator,
     createCheckoutStore,
 } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { CouponActionType } from '../../../coupon';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import {
     OrderActionCreator,
     OrderActionType,
+    OrderPaymentRequestBody,
     OrderRequestBody,
     OrderRequestSender,
 } from '../../../order';
@@ -50,6 +59,7 @@ import {
 describe('KlarnaV2PaymentStrategy', () => {
     let checkoutActionCreator: CheckoutActionCreator;
     let initializePaymentAction: Observable<Action>;
+    let checkoutMock: Checkout;
     let klarnaPayments: KlarnaPayments;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
@@ -122,9 +132,12 @@ describe('KlarnaV2PaymentStrategy', () => {
             useStoreCredit: true,
         });
 
+        checkoutMock = getCheckout();
+
         initializePaymentAction = of(
             createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested),
         );
+
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');
@@ -140,6 +153,8 @@ describe('KlarnaV2PaymentStrategy', () => {
         jest.spyOn(klarnav2TokenUpdater, 'updateClientToken').mockResolvedValue(
             getResponse(getKlarna()),
         );
+
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
         jest.spyOn(store, 'subscribe');
     });
@@ -173,6 +188,23 @@ describe('KlarnaV2PaymentStrategy', () => {
             );
         });
 
+        it('throws InvalidArgumentError when gateway is not provided', async () => {
+            const rejectedSpy = jest.fn();
+
+            await strategy
+                .initialize({
+                    methodId: paymentMethod.id,
+                    klarnav2: { container: '#container', onLoad },
+                })
+                .catch(rejectedSpy);
+
+            expect(rejectedSpy).toHaveBeenCalledWith(
+                new InvalidArgumentError(
+                    'Unable to proceed because "payload.payment.gatewayId" argument is not provided.',
+                ),
+            );
+        });
+
         it('loads script when initializing strategy', () => {
             expect(scriptLoader.load).toHaveBeenCalledTimes(1);
         });
@@ -181,6 +213,42 @@ describe('KlarnaV2PaymentStrategy', () => {
             store.notifyState();
 
             expect(store.subscribe).toHaveBeenCalledTimes(1);
+        });
+
+        it('initializes again when the subscriber is triggered', async () => {
+            const isInitialized = jest
+                .spyOn(store.getState().paymentStrategies, 'isInitialized')
+                .mockReturnValue(true);
+
+            expect(store.subscribe).toHaveBeenCalledTimes(1);
+
+            await store.notifyState();
+
+            await createAction(CouponActionType.ApplyCouponSucceeded, getCheckout());
+            await store.notifyState();
+            await createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
+            await store.notifyState();
+
+            expect(klarnaPayments.init).toBeCalledTimes(3);
+            expect(isInitialized).toHaveBeenCalledTimes(3);
+        });
+
+        it('updateClientToken fails', async () => {
+            const rejectedSpy = jest.fn();
+
+            jest.spyOn(klarnav2TokenUpdater, 'updateClientToken').mockRejectedValue({});
+
+            await strategy
+                .initialize({
+                    methodId: paymentMethod.id,
+                    gatewayId: paymentMethod.gateway,
+                    klarnav2: { container: '#container', onLoad },
+                })
+                .catch(rejectedSpy);
+
+            expect(rejectedSpy).toHaveBeenCalledWith(
+                new MissingDataError(MissingDataErrorType.MissingPaymentMethod),
+            );
         });
 
         it('loads payments widget', () => {
@@ -218,6 +286,36 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentMethod.gateway,
                 { params: { params: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } },
             );
+        });
+
+        it('executes with no payment argument', async () => {
+            try {
+                await strategy.execute({ ...payload, payment: undefined });
+            } catch (error) {
+                expect(error).toMatchObject(
+                    new InvalidArgumentError(
+                        'Unable to proceed because "payload.payment" argument is not provided.',
+                    ),
+                );
+            }
+        });
+
+        it('executes with no gateway argument', async () => {
+            try {
+                await strategy.execute({
+                    ...payload,
+                    payment: {
+                        ...(payload.payment as OrderPaymentRequestBody),
+                        gatewayId: undefined,
+                    },
+                });
+            } catch (error) {
+                expect(error).toMatchObject(
+                    new InvalidArgumentError(
+                        'Unable to proceed because "payload.payment.gatewayId" argument is not provided.',
+                    ),
+                );
+            }
         });
 
         it('loads widget in EU', async () => {
@@ -360,6 +458,25 @@ describe('KlarnaV2PaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
+        describe('when the billing address is from an invalid country', () => {
+            beforeEach(() => {
+                jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue({
+                    ...getEUBillingAddress(),
+                    countryCode: 'zzz',
+                });
+            });
+
+            it('authorize gets called without session data', async () => {
+                strategy.execute(payload);
+
+                expect(klarnaPayments.authorize).toHaveBeenCalledWith(
+                    { payment_method_category: paymentMethod.id },
+                    {},
+                    expect.any(Function),
+                );
+            });
+        });
+
         describe('when klarnav2 authorization is not approved', () => {
             beforeEach(() => {
                 klarnaPayments.authorize = jest.fn((_params, _data, callback) =>
@@ -399,6 +516,35 @@ describe('KlarnaV2PaymentStrategy', () => {
         });
     });
 
+    describe('when klarnav2 initialization fails', () => {
+        beforeEach(async () => {
+            jest.spyOn(scriptLoader, 'load').mockImplementation(() => Promise.resolve(undefined));
+        });
+
+        it('rejects the payment execution with invalid payment error', async () => {
+            const rejectedInitialization = jest.fn();
+            const rejectedExecute = jest.fn();
+
+            await strategy
+                .initialize({
+                    methodId: paymentMethod.id,
+                    gatewayId: paymentMethod.gateway,
+                    klarnav2: { container: '#container' },
+                })
+                .catch(rejectedInitialization);
+
+            expect(rejectedInitialization).toHaveBeenCalledWith(
+                new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+            );
+
+            await strategy.execute(payload).catch(rejectedExecute);
+
+            expect(rejectedExecute).toHaveBeenCalledWith(
+                new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+            );
+        });
+    });
+
     describe('#finalize()', () => {
         it('throws error to inform that order finalization is not required', async () => {
             try {
@@ -406,6 +552,26 @@ describe('KlarnaV2PaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
+        });
+    });
+
+    describe('#deinitialize()', () => {
+        const unsubscribe = jest.fn();
+
+        beforeEach(async () => {
+            jest.spyOn(store, 'subscribe').mockReturnValue(unsubscribe);
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container' },
+            });
+        });
+
+        it('deinitializes and unsubscribes klarnav2 payment strategy', async () => {
+            const promise = await strategy.deinitialize();
+
+            expect(promise).toBe(store.getState());
+            expect(unsubscribe).toHaveBeenCalledTimes(1);
         });
     });
 });
