@@ -7,6 +7,7 @@ export function getKlarnaV2UpdateSessionParams(): KlarnaUpdateSessionParams {
     return {
         billing_address: {
             street_address: '12345 Testing Way',
+            street_address2: '67890 Klarna St',
             city: 'Some City',
             country: 'DE',
             given_name: 'Test',
@@ -64,7 +65,7 @@ export function getEUBillingAddressWithNoPhone(): BillingAddress {
         email: 'test@bigcommerce.com',
         company: 'Bigcommerce',
         address1: '12345 Testing Way',
-        address2: '',
+        address2: '67890 Klarna St',
         city: 'Some City',
         stateOrProvince: 'Berlin',
         stateOrProvinceCode: 'CA',
