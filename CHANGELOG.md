@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.309.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.0...v1.309.1) (2022-11-28)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-7107 Refactor `hosted-form` ([#1707](https://github.com/bigcommerce/checkout-sdk-js/issues/1707)) ([d28eb54](https://github.com/bigcommerce/checkout-sdk-js/commit/d28eb543ce84c0f379454bdb0fdc14be0ad16b22))
+
 ## [1.309.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.4...v1.309.0) (2022-11-28)
 
 
