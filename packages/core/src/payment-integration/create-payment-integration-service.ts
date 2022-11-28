@@ -14,6 +14,7 @@ import {
 } from "../checkout";
 import { ConfigActionCreator, ConfigRequestSender } from "../config";
 import { FormFieldsActionCreator, FormFieldsRequestSender } from "../form";
+import { HostedFormFactory } from "../hosted-form";
 import { OrderActionCreator, OrderRequestSender } from "../order";
 import {
     createPaymentClient,
@@ -58,6 +59,8 @@ export default function createPaymentIntegrationService(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
     );
 
+    const hostedFormFactory = new HostedFormFactory(store);
+
     const orderActionCreator = new OrderActionCreator(
         new OrderRequestSender(requestSender),
         new CheckoutValidator(new CheckoutRequestSender(requestSender))
@@ -92,6 +95,7 @@ export default function createPaymentIntegrationService(
         store,
         storeProjectionFactory,
         checkoutActionCreator,
+        hostedFormFactory,
         orderActionCreator,
         billingAddressActionCreator,
         consignmentActionCreator,

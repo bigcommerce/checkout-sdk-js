@@ -1,5 +1,9 @@
 import { noop, without } from 'lodash';
 
+import {
+    HostedForm as HostedFormInterface
+} from "@bigcommerce/checkout-sdk/payment-integration-api";
+
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
 import { PaymentAdditionalAction } from '../payment';
@@ -13,7 +17,7 @@ import { HostedInputEnterEvent, HostedInputEventMap, HostedInputEventType, Hoste
 
 type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
 
-export default class HostedForm {
+export default class HostedForm implements HostedFormInterface {
     private _bin?: string;
     private _cardType?: string;
 

@@ -1,6 +1,5 @@
 import { BillingAddressRequestBody } from "./billing";
-import { HostedForm } from "./hosted-form";
-import HostedFormOptions from "./hosted-form/hosted-form-options";
+import { HostedForm, HostedFormOptions } from "./hosted-form";
 import { OrderRequestBody } from "./order";
 import { Payment } from "./payment";
 import PaymentIntegrationSelectors from "./payment-integration-selectors";

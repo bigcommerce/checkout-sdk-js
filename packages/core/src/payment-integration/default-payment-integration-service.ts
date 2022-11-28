@@ -29,6 +29,7 @@ export default class DefaultPaymentIntegrationService
         private _store: CheckoutStore,
         private _storeProjectionFactory: PaymentIntegrationStoreProjectionFactory,
         private _checkoutActionCreator: CheckoutActionCreator,
+        private _hostedFormFactory: HostedFormFactory,
         private _orderActionCreator: OrderActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
@@ -41,9 +42,7 @@ export default class DefaultPaymentIntegrationService
     }
 
     createHostedForm(host: string, options: HostedFormOptions): HostedForm {
-        const hostedFormFactory = new HostedFormFactory(this._store);
-
-        return hostedFormFactory.create(host,options);
+        return this._hostedFormFactory.create(host,options);
     }
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
