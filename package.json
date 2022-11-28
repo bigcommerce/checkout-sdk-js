@@ -84,6 +84,7 @@
     "@nrwl/jest": "^13.10.3",
     "@nrwl/nx-plugin": "^13.10.3",
     "@nrwl/workspace": "^13.10.3",
+    "@square/web-payments-sdk-types": "^1.44.1",
     "@types/applepayjs": "^3.0.2",
     "@types/glob": "^7.2.0",
     "@types/grecaptcha": "^2.0.36",
