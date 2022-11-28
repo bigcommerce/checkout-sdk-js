@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.309.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.4...v1.309.0) (2022-11-28)
+
+
+### Features
+
+* **payment:** INT-6716 SquareV2: Add payment strategy ([#1642](https://github.com/bigcommerce/checkout-sdk-js/issues/1642)) ([6af5062](https://github.com/bigcommerce/checkout-sdk-js/commit/6af5062c53392e825e937b4fccc4bc47e9b72cda))
+
 ### [1.308.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.3...v1.308.4) (2022-11-24)
 
 ### [1.308.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.2...v1.308.3) (2022-11-24)

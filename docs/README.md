@@ -328,6 +328,7 @@
 - [SpamProtectionOptions](interfaces/SpamProtectionOptions.md)
 - [SquareFormElement](interfaces/SquareFormElement.md)
 - [SquarePaymentInitializeOptions](interfaces/SquarePaymentInitializeOptions.md)
+- [SquareV2PaymentInitializeOptions](interfaces/SquareV2PaymentInitializeOptions.md)
 - [StepStyles](interfaces/StepStyles.md)
 - [StepTracker](interfaces/StepTracker.md)
 - [StepTrackerConfig](interfaces/StepTrackerConfig.md)
@@ -374,6 +375,7 @@
 - [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
+- [WithSquareV2PaymentInitializeOptions](interfaces/WithSquareV2PaymentInitializeOptions.md)
 - [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
 
@@ -665,7 +667,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 
