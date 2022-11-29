@@ -82,7 +82,7 @@ npm install --save @bigcommerce/checkout-sdk
 
 You can also use this library by referencing a CDN URL.
 
-```
+```http
 https://checkout-sdk.bigcommerce.com/v1/loader.js
 ```
 
@@ -457,7 +457,7 @@ The functions provided by the SDK are:
 
 ## Notes
 
-* If you are using this library on the checkout page of a Stencil theme, you must have [Optimized One Page Checkout](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout/) enabled. Otherwise, you will not be able to preview your changes.
+* If you are using this library on the checkout page of a Stencil theme, you must have [Optimized One Page Checkout](https://support.bigcommerce.com/s/article/Optimized-Single-Page-Checkout) enabled. Otherwise, you will not be able to preview your changes.
 * You should only use this library on a HTTPS page unless you are developing locally.
 * In order to keep up to date on the latest changes, please subscribe to this repository by clicking on the [watch](https://github.com/bigcommerce/checkout-sdk-js/subscription) button.
 
