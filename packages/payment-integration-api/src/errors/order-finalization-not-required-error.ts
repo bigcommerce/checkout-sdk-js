@@ -1,4 +1,4 @@
-import StandardError from "./standard-error";
+import StandardError from './standard-error';
 
 /**
  * Throw this error if we are trying to make an order finalization request for a
@@ -6,9 +6,9 @@ import StandardError from "./standard-error";
  */
 export default class OrderFinalizationNotRequiredError extends StandardError {
     constructor() {
-        super("The current order does not need to be finalized at this stage.");
+        super('The current order does not need to be finalized at this stage.');
 
-        this.name = "OrderFinalizationNotRequiredError";
-        this.type = "order_finalization_not_required";
+        this.name = 'OrderFinalizationNotRequiredError';
+        this.type = 'order_finalization_not_required';
     }
 }

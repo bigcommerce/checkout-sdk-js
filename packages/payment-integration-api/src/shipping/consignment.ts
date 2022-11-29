@@ -1,6 +1,7 @@
-import { Address } from "../address";
-import { ConsignmentPickupOption } from "./pickup-option";
-import ShippingOption from "./shipping-option";
+import { Address } from '../address';
+
+import { ConsignmentPickupOption } from './pickup-option';
+import ShippingOption from './shipping-option';
 
 export default interface Consignment {
     id: string;

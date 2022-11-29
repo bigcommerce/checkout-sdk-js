@@ -1,7 +1,7 @@
-import ResolvableModule from "./resolvable-module";
+import ResolvableModule from './resolvable-module';
 
 export default function isResolvableModule<TModule, TIdentifier>(
-    module: TModule
+    module: TModule,
 ): module is ResolvableModule<TModule, TIdentifier> {
-    return "resolveIds" in module;
+    return 'resolveIds' in module;
 }

@@ -1,15 +1,15 @@
-import { AddressKey } from "../address";
+import { AddressKey } from '../address';
 
 export type FormFieldFieldType =
-    | "checkbox"
-    | "date"
-    | "text"
-    | "dropdown"
-    | "password"
-    | "radio"
-    | "multiline";
+    | 'checkbox'
+    | 'date'
+    | 'text'
+    | 'dropdown'
+    | 'password'
+    | 'radio'
+    | 'multiline';
 
-export type FormFieldType = "array" | "date" | "integer" | "string";
+export type FormFieldType = 'array' | 'date' | 'integer' | 'string';
 
 export interface CustomerPasswordRequirements {
     alpha: string;

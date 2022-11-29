@@ -1,4 +1,4 @@
-import { RequireAtLeastOne } from "../util-types";
+import { RequireAtLeastOne } from '../util-types';
 
 type PaymentStrategyResolveId = RequireAtLeastOne<{
     id?: string;

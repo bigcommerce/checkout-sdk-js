@@ -3,19 +3,14 @@ import {
     CustomerInitializeOptions,
     CustomerRequestOptions,
     ExecutePaymentMethodCheckoutOptions,
-} from "../customer";
+} from '../customer';
 
 export default interface CustomerStrategy {
-    signIn(
-        credentials: CustomerCredentials,
-        options?: CustomerRequestOptions
-    ): Promise<void>;
+    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<void>;
 
     signOut(options?: CustomerRequestOptions): Promise<void>;
 
-    executePaymentMethodCheckout(
-        options?: ExecutePaymentMethodCheckoutOptions
-    ): Promise<void>;
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void>;
 
     initialize(options?: CustomerInitializeOptions): Promise<void>;
 

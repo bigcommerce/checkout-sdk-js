@@ -14,19 +14,18 @@ export enum PaymentActionType {
     InitializeOffsitePaymentFailed = 'INITIALIZE_OFFSITE_PAYMENT_FAILED',
 }
 
-export type PaymentAction = SubmitPaymentAction |
-    InitializeOffsitePaymentAction;
+export type PaymentAction = SubmitPaymentAction | InitializeOffsitePaymentAction;
 
 export type SubmitPaymentAction =
-    SubmitPaymentRequestedAction |
-    SubmitPaymentSucceededAction |
-    SubmitPaymentFailedAction |
-    LoadOrderAction;
+    | SubmitPaymentRequestedAction
+    | SubmitPaymentSucceededAction
+    | SubmitPaymentFailedAction
+    | LoadOrderAction;
 
 export type InitializeOffsitePaymentAction =
-    InitializeOffsitePaymentRequestedAction |
-    InitializeOffsitePaymentSucceededAction |
-    InitializeOffsitePaymentFailedAction;
+    | InitializeOffsitePaymentRequestedAction
+    | InitializeOffsitePaymentSucceededAction
+    | InitializeOffsitePaymentFailedAction;
 
 export interface SubmitPaymentRequestedAction extends Action {
     type: PaymentActionType.SubmitPaymentRequested;

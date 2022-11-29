@@ -1,4 +1,4 @@
-import StandardError from "./standard-error";
+import StandardError from './standard-error';
 
 /**
  * This error should be thrown when a method is unable to proceed because the
@@ -7,9 +7,9 @@ import StandardError from "./standard-error";
  */
 export default class InvalidArgumentError extends StandardError {
     constructor(message?: string) {
-        super(message || "Invalid arguments have been provided.");
+        super(message || 'Invalid arguments have been provided.');
 
-        this.name = "InvalidArgumentError";
-        this.type = "invalid_argument";
+        this.name = 'InvalidArgumentError';
+        this.type = 'invalid_argument';
     }
 }

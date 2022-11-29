@@ -1,10 +1,21 @@
-import { FormattedPayload, FormattedVaultedInstrument, HostedVaultedInstrument, PaymentInstrument, VaultedInstrument } from './payment';
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import {
+    FormattedPayload,
+    FormattedVaultedInstrument,
+    HostedVaultedInstrument,
+    PaymentInstrument,
+    VaultedInstrument,
+} from './payment';
 
-export default function isVaultedInstrument(instrument: PaymentInstrument): instrument is VaultedInstrument {
+export default function isVaultedInstrument(
+    instrument: PaymentInstrument,
+): instrument is VaultedInstrument {
     return Boolean((instrument as VaultedInstrument).instrumentId);
 }
 
-export function isHostedVaultedInstrument(instrument: PaymentInstrument): instrument is HostedVaultedInstrument {
+export function isHostedVaultedInstrument(
+    instrument: PaymentInstrument,
+): instrument is HostedVaultedInstrument {
     return (
         Boolean((instrument as HostedVaultedInstrument).instrumentId) &&
         !Object.prototype.hasOwnProperty.call(instrument, 'ccNumber') &&
@@ -12,13 +23,19 @@ export function isHostedVaultedInstrument(instrument: PaymentInstrument): instru
     );
 }
 
-export function isFormattedVaultedInstrument(instrument: PaymentInstrument): instrument is FormattedPayload<FormattedVaultedInstrument> {
-    const formattedInstrument = (instrument as FormattedPayload<FormattedVaultedInstrument>).formattedPayload;
+export function isFormattedVaultedInstrument(
+    instrument: PaymentInstrument,
+): instrument is FormattedPayload<FormattedVaultedInstrument> {
+    const formattedInstrument = (instrument as FormattedPayload<FormattedVaultedInstrument>)
+        .formattedPayload;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!formattedInstrument) {
         return false;
     }
 
-    return typeof formattedInstrument.bigpay_token === 'string' ||
-        Boolean(formattedInstrument.bigpay_token && formattedInstrument.bigpay_token.token);
+    return (
+        typeof formattedInstrument.bigpay_token === 'string' ||
+        Boolean(formattedInstrument.bigpay_token && formattedInstrument.bigpay_token.token)
+    );
 }
