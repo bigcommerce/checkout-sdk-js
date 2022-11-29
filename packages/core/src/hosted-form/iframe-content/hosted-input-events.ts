@@ -37,19 +37,18 @@ export interface HostedInputEventMap {
 }
 
 // Events
-export type HostedInputEvent = (
-    HostedInputAttachSuccessEvent |
-    HostedInputAttachErrorEvent |
-    HostedInputBinChangeEvent |
-    HostedInputBlurEvent |
-    HostedInputChangeEvent |
-    HostedInputCardTypeChangeEvent |
-    HostedInputEnterEvent |
-    HostedInputFocusEvent |
-    HostedInputSubmitSuccessEvent |
-    HostedInputSubmitErrorEvent |
-    HostedInputValidateEvent
-);
+export type HostedInputEvent =
+    | HostedInputAttachSuccessEvent
+    | HostedInputAttachErrorEvent
+    | HostedInputBinChangeEvent
+    | HostedInputBlurEvent
+    | HostedInputChangeEvent
+    | HostedInputCardTypeChangeEvent
+    | HostedInputEnterEvent
+    | HostedInputFocusEvent
+    | HostedInputSubmitSuccessEvent
+    | HostedInputSubmitErrorEvent
+    | HostedInputValidateEvent;
 
 export interface HostedInputAttachSuccessEvent {
     type: HostedInputEventType.AttachSucceeded;

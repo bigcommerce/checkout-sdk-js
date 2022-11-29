@@ -1,16 +1,13 @@
-import { BillingAddressRequestBody } from "./billing";
-import { HostedForm, HostedFormOptions } from "./hosted-form";
-import { OrderRequestBody } from "./order";
-import { Payment } from "./payment";
-import PaymentIntegrationSelectors from "./payment-integration-selectors";
-import { RequestOptions } from "./util-types";
-import { ShippingAddressRequestBody } from "./shipping";
+import { BillingAddressRequestBody } from './billing';
+import { HostedForm, HostedFormOptions } from './hosted-form';
+import { OrderRequestBody } from './order';
+import { Payment } from './payment';
+import PaymentIntegrationSelectors from './payment-integration-selectors';
+import { ShippingAddressRequestBody } from './shipping';
+import { RequestOptions } from './util-types';
 
 export default interface PaymentIntegrationService {
-    createHostedForm(
-        host: string,
-        options: HostedFormOptions
-    ): HostedForm;
+    createHostedForm(host: string, options: HostedFormOptions): HostedForm;
 
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
@@ -27,7 +24,7 @@ export default interface PaymentIntegrationService {
 
     submitOrder(
         payload?: OrderRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
     submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors>;
@@ -36,14 +33,12 @@ export default interface PaymentIntegrationService {
 
     selectShippingOption(
         id: string,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
-    updateBillingAddress(
-        payload: BillingAddressRequestBody
-    ): Promise<PaymentIntegrationSelectors>;
+    updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
 
     updateShippingAddress(
-        payload: ShippingAddressRequestBody
+        payload: ShippingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors>;
 }

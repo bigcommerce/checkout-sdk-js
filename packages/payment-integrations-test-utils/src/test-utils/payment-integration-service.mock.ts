@@ -1,9 +1,9 @@
-import { PaymentIntegrationService } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getBillingAddress } from './address.mock';
-import getCart from "./carts.mock";
-import getCheckout from "./checkouts.mock";
-import getConfig from "./config.mock";
+import getCart from './carts.mock';
+import getCheckout from './checkouts.mock';
+import getConfig from './config.mock';
 
 const subscribe = jest.fn();
 const state = {
@@ -30,23 +30,21 @@ const updateShippingAddress = jest.fn();
 const signOut = jest.fn();
 const selectShippingOption = jest.fn();
 
-const PaymentIntegrationServiceMock = jest
-    .fn<PaymentIntegrationService>()
-    .mockImplementation(() => {
-        return {
-            subscribe,
-            getState,
-            loadCheckout,
-            loadDefaultCheckout,
-            loadPaymentMethod,
-            submitOrder,
-            submitPayment,
-            finalizeOrder,
-            updateBillingAddress,
-            updateShippingAddress,
-            signOut,
-            selectShippingOption,
-        };
-    });
+const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
+    return {
+        subscribe,
+        getState,
+        loadCheckout,
+        loadDefaultCheckout,
+        loadPaymentMethod,
+        submitOrder,
+        submitPayment,
+        finalizeOrder,
+        updateBillingAddress,
+        updateShippingAddress,
+        signOut,
+        selectShippingOption,
+    };
+});
 
 export default PaymentIntegrationServiceMock;

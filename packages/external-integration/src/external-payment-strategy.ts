@@ -1,6 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
+    isRequestError,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -9,6 +10,8 @@ import {
     PaymentStrategy,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { AdditionalActionRequired, isAdditionalActionRequired } from './is-additional-action';
 
 export default class ExternalPaymentStrategy implements PaymentStrategy {
     constructor(
@@ -29,24 +32,27 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
         try {
             await this._paymentIntegrationService.submitPayment({ ...payment, paymentData });
         } catch (error) {
-            if (error instanceof RequestError) {
-                if (!this._isAdditionalActionRequired(error)) {
-                    return Promise.reject(error);
-                }
+            if (isRequestError(error)) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                const { body } = error;
 
-                const {
-                    body: {
+                if (isAdditionalActionRequired(body)) {
+                    if (!this._isAdditionalActionRequired(body)) {
+                        return Promise.reject(error);
+                    }
+
+                    const {
                         additional_action_required: {
                             data: { redirect_url },
                         },
-                    },
-                } = error;
+                    } = body;
 
-                return new Promise(() => {
-                    if (error instanceof RequestError) {
-                        this._formPoster.postForm(redirect_url, {});
-                    }
-                });
+                    return new Promise(() => {
+                        if (error instanceof RequestError) {
+                            this._formPoster.postForm(redirect_url, {});
+                        }
+                    });
+                }
             }
         }
     }
@@ -63,11 +69,12 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private _isAdditionalActionRequired(error: RequestError): boolean {
-        const { additional_action_required, status } = error.body;
+    private _isAdditionalActionRequired(body: AdditionalActionRequired): boolean {
+        const { additional_action_required, status } = body;
 
         return (
             status === 'additional_action_required' &&
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             additional_action_required &&
             additional_action_required.type === 'offsite_redirect'
         );
