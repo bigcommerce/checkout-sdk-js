@@ -1,5 +1,7 @@
 import { includes, isEmpty, omitBy, some } from 'lodash';
 
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { isHostedInstrumentLike, Payment } from '../..';
 import { Address } from '../../../address';
 import { BillingAddress, isBillingAddressLike } from '../../../billing';
@@ -13,7 +15,7 @@ import {
     RequestError,
 } from '../../../common/error/errors';
 import { Customer } from '../../../customer';
-import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';

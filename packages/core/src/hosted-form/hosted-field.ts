@@ -2,17 +2,16 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedFieldType, HostedFieldStylesMap } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { DetachmentObserver } from '../common/dom';
 import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { parseUrl } from '../common/url';
-
 import { CardInstrument } from '../payment/instrument';
+
 import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
-import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import { HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputSubmitSuccessEvent, HostedInputValidateEvent } from './iframe-content';
 

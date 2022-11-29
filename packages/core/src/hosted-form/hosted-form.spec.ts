@@ -1,16 +1,15 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedFormOptions, HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 import { IframeEventListener } from '../common/iframe';
 import { PaymentAdditionalAction } from '../payment';
-
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
+
 import HostedField from './hosted-field';
 import HostedForm from './hosted-form';
-import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
