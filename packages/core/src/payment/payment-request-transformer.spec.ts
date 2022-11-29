@@ -1,5 +1,7 @@
 import { merge } from 'lodash';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import {
     CheckoutStoreState,
@@ -13,7 +15,6 @@ import {
 import { MissingDataError } from '../common/error/errors';
 import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
-import { HostedFieldType } from '../hosted-form';
 import { getHostedFormOrderData } from '../hosted-form/hosted-form-order-data.mock';
 import { getOrder, getOrderMeta } from '../order/orders.mock';
 import { getConsignment, getConsignments } from '../shipping/consignments.mock';

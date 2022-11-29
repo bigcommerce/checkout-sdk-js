@@ -1,15 +1,16 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { pick } from 'lodash';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { ReadableCheckoutStore } from '../checkout';
 import { DetachmentObserver, MutationObserverFactory } from '../common/dom';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { CardInstrument } from '../payment/instrument';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
+import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 import HostedField from './hosted-field';
-import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
 import HostedFormOptions, {
     HostedCardFieldOptionsMap,

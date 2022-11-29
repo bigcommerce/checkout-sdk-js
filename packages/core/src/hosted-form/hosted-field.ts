@@ -2,28 +2,19 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { DetachmentObserver } from '../common/dom';
 import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { parseUrl } from '../common/url';
-import { CardInstrument } from '../payment/instrument';
 
-import {
-    InvalidHostedFormConfigError,
-    InvalidHostedFormError,
-    InvalidHostedFormValueError,
-} from './errors';
+import { CardInstrument } from '../payment/instrument';
+import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
-import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import {
-    HostedInputEventMap,
-    HostedInputEventType,
-    HostedInputSubmitErrorEvent,
-    HostedInputSubmitSuccessEvent,
-    HostedInputValidateEvent,
-} from './iframe-content';
+import { HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputSubmitSuccessEvent, HostedInputValidateEvent } from './iframe-content';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -40,7 +31,7 @@ export default class HostedField {
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _detachmentObserver: DetachmentObserver,
-        private _cardInstrument?: CardInstrument,
+        private _cardInstrument?: CardInstrument
     ) {
         this._iframe = document.createElement('iframe');
 
@@ -59,9 +50,7 @@ export default class HostedField {
         const container = document.getElementById(this._containerId);
 
         if (!container) {
-            throw new InvalidHostedFormConfigError(
-                'Unable to proceed because the provided container ID is not valid.',
-            );
+            throw new InvalidHostedFormConfigError('Unable to proceed because the provided container ID is not valid.');
         }
 
         container.appendChild(this._iframe);
@@ -78,28 +67,24 @@ export default class HostedField {
 
                     this._eventPoster.setTarget(contentWindow);
 
-                    await this._eventPoster.post(
-                        {
-                            type: HostedFieldEventType.AttachRequested,
-                            payload: {
-                                accessibilityLabel: this._accessibilityLabel,
-                                cardInstrument: this._cardInstrument,
-                                fontUrls: this._getFontUrls(),
-                                placeholder: this._placeholder,
-                                styles: this._styles,
-                                origin: document.location.origin,
-                                type: this._type,
-                            },
+                    await this._eventPoster.post({
+                        type: HostedFieldEventType.AttachRequested,
+                        payload: {
+                            accessibilityLabel: this._accessibilityLabel,
+                            cardInstrument: this._cardInstrument,
+                            fontUrls: this._getFontUrls(),
+                            placeholder: this._placeholder,
+                            styles: this._styles,
+                            origin: document.location.origin,
+                            type: this._type,
                         },
-                        {
-                            successType: HostedInputEventType.AttachSucceeded,
-                            errorType: HostedInputEventType.AttachFailed,
-                        },
-                    );
+                    }, {
+                        successType: HostedInputEventType.AttachSucceeded,
+                        errorType: HostedInputEventType.AttachFailed,
+                    });
                 }),
-                take(1),
-            )
-            .toPromise();
+                take(1)
+            ).toPromise();
 
         await this._detachmentObserver.ensurePresence([this._iframe], promise);
     }
@@ -115,19 +100,16 @@ export default class HostedField {
 
     async submitForm(
         fields: HostedFieldType[],
-        data: HostedFormOrderData,
+        data: HostedFormOrderData
     ): Promise<HostedInputSubmitSuccessEvent> {
         try {
-            const promise = this._eventPoster.post<HostedInputSubmitSuccessEvent>(
-                {
-                    type: HostedFieldEventType.SubmitRequested,
-                    payload: { fields, data },
-                },
-                {
-                    successType: HostedInputEventType.SubmitSucceeded,
-                    errorType: HostedInputEventType.SubmitFailed,
-                },
-            );
+            const promise = this._eventPoster.post<HostedInputSubmitSuccessEvent>({
+                type: HostedFieldEventType.SubmitRequested,
+                payload: { fields, data },
+            }, {
+                successType: HostedInputEventType.SubmitSucceeded,
+                errorType: HostedInputEventType.SubmitFailed,
+            });
 
             return await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (event) {
@@ -148,14 +130,11 @@ export default class HostedField {
     }
 
     async validateForm(): Promise<void> {
-        const promise = this._eventPoster.post<HostedInputValidateEvent>(
-            {
-                type: HostedFieldEventType.ValidateRequested,
-            },
-            {
-                successType: HostedInputEventType.Validated,
-            },
-        );
+        const promise = this._eventPoster.post<HostedInputValidateEvent>({
+            type: HostedFieldEventType.ValidateRequested,
+        }, {
+            successType: HostedInputEventType.Validated,
+        });
 
         const { payload } = await this._detachmentObserver.ensurePresence([this._iframe], promise);
 
@@ -168,20 +147,14 @@ export default class HostedField {
         const hostname = 'fonts.googleapis.com';
         const links = document.querySelectorAll(`link[href*='${hostname}'][rel='stylesheet']`);
 
-        return Array.prototype.slice
-            .call(links)
-            .filter((link) => parseUrl(link.href).hostname === hostname)
-            .filter((link) =>
-                values(this._styles)
-                    .map((style) => style && style.fontFamily)
-                    .filter((family): family is string => typeof family === 'string')
-                    .some((family) =>
-                        family
-                            .split(/,\s/)
-                            .some((name) => link.href.indexOf(name.replace(' ', '+')) !== -1),
-                    ),
+        return Array.prototype.slice.call(links)
+            .filter(link => parseUrl(link.href).hostname === hostname)
+            .filter(link => values(this._styles)
+                .map(style => style && style.fontFamily)
+                .filter((family): family is string => typeof family === 'string')
+                .some(family => family.split(/,\s/).some(name => link.href.indexOf(name.replace(' ', '+')) !== -1))
             )
-            .map((link) => link.href);
+            .map(link => link.href);
     }
 
     private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {

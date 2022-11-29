@@ -4,27 +4,16 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop, omit } from 'lodash';
-import { Observable, of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
-import {
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-    createCheckoutStore,
-    InternalCheckoutSelectors,
-} from '../../../checkout';
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
-import {
-    FinalizeOrderAction,
-    LoadOrderSucceededAction,
-    OrderActionCreator,
-    OrderActionType,
-    OrderRequestSender,
-    SubmitOrderAction,
-} from '../../../order';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
+import { FinalizeOrderAction, LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
@@ -58,14 +47,14 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
+            new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
         );
 
         formPoster = createFormPoster();
@@ -78,22 +67,24 @@ describe('CreditCardRedirectPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
-            callback(),
-        );
+        jest.spyOn(formPoster, 'postForm')
+            .mockImplementation((_url, _data, callback = noop) => callback());
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
 
         strategy = new CreditCardRedirectPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             formFactory,
-            formPoster,
+            formPoster
         );
     });
 
@@ -103,10 +94,7 @@ describe('CreditCardRedirectPaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
-            omit(payload, 'payment'),
-            options,
-        );
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -127,27 +115,26 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     });
 
     it('posts 3ds data to the provided acs_url if 3ds is enabled', async () => {
-        const error = new RequestError(
-            getResponse({
-                ...getErrorPaymentResponseBody(),
-                errors: [{ code: 'three_d_secure_required' }],
-                three_ds_result: {
-                    acs_url: 'https://acs/url',
-                    callback_url: 'https://callback/url',
-                    payer_auth_request: 'payer_auth_request',
-                    merchant_data: 'merchant_data',
-                },
-                status: 'error',
-            }),
-        );
+        const error = new RequestError(getResponse({
+            ...getErrorPaymentResponseBody(),
+            errors: [
+                { code: 'three_d_secure_required' },
+            ],
+            three_ds_result: {
+                acs_url: 'https://acs/url',
+                callback_url: 'https://callback/url',
+                payer_auth_request: 'payer_auth_request',
+                merchant_data: 'merchant_data',
+            },
+            status: 'error',
+        }));
 
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
-            of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
-        );
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
 
         strategy.execute(getOrderRequestBody());
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
             PaReq: 'payer_auth_request',
@@ -159,9 +146,8 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('does not post 3ds data to the provided acs_url if 3ds is not enabled', async () => {
         const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
-            of(createErrorAction(PaymentActionType.SubmitPaymentFailed, response)),
-        );
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, response)));
 
         await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(RequestError);
         expect(formPoster.postForm).not.toHaveBeenCalled();
@@ -170,9 +156,11 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(paymentStatusTypes.FINALIZE);
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize();
 
@@ -183,7 +171,8 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(null);
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
@@ -193,9 +182,8 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('does not finalize order if order is not finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(
-            paymentStatusTypes.INITIALIZE,
-        );
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.INITIALIZE);
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
@@ -205,7 +193,8 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('throws error if order is missing', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(null);
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
     });
@@ -237,29 +226,35 @@ describe('CreditCardRedirectPaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
-            );
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(merge(
+                    getPaymentMethod(),
+                    { config: { isHostedFormEnabled: true } }
+                ));
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
+                .mockReturnValue(loadOrderAction);
 
-            jest.spyOn(formFactory, 'create').mockReturnValue(form);
+            jest.spyOn(formFactory, 'create')
+                .mockReturnValue(form);
         });
 
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create).toHaveBeenCalledWith(
-                'https://bigpay.integration.zone',
-                // tslint:disable-next-line:no-non-null-assertion
-                initializeOptions.creditCard!.form,
-            );
+            expect(formFactory.create)
+                .toHaveBeenCalledWith(
+                    'https://bigpay.integration.zone',
+                    // tslint:disable-next-line:no-non-null-assertion
+                    initializeOptions.creditCard!.form!
+                );
         });
 
         it('attaches hosted form to container', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(form.attach).toHaveBeenCalled();
+            expect(form.attach)
+                .toHaveBeenCalled();
         });
 
         it('submits payment data with hosted form', async () => {
@@ -268,24 +263,28 @@ describe('CreditCardRedirectPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(form.submit).toHaveBeenCalledWith(payload.payment);
+            expect(form.submit)
+                .toHaveBeenCalledWith(payload.payment);
         });
 
         it('validates user input before submitting data', async () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(getOrderRequestBody());
 
-            expect(form.validate).toHaveBeenCalled();
+            expect(form.validate)
+                .toHaveBeenCalled();
         });
 
         it('does not submit payment data with hosted form if validation fails', async () => {
-            jest.spyOn(form, 'validate').mockRejectedValue(new Error());
+            jest.spyOn(form, 'validate')
+                .mockRejectedValue(new Error());
 
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
             } catch (error) {
-                expect(form.submit).not.toHaveBeenCalled();
+                expect(form.submit)
+                    .not.toHaveBeenCalled();
             }
         });
 
@@ -295,37 +294,41 @@ describe('CreditCardRedirectPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(store.dispatch).toHaveBeenCalledWith(loadOrderAction);
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(loadOrderAction);
         });
 
         it('posts 3ds data to the provided acs_url if 3ds is enabled', async () => {
-            const error = new RequestError(
-                getResponse({
-                    ...getErrorPaymentResponseBody(),
-                    errors: [{ code: 'three_d_secure_required' }],
-                    three_ds_result: {
-                        acs_url: 'https://acs/url',
-                        callback_url: 'https://callback/url',
-                        payer_auth_request: 'payer_auth_request',
-                        merchant_data: 'merchant_data',
-                    },
-                    status: 'error',
-                }),
-            );
+            const error = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    acs_url: 'https://acs/url',
+                    callback_url: 'https://callback/url',
+                    payer_auth_request: 'payer_auth_request',
+                    merchant_data: 'merchant_data',
+                },
+                status: 'error',
+            }));
 
-            jest.spyOn(form, 'submit').mockRejectedValue(error);
+            jest.spyOn(form, 'submit')
+                .mockRejectedValue(error);
 
             await strategy.initialize(initializeOptions);
             strategy.execute(getOrderRequestBody());
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise(resolve => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
+            expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url',
+            {
                 PaReq: 'payer_auth_request',
                 TermUrl: 'https://callback/url',
                 MD: 'merchant_data',
             });
-            expect(orderActionCreator.loadCurrentOrder).not.toHaveBeenCalled();
+            expect(orderActionCreator.loadCurrentOrder)
+                .not.toHaveBeenCalled();
         });
     });
 });

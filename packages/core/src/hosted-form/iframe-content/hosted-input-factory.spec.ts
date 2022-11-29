@@ -1,4 +1,4 @@
-import HostedFieldType from '../hosted-field-type';
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedCardExpiryInput from './hosted-card-expiry-input';
 import HostedCardNumberInput from './hosted-card-number-input';

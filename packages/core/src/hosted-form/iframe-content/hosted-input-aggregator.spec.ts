@@ -1,6 +1,6 @@
 import { includes } from 'lodash';
 
-import HostedFieldType from '../hosted-field-type';
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';

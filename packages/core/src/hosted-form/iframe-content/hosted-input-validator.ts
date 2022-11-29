@@ -2,8 +2,9 @@ import { creditCardType, cvv, expirationDate, number } from 'card-validator';
 import { includes } from 'lodash';
 import { object, string, StringSchema, ValidationError } from 'yup';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CardInstrument } from '../../payment/instrument';
-import HostedFieldType from '../hosted-field-type';
 
 import { HostedInputValidateErrorDataMap } from './hosted-input-validate-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';

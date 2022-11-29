@@ -1,5 +1,6 @@
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { HostedFieldType } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';

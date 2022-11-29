@@ -1,6 +1,7 @@
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CardInstrument } from '../payment/instrument';
 
-import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 
