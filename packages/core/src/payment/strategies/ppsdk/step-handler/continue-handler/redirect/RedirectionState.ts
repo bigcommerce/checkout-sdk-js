@@ -57,6 +57,6 @@ export class RedirectionState {
             return;
         }
 
-        this.replaceCurrentUrl(exclude(location.href, [PENDING_REDIRECT_PARAM]));
+        this.replaceCurrentUrl(exclude(window.location.href, [PENDING_REDIRECT_PARAM]));
     }
 }

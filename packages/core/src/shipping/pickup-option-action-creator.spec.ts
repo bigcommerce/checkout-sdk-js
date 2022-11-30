@@ -99,39 +99,6 @@ describe('PickupOptionActionCreator', () => {
         }
     });
 
-    it('emits actions if able to fetch pickup options', async () => {
-        jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCart());
-
-        const consignment = getConsignment();
-
-        consignment.lineItemIds.pop();
-
-        const id = getCart().lineItems.physicalItems[0].id;
-
-        consignment.lineItemIds.push(id.toString());
-        jest.spyOn(store.getState().consignments, 'getConsignmentById').mockReturnValue(
-            consignment,
-        );
-
-        const query = getQueryForPickupOptions();
-        const actions = await from(pickupOptionActionCreator.loadPickupOptions(query)(store))
-            .pipe(toArray())
-            .toPromise();
-
-        expect(pickupOptionRequestSender.fetchPickupOptions).toHaveBeenCalledWith(
-            getApiQueryForPickupOptions(),
-        );
-
-        expect(actions).toEqual([
-            { type: PickupOptionActionType.LoadPickupOptionsRequested },
-            {
-                type: PickupOptionActionType.LoadPickupOptionsSucceeded,
-                payload: response.body.results,
-                meta: query,
-            },
-        ]);
-    });
-
     it('emits error actions if unable to fetch pickup options', async () => {
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCart());
 

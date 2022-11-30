@@ -401,7 +401,7 @@ describe('SquarePaymentStrategy', () => {
                 });
             });
 
-            describe('when the nonce is received', () => {
+            describe('calls sybmit after initilaize', () => {
                 const payloadVaulted = getPayloadVaulted();
 
                 it('calls submit order with the order request information for applepay', async () => {

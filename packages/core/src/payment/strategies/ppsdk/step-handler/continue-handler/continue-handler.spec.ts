@@ -17,7 +17,7 @@ describe('ContinueHandler', () => {
 
     describe('#handle', () => {
         it('passes redirect parameters to the redirect handler', () => {
-            const assignSpy = jest.spyOn(location, 'assign').mockImplementation(jest.fn);
+            const assignSpy = jest.spyOn(window.location, 'assign').mockImplementation(jest.fn);
 
             const redirectContinueResponse: Continue = {
                 type: 'continue',

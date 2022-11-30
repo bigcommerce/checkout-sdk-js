@@ -155,7 +155,7 @@ import { ZipPaymentStrategy } from './strategies/zip';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     paymentClient: any,
     requestSender: RequestSender,
     spamProtection: GoogleRecaptcha,

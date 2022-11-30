@@ -9,6 +9,11 @@ import { StripeEventType } from '../../../payment/strategies/stripe-upe';
  */
 export default interface StripeUPEShippingInitializeOptions {
     /**
+     * Available countries configured on BC shipping setup.
+     */
+    availableCountries: string;
+
+    /**
      * The ID of a container which the stripe iframe should be inserted.
      */
     container?: string;
@@ -29,11 +34,6 @@ export default interface StripeUPEShippingInitializeOptions {
      * A callback that gets called whenever the Stripe Link Shipping Element's object is completed.
      */
     onChangeShipping(shipping: StripeEventType): void;
-
-    /**
-     * Available countries configured on BC shipping setup.
-     */
-    availableCountries: string;
 
     /**
      * get styles from store theme

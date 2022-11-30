@@ -16,7 +16,7 @@ describe('SquareScriptLoader', () => {
         expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.squareup.com/v2/paymentform');
     });
 
-    it('loads widget script', () => {
+    it('loads widget script when true is passed to load', () => {
         squareScriptLoader.load(true);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(

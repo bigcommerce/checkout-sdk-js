@@ -68,22 +68,6 @@ describe('PaypalCommerceScriptLoader', () => {
         }
     });
 
-    it('throws an error if clientId is missing', async () => {
-        const paymentMethodProp = {
-            ...paymentMethod,
-            initializationData: {
-                ...paymentMethod.initializationData,
-                clientId: undefined,
-            },
-        };
-
-        try {
-            await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
-        } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
-        }
-    });
-
     it('loads PayPalSDK script with default configuration', async () => {
         const output = await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
