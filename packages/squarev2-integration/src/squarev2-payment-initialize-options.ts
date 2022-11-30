@@ -1,4 +1,4 @@
-import { CardClassSelectors } from "@square/web-payments-sdk-types";
+import { CardClassSelectors } from '@square/web-payments-sdk-types';
 
 /**
  * A set of options that are required to initialize the Square payment method.

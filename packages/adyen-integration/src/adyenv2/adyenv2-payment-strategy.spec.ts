@@ -60,7 +60,8 @@ describe('AdyenV2PaymentStrategy', () => {
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader, stylesheetLoader);
-        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paymentIntegrationService =
+            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
 
         strategy = new AdyenV2PaymentStrategy(paymentIntegrationService, adyenV2ScriptLoader);
     });
@@ -771,7 +772,7 @@ describe('AdyenV2PaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        it('throws an error to inform that order finalization is not required', async () => {
+        it('throws an error to inform that order finalization is not required', () => {
             const promise = strategy.finalize();
 
             return expect(promise).rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
@@ -802,7 +803,7 @@ describe('AdyenV2PaymentStrategy', () => {
             return expect(promise).resolves.toBe();
         });
 
-        it('does not unmount when adyen component is not available', async () => {
+        it('does not unmount when adyen component is not available', () => {
             const promise = strategy.deinitialize();
 
             return expect(promise).resolves.toBe();

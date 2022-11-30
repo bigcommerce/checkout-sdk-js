@@ -1,12 +1,11 @@
-import { PaymentMethodClientUnavailableError } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { createScriptLoader, ScriptLoader } from "@bigcommerce/script-loader";
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
-import SquareV2ScriptLoader, {
-    SquareV2WebPaymentsSdkEnv,
-} from "./squarev2-script-loader";
-import { Square } from "./types";
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-describe("SquareV2ScriptLoader", () => {
+import SquareV2ScriptLoader, { SquareV2WebPaymentsSdkEnv } from './squarev2-script-loader';
+import { Square } from './types';
+
+describe('SquareV2ScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let squarev2ScriptLoader: SquareV2ScriptLoader;
     let squarev2SdkMock: Square;
@@ -16,50 +15,42 @@ describe("SquareV2ScriptLoader", () => {
         squarev2ScriptLoader = new SquareV2ScriptLoader(scriptLoader);
         squarev2SdkMock = {} as Square;
 
-        jest.spyOn(scriptLoader, "loadScript").mockImplementation(() => {
+        jest.spyOn(scriptLoader, 'loadScript').mockImplementation(() => {
             window.Square = squarev2SdkMock;
 
             return Promise.resolve();
         });
     });
 
-    describe("#load", () => {
-        it("should load the Web Payments SDK successfully", async () => {
+    describe('#load', () => {
+        it('should load the Web Payments SDK successfully', async () => {
             const sdk = await squarev2ScriptLoader.load();
 
             expect(sdk).toEqual(squarev2SdkMock);
         });
 
-        it("should load the Web Payments SDK from the live url", async () => {
+        it('should load the Web Payments SDK from the live url', async () => {
             await squarev2ScriptLoader.load();
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                SquareV2WebPaymentsSdkEnv.LIVE
-            );
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(SquareV2WebPaymentsSdkEnv.LIVE);
         });
 
-        it("should load the Web Payments SDK from the sandbox url", async () => {
+        it('should load the Web Payments SDK from the sandbox url', async () => {
             await squarev2ScriptLoader.load(true);
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                SquareV2WebPaymentsSdkEnv.SANDBOX
-            );
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(SquareV2WebPaymentsSdkEnv.SANDBOX);
         });
 
-        it("should fail to load the Web Payments SDK", async () => {
-            jest.spyOn(scriptLoader, "loadScript").mockImplementationOnce(
-                () => {
-                    delete window.Square;
+        it('should fail to load the Web Payments SDK', () => {
+            jest.spyOn(scriptLoader, 'loadScript').mockImplementationOnce(() => {
+                delete window.Square;
 
-                    return Promise.resolve();
-                }
-            );
+                return Promise.resolve();
+            });
 
             const sdkPromise = squarev2ScriptLoader.load();
 
-            expect(sdkPromise).rejects.toThrow(
-                PaymentMethodClientUnavailableError
-            );
+            expect(sdkPromise).rejects.toThrow(PaymentMethodClientUnavailableError);
         });
     });
 });

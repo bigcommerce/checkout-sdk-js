@@ -609,7 +609,7 @@ describe('AdyenV3PaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        it('throws an error to inform that order finalization is not required', async () => {
+        it('throws an error to inform that order finalization is not required', () => {
             const promise = strategy.finalize();
 
             return expect(promise).rejects.toBeInstanceOf(OrderFinalizationNotRequiredError);
@@ -640,7 +640,7 @@ describe('AdyenV3PaymentStrategy', () => {
             return expect(promise).resolves.toBe();
         });
 
-        it('does not unmount when adyen component is not available', async () => {
+        it('does not unmount when adyen component is not available', () => {
             const promise = strategy.deinitialize();
 
             return expect(promise).resolves.toBe();

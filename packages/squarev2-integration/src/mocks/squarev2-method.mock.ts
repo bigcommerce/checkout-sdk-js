@@ -1,24 +1,24 @@
-import { PaymentMethod } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function getSquareV2(): PaymentMethod {
     return {
-        id: "squarev2",
-        logoUrl: "",
-        method: "credit-card",
-        supportedCards: ["VISA", "MC", "AMEX", "DISCOVER", "JCB", "DINERS"],
+        id: 'squarev2',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
         config: {
-            displayName: "Credit Card",
+            displayName: 'Credit Card',
             cardCode: true,
             enablePaypal: true,
-            merchantId: "",
+            merchantId: '',
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
-        type: "PAYMENT_TYPE_API",
+        type: 'PAYMENT_TYPE_API',
         initializationData: {
-            applicationId: "test",
-            env: "bar",
-            locationId: "foo",
+            applicationId: 'test',
+            env: 'bar',
+            locationId: 'foo',
             paymentData: {
                 nonce: undefined,
             },

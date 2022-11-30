@@ -1,20 +1,21 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
+import * as rxjs from 'rxjs';
+
 import {
     NotInitializedError,
     PaymentIntegrationService,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { PaymentIntegrationServiceMock } from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
-import { createScriptLoader } from "@bigcommerce/script-loader";
-import * as rxjs from "rxjs";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { getSquareV2MockFunctions } from "./mocks/squarev2-web-payments-sdk.mock";
-import SquareV2PaymentProcessor from "./squarev2-payment-processor";
-import SquareV2ScriptLoader from "./squarev2-script-loader";
-import { CardFieldNames, CardInputEventTypes, Square } from "./types";
+import { getSquareV2MockFunctions } from './mocks/squarev2-web-payments-sdk.mock';
+import SquareV2PaymentProcessor from './squarev2-payment-processor';
+import SquareV2ScriptLoader from './squarev2-script-loader';
+import { CardFieldNames, CardInputEventTypes, Square } from './types';
 
-describe("SquareV2PaymentProcessor", () => {
+describe('SquareV2PaymentProcessor', () => {
     let squareV2ScriptLoader: SquareV2ScriptLoader;
     let squareV2MockFunctions: ReturnType<typeof getSquareV2MockFunctions>;
-    let squareWebPaymentsSdkMock: Omit<Square, "errors">;
+    let squareWebPaymentsSdkMock: Omit<Square, 'errors'>;
     let paymentIntegrationService: PaymentIntegrationService;
     let processor: SquareV2PaymentProcessor;
 
@@ -24,20 +25,16 @@ describe("SquareV2PaymentProcessor", () => {
         squareV2MockFunctions = getSquareV2MockFunctions();
         squareWebPaymentsSdkMock = { payments: squareV2MockFunctions.payments };
 
-        jest.spyOn(squareV2ScriptLoader, "load").mockResolvedValue(
-            squareWebPaymentsSdkMock
-        );
+        jest.spyOn(squareV2ScriptLoader, 'load').mockResolvedValue(squareWebPaymentsSdkMock);
 
-        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paymentIntegrationService =
+            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
 
-        processor = new SquareV2PaymentProcessor(
-            squareV2ScriptLoader,
-            paymentIntegrationService
-        );
+        processor = new SquareV2PaymentProcessor(squareV2ScriptLoader, paymentIntegrationService);
 
         await processor.initialize({
-            applicationId: "foo",
-            locationId: "bar",
+            applicationId: 'foo',
+            locationId: 'bar',
             testMode: true,
         });
     });
@@ -46,116 +43,105 @@ describe("SquareV2PaymentProcessor", () => {
         await processor.deinitialize();
     });
 
-    describe("#initialize", () => {
-        it("initializes processor successfully", async () => {
+    describe('#initialize', () => {
+        it('initializes processor successfully', () => {
             expect(squareV2ScriptLoader.load).toHaveBeenCalledWith(true);
-            expect(squareWebPaymentsSdkMock.payments).toHaveBeenCalledWith(
-                "foo",
-                "bar"
-            );
+            expect(squareWebPaymentsSdkMock.payments).toHaveBeenCalledWith('foo', 'bar');
         });
     });
 
-    describe("#initializeCard", () => {
-        it("should create a card payment method and attach it to the container", async () => {
-            await processor.initializeCard({ containerId: "card-container" });
+    describe('#initializeCard', () => {
+        it('should create a card payment method and attach it to the container', async () => {
+            await processor.initializeCard({ containerId: 'card-container' });
 
             expect(squareV2MockFunctions.card).toHaveBeenCalled();
-            expect(squareV2MockFunctions.attach).toHaveBeenCalledWith(
-                "#card-container"
-            );
+            expect(squareV2MockFunctions.attach).toHaveBeenCalledWith('#card-container');
         });
 
-        it("should fail if _payments has not yet been initialized", async () => {
+        it('should fail if _payments has not yet been initialized', async () => {
             await processor.deinitialize();
 
             const initializeCard = processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
             });
 
             await expect(initializeCard).rejects.toThrow(NotInitializedError);
         });
 
-        it("should configure the card element", async () => {
+        it('should configure the card element', async () => {
             await processor.initializeCard({
-                containerId: "card-container",
-                style: { input: { color: "foo" } },
+                containerId: 'card-container',
+                style: { input: { color: 'foo' } },
             });
 
             expect(squareV2MockFunctions.configure).toHaveBeenCalledWith({
-                postalCode: "95555",
-                style: { input: { color: "foo" } },
+                postalCode: '95555',
+                style: { input: { color: 'foo' } },
             });
         });
 
-        it("should fail silently if the card element configuration fails", async () => {
-            squareV2MockFunctions.configure.mockRejectedValue(
-                new Error("Invalid configuration")
-            );
+        it('should fail silently if the card element configuration fails', async () => {
+            squareV2MockFunctions.configure.mockRejectedValue(new Error('Invalid configuration'));
 
             const initializeCard = processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
             });
 
-            await expect(initializeCard).resolves.not.toThrow(
-                "Invalid configuration"
-            );
+            await expect(initializeCard).resolves.not.toThrow('Invalid configuration');
         });
 
-        it("should subscribe to form validation", async () => {
+        it('should subscribe to form validation', async () => {
             await processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
                 onValidationChange: jest.fn(),
             });
 
-            expect(
-                squareV2MockFunctions.addEventListener
-            ).toHaveBeenCalledTimes(6);
+            expect(squareV2MockFunctions.addEventListener).toHaveBeenCalledTimes(6);
         });
 
-        it("should call onValidationChange once", async () => {
+        it('should call onValidationChange once', async () => {
             const onValidationChange = jest.fn();
 
             await processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent(
-                "focusClassAdded" as CardInputEventTypes,
-                "cardNumber" as CardFieldNames,
-                true
+                'focusClassAdded' as CardInputEventTypes,
+                'cardNumber' as CardFieldNames,
+                true,
             );
 
             expect(onValidationChange).toHaveBeenCalledTimes(1);
             expect(onValidationChange).toHaveBeenCalledWith(false);
         });
 
-        it("should call onValidationChange twice", async () => {
+        it('should call onValidationChange twice', async () => {
             const onValidationChange = jest.fn();
 
             await processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent(
-                "focusClassAdded" as CardInputEventTypes,
-                "cardNumber" as CardFieldNames,
-                true
+                'focusClassAdded' as CardInputEventTypes,
+                'cardNumber' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "focusClassRemoved" as CardInputEventTypes,
-                "expirationDate" as CardFieldNames,
-                true
+                'focusClassRemoved' as CardInputEventTypes,
+                'expirationDate' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "errorClassRemoved" as CardInputEventTypes,
-                "cvv" as CardFieldNames,
-                true
+                'errorClassRemoved' as CardInputEventTypes,
+                'cvv' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "postalCodeChanged" as CardInputEventTypes,
-                "postalCode" as CardFieldNames,
-                true
+                'postalCodeChanged' as CardInputEventTypes,
+                'postalCode' as CardFieldNames,
+                true,
             );
 
             expect(onValidationChange).toHaveBeenCalledTimes(2);
@@ -163,37 +149,37 @@ describe("SquareV2PaymentProcessor", () => {
             expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
         });
 
-        it("should call onValidationChange three times", async () => {
+        it('should call onValidationChange three times', async () => {
             const onValidationChange = jest.fn();
 
             await processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent(
-                "focusClassAdded" as CardInputEventTypes,
-                "cardNumber" as CardFieldNames,
-                true
+                'focusClassAdded' as CardInputEventTypes,
+                'cardNumber' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "focusClassRemoved" as CardInputEventTypes,
-                "expirationDate" as CardFieldNames,
-                true
+                'focusClassRemoved' as CardInputEventTypes,
+                'expirationDate' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "errorClassRemoved" as CardInputEventTypes,
-                "cvv" as CardFieldNames,
-                true
+                'errorClassRemoved' as CardInputEventTypes,
+                'cvv' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "postalCodeChanged" as CardInputEventTypes,
-                "postalCode" as CardFieldNames,
-                true
+                'postalCodeChanged' as CardInputEventTypes,
+                'postalCode' as CardFieldNames,
+                true,
             );
             squareV2MockFunctions.simulateEvent(
-                "cardBrandChanged" as CardInputEventTypes,
-                "cardNumber" as CardFieldNames,
-                false
+                'cardBrandChanged' as CardInputEventTypes,
+                'cardNumber' as CardFieldNames,
+                false,
             );
 
             expect(onValidationChange).toHaveBeenCalledTimes(3);
@@ -203,12 +189,12 @@ describe("SquareV2PaymentProcessor", () => {
         });
     });
 
-    describe("#tokenize", () => {
+    describe('#tokenize', () => {
         beforeEach(async () => {
-            await processor.initializeCard({ containerId: "card-container" });
+            await processor.initializeCard({ containerId: 'card-container' });
         });
 
-        it("should fail if _card has not yet initialized", async () => {
+        it('should fail if _card has not yet initialized', async () => {
             await processor.deinitialize();
 
             const nonce = processor.tokenize();
@@ -216,101 +202,100 @@ describe("SquareV2PaymentProcessor", () => {
             await expect(nonce).rejects.toThrow(NotInitializedError);
         });
 
-        it("should tokenize the card payment and return a nonce", async () => {
+        it('should tokenize the card payment and return a nonce', async () => {
             const nonce = await processor.tokenize();
 
-            expect(nonce).toBe("cnon:xxx");
+            expect(nonce).toBe('cnon:xxx');
         });
 
-        it("throws an error if tokenization does not return a nonce", async () => {
-            squareV2MockFunctions.tokenize.mockResolvedValue({ status: "OK" });
+        it('throws an error if tokenization does not return a nonce', async () => {
+            squareV2MockFunctions.tokenize.mockResolvedValue({ status: 'OK' });
 
             const nonce = processor.tokenize();
 
             await expect(nonce).rejects.toThrow();
         });
 
-        it("throws an error if tokenization status is not OK", async () => {
+        it('throws an error if tokenization status is not OK', async () => {
             squareV2MockFunctions.tokenize.mockResolvedValue({
-                status: "FOO",
-                errors: [{ err1: "bar" }, { err2: "baz" }],
+                status: 'FOO',
+                errors: [{ err1: 'bar' }, { err2: 'baz' }],
             });
 
             const nonce = processor.tokenize();
 
             await expect(nonce).rejects.toThrow(
-                'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]'
+                'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
             );
         });
     });
 
-    describe("#verifyBuyer", () => {
+    describe('#verifyBuyer', () => {
         beforeEach(async () => {
-            await processor.initializeCard({ containerId: "card-container" });
+            await processor.initializeCard({ containerId: 'card-container' });
         });
 
-        it("should verify the identity of the card holder and return a verification token", async () => {
+        it('should verify the identity of the card holder and return a verification token', async () => {
             const expectedDetails = {
-                amount: "190",
+                amount: '190',
                 billingContact: {
-                    addressLines: ["12345 Testing Way", ""],
-                    city: "Some City",
-                    countryCode: "US",
-                    familyName: "Tester",
-                    givenName: "Test",
-                    phone: "555-555-5555",
-                    postalCode: "95555",
-                    state: "CA",
+                    addressLines: ['12345 Testing Way', ''],
+                    city: 'Some City',
+                    countryCode: 'US',
+                    familyName: 'Tester',
+                    givenName: 'Test',
+                    phone: '555-555-5555',
+                    postalCode: '95555',
+                    state: 'CA',
                 },
-                currencyCode: "USD",
-                intent: "CHARGE",
+                currencyCode: 'USD',
+                intent: 'CHARGE',
             };
 
-            const nonce = await processor.verifyBuyer("cnon:zzz");
+            const nonce = await processor.verifyBuyer('cnon:zzz');
 
-            expect(nonce).toBe("verf:yyy");
+            expect(nonce).toBe('verf:yyy');
             expect(squareV2MockFunctions.verifyBuyer).toHaveBeenCalledWith(
-                "cnon:zzz",
-                expectedDetails
+                'cnon:zzz',
+                expectedDetails,
             );
         });
 
-        it("should fail if _payments has not yet been initialized", async () => {
+        it('should fail if _payments has not yet been initialized', async () => {
             await processor.deinitialize();
 
-            const nonce = processor.verifyBuyer("cnon:zzz");
+            const nonce = processor.verifyBuyer('cnon:zzz');
 
             await expect(nonce).rejects.toThrow(NotInitializedError);
         });
     });
 
-    describe("#deinitialize", () => {
-        it("deinitializes processor successfully", async () => {
-            await processor.initializeCard({ containerId: "card-container" });
+    describe('#deinitialize', () => {
+        it('deinitializes processor successfully', async () => {
+            await processor.initializeCard({ containerId: 'card-container' });
             await processor.deinitialize();
 
             expect(squareV2MockFunctions.destroy).toHaveBeenCalled();
         });
 
-        it("should unsubscribe from form validation", async () => {
-            const foo$ = rxjs.of("foo");
-            jest.spyOn(rxjs, "merge").mockReturnValue(foo$);
-            const bar$ = rxjs.of("bar");
-            jest.spyOn(foo$, "pipe").mockReturnValue(bar$);
+        it('should unsubscribe from form validation', async () => {
+            const foo$ = rxjs.of('foo');
 
-            const spy = jest.spyOn(bar$, "subscribe");
+            jest.spyOn(rxjs, 'merge').mockReturnValue(foo$);
+
+            const bar$ = rxjs.of('bar');
+
+            jest.spyOn(foo$, 'pipe').mockReturnValue(bar$);
+
+            const spy = jest.spyOn(bar$, 'subscribe');
 
             await processor.initializeCard({
-                containerId: "card-container",
+                containerId: 'card-container',
                 onValidationChange: jest.fn(),
             });
 
-            const formValidationSubscription = spy.mock.results[0]
-                .value as rxjs.Subscription;
-            const unsubscribe = jest.spyOn(
-                formValidationSubscription,
-                "unsubscribe"
-            );
+            const formValidationSubscription = spy.mock.results[0].value as rxjs.Subscription;
+            const unsubscribe = jest.spyOn(formValidationSubscription, 'unsubscribe');
 
             await processor.deinitialize();
 
