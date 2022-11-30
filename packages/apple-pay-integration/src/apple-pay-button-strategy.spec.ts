@@ -1,30 +1,28 @@
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
+
 import {
     InvalidArgumentError,
-    PaymentIntegrationService,
     MissingDataError,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    PaymentIntegrationServiceMock,
     getCheckout,
     getConsignment,
     getShippingOption,
-} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import {
-    createRequestSender,
-    RequestSender,
-} from "@bigcommerce/request-sender";
-import { merge } from "lodash";
-import ApplePayButtonInitializeOptions from "./apple-pay-button-initialize-options";
-import ApplePayButtonMethodType from "./apple-pay-button-method-type";
-import ApplePayButtonStrategy from "./apple-pay-button-strategy";
-import ApplePaySessionFactory from "./apple-pay-session-factory";
-import { getApplePayButtonInitializationOptions } from "./mocks/apple-pay-button.mock";
-import { getApplePay } from "./mocks/apple-pay-method.mock";
-import { MockApplePaySession } from "./mocks/apple-pay-payment.mock";
-import { getContactAddress } from "./mocks/apple-pay-wallet-button-mock";
+import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-options';
+import ApplePayButtonMethodType from './apple-pay-button-method-type';
+import ApplePayButtonStrategy from './apple-pay-button-strategy';
+import ApplePaySessionFactory from './apple-pay-session-factory';
+import { getApplePayButtonInitializationOptions } from './mocks/apple-pay-button.mock';
+import { getApplePay } from './mocks/apple-pay-method.mock';
+import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
+import { getContactAddress } from './mocks/apple-pay-wallet-button-mock';
 
-describe("ApplePayButtonStrategy", () => {
+describe('ApplePayButtonStrategy', () => {
     let container: HTMLDivElement;
     let requestSender: RequestSender;
     let applePayFactory: ApplePaySessionFactory;
@@ -35,7 +33,7 @@ describe("ApplePayButtonStrategy", () => {
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
 
-        Object.defineProperty(window, "ApplePaySession", {
+        Object.defineProperty(window, 'ApplePaySession', {
             writable: true,
             value: MockApplePaySession,
         });
@@ -43,20 +41,20 @@ describe("ApplePayButtonStrategy", () => {
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        jest.spyOn(requestSender, "post").mockReturnValue(true);
+        jest.spyOn(requestSender, 'post').mockReturnValue(true);
 
-        jest.spyOn(requestSender, "get").mockReturnValue(true);
+        jest.spyOn(requestSender, 'get').mockReturnValue(true);
 
-        jest.spyOn(applePayFactory, "create").mockReturnValue(applePaySession);
+        jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
         strategy = new ApplePayButtonStrategy(
             requestSender,
             paymentIntegrationService,
-            applePayFactory
+            applePayFactory,
         );
 
-        container = document.createElement("div");
-        container.setAttribute("id", "applePayCheckoutButton");
+        container = document.createElement('div');
+        container.setAttribute('id', 'applePayCheckoutButton');
         document.body.appendChild(container);
     });
 
@@ -64,102 +62,106 @@ describe("ApplePayButtonStrategy", () => {
         document.body.removeChild(container);
     });
 
-    describe("#initialize()", () => {
+    describe('#initialize()', () => {
         beforeEach(() => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                "getPaymentMethodOrThrow"
+                'getPaymentMethodOrThrow',
             ).mockReturnValue(getApplePay());
         });
-        it("creates the button", async () => {
-            const checkoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+
+        it('creates the button', async () => {
+            const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             let children = container.children;
-            expect(children.length).toBe(0);
+
+            expect(children).toHaveLength(0);
+
             await strategy.initialize(checkoutButtonInitializeOptions);
             children = container.children;
 
-            expect(children.length).toBe(1);
-            expect(
-                container.getElementsByClassName("apple-pay-checkout-button")[0]
-            ).toBeTruthy();
+            expect(children).toHaveLength(1);
+
+            expect(Boolean(container.getElementsByClassName('apple-pay-checkout-button')[0])).toBe(
+                true,
+            );
         });
 
-        it("creates the button with a custom style class name", async () => {
-            const customClass = "testClassName";
+        it('creates the button with a custom style class name', async () => {
+            const customClass = 'testClassName';
             const CheckoutButtonInitializeOptions = merge(
                 getApplePayButtonInitializationOptions(),
-                { applepay: { buttonClassName: customClass } }
+                { applepay: { buttonClassName: customClass } },
             );
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
-            expect(
-                container.getElementsByClassName(customClass)[0]
-            ).toBeTruthy();
+            expect(Boolean(container.getElementsByClassName(customClass)[0])).toBe(true);
         });
 
-        it("throws error when payment data is empty", async () => {
+        it('throws error when payment data is empty', async () => {
             await expect(
                 strategy.initialize({
-                    containerId: "",
+                    containerId: '',
                     methodId: ApplePayButtonMethodType.APPLEPAY,
                     params: {},
-                })
+                }),
             ).rejects.toThrow(MissingDataError);
         });
 
-        it("throws error when ApplePay object is empty", async () => {
+        it('throws error when params object is empty', async () => {
             await expect(
                 strategy.initialize({
-                    containerId: "",
+                    containerId: '',
                     params: {},
                     methodId: ApplePayButtonMethodType.APPLEPAY,
-                })
+                }),
             ).rejects.toThrow(MissingDataError);
         });
 
-        it("throws error when ApplePay object is empty", async () => {
+        it('throws error when ApplePay object is empty', async () => {
             const options = {
-                methodId: "applepay",
-                containerId: "applepay",
+                methodId: 'applepay',
+                containerId: 'applepay',
                 applepay: {} as ApplePayButtonInitializeOptions,
             };
-            await expect(strategy.initialize(options)).rejects.toThrow(
-                InvalidArgumentError
-            );
+
+            await expect(strategy.initialize(options)).rejects.toThrow(InvalidArgumentError);
         });
 
-        it("throws error when ApplePay payment sheet is cancelled", async () => {
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('throws error when ApplePay payment sheet is cancelled', async () => {
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     expect(applePaySession.begin).toHaveBeenCalled();
+
                     await applePaySession.oncancel();
 
                     expect(requestSender.get).toHaveBeenCalled();
-                    expect(
-                        paymentIntegrationService.loadCheckout
-                    ).toHaveBeenCalled();
+                    expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
                 }
             }
         });
 
-        it("validates merchant successfully", async () => {
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('validates merchant successfully', async () => {
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     const validateEvent = {
-                        validationURL: "test",
+                        validationURL: 'test',
                     } as ApplePayJS.ApplePayValidateMerchantEvent;
 
                     await applePaySession.onvalidatemerchant(validateEvent);
@@ -169,18 +171,21 @@ describe("ApplePayButtonStrategy", () => {
             }
         });
 
-        it("throws error if merchant validation fails", async () => {
-            jest.spyOn(requestSender, "post").mockRejectedValue(false);
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('throws error if merchant validation fails', async () => {
+            jest.spyOn(requestSender, 'post').mockRejectedValue(false);
+
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     const validateEvent = {
-                        validationURL: "test",
+                        validationURL: 'test',
                     } as ApplePayJS.ApplePayValidateMerchantEvent;
 
                     try {
@@ -192,12 +197,14 @@ describe("ApplePayButtonStrategy", () => {
             }
         });
 
-        it("gets shipping contact selected successfully", async () => {
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('gets shipping contact selected successfully', async () => {
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
@@ -207,23 +214,21 @@ describe("ApplePayButtonStrategy", () => {
 
                     await applePaySession.onshippingcontactselected(event);
 
-                    expect(
-                        applePaySession.completeShippingContactSelection
-                    ).toHaveBeenCalled();
+                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
                 }
             }
         });
 
-        it("throws error if call to update address fails", async () => {
-            jest.spyOn(
-                paymentIntegrationService,
-                "updateShippingAddress"
-            ).mockRejectedValue(false);
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('throws error if call to update address fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockRejectedValue(false);
+
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
@@ -240,39 +245,37 @@ describe("ApplePayButtonStrategy", () => {
             }
         });
 
-        it("gets shipping method selected successfully", async () => {
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('gets shipping method selected successfully', async () => {
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     const event = {
                         shippingMethod: {
-                            label: "test",
-                            detail: "test2",
-                            amount: "10",
-                            identifier: "1",
+                            label: 'test',
+                            detail: 'test2',
+                            amount: '10',
+                            identifier: '1',
                         },
                     } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
+
                     await applePaySession.onshippingmethodselected(event);
 
-                    expect(
-                        applePaySession.completeShippingMethodSelection
-                    ).toHaveBeenCalled();
+                    expect(applePaySession.completeShippingMethodSelection).toHaveBeenCalled();
                 }
             }
         });
 
-        it("gets shipping contact selected successfully with a selected shipping option", async () => {
-            jest.spyOn(
-                paymentIntegrationService,
-                "updateShippingAddress"
-            ).mockResolvedValue(true);
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('gets shipping contact selected successfully with a selected shipping option', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             const newCheckout = {
                 ...getCheckout(),
                 consignments: [
@@ -280,43 +283,40 @@ describe("ApplePayButtonStrategy", () => {
                         ...getConsignment(),
                         selectedShippingOption: {
                             ...getShippingOption(),
-                            description: "Free Shipping",
-                            additionalDescription:
-                                "Free shipping to your order",
-                            id: "0:61d4bb52f746477e1d4fb411221318c4",
+                            description: 'Free Shipping',
+                            additionalDescription: 'Free shipping to your order',
+                            id: '0:61d4bb52f746477e1d4fb411221318c4',
                         },
                         availableShippingOptions: [
                             getShippingOption(),
                             {
                                 ...getShippingOption(),
-                                description: "Free Shipping",
-                                additionalDescription:
-                                    "Free shipping to your order",
-                                id: "0:61d4bb52f746477e1d4fb411221318c4",
+                                description: 'Free Shipping',
+                                additionalDescription: 'Free shipping to your order',
+                                id: '0:61d4bb52f746477e1d4fb411221318c4',
                             },
                         ],
                     },
                 ],
             };
-            const availableShippingMethods =
-                newCheckout.consignments[0].availableShippingOptions
-                    .reverse()
-                    .map((option) => ({
-                        label: option.description,
-                        amount: option.cost.toFixed(2),
-                        detail: option.additionalDescription,
-                        identifier: option.id,
-                    }));
+            const availableShippingMethods = newCheckout.consignments[0].availableShippingOptions
+                .reverse()
+                .map((option) => ({
+                    label: option.description,
+                    amount: option.cost.toFixed(2),
+                    detail: option.additionalDescription,
+                    identifier: option.id,
+                }));
 
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                "getCheckoutOrThrow"
-            ).mockReturnValue(newCheckout);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
+                newCheckout,
+            );
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
@@ -326,12 +326,8 @@ describe("ApplePayButtonStrategy", () => {
 
                     await applePaySession.onshippingcontactselected(event);
 
-                    expect(
-                        paymentIntegrationService.selectShippingOption
-                    ).toHaveBeenCalled();
-                    expect(
-                        applePaySession.completeShippingContactSelection
-                    ).toHaveBeenCalledWith({
+                    expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
+                    expect(applePaySession.completeShippingContactSelection).toHaveBeenCalledWith({
                         newShippingMethods: availableShippingMethods,
                         newTotal: expect.anything(),
                         newLineItems: expect.anything(),
@@ -340,25 +336,25 @@ describe("ApplePayButtonStrategy", () => {
             }
         });
 
-        it("gets call to update shipping option in consignment fails", async () => {
-            jest.spyOn(
-                paymentIntegrationService,
-                "selectShippingOption"
-            ).mockRejectedValue(false);
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+        it('gets call to update shipping option in consignment fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'selectShippingOption').mockRejectedValue(false);
+
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     const event = {
                         shippingMethod: {
-                            label: "test",
-                            detail: "test2",
-                            amount: "10",
-                            identifier: "1",
+                            label: 'test',
+                            detail: 'test2',
+                            amount: '10',
+                            identifier: '1',
                         },
                     } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
 
@@ -371,7 +367,7 @@ describe("ApplePayButtonStrategy", () => {
             }
         });
 
-        it("submits payment when shopper authorises", async () => {
+        it('submits payment when shopper authorises', async () => {
             const authEvent = {
                 payment: {
                     billingContact: getContactAddress(),
@@ -383,32 +379,29 @@ describe("ApplePayButtonStrategy", () => {
                     },
                 },
             } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(
-                        paymentIntegrationService.submitPayment
-                    ).toHaveBeenCalled();
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                     expect(applePaySession.completePayment).toHaveBeenCalled();
                     expect(
-                        CheckoutButtonInitializeOptions.applepay
-                            .onPaymentAuthorize
+                        CheckoutButtonInitializeOptions.applepay.onPaymentAuthorize,
                     ).toHaveBeenCalled();
                 }
             }
         });
 
-        it("returns an error if autorize payment fails", async () => {
-            jest.spyOn(
-                paymentIntegrationService,
-                "submitPayment"
-            ).mockRejectedValue(false);
+        it('returns an error if autorize payment fails', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(false);
+
             const authEvent = {
                 payment: {
                     billingContact: getContactAddress(),
@@ -420,23 +413,21 @@ describe("ApplePayButtonStrategy", () => {
                     },
                 },
             } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
-            const CheckoutButtonInitializeOptions =
-                getApplePayButtonInitializationOptions();
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
+
                 if (button) {
                     button.click();
 
                     try {
                         await applePaySession.onpaymentauthorized(authEvent);
                     } catch (error) {
-                        expect(
-                            paymentIntegrationService.submitPayment
-                        ).toHaveBeenCalled();
-                        expect(
-                            applePaySession.completePayment
-                        ).toHaveBeenCalled();
+                        expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+                        expect(applePaySession.completePayment).toHaveBeenCalled();
                         expect(error).toBeInstanceOf(Error);
                     }
                 }
@@ -444,8 +435,8 @@ describe("ApplePayButtonStrategy", () => {
         });
     });
 
-    describe("#deinitialize()", () => {
-        it("deinitializes strategy", async () => {
+    describe('#deinitialize()', () => {
+        it('deinitializes strategy', async () => {
             await expect(strategy.deinitialize()).resolves.not.toThrow();
         });
     });

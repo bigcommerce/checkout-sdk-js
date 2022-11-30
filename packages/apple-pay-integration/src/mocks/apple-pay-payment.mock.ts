@@ -5,6 +5,7 @@ export class MockApplePaySession {
     completePayment = jest.fn();
 
     begin = jest.fn();
+    oncancel = jest.fn();
 
     completeShippingContactSelection = jest.fn();
 
@@ -24,19 +25,11 @@ export class MockApplePaySession {
         return event;
     }
 
-    onshippingcontactselected(
-        event?: ApplePayJS.ApplePayShippingContactSelectedEvent
-    ) {
+    onshippingcontactselected(event?: ApplePayJS.ApplePayShippingContactSelectedEvent) {
         return event;
     }
 
-    onshippingmethodselected(
-        event?: ApplePayJS.ApplePayShippingMethodSelectedEvent
-    ) {
+    onshippingmethodselected(event?: ApplePayJS.ApplePayShippingMethodSelectedEvent) {
         return event;
-    }
-
-    oncancel() {
-        return;
     }
 }
