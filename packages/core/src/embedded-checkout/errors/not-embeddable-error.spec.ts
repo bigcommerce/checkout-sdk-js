@@ -4,6 +4,6 @@ describe('NotEmbeddableError', () => {
     it('returns error name', () => {
         const error = new NotEmbeddableError();
 
-        expect(error.name).toEqual('NotEmbeddableError');
+        expect(error.name).toBe('NotEmbeddableError');
     });
 });

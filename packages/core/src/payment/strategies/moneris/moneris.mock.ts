@@ -9,8 +9,14 @@ export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
             containerId: 'moneris_iframe_container',
             form: {
                 fields: {
-                    [HostedFieldType.CardCodeVerification]: { containerId: 'card-code-veridifaction', instrumentId: 'instrument-id' },
-                    [HostedFieldType.CardNumberVerification]: { containerId: 'card-number-verification', instrumentId: 'instrument-id' },
+                    [HostedFieldType.CardCodeVerification]: {
+                        containerId: 'card-code-veridifaction',
+                        instrumentId: 'instrument-id',
+                    },
+                    [HostedFieldType.CardNumberVerification]: {
+                        containerId: 'card-number-verification',
+                        instrumentId: 'instrument-id',
+                    },
                 },
             },
         },

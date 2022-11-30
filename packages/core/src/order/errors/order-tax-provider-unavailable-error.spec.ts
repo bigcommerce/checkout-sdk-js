@@ -4,6 +4,6 @@ describe('OrderTaxProviderUnavailableError', () => {
     it('returns error name', () => {
         const error = new OrderTaxProviderUnavailableError();
 
-        expect(error.name).toEqual('OrderTaxProviderUnavailableError');
+        expect(error.name).toBe('OrderTaxProviderUnavailableError');
     });
 });

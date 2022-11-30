@@ -6,8 +6,7 @@ describe('GooglePayCheckoutcomPaymentProcessor', () => {
     let processor: GooglePayCheckoutcomPaymentProcessor;
 
     beforeEach(() => {
-        jest.spyOn(window.location, 'assign')
-            .mockResolvedValue(undefined);
+        jest.spyOn(window.location, 'assign').mockResolvedValue(undefined);
 
         processor = new GooglePayCheckoutcomPaymentProcessor();
     });
@@ -31,7 +30,7 @@ describe('GooglePayCheckoutcomPaymentProcessor', () => {
 
         processor.processAdditionalAction(err);
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
         expect(window.location.assign).toHaveBeenCalledWith(err.body.three_ds_result.acs_url);
     });

@@ -86,9 +86,7 @@ export function getErrorPaymentResponseBody(): PaymentResponseBody {
         three_ds_result: {},
         fraud_review: true,
         transaction_type: 'purchase',
-        errors: [
-            { code: 'insufficient_funds', message: 'Insufficient funds' },
-        ],
+        errors: [{ code: 'insufficient_funds', message: 'Insufficient funds' }],
     };
 }
 

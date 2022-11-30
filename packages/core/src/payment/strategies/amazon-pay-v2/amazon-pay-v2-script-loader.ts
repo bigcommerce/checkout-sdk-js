@@ -8,17 +8,18 @@ import { AmazonPayV2HostWindow, AmazonPayV2Regions, AmazonPayV2SDK } from './ama
 export default class AmazonPayV2ScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
-        private _window: AmazonPayV2HostWindow = window
+        private _window: AmazonPayV2HostWindow = window,
     ) {}
 
     async load(method: PaymentMethod): Promise<AmazonPayV2SDK> {
-        const {
-            initializationData: { region = 'us' } = {},
-        } = method;
+        const { initializationData: { region = 'us' } = {} } = method;
 
-        const amazonPayV2Region  = (AmazonPayV2Regions as any)[region];
+        const amazonPayV2Region = (AmazonPayV2Regions as any)[region];
 
-        await this._scriptLoader.loadScript(`https://static-${amazonPayV2Region}.payments-amazon.com/checkout.js`);
+        await this._scriptLoader.loadScript(
+            `https://static-${amazonPayV2Region}.payments-amazon.com/checkout.js`,
+        );
+
         if (!this._window.amazon) {
             throw new PaymentMethodClientUnavailableError();
         }

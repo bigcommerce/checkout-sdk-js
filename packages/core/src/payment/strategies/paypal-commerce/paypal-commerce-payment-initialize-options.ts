@@ -4,7 +4,9 @@ import { PaypalFieldsStyleOptions } from './index';
  * A set of options that are required to initialize the PayPal Commerce payment
  * method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
  */
-export type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
+export type PaypalCommerceInitializeOptions =
+    | PaypalCommercePaymentInitializeOptions
+    | PaypalCommerceCreditCardPaymentInitializeOptions;
 
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
@@ -303,13 +305,9 @@ export interface PaypalCommerceFormFieldStylesMap {
     focus?: PaypalCommerceFormFieldStyles;
 }
 
-export type PaypalCommerceFormFieldStyles = Partial<Pick<
-    CSSStyleDeclaration,
-    'color' |
-    'fontFamily' |
-    'fontSize' |
-    'fontWeight'
-    >>;
+export type PaypalCommerceFormFieldStyles = Partial<
+    Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>
+>;
 
 export interface PaypalCommerceFormFieldKeyboardEventData {
     fieldType: string;

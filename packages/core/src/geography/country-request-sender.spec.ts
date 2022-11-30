@@ -1,4 +1,9 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
 
 import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';

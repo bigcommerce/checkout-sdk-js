@@ -19,14 +19,17 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender,
-        private _paymentActionCreator: PaymentActionCreator
-    ) { }
+        private _paymentActionCreator: PaymentActionCreator,
+    ) {}
 
     initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -36,8 +39,11 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         const { methodId } = payment;
         const {
             paymentMethods: { getPaymentMethodOrThrow },
-        } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
-        const { clientToken, initializationData: { redirectUrl } = {} } = getPaymentMethodOrThrow(methodId);
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId, options),
+        );
+        const { clientToken, initializationData: { redirectUrl } = {} } =
+            getPaymentMethodOrThrow(methodId);
 
         if (!clientToken || !redirectUrl) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -49,17 +55,26 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store
+            .getState()
+            .checkout.getCheckoutOrThrow();
 
         await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
-        await this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }));
+        await this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }),
+        );
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
         await this._prepareForReferredRegistration(methodId, nonce);
 
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData: { nonce } }));
+            return await this._store.dispatch(
+                this._paymentActionCreator.submitPayment({ methodId, paymentData: { nonce } }),
+            );
         } catch (error) {
-            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+            if (
+                error instanceof RequestError &&
+                error.body.status === 'additional_action_required'
+            ) {
                 return new Promise(() => window.location.replace(redirectUrl));
             }
 

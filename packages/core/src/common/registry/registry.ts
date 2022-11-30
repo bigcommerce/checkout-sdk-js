@@ -9,31 +9,26 @@ export default class Registry<T, K extends string = string> {
     private _useFallback: string | boolean;
     private _tokenResolver: (token: string, registeredTokens: string[]) => string | undefined;
 
-    constructor(
-        options?: RegistryOptions
-    ) {
+    constructor(options?: RegistryOptions) {
         this._factories = {};
         this._instances = {};
         this._defaultToken = options?.defaultToken ?? 'default';
         this._useFallback = options?.useFallback ?? true;
-        this._tokenResolver = options?.tokenResolver ?? (token => token);
+        this._tokenResolver = options?.tokenResolver ?? ((token) => token);
     }
 
     get(token?: K, cacheToken?: string): T {
         try {
             return this._getInstance(
                 token || this._defaultToken,
-                cacheToken || token || this._defaultToken
+                cacheToken || token || this._defaultToken,
             );
         } catch (error) {
             if (!this._useFallback) {
                 throw error;
             }
 
-            return this._getInstance(
-                this._defaultToken,
-                cacheToken || this._defaultToken
-            );
+            return this._getInstance(this._defaultToken, cacheToken || this._defaultToken);
         }
     }
 

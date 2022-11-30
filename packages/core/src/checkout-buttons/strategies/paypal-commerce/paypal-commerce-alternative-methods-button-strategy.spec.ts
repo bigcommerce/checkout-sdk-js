@@ -6,7 +6,12 @@ import { EventEmitter } from 'events';
 import { BuyNowCartRequestBody, Cart, CartRequestSender } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { BuyNowCartCreationError } from '../../../cart/errors';
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -14,10 +19,16 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { PaymentMethod } from '../../../payment';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
-import { ButtonsOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import {
+    ButtonsOptions,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+} from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
+
 import { PaypalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods-button-options';
 import PaypalCommerceAlternativeMethodsButtonStrategy from './paypal-commerce-alternative-methods-button-strategy';
 
@@ -61,14 +72,16 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
         source: 'BUY_NOW',
-        lineItems: [{
-            productId: 1,
-            quantity: 2,
-            optionSelections: {
-                optionId: 11,
-                optionValue: 11,
+        lineItems: [
+            {
+                productId: 1,
+                quantity: 2,
+                optionSelections: {
+                    optionId: 11,
+                    optionValue: 11,
+                },
             },
-        }],
+        ],
     };
 
     const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
@@ -80,7 +93,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             buyNowInitializeOptions: {
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
             },
-        }
+        },
     };
 
     beforeEach(() => {
@@ -99,7 +112,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
         strategy = new PaypalCommerceAlternativeMethodsButtonStrategy(
@@ -117,19 +130,22 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
         jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
-        jest.spyOn(paypalSdkMock, 'Buttons')
-            .mockImplementation((options: ButtonsOptions) => {
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder().catch(() => {});
-                    }
-                });
+        jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: ButtonsOptions) => {
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder().catch(() => {});
+                }
+            });
 
-                eventEmitter.on('onClick', async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
+            eventEmitter.on(
+                'onClick',
+                async (jestSuccessExpectationsCallback, jestFailureExpectationsCallback) => {
                     try {
                         if (options.onClick) {
                             await options.onClick(
@@ -140,28 +156,35 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
                                 },
                             );
 
-                            if (jestSuccessExpectationsCallback && typeof jestSuccessExpectationsCallback === 'function') {
+                            if (
+                                jestSuccessExpectationsCallback &&
+                                typeof jestSuccessExpectationsCallback === 'function'
+                            ) {
                                 jestSuccessExpectationsCallback();
                             }
                         }
                     } catch (error) {
-                        if (jestFailureExpectationsCallback && typeof jestFailureExpectationsCallback === 'function') {
+                        if (
+                            jestFailureExpectationsCallback &&
+                            typeof jestFailureExpectationsCallback === 'function'
+                        ) {
                             jestFailureExpectationsCallback(error);
                         }
                     }
-                });
+                },
+            );
 
-                eventEmitter.on('onApprove', () => {
-                    if (options.onApprove) {
-                        options.onApprove({ orderID: approveDataOrderId });
-                    }
-                });
-
-                return {
-                    isEligible: jest.fn(() => true),
-                    render: jest.fn(),
-                };
+            eventEmitter.on('onApprove', () => {
+                if (options.onApprove) {
+                    options.onApprove({ orderID: approveDataOrderId });
+                }
             });
+
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+            };
+        });
     });
 
     afterEach(() => {
@@ -180,7 +203,9 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('throws error if methodId is not provided', async () => {
-            const options = { containerId: defaultButtonContainerId } as CheckoutButtonInitializeOptions;
+            const options = {
+                containerId: defaultButtonContainerId,
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -190,7 +215,9 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         });
 
         it('throws an error if containerId is not provided', async () => {
-            const options = { methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_APMS } as CheckoutButtonInitializeOptions;
+            const options = {
+                methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_APMS,
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -234,7 +261,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
         });
 
-        it ('does not load default checkout for Buy Now flow', async () => {
+        it('does not load default checkout for Buy Now flow', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
@@ -246,7 +273,7 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethodMock,
                 cartMock.currency.code,
-                initializationOptions.paypalcommercealternativemethods?.initializesOnCheckoutPage
+                initializationOptions.paypalcommercealternativemethods?.initializesOnCheckoutPage,
             );
         });
 
@@ -256,7 +283,8 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethodMock,
                 buyNowInitializationOptions.paypalcommercealternativemethods?.currencyCode,
-                buyNowInitializationOptions.paypalcommercealternativemethods?.initializesOnCheckoutPage
+                buyNowInitializationOptions.paypalcommercealternativemethods
+                    ?.initializesOnCheckoutPage,
             );
         });
 
@@ -294,11 +322,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         it('renders APM button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation(() => ({
-                    isEligible: jest.fn(() => true),
-                    render: paypalCommerceSdkRenderMock,
-                }));
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => true),
+                render: paypalCommerceSdkRenderMock,
+            }));
 
             await strategy.initialize(initializationOptions);
 
@@ -308,11 +335,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         it('does not render APM button if it is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation(() => ({
-                    isEligible: jest.fn(() => false),
-                    render: paypalCommerceSdkRenderMock,
-                }));
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => false),
+                render: paypalCommerceSdkRenderMock,
+            }));
 
             await strategy.initialize(initializationOptions);
 
@@ -322,11 +348,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
         it('removes APM button container if the button has not rendered', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation(() => ({
-                    isEligible: jest.fn(() => false),
-                    render: paypalCommerceSdkRenderMock,
-                }));
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => false),
+                render: paypalCommerceSdkRenderMock,
+            }));
 
             await strategy.initialize(initializationOptions);
 
@@ -346,39 +371,34 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             };
 
             await strategy.initialize(buyNowInitializationOptionsMock);
-            eventEmitter.emit(
-                'onClick',
-                undefined,
-                (error: Error) => {
-                    expect(error).toBeInstanceOf(MissingDataError);
-                },
-            );
+            eventEmitter.emit('onClick', undefined, (error: Error) => {
+                expect(error).toBeInstanceOf(MissingDataError);
+            });
         });
 
         it('creates buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                body: buyNowCartMock,
+            });
 
             await strategy.initialize(buyNowInitializationOptions);
 
-            eventEmitter.emit(
-                'onClick',
-                () => {
-                    expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(buyNowCartRequestBody);
-                },
-            );
+            eventEmitter.emit('onClick', () => {
+                expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(
+                    buyNowCartRequestBody,
+                );
+            });
         });
 
         it('throws an error if failed to create buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockImplementation(() => Promise.reject());
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockImplementation(() =>
+                Promise.reject(),
+            );
 
             await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit(
-                'onClick',
-                undefined,
-                (error: Error) => {
-                    expect(error).toBeInstanceOf(BuyNowCartCreationError);
-                }
-            );
+            eventEmitter.emit('onClick', undefined, (error: Error) => {
+                expect(error).toBeInstanceOf(BuyNowCartCreationError);
+            });
         });
 
         it('creates an order with paypalcommercealternativemethod as provider id if its initializes outside checkout page', async () => {
@@ -388,9 +408,12 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, 'paypalcommercealternativemethod');
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+                cartMock.id,
+                'paypalcommercealternativemethod',
+            );
         });
 
         it('creates an order with paypalcommercealternativemethodscheckout as provider id if its initializes on checkout page', async () => {
@@ -408,48 +431,55 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, 'paypalcommercealternativemethodscheckout');
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+                cartMock.id,
+                'paypalcommercealternativemethodscheckout',
+            );
         });
 
         it('creates order with Buy Now cart id (Buy Now flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                body: buyNowCartMock,
+            });
             jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
 
             await strategy.initialize(buyNowInitializationOptions);
 
             eventEmitter.emit('onClick');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(buyNowCartMock.id, 'paypalcommercealternativemethod');
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+                buyNowCartMock.id,
+                'paypalcommercealternativemethod',
+            );
         });
 
         it('throws an error if orderId is not provided by PayPal on approve', async () => {
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation((options: ButtonsOptions) => {
-                    eventEmitter.on('createOrder', () => {
-                        if (options.createOrder) {
-                            options.createOrder().catch(() => {});
-                        }
-                    });
-
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove({ orderID: '' });
-                        }
-                    });
-
-                    return {
-                        isEligible: jest.fn(() => true),
-                        render: jest.fn(),
-                    };
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: ButtonsOptions) => {
+                eventEmitter.on('createOrder', () => {
+                    if (options.createOrder) {
+                        options.createOrder().catch(() => {});
+                    }
                 });
+
+                eventEmitter.on('onApprove', () => {
+                    if (options.onApprove) {
+                        options.onApprove({ orderID: '' });
+                    }
+                });
+
+                return {
+                    isEligible: jest.fn(() => true),
+                    render: jest.fn(),
+                };
+            });
 
             try {
                 await strategy.initialize(initializationOptions);
@@ -464,37 +494,45 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
-                action: 'set_external_checkout',
-                order_id: approveDataOrderId,
-                payment_type: 'paypal',
-                provider: paymentMethodMock.id,
-            }));
+            expect(formPoster.postForm).toHaveBeenCalledWith(
+                '/checkout.php',
+                expect.objectContaining({
+                    action: 'set_external_checkout',
+                    order_id: approveDataOrderId,
+                    payment_type: 'paypal',
+                    provider: paymentMethodMock.id,
+                }),
+            );
         });
 
         it('provides buy now cart_id on payment tokenization on paypal approve', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                body: buyNowCartMock,
+            });
             jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('111');
 
             await strategy.initialize(buyNowInitializationOptions);
 
             eventEmitter.emit('onClick');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
-                cart_id: buyNowCartMock.id,
-            }));
+            expect(formPoster.postForm).toHaveBeenCalledWith(
+                '/checkout.php',
+                expect.objectContaining({
+                    cart_id: buyNowCartMock.id,
+                }),
+            );
         });
     });
 });

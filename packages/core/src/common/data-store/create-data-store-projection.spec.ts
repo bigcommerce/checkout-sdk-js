@@ -1,4 +1,4 @@
-import { createDataStore, Action, DataStore, Reducer } from '@bigcommerce/data-store';
+import { Action, createDataStore, DataStore, Reducer } from '@bigcommerce/data-store';
 
 import createDataStoreProjection from './create-data-store-projection';
 
@@ -23,14 +23,14 @@ describe('DataStoreProjection', () => {
 
         const reducer: Reducer<TestState, Action> = (state = initialState, action) => {
             switch (action.type) {
-            case 'MESSAGE':
-                return { ...state, message: action.payload };
+                case 'MESSAGE':
+                    return { ...state, message: action.payload };
 
-            case 'COUNT':
-                return { ...state, count: action.payload };
+                case 'COUNT':
+                    return { ...state, count: action.payload };
 
-            default:
-                return state;
+                default:
+                    return state;
             }
         };
 
@@ -47,10 +47,9 @@ describe('DataStoreProjection', () => {
     it('projects state of data store to into different shape', () => {
         const projection = createDataStoreProjection(store, transformer);
 
-        expect(projection.getState())
-            .toEqual({
-                transformedMessage: 'foobar!',
-            });
+        expect(projection.getState()).toEqual({
+            transformedMessage: 'foobar!',
+        });
     });
 
     it('passes projected data to subscriber', () => {
@@ -61,28 +60,24 @@ describe('DataStoreProjection', () => {
         subscriber.mockReset();
         store.dispatch({ type: 'MESSAGE', payload: 'new message' });
 
-        expect(subscriber)
-            .toHaveBeenCalledWith({ transformedMessage: 'new message!' });
-        expect(subscriber)
-            .toHaveBeenCalledTimes(1);
+        expect(subscriber).toHaveBeenCalledWith({ transformedMessage: 'new message!' });
+        expect(subscriber).toHaveBeenCalledTimes(1);
     });
 
     it('triggers subscriber if projected data matches filter', () => {
         const projection = createDataStoreProjection(store, transformer);
         const subscriber = jest.fn();
-        const filter = jest.fn(state => state.transformedMessage);
+        const filter = jest.fn((state) => state.transformedMessage);
 
         projection.subscribe(subscriber, filter);
         subscriber.mockReset();
         store.dispatch({ type: 'COUNT', payload: 10 });
 
-        expect(subscriber)
-            .not.toHaveBeenCalled();
+        expect(subscriber).not.toHaveBeenCalled();
 
         store.dispatch({ type: 'MESSAGE', payload: 'new message' });
 
-        expect(subscriber)
-            .toHaveBeenCalledTimes(1);
+        expect(subscriber).toHaveBeenCalledTimes(1);
     });
 
     it('can be unsubscribed', () => {
@@ -94,8 +89,7 @@ describe('DataStoreProjection', () => {
         unsubscribe();
         store.dispatch({ type: 'MESSAGE', payload: 'new message' });
 
-        expect(subscriber)
-            .toHaveBeenCalledTimes(0);
+        expect(subscriber).toHaveBeenCalledTimes(0);
     });
 
     it('can directly trigger subscriber without changing state', () => {
@@ -106,7 +100,6 @@ describe('DataStoreProjection', () => {
         subscriber.mockReset();
         projection.notifyState();
 
-        expect(subscriber)
-            .toHaveBeenCalledTimes(1);
+        expect(subscriber).toHaveBeenCalledTimes(1);
     });
 });

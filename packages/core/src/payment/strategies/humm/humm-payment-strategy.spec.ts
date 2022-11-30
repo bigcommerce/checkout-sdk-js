@@ -1,16 +1,26 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentExecuteError } from '../../errors';
@@ -51,9 +61,11 @@ describe('HummPaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
 
         paymentMethod = getHumm();
         payload = merge({}, getOrderRequestBody(), {
@@ -70,34 +82,33 @@ describe('HummPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockReturnValue(Promise.resolve());
+        jest.spyOn(formPoster, 'postForm').mockReturnValue(Promise.resolve());
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue({ ...getHumm(), initializationData: { processable: true }});
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+            ...getHumm(),
+            initializationData: { processable: true },
+        });
 
         strategy = new HummPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             formPoster,
-            paymentMethodActionCreator
+            paymentMethodActionCreator,
         );
-
     });
 
     describe('#execute()', () => {
         it('throws error when undefined payment is provided', async () => {
-            payload = {payment: undefined};
+            payload = { payment: undefined };
 
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
         });
@@ -109,32 +120,40 @@ describe('HummPaymentStrategy', () => {
         });
 
         it('redirect to Humm', async () => {
-            const data = JSON.stringify({data: 'data'});
+            const data = JSON.stringify({ data: 'data' });
 
-            const error = new RequestError(getResponse({
-                ...getErrorPaymentResponseBody(),
-                provider_data: data,
-                additional_action_required: {
-                    type: 'offsite_redirect',
-                    data : {
-                        redirect_url: 'https://sandbox-payment.humm.com',
+            const error = new RequestError(
+                getResponse({
+                    ...getErrorPaymentResponseBody(),
+                    provider_data: data,
+                    additional_action_required: {
+                        type: 'offsite_redirect',
+                        data: {
+                            redirect_url: 'https://sandbox-payment.humm.com',
+                        },
                     },
-                },
-                status:  'additional_action_required',
-            }));
+                    status: 'additional_action_required',
+                }),
+            );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
+            );
 
             strategy.execute(payload);
 
-            await new Promise(resolve => process.nextTick(resolve));
-            expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {data: 'data'});
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {
+                data: 'data',
+            });
         });
 
         it('throws PaymentExecuteError when not processable', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getHumm(), initializationData: { processable: false }});
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...getHumm(),
+                initializationData: { processable: false },
+            });
 
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentExecuteError);
         });
@@ -142,10 +161,11 @@ describe('HummPaymentStrategy', () => {
         it('reject payment when error is different to additional_action_required', async () => {
             const error = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
+            );
 
-            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrowError(error);
+            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(error);
         });
     });
 });

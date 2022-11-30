@@ -52,7 +52,10 @@ describe('billingAddressReducer', () => {
     });
 
     it('returns error state when checkout fails to load', () => {
-        const action = createAction(CheckoutActionType.LoadCheckoutFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            CheckoutActionType.LoadCheckoutFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -82,7 +85,10 @@ describe('billingAddressReducer', () => {
     });
 
     it('returns data when continueAsGuest succeeded', () => {
-        const action = createAction(BillingAddressActionType.ContinueAsGuestSucceeded, getCheckout());
+        const action = createAction(
+            BillingAddressActionType.ContinueAsGuestSucceeded,
+            getCheckout(),
+        );
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -107,7 +113,10 @@ describe('billingAddressReducer', () => {
     });
 
     it('returns error when continueAsGuest failed', () => {
-        const action = createAction(BillingAddressActionType.ContinueAsGuestFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            BillingAddressActionType.ContinueAsGuestFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({
@@ -117,7 +126,10 @@ describe('billingAddressReducer', () => {
     });
 
     it('returns error when subscriptions failed to update', () => {
-        const action = createAction(SubscriptionsActionType.UpdateSubscriptionsFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            SubscriptionsActionType.UpdateSubscriptionsFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = billingAddressReducer(initialState, action);
 
         expect(output).toEqual({

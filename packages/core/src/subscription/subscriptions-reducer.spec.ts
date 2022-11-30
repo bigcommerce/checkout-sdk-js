@@ -35,7 +35,10 @@ describe('subscriptionsReducer', () => {
     });
 
     it('returns error when subscriptions failed to update', () => {
-        const action = createAction(SubscriptionsActionType.UpdateSubscriptionsFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            SubscriptionsActionType.UpdateSubscriptionsFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = subscriptionsReducer(initialState, action);
 
         expect(output).toEqual({

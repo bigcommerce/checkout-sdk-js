@@ -15,10 +15,11 @@ export default class StripeV3Error extends StandardError {
     }
 }
 
-function getErrorMessage(type: StripeV3ErrorType){
+function getErrorMessage(type: StripeV3ErrorType) {
     switch (type) {
         case StripeV3ErrorType.AuthFailure:
             return `User did not authenticate`;
+
         default:
             return 'There was an error while processing your payment. Please try again or contact us.';
     }

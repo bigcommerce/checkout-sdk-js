@@ -27,5 +27,5 @@ export interface PaypalCommerceAlternativeMethodsButtonOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 }

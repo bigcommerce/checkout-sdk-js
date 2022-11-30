@@ -5,19 +5,27 @@ import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
-import { VisaCheckoutAddress, VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
+import {
+    VisaCheckoutAddress,
+    VisaCheckoutInitOptions,
+    VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutTokenizedPayload,
+} from './visacheckout';
 
 export default class BraintreeVisaCheckoutPaymentProcessor {
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator,
-        private _requestSender: RequestSender
+        private _requestSender: RequestSender,
     ) {}
 
-    initialize(clientToken: string, options: VisaCheckoutInitializeOptions): Promise<VisaCheckoutInitOptions> {
+    initialize(
+        clientToken: string,
+        options: VisaCheckoutInitializeOptions,
+    ): Promise<VisaCheckoutInitOptions> {
         this._braintreeSDKCreator.initialize(clientToken);
 
-        return this._braintreeSDKCreator.getVisaCheckout()
-            .then(visaCheckout => visaCheckout.createInitOptions({
+        return this._braintreeSDKCreator.getVisaCheckout().then((visaCheckout) =>
+            visaCheckout.createInitOptions({
                 settings: {
                     locale: options.locale,
                     shipping: {
@@ -28,40 +36,46 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
                     currencyCode: options.currencyCode,
                     subtotal: String(options.subtotal),
                 },
-            }));
+            }),
+        );
     }
 
     deinitialize(): Promise<void> {
         return this._braintreeSDKCreator.teardown();
     }
 
-    handleSuccess(payment: VisaCheckoutPaymentSuccessPayload, shipping?: Address, billing?: Address): Promise<any> {
-        return this._braintreeSDKCreator.getVisaCheckout()
-            .then(braintreeVisaCheckout => Promise.all([
+    handleSuccess(
+        payment: VisaCheckoutPaymentSuccessPayload,
+        shipping?: Address,
+        billing?: Address,
+    ): Promise<any> {
+        return this._braintreeSDKCreator.getVisaCheckout().then((braintreeVisaCheckout) =>
+            Promise.all([
                 braintreeVisaCheckout.tokenize(payment),
                 this._braintreeSDKCreator.getDataCollector(),
-            ])
-            .then(([tokenizedPayload, dataCollector]) => {
+            ]).then(([tokenizedPayload, dataCollector]) => {
                 const {
                     shippingAddress = this._toVisaCheckoutAddress(shipping),
                     billingAddress = this._toVisaCheckoutAddress(billing),
                 } = tokenizedPayload;
 
-                return this._postForm({
-                    ...tokenizedPayload,
-                    shippingAddress,
-                    billingAddress,
-                }, dataCollector);
-            }));
+                return this._postForm(
+                    {
+                        ...tokenizedPayload,
+                        shippingAddress,
+                        billingAddress,
+                    },
+                    dataCollector,
+                );
+            }),
+        );
     }
 
-    private _postForm(paymentData: VisaCheckoutTokenizedPayload, dataCollector: BraintreeDataCollector) {
-        const {
-            userData,
-            billingAddress,
-            shippingAddress,
-            details: cardInformation,
-        } = paymentData;
+    private _postForm(
+        paymentData: VisaCheckoutTokenizedPayload,
+        dataCollector: BraintreeDataCollector,
+    ) {
+        const { userData, billingAddress, shippingAddress, details: cardInformation } = paymentData;
         const { userEmail } = userData;
         const { deviceData } = dataCollector;
 

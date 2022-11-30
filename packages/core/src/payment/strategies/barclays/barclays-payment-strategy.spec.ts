@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -44,44 +44,42 @@ describe('BarclaysPaymentStrategy', () => {
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             store,
             paymentActionCreator as PaymentActionCreator,
-            cardinalClient
+            cardinalClient,
         );
 
-        jest.spyOn(threeDSecureFlow, 'prepare')
-            .mockReturnValue(Promise.resolve());
+        jest.spyOn(threeDSecureFlow, 'prepare').mockReturnValue(Promise.resolve());
         jest.spyOn(threeDSecureFlow, 'start');
 
         state = store.getState();
 
-        jest.spyOn(store, 'dispatch')
-            .mockResolvedValue(state);
+        jest.spyOn(store, 'dispatch').mockResolvedValue(state);
 
-        jest.spyOn(store, 'getState')
-            .mockReturnValue(state);
+        jest.spyOn(store, 'getState').mockReturnValue(state);
 
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
 
         strategy = new BarclaysPaymentStrategy(
             store,
             orderActionCreator as OrderActionCreator,
             paymentActionCreator as PaymentActionCreator,
             hostedFormFactory,
-            threeDSecureFlow as CardinalThreeDSecureFlowV2
+            threeDSecureFlow as CardinalThreeDSecureFlowV2,
         );
     });
 
     it('is special type of credit card strategy', () => {
-        expect(strategy)
-            .toBeInstanceOf(CreditCardPaymentStrategy);
+        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     describe('#initialize', () => {
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
-            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(Error);
+            await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
+                Error,
+            );
         });
 
         describe('#threeDSecureFlow', () => {
@@ -90,8 +88,7 @@ describe('BarclaysPaymentStrategy', () => {
 
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(threeDSecureFlow.prepare)
-                    .not.toHaveBeenCalled();
+                expect(threeDSecureFlow.prepare).not.toHaveBeenCalled();
             });
 
             it('prepares 3DS flow if enabled', async () => {
@@ -99,8 +96,7 @@ describe('BarclaysPaymentStrategy', () => {
 
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(threeDSecureFlow.prepare)
-                    .toHaveBeenCalled();
+                expect(threeDSecureFlow.prepare).toHaveBeenCalled();
             });
         });
     });
@@ -118,8 +114,9 @@ describe('BarclaysPaymentStrategy', () => {
         });
 
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
             await expect(strategy.execute(payload)).rejects.toThrow(Error);
         });
@@ -136,10 +133,8 @@ describe('BarclaysPaymentStrategy', () => {
 
                 await strategy.execute(payload);
 
-                expect(threeDSecureFlow.start)
-                    .not.toHaveBeenCalled();
-                expect(parentExecute)
-                    .toHaveBeenCalled();
+                expect(threeDSecureFlow.start).not.toHaveBeenCalled();
+                expect(parentExecute).toHaveBeenCalled();
             });
 
             it('starts 3DS flow if enabled', async () => {
@@ -147,10 +142,8 @@ describe('BarclaysPaymentStrategy', () => {
 
                 await strategy.execute(payload);
 
-                expect(threeDSecureFlow.start)
-                    .toHaveBeenCalled();
-                expect(parentExecute)
-                    .toHaveBeenCalled();
+                expect(threeDSecureFlow.start).toHaveBeenCalled();
+                expect(parentExecute).toHaveBeenCalled();
             });
         });
     });

@@ -3,7 +3,10 @@ import { Response } from '@bigcommerce/request-sender';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { createCheckoutStoreErrorSelectorFactory, CheckoutStoreErrorSelectorFactory } from './checkout-store-error-selector';
+import {
+    CheckoutStoreErrorSelectorFactory,
+    createCheckoutStoreErrorSelectorFactory,
+} from './checkout-store-error-selector';
 import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -24,12 +27,14 @@ describe('CheckoutStoreErrorSelector', () => {
         it('returns no error if there are no errors', () => {
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getError()).toEqual(undefined);
+            expect(errors.getError()).toBeUndefined();
         });
 
         it('returns the first error that it encounters', () => {
             jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(undefined);
-            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -55,7 +60,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadCheckoutError()).toEqual(undefined);
+            expect(errors.getLoadCheckoutError()).toBeUndefined();
             expect(selectors.checkout.getLoadError).toHaveBeenCalled();
         });
     });
@@ -75,7 +80,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getCreateCustomerAccountError()).toEqual(undefined);
+            expect(errors.getCreateCustomerAccountError()).toBeUndefined();
             expect(selectors.customer.getCreateAccountError).toHaveBeenCalled();
         });
     });
@@ -95,7 +100,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignInEmailError()).toEqual(undefined);
+            expect(errors.getSignInEmailError()).toBeUndefined();
             expect(selectors.signInEmail.getSendError).toHaveBeenCalled();
         });
     });
@@ -115,14 +120,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateCheckoutError()).toEqual(undefined);
+            expect(errors.getUpdateCheckoutError()).toBeUndefined();
             expect(selectors.checkout.getUpdateError).toHaveBeenCalled();
         });
     });
 
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -135,14 +142,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSubmitOrderError()).toEqual(undefined);
+            expect(errors.getSubmitOrderError()).toBeUndefined();
             expect(selectors.paymentStrategies.getExecuteError).toHaveBeenCalled();
         });
     });
 
     describe('#getFinalizeOrderError()', () => {
         it('returns error if there is an error when finalizing order', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -155,7 +164,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getFinalizeOrderError()).toEqual(undefined);
+            expect(errors.getFinalizeOrderError()).toBeUndefined();
             expect(selectors.paymentStrategies.getFinalizeError).toHaveBeenCalled();
         });
     });
@@ -175,7 +184,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadOrderError()).toEqual(undefined);
+            expect(errors.getLoadOrderError()).toBeUndefined();
             expect(selectors.order.getLoadError).toHaveBeenCalled();
         });
     });
@@ -195,7 +204,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadCartError()).toEqual(undefined);
+            expect(errors.getLoadCartError()).toBeUndefined();
             expect(selectors.cart.getLoadError).toHaveBeenCalled();
         });
     });
@@ -215,7 +224,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadBillingCountriesError()).toEqual(undefined);
+            expect(errors.getLoadBillingCountriesError()).toBeUndefined();
             expect(selectors.countries.getLoadError).toHaveBeenCalled();
         });
     });
@@ -235,7 +244,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadShippingCountriesError()).toEqual(undefined);
+            expect(errors.getLoadShippingCountriesError()).toBeUndefined();
             expect(selectors.shippingCountries.getLoadError).toHaveBeenCalled();
         });
     });
@@ -255,14 +264,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadPaymentMethodsError()).toEqual(undefined);
+            expect(errors.getLoadPaymentMethodsError()).toBeUndefined();
             expect(selectors.paymentMethods.getLoadError).toHaveBeenCalled();
         });
     });
 
     describe('#getLoadPaymentMethodError()', () => {
         it('returns error if there is an error when loading payment method', () => {
-            jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -275,34 +286,44 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadPaymentMethodError('braintree')).toEqual(undefined);
+            expect(errors.getLoadPaymentMethodError('braintree')).toBeUndefined();
             expect(selectors.paymentMethods.getLoadMethodError).toHaveBeenCalledWith('braintree');
         });
     });
 
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize payment', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
             expect(errors.getInitializePaymentError('braintree')).toEqual(errorResponse);
-            expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
+            expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith(
+                'braintree',
+            );
         });
 
         it('returns undefined if able to initialize payment', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(undefined);
+            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializePaymentError('braintree')).toEqual(undefined);
-            expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
+            expect(errors.getInitializePaymentError('braintree')).toBeUndefined();
+            expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith(
+                'braintree',
+            );
         });
     });
 
     describe('#getSignInError()', () => {
         it('returns error if there is an error when signing in', () => {
-            jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -315,14 +336,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignInError()).toEqual(undefined);
+            expect(errors.getSignInError()).toBeUndefined();
             expect(selectors.customerStrategies.getSignInError).toHaveBeenCalled();
         });
     });
 
     describe('#getSignOutError()', () => {
         it('returns error if there is an error when signing out', () => {
-            jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -335,14 +358,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignOutError()).toEqual(undefined);
+            expect(errors.getSignOutError()).toBeUndefined();
             expect(selectors.customerStrategies.getSignOutError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializeCustomerError()', () => {
         it('returns error if unable to initialize customer', () => {
-            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -351,18 +376,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if able to initialize customer', () => {
-            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(undefined);
+            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializeCustomerError()).toEqual(undefined);
+            expect(errors.getInitializeCustomerError()).toBeUndefined();
             expect(selectors.customerStrategies.getInitializeError).toHaveBeenCalled();
         });
     });
 
     describe('#getLoadShippingOptionsError()', () => {
         it('returns error if there is an error when loading the shipping options', () => {
-            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -371,18 +400,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when loading the shipping options', () => {
-            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(undefined);
+            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadShippingOptionsError()).toEqual(undefined);
+            expect(errors.getLoadShippingOptionsError()).toBeUndefined();
             expect(selectors.consignments.getLoadShippingOptionsError).toHaveBeenCalled();
         });
     });
 
     describe('#getSelectShippingOptionError()', () => {
         it('returns error if there is an error when selecting the shipping options', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -391,11 +424,13 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when selecting the shipping options', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(undefined);
+            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSelectShippingOptionError()).toEqual(undefined);
+            expect(errors.getSelectShippingOptionError()).toBeUndefined();
             expect(selectors.shippingStrategies.getSelectOptionError).toHaveBeenCalled();
         });
     });
@@ -415,7 +450,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateBillingAddressError()).toEqual(undefined);
+            expect(errors.getUpdateBillingAddressError()).toBeUndefined();
             expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
         });
     });
@@ -435,14 +470,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateSubscriptionsError()).toEqual(undefined);
+            expect(errors.getUpdateSubscriptionsError()).toBeUndefined();
             expect(selectors.subscriptions.getUpdateError).toHaveBeenCalled();
         });
     });
 
     describe('#getContinueAsGuestError()', () => {
         it('returns error if there is an error', () => {
-            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -451,11 +488,13 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO errors', () => {
-            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(undefined);
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getContinueAsGuestError()).toEqual(undefined);
+            expect(errors.getContinueAsGuestError()).toBeUndefined();
             expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
         });
     });
@@ -475,7 +514,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateConsignmentError('foo')).toEqual(undefined);
+            expect(errors.getUpdateConsignmentError('foo')).toBeUndefined();
             expect(selectors.consignments.getUpdateError).toHaveBeenCalledWith('foo');
         });
     });
@@ -495,7 +534,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getDeleteConsignmentError('foo')).toEqual(undefined);
+            expect(errors.getDeleteConsignmentError('foo')).toBeUndefined();
             expect(selectors.consignments.getDeleteError).toHaveBeenCalledWith('foo');
         });
     });
@@ -515,14 +554,16 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getCreateConsignmentsError()).toEqual(undefined);
+            expect(errors.getCreateConsignmentsError()).toBeUndefined();
             expect(selectors.consignments.getCreateError).toHaveBeenCalledWith();
         });
     });
 
     describe('#getUpdateShippingAddressError()', () => {
         it('returns error if there is an error when updating the shipping address', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -531,18 +572,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when updating the shipping address', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(undefined);
+            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateShippingAddressError()).toEqual(undefined);
+            expect(errors.getUpdateShippingAddressError()).toBeUndefined();
             expect(selectors.shippingStrategies.getUpdateAddressError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize shipping', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(
+                errorResponse,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
@@ -551,11 +596,13 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if able to initialize shipping', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(undefined);
+            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(
+                undefined,
+            );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializeShippingError('foobar')).toEqual(undefined);
+            expect(errors.getInitializeShippingError('foobar')).toBeUndefined();
             expect(selectors.shippingStrategies.getInitializeError).toHaveBeenCalledWith('foobar');
         });
     });
@@ -575,7 +622,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getApplyCouponError()).toEqual(undefined);
+            expect(errors.getApplyCouponError()).toBeUndefined();
             expect(selectors.coupons.getApplyError).toHaveBeenCalled();
         });
     });
@@ -595,7 +642,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getRemoveCouponError()).toEqual(undefined);
+            expect(errors.getRemoveCouponError()).toBeUndefined();
             expect(selectors.coupons.getRemoveError).toHaveBeenCalled();
         });
     });
@@ -615,7 +662,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getApplyGiftCertificateError()).toEqual(undefined);
+            expect(errors.getApplyGiftCertificateError()).toBeUndefined();
             expect(selectors.giftCertificates.getApplyError).toHaveBeenCalled();
         });
     });
@@ -635,7 +682,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getRemoveGiftCertificateError()).toEqual(undefined);
+            expect(errors.getRemoveGiftCertificateError()).toBeUndefined();
             expect(selectors.giftCertificates.getRemoveError).toHaveBeenCalled();
         });
     });
@@ -655,7 +702,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadInstrumentsError()).toEqual(undefined);
+            expect(errors.getLoadInstrumentsError()).toBeUndefined();
             expect(selectors.instruments.getLoadError).toHaveBeenCalled();
         });
     });
@@ -675,7 +722,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getDeleteInstrumentError('123')).toEqual(undefined);
+            expect(errors.getDeleteInstrumentError('123')).toBeUndefined();
             expect(selectors.instruments.getDeleteError).toHaveBeenCalledWith('123');
         });
     });
@@ -695,7 +742,7 @@ describe('CheckoutStoreErrorSelector', () => {
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadConfigError()).toEqual(undefined);
+            expect(errors.getLoadConfigError()).toBeUndefined();
             expect(selectors.config.getLoadError).toHaveBeenCalled();
         });
     });

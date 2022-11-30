@@ -6,7 +6,11 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 
 import PaypalCommerceScriptLoader from './paypal-commerce-script-loader';
-import { PaypalCommerceHostWindow, PaypalCommerceScriptParams, PaypalCommerceSDK } from './paypal-commerce-sdk';
+import {
+    PaypalCommerceHostWindow,
+    PaypalCommerceScriptParams,
+    PaypalCommerceSDK,
+} from './paypal-commerce-sdk';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
 describe('PaypalCommerceScriptLoader', () => {
@@ -14,7 +18,9 @@ describe('PaypalCommerceScriptLoader', () => {
     let paypalLoader: PaypalCommerceScriptLoader;
     let paypalSdk: PaypalCommerceSDK;
     let paymentMethod: PaymentMethod;
-    let paypalLoadScript: (options: PaypalCommerceScriptParams) => Promise<{ paypal: PaypalCommerceSDK }>;
+    let paypalLoadScript: (
+        options: PaypalCommerceScriptParams,
+    ) => Promise<{ paypal: PaypalCommerceSDK }>;
 
     const paypalCdn = 'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js';
     const paypalScriptOptions = { async: true, attributes: {} };
@@ -23,18 +29,20 @@ describe('PaypalCommerceScriptLoader', () => {
         loader = createScriptLoader();
         paymentMethod = getPaypalCommerce();
         paypalSdk = getPaypalCommerceMock();
-        paypalLoadScript = jest.fn(() => new Promise(resolve => {
-            (window as PaypalCommerceHostWindow).paypal = paypalSdk;
+        paypalLoadScript = jest.fn(
+            () =>
+                new Promise((resolve) => {
+                    (window as PaypalCommerceHostWindow).paypal = paypalSdk;
 
-            return resolve({ paypalSdk });
-        }));
+                    return resolve({ paypalSdk });
+                }),
+        );
 
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalCommerceHostWindow).paypalLoadScript = paypalLoadScript;
+        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
+            (window as PaypalCommerceHostWindow).paypalLoadScript = paypalLoadScript;
 
-                return Promise.resolve();
-            });
+            return Promise.resolve();
+        });
 
         paypalLoader = new PaypalCommerceScriptLoader(loader);
     });
@@ -90,7 +98,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(loader.loadScript).toHaveBeenCalledWith(paypalCdn, paypalScriptOptions);
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
@@ -124,7 +132,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'EUR',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -146,7 +154,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -173,7 +181,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -200,7 +208,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -227,7 +235,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -254,7 +262,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -264,7 +272,14 @@ describe('PaypalCommerceScriptLoader', () => {
             ...paymentMethod,
             initializationData: {
                 ...paymentMethod.initializationData,
-                availableAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal', 'mybank', 'sofort', 'sepa'],
+                availableAlternativePaymentMethods: [
+                    'bancontact',
+                    'giropay',
+                    'ideal',
+                    'mybank',
+                    'sofort',
+                    'sepa',
+                ],
                 enabledAlternativePaymentMethods: ['bancontact', 'giropay', 'ideal'],
             },
         };
@@ -282,7 +297,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -304,7 +319,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -323,7 +338,7 @@ describe('PaypalCommerceScriptLoader', () => {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',
-        }
+        };
 
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
@@ -346,12 +361,11 @@ describe('PaypalCommerceScriptLoader', () => {
     });
 
     it('throw error if unable window.paypalLoadScript', async () => {
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalCommerceHostWindow).paypalLoadScript = undefined;
+        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
+            (window as PaypalCommerceHostWindow).paypalLoadScript = undefined;
 
-                return Promise.resolve();
-            });
+            return Promise.resolve();
+        });
 
         try {
             await paypalLoader.getPayPalSDK(paymentMethod, 'USD');

@@ -1,4 +1,3 @@
-
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 
 import { getBraintreeAddress } from './braintree.mock';
@@ -6,7 +5,8 @@ import mapToBraintreeShippingAddressOverride from './map-to-braintree-shipping-a
 
 describe('mapToBraintreeAddress()', () => {
     it('maps shipping address to braintree address', () => {
-        expect(mapToBraintreeShippingAddressOverride(getShippingAddress()))
-            .toEqual(getBraintreeAddress());
+        expect(mapToBraintreeShippingAddressOverride(getShippingAddress())).toEqual(
+            getBraintreeAddress(),
+        );
     });
 });

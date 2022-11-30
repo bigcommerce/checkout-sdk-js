@@ -4,7 +4,7 @@
  * When ApplePay is initialized, an ApplePay button will be inserted into the
  * DOM. When a customer clicks on it, it will trigger Apple sheet.
  */
- export default interface ApplePayButtonInitializeOptions {
+export default interface ApplePayButtonInitializeOptions {
     /**
      * The class name of the ApplePay button style.
      */

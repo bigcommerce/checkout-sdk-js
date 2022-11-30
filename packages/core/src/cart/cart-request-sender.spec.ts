@@ -1,8 +1,14 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
+
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
-import BuyNowCartRequestBody from './buy-now-cart-request-body';
 
+import BuyNowCartRequestBody from './buy-now-cart-request-body';
 import Cart from './cart';
 import CartRequestSender from './cart-request-sender';
 import { getCart } from './carts.mock';
@@ -21,14 +27,16 @@ describe('CartRequestSender', () => {
     describe('#createBuyNowCart', () => {
         const buyNowCartRequestBody: BuyNowCartRequestBody = {
             source: 'BUY_NOW',
-            lineItems: [{
-                productId: 1,
-                quantity: 2,
-                optionSelections: {
-                    optionId: 11,
-                    optionValue: 11,
+            lineItems: [
+                {
+                    productId: 1,
+                    quantity: 2,
+                    optionSelections: {
+                        optionId: 11,
+                        optionValue: 11,
+                    },
                 },
-            }],
+            ],
         };
 
         beforeEach(() => {
@@ -36,7 +44,7 @@ describe('CartRequestSender', () => {
             response = getResponse(cart);
 
             jest.spyOn(requestSender, 'post').mockResolvedValue(response);
-        })
+        });
 
         it('creates buy now cart', async () => {
             await cartRequestSender.createBuyNowCart(buyNowCartRequestBody);
@@ -64,5 +72,5 @@ describe('CartRequestSender', () => {
                 },
             });
         });
-    })
-})
+    });
+});

@@ -20,10 +20,14 @@ const checkoutcomStrategies: {
     ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
     fawry: PaymentStrategyType.CHECKOUTCOM_FAWRY,
 };
-export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, PaymentStrategyType> {
+
+export default class PaymentStrategyRegistry extends Registry<
+    PaymentStrategy,
+    PaymentStrategyType
+> {
     constructor(
         private _store: ReadableDataStore<InternalCheckoutSelectors>,
-        options?: PaymentStrategyRegistryOptions
+        options?: PaymentStrategyRegistryOptions,
     ) {
         super(options);
     }
@@ -36,7 +40,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
         const token = this._getToken(paymentMethod);
 
         const cacheToken = [paymentMethod.gateway, paymentMethod.id]
-            .filter(value => value !== undefined && value !== null)
+            .filter((value) => value !== undefined && value !== null)
             .join('-');
 
         return this.get(token, cacheToken);
@@ -90,9 +94,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
         return PaymentStrategyType.CREDIT_CARD;
     }
 
-    private _hasFactoryForMethod(
-        methodId: string
-    ): methodId is PaymentStrategyType {
+    private _hasFactoryForMethod(methodId: string): methodId is PaymentStrategyType {
         return this._hasFactory(methodId);
     }
 
@@ -105,12 +107,17 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
 
         const { clientSidePaymentProviders } = config.paymentSettings;
 
-        if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen' || paymentMethod.gateway === 'barclaycard') {
+        if (
+            !clientSidePaymentProviders ||
+            paymentMethod.gateway === 'adyen' ||
+            paymentMethod.gateway === 'barclaycard'
+        ) {
             return false;
         }
 
-        return !some(clientSidePaymentProviders, id =>
-            paymentMethod.id === id || paymentMethod.gateway === id
+        return !some(
+            clientSidePaymentProviders,
+            (id) => paymentMethod.id === id || paymentMethod.gateway === id,
         );
     }
 }

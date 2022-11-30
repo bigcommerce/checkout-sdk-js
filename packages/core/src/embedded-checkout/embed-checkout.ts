@@ -41,7 +41,7 @@ export default function embedCheckout(options: EmbeddedCheckoutOptions): Promise
         createRequestSender(),
         new BrowserStorage(STORAGE_PREFIX),
         window.location,
-        options
+        options,
     );
 
     return embeddedCheckout.attach();

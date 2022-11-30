@@ -1,11 +1,17 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -16,12 +22,28 @@ import { getFormFieldsState } from '../../../form/form.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createPaymentClient, createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
-import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import {
+    createPaymentClient,
+    createPaymentStrategyRegistry,
+    createPaymentStrategyRegistryV2,
+    PaymentActionCreator,
+    PaymentMethod,
+    PaymentMethodActionCreator,
+} from '../../../payment';
 import { createPaymentIntegrationService } from '../../../payment-integration';
+import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import {
+    ChasePayEventType,
+    ChasePayScriptLoader,
+    JPMC,
+} from '../../../payment/strategies/chasepay';
+import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
+import {
+    createSpamProtection,
+    PaymentHumanVerificationHandler,
+    SpamProtectionActionCreator,
+    SpamProtectionRequestSender,
+} from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -53,7 +75,13 @@ describe('ChasePayPaymentStrategy', () => {
     let scriptLoader: ScriptLoader;
 
     beforeEach(() => {
-        paymentMethodMock = { ...getChasePay(), initializationData: { digitalSessionId: 'digitalSessionId', merchantRequestId: '1234567890' } };
+        paymentMethodMock = {
+            ...getChasePay(),
+            initializationData: {
+                digitalSessionId: 'digitalSessionId',
+                merchantRequestId: '1234567890',
+            },
+        };
         scriptLoader = createScriptLoader();
         wepayRiskClient = new WepayRiskClient(scriptLoader);
 
@@ -66,26 +94,23 @@ describe('ChasePayPaymentStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
         });
 
-        jest.spyOn(store, 'dispatch')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
         jest.spyOn(store, 'getState');
 
-        jest.spyOn(wepayRiskClient, 'initialize')
-            .mockReturnValue(Promise.resolve(wepayRiskClient));
+        jest.spyOn(wepayRiskClient, 'initialize').mockReturnValue(Promise.resolve(wepayRiskClient));
 
-        jest.spyOn(wepayRiskClient, 'getRiskToken')
-            .mockReturnValue(testRiskToken);
+        jest.spyOn(wepayRiskClient, 'getRiskToken').mockReturnValue(testRiskToken);
 
         JPMC = getChasePayScriptMock();
 
         chasePayScriptLoader = new ChasePayScriptLoader(createScriptLoader());
 
-        jest.spyOn(chasePayScriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(JPMC));
+        jest.spyOn(chasePayScriptLoader, 'load').mockReturnValue(Promise.resolve(JPMC));
         jest.spyOn(JPMC.ChasePay, 'insertBrandings');
         jest.spyOn(JPMC.ChasePay, 'showLoadingAnimation');
         jest.spyOn(JPMC.ChasePay, 'startCheckout');
@@ -94,37 +119,49 @@ describe('ChasePayPaymentStrategy', () => {
 
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const registry = createPaymentStrategyRegistry(
+            store,
+            paymentClient,
+            requestSender,
+            spamProtection,
+            'en_US',
+        );
         const paymentIntegrationService = createPaymentIntegrationService(store);
         const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-        const _requestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
+        const _requestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(
+            requestSender,
+        );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(_requestSender);
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             registryV2,
             orderActionCreator,
-            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+            new SpamProtectionActionCreator(
+                spamProtection,
+                new SpamProtectionRequestSender(requestSender),
+            ),
         );
 
         jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction');
         jest.spyOn(requestSender, 'post');
-        JPMC.ChasePay.showLoadingAnimation = jest.fn(() => jest.fn(noop))
+        JPMC.ChasePay.showLoadingAnimation = jest
+            .fn(() => jest.fn(noop))
             .mockReturnValue(Promise.resolve(store.getState()));
 
         strategy = new ChasePayPaymentStrategy(
@@ -136,7 +173,7 @@ describe('ChasePayPaymentStrategy', () => {
             paymentStrategyActionCreator,
             requestSender,
             chasePayScriptLoader,
-            wepayRiskClient
+            wepayRiskClient,
         );
 
         container = document.createElement('div');
@@ -148,8 +185,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(walletButton, 'addEventListener');
         jest.spyOn(walletButton, 'removeEventListener');
-        jest.spyOn(requestSender, 'post')
-            .mockReturnValue(checkoutActionCreator);
+        jest.spyOn(requestSender, 'post').mockReturnValue(checkoutActionCreator);
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout');
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod');
         jest.spyOn(document, 'getElementById');
@@ -202,7 +238,10 @@ describe('ChasePayPaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CompleteCheckout, expect.any(Function));
+            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(
+                ChasePayEventType.CompleteCheckout,
+                expect.any(Function),
+            );
         });
 
         it('expect the chasepay complete checkout to call request sender', async () => {
@@ -216,8 +255,11 @@ describe('ChasePayPaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CompleteCheckout, expect.any(Function));
-            expect(requestSender.post).toBeCalled();
+            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(
+                ChasePayEventType.CompleteCheckout,
+                expect.any(Function),
+            );
+            expect(requestSender.post).toHaveBeenCalled();
         });
 
         it('registers the start and cancel callbacks', async () => {
@@ -225,36 +267,40 @@ describe('ChasePayPaymentStrategy', () => {
 
             await strategy.initialize(initializeOptions);
 
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CancelCheckout, expect.any(Function));
+            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(
+                ChasePayEventType.CancelCheckout,
+                expect.any(Function),
+            );
         });
 
         it('does not load chasepay if initialization options are not provided', () => {
-            initializeOptions = { methodId: 'chasepay'};
-            expect(() => strategy.initialize(initializeOptions)).toThrowError(InvalidArgumentError);
+            initializeOptions = { methodId: 'chasepay' };
+
+            expect(() => strategy.initialize(initializeOptions)).toThrow(InvalidArgumentError);
             expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
         });
 
         it('does not load chase  pay if initialization data is not provided', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                undefined,
+            );
+
             try {
                 await strategy.initialize(initializeOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
-
             }
         });
 
         it('does not load chase  pay if store config is not provided', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
+
             try {
                 await strategy.initialize(initializeOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
-
             }
         });
 
@@ -287,39 +333,47 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('configure chasepay lightbox', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                undefined,
+            );
+
             try {
                 await strategy.initialize(initializeOptions);
             } catch (error) {
-
                 expect(error).toBeInstanceOf(Error);
             }
-
         });
 
         it('check if element exist in the DOM', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(document.getElementById).toHaveBeenCalledWith(chasePayInitializeOptions.logoContainer);
+            expect(document.getElementById).toHaveBeenCalledWith(
+                chasePayInitializeOptions.logoContainer,
+            );
         });
 
         it('dispatch widget interaction when wallet button is clicked', async () => {
             await strategy.initialize(initializeOptions);
 
-            const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
+            const chasepayButton = document.getElementById(
+                chasePayInitializeOptions.walletButton || '',
+            );
 
             if (chasepayButton) {
                 await chasepayButton.click();
             }
 
-            expect(store.dispatch).toBeCalledWith(expect.any(Observable), { queueId: 'widgetInteraction' });
+            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), {
+                queueId: 'widgetInteraction',
+            });
         });
 
         it('triggers widget interaction when wallet button is clicked', async () => {
             await strategy.initialize(initializeOptions);
 
-            const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
+            const chasepayButton = document.getElementById(
+                chasePayInitializeOptions.walletButton || '',
+            );
 
             if (chasepayButton) {
                 await chasepayButton.click();
@@ -339,7 +393,10 @@ describe('ChasePayPaymentStrategy', () => {
             orderRequestBody = getOrderRequestBody();
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-            initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
+            initializeOptions = {
+                methodId: 'chasepay',
+                chasepay: { logoContainer: 'login', walletButton: 'mockButton' },
+            };
             paymentMethodMock.initializationData = {
                 paymentCryptogram: '11111111111111',
                 eci: '11111111111',
@@ -357,6 +414,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('calls submit order with the order request information', async () => {
             await strategy.execute(orderRequestBody, initializeOptions);
+
             const { payment, ...order } = orderRequestBody;
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, expect.any(Object));
@@ -372,7 +430,9 @@ describe('ChasePayPaymentStrategy', () => {
         it('calls payment method actioncreator and loads the payment method', async () => {
             await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(initializeOptions.methodId);
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                initializeOptions.methodId,
+            );
         });
 
         it('returns the payment information', async () => {
@@ -383,6 +443,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('does not execute the payment if initialization data is not provided', async () => {
             paymentMethodMock.initializationData = {};
+
             try {
                 await strategy.execute(orderRequestBody, initializeOptions);
             } catch (error) {
@@ -393,7 +454,10 @@ describe('ChasePayPaymentStrategy', () => {
         it('pass the options to submitOrder', async () => {
             await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), initializeOptions);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                expect.any(Object),
+                initializeOptions,
+            );
         });
 
         it('expect the wepayRiskClient not to be called', async () => {
@@ -411,7 +475,9 @@ describe('ChasePayPaymentStrategy', () => {
         it('expect to get the payment method', async () => {
             await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalledWith(initializeOptions.methodId);
+            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalledWith(
+                initializeOptions.methodId,
+            );
         });
 
         it('initialize wepayRiskClient', async () => {
@@ -431,7 +497,6 @@ describe('ChasePayPaymentStrategy', () => {
 
             expect(wepayRiskClient.getRiskToken).toHaveBeenCalled();
         });
-
     });
 
     describe('#deinitialize()', () => {
@@ -439,7 +504,10 @@ describe('ChasePayPaymentStrategy', () => {
         let submitOrderAction: Observable<Action>;
 
         beforeEach(async () => {
-            initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
+            initializeOptions = {
+                methodId: 'chasepay',
+                chasepay: { logoContainer: 'login', walletButton: 'mockButton' },
+            };
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
@@ -460,6 +528,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         it('deinitializes strategy', async () => {
             await strategy.deinitialize();
+
             expect(await strategy.deinitialize()).toEqual(store.getState());
         });
     });

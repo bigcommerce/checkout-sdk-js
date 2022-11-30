@@ -16,13 +16,13 @@ export default interface StripeUPECustomerInitializeOptions {
      */
     gatewayId: string;
 
-
     /**
      * A callback that gets called whenever the Stripe Link Authentication Element's value changes.
+     *
      * @param authenticated - if the email is authenticated on Stripe.
      * @param email - The new value of the email.
      */
-    onEmailChange(authenticated: boolean ,email: string): void;
+    onEmailChange(authenticated: boolean, email: string): void;
 
     /**
      * A callback that gets called when Stripe Link Authentication Element is Loaded.
@@ -32,8 +32,9 @@ export default interface StripeUPECustomerInitializeOptions {
     /**
      * get styles from store theme
      */
-    getStyles?(): {
-        [key: string]: string;
-    } | undefined;
-
+    getStyles?():
+        | {
+              [key: string]: string;
+          }
+        | undefined;
 }

@@ -23,7 +23,7 @@ describe('mapFromStorefrontErrorResponse()', () => {
     });
 
     it('sets message using detail', () => {
-        expect(error.message).toEqual('Coupon FOO cannot be applied');
+        expect(error.message).toBe('Coupon FOO cannot be applied');
     });
 
     it('creates an array of error objects', () => {

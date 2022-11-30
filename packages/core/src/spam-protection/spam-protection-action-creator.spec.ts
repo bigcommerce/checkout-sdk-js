@@ -4,7 +4,7 @@ import { merge } from 'lodash';
 import { from, of, ReplaySubject, Subject } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 
@@ -33,12 +33,14 @@ describe('SpamProtectionActionCreator', () => {
         spamProtectionRequestSender = new SpamProtectionRequestSender(createRequestSender());
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             googleRecaptcha,
-            spamProtectionRequestSender
+            spamProtectionRequestSender,
         );
         jest.spyOn(googleRecaptcha, 'load').mockReturnValue(Promise.resolve());
         $event = new ReplaySubject<RecaptchaResult>();
         jest.spyOn(googleRecaptcha, 'execute').mockReturnValue($event);
-        jest.spyOn(spamProtectionRequestSender, 'validate').mockReturnValue(Promise.resolve(response));
+        jest.spyOn(spamProtectionRequestSender, 'validate').mockReturnValue(
+            Promise.resolve(response),
+        );
     });
 
     describe('#initialize()', () => {
@@ -75,13 +77,10 @@ describe('SpamProtectionActionCreator', () => {
         it('emits error actions if unable to initialize spam protection', async () => {
             jest.spyOn(googleRecaptcha, 'load').mockReturnValue(Promise.reject());
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
             const actions = await from(spamProtectionActionCreator.initialize(options)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -104,12 +103,17 @@ describe('SpamProtectionActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.InitializeRequested },
-                { type: SpamProtectionActionType.InitializeSucceeded },
-                { type: SpamProtectionActionType.ExecuteSucceeded, payload: { token: 'spamProtectionToken' } },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: SpamProtectionActionType.ExecuteRequested },
+                    { type: SpamProtectionActionType.InitializeRequested },
+                    { type: SpamProtectionActionType.InitializeSucceeded },
+                    {
+                        type: SpamProtectionActionType.ExecuteSucceeded,
+                        payload: { token: 'spamProtectionToken' },
+                    },
+                ]),
+            );
         });
 
         it('emits error action if unable to execute spam protection due to cancellation', async () => {
@@ -117,12 +121,9 @@ describe('SpamProtectionActionCreator', () => {
 
             $event.next({ error });
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
             const actions = await from(spamProtectionActionCreator.execute()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -141,77 +142,88 @@ describe('SpamProtectionActionCreator', () => {
         it('emits error actions if unable to execute spam protection due to unknown error', async () => {
             $event.next({ error: new Error() });
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
             const actions = await from(spamProtectionActionCreator.execute()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.InitializeRequested },
-                { type: SpamProtectionActionType.InitializeSucceeded },
-                {
-                    type: SpamProtectionActionType.ExecuteFailed,
-                    payload: expect.any(SpamProtectionFailedError),
-                    error: true,
-                },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: SpamProtectionActionType.ExecuteRequested },
+                    { type: SpamProtectionActionType.InitializeRequested },
+                    { type: SpamProtectionActionType.InitializeSucceeded },
+                    {
+                        type: SpamProtectionActionType.ExecuteFailed,
+                        payload: expect.any(SpamProtectionFailedError),
+                        error: true,
+                    },
+                ]),
+            );
         });
     });
 
     describe('#verifyCheckoutSpamProtection()', () => {
         it('emits actions if able to execute spam check', async () => {
-            const store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
-                checkout: {
-                    data: {
-                        shouldExecuteSpamCheck: true,
+            const store = createCheckoutStore(
+                merge({}, getCheckoutStoreState(), {
+                    checkout: {
+                        data: {
+                            shouldExecuteSpamCheck: true,
+                        },
                     },
-                },
-            }));
+                }),
+            );
 
             $event.next({ token: 'spamProtectionToken' });
 
-            const actions = await from(spamProtectionActionCreator.verifyCheckoutSpamProtection()(store))
+            const actions = await from(
+                spamProtectionActionCreator.verifyCheckoutSpamProtection()(store),
+            )
                 .pipe(toArray())
                 .toPromise();
 
-            expect(spamProtectionRequestSender.validate)
-                .toHaveBeenCalledWith(
-                    getCheckout().id,
-                    'spamProtectionToken'
-                );
+            expect(spamProtectionRequestSender.validate).toHaveBeenCalledWith(
+                getCheckout().id,
+                'spamProtectionToken',
+            );
 
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: SpamProtectionActionType.VerifyCheckoutRequested },
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.ExecuteSucceeded, payload: { token: 'spamProtectionToken' } },
-                { type: SpamProtectionActionType.VerifyCheckoutSucceeded, payload: response.body },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: SpamProtectionActionType.VerifyCheckoutRequested },
+                    { type: SpamProtectionActionType.ExecuteRequested },
+                    {
+                        type: SpamProtectionActionType.ExecuteSucceeded,
+                        payload: { token: 'spamProtectionToken' },
+                    },
+                    {
+                        type: SpamProtectionActionType.VerifyCheckoutSucceeded,
+                        payload: response.body,
+                    },
+                ]),
+            );
         });
 
         it('emits error actions if unable to execute spam protection due to unknown error', async () => {
             $event.next({ error: new Error() });
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await from(spamProtectionActionCreator.verifyCheckoutSpamProtection()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                spamProtectionActionCreator.verifyCheckoutSpamProtection()(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual(expect.arrayContaining([
-                {
-                    type: SpamProtectionActionType.ExecuteFailed,
-                    payload: expect.any(SpamProtectionFailedError),
-                    error: true,
-                },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    {
+                        type: SpamProtectionActionType.ExecuteFailed,
+                        payload: expect.any(SpamProtectionFailedError),
+                        error: true,
+                    },
+                ]),
+            );
         });
     });
 });

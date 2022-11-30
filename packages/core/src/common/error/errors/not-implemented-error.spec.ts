@@ -4,6 +4,6 @@ describe('NotImplementedError', () => {
     it('returns error name', () => {
         const error = new NotImplementedError();
 
-        expect(error.name).toEqual('NotImplementedError');
+        expect(error.name).toBe('NotImplementedError');
     });
 });

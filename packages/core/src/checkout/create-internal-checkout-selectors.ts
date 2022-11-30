@@ -8,10 +8,20 @@ import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } 
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
-import { createPaymentMethodSelectorFactory, createPaymentSelectorFactory, createPaymentStrategySelectorFactory } from '../payment';
+import {
+    createPaymentMethodSelectorFactory,
+    createPaymentSelectorFactory,
+    createPaymentStrategySelectorFactory,
+} from '../payment';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
-import { createConsignmentSelectorFactory, createPickupOptionSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
+import {
+    createConsignmentSelectorFactory,
+    createPickupOptionSelectorFactory,
+    createShippingAddressSelectorFactory,
+    createShippingCountrySelectorFactory,
+    createShippingStrategySelectorFactory,
+} from '../shipping';
 import { createSignInEmailSelectorFactory } from '../signin-email';
 import { createStoreCreditSelectorFactory } from '../store-credit';
 import { createSubscriptionsSelectorFactory } from '../subscription';
@@ -23,7 +33,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export type InternalCheckoutSelectorsFactory = (
     state: CheckoutStoreState,
-    options?: CheckoutStoreOptions
+    options?: CheckoutStoreOptions,
 ) => InternalCheckoutSelectors;
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
@@ -77,7 +87,15 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
 
         // Compose selectors
         const consignments = createConsignmentSelector(state.consignments, cart);
-        const checkout = createCheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
+        const checkout = createCheckoutSelector(
+            state.checkout,
+            billingAddress,
+            cart,
+            consignments,
+            coupons,
+            customer,
+            giftCertificates,
+        );
         const order = createOrderSelector(state.order, billingAddress, coupons);
         const payment = createPaymentSelector(checkout, order);
         const config = createConfigSelector(state.config, state.formFields);
@@ -116,7 +134,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
 
 export default function createInternalCheckoutSelectors(
     state: CheckoutStoreState,
-    options?: CheckoutStoreOptions
+    options?: CheckoutStoreOptions,
 ): InternalCheckoutSelectors {
     return createInternalCheckoutSelectorsFactory()(state, options);
 }

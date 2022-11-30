@@ -1,25 +1,39 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { getFormFieldsState } from '../../../form/form.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrderState } from '../../../order/orders.mock';
 import { getAffirm, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import {
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError,
+    PaymentMethodInvalidError,
+} from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -69,38 +83,40 @@ describe('AffirmPaymentStrategy', () => {
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(checkoutRequestSender)
+            new CheckoutValidator(checkoutRequestSender),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(requestSender),
+        );
         affirmScriptLoader = new AffirmScriptLoader();
         strategy = new AffirmPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            affirmScriptLoader
+            affirmScriptLoader,
         );
 
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethod,
+        );
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
 
         jest.spyOn(affirmScriptLoader, 'load').mockResolvedValue(affirm);
 
@@ -114,32 +130,36 @@ describe('AffirmPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         it('throws error if client token is missing', () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                .mockReturnValue({
-                    ...paymentMethod,
-                    clientToken: null,
-                });
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                ...paymentMethod,
+                clientToken: null,
+            });
 
-            return expect(strategy.initialize({ methodId: paymentMethod.id }))
-                .rejects.toThrow(MissingDataError);
-
+            return expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
+                MissingDataError,
+            );
         });
 
         it('loads affirm script from snippet with testMode equals to true', async () => {
             paymentMethod.config.testMode = true;
             await strategy.initialize({ methodId: paymentMethod.id });
-            expect(affirmScriptLoader.load).toBeCalledWith(paymentMethod.clientToken, true);
+
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(paymentMethod.clientToken, true);
         });
 
         it('loads affirm script from snippet with testMode equals to false', async () => {
             await strategy.initialize({ methodId: paymentMethod.id });
-            expect(affirmScriptLoader.load).toBeCalledWith(paymentMethod.clientToken, false);
+
+            expect(affirmScriptLoader.load).toHaveBeenCalledWith(paymentMethod.clientToken, false);
         });
     });
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
                 onSuccess({
@@ -151,24 +171,32 @@ describe('AffirmPaymentStrategy', () => {
 
         it('creates order, checkout and payment', async () => {
             jest.spyOn(store, 'dispatch');
-            const options = { methodId: 'affirm', gatewayId: undefined,  timeout: undefined,
+
+            const options = {
+                methodId: 'affirm',
+                gatewayId: undefined,
+                timeout: undefined,
                 params: {
                     include: [
                         'lineItems.physicalItems.categories',
                         'lineItems.digitalItems.categories',
                     ],
-                }};
+                },
+            };
 
             await strategy.execute(payload, options);
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: false }, options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                { useStoreCredit: false },
+                options,
+            );
             expect(affirm.checkout).toHaveBeenCalled();
             expect(affirm.checkout.open).toHaveBeenCalled();
             expect(affirm.ui.error.on).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
-            expect(paymentActionCreator.submitPayment).toBeCalledWith({
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: paymentMethod.id,
                 paymentData: { nonce: '1234' },
             });
@@ -253,6 +281,7 @@ describe('AffirmPaymentStrategy', () => {
             };
 
             const options = { methodId: 'affirm', gatewayId: undefined };
+
             await strategy.execute(payload, options);
 
             expect(affirm.checkout).toHaveBeenCalledWith(checkoutPayload);
@@ -265,8 +294,7 @@ describe('AffirmPaymentStrategy', () => {
                 });
             });
 
-            return expect(strategy.execute(payload))
-                .rejects.toThrow(PaymentMethodCancelledError);
+            return expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
         });
 
         it('returns invalid error on affirm if payment method was invalid', () => {
@@ -276,12 +304,12 @@ describe('AffirmPaymentStrategy', () => {
                 });
             });
 
-            return expect(strategy.execute(payload))
-                .rejects.toThrow(PaymentMethodInvalidError);
+            return expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodInvalidError);
         });
 
         it('does not create order/payment if methodId is not passed', async () => {
             payload.payment = undefined;
+
             try {
                 await strategy.execute(payload);
             } catch (error) {
@@ -296,7 +324,9 @@ describe('AffirmPaymentStrategy', () => {
         });
 
         it('does not create affirm object if billingAddress does not exist', () => {
-            jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(undefined);
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(
+                undefined,
+            );
 
             return expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
@@ -316,9 +346,7 @@ describe('AffirmPaymentStrategy', () => {
 
     describe('#finalize()', () => {
         it('throws error to inform that order finalization is not required', () => {
-
             return expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
-
 });

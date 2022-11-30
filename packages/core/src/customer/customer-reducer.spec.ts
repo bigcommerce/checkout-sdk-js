@@ -1,6 +1,11 @@
 import { createErrorAction } from '@bigcommerce/data-store';
 
-import { CreateCustomerAction, CreateCustomerAddressAction, CustomerActionType, StripeLinkAuthenticatedAction } from './customer-actions';
+import {
+    CreateCustomerAction,
+    CreateCustomerAddressAction,
+    CustomerActionType,
+    StripeLinkAuthenticatedAction,
+} from './customer-actions';
 import customerReducer from './customer-reducer';
 import CustomerState, { DEFAULT_STATE } from './customer-state';
 
@@ -16,11 +21,13 @@ describe('customerReducer()', () => {
             type: CustomerActionType.CreateCustomerRequested,
         };
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreating: true,
-            },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: {
+                    isCreating: true,
+                },
+            }),
+        );
     });
 
     it('returns is creating status false when succeeded', () => {
@@ -28,20 +35,24 @@ describe('customerReducer()', () => {
             type: CustomerActionType.CreateCustomerSucceeded,
         };
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreating: false,
-            },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: {
+                    isCreating: false,
+                },
+            }),
+        );
     });
 
     it('returns is creating customer error', () => {
         const action = createErrorAction(CustomerActionType.CreateCustomerFailed, new Error());
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isCreating: false },
-            errors: { createError: action.payload },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isCreating: false },
+                errors: { createError: action.payload },
+            }),
+        );
     });
 
     it('return is creating address status true when requested', () => {
@@ -49,11 +60,13 @@ describe('customerReducer()', () => {
             type: CustomerActionType.CreateCustomerAddressRequested,
         };
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreatingAddress: true,
-            },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: {
+                    isCreatingAddress: true,
+                },
+            }),
+        );
     });
 
     it('returns is creating address status false when succeeded', () => {
@@ -61,30 +74,39 @@ describe('customerReducer()', () => {
             type: CustomerActionType.CreateCustomerAddressSucceeded,
         };
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: {
-                isCreatingAddress: false,
-            },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: {
+                    isCreatingAddress: false,
+                },
+            }),
+        );
     });
 
     it('returns is creating address error', () => {
-        const action = createErrorAction(CustomerActionType.CreateCustomerAddressFailed, new Error());
+        const action = createErrorAction(
+            CustomerActionType.CreateCustomerAddressFailed,
+            new Error(),
+        );
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isCreatingAddress: false },
-            errors: { createAddressError: action.payload },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isCreatingAddress: false },
+                errors: { createAddressError: action.payload },
+            }),
+        );
     });
 
     it('returns is stripe link authenticated value when succeeded', () => {
         const action: StripeLinkAuthenticatedAction = {
             type: CustomerActionType.StripeLinkAuthenticated,
-            payload: true
+            payload: true,
         };
 
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: { isStripeLinkAuthenticated: action.payload },
-        }));
+        expect(customerReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: { isStripeLinkAuthenticated: action.payload },
+            }),
+        );
     });
 });

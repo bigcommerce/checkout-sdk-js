@@ -5,12 +5,21 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { CartRequestSender } from '../../../cart';
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getCart } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import {
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../../../payment';
 import { getBraintree } from '../../../payment/payment-methods.mock';
-import { BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVenmoCheckout, BraintreeVenmoCheckoutCreator } from '../../../payment/strategies/braintree';
+import {
+    BraintreeScriptLoader,
+    BraintreeSDKCreator,
+    BraintreeVenmoCheckout,
+    BraintreeVenmoCheckoutCreator,
+} from '../../../payment/strategies/braintree';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
@@ -40,14 +49,16 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
         source: 'BUY_NOW',
-        lineItems: [{
-            productId: 1,
-            quantity: 2,
-            optionSelections: {
-                optionId: 11,
-                optionValue: 11,
+        lineItems: [
+            {
+                productId: 1,
+                quantity: 2,
+                optionSelections: {
+                    optionId: 11,
+                    optionValue: 11,
+                },
             },
-        }],
+        ],
     };
 
     const getBraintreeVenmoButtonOptionsMock = () => ({
@@ -65,8 +76,8 @@ describe('BraintreeVenmoButtonStrategy', () => {
             onError: jest.fn(),
             currencyCode: 'USD',
             buyNowInitializeOptions: {
-                getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody)
-            }
+                getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
+            },
         },
     });
 
@@ -100,7 +111,9 @@ describe('BraintreeVenmoButtonStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader());
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         formPoster = createFormPoster();
@@ -111,7 +124,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
             paymentMethodActionCreator,
             cartRequestSender,
             braintreeSDKCreator,
-            formPoster
+            formPoster,
         );
 
         paymentMethodMock = {
@@ -123,9 +136,13 @@ describe('BraintreeVenmoButtonStrategy', () => {
         };
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
         jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
-        jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue({ deviceData: { device: 'something' } });
+        jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue({
+            deviceData: { device: 'something' },
+        });
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
         venmoButtonElement = document.createElement('div');
@@ -147,7 +164,9 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
     describe('#initialize()', () => {
         it('throws error if methodId is not provided', async () => {
-            const options = { containerId: 'braintree-venmo-button-mock-id' } as CheckoutButtonInitializeOptions;
+            const options = {
+                containerId: 'braintree-venmo-button-mock-id',
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -158,6 +177,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
         it('throws error if client token is missing', async () => {
             paymentMethodMock.clientToken = undefined;
+
             const options = getBraintreeVenmoButtonOptionsMock();
 
             try {
@@ -168,7 +188,9 @@ describe('BraintreeVenmoButtonStrategy', () => {
         });
 
         it('throws an error if containerId is not provided', async () => {
-            const options = { methodId: CheckoutButtonMethodType.BRAINTREE_VENMO } as CheckoutButtonInitializeOptions;
+            const options = {
+                methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -185,7 +207,9 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             await strategy.initialize(options);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+            );
         });
 
         it('initializes the braintree venmo checkout', async () => {
@@ -196,15 +220,21 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             await strategy.initialize(options);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+            );
             expect(braintreeSDKCreator.getVenmoCheckout).toHaveBeenCalled();
         });
 
         it('calls braintree venmo checkout create method', async () => {
             braintreeVenmoCheckoutCreatorMock = { create: jest.fn() };
 
-            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(
+                paymentMethodMock.clientToken,
+            );
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const options = getBraintreeVenmoButtonOptionsMock();
 
@@ -224,7 +254,9 @@ describe('BraintreeVenmoButtonStrategy', () => {
                 create: jest.fn((_config, callback) => callback(new Error('test'), undefined)),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const onErrorCallback = jest.fn();
 
@@ -236,6 +268,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             await strategy.initialize(options);
+
             expect(onErrorCallback).toHaveBeenCalled();
         });
 
@@ -247,10 +280,14 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const onErrorCallback = jest.fn();
 
@@ -262,6 +299,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             await strategy.initialize(options);
+
             expect(onErrorCallback).toHaveBeenCalled();
         });
 
@@ -273,10 +311,14 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const options = getBraintreeVenmoButtonOptionsMock();
             const venmoButton = document.getElementById(options.containerId);
@@ -296,11 +338,17 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                body: buyNowCartMock,
+            });
 
             const venmoButton = document.getElementById(options.containerId);
 
@@ -321,10 +369,14 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const options = getBraintreeVenmoButtonOptionsMock();
             const venmoButton = document.getElementById(options.containerId);
@@ -334,7 +386,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
             }
@@ -357,14 +409,18 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
-                tokenize: jest.fn(callback => callback(undefined, tokenizationPayload)),
+                tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const options = getBraintreeVenmoButtonOptionsMock();
             const venmoButton = document.getElementById(options.containerId);
@@ -374,11 +430,11 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
                     action: 'set_external_checkout',
@@ -409,15 +465,21 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
-                tokenize: jest.fn(callback => callback(undefined, tokenizationPayload)),
+                tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({ body: buyNowCartMock });
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
+            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                body: buyNowCartMock,
+            });
 
             const options = getBuyNowBraintreeVenmoButtonOptionsMock();
             const venmoButton = document.getElementById(options.containerId);
@@ -427,11 +489,11 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
                     action: 'set_external_checkout',
@@ -441,7 +503,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
                     provider: 'braintreevenmo',
                     billing_address: JSON.stringify(expectedAddress),
                     shipping_address: JSON.stringify(expectedAddress),
-                    cart_id: buyNowCartMock.id
+                    cart_id: buyNowCartMock.id,
                 });
             }
         });
@@ -462,14 +524,18 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
-                tokenize: jest.fn(callback => callback(undefined, tokenizationPayload)),
+                tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
-                create: jest.fn((_config, callback) => callback(undefined, braintreeVenmoCheckoutMock)),
+                create: jest.fn((_config, callback) =>
+                    callback(undefined, braintreeVenmoCheckoutMock),
+                ),
             };
 
-            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(braintreeVenmoCheckoutCreatorMock);
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                braintreeVenmoCheckoutCreatorMock,
+            );
 
             const options = getBraintreeVenmoButtonOptionsMock();
             const venmoButton = document.getElementById(options.containerId);
@@ -479,11 +545,11 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(braintreeVenmoCheckoutMock.tokenize).toHaveBeenCalled();
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
                     action: 'set_external_checkout',

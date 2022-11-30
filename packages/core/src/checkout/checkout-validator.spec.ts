@@ -18,31 +18,35 @@ describe('CheckoutValidator', () => {
 
     describe('validate()', () => {
         beforeEach(() => {
-            jest.spyOn(checkoutRequestSender, 'loadCheckout')
-                .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+            jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+                Promise.resolve(getResponse(getCheckout())),
+            );
         });
 
         it('throws when no cart is passed', () => {
-            expect(() => checkoutValidator.validate()).toThrowError(MissingDataError);
+            expect(() => checkoutValidator.validate()).toThrow(MissingDataError);
         });
 
         it('calls loadCheckout when cart is passed', () => {
             checkoutValidator.validate(checkout, {});
 
-            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', {});
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                {},
+            );
         });
 
         describe('when API request fails', () => {
             beforeEach(() => {
-                jest.spyOn(checkoutRequestSender, 'loadCheckout')
-                    .mockReturnValue(Promise.reject({ foo: 'bar' }));
+                jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+                    Promise.reject({ foo: 'bar' }),
+                );
             });
 
             it('returns a rejected promise containing the original reason', async () => {
                 const errorHandler = jest.fn(() => {});
 
-                await checkoutValidator.validate(checkout, {})
-                    .catch(errorHandler);
+                await checkoutValidator.validate(checkout, {}).catch(errorHandler);
 
                 expect(errorHandler).toHaveBeenCalledWith({ foo: 'bar' });
             });
@@ -50,15 +54,15 @@ describe('CheckoutValidator', () => {
 
         describe('when API request succeeds', () => {
             beforeEach(() => {
-                jest.spyOn(checkoutRequestSender, 'loadCheckout')
-                    .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+                jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+                    Promise.resolve(getResponse(getCheckout())),
+                );
             });
 
             it('resolves when cart content matches', async () => {
                 const successHandler = jest.fn(() => {});
 
-                await checkoutValidator.validate(checkout)
-                    .then(successHandler);
+                await checkoutValidator.validate(checkout).then(successHandler);
 
                 expect(successHandler).toHaveBeenCalled();
             });
@@ -67,22 +71,22 @@ describe('CheckoutValidator', () => {
                 const errorHandler = jest.fn(() => {});
                 const cart = getCart();
 
-                await checkoutValidator.validate({
-                    ...checkout,
-                    cart: {
-                        ...cart,
-                        lineItems: {
-                            ...cart.lineItems,
-                            physicalItems: [],
+                await checkoutValidator
+                    .validate({
+                        ...checkout,
+                        cart: {
+                            ...cart,
+                            lineItems: {
+                                ...cart.lineItems,
+                                physicalItems: [],
+                            },
                         },
-                    },
-                })
+                    })
                     .catch(errorHandler);
 
-                expect(errorHandler).toHaveBeenCalledWith(new CartChangedError(
-                    getCheckout(),
-                    getCheckout()
-                ));
+                expect(errorHandler).toHaveBeenCalledWith(
+                    new CartChangedError(getCheckout(), getCheckout()),
+                );
             });
 
             it('rejects with "cart changed error" if outstandingBalance are different', async () => {
@@ -119,10 +123,12 @@ describe('CheckoutValidator', () => {
             });
 
             it('does not reject "cart changed error" if only update timestamp is different', async () => {
-                await expect(checkoutValidator.validate({
-                    ...checkout,
-                    updatedTime: '2018-06-01T14:31:40+00:00',
-                })).resolves.toBeUndefined();
+                await expect(
+                    checkoutValidator.validate({
+                        ...checkout,
+                        updatedTime: '2018-06-01T14:31:40+00:00',
+                    }),
+                ).resolves.toBeUndefined();
             });
         });
     });

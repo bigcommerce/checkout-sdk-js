@@ -16,7 +16,9 @@ export default interface PaymentStrategySelector {
     isWidgetInteracting(methodId?: string): boolean;
 }
 
-export type PaymentStrategySelectorFactory = (state: PaymentStrategyState) => PaymentStrategySelector;
+export type PaymentStrategySelectorFactory = (
+    state: PaymentStrategyState,
+) => PaymentStrategySelector;
 
 export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorFactory {
     const getInitializeError = createSelector(
@@ -28,7 +30,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return initializeError;
-        }
+        },
     );
 
     const getExecuteError = createSelector(
@@ -40,7 +42,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return executeError;
-        }
+        },
     );
 
     const getFinalizeError = createSelector(
@@ -52,7 +54,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return finalizeError;
-        }
+        },
     );
 
     const getWidgetInteractingError = createSelector(
@@ -64,7 +66,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return widgetInteractionError;
-        }
+        },
     );
 
     const isInitializing = createSelector(
@@ -76,17 +78,14 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return !!isInitializing;
-        }
+        },
     );
 
     const isInitialized = createSelector(
         (state: PaymentStrategyState) => state.data,
-        data => (methodId: string) => {
-            return !!(
-                data[methodId] &&
-                data[methodId].isInitialized
-            );
-        }
+        (data) => (methodId: string) => {
+            return !!(data[methodId] && data[methodId].isInitialized);
+        },
     );
 
     const isExecuting = createSelector(
@@ -98,7 +97,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return !!isExecuting;
-        }
+        },
     );
 
     const isFinalizing = createSelector(
@@ -110,7 +109,7 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return !!isFinalizing;
-        }
+        },
     );
 
     const isWidgetInteracting = createSelector(
@@ -122,12 +121,10 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
             }
 
             return !!isWidgetInteracting;
-        }
+        },
     );
 
-    return memoizeOne((
-        state: PaymentStrategyState = DEFAULT_STATE
-    ): PaymentStrategySelector => {
+    return memoizeOne((state: PaymentStrategyState = DEFAULT_STATE): PaymentStrategySelector => {
         return {
             getInitializeError: getInitializeError(state),
             getExecuteError: getExecuteError(state),

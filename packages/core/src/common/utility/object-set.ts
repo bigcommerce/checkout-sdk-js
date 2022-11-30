@@ -7,14 +7,18 @@ import isEqual from './is-equal';
 export default function objectSet<T extends { [key: string]: any }, K extends keyof T>(
     object: T | undefined,
     key: K,
-    value: T[K]
+    value: T[K],
 ): T {
-    if (object && Object.prototype.hasOwnProperty.call(object, key) && isEqual(object[key], value)) {
+    if (
+        object &&
+        Object.prototype.hasOwnProperty.call(object, key) &&
+        isEqual(object[key], value)
+    ) {
         return object;
     }
 
     return {
-        ...object as any,
+        ...(object as any),
         [key]: value,
     };
 }

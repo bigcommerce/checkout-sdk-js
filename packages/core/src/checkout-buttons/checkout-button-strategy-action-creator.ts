@@ -1,34 +1,32 @@
-import { createAction, ThunkAction } from "@bigcommerce/data-store";
-import { CheckoutButtonStrategy as CheckoutButtonStrategyV2 } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { concat, defer, empty, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { concat, defer, empty, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { InternalCheckoutSelectors } from "../checkout";
-import { throwErrorAction } from "../common/error";
-import { Registry } from "../common/registry";
-import { PaymentMethodActionCreator } from "../payment";
+import { CheckoutButtonStrategy as CheckoutButtonStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { InternalCheckoutSelectors } from '../checkout';
+import { throwErrorAction } from '../common/error';
+import { Registry } from '../common/registry';
+import { PaymentMethodActionCreator } from '../payment';
 
 import {
     CheckoutButtonActionType,
     DeinitializeButtonAction,
     InitializeButtonAction,
-} from "./checkout-button-actions";
-import {
-    CheckoutButtonInitializeOptions,
-    CheckoutButtonOptions,
-} from "./checkout-button-options";
-import CheckoutButtonRegistryV2 from "./checkout-button-strategy-registry-v2";
-import { CheckoutButtonMethodType, CheckoutButtonStrategy } from "./strategies";
+} from './checkout-button-actions';
+import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
+import CheckoutButtonRegistryV2 from './checkout-button-strategy-registry-v2';
+import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 
 export default class CheckoutButtonStrategyActionCreator {
     constructor(
         private _registry: Registry<CheckoutButtonStrategy>,
         private _registryV2: CheckoutButtonRegistryV2,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
     ) {}
 
     initialize(
-        options: CheckoutButtonInitializeOptions
+        options: CheckoutButtonInitializeOptions,
     ): ThunkAction<InitializeButtonAction, InternalCheckoutSelectors> {
         return (store) => {
             const meta = {
@@ -37,12 +35,7 @@ export default class CheckoutButtonStrategyActionCreator {
             };
 
             if (
-                store
-                    .getState()
-                    .checkoutButton.isInitialized(
-                        options.methodId,
-                        options.containerId
-                    )
+                store.getState().checkoutButton.isInitialized(options.methodId, options.containerId)
             ) {
                 return empty();
             }
@@ -62,8 +55,8 @@ export default class CheckoutButtonStrategyActionCreator {
                     createAction(
                         CheckoutButtonActionType.InitializeButtonRequested,
                         undefined,
-                        meta
-                    )
+                        meta,
+                    ),
                 ),
                 this._paymentMethodActionCreator.loadPaymentMethod(
                     options.methodId,
@@ -76,31 +69,25 @@ export default class CheckoutButtonStrategyActionCreator {
                             createAction(
                                 CheckoutButtonActionType.InitializeButtonSucceeded,
                                 undefined,
-                                meta
-                            )
-                        )
-                )
+                                meta,
+                            ),
+                        ),
+                ),
             ).pipe(
                 catchError((error) =>
-                    throwErrorAction(
-                        CheckoutButtonActionType.InitializeButtonFailed,
-                        error,
-                        meta
-                    )
-                )
+                    throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta),
+                ),
             );
         };
     }
 
     deinitialize(
-        options: CheckoutButtonOptions
+        options: CheckoutButtonOptions,
     ): ThunkAction<DeinitializeButtonAction, InternalCheckoutSelectors> {
         return (store) => {
             const meta = { methodId: options.methodId };
 
-            if (
-                !store.getState().checkoutButton.isInitialized(options.methodId)
-            ) {
+            if (!store.getState().checkoutButton.isInitialized(options.methodId)) {
                 return empty();
             }
 
@@ -109,8 +96,8 @@ export default class CheckoutButtonStrategyActionCreator {
                     createAction(
                         CheckoutButtonActionType.DeinitializeButtonRequested,
                         undefined,
-                        meta
-                    )
+                        meta,
+                    ),
                 ),
                 defer(() =>
                     this._getStrategy(options.methodId)
@@ -119,24 +106,24 @@ export default class CheckoutButtonStrategyActionCreator {
                             createAction(
                                 CheckoutButtonActionType.DeinitializeButtonSucceeded,
                                 undefined,
-                                meta
-                            )
-                        )
-                )
+                                meta,
+                            ),
+                        ),
+                ),
             ).pipe(
                 catchError((error) =>
                     throwErrorAction(
                         CheckoutButtonActionType.DeinitializeButtonFailed,
                         error,
-                        meta
-                    )
-                )
+                        meta,
+                    ),
+                ),
             );
         };
     }
 
     private _getStrategy(
-        methodId: CheckoutButtonMethodType
+        methodId: CheckoutButtonMethodType,
     ): CheckoutButtonStrategy | CheckoutButtonStrategyV2 {
         let strategy: CheckoutButtonStrategy | CheckoutButtonStrategyV2;
 

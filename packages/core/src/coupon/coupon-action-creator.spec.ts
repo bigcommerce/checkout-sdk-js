@@ -2,7 +2,7 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState, getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -41,10 +41,13 @@ describe('CouponActionCreator', () => {
 
             from(couponActionCreator.applyCoupon(coupon)(store))
                 .pipe(toArray())
-                .subscribe(actions => {
+                .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: CouponActionType.ApplyCouponRequested },
-                        { type: CouponActionType.ApplyCouponSucceeded, payload: getCheckoutWithCoupons() },
+                        {
+                            type: CouponActionType.ApplyCouponSucceeded,
+                            payload: getCheckoutWithCoupons(),
+                        },
                     ]);
                 });
         });
@@ -53,18 +56,19 @@ describe('CouponActionCreator', () => {
             jest.spyOn(requestSender, 'applyCoupon').mockReturnValue(Promise.reject(errorResponse));
 
             const coupon = 'myCouponCode1234';
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
             from(couponActionCreator.applyCoupon(coupon)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
-                .subscribe(actions => {
+                .pipe(catchError(errorHandler), toArray())
+                .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
                         { type: CouponActionType.ApplyCouponRequested },
-                        { type: CouponActionType.ApplyCouponFailed, payload: errorResponse, error: true },
+                        {
+                            type: CouponActionType.ApplyCouponFailed,
+                            payload: errorResponse,
+                            error: true,
+                        },
                     ]);
                 });
         });
@@ -80,30 +84,36 @@ describe('CouponActionCreator', () => {
 
             from(couponActionCreator.removeCoupon(coupon)(store))
                 .pipe(toArray())
-                .subscribe(actions => {
+                .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: CouponActionType.RemoveCouponRequested },
-                        { type: CouponActionType.RemoveCouponSucceeded, payload: getCheckoutWithCoupons() },
+                        {
+                            type: CouponActionType.RemoveCouponSucceeded,
+                            payload: getCheckoutWithCoupons(),
+                        },
                     ]);
                 });
         });
 
         it('emits error actions if unable to remove coupon', () => {
-            jest.spyOn(requestSender, 'removeCoupon').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(requestSender, 'removeCoupon').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
             const coupon = 'myCouponCode1234';
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
             from(couponActionCreator.removeCoupon(coupon)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
-                .subscribe(actions => {
+                .pipe(catchError(errorHandler), toArray())
+                .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
                         { type: CouponActionType.RemoveCouponRequested },
-                        { type: CouponActionType.RemoveCouponFailed, payload: errorResponse, error: true },
+                        {
+                            type: CouponActionType.RemoveCouponFailed,
+                            payload: errorResponse,
+                            error: true,
+                        },
                     ]);
                 });
         });

@@ -25,13 +25,15 @@ describe('FormFieldsActionCreator', () => {
         response = getResponse(getFormFields());
         errorResponse = getErrorResponse();
 
-        jest.spyOn(formFieldsRequestSender, 'loadFields')
-            .mockReturnValue(Promise.resolve(response));
+        jest.spyOn(formFieldsRequestSender, 'loadFields').mockReturnValue(
+            Promise.resolve(response),
+        );
     });
 
     describe('#loadConfig()', () => {
         it('emits actions if able to load config', async () => {
-            const actions = await formFieldsActionCreator.loadFormFields()
+            const actions = await formFieldsActionCreator
+                .loadFormFields()
                 .pipe(toArray())
                 .toPromise();
 
@@ -42,27 +44,31 @@ describe('FormFieldsActionCreator', () => {
         });
 
         it('emits error actions if unable to load config', async () => {
-            jest.spyOn(formFieldsRequestSender, 'loadFields').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(formFieldsRequestSender, 'loadFields').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await formFieldsActionCreator.loadFormFields()
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await formFieldsActionCreator
+                .loadFormFields()
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: FormFieldsActionType.LoadFormFieldsRequested },
-                { type: FormFieldsActionType.LoadFormFieldsFailed, payload: errorResponse, error: true },
+                {
+                    type: FormFieldsActionType.LoadFormFieldsFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
             ]);
         });
 
         it('dispatches actions using cached responses if available', async () => {
             const actions = await merge(
                 formFieldsActionCreator.loadFormFields({ useCache: true }),
-                formFieldsActionCreator.loadFormFields({ useCache: true })
+                formFieldsActionCreator.loadFormFields({ useCache: true }),
             )
                 .pipe(toArray())
                 .toPromise();

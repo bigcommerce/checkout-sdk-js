@@ -1,21 +1,51 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import localStorageFallback from 'local-storage-fallback';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
+import {
+    Checkout,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
+import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+} from '../../../common/error/errors';
 import { getConfig } from '../../../config/configs.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentInitializeOptions, PaymentMethod, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
+import {
+    PaymentInitializeOptions,
+    PaymentMethod,
+    PaymentMethodRequestSender,
+    PaymentRequestSender,
+} from '../../../payment';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
+import {
+    StoreCreditActionCreator,
+    StoreCreditActionType,
+    StoreCreditRequestSender,
+} from '../../../store-credit';
+import {
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError,
+    PaymentMethodFailedError,
+    PaymentMethodInvalidError,
+} from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -62,32 +92,34 @@ describe('BoltPaymentStrategy', () => {
         requestSender = createRequestSender();
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
 
         const config = getConfig();
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-            .mockReturnValue({
-                ...config.storeConfig,
-                checkoutSettings: {
-                    ...config.storeConfig.checkoutSettings,
-                    features: {
-                        'BOLT-203.Bolt_string_type_of_token_card_data': true,
-                    },
+
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+            ...config.storeConfig,
+            checkoutSettings: {
+                ...config.storeConfig.checkoutSettings,
+                features: {
+                    'BOLT-203.Bolt_string_type_of_token_card_data': true,
                 },
-            });
+            },
+        });
 
         paymentRequestTransformer = new PaymentRequestTransformer();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient());
-        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader));
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
+            createSpamProtection(scriptLoader),
+        );
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
             paymentRequestTransformer,
-            paymentHumanVerificationHandler
+            paymentHumanVerificationHandler,
         );
         storeCreditActionCreator = new StoreCreditActionCreator(
-            new StoreCreditRequestSender(requestSender)
+            new StoreCreditRequestSender(requestSender),
         );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
@@ -140,26 +172,24 @@ describe('BoltPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethodMock);
-        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
-            .mockReturnValue(checkoutMock);
-        jest.spyOn(boltScriptLoader, 'loadBoltClient')
-            .mockResolvedValue(boltClient);
-        jest.spyOn(boltScriptLoader, 'loadBoltEmbedded')
-            .mockResolvedValue(boltEmbedded);
-        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
-            .mockReturnValue(applyStoreCreditAction);
-        jest.spyOn(boltEmbedded, 'create')
-            .mockReturnValue(boltEmbeddedField);
-        jest.spyOn(boltEmbeddedField, 'tokenize')
-            .mockReturnValue(boltEmbeddedFieldTokenizeResponse);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
+        jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(boltClient);
+        jest.spyOn(boltScriptLoader, 'loadBoltEmbedded').mockResolvedValue(boltEmbedded);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            applyStoreCreditAction,
+        );
+        jest.spyOn(boltEmbedded, 'create').mockReturnValue(boltEmbeddedField);
+        jest.spyOn(boltEmbeddedField, 'tokenize').mockReturnValue(
+            boltEmbeddedFieldTokenizeResponse,
+        );
 
         strategy = new BoltPaymentStrategy(
             store,
@@ -168,20 +198,36 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodActionCreator,
             storeCreditActionCreator,
             boltScriptLoader,
-            new AnalyticsExtraItemsManager(localStorageFallback)
+            new AnalyticsExtraItemsManager(localStorageFallback),
         );
     });
 
     describe('#initialize', () => {
         it('successfully initializes the bolt strategy and loads the bolt client', async () => {
-            await expect(strategy.initialize(boltClientScriptInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.loadBoltClient).toHaveBeenCalledWith('publishableKey', true, undefined);
+            await expect(
+                strategy.initialize(boltClientScriptInitializationOptions),
+            ).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.loadBoltClient).toHaveBeenCalledWith(
+                'publishableKey',
+                true,
+                undefined,
+            );
         });
 
         it('successfully initializes the bolt strategy and loads the bolt client with developer params', async () => {
-            paymentMethodMock.initializationData.developerConfig = { developerMode: 'bolt_sandbox', developerDomain: '' };
-            await expect(strategy.initialize(boltClientScriptInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.loadBoltClient).toHaveBeenCalledWith('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
+            paymentMethodMock.initializationData.developerConfig = {
+                developerMode: 'bolt_sandbox',
+                developerDomain: '',
+            };
+
+            await expect(
+                strategy.initialize(boltClientScriptInitializationOptions),
+            ).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.loadBoltClient).toHaveBeenCalledWith(
+                'publishableKey',
+                true,
+                paymentMethodMock.initializationData.developerConfig,
+            );
         });
 
         it('fails to initialize the bolt strategy and load bolt embedded script if containerId is not provided', async () => {
@@ -195,7 +241,10 @@ describe('BoltPaymentStrategy', () => {
             };
 
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
-            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(InvalidArgumentError);
+
+            await expect(strategy.initialize(initializationOptions)).rejects.toThrow(
+                InvalidArgumentError,
+            );
             expect(boltScriptLoader.loadBoltEmbedded).not.toHaveBeenCalled();
             expect(boltClient.hasBoltAccount).not.toHaveBeenCalled();
             expect(initializationOptions.bolt.onPaymentSelect).not.toHaveBeenCalled();
@@ -203,33 +252,60 @@ describe('BoltPaymentStrategy', () => {
 
         it('successfully initializes the bolt strategy, loads the bolt embedded and mounts bolt embedded field', async () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
-            await expect(strategy.initialize(boltEmbeddedScriptInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.loadBoltEmbedded).toHaveBeenCalledWith('publishableKey', true, undefined);
+
+            await expect(
+                strategy.initialize(boltEmbeddedScriptInitializationOptions),
+            ).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.loadBoltEmbedded).toHaveBeenCalledWith(
+                'publishableKey',
+                true,
+                undefined,
+            );
             expect(boltEmbedded.create).toHaveBeenCalled();
             expect(boltEmbeddedField.mount).toHaveBeenCalled();
             expect(boltClient.hasBoltAccount).toHaveBeenCalled();
-            expect(boltEmbeddedScriptInitializationOptions?.bolt?.onPaymentSelect).toHaveBeenCalled();
+            expect(
+                boltEmbeddedScriptInitializationOptions.bolt?.onPaymentSelect,
+            ).toHaveBeenCalled();
         });
 
         it('successfully initializes the bolt strategy, loads the bolt embedded with developer params and mounts bolt embedded field', async () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
-            paymentMethodMock.initializationData.developerConfig = { developerMode: 'bolt_sandbox', developerDomain: '' };
-            await expect(strategy.initialize(boltEmbeddedScriptInitializationOptions)).resolves.toEqual(store.getState());
-            expect(boltScriptLoader.loadBoltEmbedded).toHaveBeenCalledWith('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
+            paymentMethodMock.initializationData.developerConfig = {
+                developerMode: 'bolt_sandbox',
+                developerDomain: '',
+            };
+
+            await expect(
+                strategy.initialize(boltEmbeddedScriptInitializationOptions),
+            ).resolves.toEqual(store.getState());
+            expect(boltScriptLoader.loadBoltEmbedded).toHaveBeenCalledWith(
+                'publishableKey',
+                true,
+                paymentMethodMock.initializationData.developerConfig,
+            );
             expect(boltEmbedded.create).toHaveBeenCalled();
             expect(boltEmbeddedField.mount).toHaveBeenCalled();
             expect(boltClient.hasBoltAccount).toHaveBeenCalled();
-            expect(boltEmbeddedScriptInitializationOptions?.bolt?.onPaymentSelect).toHaveBeenCalled();
+            expect(
+                boltEmbeddedScriptInitializationOptions.bolt?.onPaymentSelect,
+            ).toHaveBeenCalled();
         });
 
         it('successfully initializes the bolt strategy without loading the bolt embedded', async () => {
-            await expect(strategy.initialize(boltTakeOverInitializationOptions)).resolves.toEqual(store.getState());
+            await expect(strategy.initialize(boltTakeOverInitializationOptions)).resolves.toEqual(
+                store.getState(),
+            );
             expect(boltScriptLoader.loadBoltClient).toHaveBeenCalled();
             expect(boltScriptLoader.loadBoltEmbedded).not.toHaveBeenCalled();
         });
 
         it('successfully initializes the bolt strategy without publishable key if BoltCheckout SDK was initialized before', async () => {
-            await boltScriptLoader.loadBoltClient('publishableKey', true, paymentMethodMock.initializationData.developerConfig);
+            await boltScriptLoader.loadBoltClient(
+                'publishableKey',
+                true,
+                paymentMethodMock.initializationData.developerConfig,
+            );
 
             const initializationOptions = {
                 ...boltTakeOverInitializationOptions,
@@ -240,13 +316,18 @@ describe('BoltPaymentStrategy', () => {
 
             paymentMethodMock.initializationData.publishableKey = null;
 
-            await expect(strategy.initialize(initializationOptions)).resolves.toEqual(store.getState());
+            await expect(strategy.initialize(initializationOptions)).resolves.toEqual(
+                store.getState(),
+            );
             expect(boltScriptLoader.loadBoltClient).toHaveBeenCalledWith();
         });
 
         it('fails to initialize the bolt strategy if publishableKey is not provided when using Bigcommerce Checkout', async () => {
             paymentMethodMock.initializationData.publishableKey = null;
-            await expect(strategy.initialize(boltClientScriptInitializationOptions)).rejects.toThrow(MissingDataError);
+
+            await expect(
+                strategy.initialize(boltClientScriptInitializationOptions),
+            ).rejects.toThrow(MissingDataError);
             expect(boltScriptLoader.loadBoltClient).not.toHaveBeenCalled();
             expect(boltScriptLoader.loadBoltEmbedded).not.toHaveBeenCalled();
         });
@@ -271,8 +352,13 @@ describe('BoltPaymentStrategy', () => {
 
             await strategy.initialize(boltClientScriptInitializationOptions);
             await strategy.execute(payload);
+
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
-            expect(boltClient.configure).toHaveBeenCalledWith(expect.objectContaining(expectedCart), {}, expect.objectContaining(expectedCallbacks));
+            expect(boltClient.configure).toHaveBeenCalledWith(
+                expect.objectContaining(expectedCart),
+                {},
+                expect.objectContaining(expectedCallbacks),
+            );
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
@@ -289,16 +375,24 @@ describe('BoltPaymentStrategy', () => {
 
             await strategy.initialize(boltClientScriptInitializationOptions);
             await strategy.execute(payload);
+
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
-            expect(boltClient.configure).toHaveBeenCalledWith(expect.objectContaining(expectedCart), {}, expect.objectContaining(expectedCallbacks));
+            expect(boltClient.configure).toHaveBeenCalledWith(
+                expect.objectContaining(expectedCart),
+                {},
+                expect.objectContaining(expectedCallbacks),
+            );
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
         it('succesfully executes the bolt strategy with checkout takeover', async () => {
-            jest.spyOn(boltClient, 'getTransactionReference').mockResolvedValue('transactionReference');
+            jest.spyOn(boltClient, 'getTransactionReference').mockResolvedValue(
+                'transactionReference',
+            );
 
             await strategy.initialize(boltTakeOverInitializationOptions);
             await strategy.execute(payload);
+
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(boltClient.setOrderId).toHaveBeenCalled();
             expect(boltClient.getTransactionReference).toHaveBeenCalled();
@@ -331,6 +425,7 @@ describe('BoltPaymentStrategy', () => {
         it('fails to execute the bolt strategy if no payment is provided when using bolt client', async () => {
             payload.payment = undefined;
             await strategy.initialize(boltClientScriptInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
             expect(boltClient.configure).not.toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -339,15 +434,16 @@ describe('BoltPaymentStrategy', () => {
         it('fails to execute the bolt strategy if no client token is provided when using bolt client', async () => {
             paymentMethodMock.clientToken = undefined;
             await strategy.initialize(boltClientScriptInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
             expect(boltClient.configure).not.toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
 
         it('fails to execute the bolt strategy if the client script is not loaded when using bolt client', async () => {
-            jest.spyOn(boltScriptLoader, 'loadBoltClient')
-                .mockResolvedValue(undefined);
+            jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(undefined);
             await strategy.initialize(boltClientScriptInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
             expect(boltClient.configure).not.toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -357,6 +453,7 @@ describe('BoltPaymentStrategy', () => {
             boltClient = getBoltClientScriptMock(false);
             jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(boltClient);
             await strategy.initialize(boltClientScriptInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
             expect(boltClient.configure).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -366,6 +463,7 @@ describe('BoltPaymentStrategy', () => {
             boltClient = getBoltClientScriptMock(true, false);
             jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(boltClient);
             await strategy.initialize(boltClientScriptInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodFailedError);
             expect(boltClient.configure).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -375,6 +473,7 @@ describe('BoltPaymentStrategy', () => {
             payload.payment = undefined;
 
             await strategy.initialize(boltTakeOverInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
             expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
             expect(boltClient.configure).not.toHaveBeenCalled();
@@ -386,6 +485,7 @@ describe('BoltPaymentStrategy', () => {
             };
 
             await strategy.initialize(boltTakeOverInitializationOptions);
+
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
             expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
             expect(boltClient.configure).not.toHaveBeenCalled();
@@ -402,6 +502,7 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
 
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
+
             await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(MissingDataError);
             expect(boltEmbeddedField.tokenize).not.toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
@@ -414,7 +515,10 @@ describe('BoltPaymentStrategy', () => {
             };
 
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
-            await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(PaymentArgumentInvalidError);
+
+            await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(
+                PaymentArgumentInvalidError,
+            );
             expect(boltEmbeddedField.tokenize).not.toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -437,6 +541,7 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
 
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
+
             await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(Error);
             expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
@@ -465,7 +570,10 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
 
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
-            await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(PaymentArgumentInvalidError);
+
+            await expect(strategy.execute(boltEmbeddedPayload)).rejects.toThrow(
+                PaymentArgumentInvalidError,
+            );
             expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
@@ -503,6 +611,7 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
             await strategy.execute(boltEmbeddedPayload);
+
             expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
@@ -540,11 +649,11 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
             await strategy.initialize(boltEmbeddedScriptInitializationOptions);
             await strategy.execute(boltEmbeddedPayload);
+
             expect(boltEmbeddedField.tokenize).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentOptions);
         });
-
     });
 
     describe('#deinitialize()', () => {

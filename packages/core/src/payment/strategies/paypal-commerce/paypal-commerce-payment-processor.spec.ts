@@ -1,12 +1,12 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { NotImplementedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType } from '../../../order';
@@ -16,8 +16,18 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 
-import { ButtonsOptions, ParamsRenderHostedFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
+
+import {
+    ButtonsOptions,
+    ParamsRenderHostedFields,
+    PaypalCommerceHostedFields,
+    PaypalCommerceHostedFieldsApprove,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+} from './index';
 
 describe('PaypalCommercePaymentProcessor', () => {
     let paypal: PaypalCommerceSDK;
@@ -33,7 +43,7 @@ describe('PaypalCommercePaymentProcessor', () => {
     let containers: HTMLElement[];
     let render: () => void;
     let renderApmFields: (container: string) => void;
-    let submit: () => (PaypalCommerceHostedFieldsApprove);
+    let submit: () => PaypalCommerceHostedFieldsApprove;
     let orderID: string;
     let fundingSource: string;
     let store: CheckoutStore;
@@ -85,42 +95,42 @@ describe('PaypalCommercePaymentProcessor', () => {
             },
         };
 
-        jest.spyOn(paypalCommerceRequestSender, 'setupPayment')
-            .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({ body: orderID })));
+        jest.spyOn(paypalCommerceRequestSender, 'setupPayment').mockImplementation(
+            jest.fn().mockReturnValue(Promise.resolve({ body: orderID })),
+        );
 
         renderApmFields = jest.fn();
-        jest.spyOn(paypal, 'PaymentFields')
-            .mockImplementation(jest.fn().mockReturnValue({ render: renderApmFields }));
+        jest.spyOn(paypal, 'PaymentFields').mockImplementation(
+            jest.fn().mockReturnValue({ render: renderApmFields }),
+        );
 
         render = jest.fn();
-        jest.spyOn(paypal, 'Buttons')
-            .mockImplementation((options: ButtonsOptions) => {
-                eventEmitter.on('onClick', () => {
-                    if (options.onClick) {
-                        options.onClick({ fundingSource }, { reject: jest.fn(), resolve: jest.fn() });
-                    }
-                });
-
-                eventEmitter.on('createOrder', () => {
-                    if (options.createOrder) {
-                        options.createOrder();
-                    }
-                });
-
-                eventEmitter.on('approve', () => {
-                    if (options.onApprove) {
-                        options.onApprove({orderID});
-                    }
-                });
-
-                return {
-                    render,
-                    isEligible: () => true,
-                };
+        jest.spyOn(paypal, 'Buttons').mockImplementation((options: ButtonsOptions) => {
+            eventEmitter.on('onClick', () => {
+                if (options.onClick) {
+                    options.onClick({ fundingSource }, { reject: jest.fn(), resolve: jest.fn() });
+                }
             });
 
-        jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
-            .mockReturnValue(Promise.resolve(paypal));
+            eventEmitter.on('createOrder', () => {
+                if (options.createOrder) {
+                    options.createOrder();
+                }
+            });
+
+            eventEmitter.on('approve', () => {
+                if (options.onApprove) {
+                    options.onApprove({ orderID });
+                }
+            });
+
+            return {
+                render,
+                isEligible: () => true,
+            };
+        });
+
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(Promise.resolve(paypal));
 
         hostedFormOptions = {
             fields: {
@@ -161,13 +171,12 @@ describe('PaypalCommercePaymentProcessor', () => {
             paypalCommerceRequestSender,
             store,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
         );
-
     });
 
     afterEach(() => {
-        containers.forEach(container => {
+        containers.forEach((container) => {
             container.parentElement?.removeChild(container);
         });
     });
@@ -176,14 +185,19 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('initializes PaypalCommerce and PayPal JS clients', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
 
-            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(paymentMethodMock, 'USD', undefined);
+            expect(paypalScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
+                paymentMethodMock,
+                'USD',
+                undefined,
+            );
         });
 
         it('throws error if unable to initialize PaypalCommerce or PayPal JS client', async () => {
             const expectedError = new Error('Unable to load JS client');
 
-            jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
-                .mockReturnValue(Promise.reject(expectedError));
+            jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(
+                Promise.reject(expectedError),
+            );
 
             try {
                 await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
@@ -214,10 +228,9 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('throws error if unable to setting PayPalCommerce button', async () => {
             const expectedError = new Error('Unable to setting PayPal button');
 
-            jest.spyOn(paypal, 'Buttons')
-                .mockImplementation(() => {
-                    throw expectedError;
-                });
+            jest.spyOn(paypal, 'Buttons').mockImplementation(() => {
+                throw expectedError;
+            });
 
             try {
                 await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
@@ -235,10 +248,13 @@ describe('PaypalCommercePaymentProcessor', () => {
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.setupPayment)
-                .toHaveBeenCalledWith(cart.id, { isCredit: false, isAPM: false, isVenmo: false });
+            expect(paypalCommerceRequestSender.setupPayment).toHaveBeenCalledWith(cart.id, {
+                isCredit: false,
+                isAPM: false,
+                isVenmo: false,
+            });
         });
 
         it('create order with credit (post request to server) when PayPalCommerce payment details are setup payment', async () => {
@@ -251,32 +267,43 @@ describe('PaypalCommercePaymentProcessor', () => {
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.setupPayment)
-                .toHaveBeenCalledWith(cart.id, { isCredit: true, isAPM: false , isVenmo: false });
+            expect(paypalCommerceRequestSender.setupPayment).toHaveBeenCalledWith(cart.id, {
+                isCredit: true,
+                isAPM: false,
+                isVenmo: false,
+            });
         });
 
         it('call onApprove when PayPalCommerce payment details are tokenized', async () => {
             const onApprove = jest.fn();
+
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
             await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container', { onApprove });
 
             eventEmitter.emit('approve');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(onApprove).toHaveBeenCalledWith({ orderID });
         });
 
         it('throw error if button is not eligible', async () => {
-            const expectedError = new NotImplementedError(`PayPal credit is not available for your region. Please use PayPal Checkout instead.`);
-            jest.spyOn(paypal, 'Buttons')
-                .mockImplementation(() => ({ isEligible: () => false }));
+            const expectedError = new NotImplementedError(
+                `PayPal credit is not available for your region. Please use PayPal Checkout instead.`,
+            );
+
+            jest.spyOn(paypal, 'Buttons').mockImplementation(() => ({ isEligible: () => false }));
 
             try {
                 await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-                await paypalCommercePaymentProcessor.renderButtons(cart.id, 'container', {}, { fundingKey: 'CREDIT' });
+                await paypalCommercePaymentProcessor.renderButtons(
+                    cart.id,
+                    'container',
+                    {},
+                    { fundingKey: 'CREDIT' },
+                );
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
@@ -286,7 +313,10 @@ describe('PaypalCommercePaymentProcessor', () => {
     describe('render apmFields', () => {
         it('sets PaypalCommerce apmFields without styles and fields predifined values', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+            await paypalCommercePaymentProcessor.renderFields({
+                apmFieldsContainer: '#fieldsContainer',
+                fundingKey: 'P24',
+            });
 
             expect(paypal.PaymentFields).toHaveBeenCalledWith({
                 fundingSource: 'p24',
@@ -304,7 +334,10 @@ describe('PaypalCommercePaymentProcessor', () => {
 
         it('render PaypalCommerce apmFields', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+            await paypalCommercePaymentProcessor.renderFields({
+                apmFieldsContainer: '#fieldsContainer',
+                fundingKey: 'P24',
+            });
 
             expect(renderApmFields).toHaveBeenCalledWith('#fieldsContainer');
         });
@@ -317,7 +350,10 @@ describe('PaypalCommercePaymentProcessor', () => {
 
             try {
                 await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-                await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+                await paypalCommercePaymentProcessor.renderFields({
+                    apmFieldsContainer: '#fieldsContainer',
+                    fundingKey: 'P24',
+                });
             } catch (error) {
                 expect(error).toEqual(expectedError);
             }
@@ -325,16 +361,19 @@ describe('PaypalCommercePaymentProcessor', () => {
 
         it('should clear PaypalCommerce apmFields container on re-render', async () => {
             const container = document.createElement('div');
+
             container.id = 'fieldsContainer';
             container.innerHTML = 'Test';
             document.body.appendChild(container);
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderFields({apmFieldsContainer: '#fieldsContainer', fundingKey: 'P24'});
+            await paypalCommercePaymentProcessor.renderFields({
+                apmFieldsContainer: '#fieldsContainer',
+                fundingKey: 'P24',
+            });
 
-            expect(container.innerHTML).toEqual('');
+            expect(container.innerHTML).toBe('');
         });
-
     });
 
     describe('validate style for PaypalCommerce checkout button', () => {
@@ -405,48 +444,52 @@ describe('PaypalCommercePaymentProcessor', () => {
             const handleFocus = jest.fn();
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, { focus: handleFocus });
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
+                focus: handleFocus,
+            });
 
             cardFieldsEventEmitter.emit('focus', { fieldType: 'cardCode' });
 
-            expect(handleFocus)
-                .toHaveBeenCalledWith({ fieldType: 'cardCode' });
+            expect(handleFocus).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when field loses focus', async () => {
             const handleBlur = jest.fn();
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, { blur: handleBlur });
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
+                blur: handleBlur,
+            });
 
             cardFieldsEventEmitter.emit('blur', { fieldType: 'cardCode' });
 
-            expect(handleBlur)
-                .toHaveBeenCalledWith({ fieldType: 'cardCode' });
+            expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when input receives submit event', async () => {
             const handleEnter = jest.fn();
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, { inputSubmitRequest: handleEnter });
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
+                inputSubmitRequest: handleEnter,
+            });
 
             cardFieldsEventEmitter.emit('inputSubmitRequest', { fieldType: 'cardCode' });
 
-            expect(handleEnter)
-                .toHaveBeenCalledWith({ fieldType: 'cardCode' });
+            expect(handleEnter).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when card number changes', async () => {
             const handleCardTypeChange = jest.fn();
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, { cardTypeChange: handleCardTypeChange });
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
+                cardTypeChange: handleCardTypeChange,
+            });
 
             cardFieldsEventEmitter.emit('cardTypeChange', { cardType: 'Visa' });
 
-            expect(handleCardTypeChange)
-                .toHaveBeenCalledWith({ cardType: 'Visa' });
+            expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'Visa' });
         });
 
         it('notifies when there are validation errors', async () => {
@@ -458,12 +501,13 @@ describe('PaypalCommercePaymentProcessor', () => {
             };
 
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, { validityChange: handleValidate });
+            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
+                validityChange: handleValidate,
+            });
 
             cardFieldsEventEmitter.emit('validityChange', { fields });
 
-            expect(handleValidate)
-                .toHaveBeenCalledWith({ fields });
+            expect(handleValidate).toHaveBeenCalledWith({ fields });
         });
 
         it('submit Hosted Fields when call submitHostedFields', async () => {
@@ -480,6 +524,7 @@ describe('PaypalCommercePaymentProcessor', () => {
         it('submitHostedFields should return orderId', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
+
             const result = await paypalCommercePaymentProcessor.submitHostedFields();
 
             expect(result.orderId).toEqual(orderID);
@@ -491,6 +536,7 @@ describe('PaypalCommercePaymentProcessor', () => {
                 expirationDate: { isValid: false },
                 number: { isValid: false },
             };
+
             cardFields.getState = jest.fn(() => ({
                 cards: [],
                 emittedBy: '',
@@ -499,15 +545,20 @@ describe('PaypalCommercePaymentProcessor', () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
 
-            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({ isValid: false, fields });
+            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({
+                isValid: false,
+                fields,
+            });
         });
 
         it('getHostedFieldsValidationState should return isValid = true and fields', async () => {
             await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
             await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
 
-            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({ isValid: true, fields: {} });
+            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({
+                isValid: true,
+                fields: {},
+            });
         });
     });
-
 });

@@ -7,7 +7,7 @@ import { createSelector as defaultSelectorCreator } from 'reselect';
  * applied combiner).
  */
 export default function withMemoizedCombiner<T extends typeof defaultSelectorCreator>(
-    creator: T
+    creator: T,
 ): T {
     return ((...args: any[]) => {
         const combiner = args.pop();

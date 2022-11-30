@@ -17,12 +17,11 @@ describe('OpyScriptLoader', () => {
         opyScriptLoader = new OpyScriptLoader(scriptLoader, opyWindow);
         opyLibraryMock = { Config: jest.fn() };
 
-        jest.spyOn(scriptLoader, 'loadScript')
-            .mockImplementation(() => {
-                opyWindow.OpenpayWidgets = opyLibraryMock;
+        jest.spyOn(scriptLoader, 'loadScript').mockImplementation(() => {
+            opyWindow.OpenpayWidgets = opyLibraryMock;
 
-                return Promise.resolve();
-            });
+            return Promise.resolve();
+        });
     });
 
     describe('#loadOpyWidgets', () => {
@@ -30,38 +29,43 @@ describe('OpyScriptLoader', () => {
             await expect(opyScriptLoader.loadOpyWidget()).resolves.toEqual(opyLibraryMock);
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js'
+                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js',
             );
         });
 
         it('loads widget script for USA', async () => {
-            await expect(opyScriptLoader.loadOpyWidget(OpyRegion.US)).resolves.toEqual(opyLibraryMock);
+            await expect(opyScriptLoader.loadOpyWidget(OpyRegion.US)).resolves.toEqual(
+                opyLibraryMock,
+            );
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                'https://widgets.opy.com/lib/openpay-widgets.min.js'
+                'https://widgets.opy.com/lib/openpay-widgets.min.js',
             );
         });
 
         it('loads widget script for different region', async () => {
-            await expect(opyScriptLoader.loadOpyWidget(OpyRegion.UK)).resolves.toEqual(opyLibraryMock);
+            await expect(opyScriptLoader.loadOpyWidget(OpyRegion.UK)).resolves.toEqual(
+                opyLibraryMock,
+            );
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js'
+                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js',
             );
         });
 
         it('fails to load widget script', async () => {
-            jest.spyOn(scriptLoader, 'loadScript')
-                .mockImplementationOnce(() => {
-                    delete opyWindow.OpenpayWidgets;
+            jest.spyOn(scriptLoader, 'loadScript').mockImplementationOnce(() => {
+                delete opyWindow.OpenpayWidgets;
 
-                    return Promise.resolve();
-                });
+                return Promise.resolve();
+            });
 
-            await expect(opyScriptLoader.loadOpyWidget()).rejects.toThrow(PaymentMethodClientUnavailableError);
+            await expect(opyScriptLoader.loadOpyWidget()).rejects.toThrow(
+                PaymentMethodClientUnavailableError,
+            );
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js'
+                'https://widgets.openpay.com.au/lib/openpay-widgets.min.js',
             );
         });
     });

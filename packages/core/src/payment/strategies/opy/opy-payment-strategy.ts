@@ -1,5 +1,10 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotImplementedError, RequestError } from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
+    RequestError,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -9,7 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import StorefrontPaymentRequestSender from '../../storefront-payment-request-sender';
 import PaymentStrategy from '../payment-strategy';
 
-import { isOpyPaymentMethod, ActionTypes } from './opy';
+import { ActionTypes, isOpyPaymentMethod } from './opy';
 import { OpyWidgetConfig } from './opy-library';
 import OpyError, { OpyErrorType } from './opy-payment-error';
 import OpyScriptLoader from './opy-script-loader';
@@ -21,12 +26,15 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender,
         private _paymentActionCreator: PaymentActionCreator,
-        private _scriptLoader: OpyScriptLoader
-    ) { }
+        private _scriptLoader: OpyScriptLoader,
+    ) {}
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (options?.opy?.containerId) {
-            const { methodId, opy: { containerId } } = options;
+            const {
+                methodId,
+                opy: { containerId },
+            } = options;
 
             const paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
@@ -42,7 +50,10 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -53,7 +64,7 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         const {
             paymentMethods: { getPaymentMethodOrThrow },
         } = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(methodId, options)
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId, options),
         );
         const paymentMethod = getPaymentMethodOrThrow(methodId);
 
@@ -80,9 +91,14 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         await this._storefrontPaymentRequestSender.saveExternalId(methodId, nonce);
 
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData: { nonce } }));
+            return await this._store.dispatch(
+                this._paymentActionCreator.submitPayment({ methodId, paymentData: { nonce } }),
+            );
         } catch (error) {
-            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+            if (
+                error instanceof RequestError &&
+                error.body.status === 'additional_action_required'
+            ) {
                 if (nextAction.type === ActionTypes.FORM_POST) {
                     const { formPostUrl, formFields } = nextAction.formPost;
 
@@ -116,14 +132,13 @@ export default class OpyPaymentStrategy implements PaymentStrategy {
         if (widgetContainer) {
             try {
                 const widget = await this._scriptLoader.loadOpyWidget(config.region);
+
                 widget.Config(config);
             } catch (error) {
                 return;
             }
 
-            widgetContainer.appendChild(
-                document.createElement('opy-learn-more-button')
-            );
+            widgetContainer.appendChild(document.createElement('opy-learn-more-button'));
         }
     }
 }

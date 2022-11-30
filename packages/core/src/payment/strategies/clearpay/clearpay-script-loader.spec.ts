@@ -10,8 +10,7 @@ describe('ClearpayScriptLoader', () => {
     const clearpayScriptLoader = new ClearpayScriptLoader(scriptLoader);
 
     beforeEach(() => {
-        jest.spyOn(scriptLoader, 'loadScript')
-            .mockReturnValue(Promise.resolve(new Event('load')));
+        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(new Event('load')));
     });
 
     it('loads widget script', () => {
@@ -20,7 +19,7 @@ describe('ClearpayScriptLoader', () => {
         clearpayScriptLoader.load(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.clearpay.co.uk/afterpay-async.js'
+            '//portal.clearpay.co.uk/afterpay-async.js',
         );
     });
 
@@ -30,7 +29,7 @@ describe('ClearpayScriptLoader', () => {
         clearpayScriptLoader.load(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.sandbox.clearpay.co.uk/afterpay-async.js'
+            '//portal.sandbox.clearpay.co.uk/afterpay-async.js',
         );
     });
 });

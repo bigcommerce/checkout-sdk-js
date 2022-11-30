@@ -9,7 +9,9 @@ import RequestError from './request-error';
 export default class UnrecoverableError<T = any> extends RequestError {
     constructor(response: Response<T>, message?: string) {
         super(response, {
-            message: message || 'An unexpected error has occurred. The checkout process cannot continue as a result.',
+            message:
+                message ||
+                'An unexpected error has occurred. The checkout process cannot continue as a result.',
         });
 
         this.name = 'UnrecoverableError';

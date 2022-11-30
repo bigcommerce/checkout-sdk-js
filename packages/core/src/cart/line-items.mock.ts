@@ -31,7 +31,7 @@ export function getPhysicalItem(): PhysicalItem {
                 valueId: 3,
             },
         ],
-        categories: [[{name: 'Cat 1'}], [{name: 'Furniture'}, {name: 'Bed'}]],
+        categories: [[{ name: 'Cat 1' }], [{ name: 'Furniture' }, { name: 'Bed' }]],
         categoryNames: ['Cat 1'],
     };
 }
@@ -69,7 +69,7 @@ export function getDigitalItem(): DigitalItem {
                 valueId: 3,
             },
         ],
-        categories: [[{name: 'Cat 1'}], [{name: 'Cat 2'}], [{name: 'Cat 3'}]],
+        categories: [[{ name: 'Cat 1' }], [{ name: 'Cat 2' }], [{ name: 'Cat 3' }]],
         categoryNames: ['Ebooks', 'Audio Books'],
     };
 }

@@ -9,13 +9,39 @@ import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerAccountRequestBody, CustomerActionCreator, CustomerAddressRequestBody, CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, ExecutePaymentMethodCheckoutOptions, GuestCredentials } from '../customer';
+import {
+    CustomerAccountRequestBody,
+    CustomerActionCreator,
+    CustomerAddressRequestBody,
+    CustomerCredentials,
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    CustomerStrategyActionCreator,
+    ExecutePaymentMethodCheckoutOptions,
+    GuestCredentials,
+} from '../customer';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
+import {
+    PaymentInitializeOptions,
+    PaymentMethodActionCreator,
+    PaymentRequestOptions,
+    PaymentStrategyActionCreator,
+} from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
-import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, PickupOptionActionCreator, PickupOptionRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import {
+    ConsignmentActionCreator,
+    ConsignmentAssignmentRequestBody,
+    ConsignmentsRequestBody,
+    ConsignmentUpdateRequestBody,
+    PickupOptionActionCreator,
+    PickupOptionRequestBody,
+    ShippingCountryActionCreator,
+    ShippingInitializeOptions,
+    ShippingRequestOptions,
+    ShippingStrategyActionCreator,
+} from '../shipping';
 import { SignInEmailActionCreator, SignInEmailRequestBody } from '../signin-email';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
@@ -26,7 +52,10 @@ import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
-import { createCheckoutSelectorsFactory, CheckoutSelectorsFactory } from './create-checkout-selectors';
+import {
+    CheckoutSelectorsFactory,
+    createCheckoutSelectorsFactory,
+} from './create-checkout-selectors';
 import createCheckoutServiceErrorTransformer from './create-checkout-service-error-transformer';
 
 /**
@@ -68,7 +97,7 @@ export default class CheckoutService {
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _subscriptionsActionCreator: SubscriptionsActionCreator,
-        private _formFieldsActionCreator: FormFieldsActionCreator
+        private _formFieldsActionCreator: FormFieldsActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -161,10 +190,14 @@ export default class CheckoutService {
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(id?: string, options?: RequestOptions<CheckoutParams>): Promise<CheckoutSelectors> {
-        return this._dispatch(id ?
-            this._checkoutActionCreator.loadCheckout(id, options) :
-            this._checkoutActionCreator.loadDefaultCheckout(options)
+    loadCheckout(
+        id?: string,
+        options?: RequestOptions<CheckoutParams>,
+    ): Promise<CheckoutSelectors> {
+        return this._dispatch(
+            id
+                ? this._checkoutActionCreator.loadCheckout(id, options)
+                : this._checkoutActionCreator.loadDefaultCheckout(options),
         );
     }
 
@@ -181,7 +214,10 @@ export default class CheckoutService {
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    updateCheckout(payload: CheckoutRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+    updateCheckout(
+        payload: CheckoutRequestBody,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._checkoutActionCreator.updateCheckout(payload, options);
 
         return this._dispatch(action);
@@ -213,8 +249,7 @@ export default class CheckoutService {
             this._dispatch(loadCheckoutAction),
             this._dispatch(loadConfigAction, { queueId: 'config' }),
             this._dispatch(formFieldsAction, { queueId: 'formFields' }),
-        ])
-            .then(() => this.getState());
+        ]).then(() => this.getState());
     }
 
     /**
@@ -571,7 +606,10 @@ export default class CheckoutService {
      * @param options - Options for the send email request.
      * @returns A promise that resolves to the current state.
      */
-    sendSignInEmail(signInEmailRequest: SignInEmailRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+    sendSignInEmail(
+        signInEmailRequest: SignInEmailRequestBody,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._signInEmailActionCreator.sendSignInEmail(signInEmailRequest, options);
 
         return this._dispatch(action, { queueId: 'signInEmail' });
@@ -600,7 +638,10 @@ export default class CheckoutService {
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
-    createCustomerAccount(customerAccount: CustomerAccountRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+    createCustomerAccount(
+        customerAccount: CustomerAccountRequestBody,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._customerActionCreator.createCustomer(customerAccount, options);
 
         return this._dispatch(action);
@@ -630,7 +671,10 @@ export default class CheckoutService {
      * @param options - Options for creating customer account.
      * @returns A promise that resolves to the current state.
      */
-    createCustomerAddress(customerAddress: CustomerAddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+    createCustomerAddress(
+        customerAddress: CustomerAddressRequestBody,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._customerActionCreator.createAddress(customerAddress, options);
 
         return this._dispatch(action);
@@ -643,7 +687,10 @@ export default class CheckoutService {
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */
-    updateSubscriptions(subscriptions: Subscriptions, options?: RequestOptions): Promise<CheckoutSelectors> {
+    updateSubscriptions(
+        subscriptions: Subscriptions,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._subscriptionsActionCreator.updateSubscriptions(subscriptions, options);
 
         return this._dispatch(action, { queueId: 'subscriptions' });
@@ -663,7 +710,10 @@ export default class CheckoutService {
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */
-    continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
+    continueAsGuest(
+        credentials: GuestCredentials,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.continueAsGuest(credentials, options);
 
         return this._dispatch(action);
@@ -690,7 +740,10 @@ export default class CheckoutService {
      * @param options - Options for signing in the customer.
      * @returns A promise that resolves to the current state.
      */
-    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+    signInCustomer(
+        credentials: CustomerCredentials,
+        options?: CustomerRequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.signIn(credentials, options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
@@ -748,7 +801,9 @@ export default class CheckoutService {
      * @param options - Options for executing payment method checkout.
      * @returns A promise that resolves to the current state.
      */
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<CheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.executePaymentMethodCheckout(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
@@ -842,7 +897,10 @@ export default class CheckoutService {
      * @param options - Options for selecting the shipping option.
      * @returns A promise that resolves to the current state.
      */
-    selectShippingOption(shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    selectShippingOption(
+        shippingOptionId: string,
+        options?: ShippingRequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.selectOption(shippingOptionId, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
@@ -875,7 +933,7 @@ export default class CheckoutService {
      */
     updateShippingAddress(
         address: Partial<AddressRequestBody>,
-        options?: ShippingRequestOptions<CheckoutParams>
+        options?: ShippingRequestOptions<CheckoutParams>,
     ): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
@@ -913,7 +971,7 @@ export default class CheckoutService {
      */
     createConsignments(
         consignments: ConsignmentsRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.createConsignments(consignments, options);
 
@@ -933,10 +991,7 @@ export default class CheckoutService {
      * @param options - Options for the consignment delete request
      * @returns A promise that resolves to the current state.
      */
-    deleteConsignment(
-        consignmentId: string,
-        options?: RequestOptions
-    ): Promise<CheckoutSelectors> {
+    deleteConsignment(consignmentId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.deleteConsignment(consignmentId, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
@@ -977,7 +1032,7 @@ export default class CheckoutService {
      */
     updateConsignment(
         consignment: ConsignmentUpdateRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.updateConsignment(consignment, options);
 
@@ -997,7 +1052,7 @@ export default class CheckoutService {
      */
     assignItemsToAddress(
         consignment: ConsignmentAssignmentRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.assignItemsByAddress(consignment, options);
 
@@ -1017,7 +1072,7 @@ export default class CheckoutService {
      */
     unassignItemsToAddress(
         consignment: ConsignmentAssignmentRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.unassignItemsByAddress(consignment, options);
 
@@ -1048,12 +1103,15 @@ export default class CheckoutService {
     selectConsignmentShippingOption(
         consignmentId: string,
         shippingOptionId: string,
-        options?: ShippingRequestOptions
+        options?: ShippingRequestOptions,
     ): Promise<CheckoutSelectors> {
-        const action = this._consignmentActionCreator.updateShippingOption({
-            id: consignmentId,
-            shippingOptionId,
-        }, options);
+        const action = this._consignmentActionCreator.updateShippingOption(
+            {
+                id: consignmentId,
+                shippingOptionId,
+            },
+            options,
+        );
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
@@ -1077,7 +1135,10 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: Partial<BillingAddressRequestBody>, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(
+        address: Partial<BillingAddressRequestBody>,
+        options: RequestOptions = {},
+    ): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._dispatch(action);
@@ -1097,7 +1158,10 @@ export default class CheckoutService {
      * @param options - Options for applying store credit.
      * @returns A promise that resolves to the current state.
      */
-    applyStoreCredit(useStoreCredit: boolean, options?: RequestOptions): Promise<CheckoutSelectors> {
+    applyStoreCredit(
+        useStoreCredit: boolean,
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
         const action = this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options);
 
         return this._dispatch(action);
@@ -1224,8 +1288,7 @@ export default class CheckoutService {
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors> {
         const action = this._instrumentActionCreator.deleteInstrument(instrumentId);
 
-        return this._dispatch(action)
-            .then(() => this.loadInstruments());
+        return this._dispatch(action).then(() => this.loadInstruments());
     }
 
     /**
@@ -1305,10 +1368,14 @@ export default class CheckoutService {
      * @param action - The action to dispatch.
      * @returns A promise that resolves to the current state.
      */
-    private _dispatch(action: Action | Observable<Action> | ThunkAction<Action>, options?: { queueId?: string }): Promise<CheckoutSelectors> {
-        return this._store.dispatch(action, options)
+    private _dispatch(
+        action: Action | Observable<Action> | ThunkAction<Action>,
+        options?: { queueId?: string },
+    ): Promise<CheckoutSelectors> {
+        return this._store
+            .dispatch(action, options)
             .then(() => this.getState())
-            .catch(error => {
+            .catch((error) => {
                 throw this._errorTransformer.transform(error);
             });
     }

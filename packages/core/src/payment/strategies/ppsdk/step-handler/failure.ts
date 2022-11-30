@@ -11,15 +11,12 @@ export interface FailureResponse extends PaymentsAPIResponse {
 }
 
 export const isFailure = (response: PaymentsAPIResponse): response is FailureResponse =>
-    get(response.body, 'type') === 'failure' &&
-    isString(get(response.body, 'code'));
+    get(response.body, 'type') === 'failure' && isString(get(response.body, 'code'));
 
 const toRequestErrorFormat = (failureResponse: FailureResponse) => ({
     ...failureResponse,
     body: {
-        errors: [
-            { code: failureResponse.body.code },
-        ],
+        errors: [{ code: failureResponse.body.code }],
     },
 });
 

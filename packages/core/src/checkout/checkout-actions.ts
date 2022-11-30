@@ -18,16 +18,16 @@ export enum CheckoutActionType {
 export type CheckoutAction = LoadCheckoutAction | UpdateCheckoutAction;
 
 export type LoadCheckoutAction =
-    LoadCheckoutRequestedAction |
-    LoadCheckoutSucceededAction |
-    LoadCheckoutFailedAction |
-    LoadFormFieldsAction |
-    LoadConfigAction;
+    | LoadCheckoutRequestedAction
+    | LoadCheckoutSucceededAction
+    | LoadCheckoutFailedAction
+    | LoadFormFieldsAction
+    | LoadConfigAction;
 
 export type UpdateCheckoutAction =
-    UpdateCheckoutRequestedAction |
-    UpdateCheckoutSucceededAction |
-    UpdateCheckoutFailedAction;
+    | UpdateCheckoutRequestedAction
+    | UpdateCheckoutSucceededAction
+    | UpdateCheckoutFailedAction;
 
 export interface LoadCheckoutRequestedAction extends Action {
     type: CheckoutActionType.LoadCheckoutRequested;

@@ -4,8 +4,16 @@ import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
+import {
+    PaymentMethodCreateParams,
+    StripeBillingDetails,
+    StripeConfirmCardPaymentData,
+    StripeElementType,
+    StripeShippingAddress,
+    StripeV3Client,
+} from './stripev3';
+
 import { IndividualCardElementOptions, StripeV3PaymentInitializeOptions } from './index';
-import { PaymentMethodCreateParams, StripeBillingDetails, StripeConfirmCardPaymentData, StripeElementType, StripeShippingAddress, StripeV3Client } from './stripev3';
 
 const gatewayId = 'stripev3';
 
@@ -55,7 +63,9 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
     };
 }
 
-export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElementType = StripeElementType.CreditCard): PaymentInitializeOptions {
+export function getStripeV3InitializeOptionsMock(
+    stripeElementType: StripeElementType = StripeElementType.CreditCard,
+): PaymentInitializeOptions {
     return {
         methodId: stripeElementType,
         gatewayId,
@@ -70,7 +80,9 @@ export function getStripeV3InitializeOptionsMock(stripeElementType: StripeElemen
     };
 }
 
-export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode = false): PaymentInitializeOptions {
+export function getStripeV3InitializeOptionsMockSingleElements(
+    includeZipCode = false,
+): PaymentInitializeOptions {
     const paymentInitializeOptions: PaymentInitializeOptions = {
         methodId: StripeElementType.CreditCard,
         gatewayId,
@@ -127,7 +139,10 @@ export function getStripeV3InitializeOptionsMockSingleElements(includeZipCode = 
     };
 }
 
-export function getStripeV3OrderRequestBodyMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSaveInstrument = false): OrderRequestBody {
+export function getStripeV3OrderRequestBodyMock(
+    stripeElementType: StripeElementType = StripeElementType.CreditCard,
+    shouldSaveInstrument = false,
+): OrderRequestBody {
     return {
         payment: {
             methodId: stripeElementType,
@@ -138,7 +153,10 @@ export function getStripeV3OrderRequestBodyMock(stripeElementType: StripeElement
     };
 }
 
-export function getStripeV3OrderRequestBodyVaultMock(stripeElementType: StripeElementType = StripeElementType.CreditCard, shouldSetAsDefaultInstrument = false): OrderRequestBody {
+export function getStripeV3OrderRequestBodyVaultMock(
+    stripeElementType: StripeElementType = StripeElementType.CreditCard,
+    shouldSetAsDefaultInstrument = false,
+): OrderRequestBody {
     return {
         payment: {
             methodId: stripeElementType,
@@ -244,6 +262,7 @@ export function getStripeBillingAddress(): StripeBillingDetails {
 
 export function getStripeBillingAddressWithoutPhone(): StripeBillingDetails {
     const billingAddress = getStripeBillingAddress();
+
     delete billingAddress.phone;
 
     return billingAddress;

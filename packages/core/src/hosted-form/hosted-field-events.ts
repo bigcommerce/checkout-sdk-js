@@ -16,11 +16,10 @@ export interface HostedFieldEventMap {
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
 }
 
-export type HostedFieldEvent = (
-    HostedFieldAttachEvent |
-    HostedFieldSubmitRequestEvent |
-    HostedFieldValidateRequestEvent
-);
+export type HostedFieldEvent =
+    | HostedFieldAttachEvent
+    | HostedFieldSubmitRequestEvent
+    | HostedFieldValidateRequestEvent;
 
 export interface HostedFieldAttachEvent {
     type: HostedFieldEventType.AttachRequested;

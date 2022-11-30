@@ -5,13 +5,23 @@ import { omit } from 'lodash';
 import { of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotImplementedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
@@ -63,11 +73,11 @@ describe('OpyPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(requestSender)
+            new PaymentMethodRequestSender(requestSender),
         );
 
         storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
@@ -76,25 +86,26 @@ describe('OpyPaymentStrategy', () => {
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         opyScriptLoader = new OpyScriptLoader(createScriptLoader());
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(of(createAction(OrderActionType.SubmitOrderRequested)));
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
+            of(createAction(OrderActionType.SubmitOrderRequested)),
+        );
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
 
-        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId')
-            .mockResolvedValue(undefined);
+        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId').mockResolvedValue(undefined);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(of(createAction(PaymentActionType.SubmitPaymentRequested)));
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            of(createAction(PaymentActionType.SubmitPaymentRequested)),
+        );
 
-        jest.spyOn(opyScriptLoader, 'loadOpyWidget')
-            .mockResolvedValue({ Config: jest.fn() });
+        jest.spyOn(opyScriptLoader, 'loadOpyWidget').mockResolvedValue({ Config: jest.fn() });
 
         strategy = new OpyPaymentStrategy(
             store,
@@ -102,11 +113,10 @@ describe('OpyPaymentStrategy', () => {
             paymentMethodActionCreator,
             storefrontPaymentRequestSender,
             paymentActionCreator,
-            opyScriptLoader
+            opyScriptLoader,
         );
 
-        jest.spyOn(document, 'getElementById')
-            .mockReturnValue(widgetContainer);
+        jest.spyOn(document, 'getElementById').mockReturnValue(widgetContainer);
 
         jest.spyOn(document, 'createElement');
 
@@ -114,11 +124,9 @@ describe('OpyPaymentStrategy', () => {
     });
 
     afterEach(() => {
-        jest.spyOn(document, 'getElementById')
-            .mockRestore();
+        jest.spyOn(document, 'getElementById').mockRestore();
 
-        jest.spyOn(document, 'createElement')
-            .mockRestore();
+        jest.spyOn(document, 'createElement').mockRestore();
     });
 
     describe('#initialize()', () => {
@@ -131,8 +139,10 @@ describe('OpyPaymentStrategy', () => {
         it('initializes the strategy successfully', async () => {
             await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
 
-            const opyLibrary: OpyWidget = await (opyScriptLoader.loadOpyWidget as jest.Mock).mock.results[0].value;
-            const opyLearMoreButton: HTMLUnknownElement = (document.createElement as jest.Mock).mock.results[0].value;
+            const opyLibrary: OpyWidget = await (opyScriptLoader.loadOpyWidget as jest.Mock).mock
+                .results[0].value;
+            const opyLearMoreButton: HTMLUnknownElement = (document.createElement as jest.Mock).mock
+                .results[0].value;
 
             expect(document.getElementById).toHaveBeenCalledWith('learnMoreButton');
             expect(opyScriptLoader.loadOpyWidget).toHaveBeenCalledWith('US');
@@ -161,8 +171,9 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('payment method is not found', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                    .mockReturnValueOnce(undefined);
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValueOnce(
+                    undefined,
+                );
 
                 await expect(strategy.initialize()).resolves.toEqual(store.getState());
 
@@ -173,8 +184,9 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('payment method is not an OpyPaymentMethod', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                    .mockReturnValueOnce({ ...getOpy(), initializationData: undefined });
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValueOnce(
+                    { ...getOpy(), initializationData: undefined },
+                );
 
                 await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
 
@@ -185,8 +197,7 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('containerId is invalid', async () => {
-                jest.spyOn(document, 'getElementById')
-                    .mockReturnValueOnce(undefined);
+                jest.spyOn(document, 'getElementById').mockReturnValueOnce(undefined);
 
                 await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
 
@@ -197,8 +208,9 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('the Opy widgets library is unavailable', async () => {
-                jest.spyOn(opyScriptLoader, 'loadOpyWidget')
-                    .mockRejectedValue(new PaymentMethodClientUnavailableError());
+                jest.spyOn(opyScriptLoader, 'loadOpyWidget').mockRejectedValue(
+                    new PaymentMethodClientUnavailableError(),
+                );
 
                 await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
 
@@ -232,31 +244,45 @@ describe('OpyPaymentStrategy', () => {
             await strategy.execute(payload, options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, options);
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('opy', options);
-            expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith('opy', '3000000091451');
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'opy', paymentData: { nonce: '3000000091451' }});
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                'opy',
+                options,
+            );
+            expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(
+                'opy',
+                '3000000091451',
+            );
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'opy',
+                paymentData: { nonce: '3000000091451' },
+            });
         });
 
         it('redirects to Openpay URL', async () => {
-            const paymentFailedErrorAction = of(createErrorAction(
-                PaymentActionType.SubmitPaymentFailed,
-                new RequestError(getResponse({
-                    ...getErrorPaymentResponseBody(),
-                    status: 'additional_action_required',
-                }))
-            ));
+            const paymentFailedErrorAction = of(
+                createErrorAction(
+                    PaymentActionType.SubmitPaymentFailed,
+                    new RequestError(
+                        getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            status: 'additional_action_required',
+                        }),
+                    ),
+                ),
+            );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(paymentFailedErrorAction);
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                paymentFailedErrorAction,
+            );
 
             window.location.assign = jest.fn();
 
             strategy.execute(payload, options);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(window.location.assign).toBeCalledWith(
-                'https://retailer.myopenpay.com.au/websalestraining?TransactionToken=Al5dE65...%3D&JamPlanID=3000000091451'
+            expect(window.location.assign).toHaveBeenCalledWith(
+                'https://retailer.myopenpay.com.au/websalestraining?TransactionToken=Al5dE65...%3D&JamPlanID=3000000091451',
             );
         });
 
@@ -264,7 +290,9 @@ describe('OpyPaymentStrategy', () => {
             it('payment argument is invalid', async () => {
                 payload.payment = undefined;
 
-                await expect(strategy.execute(payload, options)).rejects.toThrow(PaymentArgumentInvalidError);
+                await expect(strategy.execute(payload, options)).rejects.toThrow(
+                    PaymentArgumentInvalidError,
+                );
             });
 
             it('payment method is not found', async () => {
@@ -274,60 +302,80 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('payment method is not an OpyPaymentMethod', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValueOnce({ ...getOpy(), initializationData: undefined });
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValueOnce({ ...getOpy(), initializationData: undefined });
 
                 await expect(strategy.execute(payload, options)).rejects.toThrow(MissingDataError);
             });
 
             it('nextAction is empty', async () => {
-                const opy = (getOpy() as OpyPaymentMethod);
+                const opy = getOpy() as OpyPaymentMethod;
+
                 delete opy.initializationData.nextAction;
 
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValueOnce(opy);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValueOnce(opy);
 
                 await expect(strategy.execute(payload, options)).rejects.toThrow(
-                    new OpyError(OpyErrorType.InvalidCart, 'Openpay')
+                    new OpyError(OpyErrorType.InvalidCart, 'Openpay'),
                 );
             });
 
             it('nonce is empty', async () => {
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValueOnce({ ...getOpy(), clientToken: '' });
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValueOnce({ ...getOpy(), clientToken: '' });
 
                 await expect(strategy.execute(payload, options)).rejects.toThrow(MissingDataError);
             });
 
             it('nextAction type is not supported', async () => {
-                const opy = (getOpy() as OpyPaymentMethod);
+                const opy = getOpy() as OpyPaymentMethod;
+
                 opy.initializationData.nextAction = { type: ActionTypes.WAIT_FOR_CUSTOMER };
 
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValueOnce(opy);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValueOnce(opy);
 
-                const paymentFailedErrorAction = of(createErrorAction(
-                    PaymentActionType.SubmitPaymentFailed,
-                    new RequestError(getResponse({
-                        ...getErrorPaymentResponseBody(),
-                        status: 'additional_action_required',
-                    }))
-                ));
+                const paymentFailedErrorAction = of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        new RequestError(
+                            getResponse({
+                                ...getErrorPaymentResponseBody(),
+                                status: 'additional_action_required',
+                            }),
+                        ),
+                    ),
+                );
 
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(paymentFailedErrorAction);
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    paymentFailedErrorAction,
+                );
 
-                await expect(strategy.execute(payload, options)).rejects.toThrow(NotImplementedError);
+                await expect(strategy.execute(payload, options)).rejects.toThrow(
+                    NotImplementedError,
+                );
             });
 
             it('RequestError status is not additional_action_required', async () => {
-                const paymentFailedErrorAction = of(createErrorAction(
-                    PaymentActionType.SubmitPaymentFailed,
-                    new RequestError(getResponse(getErrorPaymentResponseBody()))
-                ));
+                const paymentFailedErrorAction = of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        new RequestError(getResponse(getErrorPaymentResponseBody())),
+                    ),
+                );
 
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(paymentFailedErrorAction);
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    paymentFailedErrorAction,
+                );
 
                 await expect(strategy.execute(payload, options)).rejects.toThrow(RequestError);
             });

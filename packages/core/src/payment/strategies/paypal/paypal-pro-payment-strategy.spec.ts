@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -49,39 +49,35 @@ describe('PaypalProPaymentStrategy', () => {
 
         state = store.getState();
 
-        jest.spyOn(store, 'dispatch')
-            .mockResolvedValue(state);
+        jest.spyOn(store, 'dispatch').mockResolvedValue(state);
 
-        jest.spyOn(store, 'getState')
-            .mockReturnValue(state);
+        jest.spyOn(store, 'getState').mockReturnValue(state);
 
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
 
         strategy = new PaypalProPaymentStrategy(
             store,
             orderActionCreator as OrderActionCreator,
             paymentActionCreator as PaymentActionCreator,
             hostedFormFactory,
-            threeDSecureFlow as CardinalThreeDSecureFlow
+            threeDSecureFlow as CardinalThreeDSecureFlow,
         );
     });
 
     it('is special type of credit card strategy', () => {
-        expect(strategy)
-            .toBeInstanceOf(CreditCardPaymentStrategy);
+        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     describe('#initialize', () => {
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
             try {
                 await strategy.initialize({ methodId: paymentMethod.id });
             } catch (error) {
-                expect(error)
-                    .toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(Error);
             }
         });
 
@@ -90,8 +86,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare)
-                .not.toHaveBeenCalled();
+            expect(threeDSecureFlow.prepare).not.toHaveBeenCalled();
         });
 
         it('prepares 3DS flow if enabled', async () => {
@@ -99,8 +94,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare)
-                .toHaveBeenCalled();
+            expect(threeDSecureFlow.prepare).toHaveBeenCalled();
         });
     });
 
@@ -117,14 +111,14 @@ describe('PaypalProPaymentStrategy', () => {
         });
 
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
             try {
                 await strategy.execute(payload);
             } catch (error) {
-                expect(error)
-                    .toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(Error);
             }
         });
 
@@ -133,8 +127,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start)
-                .not.toHaveBeenCalled();
+            expect(threeDSecureFlow.start).not.toHaveBeenCalled();
         });
 
         it('starts 3DS flow if enabled', async () => {
@@ -142,29 +135,28 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start)
-                .toHaveBeenCalled();
+            expect(threeDSecureFlow.start).toHaveBeenCalled();
         });
 
         describe('if payment is acknowledged', () => {
-
             beforeEach(() => {
-                jest.spyOn(state.payment, 'getPaymentStatus')
-                    .mockReturnValue(ACKNOWLEDGE);
+                jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(ACKNOWLEDGE);
             });
 
             it('submits order with payment method name', async () => {
                 const submitOrderAction = of();
 
-                jest.spyOn(orderActionCreator, 'submitOrder')
-                    .mockReturnValue(submitOrderAction);
+                jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
                 await strategy.execute(payload);
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
-                    ...payload,
-                    payment: { methodId: payload.payment && payload.payment.methodId },
-                }, undefined);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                    {
+                        ...payload,
+                        payment: { methodId: payload.payment && payload.payment.methodId },
+                    },
+                    undefined,
+                );
 
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
@@ -172,8 +164,9 @@ describe('PaypalProPaymentStrategy', () => {
             it('does not submit payment separately', async () => {
                 const submitPaymentAction = of();
 
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValue(submitPaymentAction);
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                    submitPaymentAction,
+                );
 
                 await strategy.execute(payload);
 

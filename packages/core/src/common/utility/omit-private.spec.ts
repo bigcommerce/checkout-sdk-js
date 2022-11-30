@@ -14,10 +14,7 @@ describe('omitPrivate()', () => {
 
         const expected = {
             id: 1,
-            items: [
-                { id: 2 },
-                { id: 3 },
-            ],
+            items: [{ id: 2 }, { id: 3 }],
         };
 
         expect(omitPrivate(object)).toEqual(expected);

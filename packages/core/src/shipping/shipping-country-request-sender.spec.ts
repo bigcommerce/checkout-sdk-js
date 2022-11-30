@@ -1,4 +1,9 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
 
 import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -13,7 +18,9 @@ describe('ShippingCountryRequestSender', () => {
 
     beforeEach(() => {
         requestSender = createRequestSender();
-        shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, { locale: 'en' });
+        shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, {
+            locale: 'en',
+        });
     });
 
     describe('#loadCountries()', () => {

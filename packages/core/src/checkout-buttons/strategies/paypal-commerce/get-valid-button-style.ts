@@ -1,8 +1,16 @@
 import { isNil, omitBy } from 'lodash';
 
-import { StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape, PaypalButtonStyleOptions } from '../../../payment/strategies/paypal-commerce';
+import {
+    PaypalButtonStyleOptions,
+    StyleButtonColor,
+    StyleButtonLabel,
+    StyleButtonLayout,
+    StyleButtonShape,
+} from '../../../payment/strategies/paypal-commerce';
 
-export default function getValidButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+export default function getValidButtonStyle(
+    style: PaypalButtonStyleOptions,
+): PaypalButtonStyleOptions {
     const { label, color, layout, shape, height, tagline } = style;
 
     const validStyles = {
@@ -22,19 +30,23 @@ function getValidColor(color?: StyleButtonColor): StyleButtonColor | undefined {
 }
 
 function getValidLabel(label?: StyleButtonLabel): StyleButtonLabel | undefined {
-    return label && StyleButtonLabel[label] ? label : undefined
+    return label && StyleButtonLabel[label] ? label : undefined;
 }
 
 function getValidLayout(layout?: StyleButtonLayout): StyleButtonLayout | undefined {
-    return layout && StyleButtonLayout[layout] ? layout : undefined
+    return layout && StyleButtonLayout[layout] ? layout : undefined;
 }
 
 function getValidShape(shape?: StyleButtonShape): StyleButtonShape | undefined {
-    return shape && StyleButtonShape[shape] ? shape : undefined
+    return shape && StyleButtonShape[shape] ? shape : undefined;
 }
 
 function getValidTagline(tagline?: boolean, layout?: string): boolean | undefined {
-    if (tagline && typeof tagline === 'boolean' && layout === StyleButtonLayout[StyleButtonLayout.horizontal]) {
+    if (
+        tagline &&
+        typeof tagline === 'boolean' &&
+        layout === StyleButtonLayout[StyleButtonLayout.horizontal]
+    ) {
         return tagline;
     }
 

@@ -30,7 +30,10 @@ export enum Mode {
     GooglePayStripeUPE,
 }
 
-export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
+export function getCheckoutButtonOptions(
+    methodId: CheckoutButtonMethodType,
+    mode: Mode = Mode.Full,
+): CheckoutButtonInitializeOptions {
     const containerId = 'googlePayCheckoutButton';
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
@@ -49,39 +52,51 @@ export function getCheckoutButtonOptions(methodId: CheckoutButtonMethodType, mod
         case Mode.UndefinedContainer: {
             return { methodId, ...undefinedContainerId };
         }
+
         case Mode.InvalidContainer: {
             return { methodId, ...invalidContainerId };
         }
+
         case Mode.GooglePayAdyenV2: {
             return { methodId, containerId, ...googlepayadyenv2 };
         }
+
         case Mode.GooglePayAdyenV3: {
             return { methodId, containerId, ...googlepayadyenv3 };
         }
+
         case Mode.GooglePayAuthorizeNet: {
             return { methodId, containerId, ...googlepayauthorizenet };
         }
+
         case Mode.GooglePayBNZ: {
             return { methodId, containerId, ...googlepaybnz };
         }
+
         case Mode.GooglePayBraintree: {
             return { methodId, containerId, ...googlepaybraintree };
         }
+
         case Mode.GooglePayCheckoutcom: {
             return { methodId, containerId, ...googlepaycheckoutcom };
         }
+
         case Mode.GooglePayCybersourceV2: {
             return { methodId, containerId, ...googlepaycybersourcev2 };
         }
+
         case Mode.GooglePayOrbital: {
             return { methodId, containerId, ...googlepayorbital };
         }
+
         case Mode.GooglePayStripe: {
             return { methodId, containerId, ...googlepaystripe };
         }
+
         case Mode.GooglePayStripeUPE: {
             return { methodId, containerId, ...googlepaystripeupe };
         }
+
         default: {
             return { methodId, containerId };
         }

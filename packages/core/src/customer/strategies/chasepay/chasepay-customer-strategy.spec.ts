@@ -3,16 +3,33 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+} from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import {
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
+import {
+    ChasePayEventType,
+    ChasePayScriptLoader,
+    JPMC,
+} from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
@@ -35,7 +52,13 @@ describe('ChasePayCustomerStrategy', () => {
     let formPoster;
 
     beforeEach(() => {
-        paymentMethodMock = { ...getChasePay(), initializationData: { digitalSessionId: 'digitalSessionId', merchantRequestId: '1234567890' } };
+        paymentMethodMock = {
+            ...getChasePay(),
+            initializationData: {
+                digitalSessionId: 'digitalSessionId',
+                merchantRequestId: '1234567890',
+            },
+        };
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
@@ -46,33 +69,34 @@ describe('ChasePayCustomerStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
         });
 
-        jest.spyOn(store, 'dispatch')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
         requestSender = createRequestSender();
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender),
-            checkoutActionCreator
+            checkoutActionCreator,
         );
 
         JPMC = getChasePayScriptMock();
 
         chasePayScriptLoader = new ChasePayScriptLoader(createScriptLoader());
 
-        jest.spyOn(chasePayScriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(JPMC));
+        jest.spyOn(chasePayScriptLoader, 'load').mockReturnValue(Promise.resolve(JPMC));
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(requestSender),
+        );
         formPoster = createFormPoster();
         strategy = new ChasePayCustomerStrategy(
             store,
@@ -80,7 +104,7 @@ describe('ChasePayCustomerStrategy', () => {
             remoteCheckoutActionCreator,
             chasePayScriptLoader,
             requestSender,
-            formPoster
+            formPoster,
         );
 
         container = document.createElement('div');
@@ -121,13 +145,16 @@ describe('ChasePayCustomerStrategy', () => {
 
         it('does not load chasepay if initialization options are not provided', () => {
             chasePayOptions = { methodId: 'chasepay' };
-            expect(() => strategy.initialize(chasePayOptions)).toThrowError(InvalidArgumentError);
+
+            expect(() => strategy.initialize(chasePayOptions)).toThrow(InvalidArgumentError);
             expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
         });
 
         it('does not load chase  pay if initialization data is not provided', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                undefined,
+            );
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (error) {
@@ -136,14 +163,13 @@ describe('ChasePayCustomerStrategy', () => {
         });
 
         it('does not load chase  pay if store config is not provided', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
-
             }
         });
 
@@ -161,6 +187,7 @@ describe('ChasePayCustomerStrategy', () => {
 
         it('fails to initialize the strategy if no methodid is supplied', async () => {
             chasePayOptions = { methodId: undefined, chasepay: { container: 'login' } };
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -169,8 +196,8 @@ describe('ChasePayCustomerStrategy', () => {
         });
 
         it('fails to initialize the strategy if no cart is supplied', async () => {
-            jest.spyOn(store.getState().cart, 'getCart')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(undefined);
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -180,6 +207,7 @@ describe('ChasePayCustomerStrategy', () => {
 
         it('fails to initialize the strategy if no digitalSessionID is supplied', async () => {
             paymentMethodMock.initializationData.digitalSessionId = undefined;
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -192,12 +220,19 @@ describe('ChasePayCustomerStrategy', () => {
 
             await strategy.initialize(chasePayOptions);
 
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.StartCheckout, expect.any(Function));
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CompleteCheckout, expect.any(Function));
+            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(
+                ChasePayEventType.StartCheckout,
+                expect.any(Function),
+            );
+            expect(JPMC.ChasePay.on).toHaveBeenCalledWith(
+                ChasePayEventType.CompleteCheckout,
+                expect.any(Function),
+            );
         });
 
         it('fails to initialize the strategy if no methodid is supplied', async () => {
             chasePayOptions = { methodId: undefined, chasepay: { container: 'login' } };
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -206,8 +241,8 @@ describe('ChasePayCustomerStrategy', () => {
         });
 
         it('fails to initialize the strategy if no cart is supplied', async () => {
-            jest.spyOn(store.getState().cart, 'getCart')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(undefined);
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -217,6 +252,7 @@ describe('ChasePayCustomerStrategy', () => {
 
         it('fails to initialize the strategy if no digitalSessionID is supplied', async () => {
             paymentMethodMock.initializationData.digitalSessionId = undefined;
+
             try {
                 await strategy.initialize(chasePayOptions);
             } catch (e) {
@@ -231,7 +267,7 @@ describe('ChasePayCustomerStrategy', () => {
         });
 
         it('throws error if trying to sign in programmatically', () => {
-            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
+            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
         });
     });
 
@@ -243,8 +279,7 @@ describe('ChasePayCustomerStrategy', () => {
 
             jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(paymentId);
 
-            jest.spyOn(remoteCheckoutActionCreator, 'signOut')
-                .mockReturnValue('data');
+            jest.spyOn(remoteCheckoutActionCreator, 'signOut').mockReturnValue('data');
 
             await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });
         });
@@ -265,9 +300,11 @@ describe('ChasePayCustomerStrategy', () => {
         it('runs continue callback automatically on execute payment method checkout', async () => {
             const mockCallback = jest.fn();
 
-            await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+            await strategy.executePaymentMethodCheckout({
+                continueWithCheckoutCallback: mockCallback,
+            });
 
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
     });
 });

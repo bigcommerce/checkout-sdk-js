@@ -42,12 +42,9 @@ export function getConfig(): Config {
                 orderTermsAndConditionsType: '',
                 privacyPolicyUrl: '',
                 providerWithCustomCheckout: null,
-                shippingQuoteFailedMessage: 'Unfortunately one or more items in your cart can\'t be shipped to your location. Please choose a different delivery address.',
-                realtimeShippingProviders: [
-                    'Fedex',
-                    'UPS',
-                    'USPS',
-                ],
+                shippingQuoteFailedMessage:
+                    "Unfortunately one or more items in your cart can't be shipped to your location. Please choose a different delivery address.",
+                realtimeShippingProviders: ['Fedex', 'UPS', 'USPS'],
                 requiresMarketingConsent: false,
                 remoteCheckoutProviders: [],
             },
@@ -68,11 +65,14 @@ export function getConfig(): Config {
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
                 checkoutLink: 'https://store-k1drp8k8.bcapp.dev/checkout',
-                createAccountLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=create_account',
-                forgotPasswordLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=reset_password',
+                createAccountLink:
+                    'https://store-k1drp8k8.bcapp.dev/login.php?action=create_account',
+                forgotPasswordLink:
+                    'https://store-k1drp8k8.bcapp.dev/login.php?action=reset_password',
                 loginLink: 'https://store-k1drp8k8.bcapp.dev/login.php',
                 siteLink: 'https://store-k1drp8k8.bcapp.dev/',
-                orderConfirmationLink: 'https://store-k1drp8k8.bcapp.dev/checkout/order-confirmation',
+                orderConfirmationLink:
+                    'https://store-k1drp8k8.bcapp.dev/checkout/order-confirmation',
             },
             paymentSettings: {
                 bigpayBaseUrl: 'https://bigpay.integration.zone',

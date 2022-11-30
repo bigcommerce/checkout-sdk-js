@@ -13,25 +13,24 @@ export enum InstrumentActionType {
     DeleteInstrumentFailed = 'DELETE_INSTRUMENT_FAILED',
 }
 
-export type InstrumentAction =
-    LoadInstrumentsAction |
-    DeleteInstrumentAction;
+export type InstrumentAction = LoadInstrumentsAction | DeleteInstrumentAction;
 
 export type LoadInstrumentsAction =
-    LoadInstrumentsRequestedAction |
-    LoadInstrumentsSucceededAction |
-    LoadInstrumentsFailedAction;
+    | LoadInstrumentsRequestedAction
+    | LoadInstrumentsSucceededAction
+    | LoadInstrumentsFailedAction;
 
 export type DeleteInstrumentAction =
-    DeleteInstrumentRequestedAction |
-    DeleteInstrumentSucceededAction |
-    DeleteInstrumentFailedAction;
+    | DeleteInstrumentRequestedAction
+    | DeleteInstrumentSucceededAction
+    | DeleteInstrumentFailedAction;
 
 export interface LoadInstrumentsRequestedAction extends Action {
     type: InstrumentActionType.LoadInstrumentsRequested;
 }
 
-export interface LoadInstrumentsSucceededAction extends Action<InstrumentsResponseBody, VaultAccessToken> {
+export interface LoadInstrumentsSucceededAction
+    extends Action<InstrumentsResponseBody, VaultAccessToken> {
     type: InstrumentActionType.LoadInstrumentsSucceeded;
 }
 
@@ -43,7 +42,8 @@ export interface DeleteInstrumentRequestedAction extends Action {
     type: InstrumentActionType.DeleteInstrumentRequested;
 }
 
-export interface DeleteInstrumentSucceededAction extends Action<InstrumentsResponseBody, VaultAccessToken & { instrumentId: string }> {
+export interface DeleteInstrumentSucceededAction
+    extends Action<InstrumentsResponseBody, VaultAccessToken & { instrumentId: string }> {
     type: InstrumentActionType.DeleteInstrumentSucceeded;
 }
 

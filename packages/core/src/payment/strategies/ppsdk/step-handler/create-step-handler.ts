@@ -5,5 +5,7 @@ import { PaymentHumanVerificationHandler } from '../../../../spam-protection';
 import { ContinueHandler } from './continue-handler';
 import { StepHandler } from './step-handler';
 
-export const createStepHandler = (formPoster: FormPoster, humanVerificationHandler: PaymentHumanVerificationHandler) =>
-    new StepHandler(new ContinueHandler(formPoster, humanVerificationHandler));
+export const createStepHandler = (
+    formPoster: FormPoster,
+    humanVerificationHandler: PaymentHumanVerificationHandler,
+) => new StepHandler(new ContinueHandler(formPoster, humanVerificationHandler));

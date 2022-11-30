@@ -32,7 +32,7 @@ export default class HostedCardNumberInput extends HostedInput {
         inputValidator: HostedInputValidator,
         paymentHandler: HostedInputPaymentHandler,
         private _autocompleteFieldset: HostedAutocompleteFieldset,
-        private _formatter: CardNumberFormatter
+        private _formatter: CardNumberFormatter,
     ) {
         super(
             type,
@@ -46,7 +46,7 @@ export default class HostedCardNumberInput extends HostedInput {
             eventPoster,
             inputAggregator,
             inputValidator,
-            paymentHandler
+            paymentHandler,
         );
     }
 
@@ -70,10 +70,16 @@ export default class HostedCardNumberInput extends HostedInput {
         }
 
         const unformattedValue = this._formatter.unformat(value);
-        const unformattedPreviousValue = this._previousValue ? this._formatter.unformat(this._previousValue) : '';
+        const unformattedPreviousValue = this._previousValue
+            ? this._formatter.unformat(this._previousValue)
+            : '';
 
-        const bin = unformattedValue.length >= 6 && number(unformattedValue).isPotentiallyValid ? unformattedValue.substr(0, 6) : '';
-        const prevBin = unformattedPreviousValue.length >= 6 ? unformattedPreviousValue.substr(0, 6) : '';
+        const bin =
+            unformattedValue.length >= 6 && number(unformattedValue).isPotentiallyValid
+                ? unformattedValue.substr(0, 6)
+                : '';
+        const prevBin =
+            unformattedPreviousValue.length >= 6 ? unformattedPreviousValue.substr(0, 6) : '';
 
         if (bin !== prevBin) {
             this._eventPoster.post({

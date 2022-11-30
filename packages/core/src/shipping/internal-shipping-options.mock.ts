@@ -2,9 +2,7 @@ import InternalShippingOption, { InternalShippingOptionList } from './internal-s
 
 export function getShippingOptions(): InternalShippingOptionList {
     return {
-        '55c96cda6f04c': [
-            getFlatRateOption(),
-        ],
+        '55c96cda6f04c': [getFlatRateOption()],
     };
 }
 

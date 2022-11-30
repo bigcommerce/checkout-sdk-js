@@ -20,10 +20,13 @@ export default class RequestError<TBody = any> extends StandardError {
 
     constructor(
         response?: Response<TBody | {}>,
-        { message, errors }: {
+        {
+            message,
+            errors,
+        }: {
             message?: string;
             errors?: Array<{ code: string; message?: string }>;
-        } = {}
+        } = {},
     ) {
         const { body, headers, status } = response || DEFAULT_RESPONSE;
 

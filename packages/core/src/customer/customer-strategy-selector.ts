@@ -18,7 +18,9 @@ export default interface CustomerStrategySelector {
     isWidgetInteracting(methodId?: string): boolean;
 }
 
-export type CustomerStrategySelectorFactory = (state: CustomerStrategyState) => CustomerStrategySelector;
+export type CustomerStrategySelectorFactory = (
+    state: CustomerStrategyState,
+) => CustomerStrategySelector;
 
 export function createCustomerStrategySelectorFactory(): CustomerStrategySelectorFactory {
     const getSignInError = createSelector(
@@ -30,7 +32,7 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return signInError;
-        }
+        },
     );
 
     const getSignOutError = createSelector(
@@ -42,19 +44,20 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return signOutError;
-        }
+        },
     );
 
     const getExecutePaymentMethodCheckoutError = createSelector(
         (state: CustomerStrategyState) => state.errors.executePaymentMethodCheckoutMethodId,
         (state: CustomerStrategyState) => state.errors.executePaymentMethodCheckoutError,
-        (executePaymentMethodCheckoutMethodId, executePaymentMethodCheckoutError) => (methodId?: string) => {
-            if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
-                return;
-            }
+        (executePaymentMethodCheckoutMethodId, executePaymentMethodCheckoutError) =>
+            (methodId?: string) => {
+                if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
+                    return;
+                }
 
-            return executePaymentMethodCheckoutError;
-        }
+                return executePaymentMethodCheckoutError;
+            },
     );
 
     const getInitializeError = createSelector(
@@ -66,7 +69,7 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return initializeError;
-        }
+        },
     );
 
     const getWidgetInteractionError = createSelector(
@@ -78,7 +81,7 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return widgetInteractionError;
-        }
+        },
     );
 
     const isSigningIn = createSelector(
@@ -90,7 +93,7 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return !!isSigningIn;
-        }
+        },
     );
 
     const isSigningOut = createSelector(
@@ -102,19 +105,20 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return !!isSigningOut;
-        }
+        },
     );
 
     const isExecutingPaymentMethodCheckout = createSelector(
         (state: CustomerStrategyState) => state.statuses.executePaymentMethodCheckoutMethodId,
         (state: CustomerStrategyState) => state.statuses.isExecutingPaymentMethodCheckout,
-        (executePaymentMethodCheckoutMethodId, isExecutingPaymentMethodCheckout) => (methodId?: string) => {
-            if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
-                return false;
-            }
+        (executePaymentMethodCheckoutMethodId, isExecutingPaymentMethodCheckout) =>
+            (methodId?: string) => {
+                if (methodId && executePaymentMethodCheckoutMethodId !== methodId) {
+                    return false;
+                }
 
-            return !!isExecutingPaymentMethodCheckout;
-        }
+                return !!isExecutingPaymentMethodCheckout;
+            },
     );
 
     const isInitializing = createSelector(
@@ -126,17 +130,14 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return !!isInitializing;
-        }
+        },
     );
 
     const isInitialized = createSelector(
         (state: CustomerStrategyState) => state.data,
-        data => (methodId: string) => {
-            return !!(
-                data[methodId] &&
-                data[methodId].isInitialized
-            );
-        }
+        (data) => (methodId: string) => {
+            return !!(data[methodId] && data[methodId].isInitialized);
+        },
     );
 
     const isWidgetInteracting = createSelector(
@@ -148,12 +149,10 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return !!isWidgetInteracting;
-        }
+        },
     );
 
-    return memoizeOne((
-        state: CustomerStrategyState = DEFAULT_STATE
-    ): CustomerStrategySelector => {
+    return memoizeOne((state: CustomerStrategyState = DEFAULT_STATE): CustomerStrategySelector => {
         return {
             getSignInError: getSignInError(state),
             getSignOutError: getSignOutError(state),

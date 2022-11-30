@@ -3,7 +3,10 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { RemoteCheckoutAction, RemoteCheckoutActionType } from './remote-checkout-actions';
 import remoteCheckoutReducer from './remote-checkout-reducer';
 import RemoteCheckoutState from './remote-checkout-state';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody } from './remote-checkout.mock';
+import {
+    getRemoteBillingResponseBody,
+    getRemoteShippingResponseBody,
+} from './remote-checkout.mock';
 
 describe('remoteCheckoutReducer', () => {
     let initialState: RemoteCheckoutState;
@@ -22,8 +25,8 @@ describe('remoteCheckoutReducer', () => {
             meta: { methodId: 'amazon' },
         };
 
-        expect(remoteCheckoutReducer(initialState, action))
-            .toEqual(expect.objectContaining({
+        expect(remoteCheckoutReducer(initialState, action)).toEqual(
+            expect.objectContaining({
                 data: {
                     amazon: {
                         billing: {
@@ -31,7 +34,8 @@ describe('remoteCheckoutReducer', () => {
                         },
                     },
                 },
-            }));
+            }),
+        );
     });
 
     it('returns state with shipping address', () => {
@@ -42,8 +46,8 @@ describe('remoteCheckoutReducer', () => {
             meta: { methodId: 'amazon' },
         };
 
-        expect(remoteCheckoutReducer(initialState, action))
-            .toEqual(expect.objectContaining({
+        expect(remoteCheckoutReducer(initialState, action)).toEqual(
+            expect.objectContaining({
                 data: {
                     amazon: {
                         shipping: {
@@ -51,6 +55,7 @@ describe('remoteCheckoutReducer', () => {
                         },
                     },
                 },
-            }));
+            }),
+        );
     });
 });

@@ -27,12 +27,14 @@ export type InstrumentSelectorFactory = (state: InstrumentState) => InstrumentSe
 export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
     const getInstrumentsByPaymentMethod = createSelector(
         (state: InstrumentState) => state.data,
-        instruments => (paymentMethod: PaymentMethod) => {
+        (instruments) => (paymentMethod: PaymentMethod) => {
             if (!instruments) {
                 return;
             }
 
-            const paymentMethodKey = paymentMethod.gateway ? `${paymentMethod.gateway}.${paymentMethod.id}` : paymentMethod.id;
+            const paymentMethodKey = paymentMethod.gateway
+                ? `${paymentMethod.gateway}.${paymentMethod.id}`
+                : paymentMethod.id;
 
             const currentMethod = supportedInstruments[paymentMethodKey];
 
@@ -41,54 +43,62 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
             }
 
             return filter<PaymentInstrument>(instruments, currentMethod);
-        }
+        },
     );
 
     const getCardInstrument = createSelector(
         (state: InstrumentState) => state.data,
-        (instruments = []) => (instrumentId: string) => {
-            const cards = values(supportedInstruments);
+        (instruments = []) =>
+            (instrumentId: string) => {
+                const cards = values(supportedInstruments);
 
-            return instruments?.find((instrument): instrument is CardInstrument =>
-                instrument.bigpayToken === instrumentId &&
-                instrument.type === 'card' &&
-                cards.some(card => isMatch(instrument, card))
-            );
-        }
+                return instruments.find(
+                    (instrument): instrument is CardInstrument =>
+                        instrument.bigpayToken === instrumentId &&
+                        instrument.type === 'card' &&
+                        cards.some((card) => isMatch(instrument, card)),
+                );
+            },
     );
 
     const getCardInstrumentOrThrow = createSelector(
         getCardInstrument,
-        getCardInstrument => (instrumentId: string) => {
-            return guard(getCardInstrument(instrumentId), () => new MissingDataError(MissingDataErrorType.MissingPaymentInstrument));
-        }
+        (getCardInstrument) => (instrumentId: string) => {
+            return guard(
+                getCardInstrument(instrumentId),
+                () => new MissingDataError(MissingDataErrorType.MissingPaymentInstrument),
+            );
+        },
     );
 
     const getInstruments = createSelector(
         (state: InstrumentState) => state.data,
-        instruments => () => {
+        (instruments) => () => {
             if (!instruments) {
                 return;
             }
 
-            const allSupportedInstruments = flatMap(supportedInstruments, supportedProvider =>
-                filter(instruments, (instrument: PaymentInstrument): instrument is PaymentInstrument => {
-                    return isMatch(instrument, supportedProvider);
-                })
+            const allSupportedInstruments = flatMap(supportedInstruments, (supportedProvider) =>
+                filter(
+                    instruments,
+                    (instrument: PaymentInstrument): instrument is PaymentInstrument => {
+                        return isMatch(instrument, supportedProvider);
+                    },
+                ),
             );
 
             return allSupportedInstruments;
-        }
+        },
     );
 
     const getInstrumentsMeta = createSelector(
         (state: InstrumentState) => state.meta,
-        meta => () => meta
+        (meta) => () => meta,
     );
 
     const getLoadError = createSelector(
         (state: InstrumentState) => state.errors.loadError,
-        loadError => () => loadError
+        (loadError) => () => loadError,
     );
 
     const getDeleteError = createSelector(
@@ -100,12 +110,12 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
             }
 
             return deleteError;
-        }
+        },
     );
 
     const isLoading = createSelector(
         (state: InstrumentState) => state.statuses.isLoading,
-        isLoading => () => !!isLoading
+        (isLoading) => () => !!isLoading,
     );
 
     const isDeleting = createSelector(
@@ -117,12 +127,10 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
             }
 
             return !!isDeleting;
-        }
+        },
     );
 
-    return memoizeOne((
-        state: InstrumentState = DEFAULT_STATE
-    ): InstrumentSelector => {
+    return memoizeOne((state: InstrumentState = DEFAULT_STATE): InstrumentSelector => {
         return {
             getCardInstrument: getCardInstrument(state),
             getCardInstrumentOrThrow: getCardInstrumentOrThrow(state),

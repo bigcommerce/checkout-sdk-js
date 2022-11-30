@@ -60,6 +60,8 @@ describe('Registry', () => {
 
         registry.register('foo', () => ({ name: 'Foo' }));
 
-        expect(() => registry.register('foo', () => ({ name: 'Foo' }))).toThrow(InvalidArgumentError);
+        expect(() => registry.register('foo', () => ({ name: 'Foo' }))).toThrow(
+            InvalidArgumentError,
+        );
     });
 });

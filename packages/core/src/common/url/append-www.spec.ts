@@ -13,13 +13,12 @@ describe('appendWww', () => {
             search: '?foo=foo',
         };
 
-        expect(appendWww(url))
-            .toEqual({
-                ...url,
-                origin: 'https://www.foobar.com:8080',
-                hostname: 'www.foobar.com',
-                href: 'https://www.foobar.com:8080/bar?foo=foo',
-            });
+        expect(appendWww(url)).toEqual({
+            ...url,
+            origin: 'https://www.foobar.com:8080',
+            hostname: 'www.foobar.com',
+            href: 'https://www.foobar.com:8080/bar?foo=foo',
+        });
     });
 
     it('does not www to URL if already has www', () => {
@@ -34,7 +33,6 @@ describe('appendWww', () => {
             search: '?foo=foo',
         };
 
-        expect(appendWww(url))
-            .toEqual(url);
+        expect(appendWww(url)).toEqual(url);
     });
 });

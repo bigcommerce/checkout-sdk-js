@@ -1,4 +1,10 @@
-import { createCheckoutStoreErrorSelectorFactory, createCheckoutStoreSelectorFactory, createCheckoutStoreStatusSelectorFactory, CheckoutSelectors, InternalCheckoutSelectors } from '../checkout';
+import {
+    CheckoutSelectors,
+    createCheckoutStoreErrorSelectorFactory,
+    createCheckoutStoreSelectorFactory,
+    createCheckoutStoreStatusSelectorFactory,
+    InternalCheckoutSelectors,
+} from '../checkout';
 
 export type CheckoutSelectorsFactory = (selectors: InternalCheckoutSelectors) => CheckoutSelectors;
 
@@ -20,6 +26,8 @@ export function createCheckoutSelectorsFactory(): CheckoutSelectorsFactory {
     };
 }
 
-export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
+export default function createCheckoutSelectors(
+    selectors: InternalCheckoutSelectors,
+): CheckoutSelectors {
     return createCheckoutSelectorsFactory()(selectors);
 }

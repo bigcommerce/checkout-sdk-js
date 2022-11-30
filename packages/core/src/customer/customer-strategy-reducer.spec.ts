@@ -16,11 +16,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if initializing customer', () => {
-        const action = createAction(
-            CustomerStrategyActionType.InitializeRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.InitializeRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             initializeMethodId: 'foobar',
@@ -29,11 +27,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if customer has initialized successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.InitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             initializeMethodId: undefined,
@@ -42,11 +38,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns initialization flag as true if customer has initialized successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.InitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).data).toEqual({
             foobar: { isInitialized: true },
@@ -54,11 +48,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns error if customer has failed to initialize', () => {
-        const action = createErrorAction(
-            CustomerStrategyActionType.InitializeFailed,
-            new Error(),
-            { methodId: 'foobar' }
-        );
+        const action = createErrorAction(CustomerStrategyActionType.InitializeFailed, new Error(), {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
             initializeMethodId: 'foobar',
@@ -71,11 +63,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if deinitializing customer', () => {
-        const action = createAction(
-            CustomerStrategyActionType.DeinitializeRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             deinitializeMethodId: 'foobar',
@@ -84,11 +74,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if customer has deinitialized successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.DeinitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             deinitializeMethodId: undefined,
@@ -97,11 +85,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns initialization flag as false if customer has deinitialized successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.DeinitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).data).toEqual({
             foobar: { isInitialized: false },
@@ -112,7 +98,7 @@ describe('customerStrategyReducer()', () => {
         const action = createErrorAction(
             CustomerStrategyActionType.DeinitializeFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
@@ -126,11 +112,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if signing in customer', () => {
-        const action = createAction(
-            CustomerStrategyActionType.SignInRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.SignInRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             signInMethodId: 'foobar',
@@ -139,11 +123,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if customer has signed in successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.SignInSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.SignInSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             signInMethodId: undefined,
@@ -156,11 +138,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns error if customer has failed to sign in', () => {
-        const action = createErrorAction(
-            CustomerStrategyActionType.SignInFailed,
-            new Error(),
-            { methodId: 'foobar' }
-        );
+        const action = createErrorAction(CustomerStrategyActionType.SignInFailed, new Error(), {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
             signInMethodId: 'foobar',
@@ -169,11 +149,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if signing out customer', () => {
-        const action = createAction(
-            CustomerStrategyActionType.SignOutRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.SignOutRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             signOutMethodId: 'foobar',
@@ -182,11 +160,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if customer has signed out successfully', () => {
-        const action = createAction(
-            CustomerStrategyActionType.SignOutSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(CustomerStrategyActionType.SignOutSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             signOutMethodId: undefined,
@@ -195,11 +171,9 @@ describe('customerStrategyReducer()', () => {
     });
 
     it('returns error if customer has failed to sign out', () => {
-        const action = createErrorAction(
-            CustomerStrategyActionType.SignOutFailed,
-            new Error(),
-            { methodId: 'foobar' }
-        );
+        const action = createErrorAction(CustomerStrategyActionType.SignOutFailed, new Error(), {
+            methodId: 'foobar',
+        });
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
             signOutMethodId: 'foobar',
@@ -215,7 +189,7 @@ describe('customerStrategyReducer()', () => {
         const action = createAction(
             CustomerStrategyActionType.ExecutePaymentMethodCheckoutRequested,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
@@ -228,7 +202,7 @@ describe('customerStrategyReducer()', () => {
         const action = createAction(
             CustomerStrategyActionType.ExecutePaymentMethodCheckoutSucceeded,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
@@ -245,7 +219,7 @@ describe('customerStrategyReducer()', () => {
         const action = createErrorAction(
             CustomerStrategyActionType.ExecutePaymentMethodCheckoutFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
@@ -258,7 +232,7 @@ describe('customerStrategyReducer()', () => {
         const action = createAction(
             CustomerStrategyActionType.WidgetInteractionStarted,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
@@ -271,7 +245,7 @@ describe('customerStrategyReducer()', () => {
         const action = createAction(
             CustomerStrategyActionType.WidgetInteractionFinished,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
@@ -284,7 +258,7 @@ describe('customerStrategyReducer()', () => {
         const action = createErrorAction(
             CustomerStrategyActionType.WidgetInteractionFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({

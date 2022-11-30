@@ -22,9 +22,13 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
         items: mapToInternalLineItems(checkout.cart.lineItems, decimalPlaces),
         currency: checkout.cart.currency.code,
         coupon: {
-            discountedAmount: reduce(checkout.cart.coupons, (sum, coupon) => {
-                return sum + coupon.discountedAmount;
-            }, 0),
+            discountedAmount: reduce(
+                checkout.cart.coupons,
+                (sum, coupon) => {
+                    return sum + coupon.discountedAmount;
+                },
+                0,
+            ),
             coupons: checkout.cart.coupons.map(mapToInternalCoupon),
         },
         discount: {
@@ -33,17 +37,29 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
         },
         discountNotifications: mapToDiscountNotifications(checkout.promotions),
         giftCertificate: {
-            totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
-                return sum + certificate.used;
-            }, 0),
-            appliedGiftCertificates: keyBy(checkout.giftCertificates.map(mapToInternalGiftCertificate), 'code'),
+            totalDiscountedAmount: reduce(
+                checkout.giftCertificates,
+                (sum, certificate) => {
+                    return sum + certificate.used;
+                },
+                0,
+            ),
+            appliedGiftCertificates: keyBy(
+                checkout.giftCertificates.map(mapToInternalGiftCertificate),
+                'code',
+            ),
         },
         shipping: {
             amount: checkout.shippingCostTotal,
             integerAmount: amountTransformer.toInteger(checkout.shippingCostTotal),
             amountBeforeDiscount: checkout.shippingCostBeforeDiscount,
-            integerAmountBeforeDiscount: amountTransformer.toInteger(checkout.shippingCostBeforeDiscount),
-            required: some(checkout.cart.lineItems.physicalItems, lineItem => lineItem.isShippingRequired),
+            integerAmountBeforeDiscount: amountTransformer.toInteger(
+                checkout.shippingCostBeforeDiscount,
+            ),
+            required: some(
+                checkout.cart.lineItems.physicalItems,
+                (lineItem) => lineItem.isShippingRequired,
+            ),
         },
         subtotal: {
             amount: checkout.subtotal,

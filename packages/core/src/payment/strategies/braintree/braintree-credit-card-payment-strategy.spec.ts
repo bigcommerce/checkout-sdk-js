@@ -1,16 +1,27 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { from, of, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    Order,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
@@ -48,15 +59,31 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.deinitialize = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.initializeHostedForm = jest.fn();
-        braintreePaymentProcessorMock.isInitializedHostedForm = jest.fn(() => Promise.resolve(true));
+        braintreePaymentProcessorMock.isInitializedHostedForm = jest.fn(() =>
+            Promise.resolve(true),
+        );
         braintreePaymentProcessorMock.deinitializeHostedForm = jest.fn(() => Promise.resolve());
-        braintreePaymentProcessorMock.tokenizeCard = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
-        braintreePaymentProcessorMock.tokenizeHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_with_hosted_form' }));
-        braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card_verification_with_hosted_form' }));
-        braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
-        braintreePaymentProcessorMock.verifyCardWithHostedForm = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card_with_hosted_form' }));
-        braintreePaymentProcessorMock.challenge3DSVerification = jest.fn(() => Promise.resolve({ nonce: 'my_verified_stored_credit_card' }));
-        braintreePaymentProcessorMock.getSessionId = jest.fn(() => Promise.resolve('my_session_id'));
+        braintreePaymentProcessorMock.tokenizeCard = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_tokenized_card' }),
+        );
+        braintreePaymentProcessorMock.tokenizeHostedForm = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_tokenized_card_with_hosted_form' }),
+        );
+        braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_tokenized_card_verification_with_hosted_form' }),
+        );
+        braintreePaymentProcessorMock.verifyCard = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_verified_card' }),
+        );
+        braintreePaymentProcessorMock.verifyCardWithHostedForm = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_verified_card_with_hosted_form' }),
+        );
+        braintreePaymentProcessorMock.challenge3DSVerification = jest.fn(() =>
+            Promise.resolve({ nonce: 'my_verified_stored_credit_card' }),
+        );
+        braintreePaymentProcessorMock.getSessionId = jest.fn(() =>
+            Promise.resolve('my_session_id'),
+        );
 
         paymentMethodMock = {
             ...getBraintree(),
@@ -70,15 +97,17 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
 
         order = getOrder();
         submitOrderAction = from([
@@ -86,30 +115,35 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             createAction(OrderActionType.LoadOrderSucceeded, order), // Currently we load the order after a successful submission
         ]);
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: paymentMethodMock.id }));
+        loadPaymentMethodAction = of(
+            createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {
+                methodId: paymentMethodMock.id,
+            }),
+        );
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(loadPaymentMethodAction);
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            loadPaymentMethodAction,
+        );
 
         braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            braintreePaymentProcessorMock
+            braintreePaymentProcessorMock,
         );
     });
 
     it('creates an instance of the braintree payment strategy', () => {
-        expect(braintreeCreditCardPaymentStrategy).toBeInstanceOf(BraintreeCreditCardPaymentStrategy);
+        expect(braintreeCreditCardPaymentStrategy).toBeInstanceOf(
+            BraintreeCreditCardPaymentStrategy,
+        );
     });
 
     describe('#initialize()', () => {
@@ -117,7 +151,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             paymentMethodMock.clientToken = '';
 
             try {
-                await braintreeCreditCardPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                });
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -130,7 +166,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             await braintreeCreditCardPaymentStrategy.initialize(options);
 
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken, options.braintree);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+                options.braintree,
+            );
             expect(braintreePaymentProcessorMock.initializeHostedForm).not.toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.isInitializedHostedForm).not.toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
@@ -154,8 +193,13 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             await braintreeCreditCardPaymentStrategy.initialize(options);
 
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken, options.braintree);
-            expect(braintreePaymentProcessorMock.initializeHostedForm).toHaveBeenCalledWith(options.braintree.form);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+                options.braintree,
+            );
+            expect(braintreePaymentProcessorMock.initializeHostedForm).toHaveBeenCalledWith(
+                options.braintree.form,
+            );
             expect(braintreePaymentProcessorMock.isInitializedHostedForm).toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
         });
@@ -189,10 +233,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.deinitialize();
             await braintreeCreditCardPaymentStrategy.execute(getOrderRequestBody());
 
-            expect(braintreePaymentProcessorMock.tokenizeHostedForm)
-                .not.toHaveBeenCalled();
-            expect(braintreePaymentProcessorMock.tokenizeCard)
-                .toHaveBeenCalled();
+            expect(braintreePaymentProcessorMock.tokenizeHostedForm).not.toHaveBeenCalled();
+            expect(braintreePaymentProcessorMock.tokenizeCard).toHaveBeenCalled();
         });
     });
 
@@ -219,28 +261,33 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             it('calls submit order with the order request information', async () => {
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Object));
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                    omit(orderRequestBody, 'payment'),
+                    expect.any(Object),
+                );
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
             it('pass the options to submitOrder', async () => {
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                    expect.any(Object),
+                    options,
+                );
             });
 
             it('throws error if unable to submit payment due to missing data', async () => {
                 submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
-                jest.spyOn(orderActionCreator, 'submitOrder')
-                    .mockReturnValue(submitOrderAction);
+                jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
                 braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
                     store,
                     orderActionCreator,
                     paymentActionCreator,
                     paymentMethodActionCreator,
-                    braintreePaymentProcessorMock
+                    braintreePaymentProcessorMock,
                 );
 
                 try {
@@ -264,20 +311,24 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             it('passes on optional flags to save and to make default', async () => {
                 const payload = merge({}, orderRequestBody, {
-                    payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } },
+                    payment: {
+                        paymentData: {
+                            shouldSaveInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
+                        },
+                    },
                 });
 
                 await braintreeCreditCardPaymentStrategy.execute(payload, options);
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            paymentData: expect.objectContaining({
-                                shouldSaveInstrument: true,
-                                shouldSetAsDefaultInstrument: true,
-                            }),
-                        })
-                    );
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            shouldSaveInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    }),
+                );
             });
 
             it('does nothing to VaultedInstruments', async () => {
@@ -308,10 +359,15 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     },
                 };
 
-                await braintreeCreditCardPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                });
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-                expect(braintreePaymentProcessorMock.tokenizeCard).toHaveBeenCalledWith(orderRequestBody.payment, getBillingAddress());
+                expect(braintreePaymentProcessorMock.tokenizeCard).toHaveBeenCalledWith(
+                    orderRequestBody.payment,
+                    getBillingAddress(),
+                );
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
                 expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             });
@@ -335,7 +391,11 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-                expect(braintreePaymentProcessorMock.verifyCard).toHaveBeenCalledWith(orderRequestBody.payment, getBillingAddress(), 190);
+                expect(braintreePaymentProcessorMock.verifyCard).toHaveBeenCalledWith(
+                    orderRequestBody.payment,
+                    getBillingAddress(),
+                    190,
+                );
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
                 expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             });
@@ -366,19 +426,19 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
 
-                expect(braintreePaymentProcessorMock.tokenizeHostedForm)
-                    .toHaveBeenCalledWith(getBillingAddress());
+                expect(braintreePaymentProcessorMock.tokenizeHostedForm).toHaveBeenCalledWith(
+                    getBillingAddress(),
+                );
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith({
-                        ...orderRequestBody.payment,
-                        paymentData: {
-                            deviceSessionId: 'my_session_id',
-                            nonce: 'my_tokenized_card_with_hosted_form',
-                            shouldSaveInstrument: false,
-                            shouldSetAsDefaultInstrument: false,
-                        },
-                    });
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    ...orderRequestBody.payment,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        nonce: 'my_tokenized_card_with_hosted_form',
+                        shouldSaveInstrument: false,
+                        shouldSetAsDefaultInstrument: false,
+                    },
+                });
             });
 
             it('passes on optional flags to save and to make default', async () => {
@@ -388,20 +448,24 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 });
 
                 const payload = merge({}, orderRequestBody, {
-                    payment: { paymentData: { shouldSaveInstrument: true, shouldSetAsDefaultInstrument: true } },
+                    payment: {
+                        paymentData: {
+                            shouldSaveInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
+                        },
+                    },
                 });
 
                 await braintreeCreditCardPaymentStrategy.execute(payload, options);
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            paymentData: expect.objectContaining({
-                                shouldSaveInstrument: true,
-                                shouldSetAsDefaultInstrument: true,
-                            }),
-                        })
-                    );
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            shouldSaveInstrument: true,
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    }),
+                );
             });
 
             it('verifies payment data with 3DS through hosted form and submits it if 3DS is enabled', async () => {
@@ -414,19 +478,20 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 await braintreeCreditCardPaymentStrategy.execute(orderRequestBody);
 
-                expect(braintreePaymentProcessorMock.verifyCardWithHostedForm)
-                    .toHaveBeenCalledWith(getBillingAddress(), 190);
+                expect(braintreePaymentProcessorMock.verifyCardWithHostedForm).toHaveBeenCalledWith(
+                    getBillingAddress(),
+                    190,
+                );
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith({
-                        ...orderRequestBody.payment,
-                        paymentData: {
-                            deviceSessionId: 'my_session_id',
-                            nonce: 'my_verified_card_with_hosted_form',
-                            shouldSaveInstrument: false,
-                            shouldSetAsDefaultInstrument: false,
-                        },
-                    });
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    ...orderRequestBody.payment,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        nonce: 'my_verified_card_with_hosted_form',
+                        shouldSaveInstrument: false,
+                        shouldSetAsDefaultInstrument: false,
+                    },
+                });
             });
 
             it('tokenizes stored card verification data through hosted form and submits it if paying with stored card', async () => {
@@ -445,18 +510,18 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     },
                 });
 
-                expect(braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification)
-                    .toHaveBeenCalledWith();
+                expect(
+                    braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification,
+                ).toHaveBeenCalledWith();
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith({
-                        methodId: paymentMethodMock.id,
-                        paymentData: {
-                            deviceSessionId: 'my_session_id',
-                            instrumentId: 'foobar_instrument',
-                            nonce: 'my_tokenized_card_verification_with_hosted_form',
-                        },
-                    });
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    methodId: paymentMethodMock.id,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        instrumentId: 'foobar_instrument',
+                        nonce: 'my_tokenized_card_verification_with_hosted_form',
+                    },
+                });
             });
 
             it('does not verify payment data with 3DS through hosted form and if paying with stored card', async () => {
@@ -477,18 +542,18 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     },
                 });
 
-                expect(braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification)
-                    .toHaveBeenCalledWith();
+                expect(
+                    braintreePaymentProcessorMock.tokenizeHostedFormForStoredCardVerification,
+                ).toHaveBeenCalledWith();
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith({
-                        methodId: paymentMethodMock.id,
-                        paymentData: {
-                            deviceSessionId: 'my_session_id',
-                            instrumentId: 'foobar_instrument',
-                            nonce: 'my_tokenized_card_verification_with_hosted_form',
-                        },
-                    });
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    methodId: paymentMethodMock.id,
+                    paymentData: {
+                        deviceSessionId: 'my_session_id',
+                        instrumentId: 'foobar_instrument',
+                        nonce: 'my_tokenized_card_verification_with_hosted_form',
+                    },
+                });
             });
 
             it('challenges 3ds verification for stored credit card if gets 3ds required error on submit payment', async () => {
@@ -503,7 +568,14 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 });
 
                 jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, threeDSecureRequired)))
+                    .mockReturnValueOnce(
+                        of(
+                            createErrorAction(
+                                PaymentActionType.SubmitPaymentFailed,
+                                threeDSecureRequired,
+                            ),
+                        ),
+                    )
                     .mockReturnValueOnce(submitPaymentAction);
 
                 const payload = {
@@ -515,11 +587,16 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     },
                 };
 
-                await braintreeCreditCardPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+                await braintreeCreditCardPaymentStrategy.initialize({
+                    methodId: paymentMethodMock.id,
+                });
                 await braintreeCreditCardPaymentStrategy.execute(payload, options);
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
-                expect(braintreePaymentProcessorMock.challenge3DSVerification).toHaveBeenCalledWith(threeDSecureNonce, getOrder().orderAmount);
+                expect(braintreePaymentProcessorMock.challenge3DSVerification).toHaveBeenCalledWith(
+                    threeDSecureNonce,
+                    getOrder().orderAmount,
+                );
             });
         });
     });

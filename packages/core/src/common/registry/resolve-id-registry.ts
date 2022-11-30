@@ -31,7 +31,7 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
         const query = this._decodeToken(token);
         const results: Array<{ token: string; matches: number }> = [];
 
-        registeredTokens.forEach(registeredToken => {
+        registeredTokens.forEach((registeredToken) => {
             const resolverId = this._decodeToken(registeredToken);
             const result = { token: registeredToken, matches: 0 };
 
@@ -44,10 +44,11 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             results.push(result);
         });
 
-        const matched = results.sort((a, b) => b.matches - a.matches)
-            .filter(result => result.matches > 0)[0];
+        const matched = results
+            .sort((a, b) => b.matches - a.matches)
+            .filter((result) => result.matches > 0)[0];
 
-        if (matched?.token) {
+        if (matched.token) {
             return matched.token;
         }
 

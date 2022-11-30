@@ -48,5 +48,8 @@ export interface ChasePay {
     startCheckout(digitalSessionId?: string): void;
     showLoadingAnimation(): void;
     configure(options: ChasePayConfigureOptions): void;
-    on<ChasePayEventType extends keyof ChasePayEventMap>(eventType: ChasePayEventType, callback: ChasePayEventMap[ChasePayEventType]): void;
+    on<ChasePayEventType extends keyof ChasePayEventMap>(
+        eventType: ChasePayEventType,
+        callback: ChasePayEventMap[ChasePayEventType],
+    ): void;
 }

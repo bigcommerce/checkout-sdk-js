@@ -7,11 +7,10 @@ export type PPSDKPaymentMethod = PaymentMethod & {
     type: PaymentStrategyType.PPSDK;
 } & Required<Pick<PaymentMethod, PPSDKRequiredProperties>>;
 
-export const isPPSDKPaymentMethod = ( paymentMethod: PaymentMethod ): paymentMethod is PPSDKPaymentMethod => {
+export const isPPSDKPaymentMethod = (
+    paymentMethod: PaymentMethod,
+): paymentMethod is PPSDKPaymentMethod => {
     const { type, initializationStrategy } = paymentMethod;
 
-    return (
-        type === PaymentStrategyType.PPSDK &&
-        typeof initializationStrategy?.type === 'string'
-    );
+    return type === PaymentStrategyType.PPSDK && typeof initializationStrategy?.type === 'string';
 };

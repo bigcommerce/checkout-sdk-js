@@ -35,36 +35,68 @@ describe('BoltScriptLoader', () => {
             it('loads the bolt client script in live mode', async () => {
                 await boltScriptLoader.loadBoltClient(publishableKey);
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.bolt.com/connect-bigcommerce.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect.bolt.com/connect-bigcommerce.js',
+                    expect.any(Object),
+                );
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.bolt.com/track.js');
             });
 
             it('loads the bolt client script in test mode', async () => {
                 await boltScriptLoader.loadBoltClient(publishableKey, true);
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/connect-bigcommerce.js',
+                    expect.any(Object),
+                );
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/track.js',
+                );
             });
 
             it('loads the bolt client script in staging mode', async () => {
-                await boltScriptLoader.loadBoltClient(publishableKey, true, { developerMode: BoltDeveloperMode.StagingMode, developerDomain: ''});
+                await boltScriptLoader.loadBoltClient(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.StagingMode,
+                    developerDomain: '',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-staging.bolt.com/connect-bigcommerce.js', expect.any(Object));
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-staging.bolt.com/track.js');
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-staging.bolt.com/connect-bigcommerce.js',
+                    expect.any(Object),
+                );
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-staging.bolt.com/track.js',
+                );
             });
 
             it('loads the bolt client script in sandbox mode', async () => {
-                await boltScriptLoader.loadBoltClient(publishableKey, true, { developerMode: BoltDeveloperMode.SandboxMode, developerDomain: ''});
+                await boltScriptLoader.loadBoltClient(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.SandboxMode,
+                    developerDomain: '',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/connect-bigcommerce.js', expect.any(Object));
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/track.js');
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/connect-bigcommerce.js',
+                    expect.any(Object),
+                );
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/track.js',
+                );
             });
 
             it('loads the bolt client script in development mode', async () => {
-                await boltScriptLoader.loadBoltClient(publishableKey, true, { developerMode: BoltDeveloperMode.DevelopmentMode, developerDomain: 'test.sample.com'});
+                await boltScriptLoader.loadBoltClient(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.DevelopmentMode,
+                    developerDomain: 'test.sample.com',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.test.sample.com/connect-bigcommerce.js', expect.any(Object));
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.test.sample.com/track.js');
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect.test.sample.com/connect-bigcommerce.js',
+                    expect.any(Object),
+                );
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect.test.sample.com/track.js',
+                );
             });
 
             it('returns the BoltClient from the window', async () => {
@@ -88,7 +120,9 @@ describe('BoltScriptLoader', () => {
                     return Promise.resolve();
                 });
 
-                await expect(boltScriptLoader.loadBoltClient(publishableKey)).rejects.toThrow(PaymentMethodClientUnavailableError);
+                await expect(boltScriptLoader.loadBoltClient(publishableKey)).rejects.toThrow(
+                    PaymentMethodClientUnavailableError,
+                );
             });
 
             it('throws an error when window is not set', async () => {
@@ -98,7 +132,9 @@ describe('BoltScriptLoader', () => {
                     return Promise.resolve();
                 });
 
-                await expect(boltScriptLoader.loadBoltClient(publishableKey)).rejects.toThrow(PaymentMethodClientUnavailableError);
+                await expect(boltScriptLoader.loadBoltClient(publishableKey)).rejects.toThrow(
+                    PaymentMethodClientUnavailableError,
+                );
             });
         });
 
@@ -115,31 +151,55 @@ describe('BoltScriptLoader', () => {
             it('loads the bolt embedded script in live mode', async () => {
                 await boltScriptLoader.loadBoltEmbedded(publishableKey);
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.bolt.com/embed.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect.bolt.com/embed.js',
+                    expect.any(Object),
+                );
             });
 
             it('loads the bolt embedded script in test mode', async () => {
                 await boltScriptLoader.loadBoltEmbedded(publishableKey, true);
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/embed.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/embed.js',
+                    expect.any(Object),
+                );
             });
 
             it('loads the bolt embedded script in staging mode', async () => {
-                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, { developerMode: BoltDeveloperMode.StagingMode, developerDomain: ''});
+                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.StagingMode,
+                    developerDomain: '',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-staging.bolt.com/embed.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-staging.bolt.com/embed.js',
+                    expect.any(Object),
+                );
             });
 
             it('loads the bolt embedded script in sandbox mode', async () => {
-                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, { developerMode: BoltDeveloperMode.SandboxMode, developerDomain: ''});
+                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.SandboxMode,
+                    developerDomain: '',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect-sandbox.bolt.com/embed.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect-sandbox.bolt.com/embed.js',
+                    expect.any(Object),
+                );
             });
 
             it('loads the bolt embedded script in development mode', async () => {
-                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, { developerMode: BoltDeveloperMode.DevelopmentMode, developerDomain: 'test.sample.com'});
+                await boltScriptLoader.loadBoltEmbedded(publishableKey, true, {
+                    developerMode: BoltDeveloperMode.DevelopmentMode,
+                    developerDomain: 'test.sample.com',
+                });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//connect.test.sample.com/embed.js', expect.any(Object));
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//connect.test.sample.com/embed.js',
+                    expect.any(Object),
+                );
             });
 
             it('returns the BoltEmbedded from the window', async () => {
@@ -155,7 +215,9 @@ describe('BoltScriptLoader', () => {
                     return Promise.resolve();
                 });
 
-                await expect(boltScriptLoader.loadBoltEmbedded(publishableKey)).rejects.toThrow(PaymentMethodClientUnavailableError);
+                await expect(boltScriptLoader.loadBoltEmbedded(publishableKey)).rejects.toThrow(
+                    PaymentMethodClientUnavailableError,
+                );
             });
         });
     });

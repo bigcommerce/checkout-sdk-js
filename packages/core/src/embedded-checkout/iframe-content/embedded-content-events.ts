@@ -8,9 +8,7 @@ export interface EmbeddedContentEventMap {
     [EmbeddedContentEventType.StyleConfigured]: EmbeddedContentStyleConfiguredEvent;
 }
 
-export type EmbeddedContentEvent = (
-    EmbeddedContentStyleConfiguredEvent
-);
+export type EmbeddedContentEvent = EmbeddedContentStyleConfiguredEvent;
 
 export interface EmbeddedContentStyleConfiguredEvent {
     type: EmbeddedContentEventType.StyleConfigured;

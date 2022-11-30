@@ -1,4 +1,4 @@
-import { combineReducers, Action, Reducer } from '@bigcommerce/data-store';
+import { Action, combineReducers, Reducer } from '@bigcommerce/data-store';
 
 import { billingAddressReducer } from '../billing';
 import { cartReducer } from '../cart';
@@ -12,7 +12,12 @@ import { orderReducer } from '../order';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
 import { instrumentReducer } from '../payment/instrument';
 import { remoteCheckoutReducer } from '../remote-checkout';
-import { consignmentReducer, pickupOptionReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
+import {
+    consignmentReducer,
+    pickupOptionReducer,
+    shippingCountryReducer,
+    shippingStrategyReducer,
+} from '../shipping';
 import { signInEmailReducer } from '../signin-email';
 import { storeCreditReducer } from '../store-credit';
 import { subscriptionsReducer } from '../subscription';

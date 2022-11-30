@@ -1,6 +1,9 @@
 import ConsignmentState from './consignment-state';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
-import ShippingAddressSelector, { createShippingAddressSelectorFactory, ShippingAddressSelectorFactory } from './shipping-address-selector';
+import ShippingAddressSelector, {
+    createShippingAddressSelectorFactory,
+    ShippingAddressSelectorFactory,
+} from './shipping-address-selector';
 
 describe('ShippingAddressSelector', () => {
     let createShippingAddressSelector: ShippingAddressSelectorFactory;
@@ -16,8 +19,9 @@ describe('ShippingAddressSelector', () => {
         it('returns the current shipping address', () => {
             shippingAddressSelector = createShippingAddressSelector(consignmentState);
 
-            expect(shippingAddressSelector.getShippingAddress())
-                .toEqual(getConsignment().shippingAddress);
+            expect(shippingAddressSelector.getShippingAddress()).toEqual(
+                getConsignment().shippingAddress,
+            );
         });
 
         describe('when there is no shipping information', () => {

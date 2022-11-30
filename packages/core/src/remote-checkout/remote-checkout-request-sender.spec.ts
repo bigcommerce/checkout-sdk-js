@@ -4,7 +4,12 @@ import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
-import { getRemoteBillingResponseBody, getRemotePaymentResponseBody, getRemoteShippingResponseBody, getRemoteTokenResponseBody } from './remote-checkout.mock';
+import {
+    getRemoteBillingResponseBody,
+    getRemotePaymentResponseBody,
+    getRemoteShippingResponseBody,
+    getRemoteTokenResponseBody,
+} from './remote-checkout.mock';
 
 describe('RemoteCheckoutRequestSender', () => {
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
@@ -22,10 +27,17 @@ describe('RemoteCheckoutRequestSender', () => {
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
-        const output = await remoteCheckoutRequestSender.initializeBilling('amazon', params, options);
+        const output = await remoteCheckoutRequestSender.initializeBilling(
+            'amazon',
+            params,
+            options,
+        );
 
         expect(output).toEqual(response);
-        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/billing', { ...options, params });
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/billing', {
+            ...options,
+            params,
+        });
     });
 
     it('sends request to initialize shipping', async () => {
@@ -35,10 +47,17 @@ describe('RemoteCheckoutRequestSender', () => {
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
-        const output = await remoteCheckoutRequestSender.initializeShipping('amazon', params, options);
+        const output = await remoteCheckoutRequestSender.initializeShipping(
+            'amazon',
+            params,
+            options,
+        );
 
         expect(output).toEqual(response);
-        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/shipping', { ...options, params });
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/shipping', {
+            ...options,
+            params,
+        });
     });
 
     it('sends request to initialize payment', async () => {
@@ -48,10 +67,17 @@ describe('RemoteCheckoutRequestSender', () => {
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
-        const output = await remoteCheckoutRequestSender.initializePayment('amazon', params, options);
+        const output = await remoteCheckoutRequestSender.initializePayment(
+            'amazon',
+            params,
+            options,
+        );
 
         expect(output).toEqual(response);
-        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/payment', { ...options, params });
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/payment', {
+            ...options,
+            params,
+        });
     });
 
     it('sends request to sign out from remote checkout provider', async () => {
@@ -87,7 +113,10 @@ describe('RemoteCheckoutRequestSender', () => {
         const output = await remoteCheckoutRequestSender.trackAuthorizationEvent(options);
 
         expect(output).toEqual(response);
-        expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/events/shopper-checkout-service-provider-authorization-requested', options);
+        expect(requestSender.post).toHaveBeenCalledWith(
+            '/remote-checkout/events/shopper-checkout-service-provider-authorization-requested',
+            options,
+        );
     });
 
     it('sends request to forget the remote checkout provider', async () => {
@@ -99,6 +128,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const output = await remoteCheckoutRequestSender.forgetCheckout(options);
 
         expect(output).toEqual(response);
-        expect(requestSender.post).toHaveBeenCalledWith('/remote-checkout/forget-checkout', options);
+        expect(requestSender.post).toHaveBeenCalledWith(
+            '/remote-checkout/forget-checkout',
+            options,
+        );
     });
 });

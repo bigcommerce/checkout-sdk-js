@@ -26,7 +26,7 @@ export default class HostedCardExpiryInput extends HostedInput {
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
         paymentHandler: HostedInputPaymentHandler,
-        private _formatter: CardExpiryFormatter
+        private _formatter: CardExpiryFormatter,
     ) {
         super(
             HostedFieldType.CardExpiry,
@@ -40,7 +40,7 @@ export default class HostedCardExpiryInput extends HostedInput {
             eventPoster,
             inputAggregator,
             inputValidator,
-            paymentHandler
+            paymentHandler,
         );
     }
 

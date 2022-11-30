@@ -1,7 +1,10 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import CountrySelector, { createCountrySelectorFactory, CountrySelectorFactory } from './country-selector';
+import CountrySelector, {
+    CountrySelectorFactory,
+    createCountrySelectorFactory,
+} from './country-selector';
 
 describe('CountrySelector', () => {
     let countrySelector: CountrySelector;
@@ -56,13 +59,13 @@ describe('CountrySelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(countrySelector.isLoading()).toEqual(true);
+            expect(countrySelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading countries', () => {
             countrySelector = createCountrySelector(state.countries);
 
-            expect(countrySelector.isLoading()).toEqual(false);
+            expect(countrySelector.isLoading()).toBe(false);
         });
     });
 });

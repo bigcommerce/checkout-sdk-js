@@ -1,5 +1,11 @@
 import GooglePayBNZInitializer from './googlepay-bnz-initializer';
-import { getCheckoutMock, getBNZPaymentDataMock, getBNZPaymentDataRequest, getBNZPaymentMethodMock, getBNZTokenizedPayload  } from './googlepay.mock';
+import {
+    getBNZPaymentDataMock,
+    getBNZPaymentDataRequest,
+    getBNZPaymentMethodMock,
+    getBNZTokenizedPayload,
+    getCheckoutMock,
+} from './googlepay.mock';
 
 describe('GooglePayBNZInitializer', () => {
     let googlePayInitializer: GooglePayBNZInitializer;
@@ -17,7 +23,7 @@ describe('GooglePayBNZInitializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getBNZPaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getBNZPaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayBNZInitializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getBNZPaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getBNZPaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getBNZTokenizedPayload());
         });

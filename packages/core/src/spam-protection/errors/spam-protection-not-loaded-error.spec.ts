@@ -4,6 +4,6 @@ describe('SpamProtectionNotLoadedError', () => {
     it('returns error name', () => {
         const error = new SpamProtectionNotLoadedError();
 
-        expect(error.name).toEqual('SpamProtectionNotLoadedError');
+        expect(error.name).toBe('SpamProtectionNotLoadedError');
     });
 });

@@ -3,14 +3,23 @@ import { Response } from '@bigcommerce/request-sender';
 import PaymentResponse from '../payment-response';
 
 import PaymentInstrument, { VaultAccessToken } from './instrument';
-import { BankInternalInstrument, InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody, PayPalInternalInstrument } from './instrument-response-body';
+import {
+    BankInternalInstrument,
+    InstrumentErrorResponseBody,
+    InstrumentsResponseBody,
+    InternalInstrument,
+    InternalInstrumentErrorResponseBody,
+    InternalInstrumentsResponseBody,
+    InternalVaultAccessTokenResponseBody,
+    PayPalInternalInstrument,
+} from './instrument-response-body';
 import { mapToBankInstrument } from './map-to-bank-instrument';
 import { mapToCardInstrument } from './map-to-card-instrument';
 import { mapToPayPalInstrument } from './map-to-paypal-instrument';
 
 export default class InstrumentResponseTransformer {
     transformResponse(
-        response: PaymentResponse<InternalInstrumentsResponseBody>
+        response: PaymentResponse<InternalInstrumentsResponseBody>,
     ): Response<InstrumentsResponseBody> {
         const { body, ...payload } = this._transformResponse(response);
 
@@ -23,13 +32,13 @@ export default class InstrumentResponseTransformer {
     }
 
     transformErrorResponse(
-        response: PaymentResponse<InternalInstrumentErrorResponseBody>
+        response: PaymentResponse<InternalInstrumentErrorResponseBody>,
     ): Response<InstrumentErrorResponseBody> {
         return this._transformResponse(response);
     }
 
     transformVaultAccessResponse(
-        response: Response<InternalVaultAccessTokenResponseBody>
+        response: Response<InternalVaultAccessTokenResponseBody>,
     ): Response<VaultAccessToken> {
         return {
             ...response,
@@ -40,26 +49,31 @@ export default class InstrumentResponseTransformer {
         };
     }
 
-    private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): PaymentInstrument[] {
-        return vaultedInstruments
-            .map(instrument => {
-                if (this._isPayPalInstrument(instrument)) {
-                    return mapToPayPalInstrument(instrument);
-                }
+    private _transformVaultedInstruments(
+        vaultedInstruments: InternalInstrument[] = [],
+    ): PaymentInstrument[] {
+        return vaultedInstruments.map((instrument) => {
+            if (this._isPayPalInstrument(instrument)) {
+                return mapToPayPalInstrument(instrument);
+            }
 
-                if (this._isBankInstrument(instrument)) {
-                    return mapToBankInstrument(instrument);
-                }
+            if (this._isBankInstrument(instrument)) {
+                return mapToBankInstrument(instrument);
+            }
 
-                return mapToCardInstrument(instrument);
-            });
+            return mapToCardInstrument(instrument);
+        });
     }
 
-    private _isPayPalInstrument(instrument: InternalInstrument): instrument is PayPalInternalInstrument {
+    private _isPayPalInstrument(
+        instrument: InternalInstrument,
+    ): instrument is PayPalInternalInstrument {
         return instrument.method_type === 'paypal';
     }
 
-    private _isBankInstrument(instrument: InternalInstrument): instrument is BankInternalInstrument {
+    private _isBankInstrument(
+        instrument: InternalInstrument,
+    ): instrument is BankInternalInstrument {
         return instrument.method_type === 'bank';
     }
 

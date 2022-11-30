@@ -1,17 +1,17 @@
-import { PaymentIntegrationSelectors } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { ReadableDataStore } from "@bigcommerce/data-store";
-import { InternalCheckoutSelectors, createCheckoutStore } from "../checkout";
+import { ReadableDataStore } from '@bigcommerce/data-store';
 
-import createPaymentIntegrationSelectors from "./create-payment-integration-selectors";
-import PaymentIntegrationStoreProjectionFactory from "./payment-integration-store-projection-factory";
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-describe("PaymentIntegrationStoreProjectionFactory", () => {
+import { createCheckoutStore, InternalCheckoutSelectors } from '../checkout';
+
+import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
+import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+
+describe('PaymentIntegrationStoreProjectionFactory', () => {
     let subject: PaymentIntegrationStoreProjectionFactory;
     let store: ReadableDataStore<InternalCheckoutSelectors>;
     let selectors: PaymentIntegrationSelectors;
-    let transformer: (
-        selectors: InternalCheckoutSelectors
-    ) => PaymentIntegrationSelectors;
+    let transformer: (selectors: InternalCheckoutSelectors) => PaymentIntegrationSelectors;
 
     beforeEach(() => {
         store = createCheckoutStore();
@@ -20,14 +20,14 @@ describe("PaymentIntegrationStoreProjectionFactory", () => {
         subject = new PaymentIntegrationStoreProjectionFactory(transformer);
     });
 
-    describe("#create", () => {
-        it("returns data store projection that returns payment integration selectors", () => {
+    describe('#create', () => {
+        it('returns data store projection that returns payment integration selectors', () => {
             const output = subject.create(store);
 
             expect(output.getState()).toEqual(selectors);
         });
 
-        it("returns data store projection that notifies subscribers with payment integration selectors", () => {
+        it('returns data store projection that notifies subscribers with payment integration selectors', () => {
             const store = createCheckoutStore();
             const output = subject.create(store);
             const subscriber = jest.fn();

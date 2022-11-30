@@ -1,5 +1,11 @@
 import GooglePayAuthorizeNetInitializer from './googlepay-authorizenet-initializer';
-import { getAuthorizeNetPaymentDataMock,  getAuthorizeNetPaymentDataRequest,  getAuthorizeNetPaymentMethodMock, getAuthorizeNetTokenizedPayload, getCheckoutMock } from './googlepay.mock';
+import {
+    getAuthorizeNetPaymentDataMock,
+    getAuthorizeNetPaymentDataRequest,
+    getAuthorizeNetPaymentMethodMock,
+    getAuthorizeNetTokenizedPayload,
+    getCheckoutMock,
+} from './googlepay.mock';
 
 describe('GooglePayAuthorizeNetInitializer', () => {
     let googlePayInitializer: GooglePayAuthorizeNetInitializer;
@@ -17,7 +23,7 @@ describe('GooglePayAuthorizeNetInitializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getAuthorizeNetPaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getAuthorizeNetPaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayAuthorizeNetInitializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getAuthorizeNetPaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getAuthorizeNetPaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getAuthorizeNetTokenizedPayload());
         });

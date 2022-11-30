@@ -2,7 +2,9 @@ import { isNil, omitBy } from 'lodash';
 
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
-export default function getValidButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+export default function getValidButtonStyle(
+    style: PaypalButtonStyleOptions,
+): PaypalButtonStyleOptions {
     const { color, fundingicons, height, layout, shape, size, tagline } = style;
 
     const validStyles = {

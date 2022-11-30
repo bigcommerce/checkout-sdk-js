@@ -19,32 +19,30 @@ export type CouponSelectorFactory = (state: CouponState) => CouponSelector;
 export function createCouponSelectorFactory(): CouponSelectorFactory {
     const getCoupons = createSelector(
         (state: CouponState) => state.data,
-        data => () => data
+        (data) => () => data,
     );
 
     const getRemoveError = createSelector(
         (state: CouponState) => state.errors.removeCouponError,
-        error => () => error
+        (error) => () => error,
     );
 
     const getApplyError = createSelector(
         (state: CouponState) => state.errors.applyCouponError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isApplying = createSelector(
         (state: CouponState) => !!state.statuses.isApplyingCoupon,
-        status => () => status
+        (status) => () => status,
     );
 
     const isRemoving = createSelector(
         (state: CouponState) => !!state.statuses.isRemovingCoupon,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: CouponState = DEFAULT_STATE
-    ): CouponSelector => {
+    return memoizeOne((state: CouponState = DEFAULT_STATE): CouponSelector => {
         return {
             getCoupons: getCoupons(state),
             getRemoveError: getRemoveError(state),

@@ -2,6 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { ConfigActionType } from './config-actions';
 import { getConfig } from './configs.mock';
+
 import { configReducer, ConfigState } from './index';
 
 describe('configReducer()', () => {

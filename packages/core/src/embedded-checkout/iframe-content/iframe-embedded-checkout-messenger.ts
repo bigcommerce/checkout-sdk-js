@@ -1,8 +1,18 @@
-import { isCustomError, CustomError } from '../../common/error/errors';
+import { CustomError, isCustomError } from '../../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { bindDecorator as bind } from '../../common/utility';
 import EmbeddedCheckoutError from '../embedded-checkout-error';
-import { EmbeddedCheckoutCompleteEvent, EmbeddedCheckoutErrorEvent, EmbeddedCheckoutEvent, EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType, EmbeddedCheckoutFrameErrorEvent, EmbeddedCheckoutFrameLoadedEvent, EmbeddedCheckoutLoadedEvent, EmbeddedCheckoutSignedOutEvent } from '../embedded-checkout-events';
+import {
+    EmbeddedCheckoutCompleteEvent,
+    EmbeddedCheckoutErrorEvent,
+    EmbeddedCheckoutEvent,
+    EmbeddedCheckoutEventMap,
+    EmbeddedCheckoutEventType,
+    EmbeddedCheckoutFrameErrorEvent,
+    EmbeddedCheckoutFrameLoadedEvent,
+    EmbeddedCheckoutLoadedEvent,
+    EmbeddedCheckoutSignedOutEvent,
+} from '../embedded-checkout-events';
 import EmbeddedCheckoutStyles from '../embedded-checkout-styles';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
@@ -18,7 +28,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
         private _messageListener: IframeEventListener<EmbeddedContentEventMap>,
         private _messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>,
         private _untargetedMessagePoster: IframeEventPoster<EmbeddedCheckoutEvent>,
-        private _messageHandlers: EventCallbacks<EmbeddedCheckoutEventMap> = {}
+        private _messageHandlers: EventCallbacks<EmbeddedCheckoutEventMap> = {},
     ) {
         this._messageListener.listen();
     }
@@ -81,9 +91,12 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
     }
 
     receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void {
-        this._messageListener.addListener(EmbeddedContentEventType.StyleConfigured, ({ payload }) => {
-            handler(payload);
-        });
+        this._messageListener.addListener(
+            EmbeddedContentEventType.StyleConfigured,
+            ({ payload }) => {
+                handler(payload);
+            },
+        );
     }
 
     private _postMessage(message: EmbeddedCheckoutEvent, options?: { untargeted?: boolean }): void {
@@ -97,18 +110,17 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
     }
 
     private _notifyMessageHandlers(message: EmbeddedCheckoutEvent): void {
-        Object.keys(this._messageHandlers)
-            .forEach(key => {
-                if (message.type !== key) {
-                    return;
-                }
+        Object.keys(this._messageHandlers).forEach((key) => {
+            if (message.type !== key) {
+                return;
+            }
 
-                const handler = this._messageHandlers[key];
+            const handler = this._messageHandlers[key];
 
-                if (handler) {
-                    (handler as (event: EmbeddedCheckoutEvent) => void).call(null, message);
-                }
-            });
+            if (handler) {
+                (handler as (event: EmbeddedCheckoutEvent) => void).call(null, message);
+            }
+        });
     }
 
     private _transformError(error: Error | CustomError): EmbeddedCheckoutError {

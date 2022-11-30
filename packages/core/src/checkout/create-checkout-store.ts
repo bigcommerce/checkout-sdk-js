@@ -10,15 +10,15 @@ import { createInternalCheckoutSelectorsFactory } from './create-internal-checko
 
 export default function createCheckoutStore(
     initialState: Partial<CheckoutStoreState> = {},
-    options?: CheckoutStoreOptions
+    options?: CheckoutStoreOptions,
 ): CheckoutStore {
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
     const createInternalCheckoutSelectors = createInternalCheckoutSelectorsFactory();
     const stateTransformer = (state: CheckoutStoreState) => createInternalCheckoutSelectors(state);
 
-    return createDataStore(
-        createCheckoutStoreReducer(),
-        initialState,
-        { actionTransformer, stateTransformer, ...options }
-    );
+    return createDataStore(createCheckoutStoreReducer(), initialState, {
+        actionTransformer,
+        stateTransformer,
+        ...options,
+    });
 }

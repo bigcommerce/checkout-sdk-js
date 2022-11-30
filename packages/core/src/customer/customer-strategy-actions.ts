@@ -22,42 +22,42 @@ export enum CustomerStrategyActionType {
 }
 
 export type CustomerStrategyAction =
-    CustomerStrategySignInAction |
-    CustomerStrategySignOutAction |
-    CustomerStrategyExecutePaymentMethodCheckoutAction |
-    CustomerStrategyInitializeAction |
-    CustomerStrategyDeinitializeAction |
-    CustomerStrategyWidgetAction;
+    | CustomerStrategySignInAction
+    | CustomerStrategySignOutAction
+    | CustomerStrategyExecutePaymentMethodCheckoutAction
+    | CustomerStrategyInitializeAction
+    | CustomerStrategyDeinitializeAction
+    | CustomerStrategyWidgetAction;
 
 export type CustomerStrategySignInAction =
-    SignInRequestedAction |
-    SignInSucceededAction |
-    SignInFailedAction;
+    | SignInRequestedAction
+    | SignInSucceededAction
+    | SignInFailedAction;
 
 export type CustomerStrategySignOutAction =
-    SignOutRequestedAction |
-    SignOutSucceededAction |
-    SignOutFailedAction;
+    | SignOutRequestedAction
+    | SignOutSucceededAction
+    | SignOutFailedAction;
 
 export type CustomerStrategyExecutePaymentMethodCheckoutAction =
-    ExecutePaymentMethodCheckoutRequestedAction |
-    ExecutePaymentMethodCheckoutSucceededAction |
-    ExecutePaymentMethodCheckoutFailedAction;
+    | ExecutePaymentMethodCheckoutRequestedAction
+    | ExecutePaymentMethodCheckoutSucceededAction
+    | ExecutePaymentMethodCheckoutFailedAction;
 
 export type CustomerStrategyInitializeAction =
-    InitializeRequestedAction |
-    InitializeSucceededAction |
-    InitializeFailedAction;
+    | InitializeRequestedAction
+    | InitializeSucceededAction
+    | InitializeFailedAction;
 
 export type CustomerStrategyDeinitializeAction =
-    DeinitializeRequestedAction |
-    DeinitializeSucceededAction |
-    DeinitializeFailedAction;
+    | DeinitializeRequestedAction
+    | DeinitializeSucceededAction
+    | DeinitializeFailedAction;
 
 export type CustomerStrategyWidgetAction =
-    WidgetInteractionStartedAction |
-    WidgetInteractionFinishedAction |
-    WidgetInteractionFailedAction;
+    | WidgetInteractionStartedAction
+    | WidgetInteractionFinishedAction
+    | WidgetInteractionFailedAction;
 
 export interface SignInRequestedAction extends Action {
     type: CustomerStrategyActionType.SignInRequested;

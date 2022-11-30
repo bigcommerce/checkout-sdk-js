@@ -19,36 +19,36 @@ export enum ShippingStrategyActionType {
 }
 
 export type ShippingStrategyAction =
-    ShippingStrategyUpdateAddressAction |
-    ShippingStrategySelectOptionAction |
-    ShippingStrategyInitializeAction |
-    ShippingStrategyDeinitializeAction |
-    ShippingStrategyWidgetAction;
+    | ShippingStrategyUpdateAddressAction
+    | ShippingStrategySelectOptionAction
+    | ShippingStrategyInitializeAction
+    | ShippingStrategyDeinitializeAction
+    | ShippingStrategyWidgetAction;
 
 export type ShippingStrategyUpdateAddressAction =
-    UpdateAddressRequestedAction |
-    UpdateAddressSucceededAction |
-    UpdateAddressFailedAction;
+    | UpdateAddressRequestedAction
+    | UpdateAddressSucceededAction
+    | UpdateAddressFailedAction;
 
 export type ShippingStrategySelectOptionAction =
-    SelectOptionRequestedAction |
-    SelectOptionSucceededAction |
-    SelectOptionFailedAction;
+    | SelectOptionRequestedAction
+    | SelectOptionSucceededAction
+    | SelectOptionFailedAction;
 
 export type ShippingStrategyInitializeAction =
-    InitializeRequestedAction |
-    InitializeSucceededAction |
-    InitializeFailedAction;
+    | InitializeRequestedAction
+    | InitializeSucceededAction
+    | InitializeFailedAction;
 
 export type ShippingStrategyDeinitializeAction =
-    DeinitializeRequestedAction |
-    DeinitializeSucceededAction |
-    DeinitializeFailedAction;
+    | DeinitializeRequestedAction
+    | DeinitializeSucceededAction
+    | DeinitializeFailedAction;
 
 export type ShippingStrategyWidgetAction =
-    WidgetInteractionStartedAction |
-    WidgetInteractionFinishedAction |
-    WidgetInteractionFailedAction;
+    | WidgetInteractionStartedAction
+    | WidgetInteractionFinishedAction
+    | WidgetInteractionFailedAction;
 
 export interface UpdateAddressRequestedAction extends Action {
     type: ShippingStrategyActionType.UpdateAddressRequested;

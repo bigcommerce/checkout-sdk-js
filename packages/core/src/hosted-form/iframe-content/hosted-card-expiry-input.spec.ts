@@ -12,7 +12,10 @@ import HostedInputValidator from './hosted-input-validator';
 
 describe('HostedCardExpiryInput', () => {
     let container: HTMLFormElement;
-    let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
+    let eventListener: Pick<
+        IframeEventListener<HostedFieldEventMap>,
+        'addListener' | 'listen' | 'stopListen'
+    >;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'post' | 'setTarget'>;
     let expiryFormatter: Pick<CardExpiryFormatter, 'format'>;
     let input: HostedCardExpiryInput;
@@ -34,10 +37,12 @@ describe('HostedCardExpiryInput', () => {
         expiryFormatter = { format: jest.fn() };
         inputAggregator = { getInputValues: jest.fn() };
         inputValidator = {
-            validate: jest.fn(() => Promise.resolve({
-                isValid: true,
-                errors: {},
-            })),
+            validate: jest.fn(() =>
+                Promise.resolve({
+                    isValid: true,
+                    errors: {},
+                }),
+            ),
         };
         paymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
@@ -57,7 +62,7 @@ describe('HostedCardExpiryInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
-            expiryFormatter as CardExpiryFormatter
+            expiryFormatter as CardExpiryFormatter,
         );
     });
 
@@ -66,13 +71,11 @@ describe('HostedCardExpiryInput', () => {
     });
 
     it('returns input type', () => {
-        expect(input.getType())
-            .toEqual(HostedFieldType.CardExpiry);
+        expect(input.getType()).toEqual(HostedFieldType.CardExpiry);
     });
 
     it('formats input on change', () => {
-        jest.spyOn(expiryFormatter, 'format')
-            .mockReturnValue('10 / 20');
+        jest.spyOn(expiryFormatter, 'format').mockReturnValue('10 / 20');
 
         input.attach();
 
@@ -82,9 +85,7 @@ describe('HostedCardExpiryInput', () => {
         element.value = '1020';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(expiryFormatter.format)
-            .toHaveBeenCalledWith('1020');
-        expect(element.value)
-            .toEqual('10 / 20');
+        expect(expiryFormatter.format).toHaveBeenCalledWith('1020');
+        expect(element.value).toBe('10 / 20');
     });
 });

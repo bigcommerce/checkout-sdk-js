@@ -7,7 +7,7 @@ import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-paym
 
 export default function createBraintreeVisaCheckoutPaymentProcessor(
     scriptLoader: ScriptLoader,
-    requestSender: RequestSender
+    requestSender: RequestSender,
 ) {
     const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
     const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);

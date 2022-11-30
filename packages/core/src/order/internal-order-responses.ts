@@ -3,7 +3,10 @@ import { InternalCustomer } from '../customer';
 
 import InternalOrder from './internal-order';
 
-export type InternalOrderResponseBody = InternalResponseBody<InternalOrderResponseData, InternalOrderResponseMeta>;
+export type InternalOrderResponseBody = InternalResponseBody<
+    InternalOrderResponseData,
+    InternalOrderResponseMeta
+>;
 
 export interface InternalOrderResponseData {
     customer: InternalCustomer;

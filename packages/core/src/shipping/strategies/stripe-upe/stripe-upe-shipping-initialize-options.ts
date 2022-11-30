@@ -44,6 +44,7 @@ export default interface StripeUPEShippingInitializeOptions {
 
     /**
      * get the state code needed for shipping stripe element
+     *
      * @param country
      * @param state
      */

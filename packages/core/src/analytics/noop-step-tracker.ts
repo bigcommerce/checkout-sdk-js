@@ -1,19 +1,11 @@
 import StepTracker from './step-tracker';
 
 export default class NoopStepTracker implements StepTracker {
-    trackCheckoutStarted(): void {
-        return;
-    }
+    trackCheckoutStarted(): void {}
 
-    trackOrderComplete(): void {
-        return;
-    }
+    trackOrderComplete(): void {}
 
-    trackStepViewed(): void {
-        return;
-    }
+    trackStepViewed(): void {}
 
-    trackStepCompleted(): void {
-        return;
-    }
+    trackStepCompleted(): void {}
 }

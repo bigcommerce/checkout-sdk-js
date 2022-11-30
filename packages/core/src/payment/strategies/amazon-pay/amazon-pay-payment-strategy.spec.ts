@@ -1,14 +1,30 @@
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
+import {
+    BillingAddressActionCreator,
+    BillingAddressActionType,
+    BillingAddressRequestSender,
+} from '../../../billing';
 import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutStoreState,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    RequestError,
+} from '../../../common/error/errors';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -16,8 +32,15 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
+import {
+    RemoteCheckoutActionCreator,
+    RemoteCheckoutActionType,
+    RemoteCheckoutRequestSender,
+} from '../../../remote-checkout';
+import {
+    getRemoteCheckoutState,
+    getRemoteCheckoutStateData,
+} from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import PaymentMethod from '../../payment-method';
@@ -80,10 +103,12 @@ describe('AmazonPayPaymentStrategy', () => {
                 }
             });
 
-            element.addEventListener('error', event => {
-                this.options.onError(Object.assign(new Error(), {
-                    getErrorCode: () => (event as any).detail.code,
-                }));
+            element.addEventListener('error', (event) => {
+                this.options.onError(
+                    Object.assign(new Error(), {
+                        getErrorCode: () => (event as any).detail.code,
+                    }),
+                );
             });
         }
     }
@@ -103,20 +128,20 @@ describe('AmazonPayPaymentStrategy', () => {
         });
         billingAddressActionCreator = new BillingAddressActionCreator(
             billingAddressRequestSender,
-            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
         );
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender),
-            checkoutActionCreator
+            checkoutActionCreator,
         );
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
         strategy = new AmazonPayPaymentStrategy(
@@ -124,7 +149,7 @@ describe('AmazonPayPaymentStrategy', () => {
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
         );
         walletSpy = jest.fn();
         hostWindow = window;
@@ -135,9 +160,15 @@ describe('AmazonPayPaymentStrategy', () => {
         };
 
         paymentMethod = getAmazonPay();
-        initializeBillingAction = of(createAction(RemoteCheckoutActionType.InitializeRemoteBillingRequested));
-        initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
-        updateAddressAction = of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
+        initializeBillingAction = of(
+            createAction(RemoteCheckoutActionType.InitializeRemoteBillingRequested),
+        );
+        initializePaymentAction = of(
+            createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested),
+        );
+        updateAddressAction = of(
+            createAction(BillingAddressActionType.UpdateBillingAddressRequested),
+        );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         container.setAttribute('id', 'wallet');
@@ -158,17 +189,19 @@ describe('AmazonPayPaymentStrategy', () => {
             return Promise.resolve();
         });
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-            .mockReturnValue(initializePaymentAction);
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockReturnValue(
+            initializePaymentAction,
+        );
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
-            .mockReturnValue(initializeBillingAction);
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling').mockReturnValue(
+            initializeBillingAction,
+        );
 
-        jest.spyOn(billingAddressActionCreator, 'updateAddress')
-            .mockReturnValue(updateAddressAction);
+        jest.spyOn(billingAddressActionCreator, 'updateAddress').mockReturnValue(
+            updateAddressAction,
+        );
     });
 
     afterEach(() => {
@@ -202,11 +235,14 @@ describe('AmazonPayPaymentStrategy', () => {
         const { merchantId } = paymentMethod.config;
 
         strategy = new AmazonPayPaymentStrategy(
-            createCheckoutStore({ remoteCheckout: { data: {} }, paymentMethods: getPaymentMethodsState() }),
+            createCheckoutStore({
+                remoteCheckout: { data: {} },
+                paymentMethods: getPaymentMethodsState(),
+            }),
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
         );
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
@@ -223,11 +259,14 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('sets order reference id when order reference gets created', async () => {
         strategy = new AmazonPayPaymentStrategy(
-            createCheckoutStore({ remoteCheckout: { data: {} }, paymentMethods: getPaymentMethodsState() }),
+            createCheckoutStore({
+                remoteCheckout: { data: {} },
+                paymentMethods: getPaymentMethodsState(),
+            }),
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
         );
 
         jest.spyOn(remoteCheckoutActionCreator, 'updateCheckout');
@@ -240,18 +279,22 @@ describe('AmazonPayPaymentStrategy', () => {
             element.dispatchEvent(new CustomEvent('ready'));
         }
 
-        expect(remoteCheckoutActionCreator.updateCheckout)
-            .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
-            });
+        expect(remoteCheckoutActionCreator.updateCheckout).toHaveBeenCalledWith(paymentMethod.id, {
+            referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
+        });
     });
 
     it('rejects with error if initialization fails', async () => {
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue({ ...paymentMethod, config: {} });
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+            ...paymentMethod,
+            config: {},
+        });
 
         try {
-            await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                amazon: { container: 'wallet' },
+            });
         } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
@@ -259,7 +302,10 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('rejects with error if initialization fails because of invalid container', async () => {
         try {
-            await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'missingWallet' } });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                amazon: { container: 'missingWallet' },
+            });
         } catch (error) {
             expect(error).toBeInstanceOf(InvalidArgumentError);
         }
@@ -269,10 +315,15 @@ describe('AmazonPayPaymentStrategy', () => {
         const onError = jest.fn();
         const element = document.getElementById('wallet');
 
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
+        await strategy.initialize({
+            methodId: paymentMethod.id,
+            amazon: { container: 'wallet', onError },
+        });
 
         if (element) {
-            element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
+            element.dispatchEvent(
+                new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }),
+            );
         }
 
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
@@ -280,7 +331,9 @@ describe('AmazonPayPaymentStrategy', () => {
         onError.mockReset();
 
         if (element) {
-            element.dispatchEvent(new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }));
+            element.dispatchEvent(
+                new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }),
+            );
         }
 
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
@@ -290,16 +343,25 @@ describe('AmazonPayPaymentStrategy', () => {
         const onError = jest.fn();
         const element = document.getElementById('wallet');
 
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
+        await strategy.initialize({
+            methodId: paymentMethod.id,
+            amazon: { container: 'wallet', onError },
+        });
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
-            .mockReturnValue(of(createErrorAction(RemoteCheckoutActionType.InitializeRemoteBillingFailed, new Error())));
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling').mockReturnValue(
+            of(
+                createErrorAction(
+                    RemoteCheckoutActionType.InitializeRemoteBillingFailed,
+                    new Error(),
+                ),
+            ),
+        );
 
         if (element) {
             element.dispatchEvent(new CustomEvent('paymentSelect'));
         }
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
@@ -321,22 +383,25 @@ describe('AmazonPayPaymentStrategy', () => {
                 useStoreCredit: undefined,
             });
 
-        expect(orderActionCreator.submitOrder)
-            .toHaveBeenCalledWith({
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+            {
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
-            }, options);
+            },
+            options,
+        );
 
         expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('refreshes wallet when there is provider widget error', async () => {
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(createErrorAction(
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
+            createErrorAction(
                 OrderActionType.SubmitOrderFailed,
-                getErrorResponse({ type: 'provider_widget_error', status: '', errors: [] })
-            ));
+                getErrorResponse({ type: 'provider_widget_error', status: '', errors: [] }),
+            ),
+        );
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
@@ -352,8 +417,9 @@ describe('AmazonPayPaymentStrategy', () => {
     it('returns error response if order submission fails', async () => {
         const response = getErrorResponse();
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(createErrorAction(OrderActionType.SubmitOrderFailed, response));
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
+            createErrorAction(OrderActionType.SubmitOrderFailed, response),
+        );
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
@@ -376,12 +442,14 @@ describe('AmazonPayPaymentStrategy', () => {
             element.dispatchEvent(new CustomEvent('paymentSelect'));
         }
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(remoteCheckoutActionCreator.initializeBilling)
-            .toHaveBeenCalledWith(paymentMethod.id, expect.objectContaining({
+        expect(remoteCheckoutActionCreator.initializeBilling).toHaveBeenCalledWith(
+            paymentMethod.id,
+            expect.objectContaining({
                 referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
-            }));
+            }),
+        );
 
         const { email, shouldSaveAddress, ...address } = getBillingAddress();
 
@@ -404,7 +472,7 @@ describe('AmazonPayPaymentStrategy', () => {
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
         );
 
         jest.spyOn(store, 'dispatch');
@@ -417,7 +485,7 @@ describe('AmazonPayPaymentStrategy', () => {
             element.dispatchEvent(new CustomEvent('paymentSelect'));
         }
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).not.toHaveBeenCalledWith(updateAddressAction);
@@ -439,7 +507,7 @@ describe('AmazonPayPaymentStrategy', () => {
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
-            scriptLoader
+            scriptLoader,
         );
 
         jest.spyOn(store, 'dispatch');
@@ -452,7 +520,7 @@ describe('AmazonPayPaymentStrategy', () => {
             element.dispatchEvent(new CustomEvent('paymentSelect'));
         }
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).not.toHaveBeenCalledWith(updateAddressAction);
@@ -483,20 +551,22 @@ describe('AmazonPayPaymentStrategy', () => {
         let store3ds: CheckoutStore;
         let strategy3ds: AmazonPayPaymentStrategy;
         let amazonConfirmationFlow: AmazonPayConfirmationFlow;
+
         amazon3ds.config.is3dsEnabled = true;
 
         beforeEach(async () => {
             options = { methodId: paymentMethod.id };
 
             store3ds = createCheckoutStore({
-                remoteCheckout: {data: {}}, paymentMethods: paymentMethodsState,
+                remoteCheckout: { data: {} },
+                paymentMethods: paymentMethodsState,
             });
             strategy3ds = new AmazonPayPaymentStrategy(
                 store3ds,
                 orderActionCreator,
                 billingAddressActionCreator,
                 remoteCheckoutActionCreator,
-                scriptLoader
+                scriptLoader,
             );
 
             amazonConfirmationFlow = {
@@ -504,11 +574,13 @@ describe('AmazonPayPaymentStrategy', () => {
                 error: jest.fn(),
             };
 
-            await strategy3ds.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
+            await strategy3ds.initialize({
+                methodId: paymentMethod.id,
+                amazon: { container: 'wallet' },
+            });
         });
 
         it('redirects to confirmation flow success when support 3ds', async () => {
-
             const remoteCheckout = {
                 referenceId: 'referenceId',
                 shipping: {},
@@ -516,50 +588,56 @@ describe('AmazonPayPaymentStrategy', () => {
 
             jest.spyOn(store3ds, 'getState');
 
-            jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout')
-                .mockReturnValue(remoteCheckout);
+            jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout').mockReturnValue(
+                remoteCheckout,
+            );
 
             if (hostWindow.OffAmazonPayments) {
-                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
-                    callback(amazonConfirmationFlow);
-                });
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn(
+                    (_sellerId, _referenceId, callback) => {
+                        callback(amazonConfirmationFlow);
+                    },
+                );
 
                 strategy3ds.execute(payload, options);
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(hostWindow.OffAmazonPayments.initConfirmationFlow).toHaveBeenCalled();
             }
-
         });
 
         it('redirects to confirmation flow success when support 3ds and extract OrderReferenceId from InitializationData', async () => {
             if (hostWindow.OffAmazonPayments) {
-                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
-                    callback(amazonConfirmationFlow);
-                });
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn(
+                    (_sellerId, _referenceId, callback) => {
+                        callback(amazonConfirmationFlow);
+                    },
+                );
 
                 strategy3ds.execute(payload, options);
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(hostWindow.OffAmazonPayments.initConfirmationFlow).toHaveBeenCalled();
             }
-
         });
 
         it('redirects to confirmation flow  error when initializePayment fails', async () => {
             if (hostWindow.OffAmazonPayments) {
-                jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-                    .mockImplementation(() => {
+                jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(
+                    () => {
                         throw new Error('error');
-                    });
+                    },
+                );
 
-                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
-                    callback(amazonConfirmationFlow).catch((error: Error) => {
-                        expect(error).toBeInstanceOf(Error);
-                    });
-                });
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn(
+                    (_sellerId, _referenceId, callback) => {
+                        callback(amazonConfirmationFlow).catch((error: Error) => {
+                            expect(error).toBeInstanceOf(Error);
+                        });
+                    },
+                );
 
                 try {
                     await strategy3ds.execute(payload, options);
@@ -570,8 +648,10 @@ describe('AmazonPayPaymentStrategy', () => {
         });
 
         it('returns NotInitializedError when referenceId is undefined', async () => {
-            jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout')
-                .mockReturnValue({ referenceId: undefined });
+            jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout').mockReturnValue({
+                referenceId: undefined,
+            });
+
             try {
                 await strategy3ds.execute(payload, options);
             } catch (error) {
@@ -581,6 +661,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         it('returns NotInitializedError when payload.payment is undefined', async () => {
             payload.payment = undefined;
+
             try {
                 await strategy3ds.execute(payload, options);
             } catch (error) {

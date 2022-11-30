@@ -50,8 +50,7 @@ describe('HostedInputAggregator', () => {
     });
 
     it('gathers all adjacent hosted inputs', () => {
-        expect(aggregator.getInputs())
-            .toEqual(frames.map(frame => frame.hostedInput));
+        expect(aggregator.getInputs()).toEqual(frames.map((frame) => frame.hostedInput));
     });
 
     it('does not throw error if there are other iframes in parent window that belong to different origin than itself', () => {
@@ -61,8 +60,9 @@ describe('HostedInputAggregator', () => {
             },
         } as unknown as HostedInputWindow);
 
-        expect(aggregator.getInputs())
-            .toEqual(frames.slice(0, -1).map(frame => frame.hostedInput));
+        expect(aggregator.getInputs()).toEqual(
+            frames.slice(0, -1).map((frame) => frame.hostedInput),
+        );
     });
 
     it('does not throw error if there are other iframes in parent window that belong to different origin than itself in IE 11', () => {
@@ -72,8 +72,9 @@ describe('HostedInputAggregator', () => {
             },
         } as unknown as HostedInputWindow);
 
-        expect(aggregator.getInputs())
-            .toEqual(frames.slice(0, -1).map(frame => frame.hostedInput));
+        expect(aggregator.getInputs()).toEqual(
+            frames.slice(0, -1).map((frame) => frame.hostedInput),
+        );
     });
 
     it('does not fail silently if unable to gather adjacent hosted inputs for other reasons', () => {
@@ -83,30 +84,34 @@ describe('HostedInputAggregator', () => {
             },
         } as unknown as HostedInputWindow);
 
-        expect(() => aggregator.getInputs())
-            .toThrowError(TypeError);
+        expect(() => aggregator.getInputs()).toThrow(TypeError);
     });
 
     it('gathers all adjacent hosted inputs that satisfy filter', () => {
-        expect(aggregator.getInputs(field => includes([HostedFieldType.CardCode, HostedFieldType.CardExpiry], field.getType())))
-            .toEqual([frames[0].hostedInput, frames[1].hostedInput]);
+        expect(
+            aggregator.getInputs((field) =>
+                includes([HostedFieldType.CardCode, HostedFieldType.CardExpiry], field.getType()),
+            ),
+        ).toEqual([frames[0].hostedInput, frames[1].hostedInput]);
     });
 
     it('gathers all values of adjacent hosted inputs', () => {
-        expect(aggregator.getInputValues())
-            .toEqual({
-                [HostedFieldType.CardCode]: '123',
-                [HostedFieldType.CardExpiry]: '10 / 20',
-                [HostedFieldType.CardName]: 'Good Shopper',
-                [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
-            });
+        expect(aggregator.getInputValues()).toEqual({
+            [HostedFieldType.CardCode]: '123',
+            [HostedFieldType.CardExpiry]: '10 / 20',
+            [HostedFieldType.CardName]: 'Good Shopper',
+            [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
+        });
     });
 
     it('gathers all values of adjacent hosted inputs that satisfy filter', () => {
-        expect(aggregator.getInputValues(field => includes([HostedFieldType.CardCode, HostedFieldType.CardExpiry], field.getType())))
-            .toEqual({
-                [HostedFieldType.CardCode]: '123',
-                [HostedFieldType.CardExpiry]: '10 / 20',
-            });
+        expect(
+            aggregator.getInputValues((field) =>
+                includes([HostedFieldType.CardCode, HostedFieldType.CardExpiry], field.getType()),
+            ),
+        ).toEqual({
+            [HostedFieldType.CardCode]: '123',
+            [HostedFieldType.CardExpiry]: '10 / 20',
+        });
     });
 });

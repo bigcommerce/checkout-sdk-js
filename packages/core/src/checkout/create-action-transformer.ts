@@ -5,21 +5,27 @@ import { catchError } from 'rxjs/operators';
 import { RequestErrorFactory } from '../common/error';
 
 export default function createActionTransformer(
-    requestErrorFactory: RequestErrorFactory
+    requestErrorFactory: RequestErrorFactory,
 ): (action: Subscribable<Action>) => Observable<Action> {
-    return action$ => from(action$).pipe(catchError<Action, never>(action => {
-        if (action instanceof Error || action.payload instanceof Error) {
-            throw action;
-        }
+    return (action$) =>
+        from(action$).pipe(
+            catchError<Action, never>((action) => {
+                if (action instanceof Error || action.payload instanceof Error) {
+                    throw action;
+                }
 
-        if (isResponse(action.payload)) {
-            const message = action.payload.body && action.payload.body.detail;
+                if (isResponse(action.payload)) {
+                    const message = action.payload.body && action.payload.body.detail;
 
-            throw { ...action, payload: requestErrorFactory.createError(action.payload, message) };
-        }
+                    throw {
+                        ...action,
+                        payload: requestErrorFactory.createError(action.payload, message),
+                    };
+                }
 
-        throw action;
-    }));
+                throw action;
+            }),
+        );
 }
 
 function isResponse(object: any) {
@@ -27,7 +33,7 @@ function isResponse(object: any) {
         return false;
     }
 
-    return ['body', 'headers', 'status', 'statusText'].every(key =>
-        Object.prototype.hasOwnProperty.call(object, key)
+    return ['body', 'headers', 'status', 'statusText'].every((key) =>
+        Object.prototype.hasOwnProperty.call(object, key),
     );
 }

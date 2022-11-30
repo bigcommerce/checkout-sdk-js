@@ -22,55 +22,65 @@ import { StripeUPEShippingStrategy } from './strategies/stripe-upe';
 
 export default function createShippingStrategyRegistry(
     store: CheckoutStore,
-    requestSender: RequestSender
+    requestSender: RequestSender,
 ): Registry<ShippingStrategy> {
     const registry = new Registry<ShippingStrategy>();
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
-    const consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+    const consignmentActionCreator = new ConsignmentActionCreator(
+        consignmentRequestSender,
+        checkoutRequestSender,
+    );
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(
+        new PaymentMethodRequestSender(requestSender),
+    );
     const scriptLoader = getScriptLoader();
 
-    registry.register('amazon', () =>
-        new AmazonPayShippingStrategy(
-            store,
-            consignmentActionCreator,
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
-            new RemoteCheckoutActionCreator(
-                new RemoteCheckoutRequestSender(requestSender),
-                new CheckoutActionCreator(
-                    new CheckoutRequestSender(requestSender),
-                    new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-                    new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
-                )),
-            new AmazonPayScriptLoader(getScriptLoader())
-        )
+    registry.register(
+        'amazon',
+        () =>
+            new AmazonPayShippingStrategy(
+                store,
+                consignmentActionCreator,
+                new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+                new RemoteCheckoutActionCreator(
+                    new RemoteCheckoutRequestSender(requestSender),
+                    new CheckoutActionCreator(
+                        new CheckoutRequestSender(requestSender),
+                        new ConfigActionCreator(new ConfigRequestSender(requestSender)),
+                        new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
+                    ),
+                ),
+                new AmazonPayScriptLoader(getScriptLoader()),
+            ),
     );
 
-    registry.register('amazonpay', () =>
-        new AmazonPayV2ShippingStrategy(
-            store,
-            consignmentActionCreator,
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
-            createAmazonPayV2PaymentProcessor(),
-            new ShippingStrategyActionCreator(registry)
-        )
+    registry.register(
+        'amazonpay',
+        () =>
+            new AmazonPayV2ShippingStrategy(
+                store,
+                consignmentActionCreator,
+                new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
+                createAmazonPayV2PaymentProcessor(),
+                new ShippingStrategyActionCreator(registry),
+            ),
     );
 
-    registry.register('stripeupe', () =>
-        new StripeUPEShippingStrategy(
-            store,
-            new StripeScriptLoader(scriptLoader),
-            consignmentActionCreator,
-            paymentMethodActionCreator
-        )
+    registry.register(
+        'stripeupe',
+        () =>
+            new StripeUPEShippingStrategy(
+                store,
+                new StripeScriptLoader(scriptLoader),
+                consignmentActionCreator,
+                paymentMethodActionCreator,
+            ),
     );
 
-    registry.register('default', () =>
-        new DefaultShippingStrategy(
-            store,
-            consignmentActionCreator
-        )
+    registry.register(
+        'default',
+        () => new DefaultShippingStrategy(store, consignmentActionCreator),
     );
 
     return registry;

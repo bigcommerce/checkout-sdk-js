@@ -7,21 +7,30 @@ import { LoadShippingCountriesAction, ShippingCountryActionType } from './shippi
 import ShippingCountryRequestSender from './shipping-country-request-sender';
 
 export default class ShippingCountryActionCreator {
-    constructor(
-        private _shippingCountryRequestSender: ShippingCountryRequestSender
-    ) {}
+    constructor(private _shippingCountryRequestSender: ShippingCountryRequestSender) {}
 
     loadCountries(options?: RequestOptions): Observable<LoadShippingCountriesAction> {
         return Observable.create((observer: Observer<LoadShippingCountriesAction>) => {
             observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesRequested));
 
-            this._shippingCountryRequestSender.loadCountries(options)
-                .then(response => {
-                    observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesSucceeded, response.body.data));
+            this._shippingCountryRequestSender
+                .loadCountries(options)
+                .then((response) => {
+                    observer.next(
+                        createAction(
+                            ShippingCountryActionType.LoadShippingCountriesSucceeded,
+                            response.body.data,
+                        ),
+                    );
                     observer.complete();
                 })
-                .catch(response => {
-                    observer.error(createErrorAction(ShippingCountryActionType.LoadShippingCountriesFailed, response));
+                .catch((response) => {
+                    observer.error(
+                        createErrorAction(
+                            ShippingCountryActionType.LoadShippingCountriesFailed,
+                            response,
+                        ),
+                    );
                 });
         });
     }

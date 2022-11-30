@@ -3,14 +3,15 @@ import { switchMap, take } from 'rxjs/operators';
 import { RequestError } from '../common/error/errors';
 import { PaymentAdditionalAction } from '../payment';
 
-import { CardingProtectionChallengeNotCompletedError, CardingProtectionFailedError, SpamProtectionChallengeNotCompletedError } from './errors';
+import {
+    CardingProtectionChallengeNotCompletedError,
+    CardingProtectionFailedError,
+    SpamProtectionChallengeNotCompletedError,
+} from './errors';
 import GoogleRecaptcha from './google-recaptcha';
 
 export default class PaymentHumanVerificationHandler {
-
-    constructor(
-        private _googleRecaptcha: GoogleRecaptcha
-    ) {}
+    constructor(private _googleRecaptcha: GoogleRecaptcha) {}
 
     handle(error: Error): Promise<PaymentAdditionalAction>;
     handle(id: string, key: string): Promise<PaymentAdditionalAction>;
@@ -22,7 +23,9 @@ export default class PaymentHumanVerificationHandler {
         return this.handleWithPaymentHumanVerificationRequestError(errorOrId);
     }
 
-    private async handleWithPaymentHumanVerificationRequestError(error: Error): Promise<PaymentAdditionalAction> {
+    private async handleWithPaymentHumanVerificationRequestError(
+        error: Error,
+    ): Promise<PaymentAdditionalAction> {
         if (!this._isPaymentHumanVerificationRequest(error)) {
             throw error;
         }
@@ -32,7 +35,10 @@ export default class PaymentHumanVerificationHandler {
         return this._performRecaptcha();
     }
 
-    private async handleWithRecaptchaSitekey(id: string, key?: string): Promise<PaymentAdditionalAction> {
+    private async handleWithRecaptchaSitekey(
+        id: string,
+        key?: string,
+    ): Promise<PaymentAdditionalAction> {
         if (id !== 'recaptcha_v2') {
             throw Error('Human verification method is not supported.');
         }
@@ -47,30 +53,35 @@ export default class PaymentHumanVerificationHandler {
     }
 
     private _performRecaptcha(): Promise<PaymentAdditionalAction> {
-        return this._googleRecaptcha.execute()
+        return this._googleRecaptcha
+            .execute()
             .pipe(take(1))
-            .pipe(switchMap(async ({ error, token }) => {
-                if (error instanceof SpamProtectionChallengeNotCompletedError) {
-                    throw new CardingProtectionChallengeNotCompletedError();
-                }
+            .pipe(
+                switchMap(async ({ error, token }) => {
+                    if (error instanceof SpamProtectionChallengeNotCompletedError) {
+                        throw new CardingProtectionChallengeNotCompletedError();
+                    }
 
-                if (error || !token) {
-                    throw new CardingProtectionFailedError();
-                }
+                    if (error || !token) {
+                        throw new CardingProtectionFailedError();
+                    }
 
-                return {
-                    type: 'recaptcha_v2_verification',
-                    data: {
-                        human_verification_token: token,
-                    },
-                };
-            })).toPromise();
+                    return {
+                        type: 'recaptcha_v2_verification',
+                        data: {
+                            human_verification_token: token,
+                        },
+                    };
+                }),
+            )
+            .toPromise();
     }
 
     private _initialize(recaptchaSitekey: string): Promise<void> {
         const cardingProtectionElementId = 'cardingProtectionContainer';
 
         let cardingProtectionElement = document.getElementById(cardingProtectionElementId);
+
         if (cardingProtectionElement && cardingProtectionElement.parentNode) {
             cardingProtectionElement.parentNode.removeChild(cardingProtectionElement);
         }
@@ -85,8 +96,10 @@ export default class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest(error: Error): error is RequestError {
         const { additional_action_required, status } = (error as RequestError).body || {};
 
-        return status === 'additional_action_required'
-            && additional_action_required
-            && additional_action_required.type === 'recaptcha_v2_verification';
+        return (
+            status === 'additional_action_required' &&
+            additional_action_required &&
+            additional_action_required.type === 'recaptcha_v2_verification'
+        );
     }
 }

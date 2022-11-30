@@ -1,8 +1,18 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
+import {
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError,
+    PaymentMethodFailedError,
+} from '../../errors';
 import { isHostedInstrumentLike } from '../../index';
 import isVaultedInstrument, { isHostedVaultedInstrument } from '../../is-vaulted-instrument';
 import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';
@@ -27,21 +37,26 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
-        private _credit: boolean = false
+        private _credit: boolean = false,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
 
         if (!this._paymentMethod || !this._paymentMethod.nonce) {
-            this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
+            this._paymentMethod = this._store
+                .getState()
+                .paymentMethods.getPaymentMethodOrThrow(methodId);
         }
 
         if (this._paymentMethod.clientToken) {
             return this._loadPaypal(braintreeOptions);
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+        );
+
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         if (!this._paymentMethod.clientToken) {
@@ -51,16 +66,30 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         return this._loadPaypal(braintreeOptions);
     }
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        orderRequest: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        return (payment ? this._preparePaymentData(payment, order.useStoreCredit) : Promise.resolve(payment))
-            .then(payment => Promise.all([payment, this._store.dispatch(this._orderActionCreator.submitOrder(order, options))]))
-            .then(([payment]) => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
+        return (
+            payment
+                ? this._preparePaymentData(payment, order.useStoreCredit)
+                : Promise.resolve(payment)
+        )
+            .then((payment) =>
+                Promise.all([
+                    payment,
+                    this._store.dispatch(this._orderActionCreator.submitOrder(order, options)),
+                ]),
+            )
+            .then(([payment]) =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment)),
+            )
             .catch((error: Error) => this._handleError(error));
     }
 
@@ -69,8 +98,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        return this._braintreePaymentProcessor.deinitialize()
-            .then(() => this._store.getState());
+        return this._braintreePaymentProcessor.deinitialize().then(() => this._store.getState());
     }
 
     private _handleError(error: BraintreeError | Error): never {
@@ -85,7 +113,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         throw new PaymentMethodFailedError(error.message);
     }
 
-    private async _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {
+    private async _preparePaymentData(
+        payment: OrderPaymentRequestBody,
+        useStoreCredit?: boolean,
+    ): Promise<Payment> {
         const state = this._store.getState();
 
         const grandTotal = state.checkout.getOutstandingBalance(useStoreCredit);
@@ -103,12 +134,21 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { currency, storeProfile: { storeLanguage } } = config;
-        const { nonce, config: { isVaultingEnabled } } = this._paymentMethod;
+        const {
+            currency,
+            storeProfile: { storeLanguage },
+        } = config;
+        const {
+            nonce,
+            config: { isVaultingEnabled },
+        } = this._paymentMethod;
         const { methodId, paymentData = {} } = payment;
 
         if (nonce) {
-            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+            const state = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+            );
+
             this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
             return Promise.resolve({ ...payment, paymentData: this._formattedPayload(nonce) });
@@ -116,7 +156,9 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         if (isVaultedInstrument(paymentData) || isHostedVaultedInstrument(paymentData)) {
             if (!isVaultingEnabled) {
-                throw new InvalidArgumentError('Vaulting is disabled but a vaulted instrument was being used for this transaction');
+                throw new InvalidArgumentError(
+                    'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+                );
             }
 
             return Promise.resolve(payment);
@@ -129,12 +171,16 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = paymentData;
 
         if (shouldSaveInstrument && !isVaultingEnabled) {
-            throw new InvalidArgumentError('Vaulting is disabled but shouldSaveInstrument is set to true');
+            throw new InvalidArgumentError(
+                'Vaulting is disabled but shouldSaveInstrument is set to true',
+            );
         }
 
         const shippingAddress = state.shippingAddress.getShippingAddress();
 
-        const shippingAddressOverride = shippingAddress ? mapToBraintreeShippingAddressOverride(shippingAddress) : undefined;
+        const shippingAddressOverride = shippingAddress
+            ? mapToBraintreeShippingAddressOverride(shippingAddress)
+            : undefined;
 
         return Promise.all([
             this._braintreePaymentProcessor.paypal({
@@ -146,16 +192,25 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 shouldSaveInstrument: shouldSaveInstrument || false,
             }),
             this._braintreePaymentProcessor.getSessionId(),
-        ]).then(([
-            { nonce, details } = {} as any,
-            sessionId,
-        ]) => ({
+        ]).then(([{ nonce, details } = {} as any, sessionId]) => ({
             ...payment,
-            paymentData: this._formattedPayload(nonce, details && details.email, sessionId, shouldSaveInstrument, shouldSetAsDefaultInstrument),
+            paymentData: this._formattedPayload(
+                nonce,
+                details && details.email,
+                sessionId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            ),
         }));
     }
 
-    private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean, shouldSetAsDefaultInstrument?: boolean): FormattedPayload<PaypalInstrument> {
+    private _formattedPayload(
+        token: string,
+        email?: string,
+        sessionId?: string,
+        vaultPaymentInstrument?: boolean,
+        shouldSetAsDefaultInstrument?: boolean,
+    ): FormattedPayload<PaypalInstrument> {
         return {
             formattedPayload: {
                 vault_payment_instrument: vaultPaymentInstrument || null,
@@ -169,13 +224,18 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _loadPaypal(braintreeOptions?: BraintreePaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    private _loadPaypal(
+        braintreeOptions?: BraintreePaymentInitializeOptions,
+    ): Promise<InternalCheckoutSelectors> {
         if (!this._paymentMethod || !this._paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, braintreeOptions);
+            this._braintreePaymentProcessor.initialize(
+                this._paymentMethod.clientToken,
+                braintreeOptions,
+            );
 
             this._braintreePaymentProcessor.preloadPaypal();
         } catch (error) {

@@ -1,8 +1,6 @@
 import { noop, without } from 'lodash';
 
-import {
-    HostedForm as HostedFormInterface
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';

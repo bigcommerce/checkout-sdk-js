@@ -4,6 +4,6 @@ describe('CardingProtectionChallengeNotCompletedError', () => {
     it('returns error name', () => {
         const error = new CardingProtectionChallengeNotCompletedError();
 
-        expect(error.name).toEqual('CardingProtectionChallengeNotCompletedError');
+        expect(error.name).toBe('CardingProtectionChallengeNotCompletedError');
     });
 });

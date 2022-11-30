@@ -1,7 +1,14 @@
 import { noop } from 'lodash';
 import shallowEqual from 'shallowequal';
 
-import { isRootCacheKeyMap, isTerminalCacheKeyMap, ChildCacheKeyMap, IntermediateCacheKeyMap, RootCacheKeyMap, TerminalCacheKeyMap } from './cache-key-maps';
+import {
+    ChildCacheKeyMap,
+    IntermediateCacheKeyMap,
+    isRootCacheKeyMap,
+    isTerminalCacheKeyMap,
+    RootCacheKeyMap,
+    TerminalCacheKeyMap,
+} from './cache-key-maps';
 
 export interface CacheKeyResolverOptions {
     maxSize?: number;
@@ -78,7 +85,10 @@ export default class CacheKeyResolver {
                 // quicker access
                 parentMap.maps.unshift(...parentMap.maps.splice(mapIndex, 1));
 
-                if ((args.length === 0 || index === args.length - 1) && isTerminalCacheKeyMap(map)) {
+                if (
+                    (args.length === 0 || index === args.length - 1) &&
+                    isTerminalCacheKeyMap(map)
+                ) {
                     return { index, map, parentMap };
                 }
 
@@ -97,7 +107,10 @@ export default class CacheKeyResolver {
         return { index, parentMap };
     }
 
-    private _generateMap(parent: RootCacheKeyMap | IntermediateCacheKeyMap, args: any[]): TerminalCacheKeyMap {
+    private _generateMap(
+        parent: RootCacheKeyMap | IntermediateCacheKeyMap,
+        args: any[],
+    ): TerminalCacheKeyMap {
         let index = 0;
         let parentMap = parent;
         let map: IntermediateCacheKeyMap;
@@ -133,11 +146,7 @@ export default class CacheKeyResolver {
 
         const index = this._usedMaps.indexOf(recentlyUsedMap);
 
-        this._usedMaps.splice(
-            index === -1 ? 0 : index,
-            index === -1 ? 0 : 1,
-            recentlyUsedMap
-        );
+        this._usedMaps.splice(index === -1 ? 0 : index, index === -1 ? 0 : 1, recentlyUsedMap);
 
         if (this._usedMaps.length <= this._options.maxSize) {
             return;

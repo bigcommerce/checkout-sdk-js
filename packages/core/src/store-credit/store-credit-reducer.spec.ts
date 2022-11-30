@@ -21,20 +21,24 @@ describe('storeCreditReducer()', () => {
 
         const action = createErrorAction(
             StoreCreditActionType.ApplyStoreCreditFailed,
-            new RequestError(getErrorResponse(errorResponseBody))
+            new RequestError(getErrorResponse(errorResponseBody)),
         );
 
-        expect(storeCreditReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { applyError: action.payload },
-            statuses: { isApplying: false },
-        }));
+        expect(storeCreditReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                errors: { applyError: action.payload },
+                statuses: { isApplying: false },
+            }),
+        );
     });
 
     it('returns new state while applying store credit', () => {
         const action = createAction(StoreCreditActionType.ApplyStoreCreditRequested);
 
-        expect(storeCreditReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isApplying: true },
-        }));
+        expect(storeCreditReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isApplying: true },
+            }),
+        );
     });
 });

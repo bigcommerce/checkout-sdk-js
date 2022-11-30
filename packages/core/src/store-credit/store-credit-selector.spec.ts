@@ -1,6 +1,9 @@
 import { RequestError } from '../common/error/errors';
 
-import StoreCreditSelector, { createStoreCreditSelectorFactory, StoreCreditSelectorFactory } from './store-credit-selector';
+import StoreCreditSelector, {
+    createStoreCreditSelectorFactory,
+    StoreCreditSelectorFactory,
+} from './store-credit-selector';
 import StoreCreditState from './store-credit-state';
 
 describe('StoreCreditSelector', () => {
@@ -42,13 +45,13 @@ describe('StoreCreditSelector', () => {
                 statuses: { isApplying: true },
             });
 
-            expect(selector.isApplying()).toEqual(true);
+            expect(selector.isApplying()).toBe(true);
         });
 
         it('returns false if not applying a coupon', () => {
             selector = createStoreCreditSelector(state);
 
-            expect(selector.isApplying()).toEqual(false);
+            expect(selector.isApplying()).toBe(false);
         });
     });
 });

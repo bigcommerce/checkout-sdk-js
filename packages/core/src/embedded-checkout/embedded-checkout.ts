@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { IframeEventListener, IframeEventPoster, IFrameComponent } from '../common/iframe';
+import { IFrameComponent, IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
@@ -33,31 +33,48 @@ export default class EmbeddedCheckout {
         private _requestSender: RequestSender,
         private _storage: BrowserStorage,
         private _location: Location,
-        private _options: EmbeddedCheckoutOptions
+        private _options: EmbeddedCheckoutOptions,
     ) {
         this._isAttached = false;
 
         if (this._options.onComplete) {
-            this._messageListener.addListener(EmbeddedCheckoutEventType.CheckoutComplete, this._options.onComplete);
+            this._messageListener.addListener(
+                EmbeddedCheckoutEventType.CheckoutComplete,
+                this._options.onComplete,
+            );
         }
 
         if (this._options.onError) {
-            this._messageListener.addListener(EmbeddedCheckoutEventType.CheckoutError, this._options.onError);
+            this._messageListener.addListener(
+                EmbeddedCheckoutEventType.CheckoutError,
+                this._options.onError,
+            );
         }
 
         if (this._options.onLoad) {
-            this._messageListener.addListener(EmbeddedCheckoutEventType.CheckoutLoaded, this._options.onLoad);
+            this._messageListener.addListener(
+                EmbeddedCheckoutEventType.CheckoutLoaded,
+                this._options.onLoad,
+            );
         }
 
         if (this._options.onFrameLoad) {
-            this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, this._options.onFrameLoad);
+            this._messageListener.addListener(
+                EmbeddedCheckoutEventType.FrameLoaded,
+                this._options.onFrameLoad,
+            );
         }
 
         if (this._options.onSignOut) {
-            this._messageListener.addListener(EmbeddedCheckoutEventType.SignedOut, this._options.onSignOut);
+            this._messageListener.addListener(
+                EmbeddedCheckoutEventType.SignedOut,
+                this._options.onSignOut,
+            );
         }
 
-        this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, () => this._configureStyles());
+        this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, () =>
+            this._configureStyles(),
+        );
     }
 
     attach(): Promise<this> {
@@ -71,27 +88,26 @@ export default class EmbeddedCheckout {
 
         return this._allowCookie()
             .then(() => this._attemptLogin())
-            .then(url => this._iframeCreator.createFrame(url, this._options.containerId))
-            .then(iframe => {
+            .then((url) => this._iframeCreator.createFrame(url, this._options.containerId))
+            .then((iframe) => {
                 this._iframe = iframe;
 
                 this._configureStyles();
                 this._loadingIndicator.hide();
             })
-            .catch(error => {
+            .catch((error) => {
                 this._isAttached = false;
 
-                return this._retryAllowCookie(error)
-                    .catch(() => {
-                        this._messageListener.trigger({
-                            type: EmbeddedCheckoutEventType.FrameError,
-                            payload: error,
-                        });
-
-                        this._loadingIndicator.hide();
-
-                        throw error;
+                return this._retryAllowCookie(error).catch(() => {
+                    this._messageListener.trigger({
+                        type: EmbeddedCheckoutEventType.FrameError,
+                        payload: error,
                     });
+
+                    this._loadingIndicator.hide();
+
+                    throw error;
+                });
             })
             .then(() => this);
     }
@@ -128,9 +144,10 @@ export default class EmbeddedCheckout {
             return Promise.resolve(this._options.url);
         }
 
-        return this._requestSender.post<{ redirectUrl: string }>(this._options.url)
+        return this._requestSender
+            .post<{ redirectUrl: string }>(this._options.url)
             .then(({ body: { redirectUrl } }) => redirectUrl)
-            .catch(response => Promise.reject(new InvalidLoginTokenError(response)));
+            .catch((response) => Promise.reject(new InvalidLoginTokenError(response)));
     }
 
     /**
@@ -156,7 +173,9 @@ export default class EmbeddedCheckout {
         this._storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now());
 
         const { origin } = parseUrl(this._options.url);
-        const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(this._location.href)}`;
+        const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(
+            this._location.href,
+        )}`;
 
         document.body.style.visibility = 'hidden';
         this._location.replace(redirectUrl);
@@ -166,11 +185,10 @@ export default class EmbeddedCheckout {
 
     private _retryAllowCookie(error: EmbeddedCheckoutError): Promise<void> {
         const lastAttempt = Number(this._storage.getItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY));
-        const canRetry = (
+        const canRetry =
             (!lastAttempt || Date.now() - lastAttempt > ALLOW_COOKIE_ATTEMPT_INTERVAL) &&
             error instanceof NotEmbeddableError &&
-            error.subtype === NotEmbeddableErrorType.MissingContent
-        );
+            error.subtype === NotEmbeddableErrorType.MissingContent;
 
         if (!canRetry) {
             return Promise.reject();

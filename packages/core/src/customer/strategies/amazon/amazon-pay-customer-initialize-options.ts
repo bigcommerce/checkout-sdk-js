@@ -1,4 +1,3 @@
-
 import { StandardError } from '../../../common/error/errors';
 import { AmazonPayWidgetError } from '../../../payment/strategies/amazon-pay';
 

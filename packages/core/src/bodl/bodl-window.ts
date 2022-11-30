@@ -17,28 +17,25 @@ export interface BODLProduct {
     currency?: string;
 }
 
-
 export interface CheckoutBeginData {
-    event_id: string
-    currency: string,
-    channel_id: number,
-    cart_value: number,
-    coupon_codes: string[],
-    line_items: BODLProduct[]
+    event_id: string;
+    currency: string;
+    channel_id: number;
+    cart_value: number;
+    coupon_codes: string[];
+    line_items: BODLProduct[];
 }
 
-
 export interface OrderPurchasedData {
-    event_id: string
-    currency: string,
-    tax: number,
-    channel_id: number,
-    order_id: number,
-    cart_value: number,
-    coupon_codes: string[],
-    shipping_cost: number,
-    line_items: BODLProduct[]
-
+    event_id: string;
+    currency: string;
+    tax: number;
+    channel_id: number;
+    order_id: number;
+    cart_value: number;
+    coupon_codes: string[];
+    shipping_cost: number;
+    line_items: BODLProduct[];
 }
 
 export interface BodlEventsCheckout {
@@ -48,7 +45,7 @@ export interface BodlEventsCheckout {
 }
 
 export interface BodlEventsPayload {
-    [key: string]: unknown
+    [key: string]: unknown;
 }
 
 export interface BodlEvents {

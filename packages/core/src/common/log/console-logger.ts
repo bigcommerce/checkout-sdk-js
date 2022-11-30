@@ -1,9 +1,7 @@
 import Logger from './logger';
 
 export default class ConsoleLogger implements Logger {
-    constructor(
-        private _console?: Console
-    ) {}
+    constructor(private _console?: Console) {}
 
     log(...messages: any[]): void {
         this._logToConsole('log', ...messages);

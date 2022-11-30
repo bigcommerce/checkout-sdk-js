@@ -10,7 +10,9 @@ export enum Mode {
     UndefinedAmazonPay,
 }
 
-export function getAmazonPayV2CheckoutButtonOptions(mode: Mode = Mode.Full): CheckoutButtonInitializeOptions {
+export function getAmazonPayV2CheckoutButtonOptions(
+    mode: Mode = Mode.Full,
+): CheckoutButtonInitializeOptions {
     const methodId = { methodId: CheckoutButtonMethodType.AMAZON_PAY_V2 };
     const containerId = 'amazonpayCheckoutButton';
     const undefinedContainerId = { containerId: '' };
@@ -20,14 +22,19 @@ export function getAmazonPayV2CheckoutButtonOptions(mode: Mode = Mode.Full): Che
     switch (mode) {
         case Mode.UndefinedContainer:
             return { ...methodId, ...undefinedContainerId };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...invalidContainerId };
+
         case Mode.Full:
             return { ...methodId, ...amazonPayV2Options };
+
         case Mode.UndefinedMethodId:
             return { ...amazonPayV2Options } as CheckoutButtonInitializeOptions;
+
         case Mode.UndefinedAmazonPay:
             return { ...getAmazonPayV2CheckoutButtonOptions(Mode.Full), amazonpay: undefined };
+
         default:
             return { ...methodId, containerId };
     }

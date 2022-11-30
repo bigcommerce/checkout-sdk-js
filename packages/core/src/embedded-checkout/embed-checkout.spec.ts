@@ -46,7 +46,7 @@ describe('embedCheckout()', () => {
             expect.any(RequestSender),
             expect.any(BrowserStorage),
             expect.any(Location),
-            options
+            options,
         );
     });
 });

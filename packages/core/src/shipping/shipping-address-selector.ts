@@ -17,23 +17,26 @@ export type ShippingAddressSelectorFactory = (state: ConsignmentState) => Shippi
 export function createShippingAddressSelectorFactory(): ShippingAddressSelectorFactory {
     const getShippingAddress = createSelector(
         (state: ConsignmentState) => state.data,
-        consignments => () => {
-            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
+        (consignments) => () => {
+            const shippingConsignment = consignments?.find(
+                (consignment) => !consignment.selectedPickupOption,
+            );
 
             return shippingConsignment?.shippingAddress;
-        }
+        },
     );
 
     const getShippingAddressOrThrow = createSelector(
         getShippingAddress,
-        getShippingAddress => () => {
-            return guard(getShippingAddress(), () => new MissingDataError(MissingDataErrorType.MissingShippingAddress));
-        }
+        (getShippingAddress) => () => {
+            return guard(
+                getShippingAddress(),
+                () => new MissingDataError(MissingDataErrorType.MissingShippingAddress),
+            );
+        },
     );
 
-    return memoizeOne((
-        state: ConsignmentState = DEFAULT_STATE
-    ): ShippingAddressSelector => {
+    return memoizeOne((state: ConsignmentState = DEFAULT_STATE): ShippingAddressSelector => {
         return {
             getShippingAddress: getShippingAddress(state),
             getShippingAddressOrThrow: getShippingAddressOrThrow(state),

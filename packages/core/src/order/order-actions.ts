@@ -21,31 +21,33 @@ export enum OrderActionType {
     FinalizeOrderFailed = 'FINALIZE_ORDER_FAILED',
 }
 
-export type OrderAction = LoadOrderAction |
-    LoadOrderPaymentsAction |
-    SubmitOrderAction |
-    FinalizeOrderAction;
+export type OrderAction =
+    | LoadOrderAction
+    | LoadOrderPaymentsAction
+    | SubmitOrderAction
+    | FinalizeOrderAction;
 
-export type LoadOrderPaymentsAction = LoadOrderPaymentsRequestedAction |
-    LoadOrderPaymentsSucceededAction |
-    LoadOrderPaymentsFailedAction;
+export type LoadOrderPaymentsAction =
+    | LoadOrderPaymentsRequestedAction
+    | LoadOrderPaymentsSucceededAction
+    | LoadOrderPaymentsFailedAction;
 
 export type LoadOrderAction =
-    LoadOrderRequestedAction |
-    LoadOrderSucceededAction |
-    LoadOrderFailedAction;
+    | LoadOrderRequestedAction
+    | LoadOrderSucceededAction
+    | LoadOrderFailedAction;
 
 export type SubmitOrderAction =
-    SubmitOrderRequestedAction |
-    SubmitOrderSucceededAction |
-    SubmitOrderFailedAction |
-    LoadOrderAction;
+    | SubmitOrderRequestedAction
+    | SubmitOrderSucceededAction
+    | SubmitOrderFailedAction
+    | LoadOrderAction;
 
 export type FinalizeOrderAction =
-    FinalizeOrderRequestedAction |
-    FinalizeOrderSucceededAction |
-    FinalizeOrderFailedAction |
-    LoadOrderAction;
+    | FinalizeOrderRequestedAction
+    | FinalizeOrderSucceededAction
+    | FinalizeOrderFailedAction
+    | LoadOrderAction;
 
 export interface LoadOrderRequestedAction extends Action {
     type: OrderActionType.LoadOrderRequested;

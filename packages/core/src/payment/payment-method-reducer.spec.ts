@@ -3,7 +3,12 @@ import { getErrorResponse } from '../common/http-request/responses.mock';
 import { PaymentMethodActionType } from './payment-method-actions';
 import paymentMethodReducer from './payment-method-reducer';
 import PaymentMethodState from './payment-method-state';
-import { getBraintreePaypal, getPaymentMethod, getPaymentMethods, getPaymentMethodsMeta } from './payment-methods.mock';
+import {
+    getBraintreePaypal,
+    getPaymentMethod,
+    getPaymentMethods,
+    getPaymentMethodsMeta,
+} from './payment-methods.mock';
 
 describe('paymentMethodReducer()', () => {
     let initialState: PaymentMethodState;
@@ -67,9 +72,7 @@ describe('paymentMethodReducer()', () => {
 
         expect(paymentMethodReducer(initialState, action)).toEqual({
             ...initialState,
-            data: [
-                action.payload,
-            ],
+            data: [action.payload],
             errors: {
                 loadMethodId: undefined,
                 loadMethodError: undefined,
@@ -114,17 +117,13 @@ describe('paymentMethodReducer()', () => {
 
         initialState = {
             ...initialState,
-            data: [
-                getPaymentMethod(),
-                getBraintreePaypal(),
-            ],
+            data: [getPaymentMethod(), getBraintreePaypal()],
         };
 
-        expect(paymentMethodReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: [
-                action.payload,
-                getBraintreePaypal(),
-            ],
-        }));
+        expect(paymentMethodReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: [action.payload, getBraintreePaypal()],
+            }),
+        );
     });
 });

@@ -10,7 +10,14 @@ import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
 import { GooglePayBraintreeSDK } from '../braintree';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayAddress, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayAddress,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    GooglePaySDK,
+    TokenizePayload,
+} from './googlepay';
 import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
@@ -125,18 +132,16 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
     return {
         apiVersion: 2,
         apiVersionMinor: 0,
-        merchantInfo: { },
-        allowedPaymentMethods: [{
-            type: 'type',
-            parameters: {
-                allowedAuthMethods: [
-                    'dummy',
-                ],
-                allowedCardNetworks: [
-                    'dummy',
-                ],
+        merchantInfo: {},
+        allowedPaymentMethods: [
+            {
+                type: 'type',
+                parameters: {
+                    allowedAuthMethods: ['dummy'],
+                    allowedCardNetworks: ['dummy'],
+                },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -147,6 +152,7 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
 // AdyenV2
 export function getAdyenV2PaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
+
     googlePaymentDataMock.paymentMethodData.tokenizationData.token = `{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}`;
 
     return googlePaymentDataMock;
@@ -195,7 +201,9 @@ export function getAdyenV2PaymentDataRequest(): GooglePayPaymentDataRequestV2 {
 
 export function getAdyenV2PaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
-    paymentMethodMock.initializationData.gatewayMerchantId = paymentMethodMock.initializationData.paymentGatewayId;
+
+    paymentMethodMock.initializationData.gatewayMerchantId =
+        paymentMethodMock.initializationData.paymentGatewayId;
 
     return paymentMethodMock;
 }
@@ -256,13 +264,16 @@ export function getAuthorizeNetPaymentDataRequest(): GooglePayPaymentDataRequest
 
 export function getAuthorizeNetPaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token =
+        '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
 
     return googlePaymentDataMock;
 }
 
 export function getAuthorizeNetPaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
+
     paymentMethodMock.initializationData.storeCountry = 'US';
 
     return paymentMethodMock;
@@ -271,7 +282,9 @@ export function getAuthorizeNetPaymentMethodMock(): PaymentMethod {
 export function getAuthorizeNetTokenizedPayload(): TokenizePayload {
     return {
         type: 'CARD',
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
         details: {
             cardType: 'MASTERCARD',
             lastFour: '0304',
@@ -279,9 +292,10 @@ export function getAuthorizeNetTokenizedPayload(): TokenizePayload {
     };
 }
 
-//Bank Of New Zealanf
+// Bank Of New Zealanf
 export function getBNZPaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
+
     paymentMethodMock.initializationData.gatewayMerchantId = 'merchantId';
 
     return paymentMethodMock;
@@ -289,7 +303,9 @@ export function getBNZPaymentMethodMock(): PaymentMethod {
 
 export function getBNZPaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token =
+        '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
 
     return googlePaymentDataMock;
 }
@@ -303,25 +319,27 @@ export function getBNZPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
             merchantId: '123',
             merchantName: 'name',
         },
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                billingAddressRequired: true,
-                billingAddressParameters: {
-                    format: BillingAddressFormat.Full,
-                    phoneNumberRequired: true,
-                },
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
                 parameters: {
-                    gateway: 'cybersource',
-                    gatewayMerchantId: 'merchantId',
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'cybersource',
+                        gatewayMerchantId: 'merchantId',
+                    },
                 },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -337,7 +355,9 @@ export function getBNZPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
 
 export function getBNZTokenizedPayload(): TokenizePayload {
     return {
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
         type: 'CARD',
         details: {
             cardType: 'MASTERCARD',
@@ -427,26 +447,28 @@ export function getStripePaymentDataRequest(): GooglePayPaymentDataRequestV2 {
             merchantId: '123',
             merchantName: 'name',
         },
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                billingAddressRequired: true,
-                billingAddressParameters: {
-                    format: BillingAddressFormat.Full,
-                    phoneNumberRequired: true,
-                },
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
                 parameters: {
-                    gateway: 'stripe',
-                    'stripe:version': undefined,
-                    'stripe:publishableKey': 'STRIPE_PUBLISHABLE_KEY/STRIPE_CONNECTED_ACCOUNT',
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'stripe',
+                        'stripe:version': undefined,
+                        'stripe:publishableKey': 'STRIPE_PUBLISHABLE_KEY/STRIPE_CONNECTED_ACCOUNT',
+                    },
                 },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -484,6 +506,7 @@ export function getStripePaymentDataMock(): GooglePaymentData {
 
 export function getStripePaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
+
     paymentMethodMock.initializationData.stripePublishableKey = 'STRIPE_PUBLISHABLE_KEY';
     paymentMethodMock.initializationData.stripeConnectedAccount = 'STRIPE_CONNECTED_ACCOUNT';
 
@@ -504,7 +527,9 @@ export function getStripeTokenizedPayload(): TokenizePayload {
 export function getGooglePayTokenizePayloadAuthNet(): TokenizePayload {
     return {
         type: 'CARD',
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
         details: {
             cardType: 'MASTERCARD',
             lastFour: '0304',
@@ -521,25 +546,27 @@ export function getGooglePayCheckoutcomPaymentDataRequestMock(): GooglePayPaymen
             merchantId: '123',
             merchantName: 'name',
         },
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                billingAddressRequired: true,
-                billingAddressParameters: {
-                    format: BillingAddressFormat.Full,
-                    phoneNumberRequired: true,
-                },
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
                 parameters: {
-                    gateway: 'checkoutltd',
-                    gatewayMerchantId: undefined,
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'checkoutltd',
+                        gatewayMerchantId: undefined,
+                    },
                 },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -589,6 +616,7 @@ export function getGooglePayTokenizePayloadCheckoutcom(): TokenizePayload {
 
 export function getCybersourceV2PaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
+
     paymentMethodMock.initializationData.gatewayMerchantId = 'merchantId';
 
     return paymentMethodMock;
@@ -596,7 +624,9 @@ export function getCybersourceV2PaymentMethodMock(): PaymentMethod {
 
 export function getCybersourceV2PaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token =
+        '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
 
     return googlePaymentDataMock;
 }
@@ -610,25 +640,27 @@ export function getCybersourceV2PaymentDataRequest(): GooglePayPaymentDataReques
             merchantId: '123',
             merchantName: 'name',
         },
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                billingAddressRequired: true,
-                billingAddressParameters: {
-                    format: BillingAddressFormat.Full,
-                    phoneNumberRequired: true,
-                },
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
                 parameters: {
-                    gateway: 'cybersource',
-                    gatewayMerchantId: 'merchantId',
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'cybersource',
+                        gatewayMerchantId: 'merchantId',
+                    },
                 },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -644,7 +676,9 @@ export function getCybersourceV2PaymentDataRequest(): GooglePayPaymentDataReques
 
 export function getCybersourceV2TokenizedPayload(): TokenizePayload {
     return {
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
         type: 'CARD',
         details: {
             cardType: 'MASTERCARD',
@@ -655,6 +689,7 @@ export function getCybersourceV2TokenizedPayload(): TokenizePayload {
 
 export function getOrbitalPaymentMethodMock(): PaymentMethod {
     const paymentMethodMock = getPaymentMethodMock();
+
     paymentMethodMock.initializationData.gatewayMerchantId = 'merchantId';
 
     return paymentMethodMock;
@@ -662,7 +697,9 @@ export function getOrbitalPaymentMethodMock(): PaymentMethod {
 
 export function getOrbitalPaymentDataMock(): GooglePaymentData {
     const googlePaymentDataMock = getGooglePaymentDataMock();
-    googlePaymentDataMock.paymentMethodData.tokenizationData.token = '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token =
+        '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
 
     return googlePaymentDataMock;
 }
@@ -676,25 +713,27 @@ export function getOrbitalPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
             merchantId: '123',
             merchantName: 'name',
         },
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                billingAddressRequired: true,
-                billingAddressParameters: {
-                    format: BillingAddressFormat.Full,
-                    phoneNumberRequired: true,
-                },
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
                 parameters: {
-                    gateway: 'chase',
-                    gatewayMerchantId: 'merchantId',
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'chase',
+                        gatewayMerchantId: 'merchantId',
+                    },
                 },
             },
-        }],
+        ],
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
@@ -710,7 +749,9 @@ export function getOrbitalPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
 
 export function getOrbitalTokenizedPayload(): TokenizePayload {
     return {
-        nonce: btoa('{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}'),
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
         type: 'CARD',
         details: {
             cardType: 'MASTERCARD',

@@ -6,12 +6,9 @@ import mergeIncludes from './merge-includes';
  */
 export default function joinOrMergeIncludes<T extends string>(
     baseIncludes: T[],
-    includeDictionaryOrList: { [key in T]?: boolean } | T[] = []
+    includeDictionaryOrList: { [key in T]?: boolean } | T[] = [],
 ): string {
-    return Array.isArray(includeDictionaryOrList) ?
-        joinIncludes([
-            ...baseIncludes,
-            ...includeDictionaryOrList,
-        ]) :
-        mergeIncludes(baseIncludes, includeDictionaryOrList);
+    return Array.isArray(includeDictionaryOrList)
+        ? joinIncludes([...baseIncludes, ...includeDictionaryOrList])
+        : mergeIncludes(baseIncludes, includeDictionaryOrList);
 }

@@ -27,36 +27,36 @@ export enum ConsignmentActionType {
 }
 
 export type ConsignmentAction =
-    CreateConsignmentsAction |
-    UpdateConsignmentAction |
-    DeleteConsignmentAction |
-    UpdateShippingOptionAction |
-    LoadShippingOptionsAction;
+    | CreateConsignmentsAction
+    | UpdateConsignmentAction
+    | DeleteConsignmentAction
+    | UpdateShippingOptionAction
+    | LoadShippingOptionsAction;
 
 export type CreateConsignmentsAction =
-    CreateConsignmentsRequestedAction |
-    CreateConsignmentsSucceededAction |
-    CreateConsignmentsFailedAction;
+    | CreateConsignmentsRequestedAction
+    | CreateConsignmentsSucceededAction
+    | CreateConsignmentsFailedAction;
 
 export type UpdateConsignmentAction =
-    UpdateConsignmentRequestedAction |
-    UpdateConsignmentSucceededAction |
-    UpdateConsignmentFailedAction;
+    | UpdateConsignmentRequestedAction
+    | UpdateConsignmentSucceededAction
+    | UpdateConsignmentFailedAction;
 
 export type DeleteConsignmentAction =
-    DeleteConsignmentRequestedAction |
-    DeleteConsignmentSucceededAction |
-    DeleteConsignmentFailedAction;
+    | DeleteConsignmentRequestedAction
+    | DeleteConsignmentSucceededAction
+    | DeleteConsignmentFailedAction;
 
 export type UpdateShippingOptionAction =
-    UpdateShippingOptionRequestedAction |
-    UpdateShippingOptionSucceededAction |
-    UpdateShippingOptionFailedAction;
+    | UpdateShippingOptionRequestedAction
+    | UpdateShippingOptionSucceededAction
+    | UpdateShippingOptionFailedAction;
 
 export type LoadShippingOptionsAction =
-    LoadShippingOptionsRequestedAction |
-    LoadShippingOptionsSucceededAction |
-    LoadShippingOptionsFailedAction;
+    | LoadShippingOptionsRequestedAction
+    | LoadShippingOptionsSucceededAction
+    | LoadShippingOptionsFailedAction;
 
 export interface CreateConsignmentsRequestedAction extends Action {
     type: ConsignmentActionType.CreateConsignmentsRequested;

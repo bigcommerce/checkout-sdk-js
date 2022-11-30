@@ -4,6 +4,6 @@ describe('TimeoutError', () => {
     it('returns error name', () => {
         const error = new TimeoutError();
 
-        expect(error.name).toEqual('TimeoutError');
+        expect(error.name).toBe('TimeoutError');
     });
 });

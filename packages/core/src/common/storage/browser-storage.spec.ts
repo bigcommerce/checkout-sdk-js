@@ -10,8 +10,7 @@ describe('BrowserStorage', () => {
 
         storage.setItem('message', 'Hello world');
 
-        expect(localStorage.getItem('foobar.message'))
-            .toEqual(JSON.stringify('Hello world'));
+        expect(localStorage.getItem('foobar.message')).toEqual(JSON.stringify('Hello world'));
     });
 
     it('stores item as JSON string and restores it back to its original type when it is retrieved', () => {
@@ -20,11 +19,9 @@ describe('BrowserStorage', () => {
         storage.setItem('flag', true);
         storage.setItem('numbers', [1, 2, 3]);
 
-        expect(storage.getItem('flag'))
-            .toEqual(true);
+        expect(storage.getItem('flag')).toBe(true);
 
-        expect(storage.getItem('numbers'))
-            .toEqual([1, 2, 3]);
+        expect(storage.getItem('numbers')).toEqual([1, 2, 3]);
     });
 
     it('retrieves item and removes it from storage', () => {
@@ -32,11 +29,9 @@ describe('BrowserStorage', () => {
 
         storage.setItem('message', 'Hello world');
 
-        expect(storage.getItemOnce('message'))
-            .toEqual('Hello world');
+        expect(storage.getItemOnce('message')).toBe('Hello world');
 
-        expect(storage.getItem('message'))
-            .toEqual(null);
+        expect(storage.getItem('message')).toBeNull();
     });
 
     it('removes item from storage', () => {
@@ -45,14 +40,12 @@ describe('BrowserStorage', () => {
         storage.setItem('message', 'Hello world');
         storage.removeItem('message');
 
-        expect(storage.getItem('message'))
-            .toEqual(null);
+        expect(storage.getItem('message')).toBeNull();
     });
 
     it('returns null for unknown key', () => {
         const storage = new BrowserStorage('foobar');
 
-        expect(storage.getItem('abc'))
-            .toEqual(null);
+        expect(storage.getItem('abc')).toBeNull();
     });
 });

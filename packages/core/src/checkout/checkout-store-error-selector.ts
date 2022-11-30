@@ -298,39 +298,39 @@ export default interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to fetch pickup options, otherwise undefined.
      */
-     getPickupOptionsError(): Error | undefined;
+    getPickupOptionsError(): Error | undefined;
 }
 
-export type CheckoutStoreErrorSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreErrorSelector;
+export type CheckoutStoreErrorSelectorFactory = (
+    state: InternalCheckoutSelectors,
+) => CheckoutStoreErrorSelector;
 
 export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSelectorFactory {
     const getError = createShallowEqualSelector(
         (selector: Omit<CheckoutStoreErrorSelector, 'getError'>) => selector,
-        selector => () => {
-            for (const key of Object.keys(selector) as Array<keyof Omit<CheckoutStoreErrorSelector, 'getError'>>) {
+        (selector) => () => {
+            for (const key of Object.keys(selector) as Array<
+                keyof Omit<CheckoutStoreErrorSelector, 'getError'>
+            >) {
                 const error = selector[key]();
 
                 if (error) {
                     return error;
                 }
             }
-        }
+        },
     );
 
     const getSelectShippingOptionError = createSelector(
-        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.getSelectOptionError,
+        ({ shippingStrategies }: InternalCheckoutSelectors) =>
+            shippingStrategies.getSelectOptionError,
         ({ consignments }: InternalCheckoutSelectors) => consignments.getUpdateShippingOptionError,
         (getSelectOptionError, getUpdateShippingOptionError) => (consignmentId?: string) => {
-            return (
-                getSelectOptionError() ||
-                getUpdateShippingOptionError(consignmentId)
-            );
-        }
+            return getSelectOptionError() || getUpdateShippingOptionError(consignmentId);
+        },
     );
 
-    return memoizeOne((
-        state: InternalCheckoutSelectors
-    ): CheckoutStoreErrorSelector => {
+    return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreErrorSelector => {
         const selector = {
             getLoadCheckoutError: state.checkout.getLoadError,
             getUpdateCheckoutError: state.checkout.getUpdateError,

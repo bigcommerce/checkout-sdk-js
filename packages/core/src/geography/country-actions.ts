@@ -9,9 +9,9 @@ export enum CountryActionType {
 }
 
 export type LoadCountriesAction =
-    LoadCountriesRequestedAction |
-    LoadCountriesSucceededAction |
-    LoadCountriesFailedAction;
+    | LoadCountriesRequestedAction
+    | LoadCountriesSucceededAction
+    | LoadCountriesFailedAction;
 
 export interface LoadCountriesRequestedAction extends Action {
     type: CountryActionType.LoadCountriesRequested;

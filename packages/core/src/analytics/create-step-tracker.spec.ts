@@ -1,4 +1,4 @@
-import { createCheckoutService, CheckoutService } from '../checkout';
+import { CheckoutService, createCheckoutService } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { StoreConfig } from '../config';
 
@@ -19,7 +19,7 @@ describe('createStepTracker', () => {
     describe('#createStepTracker()', () => {
         describe('when checkoutService has not been initialized', () => {
             it('returns instance of noop logger', () => {
-                expect(() => createStepTracker(checkoutService)).toThrowError(MissingDataError);
+                expect(() => createStepTracker(checkoutService)).toThrow(MissingDataError);
             });
         });
 

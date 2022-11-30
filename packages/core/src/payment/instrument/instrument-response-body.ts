@@ -5,7 +5,10 @@ export interface InstrumentError {
     message: string;
 }
 
-export type InternalInstrument = CardInternalInstrument | PayPalInternalInstrument | BankInternalInstrument;
+export type InternalInstrument =
+    | CardInternalInstrument
+    | PayPalInternalInstrument
+    | BankInternalInstrument;
 
 export interface BaseInternalInstrument {
     bigpay_token: string;

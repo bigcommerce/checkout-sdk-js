@@ -2,12 +2,31 @@ import { includes } from 'lodash';
 
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
-import { CardinalAccount, CardinalAddress, CardinalConsumer, CardinalEventType, CardinalInitializationType, CardinalPartialOrder, CardinalPaymentBrand, CardinalSignatureValidationErrors, CardinalSignatureVerification, CardinalSDK, CardinalTriggerEvents, CardinalValidatedAction, CardinalValidatedData } from './cardinal';
+import {
+    CardinalAccount,
+    CardinalAddress,
+    CardinalConsumer,
+    CardinalEventType,
+    CardinalInitializationType,
+    CardinalPartialOrder,
+    CardinalPaymentBrand,
+    CardinalSDK,
+    CardinalSignatureValidationErrors,
+    CardinalSignatureVerification,
+    CardinalTriggerEvents,
+    CardinalValidatedAction,
+    CardinalValidatedData,
+} from './cardinal';
 import CardinalScriptLoader from './cardinal-script-loader';
 
 export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument;
@@ -27,9 +46,7 @@ export default class CardinalClient {
     private _sdk?: Promise<CardinalSDK>;
     private _configurationToken = '';
 
-    constructor(
-        private _scriptLoader: CardinalScriptLoader
-    ) {}
+    constructor(private _scriptLoader: CardinalScriptLoader) {}
 
     load(provider: string, testMode = false): Promise<void> {
         this._provider = provider;
@@ -39,67 +56,87 @@ export default class CardinalClient {
             this._sdk = this._scriptLoader.load(provider, testMode);
         }
 
-        return this._sdk.then(() => { return; });
+        return this._sdk.then(() => {});
     }
 
     configure(clientToken: string): Promise<void> {
         if (this._configurationToken) {
             if (this._configurationToken === clientToken) {
                 return Promise.resolve();
-            } else {
-                this._sdk = this._scriptLoader.load(`${this._provider}.${Date.now()}`, this._testMode);
             }
+
+            this._sdk = this._scriptLoader.load(`${this._provider}.${Date.now()}`, this._testMode);
         }
 
-        return this._getClientSDK()
-            .then(client => new Promise<void>((resolve, reject) => {
-                client.on(CardinalEventType.SetupCompleted, () => {
-                    client.off(CardinalEventType.SetupCompleted);
-                    client.off(CardinalEventType.Validated);
+        return this._getClientSDK().then(
+            (client) =>
+                new Promise<void>((resolve, reject) => {
+                    client.on(CardinalEventType.SetupCompleted, () => {
+                        client.off(CardinalEventType.SetupCompleted);
+                        client.off(CardinalEventType.Validated);
 
-                    this._configurationToken = clientToken;
+                        this._configurationToken = clientToken;
 
-                    resolve();
-                });
+                        resolve();
+                    });
 
-                client.on(CardinalEventType.Validated, (data: CardinalValidatedData) => {
-                    client.off(CardinalEventType.SetupCompleted);
-                    client.off(CardinalEventType.Validated);
+                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData) => {
+                        client.off(CardinalEventType.SetupCompleted);
+                        client.off(CardinalEventType.Validated);
 
-                    switch (data.ActionCode) {
-                        case CardinalValidatedAction.Error:
-                            if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
-                                reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
-                            }
-                            reject(new PaymentMethodFailedError(data.ErrorDescription));
-                            break;
-                    }
-                });
+                        switch (data.ActionCode) {
+                            case CardinalValidatedAction.Error:
+                                if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
+                                    reject(
+                                        new MissingDataError(
+                                            MissingDataErrorType.MissingPaymentMethod,
+                                        ),
+                                    );
+                                }
 
-                client.setup(CardinalInitializationType.Init, {
-                    jwt: clientToken,
-                });
-            }));
+                                reject(new PaymentMethodFailedError(data.ErrorDescription));
+                                break;
+                        }
+                    });
+
+                    client.setup(CardinalInitializationType.Init, {
+                        jwt: clientToken,
+                    });
+                }),
+        );
     }
 
     runBinProcess(binNumber: string): Promise<void> {
         return this._getClientSDK()
-            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => {}))
-            .then(result => {
+            .then((client) =>
+                client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => {}),
+            )
+            .then((result) => {
                 if (!result || !result.Status) {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
             });
     }
 
-    getThreeDSecureData(threeDSecureData: ThreeDsResult, orderData: CardinalOrderData): Promise<ThreeDSecureToken> {
-        return this._getClientSDK()
-            .then(client => {
-                return new Promise<ThreeDSecureToken>((resolve, reject) => {
-                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt?: string) => {
+    getThreeDSecureData(
+        threeDSecureData: ThreeDsResult,
+        orderData: CardinalOrderData,
+    ): Promise<ThreeDSecureToken> {
+        return this._getClientSDK().then((client) => {
+            return new Promise<ThreeDSecureToken>((resolve, reject) => {
+                client.on(
+                    CardinalEventType.Validated,
+                    (data: CardinalValidatedData, jwt?: string) => {
                         client.off(CardinalEventType.Validated);
+
                         if (!jwt) {
-                            return reject(new PaymentMethodFailedError(data.ErrorDescription ? data.ErrorDescription : 'An error was encountered while processing the transaction.'));
+                            return reject(
+                                new PaymentMethodFailedError(
+                                    data.ErrorDescription
+                                        ? data.ErrorDescription
+                                        : 'An error was encountered while processing the transaction.',
+                                ),
+                            );
                         }
 
                         if (!data.ActionCode) {
@@ -109,34 +146,59 @@ export default class CardinalClient {
                         switch (data.ActionCode) {
                             case CardinalValidatedAction.Success:
                                 return resolve({ token: jwt });
+
                             case CardinalValidatedAction.NoAction:
                                 if (data.ErrorNumber > 0) {
-                                    return reject(new PaymentMethodFailedError(data.ErrorDescription));
-                                } else if (!data.Payment || !data.Payment.ExtendedData || data.Payment.ExtendedData.SignatureVerification !== CardinalSignatureVerification.Yes) {
-                                    return reject(new PaymentMethodFailedError('Transaction signature could not be validated.'));
+                                    return reject(
+                                        new PaymentMethodFailedError(data.ErrorDescription),
+                                    );
+                                } else if (
+                                    !data.Payment ||
+                                    !data.Payment.ExtendedData ||
+                                    data.Payment.ExtendedData.SignatureVerification !==
+                                        CardinalSignatureVerification.Yes
+                                ) {
+                                    return reject(
+                                        new PaymentMethodFailedError(
+                                            'Transaction signature could not be validated.',
+                                        ),
+                                    );
                                 }
 
                                 return resolve({ token: jwt });
+
                             case CardinalValidatedAction.Failure:
-                                return reject(new PaymentMethodFailedError('User failed authentication or an error was encountered while processing the transaction.'));
+                                return reject(
+                                    new PaymentMethodFailedError(
+                                        'User failed authentication or an error was encountered while processing the transaction.',
+                                    ),
+                                );
+
                             case CardinalValidatedAction.Error:
                                 return reject(new PaymentMethodFailedError(data.ErrorDescription));
                         }
-                    });
+                    },
+                );
 
-                    const continueObject = {
-                        AcsUrl: threeDSecureData.acs_url,
-                        Payload: threeDSecureData.merchant_data,
-                    };
+                const continueObject = {
+                    AcsUrl: threeDSecureData.acs_url,
+                    Payload: threeDSecureData.merchant_data,
+                };
 
-                    const partialOrder = this._mapToPartialOrder(orderData, threeDSecureData.payer_auth_request);
+                const partialOrder = this._mapToPartialOrder(
+                    orderData,
+                    threeDSecureData.payer_auth_request,
+                );
 
-                    client.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
-                });
+                client.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
             });
+        });
     }
 
-    private _mapToPartialOrder(orderData: CardinalOrderData, transactionId: string): CardinalPartialOrder {
+    private _mapToPartialOrder(
+        orderData: CardinalOrderData,
+        transactionId: string,
+    ): CardinalPartialOrder {
         const consumer: CardinalConsumer = {
             BillingAddress: this._mapToCardinalAddress(orderData.billingAddress),
         };
@@ -153,7 +215,7 @@ export default class CardinalClient {
             consumer.ShippingAddress = this._mapToCardinalAddress(orderData.shippingAddress);
         }
 
-        return  {
+        return {
             Consumer: consumer,
             OrderDetails: {
                 OrderNumber: orderData.id,

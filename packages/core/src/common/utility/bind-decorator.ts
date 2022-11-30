@@ -2,8 +2,13 @@
  * Decorates a class or a method by binding all its prototype methods or itself
  * to the calling instance respectively.
  */
-function bindDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
+function bindDecorator<T extends Method>(
+    target: object,
+    key: string,
+    descriptor: TypedPropertyDescriptor<T>,
+): TypedPropertyDescriptor<T>;
 function bindDecorator<T extends Constructor<object>>(target: T): T;
+
 function bindDecorator(target: any, key?: any, descriptor?: any): any {
     if (!key || !descriptor) {
         return bindClassDecorator(target);
@@ -21,20 +26,19 @@ export default bindDecorator;
 export function bindClassDecorator<T extends Constructor<object>>(target: T): T {
     const decoratedTarget = class extends target {};
 
-    Object.getOwnPropertyNames(target.prototype)
-        .forEach(key => {
-            const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+    Object.getOwnPropertyNames(target.prototype).forEach((key) => {
+        const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
 
-            if (!descriptor || key === 'constructor') {
-                return;
-            }
+        if (!descriptor || key === 'constructor') {
+            return;
+        }
 
-            Object.defineProperty(
-                decoratedTarget.prototype,
-                key,
-                bindMethodDecorator(target.prototype, key, descriptor)
-            );
-        });
+        Object.defineProperty(
+            decoratedTarget.prototype,
+            key,
+            bindMethodDecorator(target.prototype, key, descriptor),
+        );
+    });
 
     return decoratedTarget;
 }
@@ -42,7 +46,11 @@ export function bindClassDecorator<T extends Constructor<object>>(target: T): T 
 /**
  * Decorates a method by binding it to the calling instance.
  */
-export function bindMethodDecorator<T extends Method>(_: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+export function bindMethodDecorator<T extends Method>(
+    _: object,
+    key: string,
+    descriptor: TypedPropertyDescriptor<T>,
+): TypedPropertyDescriptor<T> {
     if (typeof descriptor.value !== 'function') {
         return descriptor;
     }

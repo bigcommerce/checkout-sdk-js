@@ -13,10 +13,8 @@ export default class LoadingIndicator {
     private _indicator: HTMLElement;
     private _styles: LoadingIndicatorStyles;
 
-    constructor(
-        options?: { styles?: LoadingIndicatorStyles }
-    ) {
-        this._styles = { ...DEFAULT_STYLES, ...options && options.styles };
+    constructor(options?: { styles?: LoadingIndicatorStyles }) {
+        this._styles = { ...DEFAULT_STYLES, ...(options && options.styles) };
 
         this._defineAnimation();
 
@@ -31,7 +29,9 @@ export default class LoadingIndicator {
             const parent = document.getElementById(parentId);
 
             if (!parent) {
-                throw new Error('Unable to attach the loading indicator because the parent ID is not valid.');
+                throw new Error(
+                    'Unable to attach the loading indicator because the parent ID is not valid.',
+                );
             }
 
             parent.appendChild(this._container);
@@ -107,12 +107,15 @@ export default class LoadingIndicator {
         if (style.sheet instanceof CSSStyleSheet) {
             // We need to provide the 2nd parameter for IE11, even though it is
             // 0 by default for all other browsers.
-            style.sheet.insertRule(`
+            style.sheet.insertRule(
+                `
                 @keyframes ${ROTATION_ANIMATION} {
                     0% { transform: translateY(-50%) rotate(0deg); }
                     100% { transform: translateY(-50%) rotate(360deg); }
                 }
-            `, 0);
+            `,
+                0,
+            );
         }
     }
 }

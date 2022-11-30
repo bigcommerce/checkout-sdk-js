@@ -3,6 +3,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { getCardinalScriptMock } from './cardinal.mock';
+
 import { CardinalScriptLoader, CardinalWindow } from './index';
 
 describe('CardinalScriptLoader', () => {
@@ -18,19 +19,21 @@ describe('CardinalScriptLoader', () => {
 
     it('loads widget test script', () => {
         const testMode = true;
+
         cardinalScriptLoader.load('provider', testMode);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js?v=provider'
+            'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
         );
     });
 
     it('loads widget production script', () => {
         const testMode = false;
+
         cardinalScriptLoader.load('provider', testMode);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            'https://songbird.cardinalcommerce.com/edge/v1/songbird.js?v=provider'
+            'https://songbird.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
         );
     });
 
@@ -42,6 +45,7 @@ describe('CardinalScriptLoader', () => {
         });
 
         const script = await cardinalScriptLoader.load('provider');
+
         expect(script).toBe(cardinalWindow.Cardinal);
     });
 

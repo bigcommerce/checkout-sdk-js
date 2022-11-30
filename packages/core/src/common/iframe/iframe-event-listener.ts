@@ -9,9 +9,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
     private _listeners: EventListeners<TEventMap>;
     private _sourceOrigins: string[];
 
-    constructor(
-        sourceOrigin: string
-    ) {
+    constructor(sourceOrigin: string) {
         this._sourceOrigins = [
             parseUrl(sourceOrigin).origin,
             appendWww(parseUrl(sourceOrigin)).origin,
@@ -40,7 +38,10 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
         window.removeEventListener('message', this._handleMessage);
     }
 
-    addListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType]) => void): void {
+    addListener<TType extends keyof TEventMap>(
+        type: TType,
+        listener: (event: TEventMap[TType]) => void,
+    ): void {
         let listeners = this._listeners[type];
 
         if (!listeners) {
@@ -52,7 +53,10 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
         }
     }
 
-    removeListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType]) => void): void {
+    removeListener<TType extends keyof TEventMap>(
+        type: TType,
+        listener: (event: TEventMap[TType]) => void,
+    ): void {
         const listeners = this._listeners[type];
 
         if (!listeners) {
@@ -73,12 +77,13 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
             return;
         }
 
-        listeners.forEach(listener => listener(event));
+        listeners.forEach((listener) => listener(event));
     }
 
     @bind
     private _handleMessage(event: MessageEvent): void {
-        if ((this._sourceOrigins.indexOf(event.origin) === -1) ||
+        if (
+            this._sourceOrigins.indexOf(event.origin) === -1 ||
             !isIframeEvent(event.data as TEventMap[keyof TEventMap], event.data.type)
         ) {
             return;

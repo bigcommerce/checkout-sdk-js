@@ -14,9 +14,7 @@ export default class CurrencyService {
     /**
      * @internal
      */
-    constructor(
-        private _storeConfig: StoreConfig
-    ) {
+    constructor(private _storeConfig: StoreConfig) {
         this._customerFormatter = new CurrencyFormatter(this._storeConfig.shopperCurrency);
         this._storeFormatter = new CurrencyFormatter(this._storeConfig.currency);
     }

@@ -15,25 +15,37 @@ export default class HummPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _formPoster: FormPoster,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
-    ) { }
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+    ) {}
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment?.methodId) {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options),
+        );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(payment.methodId);
+
         if (!paymentMethod.initializationData?.processable) {
-            throw new PaymentExecuteError('payment.humm_not_processable_error', 'hummNotProcessableError');
+            throw new PaymentExecuteError(
+                'payment.humm_not_processable_error',
+                'hummNotProcessableError',
+            );
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment({methodId: payment.methodId}));
+            return await this._store.dispatch(
+                this._paymentActionCreator.submitPayment({ methodId: payment.methodId }),
+            );
         } catch (error) {
             if (this._isOffsiteRedirectResponse(error)) {
                 return this._handleOffsiteRedirectResponse(error);
@@ -77,10 +89,12 @@ export default class HummPaymentStrategy implements PaymentStrategy {
 
         const partialBody: Partial<OffsiteRedirectResponse['body']> = partialResponse.body;
 
-        return partialBody.status === 'additional_action_required'
-            && !!partialBody.additional_action_required
-            && partialBody.additional_action_required.type === 'offsite_redirect'
-            && typeof partialBody.provider_data === 'string';
+        return (
+            partialBody.status === 'additional_action_required' &&
+            !!partialBody.additional_action_required &&
+            partialBody.additional_action_required.type === 'offsite_redirect' &&
+            typeof partialBody.provider_data === 'string'
+        );
     }
 }
 

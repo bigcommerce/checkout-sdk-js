@@ -23,10 +23,7 @@ export function getShippingCoupon(): Coupon {
 
 export function getCouponsState(): CouponState {
     return {
-        data: [
-            getCoupon(),
-            getShippingCoupon(),
-        ],
+        data: [getCoupon(), getShippingCoupon()],
         errors: {},
         statuses: {},
     };

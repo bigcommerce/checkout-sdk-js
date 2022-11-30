@@ -6,6 +6,6 @@ describe('UnrecoverableError', () => {
     it('returns error name', () => {
         const error = new UnrecoverableError(getResponse('Error'));
 
-        expect(error.name).toEqual('UnrecoverableError');
+        expect(error.name).toBe('UnrecoverableError');
     });
 });

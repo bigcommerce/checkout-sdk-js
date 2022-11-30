@@ -264,190 +264,208 @@ export default interface CheckoutStoreSelector {
      * @returns The set of shipping address form fields if it is loaded,
      * otherwise undefined.
      */
-    getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
+    getPickupOptions(
+        consignmentId: string,
+        searchArea: SearchArea,
+    ): PickupOptionResult[] | undefined;
 }
 
-export type CheckoutStoreSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreSelector;
+export type CheckoutStoreSelectorFactory = (
+    state: InternalCheckoutSelectors,
+) => CheckoutStoreSelector;
 
 export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFactory {
     const getCheckout = createSelector(
         ({ checkout }: InternalCheckoutSelectors) => checkout.getCheckout,
-        getCheckout => clone(getCheckout)
+        (getCheckout) => clone(getCheckout),
     );
 
     const getOrder = createSelector(
         ({ order }: InternalCheckoutSelectors) => order.getOrder,
-        getOrder => clone(getOrder)
+        (getOrder) => clone(getOrder),
     );
 
     const getConfig = createSelector(
         ({ config }: InternalCheckoutSelectors) => config.getStoreConfig,
-        getStoreConfig => clone(getStoreConfig)
+        (getStoreConfig) => clone(getStoreConfig),
     );
 
     const getShippingAddress = createSelector(
         ({ shippingAddress }: InternalCheckoutSelectors) => shippingAddress.getShippingAddress,
         ({ config }: InternalCheckoutSelectors) => config.getContextConfig,
-        (getShippingAddress, getContextConfig) => clone(() => {
-            const shippingAddress = getShippingAddress();
-            const context = getContextConfig();
+        (getShippingAddress, getContextConfig) =>
+            clone(() => {
+                const shippingAddress = getShippingAddress();
+                const context = getContextConfig();
 
-            if (!shippingAddress) {
-                if (!context || !context.geoCountryCode) {
-                    return;
+                if (!shippingAddress) {
+                    if (!context || !context.geoCountryCode) {
+                        return;
+                    }
+
+                    return {
+                        firstName: '',
+                        lastName: '',
+                        company: '',
+                        address1: '',
+                        address2: '',
+                        city: '',
+                        stateOrProvince: '',
+                        stateOrProvinceCode: '',
+                        postalCode: '',
+                        country: '',
+                        phone: '',
+                        customFields: [],
+                        countryCode: context.geoCountryCode,
+                    };
                 }
 
-                return {
-                    firstName: '',
-                    lastName: '',
-                    company: '',
-                    address1: '',
-                    address2: '',
-                    city: '',
-                    stateOrProvince: '',
-                    stateOrProvinceCode: '',
-                    postalCode: '',
-                    country: '',
-                    phone: '',
-                    customFields: [],
-                    countryCode: context.geoCountryCode,
-                };
-            }
-
-            return shippingAddress;
-        })
+                return shippingAddress;
+            }),
     );
 
     const getShippingOptions = createSelector(
         ({ consignments }: InternalCheckoutSelectors) => consignments.getConsignments,
-        getConsignments => clone(() => {
-            const consignments = getConsignments();
+        (getConsignments) =>
+            clone(() => {
+                const consignments = getConsignments();
 
-            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
+                const shippingConsignment = consignments?.find(
+                    (consignment) => !consignment.selectedPickupOption,
+                );
 
-            return shippingConsignment?.availableShippingOptions;
-        })
+                return shippingConsignment?.availableShippingOptions;
+            }),
     );
 
     const getConsignments = createSelector(
         ({ consignments }: InternalCheckoutSelectors) => consignments.getConsignments,
-        getConsignments => clone(getConsignments)
+        (getConsignments) => clone(getConsignments),
     );
 
     const getSelectedShippingOption = createSelector(
         ({ consignments }: InternalCheckoutSelectors) => consignments.getConsignments,
-        getConsignments => clone(() => {
-            const consignments = getConsignments();
-            const shippingConsignment = consignments?.find(consignment => !consignment.selectedPickupOption);
+        (getConsignments) =>
+            clone(() => {
+                const consignments = getConsignments();
+                const shippingConsignment = consignments?.find(
+                    (consignment) => !consignment.selectedPickupOption,
+                );
 
-            return shippingConsignment?.selectedShippingOption;
-        })
+                return shippingConsignment?.selectedShippingOption;
+            }),
     );
 
     const getShippingCountries = createSelector(
-        ({ shippingCountries }: InternalCheckoutSelectors) => shippingCountries.getShippingCountries,
-        getShippingCountries => clone(getShippingCountries)
+        ({ shippingCountries }: InternalCheckoutSelectors) =>
+            shippingCountries.getShippingCountries,
+        (getShippingCountries) => clone(getShippingCountries),
     );
 
     const getBillingAddress = createSelector(
         ({ billingAddress }: InternalCheckoutSelectors) => billingAddress.getBillingAddress,
         ({ config }: InternalCheckoutSelectors) => config.getContextConfig,
-        (getBillingAddress, getContextConfig) => clone(() => {
-            const billingAddress = getBillingAddress();
-            const context = getContextConfig();
-            const isEmptyBillingAddress = !billingAddress ||
-                values(omit(billingAddress, 'shouldSaveAddress', 'email', 'id'))
-                    .every(val => !val || !val.length);
+        (getBillingAddress, getContextConfig) =>
+            clone(() => {
+                const billingAddress = getBillingAddress();
+                const context = getContextConfig();
+                const isEmptyBillingAddress =
+                    !billingAddress ||
+                    values(omit(billingAddress, 'shouldSaveAddress', 'email', 'id')).every(
+                        (val) => !val || !val.length,
+                    );
 
-            if (isEmptyBillingAddress) {
-                if (!context || !context.geoCountryCode) {
-                    return billingAddress;
+                if (isEmptyBillingAddress) {
+                    if (!context || !context.geoCountryCode) {
+                        return billingAddress;
+                    }
+
+                    return {
+                        id: billingAddress ? billingAddress.id : '',
+                        firstName: '',
+                        lastName: '',
+                        company: '',
+                        address1: '',
+                        address2: '',
+                        city: '',
+                        email: billingAddress ? billingAddress.email : '',
+                        stateOrProvince: '',
+                        stateOrProvinceCode: '',
+                        postalCode: '',
+                        country: '',
+                        phone: '',
+                        customFields: [],
+                        countryCode: context.geoCountryCode,
+                    };
                 }
 
-                return {
-                    id: billingAddress ? billingAddress.id : '',
-                    firstName: '',
-                    lastName: '',
-                    company: '',
-                    address1: '',
-                    address2: '',
-                    city: '',
-                    email: billingAddress ? billingAddress.email : '',
-                    stateOrProvince: '',
-                    stateOrProvinceCode: '',
-                    postalCode: '',
-                    country: '',
-                    phone: '',
-                    customFields: [],
-                    countryCode: context.geoCountryCode,
-                };
-            }
-
-            return billingAddress;
-        })
+                return billingAddress;
+            }),
     );
 
     const getBillingCountries = createSelector(
         ({ countries }: InternalCheckoutSelectors) => countries.getCountries,
-        getCountries => clone(getCountries)
+        (getCountries) => clone(getCountries),
     );
 
     const getPaymentMethods = createSelector(
         ({ paymentMethods }: InternalCheckoutSelectors) => paymentMethods.getPaymentMethods,
-        getPaymentMethods => clone(getPaymentMethods)
+        (getPaymentMethods) => clone(getPaymentMethods),
     );
 
     const getPaymentMethod = createSelector(
         ({ paymentMethods }: InternalCheckoutSelectors) => paymentMethods.getPaymentMethod,
-        getPaymentMethod => clone(getPaymentMethod)
+        (getPaymentMethod) => clone(getPaymentMethod),
     );
 
     const getSelectedPaymentMethod = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.getPaymentId,
         ({ paymentMethods }: InternalCheckoutSelectors) => paymentMethods.getPaymentMethod,
-        (getPaymentId, getPaymentMethod) => clone(() => {
-            const payment = getPaymentId();
+        (getPaymentId, getPaymentMethod) =>
+            clone(() => {
+                const payment = getPaymentId();
 
-            return payment && getPaymentMethod(payment.providerId, payment.gatewayId);
-        })
+                return payment && getPaymentMethod(payment.providerId, payment.gatewayId);
+            }),
     );
 
     const getCart = createSelector(
         ({ cart }: InternalCheckoutSelectors) => cart.getCart,
-        getCart => clone(getCart)
+        (getCart) => clone(getCart),
     );
 
     const getCoupons = createSelector(
         ({ coupons }: InternalCheckoutSelectors) => coupons.getCoupons,
-        getCoupons => clone(getCoupons)
+        (getCoupons) => clone(getCoupons),
     );
 
     const getGiftCertificates = createSelector(
         ({ giftCertificates }: InternalCheckoutSelectors) => giftCertificates.getGiftCertificates,
-        getGiftCertificates => clone(getGiftCertificates)
+        (getGiftCertificates) => clone(getGiftCertificates),
     );
 
     const getCustomer = createSelector(
         ({ customer }: InternalCheckoutSelectors) => customer.getCustomer,
-        getCustomer => clone(getCustomer)
+        (getCustomer) => clone(getCustomer),
     );
 
     const getSignInEmail = createSelector(
         ({ signInEmail }: InternalCheckoutSelectors) => signInEmail.getEmail,
-        getEmail => clone(getEmail)
+        (getEmail) => clone(getEmail),
     );
 
     const isPaymentDataRequired = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataRequired,
-        isPaymentDataRequired => clone(isPaymentDataRequired)
+        (isPaymentDataRequired) => clone(isPaymentDataRequired),
     );
 
     const isPaymentDataSubmitted = createSelector(
         ({ payment }: InternalCheckoutSelectors) => payment.isPaymentDataSubmitted,
         ({ paymentMethods }: InternalCheckoutSelectors) => paymentMethods.getPaymentMethod,
-        (isPaymentDataSubmitted, getPaymentMethod) => clone((methodId: string, gatewayId?: string) => {
-            return isPaymentDataSubmitted(getPaymentMethod(methodId, gatewayId));
-        })
+        (isPaymentDataSubmitted, getPaymentMethod) =>
+            clone((methodId: string, gatewayId?: string) => {
+                return isPaymentDataSubmitted(getPaymentMethod(methodId, gatewayId));
+            }),
     );
 
     const getInstruments = createSelector(
@@ -455,49 +473,57 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         ({ instruments }: InternalCheckoutSelectors) => instruments.getInstrumentsByPaymentMethod,
         (getInstruments, getInstrumentsByPaymentMethod) => {
             function getInstrumentsSelector(): Instrument[] | undefined;
-            function getInstrumentsSelector(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
-            function getInstrumentsSelector(paymentMethod?: PaymentMethod): PaymentInstrument[] | undefined {
-                return paymentMethod ? getInstrumentsByPaymentMethod(paymentMethod) : getInstruments();
+            function getInstrumentsSelector(
+                paymentMethod: PaymentMethod,
+            ): PaymentInstrument[] | undefined;
+
+            function getInstrumentsSelector(
+                paymentMethod?: PaymentMethod,
+            ): PaymentInstrument[] | undefined {
+                return paymentMethod
+                    ? getInstrumentsByPaymentMethod(paymentMethod)
+                    : getInstruments();
             }
 
             return clone(getInstrumentsSelector);
-        }
+        },
     );
 
     const getCustomerAccountFields = createSelector(
         ({ form }: InternalCheckoutSelectors) => form.getCustomerAccountFields,
-        getCustomerAccountFields => clone(getCustomerAccountFields)
+        (getCustomerAccountFields) => clone(getCustomerAccountFields),
     );
 
     const getBillingAddressFields = createSelector(
         ({ form }: InternalCheckoutSelectors) => form.getBillingAddressFields,
         ({ countries }: InternalCheckoutSelectors) => countries.getCountries,
-        (getBillingAddressFields, getCountries) => clone((countryCode: string) => {
-            return getBillingAddressFields(getCountries(), countryCode);
-        })
+        (getBillingAddressFields, getCountries) =>
+            clone((countryCode: string) => {
+                return getBillingAddressFields(getCountries(), countryCode);
+            }),
     );
 
     const getShippingAddressFields = createSelector(
         ({ form }: InternalCheckoutSelectors) => form.getShippingAddressFields,
-        ({ shippingCountries }: InternalCheckoutSelectors) => shippingCountries.getShippingCountries,
-        (getShippingAddressFields, getShippingCountries) => clone((countryCode: string) => {
-            return getShippingAddressFields(getShippingCountries(), countryCode);
-        })
+        ({ shippingCountries }: InternalCheckoutSelectors) =>
+            shippingCountries.getShippingCountries,
+        (getShippingAddressFields, getShippingCountries) =>
+            clone((countryCode: string) => {
+                return getShippingAddressFields(getShippingCountries(), countryCode);
+            }),
     );
 
     const getFlashMessages = createSelector(
         ({ config }: InternalCheckoutSelectors) => config.getFlashMessages,
-        getFlashMessages => clone(getFlashMessages)
+        (getFlashMessages) => clone(getFlashMessages),
     );
 
     const getPickupOptions = createSelector(
         ({ pickupOptions }: InternalCheckoutSelectors) => pickupOptions.getPickupOptions,
-        getPickupOptions => clone(getPickupOptions)
+        (getPickupOptions) => clone(getPickupOptions),
     );
 
-    return memoizeOne((
-        state: InternalCheckoutSelectors
-    ): CheckoutStoreSelector => {
+    return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
             getOrder: getOrder(state),

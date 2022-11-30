@@ -7,8 +7,16 @@ import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
 import { PaymentHumanVerificationHandler } from '../spam-protection';
 
-import Payment, { FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
-import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
+import Payment, {
+    FormattedHostedInstrument,
+    FormattedPayload,
+    FormattedVaultedInstrument,
+} from './payment';
+import {
+    InitializeOffsitePaymentAction,
+    PaymentActionType,
+    SubmitPaymentAction,
+} from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
 
@@ -22,42 +30,52 @@ interface InitializeOffsitePaymentSettings {
     shouldSetAsDefaultInstrument?: boolean;
 }
 
-type InitializeOffsitePayment = (settings: InitializeOffsitePaymentSettings)
-    => ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors>;
+type InitializeOffsitePayment = (
+    settings: InitializeOffsitePaymentSettings,
+) => ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors>;
 
 export default class PaymentActionCreator {
     constructor(
         private _paymentRequestSender: PaymentRequestSender,
         private _orderActionCreator: OrderActionCreator,
         private _paymentRequestTransformer: PaymentRequestTransformer,
-        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
     ) {}
 
     submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
-        return store => concat(
-            of(createAction(PaymentActionType.SubmitPaymentRequested)),
-            defer(async () => {
-                try {
-                    return await this._paymentRequestSender.submitPayment(
-                        this._paymentRequestTransformer.transform(payment, store.getState())
-                    );
-                } catch (error) {
-                    const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
+        return (store) =>
+            concat(
+                of(createAction(PaymentActionType.SubmitPaymentRequested)),
+                defer(async () => {
+                    try {
+                        return await this._paymentRequestSender.submitPayment(
+                            this._paymentRequestTransformer.transform(payment, store.getState()),
+                        );
+                    } catch (error) {
+                        const additionalAction = await this._paymentHumanVerificationHandler.handle(
+                            error,
+                        );
 
-                    return await this._paymentRequestSender.submitPayment(
-                        this._paymentRequestTransformer.transform({ ...payment, additionalAction }, store.getState())
-                    );
-                }
-            })
-                .pipe(
-                    switchMap(({ body }) => concat(
-                        this._orderActionCreator.loadCurrentOrder()(store),
-                        of(createAction(PaymentActionType.SubmitPaymentSucceeded, body))
-                    ))
-                )
-        ).pipe(
-            catchError(error => throwErrorAction(PaymentActionType.SubmitPaymentFailed, error))
-        );
+                        return await this._paymentRequestSender.submitPayment(
+                            this._paymentRequestTransformer.transform(
+                                { ...payment, additionalAction },
+                                store.getState(),
+                            ),
+                        );
+                    }
+                }).pipe(
+                    switchMap(({ body }) =>
+                        concat(
+                            this._orderActionCreator.loadCurrentOrder()(store),
+                            of(createAction(PaymentActionType.SubmitPaymentSucceeded, body)),
+                        ),
+                    ),
+                ),
+            ).pipe(
+                catchError((error) =>
+                    throwErrorAction(PaymentActionType.SubmitPaymentFailed, error),
+                ),
+            );
     }
 
     initializeOffsitePayment: InitializeOffsitePayment = ({
@@ -69,8 +87,10 @@ export default class PaymentActionCreator {
         shouldSaveInstrument,
         shouldSetAsDefaultInstrument,
     }) => {
-        return store => {
-            let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
+        return (store) => {
+            let paymentData:
+                | FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument>
+                | undefined;
 
             if (instrumentId) {
                 paymentData = { formattedPayload: { bigpay_token: instrumentId } };
@@ -83,14 +103,23 @@ export default class PaymentActionCreator {
                 };
             }
 
-            const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId, paymentData }, store.getState());
+            const payload = this._paymentRequestTransformer.transform(
+                { gatewayId, methodId, paymentData },
+                store.getState(),
+            );
 
             return concat(
                 of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
-                Promise.race([this._paymentRequestSender.initializeOffsitePayment(payload, target), promise].filter(Boolean))
-                    .then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded))
+                Promise.race(
+                    [
+                        this._paymentRequestSender.initializeOffsitePayment(payload, target),
+                        promise,
+                    ].filter(Boolean),
+                ).then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded)),
             ).pipe(
-                catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))
+                catchError((error) =>
+                    throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error),
+                ),
             );
         };
     };

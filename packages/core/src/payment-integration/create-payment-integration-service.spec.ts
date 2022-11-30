@@ -7,7 +7,6 @@ describe('createPaymentIntegrationService', () => {
     it('creates instance of PaymentIntegrationService', () => {
         const instance = createPaymentIntegrationService(createCheckoutStore());
 
-        expect(instance)
-            .toBeInstanceOf(DefaultPaymentIntegrationService);
+        expect(instance).toBeInstanceOf(DefaultPaymentIntegrationService);
     });
 });

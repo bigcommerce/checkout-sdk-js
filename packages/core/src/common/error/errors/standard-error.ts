@@ -18,7 +18,7 @@ export default abstract class StandardError extends Error implements CustomError
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, new.target);
         } else {
-            this.stack = (new Error(this.message)).stack;
+            this.stack = new Error(this.message).stack;
         }
     }
 }

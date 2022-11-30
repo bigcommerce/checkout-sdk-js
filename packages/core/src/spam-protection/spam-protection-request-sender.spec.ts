@@ -25,40 +25,48 @@ describe('SpamProtection Request Sender', () => {
     describe('#validate()', () => {
         it('validates spam protection', async () => {
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await spamProtectionRequestSender.validate(checkoutId, token);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/spam-protection', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/spam-protection',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    body: {
+                        token,
+                    },
                 },
-                body: {
-                    token,
-                },
-            });
+            );
         });
 
         it('validates spam protection with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await spamProtectionRequestSender.validate(checkoutId, token, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/spam-protection', {
-                ...options,
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/spam-protection',
+                {
+                    ...options,
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    body: {
+                        token,
+                    },
                 },
-                body: {
-                    token,
-                },
-            });
+            );
         });
     });
 });

@@ -4,6 +4,6 @@ describe('PaymentMethodCancelledError', () => {
     it('returns error name', () => {
         const error = new PaymentMethodCancelledError();
 
-        expect(error.name).toEqual('PaymentMethodCancelledError');
+        expect(error.name).toBe('PaymentMethodCancelledError');
     });
 });

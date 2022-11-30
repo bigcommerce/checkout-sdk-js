@@ -6,7 +6,10 @@ import { StandardError } from '../../common/error/errors';
  */
 export default class PaymentMethodClientUnavailableError extends StandardError {
     constructor(message?: string) {
-        super(message || 'Unable to proceed because the client library of a payment method is not loaded or ready to be used.');
+        super(
+            message ||
+                'Unable to proceed because the client library of a payment method is not loaded or ready to be used.',
+        );
 
         this.name = 'PaymentMethodClientUnavailableError';
         this.type = 'payment_method_client_unavailable';

@@ -28,7 +28,7 @@ describe('EmbeddedCheckoutMessenger', () => {
         messenger = new IframeEmbeddedCheckoutMessenger(
             messageListener,
             messagePoster,
-            untargetedMessagePoster
+            untargetedMessagePoster,
         );
     });
 
@@ -41,10 +41,7 @@ describe('EmbeddedCheckoutMessenger', () => {
     });
 
     it('posts `complete` event to parent window', () => {
-        const error = new CartChangedError(
-            getCheckout(),
-            getCheckout()
-        );
+        const error = new CartChangedError(getCheckout(), getCheckout());
 
         messenger.postError(error);
 
@@ -104,8 +101,10 @@ describe('EmbeddedCheckoutMessenger', () => {
             payload: styles,
         });
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedContentEventType.StyleConfigured, expect.any(Function));
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedContentEventType.StyleConfigured,
+            expect.any(Function),
+        );
 
         expect(handler).toHaveBeenCalledWith(styles);
     });
@@ -117,7 +116,7 @@ describe('EmbeddedCheckoutMessenger', () => {
             messageListener,
             messagePoster,
             untargetedMessagePoster,
-            { [EmbeddedCheckoutEventType.FrameLoaded]: handler }
+            { [EmbeddedCheckoutEventType.FrameLoaded]: handler },
         );
 
         messenger.postFrameLoaded({ contentId: 'foobar' });
@@ -135,19 +134,17 @@ describe('EmbeddedCheckoutMessenger', () => {
             messageListener,
             messagePoster,
             untargetedMessagePoster,
-            { [EmbeddedCheckoutEventType.FrameLoaded]: handler }
+            { [EmbeddedCheckoutEventType.FrameLoaded]: handler },
         );
 
         messenger.postFrameError(new Error('Unexpected error'));
 
-        expect(handler)
-            .not.toHaveBeenCalled();
+        expect(handler).not.toHaveBeenCalled();
     });
 
     it('has methods that can be destructed', () => {
         const { postComplete } = messenger;
 
-        expect(() => postComplete())
-            .not.toThrow(TypeError);
+        expect(() => postComplete()).not.toThrow(TypeError);
     });
 });

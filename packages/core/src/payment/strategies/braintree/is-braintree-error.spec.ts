@@ -6,14 +6,12 @@ describe('isBraintreeError()', () => {
 
         error.name = 'BraintreeError';
 
-        expect(isBraintreeError(error))
-            .toEqual(true);
+        expect(isBraintreeError(error)).toBe(true);
     });
 
     it('returns false if error is not from Braintree', () => {
         const error = new Error('An unknown error.');
 
-        expect(isBraintreeError(error))
-            .toEqual(false);
+        expect(isBraintreeError(error)).toBe(false);
     });
 });

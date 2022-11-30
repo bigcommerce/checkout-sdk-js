@@ -2,7 +2,7 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -39,29 +39,35 @@ describe('StoreCreditActionCreator', () => {
         it('emits ApplyStoreCreditSucceeded actions if able to apply store credit', () => {
             from(storeCreditActionCreator.applyStoreCredit(true)(store))
                 .pipe(toArray())
-                .subscribe(actions => {
+                .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: StoreCreditActionType.ApplyStoreCreditRequested },
-                        { type: StoreCreditActionType.ApplyStoreCreditSucceeded, payload: getCheckout() },
+                        {
+                            type: StoreCreditActionType.ApplyStoreCreditSucceeded,
+                            payload: getCheckout(),
+                        },
                     ]);
                 });
         });
 
         it('emits ApplyStoreCreditFailed actions if unable to apply store credit', () => {
-            jest.spyOn(requestSender, 'applyStoreCredit').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(requestSender, 'applyStoreCredit').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
             from(storeCreditActionCreator.applyStoreCredit(true)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
-                .subscribe(actions => {
+                .pipe(catchError(errorHandler), toArray())
+                .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
                         { type: StoreCreditActionType.ApplyStoreCreditRequested },
-                        { type: StoreCreditActionType.ApplyStoreCreditFailed, payload: errorResponse, error: true },
+                        {
+                            type: StoreCreditActionType.ApplyStoreCreditFailed,
+                            payload: errorResponse,
+                            error: true,
+                        },
                     ]);
                 });
         });

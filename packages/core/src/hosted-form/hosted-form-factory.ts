@@ -11,18 +11,20 @@ import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-p
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
-import HostedFormOptions, { HostedCardFieldOptionsMap, HostedStoredCardFieldOptionsMap } from './hosted-form-options';
+import HostedFormOptions, {
+    HostedCardFieldOptionsMap,
+    HostedStoredCardFieldOptionsMap,
+} from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 
 export default class HostedFormFactory {
-    constructor(
-        private _store: ReadableCheckoutStore
-    ) {}
+    constructor(private _store: ReadableCheckoutStore) {}
 
     create(host: string, options: HostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
-            const fields = options.fields as HostedStoredCardFieldOptionsMap & HostedCardFieldOptionsMap;
+            const fields = options.fields as HostedStoredCardFieldOptionsMap &
+                HostedCardFieldOptionsMap;
             const fieldOptions = fields[type];
 
             if (!fieldOptions) {
@@ -40,9 +42,9 @@ export default class HostedFormFactory {
                     new IframeEventPoster(host),
                     new IframeEventListener(host),
                     new DetachmentObserver(new MutationObserverFactory()),
-                    'instrumentId' in fieldOptions ?
-                        this._getCardInstrument(fieldOptions.instrumentId) :
-                        undefined
+                    'instrumentId' in fieldOptions
+                        ? this._getCardInstrument(fieldOptions.instrumentId)
+                        : undefined,
                 ),
             ];
         }, []);
@@ -52,12 +54,14 @@ export default class HostedFormFactory {
             new IframeEventListener(host),
             new HostedFormOrderDataTransformer(this._store),
             pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate'),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
     }
 
     private _getCardInstrument(instrumentId: string): CardInstrument {
-        const { instruments: { getCardInstrument } } = this._store.getState();
+        const {
+            instruments: { getCardInstrument },
+        } = this._store.getState();
         const instrument = getCardInstrument(instrumentId);
 
         if (!instrument) {

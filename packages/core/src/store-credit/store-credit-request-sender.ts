@@ -1,14 +1,20 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
-import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import {
+    ContentType,
+    joinIncludes,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 export default class StoreCreditRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    applyStoreCredit(checkoutId: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    applyStoreCredit(
+        checkoutId: string,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
         const headers = {
             Accept: ContentType.JsonV1,
@@ -24,7 +30,10 @@ export default class StoreCreditRequestSender {
         });
     }
 
-    removeStoreCredit(checkoutId: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    removeStoreCredit(
+        checkoutId: string,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/store-credit`;
         const headers = {
             Accept: ContentType.JsonV1,

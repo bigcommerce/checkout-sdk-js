@@ -3,11 +3,7 @@ import { CountryResponseBody } from './country-responses';
 import CountryState from './country-state';
 
 export function getCountries(): Country[] {
-    return [
-        getAustralia(),
-        getUnitedStates(),
-        getJapan(),
-    ];
+    return [getAustralia(), getUnitedStates(), getJapan()];
 }
 
 export function getCountriesResponseBody(): CountryResponseBody {

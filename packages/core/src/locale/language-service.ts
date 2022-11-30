@@ -28,10 +28,7 @@ export default class LanguageService {
     /**
      * @internal
      */
-    constructor(
-        config: Partial<LanguageConfig>,
-        private _logger: Logger
-    ) {
+    constructor(config: Partial<LanguageConfig>, private _logger: Logger) {
         const { locale, locales, translations } = this._transformConfig(config);
 
         this._locale = locale;
@@ -54,7 +51,7 @@ export default class LanguageService {
      * @param maps - The set of language strings.
      */
     mapKeys(maps: { [key: string]: string }): void {
-        Object.keys(maps).forEach(key => {
+        Object.keys(maps).forEach((key) => {
             const translationKey = `${KEY_PREFIX}.${maps[key]}`;
 
             this._translations[`${KEY_PREFIX}.${key}`] = this._translations[translationKey];
@@ -100,7 +97,9 @@ export default class LanguageService {
         if (!this._formatters[prefixedKey]) {
             const messageFormat = new MessageFormat(this._locales[prefixedKey]);
 
-            this._formatters[prefixedKey] = messageFormat.compile(this._translations[prefixedKey] || '');
+            this._formatters[prefixedKey] = messageFormat.compile(
+                this._translations[prefixedKey] || '',
+            );
         }
 
         return this._formatters[prefixedKey](this._transformData(data));
@@ -122,10 +121,10 @@ export default class LanguageService {
         const translationKeys = union(
             Object.keys(fallbackTranslations),
             Object.keys(defaultTranslations),
-            Object.keys(translations)
+            Object.keys(translations),
         );
 
-        translationKeys.forEach(key => {
+        translationKeys.forEach((key) => {
             if (translations && translations[key]) {
                 output.translations[key] = translations[key];
                 output.locales[key] = locales[key] || output.locale;
@@ -141,9 +140,13 @@ export default class LanguageService {
         return output;
     }
 
-    private _flattenObject(object: Translations, result: Translations = {}, parentKey = ''): Translations {
+    private _flattenObject(
+        object: Translations,
+        result: Translations = {},
+        parentKey = '',
+    ): Translations {
         try {
-            Object.keys(object).forEach(key => {
+            Object.keys(object).forEach((key) => {
                 const value = object[key];
                 const resultKey = parentKey ? `${parentKey}.${key}` : key;
 
@@ -171,9 +174,11 @@ export default class LanguageService {
     }
 
     private _hasTranslations(): boolean {
-        return Object.keys(this._locales).map(key => this._locales[key])
-            .filter(code => code.split('-')[0] === this._locale.split('-')[0])
-            .length > 0;
+        return (
+            Object.keys(this._locales)
+                .map((key) => this._locales[key])
+                .filter((code) => code.split('-')[0] === this._locale.split('-')[0]).length > 0
+        );
     }
 }
 

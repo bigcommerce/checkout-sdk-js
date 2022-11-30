@@ -21,39 +21,37 @@ export type CustomerSelectorFactory = (state: CustomerState) => CustomerSelector
 export function createCustomerSelectorFactory(): CustomerSelectorFactory {
     const getCustomer = createSelector(
         (state: CustomerState) => state.data,
-        customer => () => customer
+        (customer) => () => customer,
     );
 
-    const getCustomerOrThrow = createSelector(
-        getCustomer,
-        getCustomer => () => {
-            return guard(getCustomer(), () => new MissingDataError(MissingDataErrorType.MissingCustomer));
-        }
-    );
+    const getCustomerOrThrow = createSelector(getCustomer, (getCustomer) => () => {
+        return guard(
+            getCustomer(),
+            () => new MissingDataError(MissingDataErrorType.MissingCustomer),
+        );
+    });
 
     const getCreateAccountError = createSelector(
         (state: CustomerState) => state.errors.createError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isCreatingCustomerAccount = createSelector(
         (state: CustomerState) => !!state.statuses.isCreating,
-        status => () => status
+        (status) => () => status,
     );
 
     const getCreateAddressError = createSelector(
         (state: CustomerState) => state.errors.createAddressError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isCreatingCustomerAddress = createSelector(
         (state: CustomerState) => !!state.statuses.isCreatingAddress,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: CustomerState = DEFAULT_STATE
-    ): CustomerSelector => {
+    return memoizeOne((state: CustomerState = DEFAULT_STATE): CustomerSelector => {
         return {
             getCustomer: getCustomer(state),
             getCustomerOrThrow: getCustomerOrThrow(state),

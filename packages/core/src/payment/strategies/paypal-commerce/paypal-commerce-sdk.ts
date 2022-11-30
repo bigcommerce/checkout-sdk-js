@@ -41,7 +41,7 @@ export enum StyleButtonColor {
 
 export enum StyleButtonShape {
     pill = 'pill',
-    rect = 'rect' ,
+    rect = 'rect',
 }
 
 export interface PaypalButtonStyleOptions {
@@ -86,7 +86,7 @@ export interface PayPalSelectedShippingOption {
 
 export interface ShippingOptionChangeCallbackPayload {
     orderId: string;
-    selectedShippingOption: PayPalSelectedShippingOption,
+    selectedShippingOption: PayPalSelectedShippingOption;
 }
 
 export interface ApproveCallbackPayload {
@@ -96,7 +96,7 @@ export interface ApproveCallbackPayload {
 export interface ApproveCallbackActions {
     order: {
         get: () => PayPalOrderDetails;
-    }
+    };
 }
 
 export interface CompleteCallbackDataPayload {
@@ -117,7 +117,7 @@ export interface PayPalOrderDetails {
         name: {
             given_name: string;
             surname: string;
-        },
+        };
         email_address: string;
         address: PayPalOrderAddress;
     };
@@ -311,7 +311,7 @@ export interface PaypalCommerceHostWindow extends Window {
 }
 
 export type FundingType = string[];
-export type EnableFundingType =  FundingType | string;
+export type EnableFundingType = FundingType | string;
 
 export enum PayPalCommerceIntent {
     authorize = 'authorize',
@@ -334,9 +334,11 @@ export interface PaypalCommerceInitializationData {
     isVenmoEnabled?: boolean;
 }
 
-export type ComponentsScriptType = Array<'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'>;
+export type ComponentsScriptType = Array<
+    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'
+>;
 
-export interface PaypalCommerceScriptParams  {
+export interface PaypalCommerceScriptParams {
     'client-id'?: string;
     'merchant-id'?: string;
     'buyer-country'?: string;

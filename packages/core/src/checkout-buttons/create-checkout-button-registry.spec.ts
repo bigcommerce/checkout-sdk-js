@@ -9,9 +9,16 @@ import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
-import { BraintreePaypalButtonStrategy, BraintreePaypalCreditButtonStrategy, BraintreeVenmoButtonStrategy } from './strategies/braintree';
+import {
+    BraintreePaypalButtonStrategy,
+    BraintreePaypalCreditButtonStrategy,
+    BraintreeVenmoButtonStrategy,
+} from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
-import { PaypalCommerceButtonStrategy, PaypalCommerceVenmoButtonStrategy } from './strategies/paypal-commerce';
+import {
+    PaypalCommerceButtonStrategy,
+    PaypalCommerceVenmoButtonStrategy,
+} from './strategies/paypal-commerce';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -19,7 +26,14 @@ describe('createCheckoutButtonRegistry', () => {
     beforeEach(() => {
         const store = createCheckoutStore();
         const paymentClient = createPaymentClient(store);
-        registry = createCheckoutButtonRegistry(store, paymentClient, createRequestSender(), createFormPoster(), 'en');
+
+        registry = createCheckoutButtonRegistry(
+            store,
+            paymentClient,
+            createRequestSender(),
+            createFormPoster(),
+            'en',
+        );
     });
 
     it('returns registry with ApplePay registered', () => {
@@ -35,7 +49,9 @@ describe('createCheckoutButtonRegistry', () => {
     });
 
     it('returns registry with Braintree PayPal Credit registered', () => {
-        expect(registry.get('braintreepaypalcredit')).toEqual(expect.any(BraintreePaypalCreditButtonStrategy));
+        expect(registry.get('braintreepaypalcredit')).toEqual(
+            expect.any(BraintreePaypalCreditButtonStrategy),
+        );
     });
 
     it('returns registry with Braintree Venmo registered', () => {
@@ -83,6 +99,8 @@ describe('createCheckoutButtonRegistry', () => {
     });
 
     it('returns registry with PayPal Commerce Venmo registered', () => {
-        expect(registry.get('paypalcommercevenmo')).toEqual(expect.any(PaypalCommerceVenmoButtonStrategy));
+        expect(registry.get('paypalcommercevenmo')).toEqual(
+            expect.any(PaypalCommerceVenmoButtonStrategy),
+        );
     });
 });

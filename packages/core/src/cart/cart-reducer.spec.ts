@@ -21,9 +21,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when a consignment is updated', () => {
@@ -32,9 +34,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when consignments are created', () => {
@@ -43,9 +47,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when billing address gets updated', () => {
@@ -54,9 +60,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when a consignment is updated', () => {
@@ -65,9 +73,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when a consignment is created', () => {
@@ -76,9 +86,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when a consignment is deleted', () => {
@@ -87,9 +99,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when a shipping option is updated', () => {
@@ -98,9 +112,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when shipping options are loaded', () => {
@@ -109,9 +125,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when coupon gets applied', () => {
@@ -120,9 +138,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when coupon gets removed', () => {
@@ -131,9 +151,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when gift certificate gets applied', () => {
@@ -142,9 +164,11 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 
     it('returns new data when gift certificate gets removed', () => {
@@ -153,8 +177,10 @@ describe('cartReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getCart(),
-        }));
+        expect(cartReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: getCart(),
+            }),
+        );
     });
 });

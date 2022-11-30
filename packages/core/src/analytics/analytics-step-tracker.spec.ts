@@ -1,6 +1,5 @@
 import { getGiftCertificateItem } from '../cart/line-items.mock';
-import { createCheckoutService, CheckoutService } from '../checkout';
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
+import { CheckoutService, createCheckoutService } from '../checkout';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../common/error/errors';
 import { ShopperCurrency } from '../config';
@@ -11,8 +10,13 @@ import { getOrder } from '../order/orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
+import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import AnalyticsStepTracker, { AnalyticStepId, AnalyticStepType } from './analytics-step-tracker';
-import { isGoogleAnalyticsAvailable, isPayloadSizeLimitReached, sendGoogleAnalytics } from './analytics-tracker-ga';
+import {
+    isGoogleAnalyticsAvailable,
+    isPayloadSizeLimitReached,
+    sendGoogleAnalytics,
+} from './analytics-tracker-ga';
 
 jest.mock('./analytics-tracker-ga', () => ({
     isGoogleAnalyticsAvailable: jest.fn(),
@@ -52,22 +56,22 @@ describe('AnalyticsStepTracker', () => {
 
         checkoutService = createCheckoutService();
 
-        jest.spyOn(checkoutService.getState().data, 'getCheckout')
-            .mockReturnValue(getCheckoutWithCoupons());
+        jest.spyOn(checkoutService.getState().data, 'getCheckout').mockReturnValue(
+            getCheckoutWithCoupons(),
+        );
 
-        jest.spyOn(checkoutService.getState().data, 'getConfig')
-            .mockReturnValue({
-                ...getConfig().storeConfig,
-                shopperCurrency: {
-                    code: 'JPY',
-                    exchangeRate: 1.01,
-                } as ShopperCurrency,
-            });
+        jest.spyOn(checkoutService.getState().data, 'getConfig').mockReturnValue({
+            ...getConfig().storeConfig,
+            shopperCurrency: {
+                code: 'JPY',
+                exchangeRate: 1.01,
+            } as ShopperCurrency,
+        });
 
         analyticsStepTracker = new AnalyticsStepTracker(
             checkoutService,
             new AnalyticsExtraItemsManager(sessionStorage),
-            analytics
+            analytics,
         );
     });
 
@@ -77,18 +81,17 @@ describe('AnalyticsStepTracker', () => {
         });
 
         it('saves the category and brand data to the storage', () => {
-            expect(sessionStorage.setItem)
-                .toHaveBeenCalledWith(
-                    'ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-                    JSON.stringify(storedData)
-                );
+            expect(sessionStorage.setItem).toHaveBeenCalledWith(
+                'ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                JSON.stringify(storedData),
+            );
         });
 
         it('only tracks analytics once', () => {
             analyticsStepTracker.trackCheckoutStarted();
             analyticsStepTracker.trackCheckoutStarted();
 
-            expect(analytics.track).toBeCalledTimes(1);
+            expect(analytics.track).toHaveBeenCalledTimes(1);
         });
 
         it('tracks the affiliation', () => {
@@ -96,7 +99,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     affiliation: 's1504098821',
-                })
+                }),
             );
         });
 
@@ -105,7 +108,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     currency: 'JPY',
-                })
+                }),
             );
         });
 
@@ -114,7 +117,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     tax: 3.03,
-                })
+                }),
             );
         });
 
@@ -123,7 +126,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     revenue: 191.9,
-                })
+                }),
             );
         });
 
@@ -132,7 +135,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     shipping: 15.15,
-                })
+                }),
             );
         });
 
@@ -141,7 +144,7 @@ describe('AnalyticsStepTracker', () => {
                 'Checkout Started',
                 expect.objectContaining({
                     coupon: 'SAVEBIG2015,279F507D817E3E7',
-                })
+                }),
             );
         });
 
@@ -149,33 +152,37 @@ describe('AnalyticsStepTracker', () => {
             expect(analytics.track).toHaveBeenCalledWith(
                 'Checkout Started',
                 expect.objectContaining({
-                    products: [{
-                        product_id: 103,
-                        sku: 'CLC',
-                        name: 'Canvas Laundry Cart',
-                        price: 190,
-                        quantity: 1,
-                        image_url: '/images/canvas-laundry-cart.jpg',
-                        brand: 'OFS',
-                        category: 'Cat 1',
-                        variant: 'n:v',
-                    }, {
-                        product_id: 104,
-                        sku: 'CLX',
-                        name: 'Digital Book',
-                        price: 200,
-                        quantity: 1,
-                        image_url: '/images/digital-book.jpg',
-                        brand: 'Digitalia',
-                        category: 'Ebooks, Audio Books',
-                        variant: 'm:l',
-                    }, {
-                        name: '$100 Gift Certificate',
-                        price: 101,
-                        product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
-                        quantity: 1,
-                    }],
-                })
+                    products: [
+                        {
+                            product_id: 103,
+                            sku: 'CLC',
+                            name: 'Canvas Laundry Cart',
+                            price: 190,
+                            quantity: 1,
+                            image_url: '/images/canvas-laundry-cart.jpg',
+                            brand: 'OFS',
+                            category: 'Cat 1',
+                            variant: 'n:v',
+                        },
+                        {
+                            product_id: 104,
+                            sku: 'CLX',
+                            name: 'Digital Book',
+                            price: 200,
+                            quantity: 1,
+                            image_url: '/images/digital-book.jpg',
+                            brand: 'Digitalia',
+                            category: 'Ebooks, Audio Books',
+                            variant: 'm:l',
+                        },
+                        {
+                            name: '$100 Gift Certificate',
+                            price: 101,
+                            product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+                            quantity: 1,
+                        },
+                    ],
+                }),
             );
         });
     });
@@ -200,8 +207,7 @@ describe('AnalyticsStepTracker', () => {
 
         describe('when there are no saved items', () => {
             beforeEach(() => {
-                jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue(getOrder());
+                jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(getOrder());
 
                 sessionStorage.getItem = jest.fn(() => null);
                 analyticsStepTracker.trackOrderComplete();
@@ -214,8 +220,7 @@ describe('AnalyticsStepTracker', () => {
 
         describe('when there is a complete order', () => {
             beforeEach(() => {
-                jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue(getOrder());
+                jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(getOrder());
 
                 analyticsStepTracker.trackOrderComplete();
             });
@@ -225,7 +230,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         orderId: 295,
-                    })
+                    }),
                 );
             });
 
@@ -234,7 +239,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         affiliation: 's1504098821',
-                    })
+                    }),
                 );
             });
 
@@ -243,7 +248,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         revenue: 191.9,
-                    })
+                    }),
                 );
             });
 
@@ -252,7 +257,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         shipping: 15.15,
-                    })
+                    }),
                 );
             });
 
@@ -261,7 +266,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         discount: 10.1,
-                    })
+                    }),
                 );
             });
 
@@ -270,7 +275,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         coupon: 'SAVEBIG2015,279F507D817E3E7',
-                    })
+                    }),
                 );
             });
 
@@ -279,7 +284,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         currency: 'JPY',
-                    })
+                    }),
                 );
             });
 
@@ -288,7 +293,7 @@ describe('AnalyticsStepTracker', () => {
                     'Order Completed',
                     expect.objectContaining({
                         tax: 3.03,
-                    })
+                    }),
                 );
             });
 
@@ -296,34 +301,39 @@ describe('AnalyticsStepTracker', () => {
                 expect(analytics.track).toHaveBeenCalledWith(
                     'Order Completed',
                     expect.objectContaining({
-                        products: [{
-                            product_id: 103,
-                            sku: 'CLC',
-                            name: 'Canvas Laundry Cart',
-                            price: 190,
-                            quantity: 1,
-                            image_url: '/images/canvas-laundry-cart.jpg',
-                            brand: 'OFS',
-                            category: 'Cat 1',
-                            variant: 'n:v',
-                        }, {
-                            product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
-                            name: '$100 Gift Certificate',
-                            price: 101,
-                            quantity: 1,
-                        }],
-                    })
+                        products: [
+                            {
+                                product_id: 103,
+                                sku: 'CLC',
+                                name: 'Canvas Laundry Cart',
+                                price: 190,
+                                quantity: 1,
+                                image_url: '/images/canvas-laundry-cart.jpg',
+                                brand: 'OFS',
+                                category: 'Cat 1',
+                                variant: 'n:v',
+                            },
+                            {
+                                product_id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+                                name: '$100 Gift Certificate',
+                                price: 101,
+                                quantity: 1,
+                            },
+                        ],
+                    }),
                 );
             });
 
             it('reads data from session storage', () => {
-                expect(sessionStorage.getItem)
-                    .toHaveBeenCalledWith('ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+                expect(sessionStorage.getItem).toHaveBeenCalledWith(
+                    'ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                );
             });
 
             it('removes the category and brand data to the storage', () => {
-                expect(sessionStorage.removeItem)
-                    .toHaveBeenCalledWith('ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7');
+                expect(sessionStorage.removeItem).toHaveBeenCalledWith(
+                    'ORDER_ITEMS_b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                );
             });
         });
 
@@ -332,34 +342,30 @@ describe('AnalyticsStepTracker', () => {
                 (isGoogleAnalyticsAvailable as jest.Mock<any>).mockImplementation(() => true);
                 (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => true);
 
-                jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue({
-                        ...getOrder(),
-                        lineItems: {
-                            physicalItems: Array.from(new Array(100)).map(() => getPhysicalItem()),
-                            digitalItems: [],
-                            giftCertificates: [
-                                getGiftCertificateItem(),
-                            ],
-                            customItems: [],
-                        },
-                    });
+                jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue({
+                    ...getOrder(),
+                    lineItems: {
+                        physicalItems: Array.from(new Array(100)).map(() => getPhysicalItem()),
+                        digitalItems: [],
+                        giftCertificates: [getGiftCertificateItem()],
+                        customItems: [],
+                    },
+                });
 
-                jest.spyOn(checkoutService.getState().data, 'getConfig')
-                    .mockReturnValue({
-                        ...getConfig().storeConfig,
-                        checkoutSettings: {
-                            ...getConfig().storeConfig.checkoutSettings,
-                            features: {
-                                'DATA-6891.missing_orders_within_GA': true,
-                            },
+                jest.spyOn(checkoutService.getState().data, 'getConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            'DATA-6891.missing_orders_within_GA': true,
                         },
-                    });
+                    },
+                });
 
                 analyticsStepTracker = new AnalyticsStepTracker(
                     checkoutService,
                     new AnalyticsExtraItemsManager(sessionStorage),
-                    analytics
+                    analytics,
                 );
 
                 analyticsStepTracker.trackOrderComplete();
@@ -383,24 +389,22 @@ describe('AnalyticsStepTracker', () => {
                 (isPayloadSizeLimitReached as jest.Mock<any>).mockImplementation(() => false);
                 (sendGoogleAnalytics as jest.Mock<any>).mockImplementation();
 
-                jest.spyOn(checkoutService.getState().data, 'getOrder')
-                    .mockReturnValue(getOrder());
+                jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(getOrder());
 
-                jest.spyOn(checkoutService.getState().data, 'getConfig')
-                    .mockReturnValue({
-                        ...getConfig().storeConfig,
-                        checkoutSettings: {
-                            ...getConfig().storeConfig.checkoutSettings,
-                            features: {
-                                'DATA-6891.missing_orders_within_GA': true,
-                            },
+                jest.spyOn(checkoutService.getState().data, 'getConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            'DATA-6891.missing_orders_within_GA': true,
                         },
-                    });
+                    },
+                });
 
                 analyticsStepTracker = new AnalyticsStepTracker(
                     checkoutService,
                     new AnalyticsExtraItemsManager(sessionStorage),
-                    analytics
+                    analytics,
                 );
 
                 analyticsStepTracker.trackOrderComplete();
@@ -425,34 +429,56 @@ describe('AnalyticsStepTracker', () => {
         });
 
         it('sends step viewed tracking data to GA for the given step with current currency', () => {
-            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.PAYMENT, currency: 'JPY' });
+            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                step: AnalyticStepId.PAYMENT,
+                currency: 'JPY',
+            });
         });
 
         it('sends step completed & viewed tracking data to GA for all the steps before given step (including current step)', () => {
-            expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, buildCompletedPayload(AnalyticStepId.CUSTOMER));
-            expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, buildCompletedPayload(AnalyticStepId.BILLING));
-            expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, buildCompletedPayload(AnalyticStepId.SHIPPING));
+            expect(analytics.track).toHaveBeenCalledWith(
+                COMPLETED_EVENT_NAME,
+                buildCompletedPayload(AnalyticStepId.CUSTOMER),
+            );
+            expect(analytics.track).toHaveBeenCalledWith(
+                COMPLETED_EVENT_NAME,
+                buildCompletedPayload(AnalyticStepId.BILLING),
+            );
+            expect(analytics.track).toHaveBeenCalledWith(
+                COMPLETED_EVENT_NAME,
+                buildCompletedPayload(AnalyticStepId.SHIPPING),
+            );
 
-            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.PAYMENT, currency: 'JPY' });
-            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.CUSTOMER, currency: 'JPY' });
-            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.BILLING, currency: 'JPY' });
-            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.SHIPPING, currency: 'JPY' });
+            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                step: AnalyticStepId.PAYMENT,
+                currency: 'JPY',
+            });
+            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                step: AnalyticStepId.CUSTOMER,
+                currency: 'JPY',
+            });
+            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                step: AnalyticStepId.BILLING,
+                currency: 'JPY',
+            });
+            expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                step: AnalyticStepId.SHIPPING,
+                currency: 'JPY',
+            });
         });
 
         it('throws exception when custom invaid step order is passed', () => {
-            expect(() => new AnalyticsStepTracker(
-                checkoutService,
-                sessionStorage,
-                analytics,
-                {
-                    checkoutSteps: [
-                        'shipping',
-                        'billying' as AnalyticStepType,
-                        'payment',
-                        'customer',
-                    ],
-                }
-            )).toThrowError(InvalidArgumentError);
+            expect(
+                () =>
+                    new AnalyticsStepTracker(checkoutService, sessionStorage, analytics, {
+                        checkoutSteps: [
+                            'shipping',
+                            'billying' as AnalyticStepType,
+                            'payment',
+                            'customer',
+                        ],
+                    }),
+            ).toThrow(InvalidArgumentError);
         });
 
         describe('when custom step order is passed', () => {
@@ -465,7 +491,7 @@ describe('AnalyticsStepTracker', () => {
                     analytics,
                     {
                         checkoutSteps: ['shipping', 'billing', 'payment', 'customer'],
-                    }
+                    },
                 );
             });
 
@@ -474,15 +500,39 @@ describe('AnalyticsStepTracker', () => {
 
                 analyticsStepTrackerCustomOrder.trackStepViewed('billing');
 
-                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.BILLING, currency: 'JPY' });
-                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.SHIPPING, currency: 'JPY' });
-                expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, buildCompletedPayload(AnalyticStepId.SHIPPING));
+                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.BILLING,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.SHIPPING,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    buildCompletedPayload(AnalyticStepId.SHIPPING),
+                );
 
-                expect(analytics.track).not.toHaveBeenCalledWith(COMPLETED_EVENT_NAME, expect.objectContaining({ step: AnalyticStepId.BILLING }));
-                expect(analytics.track).not.toHaveBeenCalledWith(COMPLETED_EVENT_NAME, expect.objectContaining({ step: AnalyticStepId.PAYMENT }));
-                expect(analytics.track).not.toHaveBeenCalledWith(COMPLETED_EVENT_NAME, expect.objectContaining({ step: AnalyticStepId.CUSTOMER }));
-                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.PAYMENT, currency: 'JPY' });
-                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.CUSTOMER, currency: 'JPY' });
+                expect(analytics.track).not.toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    expect.objectContaining({ step: AnalyticStepId.BILLING }),
+                );
+                expect(analytics.track).not.toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    expect.objectContaining({ step: AnalyticStepId.PAYMENT }),
+                );
+                expect(analytics.track).not.toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    expect.objectContaining({ step: AnalyticStepId.CUSTOMER }),
+                );
+                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.PAYMENT,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.CUSTOMER,
+                    currency: 'JPY',
+                });
             });
         });
 
@@ -494,7 +544,7 @@ describe('AnalyticsStepTracker', () => {
                     checkoutService,
                     new AnalyticsExtraItemsManager(sessionStorage),
                     analytics,
-                    { checkoutSteps: [] }
+                    { checkoutSteps: [] },
                 );
             });
 
@@ -503,12 +553,27 @@ describe('AnalyticsStepTracker', () => {
 
                 analyticsStepTrackerNoBackfill.trackStepViewed('payment');
 
-                expect(analytics.track).not.toHaveBeenCalledWith(COMPLETED_EVENT_NAME, expect.anything());
+                expect(analytics.track).not.toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    expect.anything(),
+                );
 
-                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.PAYMENT, currency: 'JPY' });
-                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.CUSTOMER, currency: 'JPY' });
-                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.BILLING, currency: 'JPY' });
-                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, { step: AnalyticStepId.SHIPPING, currency: 'JPY' });
+                expect(analytics.track).toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.PAYMENT,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.CUSTOMER,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.BILLING,
+                    currency: 'JPY',
+                });
+                expect(analytics.track).not.toHaveBeenCalledWith(VIEWED_EVENT_NAME, {
+                    step: AnalyticStepId.SHIPPING,
+                    currency: 'JPY',
+                });
             });
         });
     });
@@ -520,60 +585,66 @@ describe('AnalyticsStepTracker', () => {
             });
 
             it('sends an empty shippingMethod property when neither paymentMethod nor shippingMethod are specified', () => {
-                expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, buildCompletedPayload(AnalyticStepId.PAYMENT));
+                expect(analytics.track).toHaveBeenCalledWith(
+                    COMPLETED_EVENT_NAME,
+                    buildCompletedPayload(AnalyticStepId.PAYMENT),
+                );
             });
         });
 
         describe('when there is information available', () => {
             beforeEach(() => {
-                jest.spyOn(checkoutService.getState().data, 'getSelectedShippingOption')
-                    .mockReturnValue(getShippingOption());
+                jest.spyOn(
+                    checkoutService.getState().data,
+                    'getSelectedShippingOption',
+                ).mockReturnValue(getShippingOption());
 
-                jest.spyOn(checkoutService.getState().data, 'getSelectedPaymentMethod')
-                    .mockReturnValue(getPaymentMethod());
+                jest.spyOn(
+                    checkoutService.getState().data,
+                    'getSelectedPaymentMethod',
+                ).mockReturnValue(getPaymentMethod());
 
                 analyticsStepTracker.trackStepCompleted('payment');
             });
 
             it('sends the shippingMethod and payment data', () => {
-                expect(analytics.track).toHaveBeenCalledWith(
-                    COMPLETED_EVENT_NAME,
-                    {
-                        step: AnalyticStepId.PAYMENT,
-                        shippingMethod: 'Flat Rate',
-                        paymentMethod: 'Authorizenet',
-                        currency: 'JPY',
-                    }
-                );
+                expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, {
+                    step: AnalyticStepId.PAYMENT,
+                    shippingMethod: 'Flat Rate',
+                    paymentMethod: 'Authorizenet',
+                    currency: 'JPY',
+                });
             });
 
             it('calls track only once per step', () => {
                 analytics.track.mockReset();
                 analyticsStepTracker.trackStepCompleted('payment');
+
                 expect(analytics.track).toHaveBeenCalledTimes(0);
             });
 
             it('sends step complete event again if different shippingMethod method is selected', () => {
-                jest.spyOn(checkoutService.getState().data, 'getSelectedShippingOption')
-                    .mockReturnValue({
-                        ...getShippingOption(),
-                        id: 'id-foo',
-                        description: 'foo',
-                    });
+                jest.spyOn(
+                    checkoutService.getState().data,
+                    'getSelectedShippingOption',
+                ).mockReturnValue({
+                    ...getShippingOption(),
+                    id: 'id-foo',
+                    description: 'foo',
+                });
 
-                jest.spyOn(checkoutService.getState().data, 'getSelectedPaymentMethod')
-                    .mockReturnValue(undefined);
+                jest.spyOn(
+                    checkoutService.getState().data,
+                    'getSelectedPaymentMethod',
+                ).mockReturnValue(undefined);
 
                 analyticsStepTracker.trackStepCompleted('shipping');
 
-                expect(analytics.track).toHaveBeenLastCalledWith(
-                    COMPLETED_EVENT_NAME,
-                    {
-                        step: AnalyticStepId.SHIPPING,
-                        shippingMethod: 'foo',
-                        currency: 'JPY',
-                    }
-                );
+                expect(analytics.track).toHaveBeenLastCalledWith(COMPLETED_EVENT_NAME, {
+                    step: AnalyticStepId.SHIPPING,
+                    shippingMethod: 'foo',
+                    currency: 'JPY',
+                });
             });
         });
     });

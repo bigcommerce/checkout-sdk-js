@@ -4,12 +4,24 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+    InternalCheckoutSelectors,
+} from '../../../../checkout';
 import { getCheckoutStoreState } from '../../../../checkout/checkouts.mock';
 import { HostedFormFactory } from '../../../../hosted-form';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../../order';
+import {
+    FinalizeOrderAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../../order';
 import { getOrderRequestBody } from '../../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
 import PaymentActionCreator from '../../../payment-action-creator';
@@ -39,14 +51,14 @@ describe('CheckoutcomiDealPaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         formPoster = createFormPoster();
@@ -61,26 +73,25 @@ describe('CheckoutcomiDealPaymentStrategy', () => {
 
         state = store.getState();
 
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(getPaymentMethod());
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            getPaymentMethod(),
+        );
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = noop) => callback());
+        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
+            callback(),
+        );
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         strategy = new CheckoutcomiDealPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
-            formFactory
+            formFactory,
         );
     });
 
@@ -103,7 +114,9 @@ describe('CheckoutcomiDealPaymentStrategy', () => {
         const payload = merge(getOrderRequestBody(), paymentWithDocument);
         const options = { methodId: 'ideal' };
 
-        const expectedPayment = merge(payload.payment, { paymentData: { formattedPayload: { bic: 'TESTCODE' }}});
+        const expectedPayment = merge(payload.payment, {
+            paymentData: { formattedPayload: { bic: 'TESTCODE' } },
+        });
 
         await strategy.execute(payload, options);
 
@@ -124,7 +137,9 @@ describe('CheckoutcomiDealPaymentStrategy', () => {
         const payload = merge(getOrderRequestBody(), paymentWithDocument);
         const options = { methodId: 'ideal' };
 
-        const expectedPayment = merge(payload.payment, { paymentData: { formattedPayload: undefined}});
+        const expectedPayment = merge(payload.payment, {
+            paymentData: { formattedPayload: undefined },
+        });
 
         await strategy.execute(payload, options);
 

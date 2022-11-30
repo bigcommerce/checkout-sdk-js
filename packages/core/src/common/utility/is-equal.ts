@@ -16,19 +16,19 @@ export default function isEqual(objectA: any, objectB: any, options?: CompareOpt
             return false;
         }
 
-        if ((objectA instanceof Date) && (objectB instanceof Date)) {
+        if (objectA instanceof Date && objectB instanceof Date) {
             return isDateEqual(objectA, objectB);
         }
 
-        if ((objectA instanceof Date) || (objectB instanceof Date)) {
+        if (objectA instanceof Date || objectB instanceof Date) {
             return false;
         }
 
-        if ((objectA instanceof RegExp) && (objectB instanceof RegExp)) {
+        if (objectA instanceof RegExp && objectB instanceof RegExp) {
             return isRegExpEqual(objectA, objectB);
         }
 
-        if ((objectA instanceof RegExp) || (objectB instanceof RegExp)) {
+        if (objectA instanceof RegExp || objectB instanceof RegExp) {
             return false;
         }
 
@@ -63,7 +63,7 @@ function isArrayEqual(objectA: any[], objectB: any[], options?: CompareOptions):
 function isObjectEqual(
     objectA: { [key: string]: any },
     objectB: { [key: string]: any },
-    options?: CompareOptions
+    options?: CompareOptions,
 ): boolean {
     const filter = options && options.keyFilter;
     const keysA = filter ? Object.keys(objectA).filter(filter) : Object.keys(objectA);

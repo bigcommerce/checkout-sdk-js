@@ -20,19 +20,18 @@ export interface Redirect {
 const isParameters = (x: unknown): x is Parameters => {
     const formFields = get(x, 'form_fields');
 
-    return (
-        isString(get(x, 'url')) &&
-        (isUndefined(formFields) || isObject(formFields))
-    );
+    return isString(get(x, 'url')) && (isUndefined(formFields) || isObject(formFields));
 };
 
-export const isRedirect = (body: PaymentsAPIResponse['body']): body is Redirect => (
+export const isRedirect = (body: PaymentsAPIResponse['body']): body is Redirect =>
     get(body, 'type') === 'continue' &&
     get(body, 'code') === 'redirect' &&
-    isParameters(get(body, 'parameters'))
-);
+    isParameters(get(body, 'parameters'));
 
-export const handleRedirect = ({ url, form_fields }: Parameters, formPoster: FormPoster): Promise<never> => {
+export const handleRedirect = (
+    { url, form_fields }: Parameters,
+    formPoster: FormPoster,
+): Promise<never> => {
     const redirectionState = new RedirectionState();
 
     if (redirectionState.isRedirecting()) {

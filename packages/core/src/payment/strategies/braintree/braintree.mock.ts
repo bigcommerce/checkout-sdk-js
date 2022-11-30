@@ -1,7 +1,24 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeHostedFields, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreePaypalCheckoutCreator, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVenmoCheckout, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import {
+    BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeHostedFields,
+    BraintreeModule,
+    BraintreeModuleCreator,
+    BraintreePaypalCheckout,
+    BraintreePaypalCheckoutCreator,
+    BraintreeRequestData,
+    BraintreeShippingAddressOverride,
+    BraintreeThreeDSecure,
+    BraintreeTokenizePayload,
+    BraintreeTokenizeResponse,
+    BraintreeVenmoCheckout,
+    BraintreeVerifyPayload,
+    BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
+} from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {
@@ -41,13 +58,16 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
 export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     return {
         loadPayPalSDK: jest.fn((_config, callback) => callback()),
-        createPayment: jest.fn((() => Promise.resolve())),
+        createPayment: jest.fn(() => Promise.resolve()),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
     };
 }
 
-export function getPayPalCheckoutCreatorMock(braintreePaypalCheckoutMock: BraintreePaypalCheckout | undefined, shouldThrowError: boolean): BraintreePaypalCheckoutCreator {
+export function getPayPalCheckoutCreatorMock(
+    braintreePaypalCheckoutMock: BraintreePaypalCheckout | undefined,
+    shouldThrowError: boolean,
+): BraintreePaypalCheckoutCreator {
     return {
         create: shouldThrowError
             ? jest.fn((_config, callback) => callback(new Error('test'), undefined))
@@ -57,8 +77,8 @@ export function getPayPalCheckoutCreatorMock(braintreePaypalCheckoutMock: Braint
 
 export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
     return {
-        teardown: jest.fn((() => Promise.resolve())),
-        tokenize: jest.fn((() => Promise.resolve())),
+        teardown: jest.fn(() => Promise.resolve()),
+        tokenize: jest.fn(() => Promise.resolve()),
         isBrowserSupported: jest.fn(),
     };
 }
@@ -71,13 +91,17 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
     };
 }
 
-export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
+export function getModuleCreatorMock<T>(
+    module: BraintreeModule | BraintreeClient,
+): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
     };
 }
 
-export function getModuleCreatorNewMock<T>(module: BraintreeDataCollector): BraintreeModuleCreator<T> {
+export function getModuleCreatorNewMock<T>(
+    module: BraintreeDataCollector,
+): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve({ ...module })),
     };
@@ -85,16 +109,14 @@ export function getModuleCreatorNewMock<T>(module: BraintreeDataCollector): Brai
 
 export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
     return {
-        creditCards: [
-            { nonce: 'demo_nonce' },
-        ],
+        creditCards: [{ nonce: 'demo_nonce' }],
     };
 }
 
 export function getGooglePayMock(): GooglePayBraintreeSDK {
     return {
-        createPaymentDataRequest: jest.fn((() => Promise.resolve())),
-        parseResponse: jest.fn((() => Promise.resolve())),
+        createPaymentDataRequest: jest.fn(() => Promise.resolve()),
+        parseResponse: jest.fn(() => Promise.resolve()),
         teardown: jest.fn(),
     };
 }

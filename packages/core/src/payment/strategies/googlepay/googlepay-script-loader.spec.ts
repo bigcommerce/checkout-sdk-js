@@ -12,7 +12,7 @@ describe('GooglePayScriptLoader', () => {
     let mockWindow: GooglePayHostWindow;
 
     beforeEach(() => {
-        mockWindow = { } as GooglePayHostWindow;
+        mockWindow = {} as GooglePayHostWindow;
         scriptLoader = {} as ScriptLoader;
         googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader, mockWindow);
     });
@@ -31,11 +31,15 @@ describe('GooglePayScriptLoader', () => {
 
         it('loads the SDK', async () => {
             await googlePayScriptLoader.load();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('https://pay.google.com/gp/p/js/pay.js');
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                'https://pay.google.com/gp/p/js/pay.js',
+            );
         });
 
         it('returns the SDK from the window', async () => {
             const sdk = await googlePayScriptLoader.load();
+
             expect(sdk).toBe(googlePaySDKMock);
         });
 

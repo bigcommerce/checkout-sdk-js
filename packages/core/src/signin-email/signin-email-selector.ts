@@ -16,22 +16,20 @@ export type SignInEmailSelectorFactory = (state: SignInEmailState) => SignInEmai
 export function createSignInEmailSelectorFactory(): SignInEmailSelectorFactory {
     const getEmail = createSelector(
         (state: SignInEmailState) => state.data,
-        signInEmail => () => signInEmail
+        (signInEmail) => () => signInEmail,
     );
 
     const getSendError = createSelector(
         (state: SignInEmailState) => state.errors.sendError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isSending = createSelector(
         (state: SignInEmailState) => !!state.statuses.isSending,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: SignInEmailState = DEFAULT_STATE
-    ): SignInEmailSelector => {
+    return memoizeOne((state: SignInEmailState = DEFAULT_STATE): SignInEmailSelector => {
         return {
             getEmail: getEmail(state),
             getSendError: getSendError(state),

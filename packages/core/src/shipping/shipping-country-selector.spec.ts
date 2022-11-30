@@ -1,7 +1,10 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import ShippingCountrySelector, { createShippingCountrySelectorFactory, ShippingCountrySelectorFactory } from './shipping-country-selector';
+import ShippingCountrySelector, {
+    createShippingCountrySelectorFactory,
+    ShippingCountrySelectorFactory,
+} from './shipping-country-selector';
 
 describe('ShippingCountrySelector', () => {
     let createShippingCountrySelector: ShippingCountrySelectorFactory;
@@ -17,7 +20,9 @@ describe('ShippingCountrySelector', () => {
         it('returns a list of countries', () => {
             shippingCountrySelector = createShippingCountrySelector(state.shippingCountries);
 
-            expect(shippingCountrySelector.getShippingCountries()).toEqual(state.shippingCountries.data);
+            expect(shippingCountrySelector.getShippingCountries()).toEqual(
+                state.shippingCountries.data,
+            );
         });
 
         it('returns an empty array if there are no countries', () => {
@@ -56,13 +61,13 @@ describe('ShippingCountrySelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(shippingCountrySelector.isLoading()).toEqual(true);
+            expect(shippingCountrySelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading countries', () => {
             shippingCountrySelector = createShippingCountrySelector(state.shippingCountries);
 
-            expect(shippingCountrySelector.isLoading()).toEqual(false);
+            expect(shippingCountrySelector.isLoading()).toBe(false);
         });
     });
 });

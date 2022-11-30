@@ -17,10 +17,10 @@ export default class OpyError extends StandardError {
 
 function getErrorMessage(type: OpyErrorType, displayName: string): string {
     switch (type) {
-    case OpyErrorType.InvalidCart:
-        return `Cart price is different to ${displayName} plan amount.`;
+        case OpyErrorType.InvalidCart:
+            return `Cart price is different to ${displayName} plan amount.`;
 
-    default:
-        return 'There was an error while processing your payment. Please try again or contact us.';
+        default:
+            return 'There was an error while processing your payment. Please try again or contact us.';
     }
 }

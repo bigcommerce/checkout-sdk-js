@@ -5,7 +5,7 @@ export default class GoogleRecaptchaScriptLoader {
 
     constructor(
         private _scriptLoader: ScriptLoader,
-        private _window: GoogleRecaptchaWindow = window
+        private _window: GoogleRecaptchaWindow = window,
     ) {}
 
     load(): Promise<ReCaptchaV2.ReCaptcha | undefined> {
@@ -18,16 +18,14 @@ export default class GoogleRecaptchaScriptLoader {
 
     private _loadScript(): Promise<ReCaptchaV2.ReCaptcha | undefined> {
         const callbackName = 'initRecaptcha';
-        const params = [
-            `onload=${callbackName}`,
-            'render=explicit',
-        ].join('&');
+        const params = [`onload=${callbackName}`, 'render=explicit'].join('&');
 
         return new Promise((resolve, reject) => {
             this._window[callbackName] = () => resolve(this._window.grecaptcha);
 
-            this._scriptLoader.loadScript(`//www.google.com/recaptcha/api.js?${params}`)
-                .catch(error => {
+            this._scriptLoader
+                .loadScript(`//www.google.com/recaptcha/api.js?${params}`)
+                .catch((error) => {
                     this._loadPromise = undefined;
                     reject(error);
                 });

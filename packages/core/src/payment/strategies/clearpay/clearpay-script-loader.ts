@@ -12,10 +12,7 @@ const SCRIPTS_DEFAULT = {
 };
 
 export default class ClearpayScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        public _window: ClearpayWindow = window
-    ) { }
+    constructor(private _scriptLoader: ScriptLoader, public _window: ClearpayWindow = window) {}
 
     async load(method: PaymentMethod): Promise<ClearpaySdk> {
         await this._scriptLoader.loadScript(this._getScriptUrl(method.config.testMode));

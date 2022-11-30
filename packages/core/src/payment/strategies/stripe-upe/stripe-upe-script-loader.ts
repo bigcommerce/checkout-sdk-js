@@ -2,15 +2,21 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { StripeElements, StripeElementsOptions, StripeHostWindow, StripeUPEClient } from './stripe-upe';
+import {
+    StripeElements,
+    StripeElementsOptions,
+    StripeHostWindow,
+    StripeUPEClient,
+} from './stripe-upe';
 
 export default class StripeUPEScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        private _window: StripeHostWindow = window
-    ) {}
+    constructor(private _scriptLoader: ScriptLoader, private _window: StripeHostWindow = window) {}
 
-    async getStripeClient(stripePublishableKey: string, stripeAccount: string, locale?: string): Promise<StripeUPEClient> {
+    async getStripeClient(
+        stripePublishableKey: string,
+        stripeAccount: string,
+        locale?: string,
+    ): Promise<StripeUPEClient> {
         let stripeClient = this._window.bcStripeClient;
 
         if (!stripeClient) {
@@ -19,7 +25,12 @@ export default class StripeUPEScriptLoader {
             stripeClient = stripe(stripePublishableKey, {
                 stripeAccount,
                 locale,
-                betas: ['payment_element_beta_2', 'alipay_pm_beta_1', 'link_default_integration_beta_1', 'shipping_address_element_beta_1'],
+                betas: [
+                    'payment_element_beta_2',
+                    'alipay_pm_beta_1',
+                    'link_default_integration_beta_1',
+                    'shipping_address_element_beta_1',
+                ],
                 apiVersion: '2020-03-02;alipay_beta=v1;link_beta=v1',
             });
 
@@ -48,10 +59,9 @@ export default class StripeUPEScriptLoader {
         await this._scriptLoader.loadScript('https://js.stripe.com/v3/');
 
         if (!this._window.Stripe) {
-          throw new PaymentMethodClientUnavailableError();
+            throw new PaymentMethodClientUnavailableError();
         }
 
         return this._window.Stripe;
     }
-
 }

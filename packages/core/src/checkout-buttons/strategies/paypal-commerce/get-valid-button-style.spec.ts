@@ -1,4 +1,9 @@
-import { StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from '../../../payment/strategies/paypal-commerce';
+import {
+    StyleButtonColor,
+    StyleButtonLabel,
+    StyleButtonLayout,
+    StyleButtonShape,
+} from '../../../payment/strategies/paypal-commerce';
 
 import getValidButtonStyle from './get-valid-button-style';
 

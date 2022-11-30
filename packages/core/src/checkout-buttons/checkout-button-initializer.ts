@@ -2,7 +2,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { isElementId, setUniqueElementId } from '../common/dom';
 import { bindDecorator as bind } from '../common/utility';
 
-import { CheckoutButtonOptions, CheckoutButtonInitializeOptions } from './checkout-button-options';
+import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonSelectors from './checkout-button-selectors';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import createCheckoutButtonSelectors from './create-checkout-button-selectors';
@@ -16,11 +16,11 @@ export default class CheckoutButtonInitializer {
      */
     constructor(
         private _store: CheckoutStore,
-        private _buttonStrategyActionCreator: CheckoutButtonStrategyActionCreator
+        private _buttonStrategyActionCreator: CheckoutButtonStrategyActionCreator,
     ) {
         this._state = createCheckoutButtonSelectors(this._store.getState());
 
-        this._store.subscribe(state => {
+        this._store.subscribe((state) => {
             this._state = createCheckoutButtonSelectors(state);
         });
     }
@@ -80,8 +80,11 @@ export default class CheckoutButtonInitializer {
     ): () => void {
         return this._store.subscribe(
             () => subscriber(this.getState()),
-            state => state.checkoutButton.getState(),
-            ...filters.map(filter => (state: InternalCheckoutSelectors) => filter(createCheckoutButtonSelectors(state)))
+            (state) => state.checkoutButton.getState(),
+            ...filters.map(
+                (filter) => (state: InternalCheckoutSelectors) =>
+                    filter(createCheckoutButtonSelectors(state)),
+            ),
         );
     }
 
@@ -104,19 +107,21 @@ export default class CheckoutButtonInitializer {
      * @returns A promise that resolves to the current state.
      */
     initializeButton(options: CheckoutButtonInitializeOptions): Promise<CheckoutButtonSelectors> {
-        const containerIds = isElementId(options.containerId) ?
-            [options.containerId] :
-            setUniqueElementId(options.containerId, `${options.methodId}-container`);
+        const containerIds = isElementId(options.containerId)
+            ? [options.containerId]
+            : setUniqueElementId(options.containerId, `${options.methodId}-container`);
 
         return Promise.all(
-            containerIds.map(containerId => {
-                const action = this._buttonStrategyActionCreator.initialize({ ...options, containerId });
+            containerIds.map((containerId) => {
+                const action = this._buttonStrategyActionCreator.initialize({
+                    ...options,
+                    containerId,
+                });
                 const queueId = `checkoutButtonStrategy:${options.methodId}:${containerId}`;
 
                 return this._store.dispatch(action, { queueId });
-            })
-        )
-            .then(() => this.getState());
+            }),
+        ).then(() => this.getState());
     }
 
     /**
@@ -135,7 +140,6 @@ export default class CheckoutButtonInitializer {
         const action = this._buttonStrategyActionCreator.deinitialize(options);
         const queueId = `checkoutButtonStrategy:${options.methodId}`;
 
-        return this._store.dispatch(action, { queueId })
-            .then(() => this.getState());
+        return this._store.dispatch(action, { queueId }).then(() => this.getState());
     }
 }

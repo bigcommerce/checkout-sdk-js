@@ -1,5 +1,14 @@
-import PaymentInstrument, { CardInstrument, InstrumentRequestContext, VaultAccessToken } from './instrument';
-import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrumentsResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
+import PaymentInstrument, {
+    CardInstrument,
+    InstrumentRequestContext,
+    VaultAccessToken,
+} from './instrument';
+import {
+    InstrumentErrorResponseBody,
+    InstrumentsResponseBody,
+    InternalInstrumentsResponseBody,
+    InternalVaultAccessTokenResponseBody,
+} from './instrument-response-body';
 import InstrumentState, { InstrumentMeta } from './instrument-state';
 
 export function getInstrumentsMeta(): InstrumentMeta {
@@ -114,10 +123,12 @@ export function instrumentRequestContext(): InstrumentRequestContext {
 
 export function getErrorInstrumentResponseBody(): InstrumentErrorResponseBody {
     return {
-        errors: [{
-            code: 400,
-            message: 'Bad Request',
-        }],
+        errors: [
+            {
+                code: 400,
+                message: 'Bad Request',
+            },
+        ],
     };
 }
 

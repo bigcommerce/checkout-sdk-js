@@ -1,7 +1,12 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { isNil, omitBy } from 'lodash';
 
-import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import {
+    ContentType,
+    joinIncludes,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 import { OrderTaxProviderUnavailableError } from './errors';
 import InternalOrderRequestBody from './internal-order-request-body';
@@ -16,11 +21,12 @@ export interface SubmitOrderRequestOptions extends RequestOptions {
 }
 
 export default class OrderRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    loadOrder(orderId: number, { timeout, params }: RequestOptions<OrderParams> = {}): Promise<Response<Order>> {
+    loadOrder(
+        orderId: number,
+        { timeout, params }: RequestOptions<OrderParams> = {},
+    ): Promise<Response<Order>> {
         const url = `/api/storefront/orders/${orderId}`;
         const headers = {
             Accept: ContentType.JsonV1,
@@ -36,36 +42,44 @@ export default class OrderRequestSender {
 
         return this._requestSender.get(url, {
             params: {
-                include: joinIncludes([
-                    ...include,
-                    ...(params && params.include || []),
-                ]),
+                include: joinIncludes([...include, ...((params && params.include) || [])]),
             },
             headers,
             timeout,
         });
     }
 
-    submitOrder(body?: InternalOrderRequestBody, { headers, timeout }: SubmitOrderRequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(
+        body?: InternalOrderRequestBody,
+        { headers, timeout }: SubmitOrderRequestOptions = {},
+    ): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
-        return this._requestSender.post<InternalOrderResponseBody>(url, {
-            body,
-            headers: omitBy({
-                'X-Checkout-Variant': headers && headers.checkoutVariant,
-                ...SDK_VERSION_HEADERS,
-            }, isNil),
-            timeout,
-        }).catch(error => {
-            if (error.body.type === 'tax_provider_unavailable') {
-                throw new OrderTaxProviderUnavailableError();
-            }
+        return this._requestSender
+            .post<InternalOrderResponseBody>(url, {
+                body,
+                headers: omitBy(
+                    {
+                        'X-Checkout-Variant': headers && headers.checkoutVariant,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    isNil,
+                ),
+                timeout,
+            })
+            .catch((error) => {
+                if (error.body.type === 'tax_provider_unavailable') {
+                    throw new OrderTaxProviderUnavailableError();
+                }
 
-            throw error;
-        });
+                throw error;
+            });
     }
 
-    finalizeOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
+    finalizeOrder(
+        orderId: number,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<InternalOrderResponseBody>> {
         const url = `/internalapi/v1/checkout/order/${orderId}`;
 
         return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS });

@@ -3,19 +3,23 @@ import { round } from 'lodash';
 import { Checkout } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizePayload,
+} from './googlepay';
 
 export default class GooglePayBNZInitializer implements GooglePayInitializer {
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        return Promise.resolve(this._getGooglePayPaymentDataRequest(
-            checkout,
-            paymentMethod,
-            hasShippingAddress
-        ));
+        return Promise.resolve(
+            this._getGooglePayPaymentDataRequest(checkout, paymentMethod, hasShippingAddress),
+        );
     }
 
     teardown(): Promise<void> {
@@ -27,10 +31,7 @@ export default class GooglePayBNZInitializer implements GooglePayInitializer {
             paymentMethodData: {
                 type,
                 tokenizationData: { token },
-                info: {
-                    cardNetwork: cardType,
-                    cardDetails: lastFour,
-                },
+                info: { cardNetwork: cardType, cardDetails: lastFour },
             },
         } = paymentData;
 
@@ -47,7 +48,7 @@ export default class GooglePayBNZInitializer implements GooglePayInitializer {
     private _getGooglePayPaymentDataRequest(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         const {
             outstandingBalance,
@@ -74,25 +75,29 @@ export default class GooglePayBNZInitializer implements GooglePayInitializer {
                 merchantId,
                 merchantName,
             },
-            allowedPaymentMethods: [{
-                type: 'CARD',
-                parameters: {
-                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: supportedCards.map(card => card === 'MC' ? 'MASTERCARD' : card),
-                    billingAddressRequired: true,
-                    billingAddressParameters: {
-                        format: BillingAddressFormat.Full,
-                        phoneNumberRequired: true,
-                    },
-                },
-                tokenizationSpecification: {
-                    type: 'PAYMENT_GATEWAY',
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
                     parameters: {
-                        gateway: 'cybersource',
-                        gatewayMerchantId,
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks: supportedCards.map((card) =>
+                            card === 'MC' ? 'MASTERCARD' : card,
+                        ),
+                        billingAddressRequired: true,
+                        billingAddressParameters: {
+                            format: BillingAddressFormat.Full,
+                            phoneNumberRequired: true,
+                        },
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: 'cybersource',
+                            gatewayMerchantId,
+                        },
                     },
                 },
-            }],
+            ],
             transactionInfo: {
                 currencyCode,
                 totalPriceStatus: 'FINAL',

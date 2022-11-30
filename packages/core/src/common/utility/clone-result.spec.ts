@@ -6,11 +6,9 @@ describe('cloneResult()', () => {
         const fn = () => data;
         const clonedFn = cloneResult(fn);
 
-        expect(clonedFn())
-            .toEqual(fn());
+        expect(clonedFn()).toEqual(fn());
 
-        expect(clonedFn())
-            .not.toBe(fn());
+        expect(clonedFn()).not.toBe(fn());
     });
 
     it('only clones again if output is different to previous call', () => {
@@ -19,13 +17,11 @@ describe('cloneResult()', () => {
         const clonedFn = cloneResult(fn);
         const resultA = clonedFn();
 
-        expect(resultA)
-            .toBe(clonedFn());
+        expect(resultA).toBe(clonedFn());
 
         data = { message: 'bar' };
 
-        expect(resultA)
-            .not.toBe(clonedFn());
+        expect(resultA).not.toBe(clonedFn());
     });
 
     it('does not clone nested object again if it is already cloned', () => {
@@ -38,10 +34,8 @@ describe('cloneResult()', () => {
 
         const resultB = clonedFn();
 
-        expect(resultA.child)
-            .toBe(resultB.child);
+        expect(resultA.child).toBe(resultB.child);
 
-        expect(resultA.child)
-            .not.toBe(fn().child);
+        expect(resultA.child).not.toBe(fn().child);
     });
 });

@@ -32,80 +32,96 @@ describe('StoreCredit Request Sender', () => {
     describe('#applyStoreCredit()', () => {
         it('applies store credit', async () => {
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await storeCreditRequestSender.applyStoreCredit(checkoutId);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/store-credit', {
-                params: {
-                    include: defaultIncludes,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/store-credit',
+                {
+                    params: {
+                        include: defaultIncludes,
+                    },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 },
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
-                },
-            });
+            );
         });
 
         it('applies store credit with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await storeCreditRequestSender.applyStoreCredit(checkoutId, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/store-credit', {
-                ...options,
-                params: {
-                    include: defaultIncludes,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/store-credit',
+                {
+                    ...options,
+                    params: {
+                        include: defaultIncludes,
+                    },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 },
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
-                },
-            });
+            );
         });
     });
 
     describe('#removeStoreCredit()', () => {
         it('removes store credit', async () => {
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await storeCreditRequestSender.removeStoreCredit(checkoutId);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/store-credit', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.delete).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/store-credit',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes,
+                    },
                 },
-                params: {
-                    include: defaultIncludes,
-                },
-            });
+            );
         });
 
         it('removes store credit with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckout());
+
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await storeCreditRequestSender.removeStoreCredit(checkoutId, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/store-credit', {
-                ...options,
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.delete).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/store-credit',
+                {
+                    ...options,
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes,
+                    },
                 },
-                params: {
-                    include: defaultIncludes,
-                },
-            });
+            );
         });
     });
 });

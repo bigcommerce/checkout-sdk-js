@@ -7,14 +7,14 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 export default class NoPaymentDataRequiredPaymentStrategy implements PaymentStrategy {
-    constructor(
-        private _store: CheckoutStore,
-        private _orderActionCreator: OrderActionCreator
-    ) {}
+    constructor(private _store: CheckoutStore, private _orderActionCreator: OrderActionCreator) {}
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        orderRequest: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options)
+            this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options),
         );
     }
 

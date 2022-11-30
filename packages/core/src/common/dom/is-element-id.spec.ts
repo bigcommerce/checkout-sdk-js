@@ -2,24 +2,18 @@ import isElementId from './is-element-id';
 
 describe('isElementId()', () => {
     it('returns true if string is valid element ID', () => {
-        expect(isElementId('foobar'))
-            .toEqual(true);
+        expect(isElementId('foobar')).toBe(true);
 
-        expect(isElementId('FOOBAR'))
-            .toEqual(true);
+        expect(isElementId('FOOBAR')).toBe(true);
 
-        expect(isElementId('foo-bar'))
-            .toEqual(true);
+        expect(isElementId('foo-bar')).toBe(true);
     });
 
     it('returns false if string is not valid element ID', () => {
-        expect(isElementId('.foobar'))
-            .toEqual(false);
+        expect(isElementId('.foobar')).toBe(false);
 
-        expect(isElementId('[foobar]'))
-            .toEqual(false);
+        expect(isElementId('[foobar]')).toBe(false);
 
-        expect(isElementId('#foobar'))
-            .toEqual(false);
+        expect(isElementId('#foobar')).toBe(false);
     });
 });

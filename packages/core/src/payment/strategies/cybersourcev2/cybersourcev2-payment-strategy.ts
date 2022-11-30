@@ -12,20 +12,17 @@ export default class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrat
         orderActionCreator: OrderActionCreator,
         paymentActionCreator: PaymentActionCreator,
         hostedFormFactory: HostedFormFactory,
-        private _threeDSecureFlow: CardinalThreeDSecureFlowV2
+        private _threeDSecureFlow: CardinalThreeDSecureFlowV2,
     ) {
-        super(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        );
+        super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
     }
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         await super.initialize(options);
 
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
         const paymentMethod = getPaymentMethodOrThrow(options.methodId);
 
         if (paymentMethod.config.is3dsEnabled) {
@@ -35,16 +32,21 @@ export default class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrat
         return this._store.getState();
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment: { methodId = '' } = {} } = payload;
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
 
         if (getPaymentMethodOrThrow(methodId).config.is3dsEnabled) {
             return this._threeDSecureFlow.start(
                 super.execute.bind(this),
                 payload,
                 options,
-                this._hostedForm
+                this._hostedForm,
             );
         }
 

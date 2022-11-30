@@ -3,18 +3,33 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import {
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../../../payment';
 import { PaymentMethodFailedError } from '../../../payment/errors';
 import { getBolt } from '../../../payment/payment-methods.mock';
 import { BoltCheckout, BoltScriptLoader } from '../../../payment/strategies/bolt';
 import { getQuote } from '../../../quote/internal-quotes.mock';
-import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import {
+    GoogleRecaptcha,
+    GoogleRecaptchaScriptLoader,
+    GoogleRecaptchaWindow,
+    SpamProtectionActionCreator,
+    SpamProtectionRequestSender,
+} from '../../../spam-protection';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerRequestSender from '../../customer-request-sender';
@@ -36,12 +51,19 @@ describe('BoltCustomerStrategy', () => {
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
+
         paymentMethodMock = getBolt();
         store = createCheckoutStore(getCheckoutStoreState());
 
         googleRecaptchaMockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
-        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(createScriptLoader(), googleRecaptchaMockWindow);
-        googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, new MutationObserverFactory());
+        googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(
+            createScriptLoader(),
+            googleRecaptchaMockWindow,
+        );
+        googleRecaptcha = new GoogleRecaptcha(
+            googleRecaptchaScriptLoader,
+            new MutationObserverFactory(),
+        );
 
         boltCheckout = {} as BoltCheckout;
         boltCheckout.configure = jest.fn();
@@ -57,24 +79,28 @@ describe('BoltCustomerStrategy', () => {
             new CheckoutActionCreator(
                 new CheckoutRequestSender(createRequestSender()),
                 new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
-                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+                new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
             ),
             new SpamProtectionActionCreator(
                 googleRecaptcha,
-                new SpamProtectionRequestSender(createRequestSender())
-            )
+                new SpamProtectionRequestSender(createRequestSender()),
+            ),
         );
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
         strategy = new BoltCustomerStrategy(
             store,
             boltScriptLoader,
             customerActionCreator,
-            paymentMethodActionCreator
+            paymentMethodActionCreator,
         );
     });
 
@@ -114,8 +140,7 @@ describe('BoltCustomerStrategy', () => {
             const options = {};
             const action = of(createAction(CustomerActionType.SignInCustomerRequested, getQuote()));
 
-            jest.spyOn(customerActionCreator, 'signInCustomer')
-                .mockReturnValue(action);
+            jest.spyOn(customerActionCreator, 'signInCustomer').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
 
@@ -129,10 +154,11 @@ describe('BoltCustomerStrategy', () => {
     describe('#signOut()', () => {
         it('dispatches action to sign out customer', async () => {
             const options = {};
-            const action = of(createAction(CustomerActionType.SignOutCustomerRequested, getQuote()));
+            const action = of(
+                createAction(CustomerActionType.SignOutCustomerRequested, getQuote()),
+            );
 
-            jest.spyOn(customerActionCreator, 'signOutCustomer')
-                .mockReturnValue(action);
+            jest.spyOn(customerActionCreator, 'signOutCustomer').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
 
@@ -156,7 +182,10 @@ describe('BoltCustomerStrategy', () => {
             try {
                 /* eslint-disable @typescript-eslint/ban-ts-comment */
                 // @ts-ignore
-                await strategy.executePaymentMethodCheckout({ methodId: 'bolt', continueWithCheckoutCallback: 'string' });
+                await strategy.executePaymentMethodCheckout({
+                    methodId: 'bolt',
+                    continueWithCheckoutCallback: 'string',
+                });
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
@@ -185,7 +214,7 @@ describe('BoltCustomerStrategy', () => {
 
             await strategy.executePaymentMethodCheckout(options);
 
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
 
         it('runs default BC checkout flow (calls continueWithCheckoutCallback) if Bolt embedded one click configuration mode is disabled', async () => {
@@ -197,7 +226,7 @@ describe('BoltCustomerStrategy', () => {
             await strategy.initialize({ methodId: 'bolt' });
             await strategy.executePaymentMethodCheckout(options);
 
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
 
         it('runs default BC checkout flow (calls continueWithCheckoutCallback) if customer do not have Bolt account', async () => {
@@ -212,7 +241,7 @@ describe('BoltCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout(options);
 
             expect(boltCheckout.hasBoltAccount).toHaveBeenCalledWith('test@bigcommerce.com');
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
 
         it('shows Bolt Checkout Modal', async () => {
@@ -249,7 +278,7 @@ describe('BoltCustomerStrategy', () => {
 
             expect(boltCheckout.hasBoltAccount).toHaveBeenCalledWith('test@bigcommerce.com');
             expect(boltCheckout.openCheckout).toHaveBeenCalled();
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
 
         it('fails to execute payment method checkout if Bolt has an error when open Bolt Checkout Modal', async () => {

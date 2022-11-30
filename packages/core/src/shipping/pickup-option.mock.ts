@@ -1,5 +1,12 @@
+import {
+    PickupOptionAPIRequestBody,
+    PickupOptionRequestBody,
+    PickupOptionResponse,
+    PickupOptionResult,
+    RadiusUnit,
+} from './pickup-option';
+
 import { PickupOptionState } from '.';
-import { PickupOptionAPIRequestBody, PickupOptionRequestBody, PickupOptionResponse, PickupOptionResult, RadiusUnit } from './pickup-option';
 
 export function getApiQueryForPickupOptions(): PickupOptionAPIRequestBody {
     return {
@@ -13,10 +20,12 @@ export function getApiQueryForPickupOptions(): PickupOptionAPIRequestBody {
                 longitude: 1.4,
             },
         },
-        items: [{
-            variantId: 71,
-            quantity: 1,
-        }],
+        items: [
+            {
+                variantId: 71,
+                quantity: 1,
+            },
+        ],
     };
 }
 

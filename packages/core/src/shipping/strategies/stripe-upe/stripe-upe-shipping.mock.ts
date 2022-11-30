@@ -28,7 +28,7 @@ export function getStripeUPEShippingInitializeOptionsMock(): ShippingInitializeO
             onChangeShipping: jest.fn(),
             availableCountries: 'US,MX',
             getStyles: jest.fn(),
-            getStripeState: jest.fn()
+            getStripeState: jest.fn(),
         },
     };
 }

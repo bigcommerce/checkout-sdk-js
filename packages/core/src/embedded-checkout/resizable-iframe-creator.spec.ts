@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { iframeResizer, IFrameComponent, IFrameObject, IFrameOptions } from '../common/iframe';
+import { IFrameComponent, IFrameObject, IFrameOptions, iframeResizer } from '../common/iframe';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
@@ -26,15 +26,13 @@ describe('ResizableIframeCreator', () => {
         container = document.createElement('div');
         eventEmitter = new EventEmitter();
 
-        jest.spyOn(window, 'addEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.addListener(type, listener);
-            });
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+            return eventEmitter.addListener(type, listener);
+        });
 
-        jest.spyOn(window, 'removeEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.removeListener(type, listener);
-            });
+        jest.spyOn(window, 'removeEventListener').mockImplementation((type, listener) => {
+            return eventEmitter.removeListener(type, listener);
+        });
 
         container.setAttribute('id', 'checkout');
         window.document.body.appendChild(container);
@@ -54,7 +52,7 @@ describe('ResizableIframeCreator', () => {
 
         const frame = await iframeCreator.createFrame(url, 'checkout');
 
-        expect(frame.tagName).toEqual('IFRAME');
+        expect(frame.tagName).toBe('IFRAME');
         expect(frame.src).toEqual(url);
         expect(frame.parentElement).toEqual(container);
     });
@@ -69,14 +67,17 @@ describe('ResizableIframeCreator', () => {
 
         const frame = await iframeCreator.createFrame(url, 'checkout');
 
-        expect(frame.style.border).toEqual('');
-        expect(frame.style.width).toEqual('100%');
+        expect(frame.style.border).toBe('');
+        expect(frame.style.width).toBe('100%');
         expect(frame.iFrameResizer).toBeDefined();
-        expect(iframeResizer).toHaveBeenCalledWith({
-            scrolling: false,
-            sizeWidth: false,
-            heightCalculationMethod: 'lowestElement',
-        }, frame);
+        expect(iframeResizer).toHaveBeenCalledWith(
+            {
+                scrolling: false,
+                sizeWidth: false,
+                heightCalculationMethod: 'lowestElement',
+            },
+            frame,
+        );
     });
 
     it('calculates iframe height based on body element if option is passed', async () => {
@@ -92,9 +93,12 @@ describe('ResizableIframeCreator', () => {
 
         await iframeCreator.createFrame(url, 'checkout');
 
-        expect(iframeResizer).toHaveBeenCalledWith(expect.objectContaining({
-            heightCalculationMethod: 'taggedElement',
-        }), expect.any(HTMLIFrameElement));
+        expect(iframeResizer).toHaveBeenCalledWith(
+            expect.objectContaining({
+                heightCalculationMethod: 'taggedElement',
+            }),
+            expect.any(HTMLIFrameElement),
+        );
     });
 
     it('allows cross-origin iframe to use payment request API', async () => {
@@ -107,7 +111,7 @@ describe('ResizableIframeCreator', () => {
 
         const frame = await iframeCreator.createFrame(url, 'checkout');
 
-        expect(frame.allowPaymentRequest).toEqual(true);
+        expect(frame.allowPaymentRequest).toBe(true);
     });
 
     it('removes message listener if iframe is loaded successfully', async () => {
@@ -126,7 +130,9 @@ describe('ResizableIframeCreator', () => {
     });
 
     it('throws error if unable to find container element', () => {
-        expect(() => iframeCreator.createFrame(url, 'invalid_container')).toThrow(NotEmbeddableError);
+        expect(() => iframeCreator.createFrame(url, 'invalid_container')).toThrow(
+            NotEmbeddableError,
+        );
     });
 
     it('throws error if not receiving "loaded" event within certain timeframe', async () => {
@@ -162,7 +168,7 @@ describe('ResizableIframeCreator', () => {
         try {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
-            expect(container.childNodes.length).toEqual(0);
+            expect(container.childNodes).toHaveLength(0);
         }
     });
 
@@ -172,7 +178,10 @@ describe('ResizableIframeCreator', () => {
         try {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
-            expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
+            expect(window.removeEventListener).toHaveBeenCalledWith(
+                'message',
+                expect.any(Function),
+            );
         }
     });
 });

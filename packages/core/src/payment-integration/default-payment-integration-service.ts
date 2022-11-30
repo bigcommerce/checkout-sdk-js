@@ -1,28 +1,27 @@
 import {
+    BillingAddressRequestBody,
     HostedForm,
     HostedFormOptions,
-    PaymentIntegrationService,
-    PaymentIntegrationSelectors,
-    BillingAddressRequestBody,
     OrderRequestBody,
     Payment,
-    ShippingAddressRequestBody,
+    PaymentIntegrationSelectors,
+    PaymentIntegrationService,
     RequestOptions,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { BillingAddressActionCreator } from "../billing";
-import { CheckoutStore, CheckoutActionCreator } from "../checkout";
-import { DataStoreProjection } from "../common/data-store";
-import { HostedFormFactory } from "../hosted-form";
-import { OrderActionCreator } from "../order";
-import PaymentActionCreator from "../payment/payment-action-creator";
-import PaymentMethodActionCreator from "../payment/payment-method-action-creator";
-import { ConsignmentActionCreator } from "../shipping";
+    ShippingAddressRequestBody,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import PaymentIntegrationStoreProjectionFactory from "./payment-integration-store-projection-factory";
+import { BillingAddressActionCreator } from '../billing';
+import { CheckoutActionCreator, CheckoutStore } from '../checkout';
+import { DataStoreProjection } from '../common/data-store';
+import { HostedFormFactory } from '../hosted-form';
+import { OrderActionCreator } from '../order';
+import PaymentActionCreator from '../payment/payment-action-creator';
+import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import { ConsignmentActionCreator } from '../shipping';
 
-export default class DefaultPaymentIntegrationService
-    implements PaymentIntegrationService
-{
+import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+
+export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {
     private _storeProjection: DataStoreProjection<PaymentIntegrationSelectors>;
 
     constructor(
@@ -34,18 +33,15 @@ export default class DefaultPaymentIntegrationService
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {
-        this._storeProjection = this._storeProjectionFactory.create(
-            this._store
-        );
+        this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
 
     createHostedForm(host: string, options: HostedFormOptions): HostedForm {
-        return this._hostedFormFactory.create(host,options);
+        return this._hostedFormFactory.create(host, options);
     }
 
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
         ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>
@@ -58,47 +54,31 @@ export default class DefaultPaymentIntegrationService
     }
 
     async loadCheckout(): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._checkoutActionCreator.loadCurrentCheckout()
-        );
+        await this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
 
         return this._storeProjection.getState();
     }
 
     async loadDefaultCheckout(): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._checkoutActionCreator.loadDefaultCheckout()
-        );
+        await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
 
         return this._storeProjection.getState();
     }
 
-    async loadPaymentMethod(
-        methodId: string
-    ): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(methodId)
-        );
+    async loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
 
         return this._storeProjection.getState();
     }
 
-    async submitOrder(
-        payload?: OrderRequestBody
-    ): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._orderActionCreator.submitOrder(payload)
-        );
+    async submitOrder(payload?: OrderRequestBody): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._orderActionCreator.submitOrder(payload));
 
         return this._storeProjection.getState();
     }
 
-    async submitPayment(
-        payment: Payment
-    ): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._paymentActionCreator.submitPayment(payment)
-        );
+    async submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
 
         return this._storeProjection.getState();
     }
@@ -109,38 +89,34 @@ export default class DefaultPaymentIntegrationService
         } = this._store.getState();
 
         await this._store.dispatch(
-            this._orderActionCreator.finalizeOrder(getOrderOrThrow().orderId)
+            this._orderActionCreator.finalizeOrder(getOrderOrThrow().orderId),
         );
 
         return this._storeProjection.getState();
     }
 
     async updateBillingAddress(
-        payload: BillingAddressRequestBody
+        payload: BillingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._billingAddressActionCreator.updateAddress(payload)
-        );
+        await this._store.dispatch(this._billingAddressActionCreator.updateAddress(payload));
 
         return this._storeProjection.getState();
     }
 
     async updateShippingAddress(
-        payload: ShippingAddressRequestBody
+        payload: ShippingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(
-            this._consignmentActionCreator.updateAddress(payload)
-        );
+        await this._store.dispatch(this._consignmentActionCreator.updateAddress(payload));
 
         return this._storeProjection.getState();
     }
 
     async selectShippingOption(
         id: string,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
-            this._consignmentActionCreator.selectShippingOption(id, options)
+            this._consignmentActionCreator.selectShippingOption(id, options),
         );
 
         return this._storeProjection.getState();

@@ -1,6 +1,9 @@
 import { RequestError } from '../common/error/errors';
 
-import CouponSelector, { createCouponSelectorFactory, CouponSelectorFactory } from './coupon-selector';
+import CouponSelector, {
+    CouponSelectorFactory,
+    createCouponSelectorFactory,
+} from './coupon-selector';
 import CouponState from './coupon-state';
 
 describe('CouponSelector', () => {
@@ -42,13 +45,13 @@ describe('CouponSelector', () => {
                 statuses: { isApplyingCoupon: true },
             });
 
-            expect(couponSelector.isApplying()).toEqual(true);
+            expect(couponSelector.isApplying()).toBe(true);
         });
 
         it('returns false if not applying a coupon', () => {
             couponSelector = createCouponSelector(state);
 
-            expect(couponSelector.isApplying()).toEqual(false);
+            expect(couponSelector.isApplying()).toBe(false);
         });
     });
 
@@ -78,13 +81,13 @@ describe('CouponSelector', () => {
                 statuses: { isRemovingCoupon: true },
             });
 
-            expect(couponSelector.isRemoving()).toEqual(true);
+            expect(couponSelector.isRemoving()).toBe(true);
         });
 
         it('returns false if not removing a coupon', () => {
             couponSelector = createCouponSelector(state);
 
-            expect(couponSelector.isRemoving()).toEqual(false);
+            expect(couponSelector.isRemoving()).toBe(false);
         });
     });
 });

@@ -8,7 +8,10 @@ export default interface CheckoutState {
     statuses: CheckoutStatusesState;
 }
 
-export type CheckoutDataState = Omit<Checkout, 'billingAddress' | 'cart' | 'consignments' | 'coupons' | 'giftCertificates'>;
+export type CheckoutDataState = Omit<
+    Checkout,
+    'billingAddress' | 'cart' | 'consignments' | 'coupons' | 'giftCertificates'
+>;
 
 export interface CheckoutErrorsState {
     loadError?: Error;

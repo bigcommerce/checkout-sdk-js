@@ -7,9 +7,7 @@ import AmazonPayWindow from './amazon-pay-window';
 export default class AmazonPayScriptLoader {
     private _window: AmazonPayWindow;
 
-    constructor(
-        private _scriptLoader: ScriptLoader
-    ) {
+    constructor(private _scriptLoader: ScriptLoader) {
         this._window = window;
     }
 
@@ -19,13 +17,13 @@ export default class AmazonPayScriptLoader {
             initializationData: { region = 'us' } = {},
         } = method;
 
-        const url = 'https://' +
-            (region.toLowerCase() !== 'us' ? 'static-eu.' : 'static-na.') +
-            'payments-amazon.com/OffAmazonPayments/' +
-            `${region.toLowerCase()}/` +
-            (testMode ? 'sandbox/' : '') +
-            (region.toLowerCase() !== 'us' ? 'lpa/' : '') +
-            `js/Widgets.js?sellerId=${merchantId}`;
+        const url =
+            `https://${
+                region.toLowerCase() !== 'us' ? 'static-eu.' : 'static-na.'
+            }payments-amazon.com/OffAmazonPayments/` +
+            `${region.toLowerCase()}/${testMode ? 'sandbox/' : ''}${
+                region.toLowerCase() !== 'us' ? 'lpa/' : ''
+            }js/Widgets.js?sellerId=${merchantId}`;
 
         this._configureWidget(method, onPaymentReady);
 

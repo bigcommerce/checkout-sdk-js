@@ -6,7 +6,7 @@ describe('isInternalAddressEqual', () => {
     it('returns true if addresses are equal', () => {
         const output = isAddressEqual(getShippingAddress(), getShippingAddress());
 
-        expect(output).toEqual(true);
+        expect(output).toBe(true);
     });
 
     it('returns false if addresses are different', () => {
@@ -15,18 +15,19 @@ describe('isInternalAddressEqual', () => {
             address1: '1 Foobar St',
         });
 
-        expect(output).toEqual(false);
+        expect(output).toBe(false);
     });
 
     it('returns true if addresses have different values for ignored fields', () => {
-        expect(isAddressEqual(
-            getShippingAddress(),
-            { ...getShippingAddress(), country: 'x' }
-        )).toEqual(true);
+        expect(
+            isAddressEqual(getShippingAddress(), { ...getShippingAddress(), country: 'x' }),
+        ).toBe(true);
 
-        expect(isAddressEqual(
-            getShippingAddress(),
-            { ...getShippingAddress(), stateOrProvinceCode: '123' }
-        )).toEqual(true);
+        expect(
+            isAddressEqual(getShippingAddress(), {
+                ...getShippingAddress(),
+                stateOrProvinceCode: '123',
+            }),
+        ).toBe(true);
     });
 });

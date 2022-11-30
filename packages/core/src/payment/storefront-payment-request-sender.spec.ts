@@ -12,8 +12,7 @@ describe('StorefrontPaymentRequestSender', () => {
         requestSender = createRequestSender();
         storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
-        jest.spyOn(requestSender, 'post')
-            .mockResolvedValue(undefined);
+        jest.spyOn(requestSender, 'post').mockResolvedValue(undefined);
     });
 
     describe('#saveExternalId', () => {
@@ -34,7 +33,7 @@ describe('StorefrontPaymentRequestSender', () => {
                         provider: 'zip',
                     },
                     headers,
-                }
+                },
             );
         });
 
@@ -49,7 +48,7 @@ describe('StorefrontPaymentRequestSender', () => {
                         provider: 'quadpay',
                     },
                     headers,
-                }
+                },
             );
         });
     });

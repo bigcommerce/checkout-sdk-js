@@ -5,7 +5,7 @@ import { GiftCertificateItem } from './line-item';
 
 export default function mapGiftCertificateToInternalLineItem(
     item: GiftCertificateItem,
-    decimalPlaces: number
+    decimalPlaces: number,
 ): InternalLineItem {
     const amountTransformer = new AmountTransformer(decimalPlaces);
 

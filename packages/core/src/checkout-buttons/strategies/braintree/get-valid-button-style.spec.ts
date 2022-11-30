@@ -1,4 +1,9 @@
-import { PaypalButtonStyleColorOption, PaypalButtonStyleLayoutOption, PaypalButtonStyleShapeOption, PaypalButtonStyleSizeOption } from '../../../payment/strategies/paypal';
+import {
+    PaypalButtonStyleColorOption,
+    PaypalButtonStyleLayoutOption,
+    PaypalButtonStyleShapeOption,
+    PaypalButtonStyleSizeOption,
+} from '../../../payment/strategies/paypal';
 
 import getValidButtonStyle from './get-valid-button-style';
 

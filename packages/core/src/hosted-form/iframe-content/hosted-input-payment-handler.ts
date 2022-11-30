@@ -19,10 +19,12 @@ export default class HostedInputPaymentHandler {
         private _inputStorage: HostedInputStorage,
         private _eventPoster: IframeEventPoster<HostedInputEvent>,
         private _paymentRequestSender: PaymentRequestSender,
-        private _paymentRequestTransformer: PaymentRequestTransformer
+        private _paymentRequestTransformer: PaymentRequestTransformer,
     ) {}
 
-    handle: (event: HostedFieldSubmitRequestEvent) => Promise<void> = async ({ payload: { data } }) => {
+    handle: (event: HostedFieldSubmitRequestEvent) => Promise<void> = async ({
+        payload: { data },
+    }) => {
         const values = this._inputAggregator.getInputValues();
         const results = await this._inputValidator.validate(values);
 
@@ -47,8 +49,8 @@ export default class HostedInputPaymentHandler {
                 this._paymentRequestTransformer.transformWithHostedFormData(
                     values,
                     data,
-                    this._inputStorage.getNonce() || ''
-                )
+                    this._inputStorage.getNonce() || '',
+                ),
             );
 
             this._eventPoster.post({
@@ -58,9 +60,9 @@ export default class HostedInputPaymentHandler {
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitFailed,
-                payload: this._isPaymentErrorResponse(error) ?
-                    { error: error.body.errors[0], response: error } :
-                    { error: { code: snakeCase(error.name), message: error.message } },
+                payload: this._isPaymentErrorResponse(error)
+                    ? { error: error.body.errors[0], response: error }
+                    : { error: { code: snakeCase(error.name), message: error.message } },
             });
         }
     };

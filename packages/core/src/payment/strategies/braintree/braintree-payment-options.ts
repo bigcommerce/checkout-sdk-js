@@ -107,7 +107,11 @@ export interface BraintreeThreeDSecureOptions {
      * @param cancel - A function, when called, will cancel the verification
      * process and remove the iframe.
      */
-    addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<BraintreeVerifyPayload> | undefined): void;
+    addFrame(
+        error: Error | undefined,
+        iframe: HTMLIFrameElement,
+        cancel: () => Promise<BraintreeVerifyPayload> | undefined,
+    ): void;
 
     /**
      * A callback that gets called when the iframe is about to be removed from
@@ -163,13 +167,9 @@ export interface BraintreeFormFieldStylesMap {
     focus?: BraintreeFormFieldStyles;
 }
 
-export type BraintreeFormFieldStyles = Partial<Pick<
-    CSSStyleDeclaration,
-    'color' |
-    'fontFamily' |
-    'fontSize' |
-    'fontWeight'
->>;
+export type BraintreeFormFieldStyles = Partial<
+    Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>
+>;
 
 export interface BraintreeFormFieldKeyboardEventData {
     fieldType: string;

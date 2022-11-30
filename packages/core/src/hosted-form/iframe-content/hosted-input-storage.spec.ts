@@ -10,7 +10,6 @@ describe('HostedInputStorage', () => {
     it('sets nonce for later retrieval', () => {
         subject.setNonce('abc');
 
-        expect(subject.getNonce())
-            .toEqual('abc');
+        expect(subject.getNonce()).toBe('abc');
     });
 });

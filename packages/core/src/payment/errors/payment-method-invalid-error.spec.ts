@@ -4,6 +4,6 @@ describe('PaymentMethodInvalidError', () => {
     it('returns error name', () => {
         const error = new PaymentMethodInvalidError();
 
-        expect(error.name).toEqual('PaymentMethodInvalidError');
+        expect(error.name).toBe('PaymentMethodInvalidError');
     });
 });

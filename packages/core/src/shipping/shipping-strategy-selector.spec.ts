@@ -1,6 +1,9 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import ShippingStrategySelector, { createShippingStrategySelectorFactory, ShippingStrategySelectorFactory } from './shipping-strategy-selector';
+import ShippingStrategySelector, {
+    createShippingStrategySelectorFactory,
+    ShippingStrategySelectorFactory,
+} from './shipping-strategy-selector';
 import { DEFAULT_STATE } from './shipping-strategy-state';
 
 describe('ShippingStrategySelector', () => {
@@ -70,7 +73,7 @@ describe('ShippingStrategySelector', () => {
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getInitializeError('bar')).toEqual(undefined);
+            expect(selector.getInitializeError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -79,7 +82,7 @@ describe('ShippingStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getInitializeError()).toEqual(undefined);
+            expect(selector.getInitializeError()).toBeUndefined();
         });
     });
 
@@ -87,7 +90,10 @@ describe('ShippingStrategySelector', () => {
         it('returns error if widget interaction failed', () => {
             selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
-                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+                errors: {
+                    widgetInteractionError: getErrorResponse(),
+                    widgetInteractionMethodId: 'foobar',
+                },
             });
 
             expect(selector.getWidgetInteractionError()).toEqual(getErrorResponse());
@@ -100,7 +106,7 @@ describe('ShippingStrategySelector', () => {
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getInitializeError('bar')).toEqual(undefined);
+            expect(selector.getInitializeError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -109,7 +115,7 @@ describe('ShippingStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getInitializeError()).toEqual(undefined);
+            expect(selector.getInitializeError()).toBeUndefined();
         });
     });
 
@@ -120,13 +126,13 @@ describe('ShippingStrategySelector', () => {
                 statuses: { isUpdatingAddress: true },
             });
 
-            expect(selector.isUpdatingAddress()).toEqual(true);
+            expect(selector.isUpdatingAddress()).toBe(true);
         });
 
         it('returns false if not updating address', () => {
             selector = createShippingStrategySelector(state.shippingStrategy);
 
-            expect(selector.isUpdatingAddress()).toEqual(false);
+            expect(selector.isUpdatingAddress()).toBe(false);
         });
     });
 
@@ -137,13 +143,13 @@ describe('ShippingStrategySelector', () => {
                 statuses: { isSelectingOption: true },
             });
 
-            expect(selector.isSelectingOption()).toEqual(true);
+            expect(selector.isSelectingOption()).toBe(true);
         });
 
         it('returns false if not selecting option', () => {
             selector = createShippingStrategySelector(state.shippingStrategy);
 
-            expect(selector.isSelectingOption()).toEqual(false);
+            expect(selector.isSelectingOption()).toBe(false);
         });
     });
 
@@ -154,7 +160,7 @@ describe('ShippingStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing()).toEqual(true);
+            expect(selector.isInitializing()).toBe(true);
         });
 
         it('returns true if initializing specific method', () => {
@@ -163,8 +169,8 @@ describe('ShippingStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing('foobar')).toEqual(true);
-            expect(selector.isInitializing('bar')).toEqual(false);
+            expect(selector.isInitializing('foobar')).toBe(true);
+            expect(selector.isInitializing('bar')).toBe(false);
         });
 
         it('returns false if not initializing method', () => {
@@ -173,7 +179,7 @@ describe('ShippingStrategySelector', () => {
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
 
-            expect(selector.isInitializing()).toEqual(false);
+            expect(selector.isInitializing()).toBe(false);
         });
     });
 
@@ -184,7 +190,7 @@ describe('ShippingStrategySelector', () => {
                 data: { foobar: { isInitialized: true } },
             });
 
-            expect(selector.isInitialized('foobar')).toEqual(true);
+            expect(selector.isInitialized('foobar')).toBe(true);
         });
 
         it('returns false if method is not initialized', () => {
@@ -193,8 +199,8 @@ describe('ShippingStrategySelector', () => {
                 data: { foobar: { isInitialized: false } },
             });
 
-            expect(selector.isInitialized('foobar')).toEqual(false);
-            expect(selector.isInitialized('bar')).toEqual(false);
+            expect(selector.isInitialized('foobar')).toBe(false);
+            expect(selector.isInitialized('bar')).toBe(false);
         });
     });
 
@@ -205,7 +211,7 @@ describe('ShippingStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(true);
+            expect(selector.isWidgetInteracting()).toBe(true);
         });
 
         it('returns true if a specific method is interacting with a widget', () => {
@@ -214,8 +220,8 @@ describe('ShippingStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
-            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+            expect(selector.isWidgetInteracting('foobar')).toBe(true);
+            expect(selector.isWidgetInteracting('bar')).toBe(false);
         });
 
         it('returns false if not interacting with a widget', () => {
@@ -224,7 +230,7 @@ describe('ShippingStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(false);
+            expect(selector.isWidgetInteracting()).toBe(false);
         });
     });
 });

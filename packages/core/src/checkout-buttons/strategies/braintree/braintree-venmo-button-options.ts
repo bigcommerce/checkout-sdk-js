@@ -1,5 +1,5 @@
-import { StandardError } from '../../../common/error/errors';
 import { BuyNowCartRequestBody } from '../../../cart';
+import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 
 export interface BraintreeVenmoButtonInitializeOptions {
@@ -20,5 +20,5 @@ export interface BraintreeVenmoButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 }

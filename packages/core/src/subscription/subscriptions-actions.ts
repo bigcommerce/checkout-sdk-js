@@ -8,9 +8,9 @@ export enum SubscriptionsActionType {
     UpdateSubscriptionsFailed = 'UPDATE_SUBSCRIPTIONS_FAILED',
 }
 export type UpdateSubscriptionsAction =
-    UpdateSubscriptionsRequestedAction |
-    UpdateSubscriptionsSucceededAction |
-    UpdateSubscriptionsFailedAction;
+    | UpdateSubscriptionsRequestedAction
+    | UpdateSubscriptionsSucceededAction
+    | UpdateSubscriptionsFailedAction;
 
 export interface UpdateSubscriptionsRequestedAction extends Action {
     type: SubscriptionsActionType.UpdateSubscriptionsRequested;

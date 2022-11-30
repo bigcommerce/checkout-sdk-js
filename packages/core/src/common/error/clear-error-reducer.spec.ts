@@ -15,8 +15,7 @@ describe('clearErrorReducer()', () => {
         const barError = new Error('bar');
         const action = actions.clearError(fooError);
 
-        expect(clearErrorReducer({ fooError, barError }, action))
-            .toEqual({ barError });
+        expect(clearErrorReducer({ fooError, barError }, action)).toEqual({ barError });
     });
 
     it('does nothing if action is not "clear error" action', () => {
@@ -24,8 +23,7 @@ describe('clearErrorReducer()', () => {
         const barError = new Error('bar');
         const action = createAction('FOOBAR');
 
-        expect(clearErrorReducer({ fooError, barError }, action))
-            .toEqual({ fooError, barError });
+        expect(clearErrorReducer({ fooError, barError }, action)).toEqual({ fooError, barError });
     });
 
     it('finds error recursively', () => {
@@ -33,7 +31,8 @@ describe('clearErrorReducer()', () => {
         const barError = new Error('bar');
         const action = actions.clearError(fooError);
 
-        expect(clearErrorReducer({ 123: { fooError, barError } }, action))
-            .toEqual({ 123: { barError } });
+        expect(clearErrorReducer({ 123: { fooError, barError } }, action)).toEqual({
+            123: { barError },
+        });
     });
 });

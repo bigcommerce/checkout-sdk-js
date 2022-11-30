@@ -6,7 +6,7 @@ import RequestError from './request-error';
 
 export default function mapFromPaymentErrorResponse(
     response: Response<PaymentErrorResponseBody>,
-    message?: string
+    message?: string,
 ): RequestError {
     const { body } = response;
     const { errors = [] } = body;
@@ -22,11 +22,13 @@ function joinErrors(errors: Array<{ code: string; message?: string }>): string |
         return;
     }
 
-    return errors.reduce((result: string[], error) => {
-        if (error && error.message) {
-            return [...result, error.message];
-        }
+    return errors
+        .reduce((result: string[], error) => {
+            if (error && error.message) {
+                return [...result, error.message];
+            }
 
-        return result;
-    }, []).join(' ');
+            return result;
+        }, [])
+        .join(' ');
 }

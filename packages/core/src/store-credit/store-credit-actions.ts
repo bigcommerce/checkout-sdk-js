@@ -10,13 +10,12 @@ export enum StoreCreditActionType {
     ApplyStoreCreditFailed = 'APPLY_STORE_CREDIT_FAILED',
 }
 
-export type StoreCreditAction =
-    ApplyStoreCreditAction;
+export type StoreCreditAction = ApplyStoreCreditAction;
 
 export type ApplyStoreCreditAction =
-    ApplyStoreCreditRequestedAction |
-    ApplyStoreCreditSucceededAction |
-    ApplyStoreCreditFailedAction;
+    | ApplyStoreCreditRequestedAction
+    | ApplyStoreCreditSucceededAction
+    | ApplyStoreCreditFailedAction;
 
 export interface ApplyStoreCreditRequestedAction extends Action {
     type: StoreCreditActionType.ApplyStoreCreditRequested;
@@ -26,6 +25,7 @@ export interface ApplyStoreCreditSucceededAction extends Action<Checkout> {
     type: StoreCreditActionType.ApplyStoreCreditSucceeded;
 }
 
-export interface ApplyStoreCreditFailedAction extends Action<RequestError<StorefrontErrorResponseBody>> {
+export interface ApplyStoreCreditFailedAction
+    extends Action<RequestError<StorefrontErrorResponseBody>> {
     type: StoreCreditActionType.ApplyStoreCreditFailed;
 }

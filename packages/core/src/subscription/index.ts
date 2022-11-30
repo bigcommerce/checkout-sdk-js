@@ -5,4 +5,8 @@ export { default as SubscriptionsRequestSender } from './subscriptions-request-s
 export { default as SubscriptionsActionCreator } from './subscriptions-action-creator';
 export { default as SubscriptionsState } from './subscriptions-state';
 export { default as subscriptionsReducer } from './subscriptions-reducer';
-export { default as SubscriptionsSelector, SubscriptionsSelectorFactory, createSubscriptionsSelectorFactory } from './subscriptions-selector';
+export {
+    default as SubscriptionsSelector,
+    SubscriptionsSelectorFactory,
+    createSubscriptionsSelectorFactory,
+} from './subscriptions-selector';

@@ -10,8 +10,7 @@ describe('AfterpayScriptLoader', () => {
     const afterpayScriptLoader = new AfterpayScriptLoader(scriptLoader);
 
     beforeEach(() => {
-        jest.spyOn(scriptLoader, 'loadScript')
-            .mockReturnValue(Promise.resolve(new Event('load')));
+        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(new Event('load')));
     });
 
     it('loads widget script for AU & NZ', () => {
@@ -20,13 +19,13 @@ describe('AfterpayScriptLoader', () => {
         afterpayScriptLoader.load(method, 'AU');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.afterpay.com/afterpay-async.js'
+            '//portal.afterpay.com/afterpay-async.js',
         );
 
         afterpayScriptLoader.load(method, 'NZ');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.afterpay.com/afterpay-async.js'
+            '//portal.afterpay.com/afterpay-async.js',
         );
     });
 
@@ -36,13 +35,13 @@ describe('AfterpayScriptLoader', () => {
         afterpayScriptLoader.load(method, 'AU');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal-sandbox.afterpay.com/afterpay-async.js'
+            '//portal-sandbox.afterpay.com/afterpay-async.js',
         );
 
         afterpayScriptLoader.load(method, 'NZ');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal-sandbox.afterpay.com/afterpay-async.js'
+            '//portal-sandbox.afterpay.com/afterpay-async.js',
         );
     });
 
@@ -52,7 +51,7 @@ describe('AfterpayScriptLoader', () => {
         afterpayScriptLoader.load(method, 'US');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.afterpay.com/afterpay-async.js'
+            '//portal.afterpay.com/afterpay-async.js',
         );
     });
 
@@ -62,7 +61,7 @@ describe('AfterpayScriptLoader', () => {
         afterpayScriptLoader.load(method, 'US');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//portal.sandbox.afterpay.com/afterpay-async.js'
+            '//portal.sandbox.afterpay.com/afterpay-async.js',
         );
     });
 });

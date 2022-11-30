@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 
-import { createCheckoutSelectorFactory, CheckoutSelectorFactory } from './checkout-selector';
+import { CheckoutSelectorFactory, createCheckoutSelectorFactory } from './checkout-selector';
 import CheckoutStoreState from './checkout-store-state';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
@@ -18,7 +18,15 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns checkout', () => {
-        const selector = createCheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            state.checkout,
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
         expect(selector.getCheckout()).toEqual({
             ...getCheckout(),
@@ -31,49 +39,89 @@ describe('CheckoutSelector', () => {
 
     it('returns load error', () => {
         const loadError = new Error();
-        const selector = createCheckoutSelector({
-            ...getCheckoutState(),
-            errors: { loadError },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            {
+                ...getCheckoutState(),
+                errors: { loadError },
+            },
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
         expect(selector.getLoadError()).toEqual(loadError);
     });
 
     it('returns loading status', () => {
-        const selector = createCheckoutSelector({
-            ...getCheckoutState(),
-            statuses: { isLoading: true },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            {
+                ...getCheckoutState(),
+                statuses: { isLoading: true },
+            },
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
-        expect(selector.isLoading()).toEqual(true);
+        expect(selector.isLoading()).toBe(true);
     });
 
     it('returns update error', () => {
         const updateError = new Error();
-        const selector = createCheckoutSelector({
-            ...getCheckoutState(),
-            errors: { updateError },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            {
+                ...getCheckoutState(),
+                errors: { updateError },
+            },
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
         expect(selector.getUpdateError()).toEqual(updateError);
     });
 
     it('returns updating status', () => {
-        const selector = createCheckoutSelector({
-            ...getCheckoutState(),
-            statuses: { isUpdating: true },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            {
+                ...getCheckoutState(),
+                statuses: { isUpdating: true },
+            },
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
-        expect(selector.isUpdating()).toEqual(true);
+        expect(selector.isUpdating()).toBe(true);
     });
 
     it('returns executing spam check status', () => {
-        const selector = createCheckoutSelector({
-            ...getCheckoutState(),
-            statuses: { isExecutingSpamCheck: true },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(
+            {
+                ...getCheckoutState(),
+                statuses: { isExecutingSpamCheck: true },
+            },
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates,
+        );
 
-        expect(selector.isExecutingSpamCheck()).toEqual(true);
+        expect(selector.isExecutingSpamCheck()).toBe(true);
     });
 
     it('returns outstanding balance total with store credit if flag is passed', () => {
@@ -89,13 +137,11 @@ describe('CheckoutSelector', () => {
             selectors.consignments,
             selectors.coupons,
             selectors.customer,
-            selectors.giftCertificates
+            selectors.giftCertificates,
         );
 
-        expect(selector.getOutstandingBalance(true))
-            .toEqual(140);
+        expect(selector.getOutstandingBalance(true)).toBe(140);
 
-        expect(selector.getOutstandingBalance())
-            .toEqual(190);
+        expect(selector.getOutstandingBalance()).toBe(190);
     });
 });

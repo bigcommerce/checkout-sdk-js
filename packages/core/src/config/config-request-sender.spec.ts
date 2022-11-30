@@ -22,8 +22,7 @@ describe('ConfigRequestSender', () => {
         beforeEach(() => {
             response = getResponse(getConfig());
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
         });
 
         it('loads config', async () => {
@@ -70,7 +69,9 @@ describe('ConfigRequestSender', () => {
         });
 
         it('throws a CheckoutNotAvailable error when it encounters a client error(400-499)', async () => {
-            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
+            jest.spyOn(requestSender, 'get').mockRejectedValue(
+                getErrorResponse(undefined, undefined, 404),
+            );
 
             try {
                 await configRequestSender.loadConfig();
@@ -80,7 +81,9 @@ describe('ConfigRequestSender', () => {
         });
 
         it('throws a generic request error when it encounters a server error(500-599)', async () => {
-            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 500));
+            jest.spyOn(requestSender, 'get').mockRejectedValue(
+                getErrorResponse(undefined, undefined, 500),
+            );
 
             try {
                 await configRequestSender.loadConfig();

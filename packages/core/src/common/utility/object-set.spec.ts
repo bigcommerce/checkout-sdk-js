@@ -6,10 +6,8 @@ describe('objectSet()', () => {
         const newValue = { id: 2 };
         const result = objectSet(object, 'item', newValue);
 
-        expect(result)
-            .toEqual({ item: { id: 2 } });
-        expect(result.item)
-            .toBe(newValue);
+        expect(result).toEqual({ item: { id: 2 } });
+        expect(result.item).toBe(newValue);
     });
 
     it('retains current value if new value is same as current', () => {
@@ -17,9 +15,7 @@ describe('objectSet()', () => {
         const newValue = object.item;
         const result = objectSet(object, 'item', newValue);
 
-        expect(result)
-            .toBe(object);
-        expect(result.item)
-            .toBe(object.item);
+        expect(result).toBe(object);
+        expect(result.item).toBe(object.item);
     });
 });

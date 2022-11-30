@@ -11,29 +11,33 @@ import { StoreCreditAction, StoreCreditActionType } from './store-credit-actions
 import StoreCreditRequestSender from './store-credit-request-sender';
 
 export default class StoreCreditActionCreator {
-    constructor(
-        private _storeCreditRequestSender: StoreCreditRequestSender
-    ) {}
+    constructor(private _storeCreditRequestSender: StoreCreditRequestSender) {}
 
-    applyStoreCredit(useStoreCredit: boolean, options?: RequestOptions): ThunkAction<StoreCreditAction, InternalCheckoutSelectors> {
-        return store => concat(
-            of(createAction(StoreCreditActionType.ApplyStoreCreditRequested)),
-            defer(async () => {
-                const state = store.getState();
-                const checkout = state.checkout.getCheckout();
+    applyStoreCredit(
+        useStoreCredit: boolean,
+        options?: RequestOptions,
+    ): ThunkAction<StoreCreditAction, InternalCheckoutSelectors> {
+        return (store) =>
+            concat(
+                of(createAction(StoreCreditActionType.ApplyStoreCreditRequested)),
+                defer(async () => {
+                    const state = store.getState();
+                    const checkout = state.checkout.getCheckout();
 
-                if (!checkout) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-                }
+                    if (!checkout) {
+                        throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                    }
 
-                const { body } = await (useStoreCredit ?
-                    this._storeCreditRequestSender.applyStoreCredit(checkout.id, options) :
-                    this._storeCreditRequestSender.removeStoreCredit(checkout.id, options));
+                    const { body } = await (useStoreCredit
+                        ? this._storeCreditRequestSender.applyStoreCredit(checkout.id, options)
+                        : this._storeCreditRequestSender.removeStoreCredit(checkout.id, options));
 
-                return createAction(StoreCreditActionType.ApplyStoreCreditSucceeded, body);
-            })
-        ).pipe(
-            catchError(error => throwErrorAction(StoreCreditActionType.ApplyStoreCreditFailed, error))
-        );
+                    return createAction(StoreCreditActionType.ApplyStoreCreditSucceeded, body);
+                }),
+            ).pipe(
+                catchError((error) =>
+                    throwErrorAction(StoreCreditActionType.ApplyStoreCreditFailed, error),
+                ),
+            );
     }
 }

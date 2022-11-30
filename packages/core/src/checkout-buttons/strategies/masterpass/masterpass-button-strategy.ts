@@ -1,7 +1,19 @@
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
-import { formatLocale, getCallbackUrl, Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import {
+    formatLocale,
+    getCallbackUrl,
+    Masterpass,
+    MasterpassCheckoutOptions,
+    MasterpassScriptLoader,
+} from '../../../payment/strategies/masterpass';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -14,20 +26,23 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader,
-        private _locale: string
+        private _locale: string,
     ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId } = options;
 
         if (!containerId || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "containerId" argument is not provided.',
+            );
         }
 
         this._methodId = methodId;
 
-        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
-            .then(state => {
+        return this._store
+            .dispatch(this._checkoutActionCreator.loadDefaultCheckout())
+            .then((state) => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.initializationData.checkoutId) {
@@ -43,7 +58,7 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
 
                 return this._masterpassScriptLoader.load(masterpassScriptLoaderParams);
             })
-            .then(masterpass => {
+            .then((masterpass) => {
                 this._masterpassClient = masterpass;
                 this._signInButton = this._createSignInButton(containerId);
             });
@@ -62,7 +77,9 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
     private _createSignInButton(containerId: string): HTMLElement {
         const buttonContainer = document.getElementById(containerId);
         const state = this._store.getState();
-        const paymentMethod = this._methodId ? state.paymentMethods.getPaymentMethod(this._methodId) : null;
+        const paymentMethod = this._methodId
+            ? state.paymentMethods.getPaymentMethod(this._methodId)
+            : null;
         const storeConfig = state.config.getStoreConfig();
 
         if (!buttonContainer) {
@@ -96,7 +113,8 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
                 params.join('&'),
             ].join('?');
         } else {
-            button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
+            button.src =
+                'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
         }
 
         buttonContainer.appendChild(button);
@@ -109,7 +127,9 @@ export default class MasterpassButtonStrategy implements CheckoutButtonStrategy 
     private _createMasterpassPayload(): MasterpassCheckoutOptions {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
-        const paymentMethod = this._methodId ? state.paymentMethods.getPaymentMethod(this._methodId) : null;
+        const paymentMethod = this._methodId
+            ? state.paymentMethods.getPaymentMethod(this._methodId)
+            : null;
 
         if (!checkout) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);

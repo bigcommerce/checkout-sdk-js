@@ -5,17 +5,44 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
-import { createPaymentStrategyRegistry, createPaymentStrategyRegistryV2, PaymentActionCreator, PaymentMethod } from '../..';
-import { CheckoutRequestSender, CheckoutStore, CheckoutValidator, createCheckoutStore } from '../../../checkout';
+import {
+    createPaymentStrategyRegistry,
+    createPaymentStrategyRegistryV2,
+    PaymentActionCreator,
+    PaymentMethod,
+} from '../..';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    RequestError,
+} from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfig } from '../../../config/configs.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    FinalizeOrderAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createPaymentIntegrationService } from '../../../payment-integration';
-import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
+import {
+    createSpamProtection,
+    PaymentHumanVerificationHandler,
+    SpamProtectionActionCreator,
+    SpamProtectionRequestSender,
+} from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -57,31 +84,46 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const registry = createPaymentStrategyRegistry(
+            store,
+            paymentClient,
+            requestSender,
+            spamProtection,
+            'en_US',
+        );
         const paymentIntegrationService = createPaymentIntegrationService(store);
         const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
-        const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
-        const submitPaymentAction: Observable<SubmitPaymentAction> = of(createAction(PaymentActionType.SubmitPaymentRequested));;
+        const widgetInteractionAction = of(
+            createAction(PaymentStrategyActionType.WidgetInteractionStarted),
+        );
+        const submitPaymentAction: Observable<SubmitPaymentAction> = of(
+            createAction(PaymentActionType.SubmitPaymentRequested),
+        );
 
-        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
+            createSpamProtection(createScriptLoader()),
+        );
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             registryV2,
             orderActionCreator,
-            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+            new SpamProtectionActionCreator(
+                spamProtection,
+                new SpamProtectionRequestSender(requestSender),
+            ),
         );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            paymentHumanVerificationHandler
+            paymentHumanVerificationHandler,
         );
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
@@ -94,45 +136,42 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'initialize')
-            .mockResolvedValue(undefined);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'initialize').mockResolvedValue(undefined);
 
         amazonPayButton = document.createElement('div');
 
         jest.spyOn(amazonPayButton, 'click');
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'renderAmazonPayButton')
-            .mockReturnValue(amazonPayButton);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'renderAmazonPayButton').mockReturnValue(
+            amazonPayButton,
+        );
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize')
-            .mockResolvedValue(undefined);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize').mockResolvedValue(undefined);
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'prepareCheckout')
-            .mockReturnValue(undefined);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'prepareCheckout').mockReturnValue(undefined);
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton')
-            .mockReturnValue(undefined);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton').mockReturnValue(undefined);
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = () => {}) => callback());
+        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = () => {}) =>
+            callback(),
+        );
 
-        jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction')
-            .mockImplementation(() => widgetInteractionAction);
+        jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(
+            () => widgetInteractionAction,
+        );
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        strategy = new AmazonPayV2PaymentStrategy(store,
+        strategy = new AmazonPayV2PaymentStrategy(
+            store,
             paymentStrategyActionCreator,
             orderActionCreator,
             paymentActionCreator,
-            amazonPayV2PaymentProcessor
+            amazonPayV2PaymentProcessor,
         );
     });
 
@@ -141,6 +180,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             document.body.removeChild(editMethodButton);
         } else {
             const shippingButton = document.getElementById('editButtonId');
+
             if (shippingButton) {
                 document.body.removeChild(shippingButton);
             }
@@ -166,12 +206,17 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('should bind edit method button if paymentToken and editButtonId are present', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
-            expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(changeMethodId, paymentToken, 'changePayment');
+            expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(
+                changeMethodId,
+                paymentToken,
+                'changePayment',
+            );
         });
 
         it('should not bind edit method button if paymentToken is not present', async () => {
@@ -182,8 +227,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('should not bind edit method button if paymentToken is present but editButtonId is not', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
             delete initializeOptions.amazonpay?.editButtonId;
 
             await strategy.initialize(initializeOptions);
@@ -206,13 +252,15 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('creates an additional payment button for one-time transactions', async () => {
             const storeConfigMock = getConfig().storeConfig;
+
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
                 'INT-6399.amazon_pay_apb': true,
             };
 
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValue(storeConfigMock);
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
@@ -229,8 +277,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
         it('dispatches widgetInteraction when clicking previously binded edit method button if region not US', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
             paymentMethodMock.initializationData.region = 'uk';
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
@@ -245,8 +294,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('avoid dispatching widgetInteraction when clicking previously binded edit method button if region US', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
@@ -262,8 +312,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
         it('does not bind edit method button if button do not exist', async () => {
             document.body.removeChild(editMethodButton);
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
@@ -277,7 +328,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
             test('methodId is not provided', async () => {
                 initializeOptions.methodId = '';
 
-                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
+                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(
+                    InvalidArgumentError,
+                );
 
                 expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
             });
@@ -285,16 +338,19 @@ describe('AmazonPayV2PaymentStrategy', () => {
             test('there is no payment method data', async () => {
                 const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
                 const state = { ...getCheckoutStoreState(), paymentMethods };
+
                 store = createCheckoutStore(state);
                 strategy = new AmazonPayV2PaymentStrategy(
                     store,
                     paymentStrategyActionCreator,
                     orderActionCreator,
                     paymentActionCreator,
-                    amazonPayV2PaymentProcessor
+                    amazonPayV2PaymentProcessor,
                 );
 
-                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
+                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(
+                    MissingDataError,
+                );
             });
         });
     });
@@ -320,92 +376,126 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         it('executes the strategy successfully if paymentToken is found on intializationData', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(orderRequestBody, initializeOptions);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'amazonpay', paymentData: { nonce: 'abc123' } });
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                orderRequestBody,
+                initializeOptions,
+            );
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'amazonpay',
+                paymentData: { nonce: 'abc123' },
+            });
         });
 
         it('executes the strategy successfully if it is a one-time transaction', async () => {
             const storeConfigMock = getConfig().storeConfig;
+
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
                 'INT-6399.amazon_pay_apb': true,
             };
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValue(storeConfigMock);
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigMock,
+            );
 
             await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(orderRequestBody, initializeOptions);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId: 'amazonpay', paymentData: { nonce: 'apb' } });
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                orderRequestBody,
+                initializeOptions,
+            );
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'amazonpay',
+                paymentData: { nonce: 'apb' },
+            });
         });
 
         it('redirects to Amazon url', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
-            const paymentFailedErrorAction = of(createErrorAction(
-                PaymentActionType.SubmitPaymentFailed,
-                new RequestError(getResponse({
-                    ...getErrorPaymentResponseBody(),
-                    status: 'additional_action_required',
-                    additional_action_required: {
-                        data: {
-                            redirect_url: 'http://some-url',
-                        },
-                    },
-                }))
-            ));
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(paymentFailedErrorAction);
+            const paymentFailedErrorAction = of(
+                createErrorAction(
+                    PaymentActionType.SubmitPaymentFailed,
+                    new RequestError(
+                        getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            status: 'additional_action_required',
+                            additional_action_required: {
+                                data: {
+                                    redirect_url: 'http://some-url',
+                                },
+                            },
+                        }),
+                    ),
+                ),
+            );
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                paymentFailedErrorAction,
+            );
 
             window.location.assign = jest.fn();
 
             strategy.execute(orderRequestBody, initializeOptions);
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(window.location.assign).toBeCalledWith('http://some-url');
+            expect(window.location.assign).toHaveBeenCalledWith('http://some-url');
             expect(amazonPayButton.click).not.toHaveBeenCalled();
         });
 
         it('should invoke Amazon Pay Pre-Order page', async () => {
             const storeConfigMock = getConfig().storeConfig;
+
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
                 'INT-6399.amazon_pay_apb': true,
             };
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValue(storeConfigMock);
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigMock,
+            );
 
-            const { publicKeyId, createCheckoutSessionConfig } = getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
+            const { publicKeyId, createCheckoutSessionConfig } =
+                getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
             const expectedConfig = {
                 publicKeyId,
                 ...createCheckoutSessionConfig,
             };
-            const paymentFailedErrorAction = of(createErrorAction(
-                PaymentActionType.SubmitPaymentFailed,
-                new RequestError(getResponse({
-                    ...getErrorPaymentResponseBody(),
-                    status: 'additional_action_required',
-                    additional_action_required: {
-                        data: {
-                            redirect_url: JSON.stringify(expectedConfig),
-                        },
-                    },
-                }))
-            ));
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(paymentFailedErrorAction);
+            const paymentFailedErrorAction = of(
+                createErrorAction(
+                    PaymentActionType.SubmitPaymentFailed,
+                    new RequestError(
+                        getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            status: 'additional_action_required',
+                            additional_action_required: {
+                                data: {
+                                    redirect_url: JSON.stringify(expectedConfig),
+                                },
+                            },
+                        }),
+                    ),
+                ),
+            );
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                paymentFailedErrorAction,
+            );
 
             strategy.execute(orderRequestBody, initializeOptions);
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(amazonPayV2PaymentProcessor.prepareCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
+            expect(amazonPayV2PaymentProcessor.prepareCheckout).toHaveBeenNthCalledWith(
+                1,
+                expectedConfig,
+            );
             expect(amazonPayButton.click).toHaveBeenCalled();
         });
 
@@ -413,36 +503,50 @@ describe('AmazonPayV2PaymentStrategy', () => {
             test('payment argument is invalid', async () => {
                 orderRequestBody.payment = undefined;
 
-                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(PaymentArgumentInvalidError);
+                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(
+                    PaymentArgumentInvalidError,
+                );
             });
 
             test('payment method is not found', async () => {
                 orderRequestBody.payment = { methodId: '' };
 
-                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(MissingDataError);
+                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(
+                    MissingDataError,
+                );
             });
 
             test('buttonContainer has not yet been initialized', async () => {
                 await strategy.deinitialize();
 
-                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(NotInitializedError);
+                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(
+                    NotInitializedError,
+                );
             });
 
             test('submitPayment throws an error different than additional_action_required', async () => {
                 paymentMethodMock.initializationData.paymentToken = paymentToken;
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(paymentMethodMock);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethodMock);
 
-                const paymentFailedErrorAction = of(createErrorAction(
-                    PaymentActionType.SubmitPaymentFailed,
-                    new RequestError(getResponse(getErrorPaymentResponseBody()))
-                ));
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValue(paymentFailedErrorAction);
+                const paymentFailedErrorAction = of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        new RequestError(getResponse(getErrorPaymentResponseBody())),
+                    ),
+                );
+
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                    paymentFailedErrorAction,
+                );
 
                 window.location.assign = jest.fn();
 
-                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(RequestError);
+                await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(
+                    RequestError,
+                );
 
                 expect(window.location.assign).not.toHaveBeenCalled();
                 expect(amazonPayV2PaymentProcessor.prepareCheckout).not.toHaveBeenCalled();

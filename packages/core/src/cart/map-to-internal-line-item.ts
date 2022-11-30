@@ -12,12 +12,12 @@ export default function mapToInternalLineItem(
     item: LineItem,
     type: string,
     decimalPlaces: number,
-    idKey: keyof LineItem = 'id'
+    idKey: keyof LineItem = 'id',
 ): InternalLineItem {
     const amountTransformer = new AmountTransformer(decimalPlaces);
 
     return {
-        id: (item[idKey] as string | number),
+        id: item[idKey] as string | number,
         imageUrl: item.imageUrl,
         amount: item.extendedListPrice,
         amountAfterDiscount: item.extendedSalePrice,
@@ -35,7 +35,7 @@ export default function mapToInternalLineItem(
         categoryNames: item.categoryNames,
         variantId: item.variantId,
         productId: item.productId,
-        attributes: (item.options || []).map(option => ({
+        attributes: (item.options || []).map((option) => ({
             name: option.name,
             value: option.value,
         })),

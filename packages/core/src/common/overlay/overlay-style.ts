@@ -8,7 +8,8 @@ interface OverlayStyleOptions {
 }
 
 export default function getOverlayStyle(options: OverlayStyleOptions): HTMLElement {
-    const { id, background, transitionDuration, classLayout, classOverlayText, classClose } = options;
+    const { id, background, transitionDuration, classLayout, classOverlayText, classClose } =
+        options;
     const styles = document.createElement('style');
     const addClassLayout = classLayout ? `, .${classLayout}` : '';
 

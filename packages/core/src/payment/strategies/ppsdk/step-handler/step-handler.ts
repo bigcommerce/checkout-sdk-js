@@ -1,6 +1,6 @@
 import { PaymentsAPIResponse } from '../ppsdk-payments-api-response';
 
-import { isContinue, ContinueCallbacks, ContinueHandler } from './continue-handler';
+import { ContinueCallbacks, ContinueHandler, isContinue } from './continue-handler';
 import { handleError, isError } from './error';
 import { handleFailure, isFailure } from './failure';
 import { handleSuccess, isSuccess } from './success';
@@ -11,9 +11,7 @@ interface StepHandlerCallbacks {
 }
 
 export class StepHandler {
-    constructor(
-        private  _continueHandler: ContinueHandler
-    ) {}
+    constructor(private _continueHandler: ContinueHandler) {}
 
     handle(response: PaymentsAPIResponse, callbacks?: StepHandlerCallbacks): Promise<void> {
         const { body } = response;

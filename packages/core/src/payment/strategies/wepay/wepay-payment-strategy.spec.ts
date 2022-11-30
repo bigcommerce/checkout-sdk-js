@@ -1,13 +1,23 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -42,14 +52,14 @@ describe('WepayPaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         strategy = new WepayPaymentStrategy(
@@ -57,7 +67,7 @@ describe('WepayPaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             new HostedFormFactory(store),
-            wepayRiskClient
+            wepayRiskClient,
         );
 
         paymentMethod = getWepay();
@@ -72,23 +82,19 @@ describe('WepayPaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        jest.spyOn(wepayRiskClient, 'initialize')
-            .mockReturnValue(Promise.resolve(wepayRiskClient));
+        jest.spyOn(wepayRiskClient, 'initialize').mockReturnValue(Promise.resolve(wepayRiskClient));
 
-        jest.spyOn(wepayRiskClient, 'getRiskToken')
-            .mockReturnValue(testRiskToken);
+        jest.spyOn(wepayRiskClient, 'getRiskToken').mockReturnValue(testRiskToken);
 
-        jest.spyOn(scriptLoader, 'loadScript')
-            .mockReturnValue(Promise.resolve(null));
+        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(null));
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
 
         jest.spyOn(store, 'dispatch');
     });
@@ -116,8 +122,7 @@ describe('WepayPaymentStrategy', () => {
                 },
             };
 
-            expect(paymentActionCreator.submitPayment)
-                .toHaveBeenCalledWith(paymentWithToken);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(paymentWithToken);
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);

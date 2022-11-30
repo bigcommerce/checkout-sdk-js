@@ -6,7 +6,10 @@ import { parseUrl } from '../url';
 import IframeEvent from './iframe-event';
 import isIframeEvent from './is-iframe-event';
 
-export interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+export interface IframeEventPostOptions<
+    TSuccessEvent extends IframeEvent,
+    TErrorEvent extends IframeEvent,
+> {
     errorType?: TErrorEvent['type'];
     successType?: TSuccessEvent['type'];
 }
@@ -14,21 +17,24 @@ export interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErro
 export default class IframeEventPoster<TEvent> {
     private _targetOrigin: string;
 
-    constructor(
-        targetOrigin: string,
-        private _targetWindow?: Window
-    ) {
+    constructor(targetOrigin: string, private _targetWindow?: Window) {
         this._targetOrigin = targetOrigin === '*' ? '*' : parseUrl(targetOrigin).origin;
     }
 
     post(event: TEvent): void;
-    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(
+    post<
+        TSuccessEvent extends IframeEvent = IframeEvent,
+        TErrorEvent extends IframeEvent = IframeEvent,
+    >(
         event: TEvent,
-        options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>
+        options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>,
     ): Promise<TSuccessEvent>;
-    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(
+    post<
+        TSuccessEvent extends IframeEvent = IframeEvent,
+        TErrorEvent extends IframeEvent = IframeEvent,
+    >(
         event: TEvent,
-        options?: IframeEventPostOptions<TSuccessEvent, TErrorEvent>
+        options?: IframeEventPostOptions<TSuccessEvent, TErrorEvent>,
     ): Promise<TSuccessEvent> | void {
         const targetWindow = this._targetWindow;
 
@@ -40,23 +46,27 @@ export default class IframeEventPoster<TEvent> {
             throw new Error('Unable to post message because target window is not set.');
         }
 
-        const result = options && fromEvent<MessageEvent>(window, 'message')
-            .pipe(
-                filter(event =>
-                    event.origin === this._targetOrigin &&
-                    isIframeEvent(event.data, event.data.type) &&
-                    [options.successType, options.errorType].indexOf(event.data.type) !== -1
-                ),
-                map(event => {
-                    if (options.errorType === event.data.type) {
-                        throw event.data;
-                    }
+        const result =
+            options &&
+            fromEvent<MessageEvent>(window, 'message')
+                .pipe(
+                    filter(
+                        (event) =>
+                            event.origin === this._targetOrigin &&
+                            isIframeEvent(event.data, event.data.type) &&
+                            [options.successType, options.errorType].indexOf(event.data.type) !==
+                                -1,
+                    ),
+                    map((event) => {
+                        if (options.errorType === event.data.type) {
+                            throw event.data;
+                        }
 
-                    return event.data;
-                }),
-                take(1)
-            )
-            .toPromise();
+                        return event.data;
+                    }),
+                    take(1),
+                )
+                .toPromise();
 
         targetWindow.postMessage(event, this._targetOrigin);
 

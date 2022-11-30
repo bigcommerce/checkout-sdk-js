@@ -4,6 +4,6 @@ describe('UnsupportedBrowserError', () => {
     it('returns error name', () => {
         const error = new UnsupportedBrowserError();
 
-        expect(error.name).toEqual('UnsupportedBrowserError');
+        expect(error.name).toBe('UnsupportedBrowserError');
     });
 });

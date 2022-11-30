@@ -3,10 +3,20 @@ import { RequestOptions } from '../common/http-request';
 import { CheckoutButtonMethodType } from './strategies';
 import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-pay-v2';
 import { ApplePayButtonInitializeOptions } from './strategies/apple-pay';
-import { BraintreePaypalButtonInitializeOptions, BraintreePaypalCreditButtonInitializeOptions, BraintreeVenmoButtonInitializeOptions } from './strategies/braintree';
+import {
+    BraintreePaypalButtonInitializeOptions,
+    BraintreePaypalCreditButtonInitializeOptions,
+    BraintreeVenmoButtonInitializeOptions,
+} from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
-import { PaypalCommerceAlternativeMethodsButtonOptions, PaypalCommerceButtonInitializeOptions, PaypalCommerceCreditButtonInitializeOptions, PaypalCommerceInlineCheckoutButtonInitializeOptions, PaypalCommerceVenmoButtonInitializeOptions } from './strategies/paypal-commerce';
+import {
+    PaypalCommerceAlternativeMethodsButtonOptions,
+    PaypalCommerceButtonInitializeOptions,
+    PaypalCommerceCreditButtonInitializeOptions,
+    PaypalCommerceInlineCheckoutButtonInitializeOptions,
+    PaypalCommerceVenmoButtonInitializeOptions,
+} from './strategies/paypal-commerce';
 
 export { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
 
@@ -79,7 +89,7 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
      * The options that are required to facilitate BNZ GooglePay. They can be
      * omitted unless you need to support BNZ GooglePay.
      */
-     googlepaybnz?: GooglePayButtonInitializeOptions;
+    googlepaybnz?: GooglePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree GooglePay. They can be

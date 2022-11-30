@@ -13,20 +13,17 @@ export default class PaypalProPaymentStrategy extends CreditCardPaymentStrategy 
         orderActionCreator: OrderActionCreator,
         paymentActionCreator: PaymentActionCreator,
         hostedFormFactory: HostedFormFactory,
-        private _threeDSecureFlow: CardinalThreeDSecureFlow
+        private _threeDSecureFlow: CardinalThreeDSecureFlow,
     ) {
-        super(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory
-        );
+        super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
     }
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         await super.initialize(options);
 
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
         const paymentMethod = getPaymentMethodOrThrow(options.methodId);
 
         if (paymentMethod.config.is3dsEnabled) {
@@ -36,16 +33,25 @@ export default class PaypalProPaymentStrategy extends CreditCardPaymentStrategy 
         return this._store.getState();
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment: { methodId = '' } = {} } = payload;
-        const { payment: { getPaymentStatus }, paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            payment: { getPaymentStatus },
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
 
         if (getPaymentStatus() === ACKNOWLEDGE) {
             return this._store.dispatch(
-                this._orderActionCreator.submitOrder({
-                    ...payload,
-                    payment: { methodId },
-                }, options)
+                this._orderActionCreator.submitOrder(
+                    {
+                        ...payload,
+                        payment: { methodId },
+                    },
+                    options,
+                ),
             );
         }
 
@@ -54,7 +60,7 @@ export default class PaypalProPaymentStrategy extends CreditCardPaymentStrategy 
                 super.execute.bind(this),
                 payload,
                 options,
-                this._hostedForm
+                this._hostedForm,
             );
         }
 
