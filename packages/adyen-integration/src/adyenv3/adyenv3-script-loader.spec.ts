@@ -1,5 +1,6 @@
-import { PaymentMethodClientUnavailableError } from "@bigcommerce/checkout-sdk/payment-integration-api";
 import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
+
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { AdyenHostWindow } from './adyenv3';
 import AdyenV3ScriptLoader from './adyenv3-script-loader';
@@ -23,13 +24,12 @@ describe('AdyenV3ScriptLoader', () => {
         const configuration = getAdyenConfiguration();
         const configurationWithClientKey = getAdyenConfiguration(false);
         const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.js';
-        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.css';
+        const cssUrl =
+            'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.css';
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.AdyenCheckout = jest.fn(
-                    () => adyenClient
-                );
+                mockWindow.AdyenCheckout = jest.fn(() => adyenClient);
 
                 return Promise.resolve();
             });

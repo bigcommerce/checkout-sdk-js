@@ -1,28 +1,28 @@
 export enum AdyenActionType {
     /*
-    * The payment qualifies for 3D Secure 2, and will go through either the frictionless
-    * or the challenge flow.
-    * */
+     * The payment qualifies for 3D Secure 2, and will go through either the frictionless
+     * or the challenge flow.
+     * */
     ThreeDS2Fingerprint = 'threeDS2Fingerprint',
 
     /*
-    * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
-    * */
+     * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
+     * */
     ThreeDS2Challenge = 'threeDS2Challenge',
 
     /*
-    * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
-    * */
+     * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
+     * */
     Redirect = 'redirect',
 
     /*
-    * The Component presents the QR code and calls the onAdditionalDetails event.
-    * */
+     * The Component presents the QR code and calls the onAdditionalDetails event.
+     * */
     QRCode = 'qrCode',
 
     /*
-    * The Component displays the voucher which the shopper uses to complete the payment.
-    * */
+     * The Component displays the voucher which the shopper uses to complete the payment.
+     * */
     Voucher = 'voucher',
 }
 
@@ -38,7 +38,7 @@ export enum AdyenPaymentMethodType {
     Klarna = 'klarna',
     KlarnaPayNow = 'klarna_paynow',
     KlarnaAccount = 'klarna_account',
-    iDEAL = 'ideal',
+    IDEAL = 'ideal',
     GiroPay = 'giropay',
     GooglePay = 'paywithgoogle',
     SEPA = 'sepadirectdebit',
@@ -129,7 +129,7 @@ export interface AdyenAdditionalActionErrorResponse {
     errors: [
         {
             code: string;
-        }
+        },
     ];
 }
 
@@ -190,7 +190,12 @@ export interface AdyenComponentEvents {
 export interface AdyenClient {
     create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
-    createFromAction(action: AdyenAction, componentOptions?: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions ): AdyenComponent;
+    createFromAction(
+        action: AdyenAction,
+        componentOptions?:
+            | ThreeDS2DeviceFingerprintComponentOptions
+            | ThreeDS2ChallengeComponentOptions,
+    ): AdyenComponent;
 }
 
 export interface AdyenComponent {
@@ -256,7 +261,9 @@ export interface AdyenPlaceholderData {
     };
 }
 
-export interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
+export interface AdyenCreditCardComponentOptions
+    extends AdyenBaseCardComponentOptions,
+        AdyenComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -297,7 +304,9 @@ export interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentO
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
 }
 
-export interface AdyenCustomCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
+export interface AdyenCustomCardComponentOptions
+    extends AdyenBaseCardComponentOptions,
+        AdyenComponentEvents {
     /**
      * Specify aria attributes for the input fields for web accessibility.
      */
@@ -315,7 +324,7 @@ export interface AdyenError {
 }
 
 export interface AdyenHostWindow extends Window {
-    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenClient;
+    AdyenCheckout?: new (configuration: AdyenConfiguration) => AdyenClient;
 }
 
 export interface AdyenIdealComponentOptions {
@@ -507,7 +516,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: {[key: string]: boolean};
+    valid?: { [key: string]: boolean };
     errors?: CardStateErrors;
 }
 
@@ -829,9 +838,7 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
-export type AdyenComponentState = (
-    CardState | WechatState
-);
+export type AdyenComponentState = CardState | WechatState;
 
 export interface AdyenV2ValidationStateForLoader {
     valid: boolean;
@@ -841,7 +848,7 @@ export interface AdyenV2ValidationStateForLoader {
     i18n?: string;
     error?: string;
     errorKey?: string;
-};
+}
 
 export enum AdyenV2CardFields {
     CardNumber = 'encryptedCardNumber',
@@ -849,13 +856,16 @@ export enum AdyenV2CardFields {
     ExpiryDate = 'encryptedExpiryDate',
 }
 
-export type AdyenComponentOptions = (
-    AdyenCreditCardComponentOptions | AdyenIdealComponentOptions | AdyenCustomCardComponentOptions
-);
+export type AdyenComponentOptions =
+    | AdyenCreditCardComponentOptions
+    | AdyenIdealComponentOptions
+    | AdyenCustomCardComponentOptions;
 
 export function isCardState(param: any): param is CardState {
-    return param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string' ||
-        typeof param.data.paymentMethod.encryptedExpiryMonth === 'string';
+    return (
+        (param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string') ||
+        typeof param.data.paymentMethod.encryptedExpiryMonth === 'string'
+    );
 }
 
 export function isAccountState(param: any): param is AccountState {

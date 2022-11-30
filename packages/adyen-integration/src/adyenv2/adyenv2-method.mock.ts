@@ -1,4 +1,4 @@
-import { PaymentMethod } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function getAdyenV2(method = 'scheme'): PaymentMethod {
     return {

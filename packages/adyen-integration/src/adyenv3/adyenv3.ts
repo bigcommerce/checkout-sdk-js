@@ -1,28 +1,28 @@
 export enum AdyenActionType {
     /*
-    * The payment qualifies for 3D Secure 2, and will go through either the frictionless
-    * or the challenge flow.
-    * */
+     * The payment qualifies for 3D Secure 2, and will go through either the frictionless
+     * or the challenge flow.
+     * */
     ThreeDS2Fingerprint = 'threeDS2Fingerprint',
 
     /*
-    * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
-    * */
+     * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
+     * */
     ThreeDS2 = 'threeDS2',
 
     /*
-    * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
-    * */
+     * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
+     * */
     Redirect = 'redirect',
 
     /*
-    * The Component presents the QR code and calls the onAdditionalDetails event.
-    * */
+     * The Component presents the QR code and calls the onAdditionalDetails event.
+     * */
     QRCode = 'qrCode',
 
     /*
-    * The Component displays the voucher which the shopper uses to complete the payment.
-    * */
+     * The Component displays the voucher which the shopper uses to complete the payment.
+     * */
     Voucher = 'voucher',
 }
 
@@ -38,7 +38,7 @@ export enum AdyenPaymentMethodType {
     Klarna = 'klarna',
     KlarnaPayNow = 'klarna_paynow',
     KlarnaAccount = 'klarna_account',
-    iDEAL = 'ideal',
+    IDEAL = 'ideal',
     GiroPay = 'giropay',
     GooglePay = 'paywithgoogle',
     SEPA = 'sepadirectdebit',
@@ -125,7 +125,7 @@ export interface AdyenAdditionalActionErrorResponse {
     errors: [
         {
             code: string;
-        }
+        },
     ];
 }
 
@@ -188,7 +188,12 @@ export interface AdyenComponentEvents {
 export interface AdyenClient {
     create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
-    createFromAction(action: AdyenAction, componentOptions?: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions ): AdyenComponent;
+    createFromAction(
+        action: AdyenAction,
+        componentOptions?:
+            | ThreeDS2DeviceFingerprintComponentOptions
+            | ThreeDS2ChallengeComponentOptions,
+    ): AdyenComponent;
 }
 
 export interface AdyenComponent {
@@ -256,7 +261,9 @@ export interface AdyenPlaceholderData {
     };
 }
 
-export interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
+export interface AdyenV3CreditCardComponentOptions
+    extends AdyenBaseCardComponentOptions,
+        AdyenComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -295,11 +302,11 @@ export interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponen
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
-
-
 }
 
-export interface AdyenCustomCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
+export interface AdyenCustomCardComponentOptions
+    extends AdyenBaseCardComponentOptions,
+        AdyenComponentEvents {
     /**
      * Specify aria attributes for the input fields for web accessibility.
      */
@@ -496,7 +503,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    valid?: {[key: string]: boolean};
+    valid?: { [key: string]: boolean };
     errors?: CardStateErrors;
 }
 
@@ -830,7 +837,7 @@ export interface AdyenV3ValidationState {
     i18n?: string;
     error?: string;
     errorKey?: string;
-};
+}
 
 export enum AdyenV3CardFields {
     CardNumber = 'encryptedCardNumber',
@@ -840,10 +847,16 @@ export enum AdyenV3CardFields {
 
 export type AdyenV3ComponentState = CardState | WechatState;
 
-export type AdyenComponentOptions = AdyenV3CreditCardComponentOptions | AdyenV3IdealComponentOptions | AdyenCustomCardComponentOptions;
+export type AdyenComponentOptions =
+    | AdyenV3CreditCardComponentOptions
+    | AdyenV3IdealComponentOptions
+    | AdyenCustomCardComponentOptions;
 
 export function isCardState(param: unknown): param is CardState {
-    return typeof param === 'object' && !!param &&
-        typeof (param as CardState).data.paymentMethod.encryptedSecurityCode === 'string' ||
-        typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string';
+    return (
+        (typeof param === 'object' &&
+            !!param &&
+            typeof (param as CardState).data.paymentMethod.encryptedSecurityCode === 'string') ||
+        typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string'
+    );
 }
