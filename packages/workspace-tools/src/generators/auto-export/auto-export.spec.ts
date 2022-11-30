@@ -10,8 +10,7 @@ describe('autoExport()', () => {
             memberPattern: '^Strategy',
         };
 
-        expect(await autoExport(options))
-            .toMatchSnapshot();
+        expect(await autoExport(options)).toMatchSnapshot();
     });
 
     it('handles scenario where no matching member is found', async () => {
@@ -21,7 +20,6 @@ describe('autoExport()', () => {
             memberPattern: '^Test',
         };
 
-        expect(await autoExport(options))
-            .toMatchSnapshot();
+        expect(await autoExport(options)).toMatchSnapshot();
     });
 });

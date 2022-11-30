@@ -67,7 +67,7 @@ export {
     ShippingOption,
     ShippingAddressRequestBody,
 } from './shipping';
-export { RequestOptions } from './util-types';
+export { RequestOptions, guard } from './util-types';
 export { default as ResolvableModule } from './resolvable-module';
 export { default as isResolvableModule } from './is-resolvable-module';
 export { default as toResolvableModule } from './to-resolvable-module';

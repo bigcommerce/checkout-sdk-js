@@ -13,8 +13,7 @@ describe('extendInterface', () => {
             targetMemberName: 'FoobarInterface',
         };
 
-        expect(await extendInterface(options))
-            .toMatchSnapshot();
+        expect(await extendInterface(options)).toMatchSnapshot();
     });
 
     it('handles scenario where no matching interface is found', async () => {
@@ -27,7 +26,6 @@ describe('extendInterface', () => {
             targetMemberName: 'FoobarInterface',
         };
 
-        expect(await extendInterface(options))
-            .toMatchSnapshot();
+        expect(await extendInterface(options)).toMatchSnapshot();
     });
 });
