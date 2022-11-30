@@ -32,7 +32,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         private _formPoster: FormPoster,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _cartRequestSender?: CartRequestSender,
+        private _cartRequestSender: CartRequestSender,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {

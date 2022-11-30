@@ -2,7 +2,7 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { InvalidArgumentError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { Cart } from '../../../cart';
+import { Cart, CartRequestSender } from '../../../cart';
 import { getCart, getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
@@ -24,6 +24,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
     let cart: Cart;
     let container: HTMLDivElement;
     let formPoster: FormPoster;
+    let cartRequestSender: CartRequestSender;
     let checkoutButtonOptions: CheckoutButtonInitializeOptions;
     let paymentMethod: PaymentMethod;
     let paymentProcessor: GooglePayPaymentProcessor;
@@ -60,11 +61,14 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
         formPoster = createFormPoster();
 
+        cartRequestSender = new CartRequestSender(createRequestSender());
+
         strategy = new GooglePayButtonStrategy(
             store,
             formPoster,
             checkoutActionCreator,
-            paymentProcessor
+            paymentProcessor,
+            cartRequestSender
         );
 
         jest.spyOn(store, 'dispatch')
