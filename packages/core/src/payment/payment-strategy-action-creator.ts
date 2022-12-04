@@ -1,23 +1,28 @@
-import { createAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, empty, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { PaymentStrategy as PaymentStrategyV2 } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { createAction, ThunkAction } from "@bigcommerce/data-store";
+import { concat, defer, empty, of, Observable } from "rxjs";
+import { catchError } from "rxjs/operators";
 
-import { PaymentStrategy as PaymentStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { throwErrorAction } from '../common/error';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
-import { RequestOptions } from '../common/http-request';
+import { InternalCheckoutSelectors, ReadableCheckoutStore } from "../checkout";
+import { throwErrorAction } from "../common/error";
+import { MissingDataError, MissingDataErrorType } from "../common/error/errors";
+import { RequestOptions } from "../common/http-request";
 import {
     LoadOrderPaymentsAction,
     OrderActionCreator,
     OrderPaymentRequestBody,
     OrderRequestBody,
-} from '../order';
-import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
+} from "../order";
+import { OrderFinalizationNotRequiredError } from "../order/errors";
+import {
+    SpamProtectionAction,
+    SpamProtectionActionCreator,
+} from "../spam-protection";
 
-import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
+import {
+    PaymentInitializeOptions,
+    PaymentRequestOptions,
+} from "./payment-request-options";
 import {
     PaymentStrategyActionType,
     PaymentStrategyDeinitializeAction,
@@ -25,25 +30,29 @@ import {
     PaymentStrategyFinalizeAction,
     PaymentStrategyInitializeAction,
     PaymentStrategyWidgetAction,
-} from './payment-strategy-actions';
-import PaymentStrategyRegistry from './payment-strategy-registry';
-import PaymentStrategyRegistryV2 from './payment-strategy-registry-v2';
-import PaymentStrategyType from './payment-strategy-type';
-import { PaymentStrategy } from './strategies';
+} from "./payment-strategy-actions";
+import PaymentStrategyRegistry from "./payment-strategy-registry";
+import PaymentStrategyRegistryV2 from "./payment-strategy-registry-v2";
+import PaymentStrategyType from "./payment-strategy-type";
+import { PaymentStrategy } from "./strategies";
 
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
-        private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
 
     execute(
         payload: OrderRequestBody,
-        options?: RequestOptions,
-    ): ThunkAction<PaymentStrategyExecuteAction | SpamProtectionAction, InternalCheckoutSelectors> {
-        const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
+        options?: RequestOptions
+    ): ThunkAction<
+        PaymentStrategyExecuteAction | SpamProtectionAction,
+        InternalCheckoutSelectors
+    > {
+        const { payment = {} as OrderPaymentRequestBody, useStoreCredit } =
+            payload;
         const meta = { methodId: payment.methodId };
 
         return (store) => {
@@ -52,9 +61,17 @@ export default class PaymentStrategyActionCreator {
 
             return concat(
                 shouldExecuteSpamCheck
-                    ? this._spamProtectionActionCreator.verifyCheckoutSpamProtection()(store)
+                    ? this._spamProtectionActionCreator.verifyCheckoutSpamProtection()(
+                          store
+                      )
                     : empty(),
-                of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
+                of(
+                    createAction(
+                        PaymentStrategyActionType.ExecuteRequested,
+                        undefined,
+                        meta
+                    )
+                ),
                 defer(() => {
                     const state = store.getState();
 
@@ -63,58 +80,62 @@ export default class PaymentStrategyActionCreator {
                     if (state.payment.isPaymentDataRequired(useStoreCredit)) {
                         const method = state.paymentMethods.getPaymentMethod(
                             payment.methodId,
-                            payment.gatewayId,
+                            payment.gatewayId
                         );
 
                         if (!method) {
-                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                            throw new MissingDataError(
+                                MissingDataErrorType.MissingPaymentMethod
+                            );
                         }
 
                         try {
-                            if (
-                                method.id == PaymentStrategyType.APPLEPAY &&
-                                method.gateway == PaymentStrategyType.MOLLIE
-                            ) {
+                            if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
                                 strategy = this._strategyRegistry.getByMethod(method);
                             } else {
                                 strategy = this._strategyRegistryV2.get({
-                                    id: method.id,
-                                    gateway: method.gateway,
-                                    type: method.type,
+                                    id: method.id, gateway: method.gateway, type: method.type,
                                 });
                             }
                         } catch {
-                            strategy = this._strategyRegistry.getByMethod(method);
+                            strategy =
+                                this._strategyRegistry.getByMethod(method);
                         }
                     } else {
-                        strategy = this._strategyRegistry.get(
-                            PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
-                        );
+                        strategy = this._strategyRegistryV2.get({
+                            id: PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED
+                        });
                     }
 
-                    const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
-                        payload,
-                        {
+                    const promise: Promise<InternalCheckoutSelectors | void> =
+                        strategy.execute(payload, {
                             ...options,
                             methodId: payment.methodId,
                             gatewayId: payment.gatewayId,
-                        },
-                    );
+                        });
 
                     return promise.then(() =>
-                        createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta),
+                        createAction(
+                            PaymentStrategyActionType.ExecuteSucceeded,
+                            undefined,
+                            meta
+                        )
                     );
-                }),
+                })
             ).pipe(
                 catchError((error) =>
-                    throwErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta),
-                ),
+                    throwErrorAction(
+                        PaymentStrategyActionType.ExecuteFailed,
+                        error,
+                        meta
+                    )
+                )
             );
         };
     }
 
     finalize(
-        options?: RequestOptions,
+        options?: RequestOptions
     ): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {
         return (store) =>
             concat(
@@ -122,8 +143,12 @@ export default class PaymentStrategyActionCreator {
                 this._loadOrderPaymentsIfNeeded(store, options),
                 defer(async () => {
                     const state = store.getState();
-                    const { providerId = '', gatewayId = '' } = state.payment.getPaymentId() || {};
-                    const method = state.paymentMethods.getPaymentMethod(providerId, gatewayId);
+                    const { providerId = "", gatewayId = "" } =
+                        state.payment.getPaymentId() || {};
+                    const method = state.paymentMethods.getPaymentMethod(
+                        providerId,
+                        gatewayId
+                    );
 
                     if (!method) {
                         throw new OrderFinalizationNotRequiredError();
@@ -132,16 +157,11 @@ export default class PaymentStrategyActionCreator {
                     let strategy: PaymentStrategy | PaymentStrategyV2;
 
                     try {
-                        if (
-                            method.id === PaymentStrategyType.APPLEPAY &&
-                            method.gateway === PaymentStrategyType.MOLLIE
-                        ) {
+                        if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
                             strategy = this._strategyRegistry.getByMethod(method);
                         } else {
                             strategy = this._strategyRegistryV2.get({
-                                id: method.id,
-                                gateway: method.gateway,
-                                type: method.type,
+                                id: method.id, gateway: method.gateway, type: method.type,
                             });
                         }
                     } catch {
@@ -154,184 +174,216 @@ export default class PaymentStrategyActionCreator {
                         gatewayId: method.gateway,
                     });
 
-                    return createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, {
-                        methodId: method.id,
-                    });
-                }),
+                    return createAction(
+                        PaymentStrategyActionType.FinalizeSucceeded,
+                        undefined,
+                        { methodId: method.id }
+                    );
+                })
             ).pipe(
                 catchError((error) => {
                     const state = store.getState();
                     const payment = state.payment.getPaymentId();
 
-                    return throwErrorAction(PaymentStrategyActionType.FinalizeFailed, error, {
-                        methodId: payment && payment.providerId,
-                    });
-                }),
+                    return throwErrorAction(
+                        PaymentStrategyActionType.FinalizeFailed,
+                        error,
+                        { methodId: payment && payment.providerId }
+                    );
+                })
             );
     }
 
     initialize(
-        options: PaymentInitializeOptions,
+        options: PaymentInitializeOptions
     ): ThunkAction<PaymentStrategyInitializeAction, InternalCheckoutSelectors> {
         const { methodId, gatewayId } = options;
 
         return (store) =>
             defer(() => {
                 const state = store.getState();
-                const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+                const method = state.paymentMethods.getPaymentMethod(
+                    methodId,
+                    gatewayId
+                );
 
                 if (!method) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    throw new MissingDataError(
+                        MissingDataErrorType.MissingPaymentMethod
+                    );
                 }
 
-                if (methodId && state.paymentStrategies.isInitialized(methodId)) {
+                if (
+                    methodId &&
+                    state.paymentStrategies.isInitialized(methodId)
+                ) {
                     return empty();
                 }
 
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    if (
-                        method.id == PaymentStrategyType.APPLEPAY &&
-                        method.gateway == PaymentStrategyType.MOLLIE
-                    ) {
+                    if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
                         strategy = this._strategyRegistry.getByMethod(method);
                     } else {
                         strategy = this._strategyRegistryV2.get({
-                            id: method.id,
-                            gateway: method.gateway,
-                            type: method.type,
+                            id: method.id, gateway: method.gateway, type: method.type,
                         });
                     }
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }
 
-                const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({
-                    ...options,
-                    methodId,
-                    gatewayId,
-                });
+                const promise: Promise<InternalCheckoutSelectors | void> =
+                    strategy.initialize({ ...options, methodId, gatewayId });
 
                 return concat(
                     of(
-                        createAction(PaymentStrategyActionType.InitializeRequested, undefined, {
-                            methodId,
-                        }),
+                        createAction(
+                            PaymentStrategyActionType.InitializeRequested,
+                            undefined,
+                            { methodId }
+                        )
                     ),
                     promise.then(() =>
-                        createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, {
-                            methodId,
-                        }),
-                    ),
+                        createAction(
+                            PaymentStrategyActionType.InitializeSucceeded,
+                            undefined,
+                            { methodId }
+                        )
+                    )
                 );
             }).pipe(
                 catchError((error) =>
-                    throwErrorAction(PaymentStrategyActionType.InitializeFailed, error, {
-                        methodId,
-                    }),
-                ),
+                    throwErrorAction(
+                        PaymentStrategyActionType.InitializeFailed,
+                        error,
+                        { methodId }
+                    )
+                )
             );
     }
 
     deinitialize(
-        options: PaymentRequestOptions,
-    ): ThunkAction<PaymentStrategyDeinitializeAction, InternalCheckoutSelectors> {
+        options: PaymentRequestOptions
+    ): ThunkAction<
+        PaymentStrategyDeinitializeAction,
+        InternalCheckoutSelectors
+    > {
         const { methodId, gatewayId } = options;
 
         return (store) =>
             defer(() => {
                 const state = store.getState();
-                const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+                const method = state.paymentMethods.getPaymentMethod(
+                    methodId,
+                    gatewayId
+                );
 
                 if (!method) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    throw new MissingDataError(
+                        MissingDataErrorType.MissingPaymentMethod
+                    );
                 }
 
-                if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
+                if (
+                    methodId &&
+                    !state.paymentStrategies.isInitialized(methodId)
+                ) {
                     return empty();
                 }
 
                 let strategy: PaymentStrategy | PaymentStrategyV2;
 
                 try {
-                    if (
-                        method.id == PaymentStrategyType.APPLEPAY &&
-                        method.gateway == PaymentStrategyType.MOLLIE
-                    ) {
+                    if (method.id == PaymentStrategyType.APPLEPAY && method.gateway == PaymentStrategyType.MOLLIE) {
                         strategy = this._strategyRegistry.getByMethod(method);
                     } else {
                         strategy = this._strategyRegistryV2.get({
-                            id: method.id,
-                            gateway: method.gateway,
-                            type: method.type,
+                            id: method.id, gateway: method.gateway, type: method.type,
                         });
                     }
                 } catch {
                     strategy = this._strategyRegistry.getByMethod(method);
                 }
 
-                const promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize({
-                    ...options,
-                    methodId,
-                    gatewayId,
-                });
+                const promise: Promise<InternalCheckoutSelectors | void> =
+                    strategy.deinitialize({ ...options, methodId, gatewayId });
 
                 return concat(
                     of(
-                        createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, {
-                            methodId,
-                        }),
+                        createAction(
+                            PaymentStrategyActionType.DeinitializeRequested,
+                            undefined,
+                            { methodId }
+                        )
                     ),
                     promise.then(() =>
-                        createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, {
-                            methodId,
-                        }),
-                    ),
+                        createAction(
+                            PaymentStrategyActionType.DeinitializeSucceeded,
+                            undefined,
+                            { methodId }
+                        )
+                    )
                 );
             }).pipe(
                 catchError((error) =>
-                    throwErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, {
-                        methodId,
-                    }),
-                ),
+                    throwErrorAction(
+                        PaymentStrategyActionType.DeinitializeFailed,
+                        error,
+                        { methodId }
+                    )
+                )
             );
     }
 
     widgetInteraction(
         method: () => Promise<any>,
-        options?: PaymentRequestOptions,
+        options?: PaymentRequestOptions
     ): Observable<PaymentStrategyWidgetAction> {
         const methodId = options && options.methodId;
         const meta = { methodId };
 
         return concat(
-            of(createAction(PaymentStrategyActionType.WidgetInteractionStarted, undefined, meta)),
+            of(
+                createAction(
+                    PaymentStrategyActionType.WidgetInteractionStarted,
+                    undefined,
+                    meta
+                )
+            ),
             defer(() =>
                 method().then(() =>
                     createAction(
                         PaymentStrategyActionType.WidgetInteractionFinished,
                         undefined,
-                        meta,
-                    ),
-                ),
-            ),
+                        meta
+                    )
+                )
+            )
         ).pipe(
             catchError((error) =>
-                throwErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta),
-            ),
+                throwErrorAction(
+                    PaymentStrategyActionType.WidgetInteractionFailed,
+                    error,
+                    meta
+                )
+            )
         );
     }
 
     private _loadOrderPaymentsIfNeeded(
         store: ReadableCheckoutStore,
-        options?: RequestOptions,
+        options?: RequestOptions
     ): Observable<LoadOrderPaymentsAction> {
         const state = store.getState();
         const checkout = state.checkout.getCheckout();
 
         if (checkout && checkout.orderId) {
-            return this._orderActionCreator.loadOrderPayments(checkout.orderId, options);
+            return this._orderActionCreator.loadOrderPayments(
+                checkout.orderId,
+                options
+            );
         }
 
         return empty();
