@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.309.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.1...v1.309.2) (2022-12-05)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-160 Fixed no order created for successful Stripe payment ([#1690](https://github.com/bigcommerce/checkout-sdk-js/issues/1690)) ([0d74194](https://github.com/bigcommerce/checkout-sdk-js/commit/0d74194ae55715767ced60fa4c1749ab3426e8ee))
+
 ### [1.309.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.0...v1.309.1) (2022-11-28)
 
 
