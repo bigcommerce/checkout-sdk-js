@@ -1,10 +1,13 @@
-import { OrderRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { getOrderPaymentRequest } from './payments.mock';
+import { getPayment } from './payments.mock';
 
 export default function getOrderRequestBody(): OrderRequestBody {
     return {
         useStoreCredit: false,
-        payment: getOrderPaymentRequest(),
+        payment: getPayment() as OrderPaymentRequestBody,
     };
 }

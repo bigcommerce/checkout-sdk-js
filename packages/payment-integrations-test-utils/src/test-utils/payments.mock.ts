@@ -1,8 +1,5 @@
-import { omit } from 'lodash';
-
 import {
     CreditCardInstrument,
-    OrderPaymentRequestBody,
     Payment,
     PaymentResponseBody,
     VaultedInstrument,
@@ -13,10 +10,6 @@ export function getPayment(): Payment {
         methodId: 'authorizenet',
         paymentData: getCreditCardInstrument(),
     };
-}
-
-export function getOrderPaymentRequest(): OrderPaymentRequestBody {
-    return omit(getPayment(), 'paymentData');
 }
 
 export function getCreditCardInstrument(): CreditCardInstrument {

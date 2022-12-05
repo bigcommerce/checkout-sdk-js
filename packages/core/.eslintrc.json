@@ -47,7 +47,10 @@
                 "@typescript-eslint/no-throw-literal": "off",
                 "max-classes-per-file": "off",
                 "global-require": "off",
-                "no-multi-assign": "off"
+                "no-multi-assign": "off",
+                "no-restricted-properties": "off",
+                "no-proto": "off",
+                "no-throw-literal": "off"
             }
         },
         {

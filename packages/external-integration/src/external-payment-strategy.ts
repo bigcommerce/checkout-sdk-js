@@ -33,7 +33,6 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.submitPayment({ ...payment, paymentData });
         } catch (error) {
             if (isRequestError(error)) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const { body } = error;
 
                 if (isAdditionalActionRequired(body)) {
@@ -54,6 +53,8 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
                     });
                 }
             }
+
+            throw error;
         }
     }
 
@@ -74,7 +75,6 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
 
         return (
             status === 'additional_action_required' &&
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             additional_action_required &&
             additional_action_required.type === 'offsite_redirect'
         );

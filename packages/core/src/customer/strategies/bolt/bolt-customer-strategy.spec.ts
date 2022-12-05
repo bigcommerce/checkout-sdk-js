@@ -184,6 +184,7 @@ describe('BoltCustomerStrategy', () => {
                 // @ts-ignore
                 await strategy.executePaymentMethodCheckout({
                     methodId: 'bolt',
+                    // @ts-ignore
                     continueWithCheckoutCallback: 'string',
                 });
             } catch (error) {

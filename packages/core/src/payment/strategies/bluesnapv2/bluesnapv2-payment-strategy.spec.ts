@@ -246,6 +246,8 @@ describe('BlueSnapV2PaymentStrategy', () => {
     });
 
     it('create iframe with styleprops', async () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const _iframe: HTMLIFrameElement = strategy._createIframe.call(
             '',
             'bluesnapv2_hosted_payment_page',
