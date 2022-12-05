@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
     FormattedPayload,
     FormattedVaultedInstrument,
@@ -29,7 +28,6 @@ export function isFormattedVaultedInstrument(
     const formattedInstrument = (instrument as FormattedPayload<FormattedVaultedInstrument>)
         .formattedPayload;
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!formattedInstrument) {
         return false;
     }

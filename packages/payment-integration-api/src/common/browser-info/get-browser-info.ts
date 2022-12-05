@@ -8,7 +8,6 @@ export default function getBrowserInfo(): BrowserInfo {
     if (navigator.language) {
         language = navigator.language;
     } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         language = (navigator as any).userLanguage;
     }
 

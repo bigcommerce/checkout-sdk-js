@@ -23,7 +23,7 @@ describe('ExternalPaymentStrategy', () => {
 
     beforeEach(() => {
         formPoster = createFormPoster();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         strategy = new ExternalPaymentStrategy(formPoster, paymentIntegrationService);
 
@@ -68,15 +68,13 @@ describe('ExternalPaymentStrategy', () => {
         });
 
         it('redirects to Laybuy if additional action is required', async () => {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             const redirect_url = 'https://sandbox-payment.laybuy.com';
             const error = new RequestError(
                 getResponse({
                     ...getErrorPaymentResponseBody(),
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
+
                     additional_action_required: {
                         data: {
-                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             redirect_url,
                         },
                         type: 'offsite_redirect',

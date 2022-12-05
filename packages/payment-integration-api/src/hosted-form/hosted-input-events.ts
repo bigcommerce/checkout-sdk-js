@@ -1,4 +1,4 @@
-import { Response } from "@bigcommerce/request-sender";
+import { Response } from '@bigcommerce/request-sender';
 
 export enum HostedInputEventType {
     AttachSucceeded = 'HOSTED_INPUT:ATTACH_SUCCEEDED',

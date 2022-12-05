@@ -1,7 +1,7 @@
-//copied from packages/core/src/hosted-form/iframe-content
+// copied from packages/core/src/hosted-form/iframe-content
 
-import HostedFieldType from "./hosted-field-type";
-import { HostedInputEventType } from "./hosted-input-events";
+import HostedFieldType from './hosted-field-type';
+import { HostedInputEventType } from './hosted-input-events';
 
 interface HostedInputValidateErrorData {
     fieldType: string;
@@ -51,13 +51,9 @@ export interface HostedInputFocusEvent {
     };
 }
 
-export type HostedInputStyles = Partial<Pick<
-    CSSStyleDeclaration,
-    'color' |
-    'fontFamily' |
-    'fontSize' |
-    'fontWeight'
-    >>;
+export type HostedInputStyles = Partial<
+    Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>
+>;
 
 export interface HostedInputValidateEvent {
     type: HostedInputEventType.Validated;

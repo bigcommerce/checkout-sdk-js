@@ -14,7 +14,8 @@
                 "jsdoc/check-tag-names": "off",
                 "@typescript-eslint/consistent-type-assertions": "off",
                 "no-proto": "off",
-                "@typescript-eslint/no-unsafe-return": "off"
+                "@typescript-eslint/no-unsafe-return": "off",
+                "@typescript-eslint/no-unsafe-call": "off"
             }
         }
     ]
