@@ -1,19 +1,14 @@
 import {
     PaymentStrategyFactory,
     toResolvableModule,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import NoPaymentDataRequiredPaymentStrategy from './no-payment-data-required-strategy';
 
-const createNoPaymentStrategy: PaymentStrategyFactory<
-    NoPaymentDataRequiredPaymentStrategy
-    > = (paymentIntegrationService) => {
-
-    return new NoPaymentDataRequiredPaymentStrategy(
-        paymentIntegrationService,
-    );
+const createNoPaymentStrategy: PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy> = (
+    paymentIntegrationService,
+) => {
+    return new NoPaymentDataRequiredPaymentStrategy(paymentIntegrationService);
 };
 
-export default toResolvableModule(createNoPaymentStrategy, [
-    { id: 'nopaymentdatarequired' },
-]);
+export default toResolvableModule(createNoPaymentStrategy, [{ id: 'nopaymentdatarequired' }]);
