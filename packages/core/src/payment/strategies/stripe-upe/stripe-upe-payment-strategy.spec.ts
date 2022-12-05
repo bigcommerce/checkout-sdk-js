@@ -395,6 +395,23 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     describe('without shipping and billing address', () => {
                         beforeEach(() => {
+                            const errorResponse = new RequestError(getResponse({
+                                ...getErrorPaymentResponseBody(),
+                                errors: [
+                                    { code: 'additional_action_required' },
+                                ],
+                                additional_action_required: {
+                                    type: 'additional_action_requires_payment_method',
+                                    data: {
+                                        redirect_url: 'https://redirect-url.com',
+                                        token: 'token'
+                                    },
+                                },
+                                status: 'error',
+                            }));
+                            
+                            jest.spyOn(paymentActionCreator, 'submitPayment')
+                                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
                             jest.spyOn(store.getState().shippingAddress, 'getShippingAddress')
                                 .mockReturnValue({});
                             jest.spyOn(store.getState().billingAddress, 'getBillingAddress')
@@ -404,8 +421,9 @@ describe('StripeUPEPaymentStrategy', () => {
                         it('with a signed user', async () => {
                             await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toBeInstanceOf(MissingDataError);
 
-                            expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
-                            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(1);
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                            expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
                         });
 
                         it('with a guest user', async () => {
@@ -414,8 +432,9 @@ describe('StripeUPEPaymentStrategy', () => {
 
                             await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toBeInstanceOf(MissingDataError);
 
-                            expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
-                            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(1);
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                            expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
                         });
                     });
 
@@ -443,6 +462,7 @@ describe('StripeUPEPaymentStrategy', () => {
                     it('submit payment with credit card and passes back the client token', async () => {
                         const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                         expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
                             expect.objectContaining({
                                 methodId: 'card',
@@ -450,7 +470,7 @@ describe('StripeUPEPaymentStrategy', () => {
                                     formattedPayload: expect.objectContaining({
                                         confirm: false,
                                         credit_card_token: {
-                                            token: 'pi_1234',
+                                            token: 'myToken',
                                         },
                                         vault_payment_instrument: false,
                                     }),
@@ -547,18 +567,37 @@ describe('StripeUPEPaymentStrategy', () => {
                     });
 
                     it('with a guest user and without shipping and billing address', async () => {
+                        const errorResponse = new RequestError(getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            errors: [
+                                { code: 'additional_action_required' },
+                            ],
+                            additional_action_required: {
+                                type: 'additional_action_requires_payment_method',
+                                data: {
+                                    redirect_url: 'https://redirect-url.com',
+                                    token: 'token'
+                                },
+                            },
+                            status: 'error',
+                        }));
+                        
                         jest.spyOn(store.getState().customer, 'getCustomer')
                             .mockReturnValue(undefined);
                         jest.spyOn(store.getState().shippingAddress, 'getShippingAddress')
                             .mockReturnValue(undefined);
                         jest.spyOn(store.getState().billingAddress, 'getBillingAddress')
                             .mockReturnValue(undefined);
+                        jest.spyOn(paymentActionCreator, 'submitPayment')
+                            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
 
                         await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toBeInstanceOf(MissingDataError);
 
                         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
-                        expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
-                        expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(1);
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
+                        
                     });
 
                     it('fires unknown additional action', async () => {
@@ -584,12 +623,48 @@ describe('StripeUPEPaymentStrategy', () => {
                         }
                     });
 
+                    it('fires additional action requires payment method', async () => {
+                        const errorResponse = new RequestError(getResponse({
+                            ...getErrorPaymentResponseBody(),
+                            errors: [
+                                { code: 'additional_action_required' },
+                            ],
+                            additional_action_required: {
+                                type: 'additional_action_requires_payment_method',
+                                data: {
+                                    redirect_url: 'https://redirect-url.com',
+                                    token: 'token'
+                                },
+                            },
+                            status: 'error',
+                        }));
+
+                        jest.spyOn(paymentActionCreator, 'submitPayment')
+                            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+                        try {
+                            await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                        } catch (error) {
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                            expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
+                        }
+                    });
+
                     it('throws stripe error if empty payment intent is sent', async () => {
                         const requiredFieldErrorResponse = new RequestError(getResponse({
                             ...getErrorPaymentResponseBody(),
                             errors: [
-                                { code: 'required_field' },
+                                { code: 'additional_action_required' },
                             ],
+                            additional_action_required: {
+                                type: 'additional_action_requires_payment_method',
+                                data: {
+                                    redirect_url: 'https://redirect-url.com',
+                                    token: 'token'
+                                },
+                            },
+                            status: 'error',
                         }));
                         const stripeErrorMessage = 'Stripe error message.';
 
@@ -600,16 +675,15 @@ describe('StripeUPEPaymentStrategy', () => {
 
                         await expect(strategy.execute(getStripeUPEOrderRequestBodyMock())).rejects.toThrow(stripeErrorMessage);
 
-                        expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
-                        expect(paymentActionCreator.submitPayment).not.toHaveBeenCalledTimes(1);
-                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(1);
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                        expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
                     });
 
                     it('throws unknown error', async () => {
                         const unexpectedError = {
                             message: 'An unexpected error has occurred.',
                         };
-
                         const errorResponse = new RequestError(getResponse({
                             ...getErrorPaymentResponseBody(),
                             errors: [
