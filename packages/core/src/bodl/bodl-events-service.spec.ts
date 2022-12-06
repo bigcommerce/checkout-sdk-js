@@ -374,6 +374,15 @@ describe('BodlEmitterService', () => {
                 expectedData: [string, BodlEventsPayload?];
             }> = [
                 {
+                    eventMethod: (payload: BodlEventsPayload) =>
+                        bodlEmitterService.customerSuggestionInit(payload),
+                    methodArguments: { test: 'data' },
+                    expectedData: [
+                        'bodl_checkout_customer_suggestion_initialization',
+                        { test: 'data' },
+                    ],
+                },
+                {
                     eventMethod: () => bodlEmitterService.customerSuggestionExecute(),
                     expectedData: ['bodl_checkout_customer_suggestion_execute'],
                 },

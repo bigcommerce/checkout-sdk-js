@@ -9,6 +9,8 @@ export default class NoopBodlService implements BodlService {
 
     customerEmailEntry(): void {}
 
+    customerSuggestionInit(): void {}
+
     customerSuggestionExecute(): void {}
 
     customerPaymentMethodExecuted(): void {}
