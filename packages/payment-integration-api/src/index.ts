@@ -26,6 +26,7 @@ export {
 } from './customer';
 export { Discount } from './discount';
 export {
+    BuyNowCartCreationError,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
