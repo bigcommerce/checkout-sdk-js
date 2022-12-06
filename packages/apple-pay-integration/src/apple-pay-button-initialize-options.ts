@@ -1,4 +1,4 @@
-import { BuyNowCartRequestBody } from "../../payment-integration-api/src/cart";
+import { BuyNowCartRequestBody } from '../../payment-integration-api/src/cart';
 
 /**
  * A set of options that are required to initialize ApplePay in cart.
@@ -8,6 +8,12 @@ import { BuyNowCartRequestBody } from "../../payment-integration-api/src/cart";
  */
 export default interface ApplePayButtonInitializeOptions {
     /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+    /**
      * The class name of the ApplePay button style.
      */
     buttonClassName?: string;
@@ -16,12 +22,6 @@ export default interface ApplePayButtonInitializeOptions {
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
 }
 
 export interface WithApplePayButtonInitializeOptions {
