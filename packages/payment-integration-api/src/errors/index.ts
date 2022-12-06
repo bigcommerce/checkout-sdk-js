@@ -12,3 +12,4 @@ export { default as PaymentMethodCancelledError } from './payment-method-cancell
 export { default as PaymentMethodClientUnavailableError } from './payment-method-client-unavailable-error';
 export { default as RequestError } from './request-error';
 export { default as isRequestError } from './is-request-error';
+export { default as BuyNowCartCreationError } from './buyNowCartError';

@@ -22,7 +22,7 @@ import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
-import { BuyNowCartCreationError } from "../../core/src/cart/errors";
+import { BuyNowCartCreationError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -116,7 +116,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
         console.log('BUY NOW', this._buyNowInitializeOptions);
-        if (this._buyNowInitializeOptions && typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        if (
+            this._buyNowInitializeOptions &&
+            typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
         ) {
             const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
             console.log('CART REQUEST BODY', cartRequestBody);
