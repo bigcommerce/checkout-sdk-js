@@ -100,6 +100,7 @@ export default function createPaymentIntegrationService(
         billingAddressActionCreator,
         consignmentActionCreator,
         paymentMethodActionCreator,
-        paymentActionCreator
+        paymentActionCreator,
+        requestSender
     );
 }

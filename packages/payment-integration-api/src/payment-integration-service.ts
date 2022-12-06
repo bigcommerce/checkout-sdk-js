@@ -5,12 +5,19 @@ import { Payment } from "./payment";
 import PaymentIntegrationSelectors from "./payment-integration-selectors";
 import { RequestOptions } from "./util-types";
 import { ShippingAddressRequestBody } from "./shipping";
+import { BuyNowCartRequestBody } from "./cart/buyNowCart";
+import { Response } from "@bigcommerce/request-sender";
+import { Cart } from "./cart";
 
 export default interface PaymentIntegrationService {
     createHostedForm(
         host: string,
         options: HostedFormOptions
     ): HostedForm;
+
+    createBuyNowCart(
+        body: BuyNowCartRequestBody,
+    ): Promise<Response<Cart>> ;
 
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
@@ -20,6 +27,8 @@ export default interface PaymentIntegrationService {
     getState(): PaymentIntegrationSelectors;
 
     loadCheckout(): Promise<PaymentIntegrationSelectors>;
+
+    loadDefinedCheckout(cartID: string): Promise<PaymentIntegrationSelectors>;
 
     loadDefaultCheckout(): Promise<PaymentIntegrationSelectors>;
 

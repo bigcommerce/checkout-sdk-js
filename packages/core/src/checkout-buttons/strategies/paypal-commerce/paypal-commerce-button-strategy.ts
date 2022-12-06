@@ -35,7 +35,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { paypalcommerce, containerId, methodId } = options;
-
+        console.log('PAYPALCOMMERCE', paypalcommerce);
         if (!methodId) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
         }

@@ -17,8 +17,12 @@ import { OrderActionCreator } from "../order";
 import PaymentActionCreator from "../payment/payment-action-creator";
 import PaymentMethodActionCreator from "../payment/payment-method-action-creator";
 import { ConsignmentActionCreator } from "../shipping";
+import { Cart } from "../cart";
 
 import PaymentIntegrationStoreProjectionFactory from "./payment-integration-store-projection-factory";
+import { BuyNowCartRequestBody } from "../cart";
+import { RequestSender, Response } from "@bigcommerce/request-sender";
+import { ContentType, SDK_VERSION_HEADERS } from "../common/http-request";
 
 export default class DefaultPaymentIntegrationService
     implements PaymentIntegrationService
@@ -34,7 +38,8 @@ export default class DefaultPaymentIntegrationService
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
+        private _requestSender: RequestSender
     ) {
         this._storeProjection = this._storeProjectionFactory.create(
             this._store
@@ -60,6 +65,14 @@ export default class DefaultPaymentIntegrationService
     async loadCheckout(): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._checkoutActionCreator.loadCurrentCheckout()
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async loadDefinedCheckout(cartID:string): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._checkoutActionCreator.loadCheckout(cartID)
         );
 
         return this._storeProjection.getState();
@@ -144,5 +157,15 @@ export default class DefaultPaymentIntegrationService
         );
 
         return this._storeProjection.getState();
+    }
+
+    createBuyNowCart(body: BuyNowCartRequestBody, { timeout }: RequestOptions = {}): Promise<Response<Cart>> {
+        const url = '/api/storefront/carts';
+        const headers = {
+            Accept: ContentType.JsonV1,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        return this._requestSender.post(url, { body, headers, timeout });
     }
 }
