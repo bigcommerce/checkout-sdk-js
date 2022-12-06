@@ -5,9 +5,9 @@ import { InitializeOffsitePaymentConfig, Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
-import { BuyNowCartRequestBody } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { Response } from "@bigcommerce/request-sender";
-import { Cart } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Response } from '@bigcommerce/request-sender';
+import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default interface PaymentIntegrationService {
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;

@@ -22,6 +22,7 @@ import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import { RequestSender } from '@bigcommerce/request-sender';
 
 describe('DefaultPaymentIntegrationService', () => {
     let subject: PaymentIntegrationService;
@@ -49,6 +50,8 @@ describe('DefaultPaymentIntegrationService', () => {
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
     >;
+    let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
+    let requestSender: Pick<any, any>
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
@@ -104,6 +107,10 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        requestSender = {
+
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -114,6 +121,7 @@ describe('DefaultPaymentIntegrationService', () => {
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
             paymentActionCreator as PaymentActionCreator,
+            requestSender as RequestSender,
         );
     });
 
