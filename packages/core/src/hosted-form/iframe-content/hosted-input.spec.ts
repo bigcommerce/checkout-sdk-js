@@ -3,7 +3,11 @@ import { EventEmitter } from 'events';
 import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
-import { HostedFieldEventMap, HostedFieldEventType, HostedFieldSubmitRequestEvent } from '../hosted-field-events';
+import {
+    HostedFieldEventMap,
+    HostedFieldEventType,
+    HostedFieldSubmitRequestEvent,
+} from '../hosted-field-events';
 
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
@@ -16,7 +20,10 @@ import HostedInputValues from './hosted-input-values';
 describe('HostedInput', () => {
     let container: HTMLFormElement;
     let eventEmitter: EventEmitter;
-    let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
+    let eventListener: Pick<
+        IframeEventListener<HostedFieldEventMap>,
+        'addListener' | 'listen' | 'stopListen'
+    >;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
     let fontUrls: string[];
     let input: HostedInput;
@@ -56,9 +63,7 @@ describe('HostedInput', () => {
             setTarget: jest.fn(),
         };
 
-        fontUrls = [
-            'https://fonts.googleapis.com/css?family=Open+Sans&display=swap',
-        ];
+        fontUrls = ['https://fonts.googleapis.com/css?family=Open+Sans&display=swap'];
 
         paymentHandler = { handle: jest.fn() };
 
@@ -67,14 +72,16 @@ describe('HostedInput', () => {
         };
 
         inputValidator = {
-            validate: jest.fn(() => Promise.resolve({
-                isValid: true,
-                errors: {
-                    cardExpiry: [],
-                    cardName: [],
-                    cardNumber: [],
-                },
-            })),
+            validate: jest.fn(() =>
+                Promise.resolve({
+                    isValid: true,
+                    errors: {
+                        cardExpiry: [],
+                        cardName: [],
+                        cardNumber: [],
+                    },
+                }),
+            ),
         };
 
         container = document.createElement('form');
@@ -92,7 +99,7 @@ describe('HostedInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler
+            paymentHandler as HostedInputPaymentHandler,
         );
     });
 
@@ -102,22 +109,19 @@ describe('HostedInput', () => {
     });
 
     it('returns input type', () => {
-        expect(input.getType())
-            .toEqual(HostedFieldType.CardName);
+        expect(input.getType()).toEqual(HostedFieldType.CardName);
     });
 
     it('sets and returns input value', () => {
         input.setValue('abc');
 
-        expect(input.getValue())
-            .toEqual('abc');
+        expect(input.getValue()).toBe('abc');
     });
 
     it('attaches input to container', () => {
         input.attach();
 
-        expect(container.querySelector('input'))
-            .toBeDefined();
+        expect(container.querySelector('input')).toBeDefined();
     });
 
     it('configures input with expected attributes', () => {
@@ -126,16 +130,11 @@ describe('HostedInput', () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
-        expect(element.id)
-            .toEqual('card-name');
-        expect(element.placeholder)
-            .toEqual('Full name');
-        expect(element.autocomplete)
-            .toEqual('cc-name');
-        expect(element.getAttribute('aria-label'))
-            .toEqual('Cardholder name');
-        expect(element.inputMode)
-            .toEqual('text');
+        expect(element.id).toBe('card-name');
+        expect(element.placeholder).toBe('Full name');
+        expect(element.autocomplete).toBe('cc-name');
+        expect(element.getAttribute('aria-label')).toBe('Cardholder name');
+        expect(element.inputMode).toBe('text');
     });
 
     it('configures card number input with numeric inputmode', () => {
@@ -151,13 +150,13 @@ describe('HostedInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler
+            paymentHandler as HostedInputPaymentHandler,
         );
+
         cardNumberInput.attach();
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(container.querySelector('input')!.inputMode)
-            .toEqual('numeric');
+        expect(container.querySelector('input')!.inputMode).toBe('numeric');
 
         cardNumberInput.detach();
     });
@@ -165,15 +164,13 @@ describe('HostedInput', () => {
     it('sets target for event poster', () => {
         input.attach();
 
-        expect(eventPoster.setTarget)
-            .toHaveBeenCalled();
+        expect(eventPoster.setTarget).toHaveBeenCalled();
     });
 
     it('starts listening to events', () => {
         input.attach();
 
-        expect(eventListener.listen)
-            .toHaveBeenCalled();
+        expect(eventListener.listen).toHaveBeenCalled();
     });
 
     it('applies default styles to input', () => {
@@ -182,10 +179,8 @@ describe('HostedInput', () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
-        expect(element.style.color)
-            .toEqual('rgb(255, 255, 255)');
-        expect(element.style.fontSize)
-            .toEqual('15px');
+        expect(element.style.color).toBe('rgb(255, 255, 255)');
+        expect(element.style.fontSize).toBe('15px');
     });
 
     it('notifies when input is attached', () => {
@@ -193,17 +188,19 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({ type: HostedInputEventType.AttachSucceeded });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.AttachSucceeded,
+        });
     });
 
     it('loads required fonts when input is attached', () => {
         input.attach();
 
-        const links = Array.from<HTMLLinkElement>(document.querySelectorAll('link[href*="fonts.googleapis.com"][rel="stylesheet"]'));
+        const links = Array.from<HTMLLinkElement>(
+            document.querySelectorAll('link[href*="fonts.googleapis.com"][rel="stylesheet"]'),
+        );
 
-        expect(links.map(link => link.href))
-            .toEqual(fontUrls);
+        expect(links.map((link) => link.href)).toEqual(fontUrls);
     });
 
     it('notifies input change', () => {
@@ -217,13 +214,12 @@ describe('HostedInput', () => {
         element.value = '123';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.Changed,
-                payload: {
-                    fieldType: HostedFieldType.CardName,
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.Changed,
+            payload: {
+                fieldType: HostedFieldType.CardName,
+            },
+        });
     });
 
     it('notifies when input is in focus', () => {
@@ -236,13 +232,12 @@ describe('HostedInput', () => {
 
         element.dispatchEvent(new Event('focus', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.Focused,
-                payload: {
-                    fieldType: HostedFieldType.CardName,
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.Focused,
+            payload: {
+                fieldType: HostedFieldType.CardName,
+            },
+        });
     });
 
     it('notifies when input loses focus', () => {
@@ -255,13 +250,12 @@ describe('HostedInput', () => {
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.Blurred,
-                payload: {
-                    fieldType: HostedFieldType.CardName,
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.Blurred,
+            payload: {
+                fieldType: HostedFieldType.CardName,
+            },
+        });
     });
 
     it('validates form when input loses focus', () => {
@@ -272,8 +266,7 @@ describe('HostedInput', () => {
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));
 
-        expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values);
+        expect(inputValidator.validate).toHaveBeenCalledWith(values);
     });
 
     it('validates form when requested by parent frame', () => {
@@ -281,8 +274,7 @@ describe('HostedInput', () => {
 
         eventEmitter.emit(HostedFieldEventType.ValidateRequested);
 
-        expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values);
+        expect(inputValidator.validate).toHaveBeenCalledWith(values);
     });
 
     it('submits form when requested by parent frame', () => {
@@ -292,8 +284,7 @@ describe('HostedInput', () => {
 
         eventEmitter.emit(HostedFieldEventType.SubmitRequested, event);
 
-        expect(paymentHandler.handle)
-            .toHaveBeenCalledWith(event);
+        expect(paymentHandler.handle).toHaveBeenCalledWith(event);
     });
 
     it('emits event when enter key is pressed', () => {
@@ -301,13 +292,12 @@ describe('HostedInput', () => {
 
         container.dispatchEvent(new Event('submit'));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.Entered,
-                payload: {
-                    fieldType: HostedFieldType.CardName,
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.Entered,
+            payload: {
+                fieldType: HostedFieldType.CardName,
+            },
+        });
     });
 
     it('cleans up when it detaches', () => {
@@ -316,19 +306,20 @@ describe('HostedInput', () => {
         input.attach();
         input.detach();
 
-        expect(eventListener.stopListen)
-            .toHaveBeenCalled();
-        expect(container.querySelector('input'))
-            .toBeFalsy();
-        expect(document.querySelector('link[href*="fonts.googleapis.com"][rel="stylesheet"]'))
-            .toBeFalsy();
+        expect(eventListener.stopListen).toHaveBeenCalled();
+        expect(container.querySelector('input')).toBeFalsy();
+        expect(
+            document.querySelector('link[href*="fonts.googleapis.com"][rel="stylesheet"]'),
+        ).toBeFalsy();
     });
 
     it('applies bugfix of forcing focus on input field', () => {
         input.attach();
 
         expect(document.activeElement).toEqual(document.body);
+
         window.dispatchEvent(new Event('focus'));
+
         expect(document.activeElement).toEqual(container.querySelector('input'));
     });
 });

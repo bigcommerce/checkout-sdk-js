@@ -39,7 +39,14 @@ export {
     RequestError,
     isRequestError,
 } from './errors';
-export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
+export {
+    HostedCardFieldOptionsMap,
+    HostedFieldStylesMap,
+    HostedFieldType,
+    HostedForm,
+    HostedFormOptions,
+    HostedStoredCardFieldOptionsMap,
+} from './hosted-form';
 export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
 export {
     CardInstrument,

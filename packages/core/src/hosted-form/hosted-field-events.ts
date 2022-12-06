@@ -1,4 +1,7 @@
-import { HostedFieldType, HostedFieldStylesMap } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    HostedFieldStylesMap,
+    HostedFieldType,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CardInstrument } from '../payment/instrument';
 

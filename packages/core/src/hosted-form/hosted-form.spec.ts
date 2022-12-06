@@ -1,6 +1,9 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { HostedFormOptions, HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    HostedFieldType,
+    HostedFormOptions,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';

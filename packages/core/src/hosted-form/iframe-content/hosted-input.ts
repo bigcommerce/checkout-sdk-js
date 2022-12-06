@@ -4,7 +4,11 @@ import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-a
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { parseUrl } from '../../common/url';
-import { HostedFieldEventMap, HostedFieldEventType, HostedFieldValidateRequestEvent } from '../hosted-field-events';
+import {
+    HostedFieldEventMap,
+    HostedFieldEventType,
+    HostedFieldValidateRequestEvent,
+} from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
@@ -34,15 +38,21 @@ export default class HostedInput {
         protected _eventPoster: IframeEventPoster<HostedInputEvent>,
         protected _inputAggregator: HostedInputAggregator,
         protected _inputValidator: HostedInputValidator,
-        protected _paymentHandler: HostedInputPaymentHandler
+        protected _paymentHandler: HostedInputPaymentHandler,
     ) {
         this._input = document.createElement('input');
 
         this._input.addEventListener('input', this._handleInput);
         this._input.addEventListener('blur', this._handleBlur);
         this._input.addEventListener('focus', this._handleFocus);
-        this._eventListener.addListener(HostedFieldEventType.ValidateRequested, this._handleValidate);
-        this._eventListener.addListener(HostedFieldEventType.SubmitRequested, this._paymentHandler.handle);
+        this._eventListener.addListener(
+            HostedFieldEventType.ValidateRequested,
+            this._handleValidate,
+        );
+        this._eventListener.addListener(
+            HostedFieldEventType.SubmitRequested,
+            this._paymentHandler.handle,
+        );
 
         this._configureInput();
     }
@@ -130,18 +140,20 @@ export default class HostedInput {
             case 'card-number':
                 this._input.type = 'text';
                 this._input.inputMode = 'numeric';
-                this._input.pattern = "[0-9]*";
+                this._input.pattern = '[0-9]*';
                 break;
+
             case 'card-name':
                 this._input.type = 'text';
                 this._input.inputMode = 'text';
                 break;
         }
-
     }
 
     private _applyStyles(styles: HostedInputStyles = {}): void {
-        const allowedStyles: { [key in keyof Required<HostedInputStyles>]: HostedInputStyles[key] } = {
+        const allowedStyles: {
+            [key in keyof Required<HostedInputStyles>]: HostedInputStyles[key];
+        } = {
             color: styles.color,
             fontFamily: styles.fontFamily,
             fontSize: styles.fontSize,
@@ -149,7 +161,7 @@ export default class HostedInput {
         };
         const styleKeys = Object.keys(allowedStyles) as Array<keyof HostedInputStyles>;
 
-        styleKeys.forEach(key => {
+        styleKeys.forEach((key) => {
             if (!allowedStyles[key]) {
                 return;
             }
@@ -164,9 +176,9 @@ export default class HostedInput {
         }
 
         this._fontLinks = this._fontUrls
-            .filter(url => parseUrl(url).hostname === 'fonts.googleapis.com')
-            .filter(url => !document.querySelector(`link[href='${url}'][rel='stylesheet']`))
-            .map(url => {
+            .filter((url) => parseUrl(url).hostname === 'fonts.googleapis.com')
+            .filter((url) => !document.querySelector(`link[href='${url}'][rel='stylesheet']`))
+            .map((url) => {
                 const link = document.createElement('link');
 
                 link.rel = 'stylesheet';
@@ -183,7 +195,7 @@ export default class HostedInput {
             return;
         }
 
-        this._fontLinks.forEach(link => {
+        this._fontLinks.forEach((link) => {
             if (!link.parentElement) {
                 return;
             }
@@ -224,7 +236,7 @@ export default class HostedInput {
         this._previousValue = value;
     }
 
-    private _handleInput: (event: Event) => void = event => {
+    private _handleInput: (event: Event) => void = (event) => {
         const input = event.target as HTMLInputElement;
 
         this._processChange(input.value);
@@ -257,7 +269,7 @@ export default class HostedInput {
         this._validateForm();
     };
 
-    private _handleSubmit: (event: Event) => void = event => {
+    private _handleSubmit: (event: Event) => void = (event) => {
         event.preventDefault();
 
         this._eventPoster.post({
@@ -271,6 +283,7 @@ export default class HostedInput {
     private _forceFocusToInput = (): void => {
         if (document.activeElement === document.body) {
             const browserName = navigator.userAgent.toLowerCase();
+
             if (browserName.indexOf('safari') > -1) {
                 if (this._input.value === '') {
                     this._input.setAttribute('value', ' ');
