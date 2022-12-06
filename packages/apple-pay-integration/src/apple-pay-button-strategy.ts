@@ -66,7 +66,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
-        await this._paymentIntegrationService.loadDefaultCheckout();
+        if (!buyNowInitializeOptions) {
+            await this._paymentIntegrationService.loadDefaultCheckout();
+        }
 
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
