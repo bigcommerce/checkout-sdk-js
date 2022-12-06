@@ -681,9 +681,8 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadCheckout();
 
-            noPaymentDataRequiredPaymentStrategy = createNoPaymentStrategy(
-                paymentIntegrationService,
-            );
+            noPaymentDataRequiredPaymentStrategy =
+                createNoPaymentStrategy(paymentIntegrationService);
 
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
 
