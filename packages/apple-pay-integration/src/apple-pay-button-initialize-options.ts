@@ -1,3 +1,5 @@
+import { BuyNowCartRequestBody } from "../../payment-integration-api/src/cart";
+
 /**
  * A set of options that are required to initialize ApplePay in cart.
  *
@@ -14,6 +16,12 @@ export default interface ApplePayButtonInitializeOptions {
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 export interface WithApplePayButtonInitializeOptions {
