@@ -10,7 +10,9 @@ export default class PaymentArgumentInvalidError extends InvalidArgumentError {
         let message = 'Unable to submit payment for the order because the payload is invalid.';
 
         if (invalidFields) {
-            message = `${message} Make sure the following fields are provided correctly: ${invalidFields.join(', ')}.`;
+            message = `${message} Make sure the following fields are provided correctly: ${invalidFields.join(
+                ', ',
+            )}.`;
         }
 
         super(message);

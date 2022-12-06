@@ -14,9 +14,7 @@ export enum NotInitializedErrorType {
  * separate initialization call is made.
  */
 export default class NotInitializedError extends StandardError {
-    constructor(
-        public subtype: NotInitializedErrorType
-    ) {
+    constructor(public subtype: NotInitializedErrorType) {
         super(getErrorMessage(subtype));
 
         this.name = 'NotInitializedError';
@@ -26,19 +24,19 @@ export default class NotInitializedError extends StandardError {
 
 function getErrorMessage(type: NotInitializedErrorType): string {
     switch (type) {
-    case NotInitializedErrorType.CustomerNotInitialized:
-        return 'Unable to proceed because the customer step of checkout has not been initialized.';
+        case NotInitializedErrorType.CustomerNotInitialized:
+            return 'Unable to proceed because the customer step of checkout has not been initialized.';
 
-    case NotInitializedErrorType.PaymentNotInitialized:
-        return 'Unable to proceed because the payment step of checkout has not been initialized.';
+        case NotInitializedErrorType.PaymentNotInitialized:
+            return 'Unable to proceed because the payment step of checkout has not been initialized.';
 
-    case NotInitializedErrorType.ShippingNotInitialized:
-        return 'Unable to proceed because the shipping step of checkout has not been initialized.';
+        case NotInitializedErrorType.ShippingNotInitialized:
+            return 'Unable to proceed because the shipping step of checkout has not been initialized.';
 
-    case NotInitializedErrorType.SpamProtectionNotInitialized:
-        return 'Unable to proceed because the checkout spam protection has not been initialized.';
+        case NotInitializedErrorType.SpamProtectionNotInitialized:
+            return 'Unable to proceed because the checkout spam protection has not been initialized.';
 
-    default:
-        return 'Unable to proceed because the required component has not been initialized.';
+        default:
+            return 'Unable to proceed because the required component has not been initialized.';
     }
 }

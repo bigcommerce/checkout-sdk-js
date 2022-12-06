@@ -42,10 +42,10 @@ export interface PaymentIntent {
      */
     status: 'succeeded' | string;
 
-     /**
-      * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
-      */
-     last_payment_error: LastPaymentError | null;
+    /**
+     * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
+     */
+    last_payment_error: LastPaymentError | null;
 }
 
 /**
@@ -55,7 +55,7 @@ export interface LastPaymentError {
     /**
      * A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.
      */
-     message?: string;
+    message?: string;
 }
 
 /**
@@ -212,7 +212,7 @@ interface StripeElementStyleVariant extends StripeElementCSSProperties {
     /**
      * Available for the `cardNumber`, `cardExpiry`, and `cardCvc` elements.
      */
-    '::-ms-clear'?: StripeElementCSSProperties & {display: string};
+    '::-ms-clear'?: StripeElementCSSProperties & { display: string };
 }
 
 export interface CardElementOptions extends BaseElementOptions {
@@ -238,10 +238,9 @@ export interface CardElementOptions extends BaseElementOptions {
      * Hides the icon in the Element, Default is false
      */
     hideIcon?: boolean;
-
 }
 
-interface BaseIndividualElementOptions extends BaseElementOptions  {
+interface BaseIndividualElementOptions extends BaseElementOptions {
     containerId: string;
 }
 
@@ -533,9 +532,21 @@ export interface StripeConfirmSepaPaymentData {
     payment_method?: CreatePaymentMethodSepaData;
 }
 
-export type StripeConfirmPaymentData = StripeConfirmAlipayPaymentData | StripeConfirmCardPaymentData | StripeConfirmIdealPaymentData | StripeConfirmSepaPaymentData | undefined;
+export type StripeConfirmPaymentData =
+    | StripeConfirmAlipayPaymentData
+    | StripeConfirmCardPaymentData
+    | StripeConfirmIdealPaymentData
+    | StripeConfirmSepaPaymentData
+    | undefined;
 
-export type StripeElementOptions = CardElementOptions | CardExpiryElementOptions | CardNumberElementOptions | CardCvcElementOptions | IdealElementOptions | IbanElementOptions | ZipCodeElementOptions;
+export type StripeElementOptions =
+    | CardElementOptions
+    | CardExpiryElementOptions
+    | CardNumberElementOptions
+    | CardCvcElementOptions
+    | IdealElementOptions
+    | IbanElementOptions
+    | ZipCodeElementOptions;
 
 export interface StripeElement {
     /**
@@ -560,10 +571,7 @@ export interface StripeElements {
     /**
      * Creates a `AlipayElement` | `CardElement` | `CardCvcElement` |`CardExpiryElement` | `CardExpiryElement` | `CardNumberElement` | `IdealBankElement` | `IbanElement`.
      */
-    create(
-        elementType: StripeElementType,
-        options?: StripeElementOptions
-    ): StripeElement;
+    create(elementType: StripeElementType, options?: StripeElementOptions): StripeElement;
 
     /**
      * Looks up a previously created `Element` by its type.
@@ -689,8 +697,8 @@ export interface StripeV3Client {
         /**
          * An options object to control the behavior of this method.
          */
-        options?: StripeConfirmPaymentOptions
-    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+        options?: StripeConfirmPaymentOptions,
+    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
 
     /**
      * @docs https://stripe.com/docs/js/payment_intents/confirm_card_payment
@@ -738,8 +746,8 @@ export interface StripeV3Client {
         /**
          * An options object to control the behavior of this method.
          */
-        options?: StripeConfirmPaymentOptions
-    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+        options?: StripeConfirmPaymentOptions,
+    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
 
     /**
      * @docs https://stripe.com/docs/js/payment_intents/confirm_ideal_payment
@@ -780,8 +788,8 @@ export interface StripeV3Client {
         /**
          * An options object to control the behavior of this method.
          */
-        options?: StripeConfirmPaymentOptions
-    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+        options?: StripeConfirmPaymentOptions,
+    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
 
     /**
      *
@@ -795,6 +803,7 @@ export interface StripeV3Client {
      * this method can automatically create and attach a new PaymentMethod for you. If you have already attached a
      * [PaymentMethod](https://stripe.com/docs/api/payment_methods) you can call this method without needing to provide any additional data.
      * These use cases are detailed in the sections that follow.
+     *
      * @docs https://stripe.com/docs/js/payment_intents/confirm_sepa_debit_payment
      */
     confirmSepaDebitPayment(
@@ -806,12 +815,13 @@ export interface StripeV3Client {
         /**
          * Data to be sent with the request. Refer to the [Payment Intents API](https://stripe.com/docs/api/payment_intents/confirm) for a full list of parameters.
          */
-        data?: StripeConfirmSepaPaymentData
-    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+        data?: StripeConfirmSepaPaymentData,
+    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
 
     /**
      * Use stripe.createPaymentMethod to convert payment information collected by elements into a PaymentMethod
      * object that you safely pass to your server to use in an API call.
+     *
      * @docs https://stripe.com/docs/js/payment_methods/create_payment_method
      *
      * @param type: String, The type of the PaymentMethod to create. Refer to the PaymentMethod API for all possible values.
@@ -820,19 +830,20 @@ export interface StripeV3Client {
      * may be used or required by particular types of payment methods.
      */
     createPaymentMethod(
-        params: CreatePaymentMethodParams
-    ): Promise<{paymentMethod?: PaymentMethod; error?: StripeError}>;
+        params: CreatePaymentMethodParams,
+    ): Promise<{ paymentMethod?: PaymentMethod; error?: StripeError }>;
 
     /**
      * Use stripe.handleCardAction in the Payment Intents API manual confirmation flow to handle a PaymentIntent
      * with the requires_action status. It will throw an error if the PaymentIntent has a different status.
+     *
      * @docs https://stripe.com/docs/js/payment_intents/handle_card_action
      *
      * @param paymentIntentClientSecret: String, The client secret of the PaymentIntent to handle.
      */
     handleCardAction(
-        paymentIntentClientSecret: string
-    ): Promise<{paymentIntent?: PaymentIntent; error?: StripeError}>;
+        paymentIntentClientSecret: string,
+    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
 }
 
 export interface CreatePaymentMethodParams {
@@ -842,10 +853,7 @@ export interface CreatePaymentMethodParams {
 }
 
 export interface StripeHostWindow extends Window {
-    Stripe?(
-        stripePublishableKey: string,
-        options?: StripeConfigurationOptions
-    ): StripeV3Client;
+    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeV3Client;
 }
 
 export enum StripeElementType {
@@ -854,14 +862,14 @@ export enum StripeElementType {
     CardExpiry = 'cardExpiry',
     CardNumber = 'cardNumber',
     CreditCard = 'card',
-    iDEAL = 'idealBank',
+    IDEAL = 'idealBank',
     Sepa = 'iban',
 }
 
 export enum StripePaymentMethodType {
     Alipay = 'alipay',
     CreditCard = 'card',
-    iDEAL = 'ideal',
+    IDEAL = 'ideal',
     Sepa = 'sepa_debit',
 }
 
@@ -910,8 +918,18 @@ export interface IndividualCardElementOptions {
     zipCodeElementOptions?: ZipCodeElementOptions;
 }
 
-export default function isIndividualCardElementOptions(individualCardElementOptions: unknown): individualCardElementOptions is IndividualCardElementOptions {
-    return Boolean((individualCardElementOptions as IndividualCardElementOptions).cardNumberElementOptions) &&
-        Boolean((individualCardElementOptions as IndividualCardElementOptions).cardCvcElementOptions) &&
-        Boolean((individualCardElementOptions as IndividualCardElementOptions).cardExpiryElementOptions);
+export default function isIndividualCardElementOptions(
+    individualCardElementOptions: unknown,
+): individualCardElementOptions is IndividualCardElementOptions {
+    return (
+        Boolean(
+            (individualCardElementOptions as IndividualCardElementOptions).cardNumberElementOptions,
+        ) &&
+        Boolean(
+            (individualCardElementOptions as IndividualCardElementOptions).cardCvcElementOptions,
+        ) &&
+        Boolean(
+            (individualCardElementOptions as IndividualCardElementOptions).cardExpiryElementOptions,
+        )
+    );
 }

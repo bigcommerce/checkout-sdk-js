@@ -1,9 +1,17 @@
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
-import { getAdyenAmex, getAmazonPay, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource, getPPSDK } from './payment-methods.mock';
+import {
+    getAdyenAmex,
+    getAmazonPay,
+    getBankDeposit,
+    getBraintree,
+    getBraintreePaypal,
+    getCybersource,
+    getPPSDK,
+} from './payment-methods.mock';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
@@ -13,9 +21,7 @@ describe('PaymentStrategyRegistry', () => {
     let store: CheckoutStore;
 
     class BasePaymentStrategy implements PaymentStrategy {
-        constructor(
-            private _store: CheckoutStore
-        ) {}
+        constructor(private _store: CheckoutStore) {}
 
         execute(): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());
@@ -63,8 +69,14 @@ describe('PaymentStrategyRegistry', () => {
 
     describe('#getByMethod()', () => {
         beforeEach(() => {
-            registry.register(PaymentStrategyType.AMAZON, () => new AmazonPayPaymentStrategy(store));
-            registry.register(PaymentStrategyType.CREDIT_CARD, () => new CreditCardPaymentStrategy(store));
+            registry.register(
+                PaymentStrategyType.AMAZON,
+                () => new AmazonPayPaymentStrategy(store),
+            );
+            registry.register(
+                PaymentStrategyType.CREDIT_CARD,
+                () => new CreditCardPaymentStrategy(store),
+            );
             registry.register(PaymentStrategyType.LEGACY, () => new LegacyPaymentStrategy(store));
             registry.register(PaymentStrategyType.OFFLINE, () => new OfflinePaymentStrategy(store));
             registry.register(PaymentStrategyType.OFFSITE, () => new OffsitePaymentStrategy(store));
@@ -85,8 +97,12 @@ describe('PaymentStrategyRegistry', () => {
 
         it('returns new strategy instance if multiple methods belong to same type', () => {
             expect(registry.getByMethod(getBraintree())).toBeInstanceOf(CreditCardPaymentStrategy);
-            expect(registry.getByMethod(getBraintreePaypal())).toBeInstanceOf(CreditCardPaymentStrategy);
-            expect(registry.getByMethod(getBraintree())).not.toBe(registry.getByMethod(getBraintreePaypal()));
+            expect(registry.getByMethod(getBraintreePaypal())).toBeInstanceOf(
+                CreditCardPaymentStrategy,
+            );
+            expect(registry.getByMethod(getBraintree())).not.toBe(
+                registry.getByMethod(getBraintreePaypal()),
+            );
         });
 
         it('returns offsite strategy if none is registered with method name and method is hosted', () => {

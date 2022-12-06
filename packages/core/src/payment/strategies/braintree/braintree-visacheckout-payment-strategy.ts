@@ -1,6 +1,11 @@
 import { noop } from 'lodash';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentMethodFailedError } from '../../errors';
@@ -26,18 +31,21 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
-        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
+        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
 
         if (!visaCheckoutOptions) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.braintreevisacheckout" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.braintreevisacheckout" argument is not provided.',
+            );
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then((state) => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 const checkout = state.checkout.getCheckout();
@@ -55,10 +63,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                const {
-                    onError = noop,
-                    onPaymentSelect = noop,
-                } = visaCheckoutOptions;
+                const { onError = noop, onPaymentSelect = noop } = visaCheckoutOptions;
 
                 const initOptions = {
                     locale: storeConfig.storeProfile.storeLanguage,
@@ -69,14 +74,18 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
 
                 return Promise.all([
                     this._visaCheckoutScriptLoader.load(this._paymentMethod.config.testMode),
-                    this._braintreeVisaCheckoutPaymentProcessor.initialize(this._paymentMethod.clientToken, initOptions),
-                ])
-                .then(([visaCheckout, visaInitOptions]) => {
+                    this._braintreeVisaCheckoutPaymentProcessor.initialize(
+                        this._paymentMethod.clientToken,
+                        initOptions,
+                    ),
+                ]).then(([visaCheckout, visaInitOptions]) => {
                     visaCheckout.init(visaInitOptions);
-                    visaCheckout.on('payment.success', (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
-                        this._paymentInstrumentSelected(paymentSuccessPayload)
-                            .then(() => onPaymentSelect())
-                            .catch(error => onError(error))
+                    visaCheckout.on(
+                        'payment.success',
+                        (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
+                            this._paymentInstrumentSelected(paymentSuccessPayload)
+                                .then(() => onPaymentSelect())
+                                .catch((error) => onError(error)),
                     );
                     visaCheckout.on('payment.error', (_, error) => onError(error));
                 });
@@ -84,22 +93,37 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
             .then(() => this._store.getState());
     }
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        orderRequest: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to submit payment because "payload.payment" argument is not provided.',
+            );
         }
 
-        if (!this._paymentMethod || !this._paymentMethod.initializationData || !this._paymentMethod.initializationData.nonce) {
+        if (
+            !this._paymentMethod ||
+            !this._paymentMethod.initializationData ||
+            !this._paymentMethod.initializationData.nonce
+        ) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const { nonce } = this._paymentMethod.initializationData;
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+        return this._store
+            .dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData: { nonce } }))
+                this._store.dispatch(
+                    this._paymentActionCreator.submitPayment({
+                        ...payment,
+                        paymentData: { nonce },
+                    }),
+                ),
             )
             .catch((error: Error) => this._handleError(error));
     }
@@ -109,7 +133,8 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
+        return this._braintreeVisaCheckoutPaymentProcessor
+            .deinitialize()
             .then(() => this._store.getState());
     }
 
@@ -122,17 +147,30 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
 
         const { id: methodId } = this._paymentMethod;
 
-        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
-            return this._braintreeVisaCheckoutPaymentProcessor.handleSuccess(
-                paymentSuccessPayload,
-                state.shippingAddress.getShippingAddress(),
-                state.billingAddress.getBillingAddress()
-            )
-            .then(() => Promise.all([
-                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
-                this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
-            ]));
-        }, { methodId }), { queueId: 'widgetInteraction' });
+        return this._store.dispatch(
+            this._paymentStrategyActionCreator.widgetInteraction(
+                () => {
+                    return this._braintreeVisaCheckoutPaymentProcessor
+                        .handleSuccess(
+                            paymentSuccessPayload,
+                            state.shippingAddress.getShippingAddress(),
+                            state.billingAddress.getBillingAddress(),
+                        )
+                        .then(() =>
+                            Promise.all([
+                                this._store.dispatch(
+                                    this._checkoutActionCreator.loadCurrentCheckout(),
+                                ),
+                                this._store.dispatch(
+                                    this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+                                ),
+                            ]),
+                        );
+                },
+                { methodId },
+            ),
+            { queueId: 'widgetInteraction' },
+        );
     }
 
     private _handleError(error: Error): never {

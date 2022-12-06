@@ -1,4 +1,17 @@
-import { CreditCardInstrument, HostedCreditCardInstrument, HostedInstrument, HostedVaultedInstrument, NonceInstrument, VaultedInstrument, WithAccountCreation, WithCheckoutcomiDealInstrument, WithCheckoutcomFawryInstrument, WithCheckoutcomSEPAInstrument, WithDocumentInstrument, WithMollieIssuerInstrument } from '../payment';
+import {
+    CreditCardInstrument,
+    HostedCreditCardInstrument,
+    HostedInstrument,
+    HostedVaultedInstrument,
+    NonceInstrument,
+    VaultedInstrument,
+    WithAccountCreation,
+    WithCheckoutcomFawryInstrument,
+    WithCheckoutcomiDealInstrument,
+    WithCheckoutcomSEPAInstrument,
+    WithDocumentInstrument,
+    WithMollieIssuerInstrument,
+} from '../payment';
 
 /**
  * An object that contains the information required for submitting an order.
@@ -20,20 +33,19 @@ export default interface OrderRequestBody {
     useStoreCredit?: boolean;
 }
 
-export type OrderPaymentInstrument = (
-    CreditCardInstrument |
-    HostedInstrument |
-    HostedCreditCardInstrument |
-    HostedVaultedInstrument |
-    NonceInstrument |
-    VaultedInstrument |
-    CreditCardInstrument & WithDocumentInstrument |
-    CreditCardInstrument & WithCheckoutcomFawryInstrument |
-    CreditCardInstrument & WithCheckoutcomSEPAInstrument |
-    CreditCardInstrument & WithCheckoutcomiDealInstrument |
-    HostedInstrument & WithMollieIssuerInstrument |
-    WithAccountCreation
-);
+export type OrderPaymentInstrument =
+    | CreditCardInstrument
+    | HostedInstrument
+    | HostedCreditCardInstrument
+    | HostedVaultedInstrument
+    | NonceInstrument
+    | VaultedInstrument
+    | (CreditCardInstrument & WithDocumentInstrument)
+    | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
+    | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
+    | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+    | (HostedInstrument & WithMollieIssuerInstrument)
+    | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an

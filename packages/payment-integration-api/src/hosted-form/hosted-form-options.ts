@@ -1,7 +1,14 @@
-//copied from packages/core/src/hosted-form/hosted-form-options.ts
+// copied from packages/core/src/hosted-form/hosted-form-options.ts
 
 import HostedFieldType from './hosted-field-type';
-import { HostedInputBlurEvent, HostedInputCardTypeChangeEvent, HostedInputEnterEvent, HostedInputFocusEvent, HostedInputStyles, HostedInputValidateEvent } from './iframe-content';
+import {
+    HostedInputBlurEvent,
+    HostedInputCardTypeChangeEvent,
+    HostedInputEnterEvent,
+    HostedInputFocusEvent,
+    HostedInputStyles,
+    HostedInputValidateEvent,
+} from './iframe-content';
 
 export default interface HostedFormOptions {
     fields: HostedFieldOptionsMap;

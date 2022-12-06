@@ -1,11 +1,20 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { iframeResizer, IframeEventListener, IframeEventPoster, IFrameComponent } from '../common/iframe';
+import {
+    IFrameComponent,
+    IframeEventListener,
+    IframeEventPoster,
+    iframeResizer,
+} from '../common/iframe';
 import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 
-import EmbeddedCheckout, { ALLOW_COOKIE_ATTEMPT_INTERVAL, IS_COOKIE_ALLOWED_KEY, LAST_ALLOW_COOKIE_ATTEMPT_KEY } from './embedded-checkout';
+import EmbeddedCheckout, {
+    ALLOW_COOKIE_ATTEMPT_INTERVAL,
+    IS_COOKIE_ALLOWED_KEY,
+    LAST_ALLOW_COOKIE_ATTEMPT_KEY,
+} from './embedded-checkout';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
@@ -47,20 +56,17 @@ describe('EmbeddedCheckout', () => {
         requestSender = createRequestSender();
         storage = new BrowserStorage('EmbeddedCheckout');
 
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockReturnValue(Promise.resolve(iframe));
+        jest.spyOn(iframeCreator, 'createFrame').mockReturnValue(Promise.resolve(iframe));
 
-        jest.spyOn(loadingIndicator, 'show')
-            .mockImplementation(() => {});
+        jest.spyOn(loadingIndicator, 'show').mockImplementation(() => {});
 
-        jest.spyOn(loadingIndicator, 'hide')
-            .mockImplementation(() => {});
+        jest.spyOn(loadingIndicator, 'hide').mockImplementation(() => {});
 
-        jest.spyOn(location, 'replace')
-            .mockImplementation(() => {});
+        jest.spyOn(location, 'replace').mockImplementation(() => {});
 
-        jest.spyOn(storage, 'getItem')
-            .mockImplementation(key => key === IS_COOKIE_ALLOWED_KEY ? true : null);
+        jest.spyOn(storage, 'getItem').mockImplementation((key) =>
+            key === IS_COOKIE_ALLOWED_KEY ? true : null,
+        );
 
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
@@ -70,7 +76,7 @@ describe('EmbeddedCheckout', () => {
             requestSender,
             storage,
             location,
-            options
+            options,
         );
     });
 
@@ -83,8 +89,7 @@ describe('EmbeddedCheckout', () => {
     it('creates iframe element', async () => {
         await embeddedCheckout.attach();
 
-        expect(iframeCreator.createFrame)
-            .toHaveBeenCalledWith(options.url, options.containerId);
+        expect(iframeCreator.createFrame).toHaveBeenCalledWith(options.url, options.containerId);
     });
 
     it('listens to checkout events', async () => {
@@ -92,26 +97,23 @@ describe('EmbeddedCheckout', () => {
 
         await embeddedCheckout.attach();
 
-        expect(messageListener.listen)
-            .toHaveBeenCalled();
+        expect(messageListener.listen).toHaveBeenCalled();
     });
 
     it('triggers error callback when there is error', async () => {
         const error = new NotEmbeddableError();
 
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockReturnValue(Promise.reject(error));
+        jest.spyOn(iframeCreator, 'createFrame').mockReturnValue(Promise.reject(error));
 
         jest.spyOn(messageListener, 'trigger');
 
         try {
             await embeddedCheckout.attach();
         } catch (thrown) {
-            expect(messageListener.trigger)
-                .toHaveBeenCalledWith({
-                    type: EmbeddedCheckoutEventType.FrameError,
-                    payload: error,
-                });
+            expect(messageListener.trigger).toHaveBeenCalledWith({
+                type: EmbeddedCheckoutEventType.FrameError,
+                payload: error,
+            });
 
             expect(thrown).toEqual(error);
         }
@@ -141,26 +143,24 @@ describe('EmbeddedCheckout', () => {
         await embeddedCheckout.attach();
         await embeddedCheckout.attach();
 
-        expect(iframeCreator.createFrame)
-            .toHaveBeenCalledTimes(1);
+        expect(iframeCreator.createFrame).toHaveBeenCalledTimes(1);
 
         embeddedCheckout.detach();
 
         await embeddedCheckout.attach();
 
-        expect(iframeCreator.createFrame)
-            .toHaveBeenCalledTimes(2);
+        expect(iframeCreator.createFrame).toHaveBeenCalledTimes(2);
     });
 
     it('can retry if unable to attach for first time', async () => {
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockReturnValueOnce(Promise.reject(new NotEmbeddableError()));
+        jest.spyOn(iframeCreator, 'createFrame').mockReturnValueOnce(
+            Promise.reject(new NotEmbeddableError()),
+        );
 
         await embeddedCheckout.attach().catch(() => {});
         await embeddedCheckout.attach().catch(() => {});
 
-        expect(iframeCreator.createFrame)
-            .toHaveBeenCalledTimes(2);
+        expect(iframeCreator.createFrame).toHaveBeenCalledTimes(2);
     });
 
     it('listens to checkout events when callbacks are passed', () => {
@@ -183,23 +183,33 @@ describe('EmbeddedCheckout', () => {
             requestSender,
             storage,
             location,
-            options
+            options,
         );
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutComplete, options.onComplete);
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedCheckoutEventType.CheckoutComplete,
+            options.onComplete,
+        );
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutError, options.onError);
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedCheckoutEventType.CheckoutError,
+            options.onError,
+        );
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutLoaded, options.onLoad);
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedCheckoutEventType.CheckoutLoaded,
+            options.onLoad,
+        );
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.FrameLoaded, options.onFrameLoad);
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedCheckoutEventType.FrameLoaded,
+            options.onFrameLoad,
+        );
 
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.SignedOut, options.onSignOut);
+        expect(messageListener.addListener).toHaveBeenCalledWith(
+            EmbeddedCheckoutEventType.SignedOut,
+            options.onSignOut,
+        );
     });
 
     it('configures styles when iframe is loaded', async () => {
@@ -212,7 +222,7 @@ describe('EmbeddedCheckout', () => {
             requestSender,
             storage,
             location,
-            options
+            options,
         );
 
         jest.spyOn(messagePoster, 'post');
@@ -235,7 +245,7 @@ describe('EmbeddedCheckout', () => {
             requestSender,
             storage,
             location,
-            options
+            options,
         );
 
         jest.spyOn(messagePoster, 'post');
@@ -251,85 +261,94 @@ describe('EmbeddedCheckout', () => {
         });
     });
 
-    it('toggles loading indicator', done => {
-        embeddedCheckout.attach()
-            .then(() => {
-                expect(loadingIndicator.hide).toHaveBeenCalled();
-                done();
-            });
+    it('toggles loading indicator', (done) => {
+        embeddedCheckout.attach().then(() => {
+            expect(loadingIndicator.hide).toHaveBeenCalled();
+
+            done();
+        });
 
         expect(loadingIndicator.show).toHaveBeenCalled();
         expect(loadingIndicator.hide).not.toHaveBeenCalled();
     });
 
     it('redirects user to allow third party cookie to be set', () => {
-        jest.spyOn(storage, 'getItem')
-            .mockImplementation(key => key === IS_COOKIE_ALLOWED_KEY ? null : true);
+        jest.spyOn(storage, 'getItem').mockImplementation((key) =>
+            key === IS_COOKIE_ALLOWED_KEY ? null : true,
+        );
 
         embeddedCheckout.attach();
 
-        expect(location.replace)
-            .toHaveBeenCalledWith(`https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(location.href)}`);
+        expect(location.replace).toHaveBeenCalledWith(
+            `https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(
+                location.href,
+            )}`,
+        );
     });
 
     it('does not redirect user if cookie is already allowed', () => {
         embeddedCheckout.attach();
 
-        expect(location.replace)
-            .not.toHaveBeenCalled();
+        expect(location.replace).not.toHaveBeenCalled();
     });
 
     it('retries once if cookie is flagged as allowed yet unable to load frame', async () => {
         (storage.getItem as jest.Mock).mockRestore();
         storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
 
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
+        jest.spyOn(iframeCreator, 'createFrame').mockRejectedValue(
+            new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent),
+        );
 
         embeddedCheckout.attach();
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(location.replace)
-            .toHaveBeenCalledWith(`https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(location.href)}`);
+        expect(location.replace).toHaveBeenCalledWith(
+            `https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(
+                location.href,
+            )}`,
+        );
     });
 
     it('does not retry renew cookie allowance if already retried recently', async () => {
         (storage.getItem as jest.Mock).mockRestore();
         storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
-        storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now() - ALLOW_COOKIE_ATTEMPT_INTERVAL - 1000); // Add 1 second buffer time
+        storage.setItem(
+            LAST_ALLOW_COOKIE_ATTEMPT_KEY,
+            Date.now() - ALLOW_COOKIE_ATTEMPT_INTERVAL - 1000,
+        ); // Add 1 second buffer time
 
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
+        jest.spyOn(iframeCreator, 'createFrame').mockRejectedValue(
+            new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent),
+        );
 
         embeddedCheckout.attach();
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(location.replace)
-            .toHaveBeenCalledTimes(1);
+        expect(location.replace).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry to renew cookie allowance if error is due to other issues', async () => {
         (storage.getItem as jest.Mock).mockRestore();
         storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
 
-        jest.spyOn(iframeCreator, 'createFrame')
-            .mockRejectedValue(new NotEmbeddableError('Invalid container', NotEmbeddableErrorType.MissingContainer));
+        jest.spyOn(iframeCreator, 'createFrame').mockRejectedValue(
+            new NotEmbeddableError('Invalid container', NotEmbeddableErrorType.MissingContainer),
+        );
 
         try {
             await embeddedCheckout.attach();
         } catch (thrown) {
-            expect(location.replace)
-                .not.toBeCalled();
+            expect(location.replace).not.toHaveBeenCalled();
         }
     });
 
     it('has methods that can be destructed', () => {
         const { attach } = embeddedCheckout;
 
-        expect(() => attach())
-            .not.toThrow(TypeError);
+        expect(() => attach()).not.toThrow(TypeError);
     });
 
     describe('if login URL is passed', () => {
@@ -346,41 +365,39 @@ describe('EmbeddedCheckout', () => {
                 requestSender,
                 storage,
                 location,
-                options
+                options,
             );
         });
 
         it('attempts to login', async () => {
             const response = getResponse({ redirectUrl: 'https://mybigcommerce.com/checkout' });
 
-            jest.spyOn(requestSender, 'post')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             await embeddedCheckout.attach();
 
-            expect(requestSender.post)
-                .toHaveBeenCalledWith(options.url);
+            expect(requestSender.post).toHaveBeenCalledWith(options.url);
 
-            expect(iframeCreator.createFrame)
-                .toHaveBeenCalledWith(response.body.redirectUrl, options.containerId);
+            expect(iframeCreator.createFrame).toHaveBeenCalledWith(
+                response.body.redirectUrl,
+                options.containerId,
+            );
         });
 
         it('triggers error callback if unable to login', async () => {
             const response = getErrorResponse();
 
-            jest.spyOn(requestSender, 'post')
-                .mockReturnValue(Promise.reject(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(response));
 
             jest.spyOn(messageListener, 'trigger');
 
             try {
                 await embeddedCheckout.attach();
             } catch (thrown) {
-                expect(messageListener.trigger)
-                    .toHaveBeenCalledWith({
-                        type: EmbeddedCheckoutEventType.FrameError,
-                        payload: thrown,
-                    });
+                expect(messageListener.trigger).toHaveBeenCalledWith({
+                    type: EmbeddedCheckoutEventType.FrameError,
+                    payload: thrown,
+                });
 
                 expect(thrown).toEqual(new InvalidLoginTokenError(response));
             }

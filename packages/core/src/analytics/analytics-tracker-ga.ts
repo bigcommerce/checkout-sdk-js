@@ -5,7 +5,9 @@ interface AnalyticsTrackerWindowGA extends AnalyticsTrackerWindow {
     ga(command: string, eventName: string, payload: AnalyticPayload): void;
 }
 
-function isAnalyticsTrackerWindowGA(window: Window | AnalyticsTrackerWindowGA): window is AnalyticsTrackerWindowGA {
+function isAnalyticsTrackerWindowGA(
+    window: Window | AnalyticsTrackerWindowGA,
+): window is AnalyticsTrackerWindowGA {
     return window && 'ga' in window && typeof window.ga === 'function';
 }
 
@@ -34,25 +36,21 @@ export function isPayloadSizeLimitReached(obj: AnalyticPayload): boolean {
 }
 
 function serializeAnalyticsEventPayload(obj: AnalyticPayload): string {
-    return Object.keys(obj).reduce((acc: string[], key) => {
-        const type = typeof obj[key];
+    return Object.keys(obj)
+        .reduce((acc: string[], key) => {
+            const type = typeof obj[key];
 
-        if (type === 'string' || type === 'number') {
-            return [
-                ...acc,
-                `${key}=${obj[key]}`,
-            ];
-        }
+            if (type === 'string' || type === 'number') {
+                return [...acc, `${key}=${obj[key]}`];
+            }
 
-        if (type === 'object' && obj[key] !== null) {
-            return [
-                ...acc,
-                serializeAnalyticsEventPayload(obj[key] as AnalyticPayload),
-            ];
-        }
+            if (type === 'object' && obj[key] !== null) {
+                return [...acc, serializeAnalyticsEventPayload(obj[key] as AnalyticPayload)];
+            }
 
-        return acc;
-    }, []).join('&');
+            return acc;
+        }, [])
+        .join('&');
 }
 
 interface AnalyticPayload {

@@ -1,4 +1,3 @@
-
 import { createErrorAction, DataStore } from '@bigcommerce/data-store';
 import { throwError } from 'rxjs';
 

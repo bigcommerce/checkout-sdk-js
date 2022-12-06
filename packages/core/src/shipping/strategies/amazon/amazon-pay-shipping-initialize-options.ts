@@ -1,5 +1,8 @@
 import { StandardError } from '../../../common/error/errors';
-import { AmazonPayOrderReference, AmazonPayWidgetError } from '../../../payment/strategies/amazon-pay';
+import {
+    AmazonPayOrderReference,
+    AmazonPayWidgetError,
+} from '../../../payment/strategies/amazon-pay';
 
 /**
  * A set of options that are required to initialize the shipping step of

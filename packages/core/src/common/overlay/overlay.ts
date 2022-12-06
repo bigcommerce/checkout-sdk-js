@@ -34,7 +34,6 @@ export default class Overlay {
     }
 
     show(options?: OverlayShowOptions): void {
-
         if (this._mainElement.parentElement) {
             return;
         }
@@ -44,7 +43,7 @@ export default class Overlay {
         document.body.appendChild(this._mainElement);
 
         // Fade In
-        setTimeout(() => this._element.style.opacity = '1');
+        setTimeout(() => (this._element.style.opacity = '1'));
     }
 
     remove(): void {
@@ -58,7 +57,7 @@ export default class Overlay {
 
         this._removeAfterTransition();
 
-        setTimeout(() => this._element.style.opacity = '0');
+        setTimeout(() => (this._element.style.opacity = '0'));
     }
 
     private _createElements(options?: OverlayOptions): Elements {
@@ -82,6 +81,7 @@ export default class Overlay {
 
         if (innerHtml) {
             const overlayText = document.createElement('div');
+
             classOverlayText = `${id}--overlayText`;
             overlayText.className = classOverlayText;
             overlayText.appendChild(innerHtml);
@@ -92,7 +92,7 @@ export default class Overlay {
         if (hasCloseButton) {
             classClose = `${id}--close`;
             closeElement = document.createElement('div');
-            closeElement.className =  classClose;
+            closeElement.className = classClose;
 
             classLayout = `${id}--layout`;
             mainElement = document.createElement('div');
@@ -102,20 +102,32 @@ export default class Overlay {
             mainElement.appendChild(closeElement);
         }
 
-        mainElement.appendChild(getOverlayStyle({ id, background, transitionDuration, classLayout, classOverlayText, classClose }));
+        mainElement.appendChild(
+            getOverlayStyle({
+                id,
+                background,
+                transitionDuration,
+                classLayout,
+                classOverlayText,
+                classClose,
+            }),
+        );
 
         return { element, closeElement, mainElement };
     }
 
     private _addEventListener(element?: HTMLElement, onClick?: (event: MouseEvent) => void): void {
         if (!element || !onClick) {
-           return;
+            return;
         }
 
         element.addEventListener('click', onClick);
     }
 
-    private _removeEventListener(element?: HTMLElement, onClick?: (event: MouseEvent) => void): void {
+    private _removeEventListener(
+        element?: HTMLElement,
+        onClick?: (event: MouseEvent) => void,
+    ): void {
         if (!element || !onClick) {
             return;
         }
@@ -143,7 +155,7 @@ export default class Overlay {
     }
 
     private _removeAfterTransition(): void {
-        const handleTransition: (event: Event) => void = event => {
+        const handleTransition: (event: Event) => void = (event) => {
             // NOTE: `event` is not correctly typed in this version of TS
             if ((event as TransitionEvent).propertyName !== 'opacity') {
                 return;

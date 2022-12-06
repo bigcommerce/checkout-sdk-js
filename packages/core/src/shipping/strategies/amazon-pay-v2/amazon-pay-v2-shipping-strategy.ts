@@ -3,9 +3,16 @@ import { noop } from 'rxjs';
 import { ConsignmentActionCreator, ShippingStrategyActionCreator } from '../..';
 import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { AmazonPayV2ChangeActionType, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
+import {
+    AmazonPayV2ChangeActionType,
+    AmazonPayV2PaymentProcessor,
+} from '../../../payment/strategies/amazon-pay-v2';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
@@ -15,10 +22,13 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor,
-        private _shippingStrategyActionCreator: ShippingStrategyActionCreator
+        private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
     ) {}
 
-    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    updateAddress(
+        address: AddressRequestBody,
+        options?: ShippingRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
 
         if (!shippingAddress) {
@@ -31,13 +41,16 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         };
 
         return this._store.dispatch(
-            this._consignmentActionCreator.updateAddress(updateAddressRequestBody, options)
+            this._consignmentActionCreator.updateAddress(updateAddressRequestBody, options),
         );
     }
 
-    selectOption(optionId: string, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    selectOption(
+        optionId: string,
+        options?: ShippingRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._consignmentActionCreator.selectShippingOption(optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options),
         );
     }
 
@@ -45,10 +58,14 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         const { amazonpay, methodId } = options;
 
         if (!amazonpay || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "options.amazonpay" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.amazonpay" argument is not provided.',
+            );
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+        );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
@@ -58,6 +75,7 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
 
         if (paymentToken && buttonId) {
             const shouldShowLoadingSpinner = this._shouldShowLoadingSpinner(region);
+
             this._bindEditButton(buttonId, paymentToken, 'changeAddress', shouldShowLoadingSpinner);
         }
 
@@ -70,7 +88,12 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _bindEditButton(id: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, shouldShowLoadingSpinner: boolean ): void {
+    private _bindEditButton(
+        id: string,
+        sessionId: string,
+        changeAction: AmazonPayV2ChangeActionType,
+        shouldShowLoadingSpinner: boolean,
+    ): void {
         const button = document.getElementById(id);
 
         if (!button || !button.parentNode) {
@@ -79,6 +102,7 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
 
         if (shouldShowLoadingSpinner) {
             const clone = button.cloneNode(true);
+
             button.parentNode.replaceChild(clone, button);
 
             clone.addEventListener('click', () => this._showLoadingSpinner());
@@ -90,7 +114,7 @@ export default class AmazonPayV2ShippingStrategy implements ShippingStrategy {
     private _showLoadingSpinner(): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._shippingStrategyActionCreator.widgetInteraction(() => new Promise(noop)),
-            { queueId: 'widgetInteraction' }
+            { queueId: 'widgetInteraction' },
         );
     }
 

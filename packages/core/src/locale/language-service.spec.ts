@@ -20,7 +20,8 @@ describe('LanguageService', () => {
                 },
             },
             translations: {
-                'optimized_checkout.test.item_count_text': '{count, plural, one{1 Item} other{# Items}}',
+                'optimized_checkout.test.item_count_text':
+                    '{count, plural, one{1 Item} other{# Items}}',
                 'optimized_checkout.test.continue_as_guest_action': 'Continue as guest',
                 'optimized_checkout.test.email_label': 'Email Address',
                 'optimized_checkout.test.order_number_text': 'Your order number is {orderNumber}',
@@ -37,36 +38,40 @@ describe('LanguageService', () => {
     it('has methods that can be destructed', () => {
         const { translate } = langService;
 
-        expect(() => translate('test.continue_as_guest_action'))
-            .not.toThrow(TypeError);
+        expect(() => translate('test.continue_as_guest_action')).not.toThrow(TypeError);
     });
 
     describe('#translate()', () => {
         it('returns translated strings', () => {
-            expect(langService.translate('test.continue_as_guest_action')).toEqual('Continue as guest');
-            expect(langService.translate('test.order_number_text', { orderNumber: '12345' })).toEqual('Your order number is 12345');
+            expect(langService.translate('test.continue_as_guest_action')).toBe(
+                'Continue as guest',
+            );
+            expect(langService.translate('test.order_number_text', { orderNumber: '12345' })).toBe(
+                'Your order number is 12345',
+            );
         });
 
         it('pluralizes strings using ICU format', () => {
-            expect(langService.translate('test.item_count_text', { count: 0 })).toEqual('0 Items');
-            expect(langService.translate('test.item_count_text', { count: 1 })).toEqual('1 Item');
-            expect(langService.translate('test.item_count_text', { count: 10 })).toEqual('10 Items');
+            expect(langService.translate('test.item_count_text', { count: 0 })).toBe('0 Items');
+            expect(langService.translate('test.item_count_text', { count: 1 })).toBe('1 Item');
+            expect(langService.translate('test.item_count_text', { count: 10 })).toBe('10 Items');
         });
 
         it('supports non-English pluralization rules', () => {
             config = {
                 locale: 'cs',
                 translations: {
-                    'optimized_checkout.test.days_text': '{count, plural, one{1 den} few{# dny} many{# dne} other{# dní} }',
+                    'optimized_checkout.test.days_text':
+                        '{count, plural, one{1 den} few{# dny} many{# dne} other{# dní} }',
                 },
             };
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.translate('test.days_text', { count: 1 })).toEqual('1 den');
-            expect(langService.translate('test.days_text', { count: 2 })).toEqual('2 dny');
-            expect(langService.translate('test.days_text', { count: 1.5 })).toEqual('1.5 dne');
-            expect(langService.translate('test.days_text', { count: 100 })).toEqual('100 dní');
+            expect(langService.translate('test.days_text', { count: 1 })).toBe('1 den');
+            expect(langService.translate('test.days_text', { count: 2 })).toBe('2 dny');
+            expect(langService.translate('test.days_text', { count: 1.5 })).toBe('1.5 dne');
+            expect(langService.translate('test.days_text', { count: 100 })).toBe('100 dní');
         });
 
         it('supports multiple locales', () => {
@@ -77,28 +82,38 @@ describe('LanguageService', () => {
                     'optimized_checkout.test.position_text': 'en',
                 },
                 translations: {
-                    'optimized_checkout.test.direction_text': 'Prenez la {count, selectordinal, one{#re} other{#e}} à droite',
-                    'optimized_checkout.test.position_text': '{count, selectordinal, one{#st} two{#nd} few{#rd} other{#th}} position',
+                    'optimized_checkout.test.direction_text':
+                        'Prenez la {count, selectordinal, one{#re} other{#e}} à droite',
+                    'optimized_checkout.test.position_text':
+                        '{count, selectordinal, one{#st} two{#nd} few{#rd} other{#th}} position',
                 },
             };
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.translate('test.direction_text', { count: 1 })).toEqual('Prenez la 1re à droite');
-            expect(langService.translate('test.direction_text', { count: 2 })).toEqual('Prenez la 2e à droite');
-            expect(langService.translate('test.direction_text', { count: 3 })).toEqual('Prenez la 3e à droite');
-            expect(langService.translate('test.position_text', { count: 1 })).toEqual('1st position');
-            expect(langService.translate('test.position_text', { count: 2 })).toEqual('2nd position');
-            expect(langService.translate('test.position_text', { count: 3 })).toEqual('3rd position');
+            expect(langService.translate('test.direction_text', { count: 1 })).toBe(
+                'Prenez la 1re à droite',
+            );
+            expect(langService.translate('test.direction_text', { count: 2 })).toBe(
+                'Prenez la 2e à droite',
+            );
+            expect(langService.translate('test.direction_text', { count: 3 })).toBe(
+                'Prenez la 3e à droite',
+            );
+            expect(langService.translate('test.position_text', { count: 1 })).toBe('1st position');
+            expect(langService.translate('test.position_text', { count: 2 })).toBe('2nd position');
+            expect(langService.translate('test.position_text', { count: 3 })).toBe('3rd position');
         });
 
         it('should return default translations if user-preferred language file is not available', () => {
-            expect(langService.translate('test.customer_heading')).toEqual('Customer');
-            expect(langService.translate('test.greeting_text', { name: 'David' })).toEqual('Welcome David');
+            expect(langService.translate('test.customer_heading')).toBe('Customer');
+            expect(langService.translate('test.greeting_text', { name: 'David' })).toBe(
+                'Welcome David',
+            );
         });
 
         it('should return the translation key if both custom and default translation is missing', () => {
-            expect(langService.translate('test.random')).toEqual('optimized_checkout.test.random');
+            expect(langService.translate('test.random')).toBe('optimized_checkout.test.random');
         });
 
         it('returns custom translations if defined, otherwise use default and then fallback translations', () => {
@@ -131,9 +146,9 @@ describe('LanguageService', () => {
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.translate('test.greeting_text')).toEqual('Good morning');
-            expect(langService.translate('test.hello_text')).toEqual('Hello');
-            expect(langService.translate('test.goodbye_text')).toEqual('Goodbye');
+            expect(langService.translate('test.greeting_text')).toBe('Good morning');
+            expect(langService.translate('test.hello_text')).toBe('Hello');
+            expect(langService.translate('test.goodbye_text')).toBe('Goodbye');
         });
 
         it('formats default and fallback strings based on locale specified', () => {
@@ -143,7 +158,8 @@ describe('LanguageService', () => {
                 defaultTranslations: {
                     optimized_checkout: {
                         test: {
-                            direction_text: 'Prenez la {count, selectordinal, one{#re} other{#e}} à droite',
+                            direction_text:
+                                'Prenez la {count, selectordinal, one{#re} other{#e}} à droite',
                         },
                     },
                 },
@@ -151,7 +167,8 @@ describe('LanguageService', () => {
                 fallbackTranslations: {
                     optimized_checkout: {
                         test: {
-                            position_text: '{count, selectordinal, one{#st} two{#nd} few{#rd} other{#th}} position',
+                            position_text:
+                                '{count, selectordinal, one{#st} two{#nd} few{#rd} other{#th}} position',
                         },
                     },
                 },
@@ -159,12 +176,18 @@ describe('LanguageService', () => {
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.translate('test.direction_text', { count: 1 })).toEqual('Prenez la 1re à droite');
-            expect(langService.translate('test.direction_text', { count: 2 })).toEqual('Prenez la 2e à droite');
-            expect(langService.translate('test.direction_text', { count: 3 })).toEqual('Prenez la 3e à droite');
-            expect(langService.translate('test.position_text', { count: 1 })).toEqual('1st position');
-            expect(langService.translate('test.position_text', { count: 2 })).toEqual('2nd position');
-            expect(langService.translate('test.position_text', { count: 3 })).toEqual('3rd position');
+            expect(langService.translate('test.direction_text', { count: 1 })).toBe(
+                'Prenez la 1re à droite',
+            );
+            expect(langService.translate('test.direction_text', { count: 2 })).toBe(
+                'Prenez la 2e à droite',
+            );
+            expect(langService.translate('test.direction_text', { count: 3 })).toBe(
+                'Prenez la 3e à droite',
+            );
+            expect(langService.translate('test.position_text', { count: 1 })).toBe('1st position');
+            expect(langService.translate('test.position_text', { count: 2 })).toBe('2nd position');
+            expect(langService.translate('test.position_text', { count: 3 })).toBe('3rd position');
         });
     });
 
@@ -184,7 +207,7 @@ describe('LanguageService', () => {
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.getLocale()).toEqual('zh-TW');
+            expect(langService.getLocale()).toBe('zh-TW');
         });
 
         it('returns the default locale if the current theme does not provide translations for UCO', () => {
@@ -202,7 +225,7 @@ describe('LanguageService', () => {
 
             langService = new LanguageService(config, logger);
 
-            expect(langService.getLocale()).toEqual('en');
+            expect(langService.getLocale()).toBe('en');
         });
     });
 

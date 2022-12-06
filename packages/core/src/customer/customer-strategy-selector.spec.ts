@@ -1,6 +1,9 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import CustomerStrategySelector, { createCustomerStrategySelectorFactory, CustomerStrategySelectorFactory } from './customer-strategy-selector';
+import CustomerStrategySelector, {
+    createCustomerStrategySelectorFactory,
+    CustomerStrategySelectorFactory,
+} from './customer-strategy-selector';
 import { getCustomerStrategyState } from './internal-customers.mock';
 
 describe('CustomerStrategySelector', () => {
@@ -62,7 +65,9 @@ describe('CustomerStrategySelector', () => {
                 errors: { executePaymentMethodCheckoutError },
             });
 
-            expect(selector.getExecutePaymentMethodCheckoutError()).toEqual(executePaymentMethodCheckoutError);
+            expect(selector.getExecutePaymentMethodCheckoutError()).toEqual(
+                executePaymentMethodCheckoutError,
+            );
         });
 
         it('does not returns error if able to execute payment method checkout', () => {
@@ -89,7 +94,7 @@ describe('CustomerStrategySelector', () => {
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getInitializeError('bar')).toEqual(undefined);
+            expect(selector.getInitializeError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -98,7 +103,7 @@ describe('CustomerStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getInitializeError()).toEqual(undefined);
+            expect(selector.getInitializeError()).toBeUndefined();
         });
     });
 
@@ -106,7 +111,10 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize any method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+                errors: {
+                    widgetInteractionError: getErrorResponse(),
+                    widgetInteractionMethodId: 'foobar',
+                },
             });
 
             expect(selector.getWidgetInteractionError()).toEqual(getErrorResponse());
@@ -115,11 +123,14 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize specific method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+                errors: {
+                    widgetInteractionError: getErrorResponse(),
+                    widgetInteractionMethodId: 'foobar',
+                },
             });
 
             expect(selector.getWidgetInteractionError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getWidgetInteractionError('bar')).toEqual(undefined);
+            expect(selector.getWidgetInteractionError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -128,7 +139,7 @@ describe('CustomerStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getWidgetInteractionError()).toEqual(undefined);
+            expect(selector.getWidgetInteractionError()).toBeUndefined();
         });
     });
 
@@ -139,13 +150,13 @@ describe('CustomerStrategySelector', () => {
                 statuses: { isSigningIn: true },
             });
 
-            expect(selector.isSigningIn()).toEqual(true);
+            expect(selector.isSigningIn()).toBe(true);
         });
 
         it('returns false if not signing in', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
-            expect(selector.isSigningIn()).toEqual(false);
+            expect(selector.isSigningIn()).toBe(false);
         });
     });
 
@@ -156,13 +167,13 @@ describe('CustomerStrategySelector', () => {
                 statuses: { isSigningOut: true },
             });
 
-            expect(selector.isSigningOut()).toEqual(true);
+            expect(selector.isSigningOut()).toBe(true);
         });
 
         it('returns false if not signing out', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
-            expect(selector.isSigningOut()).toEqual(false);
+            expect(selector.isSigningOut()).toBe(false);
         });
     });
 
@@ -173,13 +184,13 @@ describe('CustomerStrategySelector', () => {
                 statuses: { isExecutingPaymentMethodCheckout: true },
             });
 
-            expect(selector.isExecutingPaymentMethodCheckout()).toEqual(true);
+            expect(selector.isExecutingPaymentMethodCheckout()).toBe(true);
         });
 
         it('returns false if shopper has not executed payment method checkout', () => {
             selector = createCustomerStrategySelector(state.customerStrategy);
 
-            expect(selector.isExecutingPaymentMethodCheckout()).toEqual(false);
+            expect(selector.isExecutingPaymentMethodCheckout()).toBe(false);
         });
     });
 
@@ -190,7 +201,7 @@ describe('CustomerStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing()).toEqual(true);
+            expect(selector.isInitializing()).toBe(true);
         });
 
         it('returns true if initializing specific method', () => {
@@ -199,8 +210,8 @@ describe('CustomerStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing('foobar')).toEqual(true);
-            expect(selector.isInitializing('bar')).toEqual(false);
+            expect(selector.isInitializing('foobar')).toBe(true);
+            expect(selector.isInitializing('bar')).toBe(false);
         });
 
         it('returns false if not initializing method', () => {
@@ -209,7 +220,7 @@ describe('CustomerStrategySelector', () => {
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
 
-            expect(selector.isInitializing()).toEqual(false);
+            expect(selector.isInitializing()).toBe(false);
         });
     });
 
@@ -220,7 +231,7 @@ describe('CustomerStrategySelector', () => {
                 data: { foobar: { isInitialized: true } },
             });
 
-            expect(selector.isInitialized('foobar')).toEqual(true);
+            expect(selector.isInitialized('foobar')).toBe(true);
         });
 
         it('returns false if method is not initialized', () => {
@@ -229,8 +240,8 @@ describe('CustomerStrategySelector', () => {
                 data: { foobar: { isInitialized: false } },
             });
 
-            expect(selector.isInitialized('foobar')).toEqual(false);
-            expect(selector.isInitialized('bar')).toEqual(false);
+            expect(selector.isInitialized('foobar')).toBe(false);
+            expect(selector.isInitialized('bar')).toBe(false);
         });
     });
 
@@ -241,7 +252,7 @@ describe('CustomerStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(true);
+            expect(selector.isWidgetInteracting()).toBe(true);
         });
 
         it('returns true if a specific method is interacting with a widget', () => {
@@ -250,8 +261,8 @@ describe('CustomerStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
-            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+            expect(selector.isWidgetInteracting('foobar')).toBe(true);
+            expect(selector.isWidgetInteracting('bar')).toBe(false);
         });
 
         it('returns false if not interacting with a widget', () => {
@@ -260,7 +271,7 @@ describe('CustomerStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(false);
+            expect(selector.isWidgetInteracting()).toBe(false);
         });
     });
 });

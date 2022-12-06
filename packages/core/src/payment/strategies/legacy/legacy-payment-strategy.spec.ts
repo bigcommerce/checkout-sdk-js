@@ -1,9 +1,19 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
@@ -19,12 +29,11 @@ describe('LegacyPaymentStrategy', () => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
         jest.spyOn(store, 'dispatch');
 
@@ -34,7 +43,10 @@ describe('LegacyPaymentStrategy', () => {
     it('submits order with payment data', async () => {
         await strategy.execute(getOrderRequestBody());
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+            getOrderRequestBody(),
+            undefined,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 

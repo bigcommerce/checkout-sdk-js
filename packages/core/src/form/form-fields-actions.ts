@@ -9,9 +9,9 @@ export enum FormFieldsActionType {
 }
 
 export type LoadFormFieldsAction =
-    LoadFormFieldsRequestedAction |
-    LoadFormFieldsSucceededAction |
-    LoadFormFieldsFailedAction;
+    | LoadFormFieldsRequestedAction
+    | LoadFormFieldsSucceededAction
+    | LoadFormFieldsFailedAction;
 
 export interface LoadFormFieldsRequestedAction extends Action {
     type: FormFieldsActionType.LoadFormFieldsRequested;

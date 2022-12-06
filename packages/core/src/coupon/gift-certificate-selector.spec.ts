@@ -1,7 +1,10 @@
 import { createRequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import GiftCertificateSelector, { createGiftCertificateSelectorFactory, GiftCertificateSelectorFactory } from './gift-certificate-selector';
+import GiftCertificateSelector, {
+    createGiftCertificateSelectorFactory,
+    GiftCertificateSelectorFactory,
+} from './gift-certificate-selector';
 import GiftCertificateState from './gift-certificate-state';
 
 describe('GiftCertificateSelector', () => {
@@ -26,7 +29,7 @@ describe('GiftCertificateSelector', () => {
 
             giftCertificateSelector = createGiftCertificateSelector({
                 ...state.giftCertificates,
-                 errors: { applyGiftCertificateError } ,
+                errors: { applyGiftCertificateError },
             });
 
             expect(giftCertificateSelector.getApplyError()).toEqual(applyGiftCertificateError);
@@ -46,13 +49,13 @@ describe('GiftCertificateSelector', () => {
                 statuses: { isApplyingGiftCertificate: true },
             });
 
-            expect(giftCertificateSelector.isApplying()).toEqual(true);
+            expect(giftCertificateSelector.isApplying()).toBe(true);
         });
 
         it('returns false if not applying a gift certificate', () => {
             giftCertificateSelector = createGiftCertificateSelector(state.giftCertificates);
 
-            expect(giftCertificateSelector.isApplying()).toEqual(false);
+            expect(giftCertificateSelector.isApplying()).toBe(false);
         });
     });
 
@@ -82,13 +85,13 @@ describe('GiftCertificateSelector', () => {
                 statuses: { isRemovingGiftCertificate: true },
             });
 
-            expect(giftCertificateSelector.isRemoving()).toEqual(true);
+            expect(giftCertificateSelector.isRemoving()).toBe(true);
         });
 
         it('returns false if not removing a gift certificate', () => {
             giftCertificateSelector = createGiftCertificateSelector(state.giftCertificates);
 
-            expect(giftCertificateSelector.isRemoving()).toEqual(false);
+            expect(giftCertificateSelector.isRemoving()).toBe(false);
         });
     });
 });

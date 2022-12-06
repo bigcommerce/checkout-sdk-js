@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import { of } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
@@ -24,7 +24,10 @@ import CardinalThreeDSecureFlowV2 from './cardinal-three-d-secure-flow-v2';
 describe('CardinalBarclaysThreeDSecureFlow', () => {
     let state: InternalCheckoutSelectors;
     let store: CheckoutStore;
-    let cardinalClient: Pick<CardinalClient, 'configure' | 'getThreeDSecureData' | 'load' | 'runBinProcess'>;
+    let cardinalClient: Pick<
+        CardinalClient,
+        'configure' | 'getThreeDSecureData' | 'load' | 'runBinProcess'
+    >;
     let threeDSecureFlow: CardinalThreeDSecureFlowV2;
     let paymentMethod: PaymentMethod;
     let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
@@ -47,13 +50,12 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         state = store.getState();
 
-        jest.spyOn(store, 'getState')
-            .mockReturnValue(state);
+        jest.spyOn(store, 'getState').mockReturnValue(state);
 
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             store,
             paymentActionCreator as PaymentActionCreator,
-            cardinalClient as CardinalClient
+            cardinalClient as CardinalClient,
         );
     });
 
@@ -61,8 +63,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
         it('loads Cardinal client', async () => {
             await threeDSecureFlow.prepare(paymentMethod);
 
-            expect(cardinalClient.load)
-                .toHaveBeenCalledWith(paymentMethod.id, paymentMethod.config.testMode);
+            expect(cardinalClient.load).toHaveBeenCalledWith(
+                paymentMethod.id,
+                paymentMethod.config.testMode,
+            );
         });
     });
 
@@ -111,33 +115,33 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
             it('configures Cardinal client', async () => {
                 await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-                expect(cardinalClient.configure)
-                    .toHaveBeenCalledWith('JWT123');
+                expect(cardinalClient.configure).toHaveBeenCalledWith('JWT123');
             });
 
             it('runs BIN detection process if defined', async () => {
                 await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-                expect(cardinalClient.runBinProcess)
-                    .toHaveBeenCalledWith(form.getBin());
+                expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin());
             });
 
             it('submits XID token using hosted form if provided', async () => {
                 await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-                expect(form.submit)
-                    .toHaveBeenCalledWith(merge({}, payload.payment, {
+                expect(form.submit).toHaveBeenCalledWith(
+                    merge({}, payload.payment, {
                         paymentData: { threeDSecure: { xid: 'TOKEN123' } },
-                    }));
+                    }),
+                );
             });
 
             it('submits XID token directly if hosted form is not provided', async () => {
                 await threeDSecureFlow.start(execute, payload, options);
 
-                expect(paymentActionCreator.submitPayment)
-                    .toHaveBeenCalledWith(merge({}, payload.payment, {
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    merge({}, payload.payment, {
                         paymentData: { threeDSecure: { xid: 'TOKEN123' } },
-                    }));
+                    }),
+                );
             });
 
             describe('if 3DS is required', () => {
@@ -154,41 +158,47 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                         },
                     });
 
-                    jest.spyOn(form, 'submit')
-                        .mockRejectedValueOnce(new RequestError(threeDSecureRequired));
-                    jest.spyOn(paymentActionCreator, 'submitPayment')
-                        .mockRejectedValueOnce(new RequestError(threeDSecureRequired));
+                    jest.spyOn(form, 'submit').mockRejectedValueOnce(
+                        new RequestError(threeDSecureRequired),
+                    );
+                    jest.spyOn(paymentActionCreator, 'submitPayment').mockRejectedValueOnce(
+                        new RequestError(threeDSecureRequired),
+                    );
                 });
 
                 it('handles 3DS error and prompts shopper to authenticate', async () => {
                     await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-                    expect(cardinalClient.getThreeDSecureData)
-                        .toHaveBeenCalledWith(threeDSecureRequired.body.three_ds_result, {
+                    expect(cardinalClient.getThreeDSecureData).toHaveBeenCalledWith(
+                        threeDSecureRequired.body.three_ds_result,
+                        {
                             billingAddress: getBillingAddress(),
                             shippingAddress: getShippingAddress(),
                             currencyCode: getCheckout().cart.currency.code,
                             id: getOrder().orderId.toString(),
                             amount: getCheckout().cart.cartAmount,
-                        });
+                        },
+                    );
                 });
 
                 it('submits 3DS token using hosted form if provided', async () => {
                     await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-                    expect(form.submit)
-                        .toHaveBeenCalledWith(merge({}, payload.payment, {
+                    expect(form.submit).toHaveBeenCalledWith(
+                        merge({}, payload.payment, {
                             paymentData: { threeDSecure: { token: 'TOKEN345' } },
-                        }));
+                        }),
+                    );
                 });
 
                 it('submits 3DS token directly if hosted form is not provided', async () => {
                     await threeDSecureFlow.start(execute, payload, options);
 
-                    expect(paymentActionCreator.submitPayment)
-                        .toHaveBeenCalledWith(merge({}, payload.payment, {
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                        merge({}, payload.payment, {
                             paymentData: { threeDSecure: { token: 'TOKEN345' } },
-                        }));
+                        }),
+                    );
                 });
             });
         });

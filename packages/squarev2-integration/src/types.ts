@@ -1,1 +1,1 @@
-export * from "@square/web-payments-sdk-types";
+export * from '@square/web-payments-sdk-types';

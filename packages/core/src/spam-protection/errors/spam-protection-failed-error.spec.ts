@@ -4,6 +4,6 @@ describe('SpamProtectionFailedError', () => {
     it('returns error name', () => {
         const error = new SpamProtectionFailedError();
 
-        expect(error.name).toEqual('SpamProtectionFailedError');
+        expect(error.name).toBe('SpamProtectionFailedError');
     });
 });

@@ -19,5 +19,9 @@ export interface OffAmazonPayments {
         AddressBook: AmazonPayAddressBookConstructor;
         Wallet: AmazonPayWalletConstructor;
     };
-    initConfirmationFlow(sellerId: string, id: string, callback: (confirmationFlow: AmazonPayConfirmationFlow) => void): void;
+    initConfirmationFlow(
+        sellerId: string,
+        id: string,
+        callback: (confirmationFlow: AmazonPayConfirmationFlow) => void,
+    ): void;
 }

@@ -34,16 +34,20 @@ describe('SignInEmailRequestSender', () => {
                         ...SDK_VERSION_HEADERS,
                     },
                     timeout: undefined,
-                }
+                },
             );
         });
 
         it('sends sign-in email with provided optional parameters', async () => {
             const options = { timeout: createTimeout() };
-            await signInEmailRequestSender.sendSignInEmail({
-                email: 'foo',
-                redirectUrl: 'foo.bar',
-            }, options);
+
+            await signInEmailRequestSender.sendSignInEmail(
+                {
+                    email: 'foo',
+                    redirectUrl: 'foo.bar',
+                },
+                options,
+            );
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 '/login.php?action=passwordless_login',
@@ -57,7 +61,7 @@ describe('SignInEmailRequestSender', () => {
                         Accept: ContentType.JsonV1,
                         ...SDK_VERSION_HEADERS,
                     },
-                }
+                },
             );
         });
     });

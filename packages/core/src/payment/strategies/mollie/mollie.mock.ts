@@ -14,7 +14,7 @@ export function getInitializeOptions(): PaymentInitializeOptions {
             cardExpiryId: 'mollie-card-expiry-component-field',
             cardHolderId: 'mollie-card-holder-component-field',
             cardNumberId: 'mollie-card-number-component-field',
-            styles: {valid: '#0f0'},
+            styles: { valid: '#0f0' },
             unsupportedMethodMessage: 'This payment method is not supported',
             disableButton: jest.fn(),
         },
@@ -31,7 +31,7 @@ export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
             cardExpiryId: 'mollie-card-expiry-component-field',
             cardHolderId: 'mollie-card-holder-component-field',
             cardNumberId: 'mollie-card-number-component-field',
-            styles: {valid: '#0f0'},
+            styles: { valid: '#0f0' },
             form: {
                 fields: {
                     [HostedFieldType.CardNumber]: { containerId: 'card-number' },

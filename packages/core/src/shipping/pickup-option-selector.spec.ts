@@ -1,11 +1,14 @@
-
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { objectFlatten, objectWithSortedKeys } from '../common/utility';
 
-import { PickupOptionRequestBody } from '.';
-import PickupOptionSelector, { createPickupOptionSelectorFactory, PickupOptionSelectorFactory } from './pickup-option-selector';
+import PickupOptionSelector, {
+    createPickupOptionSelectorFactory,
+    PickupOptionSelectorFactory,
+} from './pickup-option-selector';
 import { getQueryForPickupOptions } from './pickup-option.mock';
+
+import { PickupOptionRequestBody } from '.';
 
 describe('PickupOptionSelector', () => {
     let pickupOptionSelector: PickupOptionSelector;
@@ -22,13 +25,16 @@ describe('PickupOptionSelector', () => {
     describe('#getPickupOptions()', () => {
         it.only('returns a list of pickup options', () => {
             pickupOptionSelector = createPickupOptionSelector(state.pickupOptions);
+
             const flattenedQuery = objectFlatten(query);
             const sortedFlattenedQuery = objectWithSortedKeys(flattenedQuery);
-            const result = state.pickupOptions.data && state.pickupOptions.data[btoa(JSON.stringify(sortedFlattenedQuery))];
+            const result =
+                state.pickupOptions.data &&
+                state.pickupOptions.data[btoa(JSON.stringify(sortedFlattenedQuery))];
 
-            expect(pickupOptionSelector.getPickupOptions(
-                query.consignmentId, query.searchArea
-            )).toEqual(result);
+            expect(
+                pickupOptionSelector.getPickupOptions(query.consignmentId, query.searchArea),
+            ).toEqual(result);
         });
 
         it('returns an empty array if there are no pickup options', () => {
@@ -37,7 +43,9 @@ describe('PickupOptionSelector', () => {
                 data: {},
             });
 
-            expect(pickupOptionSelector.getPickupOptions(query.consignmentId, query.searchArea)).toEqual(undefined);
+            expect(
+                pickupOptionSelector.getPickupOptions(query.consignmentId, query.searchArea),
+            ).toBeUndefined();
         });
     });
 
@@ -67,13 +75,13 @@ describe('PickupOptionSelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(pickupOptionSelector.isLoading()).toEqual(true);
+            expect(pickupOptionSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading countries', () => {
             pickupOptionSelector = createPickupOptionSelector(state.pickupOptions);
 
-            expect(pickupOptionSelector.isLoading()).toEqual(false);
+            expect(pickupOptionSelector.isLoading()).toBe(false);
         });
     });
 });

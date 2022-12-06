@@ -1,6 +1,8 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import GoogleRecaptchaScriptLoader, { GoogleRecaptchaWindow } from './google-recaptcha-script-loader';
+import GoogleRecaptchaScriptLoader, {
+    GoogleRecaptchaWindow,
+} from './google-recaptcha-script-loader';
 import { getGoogleRecaptchaMock } from './google-recaptcha.mock';
 
 describe('GoogleRecaptchaScriptLoader', () => {
@@ -22,7 +24,9 @@ describe('GoogleRecaptchaScriptLoader', () => {
             googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
             googleRecaptchaScriptLoader.load();
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//www.google.com/recaptcha/api.js?onload=initRecaptcha&render=explicit');
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                '//www.google.com/recaptcha/api.js?onload=initRecaptcha&render=explicit',
+            );
         });
 
         it('does not load the script if the script is already loaded', () => {
@@ -43,7 +47,9 @@ describe('GoogleRecaptchaScriptLoader', () => {
                 await googleRecaptchaScriptLoader.load();
             } catch (error) {
                 expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+
                 googleRecaptchaScriptLoader.load();
+
                 expect(scriptLoader.loadScript).toHaveBeenCalledTimes(2);
             }
         });

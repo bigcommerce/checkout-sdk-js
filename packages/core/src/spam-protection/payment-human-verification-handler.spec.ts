@@ -4,10 +4,15 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 
-import { PaymentHumanVerificationHandler } from '.';
 import createSpamProtection from './create-spam-protection';
-import { CardingProtectionChallengeNotCompletedError, CardingProtectionFailedError, SpamProtectionChallengeNotCompletedError } from './errors';
+import {
+    CardingProtectionChallengeNotCompletedError,
+    CardingProtectionFailedError,
+    SpamProtectionChallengeNotCompletedError,
+} from './errors';
 import GoogleRecaptcha, { RecaptchaResult } from './google-recaptcha';
+
+import { PaymentHumanVerificationHandler } from '.';
 
 describe('PaymentHumanVerificationHandler', () => {
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
@@ -50,14 +55,18 @@ describe('PaymentHumanVerificationHandler', () => {
         it('runs _initialize() - loads GoogleRecaptcha using the provided site key', () => {
             paymentHumanVerificationHandler.handle(errorResponse);
 
-            expect(googleRecaptcha.load).toHaveBeenCalledWith('cardingProtectionContainer', 'recaptchakey123');
+            expect(googleRecaptcha.load).toHaveBeenCalledWith(
+                'cardingProtectionContainer',
+                'recaptchakey123',
+            );
         });
 
-        it('throws the error if it\'s not a payment human verification request error', () => {
+        it("throws the error if it's not a payment human verification request error", () => {
             errorResponse.body.status = 'some_other_error';
 
-            return expect(paymentHumanVerificationHandler.handle(errorResponse)).rejects.toEqual(errorResponse);
-
+            return expect(paymentHumanVerificationHandler.handle(errorResponse)).rejects.toEqual(
+                errorResponse,
+            );
         });
 
         it('returns the correct payment additional action', () => {
@@ -74,22 +83,23 @@ describe('PaymentHumanVerificationHandler', () => {
         it('throws CardingProtectionChallengeNotCompletedError if challenge not completed', () => {
             $event.next({ error: new SpamProtectionChallengeNotCompletedError() });
 
-            return expect(paymentHumanVerificationHandler.handle(errorResponse))
-                .rejects.toThrowError(new CardingProtectionChallengeNotCompletedError());
+            return expect(paymentHumanVerificationHandler.handle(errorResponse)).rejects.toThrow(
+                new CardingProtectionChallengeNotCompletedError(),
+            );
         });
 
         it('throws CardingProtectionFailedError if no token is returned', () => {
             $event.next({ token: undefined });
 
-            return expect(paymentHumanVerificationHandler.handle(errorResponse))
-                .rejects.toThrowError(new CardingProtectionFailedError());
+            return expect(paymentHumanVerificationHandler.handle(errorResponse)).rejects.toThrow(
+                new CardingProtectionFailedError(),
+            );
         });
 
         it('rethrows error if error is not human verification error', () => {
             const error = new Error('foobar');
 
-            expect(paymentHumanVerificationHandler.handle(error))
-                .rejects.toThrowError(error);
+            expect(paymentHumanVerificationHandler.handle(error)).rejects.toThrow(error);
         });
     });
 });

@@ -11,4 +11,4 @@ export {
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
-} from "./test-utils";
+} from './test-utils';

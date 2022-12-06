@@ -1,6 +1,12 @@
 import { noop } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentMethod from '../../payment-method';
@@ -20,21 +26,23 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: PaypalScriptLoader,
-        private _window: PaypalHostWindow = window
+        private _window: PaypalHostWindow = window,
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
 
         this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
-        this._useRedirectFlow = (options.paypalexpress && options.paypalexpress.useRedirectFlow) === true;
+        this._useRedirectFlow =
+            (options.paypalexpress && options.paypalexpress.useRedirectFlow) === true;
 
         if (!this._isInContextEnabled()) {
             return Promise.resolve(this._store.getState());
         }
 
-        return this._scriptLoader.loadPaypal()
-            .then(paypal => {
+        return this._scriptLoader
+            .loadPaypal()
+            .then((paypal) => {
                 this._paypalSdk = paypal;
 
                 if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
@@ -58,7 +66,10 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const paypal = this._paypalSdk;
 
         if (this._isAcknowledgedOrFinalized()) {
@@ -66,8 +77,9 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
         }
 
         if (!this._isInContextEnabled() || this._useRedirectFlow) {
-            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
-                .then(state => {
+            return this._store
+                .dispatch(this._orderActionCreator.submitOrder(payload, options))
+                .then((state) => {
                     const redirectUrl = state.payment.getPaymentRedirectUrl();
 
                     if (redirectUrl) {
@@ -85,8 +97,9 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
 
         paypal.checkout.initXO();
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
-            .then(state => {
+        return this._store
+            .dispatch(this._orderActionCreator.submitOrder(payload, options))
+            .then((state) => {
                 const redirectUrl = state.payment.getPaymentRedirectUrl();
 
                 if (redirectUrl) {
@@ -96,7 +109,7 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
                 // We need to hold execution so the consumer does not redirect us somewhere else
                 return new Promise<never>(noop);
             })
-            .catch(error => {
+            .catch((error) => {
                 paypal.checkout.closeFlow();
 
                 return Promise.reject(error);
@@ -108,7 +121,9 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
         const order = state.order.getOrder();
 
         if (order && this._isAcknowledgedOrFinalized()) {
-            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
+            return this._store.dispatch(
+                this._orderActionCreator.finalizeOrder(order.orderId, options),
+            );
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
@@ -117,8 +132,10 @@ export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private _isAcknowledgedOrFinalized(): boolean {
         const state = this._store.getState();
 
-        return state.payment.getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE
-            || state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE;
+        return (
+            state.payment.getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
+            state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE
+        );
     }
 
     private _isInContextEnabled(): boolean {

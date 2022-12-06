@@ -17,9 +17,8 @@ import LanguageService from './language-service';
  * @param config - A configuration object.
  * @returns An instance of `LanguageService`.
  */
-export default function createLanguageService(config: Partial<LanguageConfig> = {}): LanguageService {
-    return new LanguageService(
-        config,
-        getDefaultLogger()
-    );
+export default function createLanguageService(
+    config: Partial<LanguageConfig> = {},
+): LanguageService {
+    return new LanguageService(config, getDefaultLogger());
 }

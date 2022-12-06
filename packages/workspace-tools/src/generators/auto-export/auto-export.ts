@@ -13,41 +13,44 @@ export interface AutoExportOptions {
 export default async function autoExport({
     inputPath,
     outputPath,
-    memberPattern
+    memberPattern,
 }: AutoExportOptions): Promise<string> {
     const filePaths = await promisify(glob)(inputPath);
     const exportDeclarations = await Promise.all(
-        filePaths.map(filePath => createExportDeclaration(filePath, outputPath, memberPattern))
+        filePaths.map((filePath) => createExportDeclaration(filePath, outputPath, memberPattern)),
     );
 
-    return ts.createPrinter()
+    return ts
+        .createPrinter()
         .printList(
             ts.ListFormat.MultiLine,
             ts.factory.createNodeArray(exportDeclarations.filter(exists)),
-            ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext)
+            ts.createSourceFile(outputPath, '', ts.ScriptTarget.ESNext),
         );
 }
 
 async function createExportDeclaration(
     filePath: string,
     outputPath: string,
-    memberPattern: string
+    memberPattern: string,
 ): Promise<ts.ExportDeclaration | undefined> {
     const root = await getSource(filePath);
 
     const memberNames = root.statements
         .filter(ts.isExportDeclaration)
-        .flatMap(statement => {
-            if (!statement.exportClause ||
+        .flatMap((statement) => {
+            if (
+                !statement.exportClause ||
                 !ts.isNamedExports(statement.exportClause) ||
-                !statement.exportClause.elements) {
+                !statement.exportClause.elements
+            ) {
                 return [];
             }
 
             return statement.exportClause.elements.filter(ts.isExportSpecifier);
         })
-        .map(element => element.name.escapedText.toString())
-        .filter(memberName => memberName?.match(new RegExp(memberPattern)));
+        .map((element) => element.name.escapedText.toString())
+        .filter((memberName) => memberName?.match(new RegExp(memberPattern)));
 
     if (memberNames.length === 0) {
         return;
@@ -58,13 +61,14 @@ async function createExportDeclaration(
         undefined,
         false,
         ts.factory.createNamedExports(
-            memberNames.map(memberName =>
+            memberNames.map((memberName) =>
                 ts.factory.createExportSpecifier(
                     undefined,
-                    ts.factory.createIdentifier(memberName)
-                )
-            )),
-        ts.factory.createStringLiteral(getImportPath(filePath, outputPath), true)
+                    ts.factory.createIdentifier(memberName),
+                ),
+            ),
+        ),
+        ts.factory.createStringLiteral(getImportPath(filePath, outputPath), true),
     );
 }
 
@@ -72,11 +76,7 @@ async function getSource(filePath: string): Promise<ts.SourceFile> {
     const readFile = promisify(fs.readFile);
     const source = await readFile(filePath, { encoding: 'utf8' });
 
-    return ts.createSourceFile(
-        path.parse(filePath).name,
-        source,
-        ts.ScriptTarget.Latest
-    );
+    return ts.createSourceFile(path.parse(filePath).name, source, ts.ScriptTarget.Latest);
 }
 
 function getImportPath(filePath: string, outputPath: string): string {
@@ -84,9 +84,7 @@ function getImportPath(filePath: string, outputPath: string): string {
     const outputFolder = path.parse(outputPath).dir;
     const importFolder = path.parse(path.relative(outputFolder, filePath)).dir;
 
-    return fileName === 'index' ?
-        importFolder :
-        path.join(importFolder, fileName);
+    return fileName === 'index' ? importFolder : path.join(importFolder, fileName);
 }
 
 function exists<TValue>(value?: TValue): value is NonNullable<TValue> {

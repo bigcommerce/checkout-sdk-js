@@ -14,16 +14,19 @@ describe('CreateShippingStrategyRegistry', () => {
     beforeEach(() => {
         const store = createCheckoutStore();
         const requestSender = createRequestSender();
+
         registry = createShippingStrategyRegistry(store, requestSender);
     });
 
     it('can instantiate amazon', () => {
         const shippingStrategy = registry.get('amazon');
+
         expect(shippingStrategy).toBeInstanceOf(AmazonPayShippingStrategy);
     });
 
     it('can instantiate amazon pay', () => {
         const shippingStrategy = registry.get('amazonpay');
+
         expect(shippingStrategy).toBeInstanceOf(AmazonPayV2ShippingStrategy);
     });
 });

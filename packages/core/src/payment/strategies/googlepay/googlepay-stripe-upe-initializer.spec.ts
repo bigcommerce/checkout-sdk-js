@@ -1,5 +1,11 @@
 import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
-import { getCheckoutMock, getStripePaymentDataMock, getStripePaymentDataRequest, getStripePaymentMethodMock, getStripeTokenizedPayload } from './googlepay.mock';
+import {
+    getCheckoutMock,
+    getStripePaymentDataMock,
+    getStripePaymentDataRequest,
+    getStripePaymentMethodMock,
+    getStripeTokenizedPayload,
+} from './googlepay.mock';
 
 describe('GooglePayStripeUPEInitializer', () => {
     let googlePayInitializer: GooglePayStripeUPEInitializer;
@@ -17,7 +23,7 @@ describe('GooglePayStripeUPEInitializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getStripePaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getStripePaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayStripeUPEInitializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getStripePaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getStripePaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getStripeTokenizedPayload());
         });

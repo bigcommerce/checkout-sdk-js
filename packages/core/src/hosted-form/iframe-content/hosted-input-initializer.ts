@@ -3,7 +3,11 @@ import { map, take } from 'rxjs/operators';
 
 import { IframeEventListener } from '../../common/iframe';
 import { InvalidHostedFormConfigError } from '../errors';
-import { HostedFieldAttachEvent, HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
+import {
+    HostedFieldAttachEvent,
+    HostedFieldEventMap,
+    HostedFieldEventType,
+} from '../hosted-field-events';
 
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';
@@ -18,8 +22,8 @@ export default class HostedInputInitializer {
     constructor(
         private _factory: HostedInputFactory,
         private _storage: HostedInputStorage,
-        private _eventListener: IframeEventListener<HostedFieldEventMap>
-    ) { }
+        private _eventListener: IframeEventListener<HostedFieldEventMap>,
+    ) {}
 
     initialize(containerId: string, nonce?: string): Promise<HostedInput> {
         if (nonce) {
@@ -33,23 +37,39 @@ export default class HostedInputInitializer {
 
         return fromEvent<HostedFieldAttachEvent>(
             this._eventListener as EventTargetLike<HostedFieldAttachEvent>,
-            HostedFieldEventType.AttachRequested
+            HostedFieldEventType.AttachRequested,
         )
             .pipe(
                 map(({ payload }) => {
-                    const { accessibilityLabel, cardInstrument, fontUrls, placeholder, styles, origin, type } = payload;
+                    const {
+                        accessibilityLabel,
+                        cardInstrument,
+                        fontUrls,
+                        placeholder,
+                        styles,
+                        origin,
+                        type,
+                    } = payload;
 
                     if (origin) {
                         this._factory.normalizeParentOrigin(origin);
                     }
 
-                    const field = this._factory.create(form, type, styles, fontUrls, placeholder, accessibilityLabel, cardInstrument);
+                    const field = this._factory.create(
+                        form,
+                        type,
+                        styles,
+                        fontUrls,
+                        placeholder,
+                        accessibilityLabel,
+                        cardInstrument,
+                    );
 
                     field.attach();
 
                     return field;
                 }),
-                take(1)
+                take(1),
             )
             .toPromise();
     }
@@ -59,25 +79,26 @@ export default class HostedInputInitializer {
         const body = document.querySelector('body');
         const container = document.getElementById(containerId);
 
-        [html, body, container]
-            .forEach(node => {
-                if (!node) {
-                    return;
-                }
+        [html, body, container].forEach((node) => {
+            if (!node) {
+                return;
+            }
 
-                node.style.height = '100%';
-                node.style.width = '100%';
-                node.style.overflow = 'hidden';
-                node.style.padding = '0';
-                node.style.margin = '0';
-            });
+            node.style.height = '100%';
+            node.style.width = '100%';
+            node.style.overflow = 'hidden';
+            node.style.padding = '0';
+            node.style.margin = '0';
+        });
     }
 
     private _createFormContainer(containerId: string): HTMLFormElement {
         const container = document.getElementById(containerId);
 
         if (!container) {
-            throw new InvalidHostedFormConfigError('Unable to proceed because the provided container ID is not valid.');
+            throw new InvalidHostedFormConfigError(
+                'Unable to proceed because the provided container ID is not valid.',
+            );
         }
 
         const form = document.createElement('form');

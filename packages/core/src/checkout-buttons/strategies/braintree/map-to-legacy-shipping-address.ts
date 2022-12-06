@@ -1,7 +1,9 @@
 import { LegacyAddress } from '../../../address';
 import { BraintreeDetails } from '../../../payment/strategies/braintree';
 
-export default function mapToLegacyShippingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
+export default function mapToLegacyShippingAddress(
+    details: BraintreeDetails,
+): Partial<LegacyAddress> {
     const { email, phone, shippingAddress } = details;
 
     const recipientName = shippingAddress?.recipientName || '';

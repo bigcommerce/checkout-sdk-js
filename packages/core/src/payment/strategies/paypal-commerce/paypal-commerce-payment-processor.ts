@@ -2,18 +2,43 @@ import { isNil, omitBy } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
-    MissingDataError, MissingDataErrorType,
+    MissingDataError,
+    MissingDataErrorType,
     NotImplementedError,
     NotInitializedError,
-    NotInitializedErrorType
-} from "../../../common/error/errors";
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
 
-import { ButtonsOptions, FieldsOptions, NON_INSTANT_PAYMENT_METHODS, ParamsForProvider, PaypalButtonStyleOptions, PaypalCommerceButtons, PaypalCommerceFields, PaypalCommerceHostedFields, PaypalCommerceHostedFieldsApprove, PaypalCommerceHostedFieldsRenderOptions, PaypalCommerceHostedFieldsState, PaypalCommerceHostedFieldsSubmitOptions, PaypalCommerceInitializationData, PaypalCommerceMessages, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PaypalCommerceSDKFunding, PaypalFieldsStyleOptions, StyleButtonColor, StyleButtonLabel, StyleButtonLayout, StyleButtonShape } from './index';
+import {
+    ButtonsOptions,
+    FieldsOptions,
+    NON_INSTANT_PAYMENT_METHODS,
+    ParamsForProvider,
+    PaypalButtonStyleOptions,
+    PaypalCommerceButtons,
+    PaypalCommerceFields,
+    PaypalCommerceHostedFields,
+    PaypalCommerceHostedFieldsApprove,
+    PaypalCommerceHostedFieldsRenderOptions,
+    PaypalCommerceHostedFieldsState,
+    PaypalCommerceHostedFieldsSubmitOptions,
+    PaypalCommerceInitializationData,
+    PaypalCommerceMessages,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+    PaypalCommerceSDKFunding,
+    PaypalFieldsStyleOptions,
+    StyleButtonColor,
+    StyleButtonLabel,
+    StyleButtonLayout,
+    StyleButtonShape,
+} from './index';
 
 export interface OptionalParamsRenderButtons {
     paramsForProvider?: ParamsForProvider;
@@ -58,18 +83,31 @@ export default class PaypalCommercePaymentProcessor {
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {}
 
-    async initialize(paymentMethod: PaymentMethod<PaypalCommerceInitializationData>, currencyCode: string, initializesOnCheckoutPage?: boolean): Promise<PaypalCommerceSDK> {
-        this._paypal = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
+    async initialize(
+        paymentMethod: PaymentMethod<PaypalCommerceInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage?: boolean,
+    ): Promise<PaypalCommerceSDK> {
+        this._paypal = await this._paypalScriptLoader.getPayPalSDK(
+            paymentMethod,
+            currencyCode,
+            initializesOnCheckoutPage,
+        );
         this._gatewayId = paymentMethod.gateway;
         this._isVenmoEnabled = paymentMethod.initializationData?.isVenmoEnabled;
 
         return this._paypal;
     }
 
-    renderButtons(cartId: string, container: string, params: ButtonsOptions = {}, optionalParams: OptionalParamsRenderButtons = {}): PaypalCommerceButtons {
+    renderButtons(
+        cartId: string,
+        container: string,
+        params: ButtonsOptions = {},
+        optionalParams: OptionalParamsRenderButtons = {},
+    ): PaypalCommerceButtons {
         if (!this._paypal || !this._paypal.Buttons) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -136,6 +174,7 @@ export default class PaypalCommercePaymentProcessor {
         this._paypalFields = this._paypal.PaymentFields(fieldsParams);
 
         const fieldContainerElement = document.querySelector(apmFieldsContainer);
+
         if (fieldContainerElement) {
             fieldContainerElement.innerHTML = '';
         }
@@ -157,6 +196,7 @@ export default class PaypalCommercePaymentProcessor {
         if (!this._paypal || !this._paypal.Messages) {
             throw new PaymentMethodClientUnavailableError();
         }
+
         this._paypalMessages = this._paypal.Messages({
             amount: cartTotal,
             placement: 'cart',
@@ -169,7 +209,11 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypalMessages;
     }
 
-    async renderHostedFields(cartId: string, params: ParamsRenderHostedFields, events?: EventsHostedFields): Promise<void> {
+    async renderHostedFields(
+        cartId: string,
+        params: ParamsRenderHostedFields,
+        events?: EventsHostedFields,
+    ): Promise<void> {
         if (!this._paypal || !this._paypal.HostedFields) {
             throw new PaymentMethodClientUnavailableError();
         }
@@ -188,13 +232,18 @@ export default class PaypalCommercePaymentProcessor {
         });
 
         if (events) {
-            (Object.keys(events) as Array<keyof EventsHostedFields>).forEach(key => {
-                (this._hostedFields as PaypalCommerceHostedFields).on(key, events[key] as (event: PaypalCommerceHostedFieldsState) => void);
+            (Object.keys(events) as Array<keyof EventsHostedFields>).forEach((key) => {
+                (this._hostedFields as PaypalCommerceHostedFields).on(
+                    key,
+                    events[key] as (event: PaypalCommerceHostedFieldsState) => void,
+                );
             });
         }
     }
 
-    async submitHostedFields(options?: PaypalCommerceHostedFieldsSubmitOptions): Promise<PaypalCommerceHostedFieldsApprove> {
+    async submitHostedFields(
+        options?: PaypalCommerceHostedFieldsSubmitOptions,
+    ): Promise<PaypalCommerceHostedFieldsApprove> {
         if (!this._hostedFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -202,21 +251,25 @@ export default class PaypalCommercePaymentProcessor {
         return this._hostedFields.submit(omitBy(options, isNil));
     }
 
-    getHostedFieldsValidationState(): { isValid: boolean; fields: PaypalCommerceHostedFieldsState['fields'] } {
+    getHostedFieldsValidationState(): {
+        isValid: boolean;
+        fields: PaypalCommerceHostedFieldsState['fields'];
+    } {
         if (!this._hostedFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         const { fields } = this._hostedFields.getState();
 
-        const isValid = (Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>)
-            .every(key => fields[key]?.isValid);
+        const isValid = (
+            Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>
+        ).every((key) => fields[key]?.isValid);
 
         return { isValid, fields };
     }
 
     deinitialize() {
-        this._paypalButtons?.close?.();
+        this._paypalButtons?.close();
         this._paypal = undefined;
         this._paypalButtons = undefined;
         this._fundingSource = undefined;
@@ -224,12 +277,21 @@ export default class PaypalCommercePaymentProcessor {
     }
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {
-        const paramsForProvider = { ...params, isCredit: this._fundingSource === 'credit' || this._fundingSource === 'paylater' };
+        const paramsForProvider = {
+            ...params,
+            isCredit: this._fundingSource === 'credit' || this._fundingSource === 'paylater',
+        };
         const isAPM = this._gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
         const isVenmo = this._fundingSource === 'venmo' && this._isVenmoEnabled;
 
-        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {...paramsForProvider, isAPM, isVenmo});
+        const { orderId } = await this._paypalCommerceRequestSender.setupPayment(cartId, {
+            ...paramsForProvider,
+            isAPM,
+            isVenmo,
+        });
+
         this._orderId = orderId;
+
         const methodId = this._fundingSource;
 
         if (methodId && NON_INSTANT_PAYMENT_METHODS.indexOf(methodId) > -1) {
@@ -239,9 +301,11 @@ export default class PaypalCommercePaymentProcessor {
         return orderId;
     }
 
-    private async _patchNonInstantPaymentMethods(methodId: string): Promise<InternalCheckoutSelectors> {
+    private async _patchNonInstantPaymentMethods(
+        methodId: string,
+    ): Promise<InternalCheckoutSelectors> {
         const gatewayId = this._gatewayId;
-        const paymentData =  {
+        const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
@@ -259,19 +323,20 @@ export default class PaypalCommercePaymentProcessor {
             methodId,
         };
 
-        await this._store.dispatch(this._orderActionCreator.submitOrder(
-            order,
-            { params: paymentRequestOptions }
-        ));
+        await this._store.dispatch(
+            this._orderActionCreator.submitOrder(order, { params: paymentRequestOptions }),
+        );
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment({
-            gatewayId,
-            methodId,
-            paymentData,
-        }));
+        return this._store.dispatch(
+            this._paymentActionCreator.submitPayment({
+                gatewayId,
+                methodId,
+                paymentData,
+            }),
+        );
     }
 
-    private _validateStyleParams = (style: PaypalButtonStyleOptions): PaypalButtonStyleOptions  => {
+    private _validateStyleParams = (style: PaypalButtonStyleOptions): PaypalButtonStyleOptions => {
         const updatedStyle: PaypalButtonStyleOptions = { ...style };
         const { label, color, layout, shape, height, tagline } = style;
 
@@ -292,21 +357,25 @@ export default class PaypalCommercePaymentProcessor {
         }
 
         if (typeof height === 'number') {
-            updatedStyle.height = height < 25
-                ? 25
-                : (height > 55 ? 55 : height);
+            updatedStyle.height = height < 25 ? 25 : height > 55 ? 55 : height;
         } else {
             delete updatedStyle.height;
         }
 
-        if (typeof tagline !== 'boolean' || (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])) {
+        if (
+            typeof tagline !== 'boolean' ||
+            (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])
+        ) {
             delete updatedStyle.tagline;
         }
 
         return updatedStyle;
     };
 
-    private _processNotEligible(buttonParams: ButtonsOptions, fundingKey?: keyof PaypalCommerceSDKFunding): void {
+    private _processNotEligible(
+        buttonParams: ButtonsOptions,
+        fundingKey?: keyof PaypalCommerceSDKFunding,
+    ): void {
         if (fundingKey?.toUpperCase() === this._paypal?.FUNDING.PAYLATER.toUpperCase()) {
             buttonParams.fundingSource = this._paypal?.FUNDING.CREDIT;
 
@@ -317,6 +386,10 @@ export default class PaypalCommercePaymentProcessor {
             }
         }
 
-        throw new NotImplementedError(`PayPal ${this._fundingSource || ''} is not available for your region. Please use PayPal Checkout instead.`);
+        throw new NotImplementedError(
+            `PayPal ${
+                this._fundingSource || ''
+            } is not available for your region. Please use PayPal Checkout instead.`,
+        );
     }
 }

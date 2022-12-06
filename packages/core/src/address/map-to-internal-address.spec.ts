@@ -8,12 +8,12 @@ import mapToInternalAddress from './map-to-internal-address';
 
 describe('mapToInternalAddress()', () => {
     it('maps to internal address', () => {
-        expect(mapToInternalAddress(getBillingAddress()))
-            .toEqual(getInternalBillingAddress());
+        expect(mapToInternalAddress(getBillingAddress())).toEqual(getInternalBillingAddress());
     });
 
     it('maps to internal shipping address when consignments are passed', () => {
-        expect(mapToInternalAddress(getShippingAddress(), [getConsignment()]))
-            .toEqual(getInternalShippingAddress());
+        expect(mapToInternalAddress(getShippingAddress(), [getConsignment()])).toEqual(
+            getInternalShippingAddress(),
+        );
     });
 });

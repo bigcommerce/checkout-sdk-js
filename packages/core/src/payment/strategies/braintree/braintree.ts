@@ -1,7 +1,17 @@
-import { GooglePaymentData, GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1, GooglePayCreator, TokenizePayload } from '../googlepay';
+import {
+    GooglePayBraintreeDataRequest,
+    GooglePayBraintreePaymentDataRequestV1,
+    GooglePayCreator,
+    GooglePaymentData,
+    TokenizePayload,
+} from '../googlepay';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
 
-import { VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
+import {
+    VisaCheckoutInitOptions,
+    VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutTokenizedPayload,
+} from './visacheckout';
 
 /**
  *
@@ -15,8 +25,15 @@ export const PAYPAL_COMPONENTS = ['buttons', 'messages'];
  * Common
  *
  */
-export interface BraintreeModuleCreator<TInstance, TOptions = BraintreeModuleCreatorConfig, TError = BraintreeError> {
-    create(config: TOptions, callback?: (error: TError, instance: TInstance) => void): Promise<TInstance>;
+export interface BraintreeModuleCreator<
+    TInstance,
+    TOptions = BraintreeModuleCreatorConfig,
+    TError = BraintreeError,
+> {
+    create(
+        config: TOptions,
+        callback?: (error: TError, instance: TInstance) => void,
+    ): Promise<TInstance>;
 }
 
 export interface BraintreeModuleCreatorConfig {
@@ -177,7 +194,10 @@ export interface BraintreeTokenizeResponse {
  * Braintree Data Collector
  *
  */
-export type BraintreeDataCollectorCreator = BraintreeModuleCreator<BraintreeDataCollector, BraintreeDataCollectorCreatorConfig>;
+export type BraintreeDataCollectorCreator = BraintreeModuleCreator<
+    BraintreeDataCollector,
+    BraintreeDataCollectorCreatorConfig
+>;
 
 export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCreatorConfig {
     kount?: boolean;
@@ -205,7 +225,9 @@ export interface BraintreeGooglePayThreeDSecureOptions {
 }
 
 export interface GooglePayBraintreeSDK extends BraintreeModule {
-    createPaymentDataRequest(request?: GooglePayBraintreeDataRequest): GooglePayBraintreePaymentDataRequestV1;
+    createPaymentDataRequest(
+        request?: GooglePayBraintreeDataRequest,
+    ): GooglePayBraintreePaymentDataRequestV1;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
 
@@ -214,11 +236,16 @@ export interface GooglePayBraintreeSDK extends BraintreeModule {
  * Braintree Hosted Fields
  *
  */
-export type BraintreeHostedFieldsCreator = BraintreeModuleCreator<BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig>;
+export type BraintreeHostedFieldsCreator = BraintreeModuleCreator<
+    BraintreeHostedFields,
+    BraintreeHostedFieldsCreatorConfig
+>;
 
 export interface BraintreeHostedFields {
     teardown(): Promise<void>;
-    tokenize(options?: BraintreeHostedFieldsTokenizeOptions): Promise<BraintreeHostedFieldsTokenizePayload>;
+    tokenize(
+        options?: BraintreeHostedFieldsTokenizeOptions,
+    ): Promise<BraintreeHostedFieldsTokenizePayload>;
     on(eventName: string, callback: (event: BraintreeHostedFieldsState) => void): void;
 }
 
@@ -339,7 +366,10 @@ export interface BraintreeHostedFormError extends BraintreeError {
  * Braintree 3D Secure
  *
  */
-export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<BraintreeThreeDSecure, BraintreeThreeDSecureCreatorConfig>;
+export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<
+    BraintreeThreeDSecure,
+    BraintreeThreeDSecureCreatorConfig
+>;
 
 export interface BraintreeThreeDSecure extends BraintreeModule {
     verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
@@ -394,7 +424,10 @@ export interface BraintreePaypal {
 export type BraintreePaypalCheckoutCreator = BraintreeModuleCreator<BraintreePaypalCheckout>;
 
 export interface BraintreePaypalCheckout {
-    loadPayPalSDK(config: BraintreePaypalSdkCreatorConfig, callback: (instance: BraintreePaypalCheckout) => void): void;
+    loadPayPalSDK(
+        config: BraintreePaypalSdkCreatorConfig,
+        callback: (instance: BraintreePaypalCheckout) => void,
+    ): void;
     createPayment(options: BraintreePaypalRequest): Promise<string>;
     teardown(): Promise<void>;
     tokenizePayment(options: PaypalAuthorizeData): Promise<BraintreeTokenizePayload>;
@@ -410,7 +443,10 @@ export interface BraintreePaypalSdkCreatorConfig {
  * Braintree Venmo
  *
  */
-export type BraintreeVenmoCheckoutCreator = BraintreeModuleCreator<BraintreeVenmoCheckout, BraintreeVenmoCreatorConfig>;
+export type BraintreeVenmoCheckoutCreator = BraintreeModuleCreator<
+    BraintreeVenmoCheckout,
+    BraintreeVenmoCreatorConfig
+>;
 
 export interface BraintreeVenmoCheckout extends BraintreeModule {
     tokenize(callback: (error: BraintreeError, payload: BraintreeTokenizePayload) => void): void;

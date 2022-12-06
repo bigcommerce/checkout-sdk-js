@@ -367,61 +367,72 @@ export default interface CheckoutStoreStatusSelector {
      *
      * @returns True if pickup options are loading, otherwise false.
      */
-     isLoadingPickupOptions(): boolean;
+    isLoadingPickupOptions(): boolean;
 }
 
-export type CheckoutStoreStatusSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreStatusSelector;
+export type CheckoutStoreStatusSelectorFactory = (
+    state: InternalCheckoutSelectors,
+) => CheckoutStoreStatusSelector;
 
 export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusSelectorFactory {
     const isPending = createShallowEqualSelector(
         (selector: Omit<CheckoutStoreStatusSelector, 'isPending'>) => selector,
-        selector => () => {
-            return (Object.keys(selector) as Array<keyof Omit<CheckoutStoreStatusSelector, 'isPending'>>)
-                .some(key => selector[key]());
-        }
+        (selector) => () => {
+            return (
+                Object.keys(selector) as Array<keyof Omit<CheckoutStoreStatusSelector, 'isPending'>>
+            ).some((key) => selector[key]());
+        },
     );
 
     const isSelectingShippingOption = createSelector(
         ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isSelectingOption,
         ({ consignments }: InternalCheckoutSelectors) => consignments.isUpdatingShippingOption,
         (isSelectingOption, isUpdatingShippingOption) => (consignmentId?: string) => {
-            return (
-                isSelectingOption() ||
-                isUpdatingShippingOption(consignmentId)
-            );
-        }
+            return isSelectingOption() || isUpdatingShippingOption(consignmentId);
+        },
     );
 
     const isCustomerStepPending = createSelector(
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isInitializing,
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningIn,
         ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningOut,
-        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isExecutingPaymentMethodCheckout,
-        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isWidgetInteracting,
-        (isInitializing, isSigningIn, isSigningOut, isExecutingPaymentMethodCheckout,  isWidgetInteracting) => (methodId?: string) => {
-            return (
-                isInitializing(methodId) ||
-                isSigningIn(methodId) ||
-                isSigningOut(methodId) ||
-                isExecutingPaymentMethodCheckout(methodId) ||
-                isWidgetInteracting(methodId)
-            );
-        }
+        ({ customerStrategies }: InternalCheckoutSelectors) =>
+            customerStrategies.isExecutingPaymentMethodCheckout,
+        ({ customerStrategies }: InternalCheckoutSelectors) =>
+            customerStrategies.isWidgetInteracting,
+        (
+                isInitializing,
+                isSigningIn,
+                isSigningOut,
+                isExecutingPaymentMethodCheckout,
+                isWidgetInteracting,
+            ) =>
+            (methodId?: string) => {
+                return (
+                    isInitializing(methodId) ||
+                    isSigningIn(methodId) ||
+                    isSigningOut(methodId) ||
+                    isExecutingPaymentMethodCheckout(methodId) ||
+                    isWidgetInteracting(methodId)
+                );
+            },
     );
 
     const isShippingStepPending = createSelector(
         ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isInitializing,
         ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isUpdatingAddress,
         ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isSelectingOption,
-        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isWidgetInteracting,
-        (isInitializing, isUpdatingAddress, isSelectingOption, isWidgetInteracting) => (methodId?: string) => {
-            return (
-                isInitializing(methodId) ||
-                isUpdatingAddress(methodId) ||
-                isSelectingOption(methodId) ||
-                isWidgetInteracting(methodId)
-            );
-        }
+        ({ shippingStrategies }: InternalCheckoutSelectors) =>
+            shippingStrategies.isWidgetInteracting,
+        (isInitializing, isUpdatingAddress, isSelectingOption, isWidgetInteracting) =>
+            (methodId?: string) => {
+                return (
+                    isInitializing(methodId) ||
+                    isUpdatingAddress(methodId) ||
+                    isSelectingOption(methodId) ||
+                    isWidgetInteracting(methodId)
+                );
+            },
     );
 
     const isPaymentStepPending = createSelector(
@@ -436,23 +447,18 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
                 isFinalizing(methodId) ||
                 isWidgetInteracting(methodId)
             );
-        }
+        },
     );
 
     const isSubmittingOrder = createSelector(
         ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isExecuting,
         ({ checkout }: InternalCheckoutSelectors) => checkout.isExecutingSpamCheck, // Remove this when CheckoutService#initializeSpamProtection is deprecated
         (isExecuting, isExecutingSpamCheck) => (methodId?: string) => {
-            return (
-                isExecuting(methodId) ||
-                isExecutingSpamCheck()
-            );
-        }
+            return isExecuting(methodId) || isExecutingSpamCheck();
+        },
     );
 
-    return memoizeOne((
-        state: InternalCheckoutSelectors
-    ): CheckoutStoreStatusSelector => {
+    return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreStatusSelector => {
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
             isUpdatingCheckout: state.checkout.isUpdating,
@@ -468,7 +474,8 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,
-            isExecutingPaymentMethodCheckout: state.customerStrategies.isExecutingPaymentMethodCheckout,
+            isExecutingPaymentMethodCheckout:
+                state.customerStrategies.isExecutingPaymentMethodCheckout,
             isInitializingCustomer: state.customerStrategies.isInitializing,
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),

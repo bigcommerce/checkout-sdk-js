@@ -19,7 +19,9 @@ export enum Mode {
     Incomplete,
 }
 
-export function getAdyenV2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getAdyenV2CustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayadyenv2' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -31,19 +33,24 @@ export function getAdyenV2CustomerInitializeOptions(mode: Mode = Mode.Full): Cus
         case Mode.Incomplete: {
             return { ...methodId };
         }
+
         case Mode.UndefinedMethodId: {
             return { ...undefinedMethodId, ...googlepayAdyenV2 };
         }
+
         case Mode.InvalidContainer: {
             return { ...methodId, ...googlepayAdyenV2WithInvalidContainer };
         }
+
         default: {
             return { ...methodId, ...googlepayAdyenV2 };
         }
     }
 }
 
-export function getAdyenV3CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getAdyenV3CustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayadyenv3' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -55,19 +62,24 @@ export function getAdyenV3CustomerInitializeOptions(mode: Mode = Mode.Full): Cus
         case Mode.Incomplete: {
             return { ...methodId };
         }
+
         case Mode.UndefinedMethodId: {
             return { ...undefinedMethodId, ...googlepayAdyenV3 };
         }
+
         case Mode.InvalidContainer: {
             return { ...methodId, ...googlepayAdyenV3WithInvalidContainer };
         }
+
         default: {
             return { ...methodId, ...googlepayAdyenV3 };
         }
     }
 }
 
-export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getAuthNetCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayauthorizenet' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -78,13 +90,16 @@ export function getAuthNetCustomerInitializeOptions(mode: Mode = Mode.Full): Cus
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...googlepayAuthNet };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...googlepayAuthNetWithInvalidContainer };
+
         default:
             return { ...methodId, ...googlepayAuthNet };
-     }
+    }
 }
 
 export function getBNZCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
@@ -98,16 +113,21 @@ export function getBNZCustomerInitializeOptions(mode: Mode = Mode.Full): Custome
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...googlepayBNZ };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...googlepayBNZWithInvalidContainer };
+
         default:
             return { ...methodId, ...googlepayBNZ };
-     }
+    }
 }
 
-export function getBraintreeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getBraintreeCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaybraintree' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -119,59 +139,78 @@ export function getBraintreeCustomerInitializeOptions(mode: Mode = Mode.Full): C
         case Mode.Incomplete: {
             return { ...methodId };
         }
+
         case Mode.UndefinedMethodId: {
             return { ...undefinedMethodId, ...googlepayBraintree };
         }
+
         case Mode.InvalidContainer: {
             return { ...methodId, ...googlepayBraintreeWithInvalidContainer };
         }
+
         default: {
             return { ...methodId, ...googlepayBraintree };
         }
-     }
+    }
 }
 
-export function getCheckoutcomCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getCheckoutcomCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaycheckoutcom' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
     const googlepayCheckoutcom = { googlepaycheckoutcom: { ...container } };
-    const googlepayCheckoutcomWithInvalidContainer = { googlepaycheckoutcom: { ...invalidContainer } };
+    const googlepayCheckoutcomWithInvalidContainer = {
+        googlepaycheckoutcom: { ...invalidContainer },
+    };
 
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...googlepayCheckoutcom };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...googlepayCheckoutcomWithInvalidContainer };
+
         default:
             return { ...methodId, ...googlepayCheckoutcom };
-     }
+    }
 }
 
-export function getCybersourceV2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getCybersourceV2CustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaycybersourcev2' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
     const googlepayCybersourceV2 = { googlepaycybersourcev2: { ...container } };
-    const googlepayCyberSourceV2WithInvalidContainer = { googlepaycybersourcev2: { ...invalidContainer } };
+    const googlepayCyberSourceV2WithInvalidContainer = {
+        googlepaycybersourcev2: { ...invalidContainer },
+    };
 
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...googlepayCybersourceV2 };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...googlepayCyberSourceV2WithInvalidContainer };
+
         default:
             return { ...methodId, ...googlepayCybersourceV2 };
-     }
+    }
 }
 
-export function getOrbitalCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getOrbitalCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepayorbital' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -182,16 +221,21 @@ export function getOrbitalCustomerInitializeOptions(mode: Mode = Mode.Full): Cus
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...googlepayOrbital };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...googlepayOrbitalWithInvalidContainer };
+
         default:
             return { ...methodId, ...googlepayOrbital };
-     }
+    }
 }
 
-export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getStripeCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaystripe' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -203,19 +247,24 @@ export function getStripeCustomerInitializeOptions(mode: Mode = Mode.Full): Cust
         case Mode.Incomplete: {
             return { ...methodId };
         }
+
         case Mode.UndefinedMethodId: {
             return { ...undefinedMethodId, ...googlepayStripe };
         }
+
         case Mode.InvalidContainer: {
             return { ...methodId, ...googlepayStripeWithInvalidContainer };
         }
+
         default: {
             return { ...methodId, ...googlepayStripe };
         }
-     }
+    }
 }
 
-export function getStripeUPECustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getStripeUPECustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'googlepaystripeupe' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
@@ -227,14 +276,17 @@ export function getStripeUPECustomerInitializeOptions(mode: Mode = Mode.Full): C
         case Mode.Incomplete: {
             return { ...methodId };
         }
+
         case Mode.UndefinedMethodId: {
             return { ...undefinedMethodId, ...googlepayStripeUPE };
         }
+
         case Mode.InvalidContainer: {
             return { ...methodId, ...googlepayStripeUPEWithInvalidContainer };
         }
+
         default: {
             return { ...methodId, ...googlepayStripeUPE };
         }
-     }
+    }
 }

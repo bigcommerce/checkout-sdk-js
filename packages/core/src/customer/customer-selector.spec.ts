@@ -1,7 +1,10 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import CustomerSelector, { createCustomerSelectorFactory, CustomerSelectorFactory } from './customer-selector';
+import CustomerSelector, {
+    createCustomerSelectorFactory,
+    CustomerSelectorFactory,
+} from './customer-selector';
 import { DEFAULT_STATE } from './customer-state';
 import { getCustomer } from './customers.mock';
 
@@ -25,7 +28,7 @@ describe('CustomerSelector', () => {
         it('returns undefined if customer is unavailable', () => {
             selector = createCustomerSelector(DEFAULT_STATE);
 
-            expect(selector.getCustomer()).toEqual(undefined);
+            expect(selector.getCustomer()).toBeUndefined();
         });
     });
 
@@ -44,24 +47,24 @@ describe('CustomerSelector', () => {
         it('returns undefined if customer is unavailable', () => {
             selector = createCustomerSelector(DEFAULT_STATE);
 
-            expect(selector.getCreateAccountError()).toEqual(undefined);
+            expect(selector.getCreateAccountError()).toBeUndefined();
         });
     });
 
     describe('#isCreatingCustomerAccount()', () => {
         it('returns current customer', () => {
             selector = createCustomerSelector({
-                errors: { },
+                errors: {},
                 statuses: { isCreating: true },
             });
 
-            expect(selector.isCreatingCustomerAccount()).toEqual(true);
+            expect(selector.isCreatingCustomerAccount()).toBe(true);
         });
 
         it('returns undefined if customer is unavailable', () => {
             selector = createCustomerSelector(DEFAULT_STATE);
 
-            expect(selector.isCreatingCustomerAccount()).toEqual(false);
+            expect(selector.isCreatingCustomerAccount()).toBe(false);
         });
     });
 
@@ -80,24 +83,24 @@ describe('CustomerSelector', () => {
         it('returns undefined if customer is unavailable', () => {
             selector = createCustomerSelector(DEFAULT_STATE);
 
-            expect(selector.getCreateAddressError()).toEqual(undefined);
+            expect(selector.getCreateAddressError()).toBeUndefined();
         });
     });
 
     describe('#isCreatingCustomerAccount()', () => {
         it('returns is creating address', () => {
             selector = createCustomerSelector({
-                errors: { },
+                errors: {},
                 statuses: { isCreatingAddress: true },
             });
 
-            expect(selector.isCreatingCustomerAddress()).toEqual(true);
+            expect(selector.isCreatingCustomerAddress()).toBe(true);
         });
 
         it('returns undefined if customer is unavailable', () => {
             selector = createCustomerSelector(DEFAULT_STATE);
 
-            expect(selector.isCreatingCustomerAddress()).toEqual(false);
+            expect(selector.isCreatingCustomerAddress()).toBe(false);
         });
     });
 });

@@ -4,6 +4,6 @@ describe('RemoteCheckoutSynchronizationError', () => {
     it('returns error name', () => {
         const error = new RemoteCheckoutSynchronizationError();
 
-        expect(error.name).toEqual('RemoteCheckoutSynchronizationError');
+        expect(error.name).toBe('RemoteCheckoutSynchronizationError');
     });
 });

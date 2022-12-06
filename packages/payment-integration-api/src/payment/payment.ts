@@ -1,7 +1,7 @@
-import { BrowserInfo } from "../browser";
-import { Omit } from "../util-types";
+import { BrowserInfo } from '../browser';
+import { Omit } from '../util-types';
 
-import PaymentAdditionalAction from "./payment-additional-action";
+import PaymentAdditionalAction from './payment-additional-action';
 
 export default interface Payment {
     methodId: string;
@@ -93,13 +93,10 @@ export interface WithHostedFormNonce {
 
 export type HostedCreditCardInstrument = Omit<
     CreditCardInstrument,
-    "ccExpiry" | "ccName" | "ccNumber" | "ccCvv"
+    'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'
 >;
 
-export type HostedVaultedInstrument = Omit<
-    VaultedInstrument,
-    "ccNumber" | "ccCvv"
->;
+export type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
 export type AdyenV2Instrument = AdyenV2Token | AdyenV2Card;
 
@@ -179,9 +176,9 @@ interface BoltInstrument {
 
 interface AppleInstrument {
     apple_pay_token: {
-        payment_data: ApplePayJS.ApplePayPaymentToken["paymentData"];
-        payment_method: ApplePayJS.ApplePayPaymentToken["paymentMethod"];
-        transaction_id: ApplePayJS.ApplePayPaymentToken["transactionIdentifier"];
+        payment_data: ApplePayJS.ApplePayPaymentToken['paymentData'];
+        payment_method: ApplePayJS.ApplePayPaymentToken['paymentMethod'];
+        transaction_id: ApplePayJS.ApplePayPaymentToken['transactionIdentifier'];
     };
 }
 

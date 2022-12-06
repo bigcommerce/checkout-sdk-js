@@ -16,13 +16,11 @@ describe('iframeResizer()', () => {
 
         const { iframeResizer } = require('./iframe-resizer');
 
-        expect(window.addEventListener)
-            .not.toHaveBeenCalledWith('resize', expect.any(Function));
+        expect(window.addEventListener).not.toHaveBeenCalledWith('resize', expect.any(Function));
 
         iframeResizer(options, iframe);
 
-        expect(window.addEventListener)
-            .toHaveBeenCalledWith('resize', expect.any(Function));
+        expect(window.addEventListener).toHaveBeenCalledWith('resize', expect.any(Function));
 
         (window.addEventListener as jest.Mock).mockReset();
     });
@@ -33,7 +31,6 @@ describe('iframeResizer()', () => {
 
         iframeResizer(options, iframe);
 
-        expect(originalIframeResizer)
-            .toHaveBeenCalledWith(options, iframe);
+        expect(originalIframeResizer).toHaveBeenCalledWith(options, iframe);
     });
 });

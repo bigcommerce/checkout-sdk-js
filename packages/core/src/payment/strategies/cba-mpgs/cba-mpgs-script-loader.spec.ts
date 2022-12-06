@@ -30,22 +30,30 @@ describe('CBAMPGSScriptLoader', () => {
 
         it('loads the Script', async () => {
             await cbaMPGSScriptLoader.load(false);
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//ap-gateway.mastercard.com/static/threeDS/1.3.0/three-ds.min.js');
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                '//ap-gateway.mastercard.com/static/threeDS/1.3.0/three-ds.min.js',
+            );
         });
 
         it('returns the Script from the window', async () => {
             const ThreeDSjs = await cbaMPGSScriptLoader.load();
+
             expect(ThreeDSjs).toBe(threeDsScript);
         });
 
         describe('when testMode is on', () => {
             it('loads the Script in sandbox mode', async () => {
                 await cbaMPGSScriptLoader.load(true);
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//test-gateway.mastercard.com/static/threeDS/1.3.0/three-ds.min.js');
+
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//test-gateway.mastercard.com/static/threeDS/1.3.0/three-ds.min.js',
+                );
             });
 
             it('returns the Script from the window', async () => {
                 const ThreeDSjs = await cbaMPGSScriptLoader.load(true);
+
                 expect(ThreeDSjs).toBe(threeDsScript);
             });
         });

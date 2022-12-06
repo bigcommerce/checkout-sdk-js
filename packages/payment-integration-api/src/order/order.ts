@@ -1,10 +1,10 @@
-import { BillingAddress } from "../billing";
-import { LineItemMap } from "../cart";
-import { Coupon } from "../coupon";
-import { Currency } from "../currency";
-import { Tax } from "../tax";
+import { BillingAddress } from '../billing';
+import { LineItemMap } from '../cart';
+import { Coupon } from '../coupon';
+import { Currency } from '../currency';
+import { Tax } from '../tax';
 
-import { OrderMetaState } from "./order-state";
+import { OrderMetaState } from './order-state';
 
 export default interface Order {
     baseAmount: number;
@@ -35,9 +35,7 @@ export default interface Order {
     taxTotal: number;
 }
 
-export type OrderPayments = Array<
-    GatewayOrderPayment | GiftCertificateOrderPayment
->;
+export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
 
 export type OrderMeta = OrderMetaState;
 

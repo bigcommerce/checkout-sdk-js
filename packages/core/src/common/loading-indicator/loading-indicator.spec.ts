@@ -30,8 +30,8 @@ describe('LoadingIndicator', () => {
 
         const child = parent.firstChild as HTMLElement;
 
-        expect(child.style.visibility).toEqual('visible');
-        expect(child.style.opacity).toEqual('1');
+        expect(child.style.visibility).toBe('visible');
+        expect(child.style.opacity).toBe('1');
     });
 
     it('throws error is parent element does not exist', () => {
@@ -44,7 +44,7 @@ describe('LoadingIndicator', () => {
 
         const child = parent.firstChild as HTMLElement;
 
-        expect(child.style.opacity).toEqual('0');
+        expect(child.style.opacity).toBe('0');
     });
 
     it('completely hides loading indicator once transition is complete', () => {
@@ -56,7 +56,7 @@ describe('LoadingIndicator', () => {
 
         child.dispatchEvent(event);
 
-        expect(child.style.visibility).toEqual('hidden');
+        expect(child.style.visibility).toBe('hidden');
     });
 
     it('does not throw error if it is already hidden', () => {

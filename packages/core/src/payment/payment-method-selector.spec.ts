@@ -3,7 +3,10 @@ import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import PaymentMethodSelector, { createPaymentMethodSelectorFactory, PaymentMethodSelectorFactory } from './payment-method-selector';
+import PaymentMethodSelector, {
+    createPaymentMethodSelectorFactory,
+    PaymentMethodSelectorFactory,
+} from './payment-method-selector';
 import { getAdyenAmex, getBraintree } from './payment-methods.mock';
 
 describe('PaymentMethodSelector', () => {
@@ -126,13 +129,13 @@ describe('PaymentMethodSelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(paymentMethodSelector.isLoading()).toEqual(true);
+            expect(paymentMethodSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading payment methods', () => {
             paymentMethodSelector = createPaymentMethodSelector(state.paymentMethods);
 
-            expect(paymentMethodSelector.isLoading()).toEqual(false);
+            expect(paymentMethodSelector.isLoading()).toBe(false);
         });
     });
 
@@ -143,7 +146,7 @@ describe('PaymentMethodSelector', () => {
                 statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
             });
 
-            expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(true);
+            expect(paymentMethodSelector.isLoadingMethod('braintree')).toBe(true);
         });
 
         it('returns false if not loading payment method', () => {
@@ -152,7 +155,7 @@ describe('PaymentMethodSelector', () => {
                 statuses: { isLoadingMethod: false, loadMethodId: undefined },
             });
 
-            expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
+            expect(paymentMethodSelector.isLoadingMethod('braintree')).toBe(false);
         });
 
         it('returns false if not loading specific payment method', () => {
@@ -161,7 +164,7 @@ describe('PaymentMethodSelector', () => {
                 statuses: { isLoadingMethod: true, loadMethodId: 'authorizenet' },
             });
 
-            expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
+            expect(paymentMethodSelector.isLoadingMethod('braintree')).toBe(false);
         });
 
         it('returns any loading status if method id is not passed', () => {
@@ -170,7 +173,7 @@ describe('PaymentMethodSelector', () => {
                 statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
             });
 
-            expect(paymentMethodSelector.isLoadingMethod()).toEqual(true);
+            expect(paymentMethodSelector.isLoadingMethod()).toBe(true);
         });
     });
 });

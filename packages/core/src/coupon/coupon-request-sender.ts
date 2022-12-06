@@ -1,14 +1,21 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { Checkout, CheckoutIncludes, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
-import { joinIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import { Checkout, CHECKOUT_DEFAULT_INCLUDES, CheckoutIncludes } from '../checkout';
+import {
+    ContentType,
+    joinIncludes,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 export default class CouponRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    applyCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    applyCoupon(
+        checkoutId: string,
+        couponCode: string,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/coupons`;
         const headers = {
             Accept: ContentType.JsonV1,
@@ -28,7 +35,11 @@ export default class CouponRequestSender {
         });
     }
 
-    removeCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    removeCoupon(
+        checkoutId: string,
+        couponCode: string,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
         const headers = {
             Accept: ContentType.JsonV1,

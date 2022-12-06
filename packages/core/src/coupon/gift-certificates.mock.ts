@@ -13,10 +13,7 @@ export function getGiftCertificate(): GiftCertificate {
 
 export function getGiftCertificatesState(): GiftCertificateState {
     return {
-        data: [
-            getGiftCertificate(),
-            { ...getGiftCertificate(), code: 'gc2' },
-        ],
+        data: [getGiftCertificate(), { ...getGiftCertificate(), code: 'gc2' }],
         errors: {},
         statuses: {},
     };

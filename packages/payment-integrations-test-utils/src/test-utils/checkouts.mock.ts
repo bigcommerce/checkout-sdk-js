@@ -1,21 +1,21 @@
-import { Checkout } from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { Checkout } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { getBillingAddress } from "./address.mock";
-import getCart from "./carts.mock";
-import getConsignment from "./consignment.mock";
-import { getCustomer } from "./customer.mock";
+import { getBillingAddress } from './address.mock';
+import getCart from './carts.mock';
+import getConsignment from './consignment.mock';
+import { getCustomer } from './customer.mock';
 
 export default function getCheckout(): Checkout {
     return {
-        id: "b20deef40f9699e48671bbc3fef6ca44dc80e3c7",
+        id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         cart: getCart(),
         customer: getCustomer(),
-        customerMessage: "comment",
+        customerMessage: 'comment',
         billingAddress: getBillingAddress(),
         consignments: [getConsignment()],
         taxes: [
             {
-                name: "Tax",
+                name: 'Tax',
                 amount: 3,
             },
         ],
@@ -34,14 +34,14 @@ export default function getCheckout(): Checkout {
         outstandingBalance: 190,
         giftCertificates: [],
         balanceDue: 0,
-        createdTime: "2018-03-06T04:41:49+00:00",
-        updatedTime: "2018-03-07T03:44:51+00:00",
+        createdTime: '2018-03-06T04:41:49+00:00',
+        updatedTime: '2018-03-07T03:44:51+00:00',
         promotions: [
             {
                 banners: [
                     {
-                        type: "upsell",
-                        text: "foo",
+                        type: 'upsell',
+                        text: 'foo',
                     },
                 ],
             },

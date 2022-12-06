@@ -12,27 +12,26 @@ import { GooglePayInitializer } from './googlepay';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
-export default function createGooglePayPaymentProcessor(store: CheckoutStore, initializer: GooglePayInitializer): GooglePayPaymentProcessor {
+export default function createGooglePayPaymentProcessor(
+    store: CheckoutStore,
+    initializer: GooglePayInitializer,
+): GooglePayPaymentProcessor {
     const requestSender = createRequestSender();
     const scriptLoader = getScriptLoader();
 
     return new GooglePayPaymentProcessor(
         store,
-        new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(requestSender)
-        ),
+        new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new GooglePayScriptLoader(scriptLoader),
         initializer,
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
-            new SubscriptionsActionCreator(
-                new SubscriptionsRequestSender(requestSender)
-            )
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
         ),
         new ConsignmentActionCreator(
             new ConsignmentRequestSender(requestSender),
-            new CheckoutRequestSender(requestSender)
+            new CheckoutRequestSender(requestSender),
         ),
-        requestSender
+        requestSender,
     );
 }

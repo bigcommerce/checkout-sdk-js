@@ -7,7 +7,10 @@ import { StandardError } from '../../common/error/errors';
  */
 export default class PaymentMethodFailedError extends StandardError {
     constructor(message?: string) {
-        super(message || 'Unable to proceed because the client library of a payment method has thrown an unexpected error.');
+        super(
+            message ||
+                'Unable to proceed because the client library of a payment method has thrown an unexpected error.',
+        );
 
         this.name = 'PaymentMethodFailedError';
         this.type = 'payment_method_client_invalid';

@@ -5,10 +5,7 @@ import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 import { CountryResponseBody } from './country-responses';
 
 export default class CountryRequestSender {
-    constructor(
-        private _requestSender: RequestSender,
-        private _config: { locale?: string }
-    ) {}
+    constructor(private _requestSender: RequestSender, private _config: { locale?: string }) {}
 
     loadCountries({ timeout }: RequestOptions = {}): Promise<Response<CountryResponseBody>> {
         const url = '/internalapi/v1/store/countries';

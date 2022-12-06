@@ -5,20 +5,27 @@ import { MissingDataError, MissingDataErrorType } from '../../../common/error/er
 import PaymentMethod from '../../payment-method';
 import { BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
-import { GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizePayload,
+} from './googlepay';
+import {
+    GooglePayBraintreeDataRequest,
+    GooglePayBraintreePaymentDataRequestV1,
+} from './googlepay-braintree';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
     private _googlePaymentInstance!: GooglePayBraintreeSDK;
 
-    constructor(
-        private _braintreeSDKCreator: BraintreeSDKCreator
-    ) {}
+    constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -26,14 +33,15 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
 
-        return this._braintreeSDKCreator.getGooglePaymentComponent()
-            .then(googleBraintreePaymentInstance => {
+        return this._braintreeSDKCreator
+            .getGooglePaymentComponent()
+            .then((googleBraintreePaymentInstance) => {
                 this._googlePaymentInstance = googleBraintreePaymentInstance;
 
                 return this._createGooglePayPayload(
                     checkout,
                     paymentMethod.initializationData,
-                    hasShippingAddress
+                    hasShippingAddress,
                 );
             });
     }
@@ -43,7 +51,8 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
     }
 
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
-        const payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token).androidPayCards[0];
+        const payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token)
+            .androidPayCards[0];
 
         return Promise.resolve({
             nonce: payload.nonce,
@@ -61,7 +70,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
     private _createGooglePayPayload(
         checkout: Checkout,
         initializationData: any,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         if (!initializationData.platformToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -88,11 +97,15 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         };
 
         return this._mapGooglePayBraintreeDataRequestToGooglePayDataRequestV2(
-            this._googlePaymentInstance.createPaymentDataRequest(googlePayBraintreePaymentDataRequest)
+            this._googlePaymentInstance.createPaymentDataRequest(
+                googlePayBraintreePaymentDataRequest,
+            ),
         );
     }
 
-    private _mapGooglePayBraintreeDataRequestToGooglePayDataRequestV2(googlePayBraintreeDataRequestV1: GooglePayBraintreePaymentDataRequestV1): GooglePayPaymentDataRequestV2 {
+    private _mapGooglePayBraintreeDataRequestToGooglePayDataRequestV2(
+        googlePayBraintreeDataRequestV1: GooglePayBraintreePaymentDataRequestV1,
+    ): GooglePayPaymentDataRequestV2 {
         return {
             apiVersion: 2,
             apiVersionMinor: 0,
@@ -101,28 +114,37 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 merchantId: googlePayBraintreeDataRequestV1.merchantInfo.merchantId,
                 merchantName: googlePayBraintreeDataRequestV1.merchantInfo.merchantName,
             },
-            allowedPaymentMethods: [{
-                type: 'CARD',
-                parameters: {
-                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: googlePayBraintreeDataRequestV1.cardRequirements.allowedCardNetworks,
-                    billingAddressRequired: true,
-                    billingAddressParameters: {
-                        format: BillingAddressFormat.Full,
-                        phoneNumberRequired: true,
-                    },
-                },
-                tokenizationSpecification: {
-                    type: 'PAYMENT_GATEWAY',
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
                     parameters: {
-                        gateway: 'braintree',
-                        'braintree:apiVersion': 'v1',
-                        'braintree:authorizationFingerprint': googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters.parameters['braintree:authorizationFingerprint'],
-                        'braintree:merchantId': googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters.parameters['braintree:merchantId'],
-                        'braintree:sdkVersion': googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters.parameters['braintree:sdkVersion'],
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks:
+                            googlePayBraintreeDataRequestV1.cardRequirements.allowedCardNetworks,
+                        billingAddressRequired: true,
+                        billingAddressParameters: {
+                            format: BillingAddressFormat.Full,
+                            phoneNumberRequired: true,
+                        },
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: 'braintree',
+                            'braintree:apiVersion': 'v1',
+                            'braintree:authorizationFingerprint':
+                                googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters
+                                    .parameters['braintree:authorizationFingerprint'],
+                            'braintree:merchantId':
+                                googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters
+                                    .parameters['braintree:merchantId'],
+                            'braintree:sdkVersion':
+                                googlePayBraintreeDataRequestV1.paymentMethodTokenizationParameters
+                                    .parameters['braintree:sdkVersion'],
+                        },
                     },
                 },
-            }],
+            ],
             transactionInfo: googlePayBraintreeDataRequestV1.transactionInfo,
             emailRequired: true,
             shippingAddressRequired: googlePayBraintreeDataRequestV1.shippingAddressRequired,

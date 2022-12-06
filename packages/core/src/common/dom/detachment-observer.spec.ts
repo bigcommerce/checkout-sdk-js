@@ -20,16 +20,14 @@ describe('DetachmentObserver', () => {
         };
 
         mutationObserverFactory = {
-            create: jest.fn(callback => {
+            create: jest.fn((callback) => {
                 mutationEventEmitter.on('remove', callback);
 
                 return mutationObserver;
             }),
         };
 
-        subject = new DetachmentObserver(
-            mutationObserverFactory as MutationObserverFactory
-        );
+        subject = new DetachmentObserver(mutationObserverFactory as MutationObserverFactory);
     });
 
     it('throws error and stops observing if targetted element is removed before promise is resolved', async () => {
@@ -42,26 +40,22 @@ describe('DetachmentObserver', () => {
         try {
             await output;
         } catch (error) {
-            expect(error)
-                .toEqual(expect.any(UnexpectedDetachmentError));
+            expect(error).toEqual(expect.any(UnexpectedDetachmentError));
 
-            expect(mutationObserver.disconnect)
-                .toHaveBeenCalled();
+            expect(mutationObserver.disconnect).toHaveBeenCalled();
         }
     });
 
     it('returns promised value and stops observing if targetted element is not removed before promise is resolved', async () => {
         const eventEmitter = new EventEmitter();
         const element = document.createElement('div');
-        const promise = new Promise(resolve => eventEmitter.on('resolve', resolve));
+        const promise = new Promise((resolve) => eventEmitter.on('resolve', resolve));
         const output = subject.ensurePresence([element], promise);
 
         eventEmitter.emit('resolve', 'foobar');
 
-        expect(await output)
-            .toEqual('foobar');
+        expect(await output).toBe('foobar');
 
-        expect(mutationObserver.disconnect)
-            .toHaveBeenCalled();
+        expect(mutationObserver.disconnect).toHaveBeenCalled();
     });
 });

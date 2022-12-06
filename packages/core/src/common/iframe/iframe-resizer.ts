@@ -23,7 +23,10 @@ export {
 // its public interfaces. The re-exports do not cause any side effect because
 // they are plain TypeScript interfaces; meaning they are only used for type
 // checks rather than for code output.
-export function iframeResizer(options: IFrameOptions, target: string | HTMLElement): IFrameComponent[] {
+export function iframeResizer(
+    options: IFrameOptions,
+    target: string | HTMLElement,
+): IFrameComponent[] {
     /* eslint-disable @typescript-eslint/no-var-requires */
     const { iframeResizer: originalIframeResizer } = require('iframe-resizer');
 

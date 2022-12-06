@@ -1,1 +1,5 @@
-export { isHumanVerification, handleHumanVerification, HumanVerification } from './human-verification';
+export {
+    isHumanVerification,
+    handleHumanVerification,
+    HumanVerification,
+} from './human-verification';

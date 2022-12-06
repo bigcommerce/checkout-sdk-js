@@ -14,19 +14,17 @@ export enum GiftCertificateActionType {
     RemoveGiftCertificateFailed = 'REMOVE_GIFT_CERTIFICATE_FAILED',
 }
 
-export type GiftCertificateAction =
-    ApplyGiftCertificateAction |
-    RemoveGiftCertificateAction;
+export type GiftCertificateAction = ApplyGiftCertificateAction | RemoveGiftCertificateAction;
 
 export type ApplyGiftCertificateAction =
-    ApplyGiftCertificateRequestedAction |
-    ApplyGiftCertificateSucceededAction |
-    ApplyGiftCertificateFailedAction;
+    | ApplyGiftCertificateRequestedAction
+    | ApplyGiftCertificateSucceededAction
+    | ApplyGiftCertificateFailedAction;
 
 export type RemoveGiftCertificateAction =
-    RemoveGiftCertificateRequestedAction |
-    RemoveGiftCertificateSucceededAction |
-    RemoveGiftCertificateFailedAction;
+    | RemoveGiftCertificateRequestedAction
+    | RemoveGiftCertificateSucceededAction
+    | RemoveGiftCertificateFailedAction;
 
 export interface ApplyGiftCertificateRequestedAction extends Action {
     type: GiftCertificateActionType.ApplyGiftCertificateRequested;
@@ -36,7 +34,8 @@ export interface ApplyGiftCertificateSucceededAction extends Action<Checkout> {
     type: GiftCertificateActionType.ApplyGiftCertificateSucceeded;
 }
 
-export interface ApplyGiftCertificateFailedAction extends Action<RequestError<StorefrontErrorResponseBody>> {
+export interface ApplyGiftCertificateFailedAction
+    extends Action<RequestError<StorefrontErrorResponseBody>> {
     type: GiftCertificateActionType.ApplyGiftCertificateFailed;
 }
 
@@ -48,6 +47,7 @@ export interface RemoveGiftCertificateSucceededAction extends Action<Checkout> {
     type: GiftCertificateActionType.RemoveGiftCertificateSucceeded;
 }
 
-export interface RemoveGiftCertificateFailedAction extends Action<RequestError<StorefrontErrorResponseBody>> {
+export interface RemoveGiftCertificateFailedAction
+    extends Action<RequestError<StorefrontErrorResponseBody>> {
     type: GiftCertificateActionType.RemoveGiftCertificateFailed;
 }

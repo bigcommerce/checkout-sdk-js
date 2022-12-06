@@ -11,7 +11,11 @@ import BraintreeSDKCreator from './braintree-sdk-creator';
 import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-payment-processor';
 import { getVisaCheckoutMock } from './braintree.mock';
 import { VisaCheckoutPaymentSuccessPayload } from './visacheckout';
-import { getPaymentSuccessPayload, getTokenizedPayload, getVisaCheckoutRequestBody } from './visacheckout.mock';
+import {
+    getPaymentSuccessPayload,
+    getTokenizedPayload,
+    getVisaCheckoutRequestBody,
+} from './visacheckout.mock';
 
 describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
@@ -19,6 +23,7 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
     beforeEach(() => {
         const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader());
+
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         braintreeSDKCreator.initialize = jest.fn();
 
@@ -26,8 +31,14 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     });
 
     it('creates an instance of BraintreeVisaCheckoutProcessor', () => {
-        const braintreeVisaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(braintreeSDKCreator, requestSender);
-        expect(braintreeVisaCheckoutPaymentProcessor).toBeInstanceOf(BraintreeVisaCheckoutPaymentProcessor);
+        const braintreeVisaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(
+            braintreeSDKCreator,
+            requestSender,
+        );
+
+        expect(braintreeVisaCheckoutPaymentProcessor).toBeInstanceOf(
+            BraintreeVisaCheckoutPaymentProcessor,
+        );
     });
 
     describe('#initialize()', () => {
@@ -37,17 +48,25 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
         beforeEach(() => {
             visaCheckoutMock = getVisaCheckoutMock();
             braintreeSDKCreator.getVisaCheckout = jest.fn(() => Promise.resolve(visaCheckoutMock));
-            visaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(braintreeSDKCreator, requestSender);
+            visaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(
+                braintreeSDKCreator,
+                requestSender,
+            );
         });
 
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
             visaCheckoutPaymentProcessor.initialize('clientToken', {});
+
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken');
         });
 
         it('maps the init options to the ones required by the braintree visacheckout module', async () => {
-            const visaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(braintreeSDKCreator, requestSender);
+            const visaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(
+                braintreeSDKCreator,
+                requestSender,
+            );
+
             await visaCheckoutPaymentProcessor.initialize('clientToken', {
                 locale: 'es_ES',
                 collectShipping: true,
@@ -81,33 +100,50 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
         beforeEach(() => {
             visaCheckoutMock = getVisaCheckoutMock();
             braintreeSDKCreator.getVisaCheckout = jest.fn(() => Promise.resolve(visaCheckoutMock));
-            braintreeSDKCreator.getDataCollector = jest.fn(() => Promise.resolve({
-                deviceData: 'my_device_session_id',
-            }));
+            braintreeSDKCreator.getDataCollector = jest.fn(() =>
+                Promise.resolve({
+                    deviceData: 'my_device_session_id',
+                }),
+            );
             billing = getBillingAddress();
             shipping = getShippingAddress();
             paymentInformation = getPaymentSuccessPayload();
             requestBody = getVisaCheckoutRequestBody();
 
             requestSender.post = jest.fn(() => Promise.resolve());
-            braintreeVisaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(braintreeSDKCreator, requestSender);
+            braintreeVisaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(
+                braintreeSDKCreator,
+                requestSender,
+            );
         });
 
         it('posts the relevant information to bcapp to update the current checkout', async () => {
             visaCheckoutMock.tokenize = jest.fn(() => Promise.resolve(getTokenizedPayload()));
+
             const paymentInformation = getPaymentSuccessPayload();
 
-            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(paymentInformation, billing, shipping);
+            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(
+                paymentInformation,
+                billing,
+                shipping,
+            );
 
-            expect(requestSender.post)
-                .toHaveBeenCalledWith('/checkout.php', getVisaCheckoutRequestBody());
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/checkout.php',
+                getVisaCheckoutRequestBody(),
+            );
         });
 
         it('uses current shipping address if not provided by visa checkout', async () => {
             const { shippingAddress, ...tokenizedPayload } = getTokenizedPayload();
+
             visaCheckoutMock.tokenize = jest.fn(() => Promise.resolve(tokenizedPayload));
 
-            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(paymentInformation, billing, shipping);
+            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(
+                paymentInformation,
+                billing,
+                shipping,
+            );
 
             expect(requestSender.post).toHaveBeenCalledWith('/checkout.php', {
                 ...requestBody,
@@ -123,9 +159,14 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
         it('uses current billing address if not provided by visa checkout', async () => {
             const { billingAddress, ...tokenizedPayload } = getTokenizedPayload();
+
             visaCheckoutMock.tokenize = jest.fn(() => Promise.resolve(tokenizedPayload));
 
-            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(paymentInformation, billing , shipping);
+            await braintreeVisaCheckoutPaymentProcessor.handleSuccess(
+                paymentInformation,
+                billing,
+                shipping,
+            );
 
             expect(requestSender.post).toHaveBeenCalledWith('/checkout.php', {
                 ...requestBody,

@@ -53,11 +53,11 @@ describe('Overlay', () => {
 
             const element = document.getElementById('overlay');
 
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 setTimeout(resolve, 400);
             });
 
-            expect(element!.style.opacity).toEqual('1');
+            expect(element!.style.opacity).toBe('1');
         });
 
         it('fades element out of view', async () => {
@@ -67,11 +67,11 @@ describe('Overlay', () => {
 
             overlay.remove();
 
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 setTimeout(resolve, 400);
             });
 
-            expect(element!.style.opacity).toEqual('0');
+            expect(element!.style.opacity).toBe('0');
         });
 
         it('removes click handler when element is removed', () => {
@@ -160,6 +160,7 @@ describe('Overlay', () => {
     describe('with modal and inner element', () => {
         beforeEach(() => {
             const innerHtml = document.createElement('div');
+
             innerHtml.id = 'innerElement';
             overlay = new Overlay({ innerHtml });
         });
@@ -190,12 +191,15 @@ describe('Overlay', () => {
 
         it('shows Document Fragment of inner elements', () => {
             const innerElement = document.createElement('div');
+
             innerElement.id = 'innerElement';
 
             const innerElement2 = document.createElement('div');
+
             innerElement2.id = 'innerElement2';
 
             const fragment = document.createDocumentFragment();
+
             fragment.appendChild(innerElement);
             fragment.appendChild(innerElement2);
 

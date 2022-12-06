@@ -34,22 +34,27 @@ describe('CheckoutRequestSender', () => {
 
     describe('loadCheckout', () => {
         it('returns the response of the requestSender', async () => {
-            expect(await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4')).toEqual(response);
+            expect(
+                await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4'),
+            ).toEqual(response);
         });
 
         it('sends expected params to requestSender', async () => {
             await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
 
-            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.get).toHaveBeenCalledWith(
+                '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes,
+                    },
+                    timeout: undefined,
                 },
-                params: {
-                    include: defaultIncludes,
-                },
-                timeout: undefined,
-            });
+            );
         });
 
         it('appends passed params when loading checkout', async () => {
@@ -59,20 +64,27 @@ describe('CheckoutRequestSender', () => {
                 },
             });
 
-            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.get).toHaveBeenCalledWith(
+                '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes.concat(
+                            `,${CheckoutIncludes.AvailableShippingOptions}`,
+                        ),
+                        timeout: undefined,
+                    },
                 },
-                params: {
-                    include: defaultIncludes.concat(`,${CheckoutIncludes.AvailableShippingOptions}`),
-                    timeout: undefined,
-                },
-            });
+            );
         });
 
         it('throws CheckoutNotAvailable if the request status is in the 400 range', async () => {
-            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
+            jest.spyOn(requestSender, 'get').mockRejectedValue(
+                getErrorResponse(undefined, undefined, 404),
+            );
 
             try {
                 await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
@@ -82,7 +94,9 @@ describe('CheckoutRequestSender', () => {
         });
 
         it('throws a generic request error if status in the 500 range', async () => {
-            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 500));
+            jest.spyOn(requestSender, 'get').mockRejectedValue(
+                getErrorResponse(undefined, undefined, 500),
+            );
 
             try {
                 await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
@@ -94,8 +108,11 @@ describe('CheckoutRequestSender', () => {
 
     describe('updateCheckout', () => {
         it('returns the response of the requestSender', async () => {
-            expect(await checkoutRequestSender.updateCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', { customerMessage: 'foo' }))
-                .toEqual(response);
+            expect(
+                await checkoutRequestSender.updateCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                    customerMessage: 'foo',
+                }),
+            ).toEqual(response);
         });
 
         it('sends expected params to requestSender', async () => {
@@ -106,22 +123,27 @@ describe('CheckoutRequestSender', () => {
                     params: {
                         include: [CheckoutIncludes.AvailableShippingOptions],
                     },
-                }
+                },
             );
 
-            expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.put).toHaveBeenCalledWith(
+                '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    body: {
+                        customerMessage: 'foo',
+                    },
+                    params: {
+                        include: defaultIncludes.concat(
+                            `,${CheckoutIncludes.AvailableShippingOptions}`,
+                        ),
+                    },
+                    timeout: undefined,
                 },
-                body: {
-                    customerMessage: 'foo',
-                },
-                params: {
-                    include: defaultIncludes.concat(`,${CheckoutIncludes.AvailableShippingOptions}`),
-                },
-                timeout: undefined,
-            });
+            );
         });
     });
 });

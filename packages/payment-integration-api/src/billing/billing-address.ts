@@ -1,4 +1,4 @@
-import { Address, AddressRequestBody } from "../address";
+import { Address, AddressRequestBody } from '../address';
 
 export default interface BillingAddress extends Address {
     id: string;
@@ -9,7 +9,6 @@ export interface BillingAddressRequestBody extends AddressRequestBody {
     email?: string;
 }
 
-export interface BillingAddressUpdateRequestBody
-    extends BillingAddressRequestBody {
+export interface BillingAddressUpdateRequestBody extends BillingAddressRequestBody {
     id: string;
 }

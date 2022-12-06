@@ -18,10 +18,10 @@ describe('objectFlatten()', () => {
     it('flattens a nested object', () => {
         const newValue = {
             consignmentId: '55c96cda6f04c',
-            ['searchArea.radius.value']: 1.4,
-            ['searchArea.radius.unit']: 0,
-            ['searchArea.coordinates.latitude']: 1.4,
-            ['searchArea.coordinates.longitude']: 1.4,
+            'searchArea.radius.value': 1.4,
+            'searchArea.radius.unit': 0,
+            'searchArea.coordinates.latitude': 1.4,
+            'searchArea.coordinates.longitude': 1.4,
         };
 
         const result = objectFlatten(testObject);

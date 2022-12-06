@@ -7,11 +7,16 @@ export interface DigitalRiverWindow extends Window {
     DigitalRiver?: DigitalRiverClass;
 }
 
-export type DigitalRiverClass = new(apiKey: string, options?: DigitalRiverJSOptions) => DigitalRiverJS;
+export type DigitalRiverClass = new (
+    apiKey: string,
+    options?: DigitalRiverJSOptions,
+) => DigitalRiverJS;
 
 export default interface DigitalRiverJS {
     createDropin(configuration: DigitalRiverDropInConfiguration): DigitalRiverDropIn;
-    authenticateSource(data: DigitalRiverAuthenticateSourceRequest): Promise<DigitalRiverAuthenticateSourceResponse>;
+    authenticateSource(
+        data: DigitalRiverAuthenticateSourceRequest,
+    ): Promise<DigitalRiverAuthenticateSourceResponse>;
     createElement(type: string, options: DigitalRiverElementOptions): DigitalRiverElement;
 }
 
@@ -213,9 +218,9 @@ export interface OnSuccessResponse {
                 line1: string;
                 postalCode: string;
                 state: string;
-            }
-        }
-    }
+            };
+        };
+    };
 
     /**
      * Indicates whether the source has been enabled for future use.

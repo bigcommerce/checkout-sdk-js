@@ -21,38 +21,38 @@ export enum PaymentStrategyActionType {
 }
 
 export type PaymentStrategyAction =
-    PaymentStrategyExecuteAction |
-    PaymentStrategyFinalizeAction |
-    PaymentStrategyInitializeAction |
-    PaymentStrategyDeinitializeAction |
-    PaymentStrategyWidgetAction;
+    | PaymentStrategyExecuteAction
+    | PaymentStrategyFinalizeAction
+    | PaymentStrategyInitializeAction
+    | PaymentStrategyDeinitializeAction
+    | PaymentStrategyWidgetAction;
 
 export type PaymentStrategyExecuteAction =
-    ExecuteRequestedAction |
-    ExecuteSucceededAction |
-    ExecuteFailedAction |
-    LoadOrderPaymentsAction;
+    | ExecuteRequestedAction
+    | ExecuteSucceededAction
+    | ExecuteFailedAction
+    | LoadOrderPaymentsAction;
 
 export type PaymentStrategyFinalizeAction =
-    FinalizeRequestedAction |
-    FinalizeSucceededAction |
-    FinalizeFailedAction |
-    LoadOrderPaymentsAction;
+    | FinalizeRequestedAction
+    | FinalizeSucceededAction
+    | FinalizeFailedAction
+    | LoadOrderPaymentsAction;
 
 export type PaymentStrategyInitializeAction =
-    InitializeRequestedAction |
-    InitializeSucceededAction |
-    InitializeFailedAction;
+    | InitializeRequestedAction
+    | InitializeSucceededAction
+    | InitializeFailedAction;
 
 export type PaymentStrategyDeinitializeAction =
-    DeinitializeRequestedAction |
-    DeinitializeSucceededAction |
-    DeinitializeFailedAction;
+    | DeinitializeRequestedAction
+    | DeinitializeSucceededAction
+    | DeinitializeFailedAction;
 
 export type PaymentStrategyWidgetAction =
-    WidgetInteractionStartedAction |
-    WidgetInteractionFinishedAction |
-    WidgetInteractionFailedAction;
+    | WidgetInteractionStartedAction
+    | WidgetInteractionFinishedAction
+    | WidgetInteractionFailedAction;
 
 export interface ExecuteRequestedAction extends Action {
     type: PaymentStrategyActionType.ExecuteRequested;

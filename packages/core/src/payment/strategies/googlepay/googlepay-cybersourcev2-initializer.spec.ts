@@ -1,5 +1,11 @@
 import GooglePayCybersourceV2Initializer from './googlepay-cybersourcev2-initializer';
-import { getCheckoutMock, getCybersourceV2PaymentDataMock, getCybersourceV2PaymentDataRequest, getCybersourceV2PaymentMethodMock, getCybersourceV2TokenizedPayload  } from './googlepay.mock';
+import {
+    getCheckoutMock,
+    getCybersourceV2PaymentDataMock,
+    getCybersourceV2PaymentDataRequest,
+    getCybersourceV2PaymentMethodMock,
+    getCybersourceV2TokenizedPayload,
+} from './googlepay.mock';
 
 describe('GooglePayCybersourceV2Initializer', () => {
     let googlePayInitializer: GooglePayCybersourceV2Initializer;
@@ -17,7 +23,7 @@ describe('GooglePayCybersourceV2Initializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getCybersourceV2PaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getCybersourceV2PaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayCybersourceV2Initializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getCybersourceV2PaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getCybersourceV2PaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getCybersourceV2TokenizedPayload());
         });

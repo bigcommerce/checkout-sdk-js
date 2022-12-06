@@ -1,17 +1,31 @@
 import {
-    OrderRequestBody,
     OrderPaymentRequestBody,
+    OrderRequestBody,
     Payment,
     PaymentInitializeOptions,
     RequestError,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getCreditCardInstrument, getErrorPaymentResponseBody, getVaultedInstrument, getResponse,
-} from "@bigcommerce/checkout-sdk/payment-integrations-test-utils";
+    getCreditCardInstrument,
+    getErrorPaymentResponseBody,
+    getResponse,
+    getVaultedInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { AdyenAdditionalActionErrorResponse, AdyenClient, AdyenComponent, AdyenComponentState, AdyenConfiguration, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
+import {
+    AdyenAdditionalActionErrorResponse,
+    AdyenClient,
+    AdyenComponent,
+    AdyenComponentState,
+    AdyenConfiguration,
+    AdyenError,
+    AdyenPaymentMethodType,
+    ResultCode,
+} from './adyenv2';
 
-function getAdditionalActionErrorResponse(resultCode: ResultCode): AdyenAdditionalActionErrorResponse {
+function getAdditionalActionErrorResponse(
+    resultCode: ResultCode,
+): AdyenAdditionalActionErrorResponse {
     return {
         provider_data: {
             resultCode,
@@ -50,10 +64,12 @@ function getVaultedPayment(paymentMethodType: AdyenPaymentMethodType): Payment {
 }
 
 export function getAdditionalActionError(resultCode: ResultCode): RequestError {
-    return new RequestError(getResponse({
-        ...getErrorPaymentResponseBody(),
-        ...getAdditionalActionErrorResponse(resultCode),
-    }));
+    return new RequestError(
+        getResponse({
+            ...getErrorPaymentResponseBody(),
+            ...getAdditionalActionErrorResponse(resultCode),
+        }),
+    );
 }
 
 export function getAdyenClient(): AdyenClient {
@@ -75,13 +91,15 @@ export function getAdyenClient(): AdyenClient {
 }
 
 export function getAdyenConfiguration(useOriginKey = true): AdyenConfiguration {
-    return useOriginKey ? {
-        environment: 'test',
-        originKey: 'YOUR_ORIGIN_KEY',
-    } : {
-        environment: 'test',
-        clientKey: 'YOUR_CLIENT_KEY',
-    };
+    return useOriginKey
+        ? {
+              environment: 'test',
+              originKey: 'YOUR_ORIGIN_KEY',
+          }
+        : {
+              environment: 'test',
+              clientKey: 'YOUR_CLIENT_KEY',
+          };
 }
 
 export function getAdyenError(): AdyenError {
@@ -196,14 +214,18 @@ export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitialize
     };
 }
 
-export function getOrderRequestBody(paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard): OrderRequestBody {
+export function getOrderRequestBody(
+    paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard,
+): OrderRequestBody {
     return {
         useStoreCredit: false,
         payment: getPayment(paymentMethodType) as OrderPaymentRequestBody,
     };
 }
 
-export function getOrderRequestBodyWithVaultedInstrument(paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard): OrderRequestBody {
+export function getOrderRequestBodyWithVaultedInstrument(
+    paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard,
+): OrderRequestBody {
     return {
         useStoreCredit: false,
         payment: getVaultedPayment(paymentMethodType) as OrderPaymentRequestBody,
@@ -218,8 +240,10 @@ export function getOrderRequestBodyWithoutPayment(): OrderRequestBody {
 }
 
 export function getUnknownError(): RequestError {
-    return new RequestError(getResponse({
-        ...getUnknownErrorResponse(),
-        ...getErrorPaymentResponseBody(),
-    }));
+    return new RequestError(
+        getResponse({
+            ...getUnknownErrorResponse(),
+            ...getErrorPaymentResponseBody(),
+        }),
+    );
 }

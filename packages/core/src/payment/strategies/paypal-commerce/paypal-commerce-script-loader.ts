@@ -1,18 +1,22 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
+
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
-
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import { FundingType, PaypalCommerceHostWindow, PaypalCommerceInitializationData, PaypalCommerceScriptParams, PaypalCommerceSDK } from './paypal-commerce-sdk';
+import {
+    FundingType,
+    PaypalCommerceHostWindow,
+    PaypalCommerceInitializationData,
+    PaypalCommerceScriptParams,
+    PaypalCommerceSDK,
+} from './paypal-commerce-sdk';
 
 export default class PaypalCommerceScriptLoader {
     private _window: PaypalCommerceHostWindow;
     private _paypalSdk?: Promise<PaypalCommerceSDK>;
 
-    constructor(
-        private _scriptLoader: ScriptLoader
-    ) {
+    constructor(private _scriptLoader: ScriptLoader) {
         this._window = window;
     }
 
@@ -23,14 +27,20 @@ export default class PaypalCommerceScriptLoader {
     ): Promise<PaypalCommerceSDK> {
         if (!this._paypalSdk) {
             this._paypalSdk = this.loadPayPalSDK(
-                this._getPayPalSdkScriptConfigOrThrow(paymentMethod, currencyCode, initializesOnCheckoutPage)
+                this._getPayPalSdkScriptConfigOrThrow(
+                    paymentMethod,
+                    currencyCode,
+                    initializesOnCheckoutPage,
+                ),
             );
         }
 
         return this._paypalSdk;
     }
 
-    private async loadPayPalSDK(paypalSdkScriptConfig: PaypalCommerceScriptParams): Promise<PaypalCommerceSDK> {
+    private async loadPayPalSDK(
+        paypalSdkScriptConfig: PaypalCommerceScriptParams,
+    ): Promise<PaypalCommerceSDK> {
         if (!this._window.paypalLoadScript) {
             const PAYPAL_SDK_VERSION = '5.0.5';
             const scriptSrc = `https://unpkg.com/@paypal/paypal-js@${PAYPAL_SDK_VERSION}/dist/iife/paypal-js.min.js`;
@@ -77,7 +87,8 @@ export default class PaypalCommerceScriptLoader {
 
         const shouldShowInlineCheckout = !initializesOnCheckoutPage && isInlineCheckoutEnabled;
 
-        const commit = shouldShowInlineCheckout || isHostedCheckoutEnabled || initializesOnCheckoutPage;
+        const commit =
+            shouldShowInlineCheckout || isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
         const shouldEnableCard = shouldShowInlineCheckout || id === 'paypalcommercecreditcards';
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
@@ -91,11 +102,23 @@ export default class PaypalCommerceScriptLoader {
         const disableVenmoFunding = !shouldEnableAPMs || !isVenmoEnabled ? ['venmo'] : [];
         const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
         const disableAPMsFunding = shouldEnableAPMs
-            ? availableAlternativePaymentMethods.filter((apm: string) => !enabledAlternativePaymentMethods.includes(apm))
+            ? availableAlternativePaymentMethods.filter(
+                  (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+              )
             : availableAlternativePaymentMethods;
 
-        const disableFunding: FundingType = [...disableCardFunding, ...disableCreditFunding, ...disableVenmoFunding, ...disableAPMsFunding];
-        const enableFunding: FundingType = [...enableCardFunding, ...enableCreditFunding, ...enableVenmoFunding, ...enableAPMsFunding];
+        const disableFunding: FundingType = [
+            ...disableCardFunding,
+            ...disableCreditFunding,
+            ...disableVenmoFunding,
+            ...disableAPMsFunding,
+        ];
+        const enableFunding: FundingType = [
+            ...enableCardFunding,
+            ...enableCreditFunding,
+            ...enableVenmoFunding,
+            ...enableAPMsFunding,
+        ];
 
         return {
             'client-id': clientId,

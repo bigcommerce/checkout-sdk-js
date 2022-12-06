@@ -11,10 +11,12 @@ interface FormPost {
     type: ActionTypes.FORM_POST;
     formPost: {
         formPostUrl: string;
-        formFields: [{
-            fieldName: string;
-            fieldValue: string;
-        }];
+        formFields: [
+            {
+                fieldName: string;
+                fieldValue: string;
+            },
+        ];
     };
 }
 
@@ -29,6 +31,8 @@ export interface OpyPaymentMethod extends PaymentMethod {
     };
 }
 
-export function isOpyPaymentMethod(paymentMethod: PaymentMethod): paymentMethod is OpyPaymentMethod {
+export function isOpyPaymentMethod(
+    paymentMethod: PaymentMethod,
+): paymentMethod is OpyPaymentMethod {
     return !!paymentMethod.initializationData?.widgetConfig;
 }

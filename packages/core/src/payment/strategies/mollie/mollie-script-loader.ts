@@ -5,11 +5,7 @@ import { PaymentMethodClientUnavailableError } from '../../errors';
 import { MollieClient, MollieHostWindow } from './mollie';
 
 export default class MollieScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        private _window: Window = window
-    ) {
-    }
+    constructor(private _scriptLoader: ScriptLoader, private _window: Window = window) {}
 
     _isMollieWindow(window: Window): window is MollieHostWindow {
         const mollieWindow: MollieHostWindow = window as MollieHostWindow;

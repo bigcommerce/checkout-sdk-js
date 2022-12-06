@@ -1,4 +1,9 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 
 import { Address } from '../../address';
@@ -9,7 +14,16 @@ import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { InstrumentRequestContext } from './instrument';
 import InstrumentRequestSender from './instrument-request-sender';
 import { InternalVaultAccessTokenResponseBody } from './instrument-response-body';
-import { deleteInstrumentResponseBody, getErrorInstrumentResponseBody, getInstruments, getInternalInstrumentsResponseBody, getLoadInstrumentsResponseBody, getVaultAccessToken, getVaultAccessTokenResponseBody, instrumentRequestContext } from './instrument.mock';
+import {
+    deleteInstrumentResponseBody,
+    getErrorInstrumentResponseBody,
+    getInstruments,
+    getInternalInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
+    getVaultAccessToken,
+    getVaultAccessTokenResponseBody,
+    instrumentRequestContext,
+} from './instrument.mock';
 
 describe('InstrumentRequestSender', () => {
     let client: any;
@@ -50,7 +64,9 @@ describe('InstrumentRequestSender', () => {
                 ...response,
                 body: getVaultAccessToken(),
             });
-            expect(requestSender.get).toHaveBeenCalledWith(expect.any(String), { timeout: undefined });
+            expect(requestSender.get).toHaveBeenCalledWith(expect.any(String), {
+                timeout: undefined,
+            });
         });
 
         it('loads vault access token with timeout', async () => {
@@ -70,42 +86,50 @@ describe('InstrumentRequestSender', () => {
 
     describe('#loadInstruments()', () => {
         it('returns instruments if request is successful', async () => {
-            client.loadInstruments = jest.fn((_, callback) => callback(null,
-                getPaymentResponse(getInternalInstrumentsResponseBody())
-            ));
+            client.loadInstruments = jest.fn((_, callback) =>
+                callback(null, getPaymentResponse(getInternalInstrumentsResponseBody())),
+            );
 
             const response = await instrumentRequestSender.loadInstruments(requestContext);
 
-            expect(response).toEqual(getResponse({
-                vaultedInstruments: getInstruments(),
-            }));
+            expect(response).toEqual(
+                getResponse({
+                    vaultedInstruments: getInstruments(),
+                }),
+            );
 
             expect(client.loadInstrumentsWithAddress).not.toHaveBeenCalled();
             expect(client.loadInstruments).toHaveBeenCalledWith(
                 requestContext,
-                expect.any(Function)
+                expect.any(Function),
             );
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.loadInstruments = jest.fn((_, callback) => callback(
-                getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
-            ));
+            client.loadInstruments = jest.fn((_, callback) =>
+                callback(
+                    getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                ),
+            );
 
             try {
                 await instrumentRequestSender.loadInstruments(requestContext);
             } catch (error) {
-                expect(error)
-                    .toEqual(getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'));
+                expect(error).toEqual(
+                    getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                );
             }
         });
 
         it('returns loads trusted instruments if shipping address is available', async () => {
-            client.loadInstrumentsWithAddress = jest.fn((_, callback) => callback(null,
-                getPaymentResponse(getInternalInstrumentsResponseBody())
-            ));
+            client.loadInstrumentsWithAddress = jest.fn((_, callback) =>
+                callback(null, getPaymentResponse(getInternalInstrumentsResponseBody())),
+            );
 
-            const response = await instrumentRequestSender.loadInstruments(requestContext, shippingAddress);
+            const response = await instrumentRequestSender.loadInstruments(
+                requestContext,
+                shippingAddress,
+            );
 
             expect(response).toEqual(getResponse(getLoadInstrumentsResponseBody()));
 
@@ -115,50 +139,62 @@ describe('InstrumentRequestSender', () => {
                     ...requestContext,
                     shippingAddress: omit(getInternalShippingAddress(), 'id'),
                 },
-                expect.any(Function)
+                expect.any(Function),
             );
         });
 
         it('returns error response if request is unsuccessful when passing shipping address', async () => {
-            client.loadInstrumentsWithAddress = jest.fn((_, callback) => callback(
-                getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
-            ));
+            client.loadInstrumentsWithAddress = jest.fn((_, callback) =>
+                callback(
+                    getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                ),
+            );
 
             try {
                 await instrumentRequestSender.loadInstruments(requestContext, shippingAddress);
             } catch (error) {
-                expect(error)
-                    .toEqual(getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'));
+                expect(error).toEqual(
+                    getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                );
             }
         });
     });
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument if request is successful', async () => {
-            client.deleteShopperInstrument = jest.fn((_, callback) => callback(null,
-                getPaymentResponse(deleteInstrumentResponseBody())
-            ));
+            client.deleteShopperInstrument = jest.fn((_, callback) =>
+                callback(null, getPaymentResponse(deleteInstrumentResponseBody())),
+            );
 
             const instrumentId = '123';
-            const response = await instrumentRequestSender.deleteInstrument(requestContext, instrumentId);
+            const response = await instrumentRequestSender.deleteInstrument(
+                requestContext,
+                instrumentId,
+            );
 
             expect(response).toEqual(getResponse(deleteInstrumentResponseBody()));
-            expect(client.deleteShopperInstrument).toHaveBeenCalledWith({
-                ...requestContext,
-                instrumentId,
-            }, expect.any(Function));
+            expect(client.deleteShopperInstrument).toHaveBeenCalledWith(
+                {
+                    ...requestContext,
+                    instrumentId,
+                },
+                expect.any(Function),
+            );
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.deleteShopperInstrument = jest.fn((_, callback) => callback(
-                getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
-            ));
+            client.deleteShopperInstrument = jest.fn((_, callback) =>
+                callback(
+                    getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                ),
+            );
 
             try {
                 await instrumentRequestSender.deleteInstrument(requestContext, '');
             } catch (error) {
-                expect(error)
-                    .toEqual(getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'));
+                expect(error).toEqual(
+                    getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'),
+                );
             }
         });
     });

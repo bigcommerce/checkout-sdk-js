@@ -15,23 +15,12 @@ export function getCart(): Cart {
         baseAmount: 200,
         discountAmount: 10,
         cartAmount: 190,
-        coupons: [
-            getCoupon(),
-            getShippingCoupon(),
-        ],
-        discounts: [
-            getDiscount(),
-        ],
+        coupons: [getCoupon(), getShippingCoupon()],
+        discounts: [getDiscount()],
         lineItems: {
-            physicalItems: [
-                getPhysicalItem(),
-            ],
-            digitalItems: [
-                getDigitalItem(),
-            ],
-            giftCertificates: [
-                getGiftCertificateItem(),
-            ],
+            physicalItems: [getPhysicalItem()],
+            digitalItems: [getDigitalItem()],
+            giftCertificates: [getGiftCertificateItem()],
             customItems: [],
         },
         createdTime: '2018-03-06T04:41:49+00:00',

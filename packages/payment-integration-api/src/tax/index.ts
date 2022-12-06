@@ -1,1 +1,1 @@
-export { default as Tax } from "./tax";
+export { default as Tax } from './tax';

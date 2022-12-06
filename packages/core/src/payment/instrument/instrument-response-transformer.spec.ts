@@ -1,7 +1,13 @@
 import { getPaymentResponse, getResponse } from '../../common/http-request/responses.mock';
 
 import InstrumentResponseTransformer from './instrument-response-transformer';
-import { getErrorInstrumentResponseBody, getInternalInstrumentsResponseBody, getLoadInstrumentsResponseBody, getVaultAccessToken, getVaultAccessTokenResponseBody } from './instrument.mock';
+import {
+    getErrorInstrumentResponseBody,
+    getInternalInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
+    getVaultAccessToken,
+    getVaultAccessTokenResponseBody,
+} from './instrument.mock';
 
 describe('InstrumentResponseTransformer', () => {
     let instrumentResponseTransformer: InstrumentResponseTransformer;

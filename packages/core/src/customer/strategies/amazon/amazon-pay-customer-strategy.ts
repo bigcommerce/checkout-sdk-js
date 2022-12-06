@@ -1,9 +1,24 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
+import {
+    AmazonPayLoginButton,
+    AmazonPayScriptLoader,
+    AmazonPayWindow,
+} from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import {
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    ExecutePaymentMethodCheckoutOptions,
+} from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 import AmazonPayCustomerInitializeOptions from './amazon-pay-customer-initialize-options';
@@ -17,7 +32,7 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
-        private _scriptLoader: AmazonPayScriptLoader
+        private _scriptLoader: AmazonPayScriptLoader,
     ) {
         this._window = window;
     }
@@ -26,33 +41,38 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
         const { amazon: amazonOptions, methodId } = options;
 
         if (!amazonOptions || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "options.amazon" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.amazon" argument is not provided.',
+            );
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => new Promise<void>((resolve, reject) => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then(
+                (state) =>
+                    new Promise<void>((resolve, reject) => {
+                        this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-                if (!this._paymentMethod) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
+                        if (!this._paymentMethod) {
+                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                        }
 
-                const { onError = () => {} } = amazonOptions;
-                const onReady = () => {
-                    this._createSignInButton({
-                        ...amazonOptions,
-                        onError: error => {
-                            reject(error);
-                            onError(error);
-                        },
-                    });
+                        const { onError = () => {} } = amazonOptions;
+                        const onReady = () => {
+                            this._createSignInButton({
+                                ...amazonOptions,
+                                onError: (error) => {
+                                    reject(error);
+                                    onError(error);
+                                },
+                            });
 
-                    resolve();
-                };
+                            resolve();
+                        };
 
-                this._scriptLoader.loadWidget(this._paymentMethod, onReady)
-                    .catch(reject);
-            }))
+                        this._scriptLoader.loadWidget(this._paymentMethod, onReady).catch(reject);
+                    }),
+            )
             .then(() => this._store.getState());
     }
 
@@ -64,7 +84,7 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via AmazonPay, the shopper must click on "Login with Amazon" button.'
+            'In order to sign in via AmazonPay, the shopper must click on "Login with Amazon" button.',
         );
     }
 
@@ -77,11 +97,13 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
         }
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
+            this._remoteCheckoutActionCreator.signOut(payment.providerId, options),
         );
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<InternalCheckoutSelectors> {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());
@@ -98,33 +120,39 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
 
         const { initializationData } = this._paymentMethod;
 
-        return new this._window.OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
-            color: options.color || 'Gold',
-            size: options.size || 'small',
-            type: 'PwA',
-            useAmazonAddressBook: true,
-            onError: options.onError,
-            authorization: () => {
-                this._handleAuthorization(initializationData);
+        return new this._window.OffAmazonPayments.Button(
+            options.container,
+            this._paymentMethod.config.merchantId,
+            {
+                color: options.color || 'Gold',
+                size: options.size || 'small',
+                type: 'PwA',
+                useAmazonAddressBook: true,
+                onError: options.onError,
+                authorization: () => {
+                    this._handleAuthorization(initializationData);
+                },
             },
-        });
+        );
     }
 
     private _handleAuthorization(options: AuthorizationOptions): void {
-        this._remoteCheckoutRequestSender.generateToken()
-            .then(({ body }) => {
-                if (!this._window.amazon) {
-                    throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
-                }
+        this._remoteCheckoutRequestSender.generateToken().then(({ body }) => {
+            if (!this._window.amazon) {
+                throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
+            }
 
-                this._window.amazon.Login.authorize({
+            this._window.amazon.Login.authorize(
+                {
                     popup: false,
                     scope: 'payments:shipping_address payments:billing_address payments:widget profile',
                     state: `${options.tokenPrefix}${body.token}`,
-                }, options.redirectUrl);
+                },
+                options.redirectUrl,
+            );
 
-                this._remoteCheckoutRequestSender.trackAuthorizationEvent();
-            });
+            this._remoteCheckoutRequestSender.trackAuthorizationEvent();
+        });
     }
 }
 

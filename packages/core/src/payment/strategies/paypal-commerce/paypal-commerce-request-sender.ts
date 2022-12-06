@@ -13,14 +13,12 @@ export interface ParamsForProvider {
 }
 
 export default class PaypalCommerceRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
     // TODO: this method should be removed when provider will be passed as an argument
     // (to prevent containing unnecessary provider detecting logic inside)
     async setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<OrderData> {
-        const { isCredit, isCheckout, isCreditCard, isAPM, isVenmo} = params;
+        const { isCredit, isCheckout, isCreditCard, isAPM, isVenmo } = params;
         let provider = 'paypalcommerce';
 
         if (isCreditCard) {
@@ -30,12 +28,15 @@ export default class PaypalCommerceRequestSender {
         } else if (isCredit) {
             provider = 'paypalcommercecredit';
         }
+
         if (isVenmo && !isAPM) {
             provider = isCheckout ? 'paypalcommercevenmocheckout' : 'paypalcommercevenmo';
         }
 
         if (isAPM) {
-            provider = isCheckout ? 'paypalcommercealternativemethodscheckout' : 'paypalcommercealternativemethod';
+            provider = isCheckout
+                ? 'paypalcommercealternativemethodscheckout'
+                : 'paypalcommercealternativemethod';
         }
 
         return this.createOrder(cartId, provider);
@@ -63,7 +64,7 @@ export default class PaypalCommerceRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this._requestSender.get<OrderStatus>(url, {headers});
+        const res = await this._requestSender.get<OrderStatus>(url, { headers });
 
         return res.body;
     }

@@ -23,35 +23,45 @@ describe('CountryActionCreator', () => {
         countryRequestSender = new CountryRequestSender(createRequestSender(), { locale: '' });
         countryActionCreator = new CountryActionCreator(countryRequestSender);
 
-        jest.spyOn(countryRequestSender, 'loadCountries').mockReturnValue(Promise.resolve(response));
+        jest.spyOn(countryRequestSender, 'loadCountries').mockReturnValue(
+            Promise.resolve(response),
+        );
     });
 
     describe('#loadCountries()', () => {
         it('emits actions if able to load countries', () => {
-            countryActionCreator.loadCountries()
+            countryActionCreator
+                .loadCountries()
                 .pipe(toArray())
-                .subscribe(actions => {
+                .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: CountryActionType.LoadCountriesRequested },
-                        { type: CountryActionType.LoadCountriesSucceeded, payload: response.body.data },
+                        {
+                            type: CountryActionType.LoadCountriesSucceeded,
+                            payload: response.body.data,
+                        },
                     ]);
                 });
         });
 
         it('emits error actions if unable to load countries', () => {
-            jest.spyOn(countryRequestSender, 'loadCountries').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(countryRequestSender, 'loadCountries').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
-            countryActionCreator.loadCountries()
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
-                .subscribe(actions => {
+            countryActionCreator
+                .loadCountries()
+                .pipe(catchError(errorHandler), toArray())
+                .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: CountryActionType.LoadCountriesRequested },
-                        { type: CountryActionType.LoadCountriesFailed, payload: errorResponse, error: true },
+                        {
+                            type: CountryActionType.LoadCountriesFailed,
+                            payload: errorResponse,
+                            error: true,
+                        },
                     ]);
                 });
         });

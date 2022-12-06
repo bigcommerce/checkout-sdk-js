@@ -1,10 +1,10 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
@@ -19,8 +19,17 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getPaypalCommerce } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { PaypalCommerceCreditCardPaymentStrategy, PaypalCommerceFormOptions, PaypalCommerceHostedForm, PaypalCommercePaymentProcessor, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from './index';
 import { getPaypalCommerceMock } from './paypal-commerce.mock';
+
+import {
+    PaypalCommerceCreditCardPaymentStrategy,
+    PaypalCommerceFormOptions,
+    PaypalCommerceHostedForm,
+    PaypalCommercePaymentProcessor,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+} from './index';
 
 describe('PaypalCommerceCreditCardPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -41,17 +50,19 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
     beforeEach(() => {
         const requestSender = createRequestSender();
 
-        paymentMethod = { ...getPaypalCommerce(), clientToken: 'clientToken'};
+        paymentMethod = { ...getPaypalCommerce(), clientToken: 'clientToken' };
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(requestSender),
+        );
         paypalCommercePaymentProcessor = new PaypalCommercePaymentProcessor(
             paypalScriptLoader,
             new PaypalCommerceRequestSender(requestSender),
             store,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
         );
         paypalCommerceHostedForm = new PaypalCommerceHostedForm(paypalCommercePaymentProcessor);
 
@@ -73,11 +84,15 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
         paymentActionCreator = {} as PaymentActionCreator;
         paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
 
-        jest.spyOn(paypalScriptLoader, 'getPayPalSDK')
-            .mockReturnValue(Promise.resolve(paypal));
+        jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(Promise.resolve(paypal));
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id })));
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            of(
+                createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, {
+                    methodId: paymentMethod.id,
+                }),
+            ),
+        );
 
         paypalCommerceHostedForm.initialize = jest.fn();
         paypalCommerceHostedForm.submit = jest.fn(() => ({ orderId }));
@@ -88,7 +103,7 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
             paymentMethodActionCreator,
             paypalCommerceHostedForm,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
         );
     });
 
@@ -107,7 +122,11 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
             try {
                 await paymentStrategy.initialize({ methodId: 'paypalcommerce' });
             } catch (error) {
-               expect(error).toEqual(new InvalidArgumentError('Unable to proceed because "options.paypalcommerce.form" argument is not provided.'));
+                expect(error).toEqual(
+                    new InvalidArgumentError(
+                        'Unable to proceed because "options.paypalcommerce.form" argument is not provided.',
+                    ),
+                );
             }
         });
     });
@@ -123,7 +142,10 @@ describe('PaypalCommerceCreditCardPaymentStrategy', () => {
             await paymentStrategy.initialize(options);
             await paymentStrategy.execute(orderRequestBody, options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                omit(orderRequestBody, 'payment'),
+                options,
+            );
         });
 
         it('calls submit order', async () => {

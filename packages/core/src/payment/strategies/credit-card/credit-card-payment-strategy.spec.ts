@@ -1,14 +1,25 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+    InternalCheckoutSelectors,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
-import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import {
+    LoadOrderSucceededAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
@@ -38,7 +49,7 @@ describe('CreditCardPaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
@@ -46,7 +57,7 @@ describe('CreditCardPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         formFactory = new HostedFormFactory(store);
@@ -55,16 +66,14 @@ describe('CreditCardPaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
-            formFactory
+            formFactory,
         );
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
     });
 
     it('submits order without payment data', async () => {
@@ -72,7 +81,10 @@ describe('CreditCardPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+            omit(payload, 'payment'),
+            undefined,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -126,35 +138,29 @@ describe('CreditCardPaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(merge(
-                    getPaymentMethod(),
-                    { config: { isHostedFormEnabled: true } }
-                ));
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
+            );
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
+            jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create)
-                .toHaveBeenCalledWith(
-                    'https://bigpay.integration.zone',
-                    // tslint:disable-next-line:no-non-null-assertion
-                    initializeOptions.creditCard!.form!
-                );
+            expect(formFactory.create).toHaveBeenCalledWith(
+                'https://bigpay.integration.zone',
+                // tslint:disable-next-line:no-non-null-assertion
+                initializeOptions.creditCard!.form,
+            );
         });
 
         it('attaches hosted form to container', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(form.attach)
-                .toHaveBeenCalled();
+            expect(form.attach).toHaveBeenCalled();
         });
 
         it('submits payment data with hosted form', async () => {
@@ -163,28 +169,24 @@ describe('CreditCardPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(form.submit)
-                .toHaveBeenCalledWith(payload.payment);
+            expect(form.submit).toHaveBeenCalledWith(payload.payment);
         });
 
         it('validates user input before submitting data', async () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(getOrderRequestBody());
 
-            expect(form.validate)
-                .toHaveBeenCalled();
+            expect(form.validate).toHaveBeenCalled();
         });
 
         it('does not submit payment data with hosted form if validation fails', async () => {
-            jest.spyOn(form, 'validate')
-                .mockRejectedValue(new Error());
+            jest.spyOn(form, 'validate').mockRejectedValue(new Error());
 
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
             } catch (error) {
-                expect(form.submit)
-                    .not.toHaveBeenCalled();
+                expect(form.submit).not.toHaveBeenCalled();
             }
         });
 
@@ -194,8 +196,7 @@ describe('CreditCardPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(store.dispatch)
-                .toHaveBeenCalledWith(loadOrderAction);
+            expect(store.dispatch).toHaveBeenCalledWith(loadOrderAction);
         });
     });
 
@@ -222,24 +223,19 @@ describe('CreditCardPaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(merge(
-                    getPaymentMethod(),
-                    { config: { isHostedFormEnabled: true } }
-                ));
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
+            );
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
+            jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 
         it('does not create hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create)
-                .not.toHaveBeenCalled();
+            expect(formFactory.create).not.toHaveBeenCalled();
         });
 
         it('does not submit with hosted form', async () => {
@@ -248,8 +244,7 @@ describe('CreditCardPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(form.submit)
-                .not.toHaveBeenCalled();
+            expect(form.submit).not.toHaveBeenCalled();
         });
     });
 });

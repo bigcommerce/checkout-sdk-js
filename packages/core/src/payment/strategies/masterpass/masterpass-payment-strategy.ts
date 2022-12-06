@@ -1,5 +1,9 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -23,7 +27,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader,
-        private _locale: string
+        private _locale: string,
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -42,15 +46,20 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
             checkoutId: this._paymentMethod.initializationData.checkoutId,
         };
 
-        return this._masterpassScriptLoader.load(masterpassScriptLoaderParams)
-            .then(masterpass => {
+        return this._masterpassScriptLoader
+            .load(masterpassScriptLoaderParams)
+            .then((masterpass) => {
                 this._masterpassClient = masterpass;
 
                 if (!options.masterpass) {
-                    throw new InvalidArgumentError('Unable to initialize payment because "options.masterpass" argument is not provided.');
+                    throw new InvalidArgumentError(
+                        'Unable to initialize payment because "options.masterpass" argument is not provided.',
+                    );
                 }
 
-                const walletButton  = options.masterpass.walletButton && document.getElementById(options.masterpass.walletButton);
+                const walletButton =
+                    options.masterpass.walletButton &&
+                    document.getElementById(options.masterpass.walletButton);
 
                 if (walletButton) {
                     this._walletButton = walletButton;
@@ -74,15 +83,24 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment } = payload;
         const order = { useStoreCredit: payload.useStoreCredit };
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to submit payment because "payload.payment" argument is not provided.',
+            );
         }
 
-        if (!this._paymentMethod || !this._paymentMethod.initializationData || !this._paymentMethod.initializationData.gateway) {
+        if (
+            !this._paymentMethod ||
+            !this._paymentMethod.initializationData ||
+            !this._paymentMethod.initializationData.gateway
+        ) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -91,11 +109,18 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
 
         // TODO: Redirect to Masterpass if nonce has not been generated yet. And then finalise the order when the shopper is redirected back to the checkout page.
         if (!paymentData) {
-            throw new InvalidArgumentError('Unable to proceed because "paymentMethod.initializationData.paymentData" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "paymentMethod.initializationData.paymentData" argument is not provided.',
+            );
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData })));
+        return this._store
+            .dispatch(this._orderActionCreator.submitOrder(order, options))
+            .then(() =>
+                this._store.dispatch(
+                    this._paymentActionCreator.submitPayment({ ...payment, paymentData }),
+                ),
+            );
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -138,6 +163,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         }
 
         const payload = this._createMasterpassPayload();
+
         this._masterpassClient.checkout(payload);
     }
 }

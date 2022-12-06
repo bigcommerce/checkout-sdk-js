@@ -15,13 +15,16 @@ describe('PaypalCommerceRequestSender', () => {
 
     describe('setupPayment', () => {
         beforeEach(() => {
-            jest.spyOn(requestSender, 'post')
-                .mockImplementation(jest.fn().mockReturnValue(Promise.resolve({
-                    body: {
-                        orderId: '123',
-                        approveUrl: 'url',
-                    },
-                })));
+            jest.spyOn(requestSender, 'post').mockImplementation(
+                jest.fn().mockReturnValue(
+                    Promise.resolve({
+                        body: {
+                            orderId: '123',
+                            approveUrl: 'url',
+                        },
+                    }),
+                ),
+            );
         });
 
         it('create order from cart page with paypalcommerce', async () => {
@@ -33,10 +36,13 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommerce', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommerce',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
 
         it('create order from cart page with paypalcommerce credit', async () => {
@@ -48,10 +54,13 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecredit', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommercecredit',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
 
         it('create order from checkout page with paypalcommerce', async () => {
@@ -63,14 +72,20 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecheckout', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommercecheckout',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
 
         it('create order from checkout page with paypalcommerce credit', async () => {
-            await paypalCommerceRequestSender.setupPayment('abc', { isCredit: true, isCheckout: true });
+            await paypalCommerceRequestSender.setupPayment('abc', {
+                isCredit: true,
+                isCheckout: true,
+            });
 
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
@@ -78,10 +93,13 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecreditcheckout', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommercecreditcheckout',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
 
         it('create order from checkout page with paypalcommerce credit card', async () => {
@@ -93,14 +111,21 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercecreditcardscheckout', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommercecreditcardscheckout',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
+
         it('create order from checkout page for APM', async () => {
             paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
-            await paypalCommerceRequestSender.setupPayment('abc', { isCheckout: true, isAPM: true });
+            await paypalCommerceRequestSender.setupPayment('abc', {
+                isCheckout: true,
+                isAPM: true,
+            });
 
             const headers = {
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
@@ -108,10 +133,13 @@ describe('PaypalCommerceRequestSender', () => {
                 ...SDK_VERSION_HEADERS,
             };
 
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/payment/paypalcommercealternativemethodscheckout', expect.objectContaining({
-                body: {cartId: 'abc'},
-                headers,
-            }));
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommercealternativemethodscheckout',
+                expect.objectContaining({
+                    body: { cartId: 'abc' },
+                    headers,
+                }),
+            );
         });
     });
 });

@@ -14,10 +14,7 @@ export interface MollieConfigurationOptions {
 }
 
 export interface MollieHostWindow extends Window {
-    Mollie(
-        publishableKey: string,
-        options: MollieConfigurationOptions
-    ): MollieClient;
+    Mollie(publishableKey: string, options: MollieConfigurationOptions): MollieClient;
 }
 
 export interface MollieElement {
@@ -37,5 +34,5 @@ export interface MollieElement {
      * The callback receives an object with all the related information.
      * blur | focus | change
      */
-    addEventListener(event: 'blur' | 'focus' | 'change', callback: ( event: Event ) => void): void;
+    addEventListener(event: 'blur' | 'focus' | 'change', callback: (event: Event) => void): void;
 }

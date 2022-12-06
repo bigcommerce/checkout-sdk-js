@@ -8,9 +8,10 @@ export enum ShippingCountryActionType {
     LoadShippingCountriesFailed = 'LOAD_SHIPPING_COUNTRIES_FAILED',
 }
 
-export type LoadShippingCountriesAction = LoadShippingCountriesRequestedAction |
-    LoadShippingCountriesSucceededAction |
-    LoadShippingCountriesFailedAction;
+export type LoadShippingCountriesAction =
+    | LoadShippingCountriesRequestedAction
+    | LoadShippingCountriesSucceededAction
+    | LoadShippingCountriesFailedAction;
 
 export interface LoadShippingCountriesRequestedAction extends Action {
     type: ShippingCountryActionType.LoadShippingCountriesRequested;

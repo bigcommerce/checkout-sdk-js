@@ -10,14 +10,12 @@ const SCRIPT_SRC = '//static.wepay.com/min/js/risk.1.latest.js';
 export default class WepayRiskClient {
     private _riskClient?: WepayRisk;
 
-    constructor(
-        private _scriptLoader: ScriptLoader
-    ) {}
+    constructor(private _scriptLoader: ScriptLoader) {}
 
     initialize(): Promise<WepayRiskClient> {
         return this._scriptLoader
             .loadScript(SCRIPT_SRC)
-            .then(() => this._riskClient = (window as unknown as WepayWindow).WePay.risk)
+            .then(() => (this._riskClient = (window as unknown as WepayWindow).WePay.risk))
             .then(() => this);
     }
 

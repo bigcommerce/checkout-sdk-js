@@ -18,7 +18,7 @@ export default class CardinalThreeDSecureFlow {
         private _store: CheckoutStore,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _cardinalClient: CardinalClient
+        private _cardinalClient: CardinalClient,
     ) {}
 
     async prepare(method: PaymentMethod): Promise<void> {
@@ -30,11 +30,15 @@ export default class CardinalThreeDSecureFlow {
         execute: PaymentStrategy['execute'],
         payload: OrderRequestBody,
         options?: PaymentRequestOptions,
-        hostedForm?: HostedForm
+        hostedForm?: HostedForm,
     ): Promise<InternalCheckoutSelectors> {
-        const { instruments: { getCardInstrument }, paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            instruments: { getCardInstrument },
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
         const { payment: { methodId = '', paymentData = {} } = {} } = payload;
-        const instrument = isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
+        const instrument =
+            isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
         const bin = instrument ? instrument.iin : hostedForm && hostedForm.getBin();
 
         if (bin) {
@@ -42,29 +46,44 @@ export default class CardinalThreeDSecureFlow {
         }
 
         try {
-            return await execute(merge(payload, {
-                payment: {
-                    paymentData: {
-                        threeDSecure: { token: getPaymentMethodOrThrow(methodId).clientToken },
+            return await execute(
+                merge(payload, {
+                    payment: {
+                        paymentData: {
+                            threeDSecure: { token: getPaymentMethodOrThrow(methodId).clientToken },
+                        },
                     },
-                },
-            }), options);
+                }),
+                options,
+            );
         } catch (error) {
-            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
+            if (
+                !(error instanceof RequestError) ||
+                !some(error.body.errors, { code: 'three_d_secure_required' })
+            ) {
                 throw error;
             }
 
-            const threeDSecure = await this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData());
+            const threeDSecure = await this._cardinalClient.getThreeDSecureData(
+                error.body.three_ds_result,
+                this._getOrderData(),
+            );
 
             if (!hostedForm) {
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment(merge(payload.payment, {
-                    paymentData: { threeDSecure },
-                })));
+                return await this._store.dispatch(
+                    this._paymentActionCreator.submitPayment(
+                        merge(payload.payment, {
+                            paymentData: { threeDSecure },
+                        }),
+                    ),
+                );
             }
 
-            await hostedForm.submit(merge(payload.payment, {
-                paymentData: { threeDSecure },
-            }));
+            await hostedForm.submit(
+                merge(payload.payment, {
+                    paymentData: { threeDSecure },
+                }),
+            );
 
             return this._store.getState();
         }
@@ -75,8 +94,10 @@ export default class CardinalThreeDSecureFlow {
             return method.clientToken;
         }
 
-        const { paymentMethods: { getPaymentMethodOrThrow } } = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(method.id)
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(method.id),
         );
 
         return getPaymentMethodOrThrow(method.id).clientToken || '';

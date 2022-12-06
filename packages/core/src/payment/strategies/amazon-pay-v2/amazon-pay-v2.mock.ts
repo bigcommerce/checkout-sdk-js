@@ -1,7 +1,15 @@
 import PaymentMethod from '../../payment-method';
 import { getAmazonPayV2 } from '../../payment-methods.mock';
 
-import { AmazonPayV2ButtonColor, AmazonPayV2CheckoutLanguage, AmazonPayV2LedgerCurrency, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK, AmazonPayV2ButtonParameters } from './amazon-pay-v2';
+import {
+    AmazonPayV2ButtonColor,
+    AmazonPayV2ButtonParameters,
+    AmazonPayV2CheckoutLanguage,
+    AmazonPayV2LedgerCurrency,
+    AmazonPayV2PayOptions,
+    AmazonPayV2Placement,
+    AmazonPayV2SDK,
+} from './amazon-pay-v2';
 
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
@@ -18,6 +26,7 @@ export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
 
 export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
     const amazonMock = getAmazonPayV2();
+
     amazonMock.config.merchantId = undefined;
 
     return amazonMock;
@@ -25,6 +34,7 @@ export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
 
 export function getPaymentMethodMockUndefinedLedgerCurrency(): PaymentMethod {
     const amazonMock = getAmazonPayV2();
+
     amazonMock.initializationData.ledgerCurrency = undefined;
 
     return amazonMock;

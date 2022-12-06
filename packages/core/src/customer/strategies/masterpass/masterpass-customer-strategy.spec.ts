@@ -2,13 +2,22 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import {
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../../../payment';
 import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { getMasterpassScriptMock } from '../../../payment/strategies/masterpass/masterpass.mock';
@@ -49,44 +58,44 @@ describe('MasterpassCustomerStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
         });
 
-        jest.spyOn(store, 'dispatch')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
-        jest.spyOn(store.getState().config, 'getStoreConfig')
-        .mockReturnValue(getConfig().storeConfig);
+        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(
+            getConfig().storeConfig,
+        );
 
         requestSender = createRequestSender();
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender),
-            checkoutActionCreator
+            checkoutActionCreator,
         );
 
         masterpass = getMasterpassScriptMock();
 
         masterpassScriptLoader = new MasterpassScriptLoader(createScriptLoader());
 
-        jest.spyOn(masterpassScriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(masterpass));
+        jest.spyOn(masterpassScriptLoader, 'load').mockReturnValue(Promise.resolve(masterpass));
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(requestSender)
+            new PaymentMethodRequestSender(requestSender),
         );
         strategy = new MasterpassCustomerStrategy(
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             masterpassScriptLoader,
-            'en-US'
+            'en-US',
         );
 
         container = document.createElement('div');
@@ -120,7 +129,9 @@ describe('MasterpassCustomerStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(
+                masterpassScriptLoaderParams,
+            );
         });
 
         it('loads masterpass without test mode if disabled', async () => {
@@ -129,11 +140,14 @@ describe('MasterpassCustomerStrategy', () => {
 
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(masterpassScriptLoaderParams);
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(
+                masterpassScriptLoaderParams,
+            );
         });
 
         it('fails to initialize the strategy if no methodId is supplied', async () => {
             masterpassOptions = { methodId: undefined, masterpass: { container: 'login' } };
+
             try {
                 await strategy.initialize(masterpassOptions);
             } catch (e) {
@@ -142,8 +156,8 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('fails to initialize the strategy if no cart is supplied', async () => {
-            jest.spyOn(store.getState().cart, 'getCart')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(undefined);
+
             try {
                 await strategy.initialize(masterpassOptions);
             } catch (e) {
@@ -153,6 +167,7 @@ describe('MasterpassCustomerStrategy', () => {
 
         it('fails to initialize the strategy if no checkoutId is supplied', async () => {
             paymentMethodMock.initializationData.checkoutId = undefined;
+
             try {
                 await strategy.initialize(masterpassOptions);
             } catch (e) {
@@ -163,12 +178,18 @@ describe('MasterpassCustomerStrategy', () => {
         it('proceeds to checkout if masterpass button is clicked', async () => {
             jest.spyOn(masterpass, 'checkout');
             await strategy.initialize(masterpassOptions);
+
             if (masterpassOptions.masterpass) {
-                const masterpassButton = document.getElementById(masterpassOptions.masterpass.container);
+                const masterpassButton = document.getElementById(
+                    masterpassOptions.masterpass.container,
+                );
+
                 if (masterpassButton) {
                     const btn = masterpassButton.firstChild as HTMLElement;
+
                     if (btn) {
                         btn.click();
+
                         expect(masterpass.checkout).toHaveBeenCalled();
                     }
                 }
@@ -176,10 +197,12 @@ describe('MasterpassCustomerStrategy', () => {
         });
 
         it('loads masterpass script with correct locale when locale contains "-" character', async () => {
-
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'en_us'});
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({
+                ...masterpassScriptLoaderParams,
+                language: 'en_us',
+            });
         });
 
         it('loads masterpass script with correct locale', async () => {
@@ -188,11 +211,14 @@ describe('MasterpassCustomerStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                'FR'
+                'FR',
             );
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'fr_fr'});
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({
+                ...masterpassScriptLoaderParams,
+                language: 'fr_fr',
+            });
         });
 
         it('loads masterpass script with default locale for unsupported country code', async () => {
@@ -201,11 +227,14 @@ describe('MasterpassCustomerStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                'es_fr'
+                'es_fr',
             );
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'es_es'});
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({
+                ...masterpassScriptLoaderParams,
+                language: 'es_es',
+            });
         });
 
         it('loads masterpass script with default locale for unsupported language', async () => {
@@ -214,11 +243,14 @@ describe('MasterpassCustomerStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                'tr'
+                'tr',
             );
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'en_us'});
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({
+                ...masterpassScriptLoaderParams,
+                language: 'en_us',
+            });
         });
 
         it('loads masterpass script with correct locale for supported language and country', async () => {
@@ -227,11 +259,14 @@ describe('MasterpassCustomerStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 masterpassScriptLoader,
-                'zh_hk'
+                'zh_hk',
             );
             await strategy.initialize(masterpassOptions);
 
-            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({ ...masterpassScriptLoaderParams , language: 'zh_hk'});
+            expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith({
+                ...masterpassScriptLoaderParams,
+                language: 'zh_hk',
+            });
         });
     });
 
@@ -246,12 +281,17 @@ describe('MasterpassCustomerStrategy', () => {
             jest.spyOn(masterpass, 'checkout');
             await strategy.initialize(masterpassOptions);
             strategy.deinitialize();
+
             if (masterpassOptions.masterpass) {
-                const masterpassButton = document.getElementById(masterpassOptions.masterpass.container);
+                const masterpassButton = document.getElementById(
+                    masterpassOptions.masterpass.container,
+                );
+
                 if (masterpassButton) {
-                    expect(masterpassButton.firstChild).toBe(null);
+                    expect(masterpassButton.firstChild).toBeNull();
                 }
             }
+
             // Prevent "After Each" failure
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -260,11 +300,14 @@ describe('MasterpassCustomerStrategy', () => {
 
     describe('#signIn()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ methodId: 'masterpass', masterpass: { container: 'login' } });
+            await strategy.initialize({
+                methodId: 'masterpass',
+                masterpass: { container: 'login' },
+            });
         });
 
         it('throws error if trying to sign in programmatically', () => {
-            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
+            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
         });
     });
 
@@ -274,13 +317,14 @@ describe('MasterpassCustomerStrategy', () => {
                 providerId: 'masterpass',
             };
 
-            jest.spyOn(store.getState().payment, 'getPaymentId')
-                .mockReturnValue(paymentId);
+            jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(paymentId);
 
-            jest.spyOn(remoteCheckoutActionCreator, 'signOut')
-                .mockReturnValue('data');
+            jest.spyOn(remoteCheckoutActionCreator, 'signOut').mockReturnValue('data');
 
-            await strategy.initialize({ methodId: 'masterpass', masterpass: { container: 'login' } });
+            await strategy.initialize({
+                methodId: 'masterpass',
+                masterpass: { container: 'login' },
+            });
         });
 
         it('throws error if trying to sign out programmatically', async () => {
@@ -299,9 +343,11 @@ describe('MasterpassCustomerStrategy', () => {
         it('runs continue callback automatically on execute payment method checkout', async () => {
             const mockCallback = jest.fn();
 
-            await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+            await strategy.executePaymentMethodCheckout({
+                continueWithCheckoutCallback: mockCallback,
+            });
 
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
     });
 });

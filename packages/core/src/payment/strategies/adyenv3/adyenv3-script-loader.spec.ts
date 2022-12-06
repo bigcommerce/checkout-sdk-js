@@ -23,13 +23,12 @@ describe('AdyenV3ScriptLoader', () => {
         const adyenClient = getAdyenClient();
         const configuration = getAdyenConfiguration();
         const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.js';
-        const cssUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.css';
+        const cssUrl =
+            'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/5.24.0/adyen.css';
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.AdyenCheckout = jest.fn(
-                    () => adyenClient
-                );
+                mockWindow.AdyenCheckout = jest.fn(() => adyenClient);
 
                 return Promise.resolve();
             });

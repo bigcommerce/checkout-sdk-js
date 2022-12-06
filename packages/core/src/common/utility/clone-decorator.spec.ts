@@ -26,6 +26,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             obj.deep.clone = 789;
 
             expect(result.deep.clone).not.toEqual(obj.deep.clone);
@@ -37,6 +38,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             foo.obj = newObj;
 
             const newResult = foo.getValue();
@@ -51,6 +53,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             obj.test = 456;
 
             const newResult = foo.getValue();
@@ -86,6 +89,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             obj.deep.clone = 789;
 
             expect(result.deep.clone).not.toEqual(obj.deep.clone);
@@ -97,6 +101,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             foo.obj = newObj;
 
             const newResult = foo.getValue();
@@ -111,6 +116,7 @@ describe('cloneDecorator', () => {
             const foo = new Foo(obj);
 
             const result = foo.getValue();
+
             obj.test = 456;
 
             const newResult = foo.getValue();

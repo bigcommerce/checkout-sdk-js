@@ -17,17 +17,17 @@ export interface CardInstrument extends BaseInstrument {
     expiryYear: string;
     iin: string;
     last4: string;
-    type: "card";
+    type: 'card';
 }
 
 interface BaseAccountInstrument extends BaseInstrument {
     externalId: string;
     method: string;
-    type: "account" | "bank";
+    type: 'account' | 'bank';
 }
 
 export interface PayPalInstrument extends BaseAccountInstrument {
-    method: "paypal";
+    method: 'paypal';
 }
 
 export interface BankInstrument extends BaseAccountInstrument {
@@ -35,7 +35,7 @@ export interface BankInstrument extends BaseAccountInstrument {
     issuer: string;
     iban: string;
     method: string;
-    type: "bank";
+    type: 'bank';
 }
 
 export type AccountInstrument = PayPalInstrument | BankInstrument;

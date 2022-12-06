@@ -1,13 +1,16 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import {
+    ContentType,
+    INTERNAL_USE_ONLY,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 import { FormFields } from './form-field';
 
 export default class FormFieldsRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
     loadFields({ timeout }: RequestOptions = {}): Promise<Response<FormFields>> {
         const url = '/api/storefront/form-fields';

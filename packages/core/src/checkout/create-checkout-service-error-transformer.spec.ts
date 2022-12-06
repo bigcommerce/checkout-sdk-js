@@ -8,8 +8,9 @@ describe('createCheckoutServiceErrorTransformer()', () => {
         const error = new MissingDataError(MissingDataErrorType.MissingCheckout);
         const originalMessage = error.message;
 
-        expect(transformer.transform(error).message)
-            .toEqual(`${originalMessage} The data could be unavailable because it has not loaded from the server yet. To fix this issue, you can try calling \`CheckoutService#loadCheckout\` before performing the same action again.`);
+        expect(transformer.transform(error).message).toBe(
+            `${originalMessage} The data could be unavailable because it has not loaded from the server yet. To fix this issue, you can try calling \`CheckoutService#loadCheckout\` before performing the same action again.`,
+        );
     });
 
     it('does not append debug information if not in development mode', () => {
@@ -17,7 +18,6 @@ describe('createCheckoutServiceErrorTransformer()', () => {
         const error = new MissingDataError(MissingDataErrorType.MissingCheckout);
         const originalMessage = error.message;
 
-        expect(transformer.transform(error).message)
-            .toEqual(originalMessage);
+        expect(transformer.transform(error).message).toEqual(originalMessage);
     });
 });

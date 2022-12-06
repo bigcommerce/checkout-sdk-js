@@ -73,7 +73,7 @@ describe('BraintreeHostedForm', () => {
     });
 
     afterEach(() => {
-        containers.forEach(container => {
+        containers.forEach((container) => {
             container.parentElement?.removeChild(container);
         });
     });
@@ -82,35 +82,34 @@ describe('BraintreeHostedForm', () => {
         it('creates and configures hosted fields', async () => {
             await subject.initialize(formOptions);
 
-            expect(braintreeSdkCreator.createHostedFields)
-                .toHaveBeenCalledWith({
-                    fields: {
-                        cvv: {
-                            container: '#cardCode',
-                            placeholder: 'Card code',
-                        },
-                        expirationDate: {
-                            container: '#cardExpiry',
-                            placeholder: 'Card expiry',
-                        },
-                        number: {
-                            container: '#cardNumber',
-                            placeholder: 'Card number',
-                        },
+            expect(braintreeSdkCreator.createHostedFields).toHaveBeenCalledWith({
+                fields: {
+                    cvv: {
+                        container: '#cardCode',
+                        placeholder: 'Card code',
                     },
-                    styles: {
-                        input: {
-                            color: '#000',
-                        },
-                        '.invalid': {
-                            color: '#f00',
-                            'font-weight': 'bold',
-                        },
-                        ':focus': {
-                            color: '#00f',
-                        },
+                    expirationDate: {
+                        container: '#cardExpiry',
+                        placeholder: 'Card expiry',
                     },
-                });
+                    number: {
+                        container: '#cardNumber',
+                        placeholder: 'Card number',
+                    },
+                },
+                styles: {
+                    input: {
+                        color: '#000',
+                    },
+                    '.invalid': {
+                        color: '#f00',
+                        'font-weight': 'bold',
+                    },
+                    ':focus': {
+                        color: '#00f',
+                    },
+                },
+            });
         });
 
         it('creates and configures hosted fields for stored card verification', async () => {
@@ -142,31 +141,30 @@ describe('BraintreeHostedForm', () => {
                 },
             });
 
-            expect(braintreeSdkCreator.createHostedFields)
-                .toHaveBeenCalledWith({
-                    fields: {
-                        cvv: {
-                            container: '#cardCode',
-                            placeholder: 'Card code',
-                        },
-                        number: {
-                            container: '#cardNumber',
-                            placeholder: 'Card number',
-                        },
+            expect(braintreeSdkCreator.createHostedFields).toHaveBeenCalledWith({
+                fields: {
+                    cvv: {
+                        container: '#cardCode',
+                        placeholder: 'Card code',
                     },
-                    styles: {
-                        input: {
-                            color: '#000',
-                        },
-                        '.invalid': {
-                            color: '#f00',
-                            'font-weight': 'bold',
-                        },
-                        ':focus': {
-                            color: '#00f',
-                        },
+                    number: {
+                        container: '#cardNumber',
+                        placeholder: 'Card number',
                     },
-                });
+                },
+                styles: {
+                    input: {
+                        color: '#000',
+                    },
+                    '.invalid': {
+                        color: '#f00',
+                        'font-weight': 'bold',
+                    },
+                    ':focus': {
+                        color: '#00f',
+                    },
+                },
+            });
         });
     });
 
@@ -185,9 +183,11 @@ describe('BraintreeHostedForm', () => {
 
         it('changes hosted form initialization state', async () => {
             await subject.initialize(formOptions);
+
             expect(subject.isInitialized()).toBe(true);
 
             await subject.deinitialize();
+
             expect(subject.isInitialized()).toBe(false);
         });
     });
@@ -212,22 +212,22 @@ describe('BraintreeHostedForm', () => {
 
             await subject.tokenize(billingAddress);
 
-            expect(cardFields.tokenize)
-                .toHaveBeenCalledWith({
-                    billingAddress: {
-                        countryName: billingAddress.country,
-                        postalCode: billingAddress.postalCode,
-                        streetAddress: billingAddress.address1,
-                    },
-                    cardholderName: 'Foobar',
-                });
+            expect(cardFields.tokenize).toHaveBeenCalledWith({
+                billingAddress: {
+                    countryName: billingAddress.country,
+                    postalCode: billingAddress.postalCode,
+                    streetAddress: billingAddress.address1,
+                },
+                cardholderName: 'Foobar',
+            });
         });
 
         it('returns invalid form error when tokenizing with invalid form data', async () => {
             await subject.initialize(formOptions);
 
-            jest.spyOn(cardFields, 'tokenize')
-                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+            jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
+                code: 'HOSTED_FIELDS_FIELDS_EMPTY',
+            });
 
             try {
                 await subject.tokenize(getBillingAddress());
@@ -255,17 +255,17 @@ describe('BraintreeHostedForm', () => {
 
             await subject.tokenizeForStoredCardVerification();
 
-            expect(cardFields.tokenize)
-                .toHaveBeenCalledWith({
-                    cardholderName: 'Foobar',
-                });
+            expect(cardFields.tokenize).toHaveBeenCalledWith({
+                cardholderName: 'Foobar',
+            });
         });
 
         it('returns invalid form error when tokenizing store credit card with invalid form data', async () => {
             await subject.initialize(formOptions);
 
-            jest.spyOn(cardFields, 'tokenize')
-                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+            jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
+                code: 'HOSTED_FIELDS_FIELDS_EMPTY',
+            });
 
             try {
                 await subject.tokenizeForStoredCardVerification();
@@ -309,31 +309,39 @@ describe('BraintreeHostedForm', () => {
 
         it('notifies when field receives focus', () => {
             cardFieldsEventEmitter.emit('focus', { emittedBy: 'cvv' });
+
             expect(handleFocus).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when field loses focus', () => {
             cardFieldsEventEmitter.emit('blur', { emittedBy: 'cvv' });
+
             expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when input receives submit event', () => {
             cardFieldsEventEmitter.emit('inputSubmitRequest', { emittedBy: 'cvv' });
+
             expect(handleEnter).toHaveBeenCalledWith({ fieldType: 'cardCode' });
         });
 
         it('notifies when card number changes', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }] });
+
             expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'visa' });
         });
 
         it('notifies when card number changes and type is master-card', () => {
             cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'master-card' }] });
+
             expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'mastercard' });
         });
 
         it('notifies when card number changes and type of card is not yet known', () => {
-            cardFieldsEventEmitter.emit('cardTypeChange', { cards: [{ type: 'visa' }, { type: 'master-card' }] });
+            cardFieldsEventEmitter.emit('cardTypeChange', {
+                cards: [{ type: 'visa' }, { type: 'master-card' }],
+            });
+
             expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: undefined });
         });
 
@@ -346,27 +354,32 @@ describe('BraintreeHostedForm', () => {
                 },
             });
 
-            expect(handleValidate)
-                .toHaveBeenCalledWith({
-                    errors: {
-                        cardCode: [{
+            expect(handleValidate).toHaveBeenCalledWith({
+                errors: {
+                    cardCode: [
+                        {
                             fieldType: 'cardCode',
                             message: 'Invalid card code',
                             type: 'invalid_card_code',
-                        }],
-                        cardNumber: [{
+                        },
+                    ],
+                    cardNumber: [
+                        {
                             fieldType: 'cardNumber',
                             message: 'Invalid card number',
                             type: 'invalid_card_number',
-                        }],
-                        cardExpiry: [{
+                        },
+                    ],
+                    cardExpiry: [
+                        {
                             fieldType: 'cardExpiry',
                             message: 'Invalid card expiry',
                             type: 'invalid_card_expiry',
-                        }],
-                    },
-                    isValid: false,
-                });
+                        },
+                    ],
+                },
+                isValid: false,
+            });
         });
 
         it('notifies when there are no more validation errors', () => {
@@ -378,60 +391,64 @@ describe('BraintreeHostedForm', () => {
                 },
             });
 
-            expect(handleValidate)
-                .toHaveBeenCalledWith({
-                    errors: {
-                        cardCode: undefined,
-                        cardNumber: undefined,
-                        cardExpiry: undefined,
-                    },
-                    isValid: true,
-                });
+            expect(handleValidate).toHaveBeenCalledWith({
+                errors: {
+                    cardCode: undefined,
+                    cardNumber: undefined,
+                    cardExpiry: undefined,
+                },
+                isValid: true,
+            });
         });
 
         it('notifies when tokenizing with invalid form data', async () => {
-            jest.spyOn(cardFields, 'tokenize')
-                .mockRejectedValue({ code: 'HOSTED_FIELDS_FIELDS_EMPTY' });
+            jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
+                code: 'HOSTED_FIELDS_FIELDS_EMPTY',
+            });
 
             try {
                 await subject.tokenize(getBillingAddress());
             } catch (error) {
-                expect(handleValidate)
-                    .toHaveBeenCalledWith({
-                        errors: {
-                            cardCode: [{
+                expect(handleValidate).toHaveBeenCalledWith({
+                    errors: {
+                        cardCode: [
+                            {
                                 fieldType: 'cardCode',
                                 message: 'CVV is required',
                                 type: 'required',
-                            }],
-                            cardNumber: [{
+                            },
+                        ],
+                        cardNumber: [
+                            {
                                 fieldType: 'cardNumber',
                                 message: 'Credit card number is required',
                                 type: 'required',
-                            }],
-                            cardExpiry: [{
+                            },
+                        ],
+                        cardExpiry: [
+                            {
                                 fieldType: 'cardExpiry',
                                 message: 'Expiration date is required',
                                 type: 'required',
-                            }],
-                        },
-                        isValid: false,
-                    });
+                            },
+                        ],
+                    },
+                    isValid: false,
+                });
             }
         });
 
         it('notifies when tokenizing with valid form data', async () => {
             await subject.tokenize(getBillingAddress());
 
-            expect(handleValidate)
-                .toHaveBeenCalledWith({
-                    errors: {
-                        cardCode: undefined,
-                        cardNumber: undefined,
-                        cardExpiry: undefined,
-                    },
-                    isValid: true,
-                });
+            expect(handleValidate).toHaveBeenCalledWith({
+                errors: {
+                    cardCode: undefined,
+                    cardNumber: undefined,
+                    cardExpiry: undefined,
+                },
+                isValid: true,
+            });
         });
     });
 });

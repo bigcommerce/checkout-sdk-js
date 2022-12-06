@@ -7,7 +7,9 @@ import { NotInitializedError } from '../common/error/errors';
 
 import { SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
-import GoogleRecaptchaScriptLoader, { GoogleRecaptchaWindow } from './google-recaptcha-script-loader';
+import GoogleRecaptchaScriptLoader, {
+    GoogleRecaptchaWindow,
+} from './google-recaptcha-script-loader';
 import { getGoogleRecaptchaMock } from './google-recaptcha.mock';
 
 describe('GoogleRecaptcha', () => {
@@ -43,8 +45,7 @@ describe('GoogleRecaptcha', () => {
             googleRecaptchaMock.getResponse = jest.fn(() => 'google-recaptcha-token');
             googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
 
-            jest.spyOn(googleRecaptchaScriptLoader, 'load')
-                .mockResolvedValue(googleRecaptchaMock);
+            jest.spyOn(googleRecaptchaScriptLoader, 'load').mockResolvedValue(googleRecaptchaMock);
         });
 
         it('loads the google recaptcha script', async () => {
@@ -61,13 +62,12 @@ describe('GoogleRecaptcha', () => {
 
             await googleRecaptcha.load(containerId, sitekey);
 
-            expect(googleRecaptchaMock.render)
-                .toBeCalledWith(containerId, {
-                    sitekey,
-                    size,
-                    callback: expect.any(Function),
-                    'error-callback': expect.any(Function),
-                });
+            expect(googleRecaptchaMock.render).toHaveBeenCalledWith(containerId, {
+                sitekey,
+                size,
+                callback: expect.any(Function),
+                'error-callback': expect.any(Function),
+            });
         });
     });
 
@@ -76,12 +76,11 @@ describe('GoogleRecaptcha', () => {
         let recaptchaChallengeContainer: HTMLElement;
 
         beforeEach(() => {
-            jest.spyOn(mutationObserverFactory, 'create')
-                .mockReturnValue({
-                    disconect: jest.fn(),
-                    observe: jest.fn(),
-                    takeRecords: jest.fn(),
-                });
+            jest.spyOn(mutationObserverFactory, 'create').mockReturnValue({
+                disconect: jest.fn(),
+                observe: jest.fn(),
+                takeRecords: jest.fn(),
+            });
 
             googleRecaptchaMock = getGoogleRecaptchaMock();
 
@@ -89,11 +88,10 @@ describe('GoogleRecaptcha', () => {
 
             recaptchaChallengeContainer = new DOMParser().parseFromString(
                 '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',
-                'text/html'
+                'text/html',
             ).body;
 
-            jest.spyOn(googleRecaptchaScriptLoader, 'load')
-                .mockResolvedValue(googleRecaptchaMock);
+            jest.spyOn(googleRecaptchaScriptLoader, 'load').mockResolvedValue(googleRecaptchaMock);
         });
 
         afterEach(() => {
@@ -117,13 +115,11 @@ describe('GoogleRecaptcha', () => {
 
             await googleRecaptcha.load(containerId, sitekey);
 
-            from(googleRecaptcha.execute())
-                .toPromise();
+            from(googleRecaptcha.execute()).toPromise();
 
             expect(googleRecaptchaMock.getResponse).toHaveBeenCalled();
             expect(googleRecaptchaMock.reset).toHaveBeenCalled();
             expect(googleRecaptchaMock.execute).toHaveBeenCalled();
-
         });
 
         it('throws an error if google recaptcha window is not loaded after a specific timeframe', async () => {
@@ -137,15 +133,14 @@ describe('GoogleRecaptcha', () => {
 
             await googleRecaptcha.load(containerId, sitekey);
 
-            scheduler.run(helpers => {
+            scheduler.run((helpers) => {
                 const { expectObservable } = helpers;
 
-                expectObservable(googleRecaptcha.execute())
-                    .toBe('7250ms (a|)', {
-                        a: {
-                            error: expect.any(SpamProtectionNotLoadedError),
-                        },
-                    });
+                expectObservable(googleRecaptcha.execute()).toBe('7250ms (a|)', {
+                    a: {
+                        error: expect.any(SpamProtectionNotLoadedError),
+                    },
+                });
 
                 expect(googleRecaptchaMock.execute).not.toHaveBeenCalled();
             });

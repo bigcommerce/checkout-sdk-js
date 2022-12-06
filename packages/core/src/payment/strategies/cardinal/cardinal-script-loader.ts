@@ -8,22 +8,17 @@ const SDK_TEST_URL = 'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird
 const SDK_PROD_URL = 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js';
 
 export default class CardinalScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        private _window: CardinalWindow = window
-    ) {}
+    constructor(private _scriptLoader: ScriptLoader, private _window: CardinalWindow = window) {}
 
     load(provider: string, testMode?: boolean): Promise<CardinalSDK> {
         const url = testMode ? SDK_TEST_URL : SDK_PROD_URL;
 
-        return this._scriptLoader
-            .loadScript(url + '?v=' + provider)
-            .then(() => {
-                if (!this._window.Cardinal) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
+        return this._scriptLoader.loadScript(`${url}?v=${provider}`).then(() => {
+            if (!this._window.Cardinal) {
+                throw new PaymentMethodClientUnavailableError();
+            }
 
-                return this._window.Cardinal;
-            });
+            return this._window.Cardinal;
+        });
     }
 }

@@ -16,7 +16,10 @@ describe('checkoutButtonReducer', () => {
     it('returns new status state if button is initializing', () => {
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.statuses).toEqual({ braintreepaypal: { isInitializing: true } });
@@ -34,7 +37,10 @@ describe('checkoutButtonReducer', () => {
 
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.statuses).toEqual({ braintreepaypal: { isInitializing: false } });
@@ -43,15 +49,24 @@ describe('checkoutButtonReducer', () => {
     it('returns new initialization state if button is initialized', () => {
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
-        expect(state.data).toEqual({ braintreepaypal: { initializedContainers: { [containerId]: true } } });
+        expect(state.data).toEqual({
+            braintreepaypal: { initializedContainers: { [containerId]: true } },
+        });
     });
 
     it('returns new status state if deinitializing button', () => {
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
-        const action = createAction(CheckoutButtonActionType.DeinitializeButtonRequested, undefined, { methodId });
+        const action = createAction(
+            CheckoutButtonActionType.DeinitializeButtonRequested,
+            undefined,
+            { methodId },
+        );
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.statuses).toEqual({ braintreepaypal: { isDeinitializing: true } });
@@ -68,7 +83,11 @@ describe('checkoutButtonReducer', () => {
         };
 
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
-        const action = createAction(CheckoutButtonActionType.DeinitializeButtonSucceeded, undefined, { methodId });
+        const action = createAction(
+            CheckoutButtonActionType.DeinitializeButtonSucceeded,
+            undefined,
+            { methodId },
+        );
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.statuses).toEqual({ braintreepaypal: { isDeinitializing: false } });
@@ -89,7 +108,11 @@ describe('checkoutButtonReducer', () => {
             },
         };
 
-        const action = createAction(CheckoutButtonActionType.DeinitializeButtonSucceeded, undefined, { methodId });
+        const action = createAction(
+            CheckoutButtonActionType.DeinitializeButtonSucceeded,
+            undefined,
+            { methodId },
+        );
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.data).toEqual({ braintreepaypal: { initializedContainers: {} } });
@@ -99,7 +122,10 @@ describe('checkoutButtonReducer', () => {
         const error = new Error('Fail to initialize');
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.InitializeButtonFailed, error, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.InitializeButtonFailed, error, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.errors).toEqual({ braintreepaypal: { initializeError: error } });
@@ -117,7 +143,10 @@ describe('checkoutButtonReducer', () => {
 
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.errors).toEqual({ braintreepaypal: { initializeError: undefined } });
@@ -127,7 +156,10 @@ describe('checkoutButtonReducer', () => {
         const error = new Error('Fail to initialize');
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'foobar';
-        const action = createAction(CheckoutButtonActionType.DeinitializeButtonFailed, error, { methodId, containerId });
+        const action = createAction(CheckoutButtonActionType.DeinitializeButtonFailed, error, {
+            methodId,
+            containerId,
+        });
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.errors).toEqual({ braintreepaypal: { deinitializeError: error } });
@@ -144,7 +176,11 @@ describe('checkoutButtonReducer', () => {
         };
 
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
-        const action = createAction(CheckoutButtonActionType.DeinitializeButtonSucceeded, undefined, { methodId });
+        const action = createAction(
+            CheckoutButtonActionType.DeinitializeButtonSucceeded,
+            undefined,
+            { methodId },
+        );
         const state = checkoutButtonReducer(initialState, action);
 
         expect(state.errors).toEqual({ braintreepaypal: { deinitializeError: undefined } });

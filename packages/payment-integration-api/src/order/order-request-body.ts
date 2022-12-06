@@ -6,12 +6,12 @@ import {
     NonceInstrument,
     VaultedInstrument,
     WithAccountCreation,
-    WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,
+    WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
-} from "../payment";
+} from '../payment';
 
 /**
  * An object that contains the information required for submitting an order.

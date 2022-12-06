@@ -7,7 +7,9 @@ import mapToInternalShippingOption from './map-to-internal-shipping-option';
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export default function mapToInternalShippingOptions(consignments: Consignment[]): InternalShippingOptionList {
+export default function mapToInternalShippingOptions(
+    consignments: Consignment[],
+): InternalShippingOptionList {
     return consignments.reduce((result, consignment) => {
         let shippingOptions;
 
@@ -19,13 +21,11 @@ export default function mapToInternalShippingOptions(consignments: Consignment[]
 
         return {
             ...result,
-            [consignment.id]: (shippingOptions || []).map(option => {
-                const selectedOptionId = consignment.selectedShippingOption && consignment.selectedShippingOption.id;
+            [consignment.id]: (shippingOptions || []).map((option) => {
+                const selectedOptionId =
+                    consignment.selectedShippingOption && consignment.selectedShippingOption.id;
 
-                return mapToInternalShippingOption(
-                    option,
-                    option.id === selectedOptionId
-                );
+                return mapToInternalShippingOption(option, option.id === selectedOptionId);
             }),
         };
     }, {});

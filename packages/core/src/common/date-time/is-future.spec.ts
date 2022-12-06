@@ -6,7 +6,7 @@ describe('isFuture()', () => {
 
         futureDate.setMinutes(futureDate.getMinutes() + 5);
 
-        expect(isFuture(futureDate)).toEqual(true);
+        expect(isFuture(futureDate)).toBe(true);
     });
 
     it('detects that the supplied time is in the past', () => {
@@ -14,6 +14,6 @@ describe('isFuture()', () => {
 
         futureDate.setMinutes(futureDate.getMinutes() - 5);
 
-        expect(isFuture(futureDate)).toEqual(false);
+        expect(isFuture(futureDate)).toBe(false);
     });
 });

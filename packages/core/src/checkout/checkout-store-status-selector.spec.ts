@@ -1,4 +1,7 @@
-import { createCheckoutStoreStatusSelectorFactory, CheckoutStoreStatusSelectorFactory } from './checkout-store-status-selector';
+import {
+    CheckoutStoreStatusSelectorFactory,
+    createCheckoutStoreStatusSelectorFactory,
+} from './checkout-store-status-selector';
 import { getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -18,7 +21,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingCheckout()).toEqual(true);
+            expect(statuses.isLoadingCheckout()).toBe(true);
             expect(selectors.checkout.isLoading).toHaveBeenCalled();
         });
 
@@ -27,7 +30,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingCheckout()).toEqual(false);
+            expect(statuses.isLoadingCheckout()).toBe(false);
             expect(selectors.checkout.isLoading).toHaveBeenCalled();
         });
     });
@@ -38,7 +41,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingCheckout()).toEqual(true);
+            expect(statuses.isUpdatingCheckout()).toBe(true);
             expect(selectors.checkout.isUpdating).toHaveBeenCalled();
         });
 
@@ -47,7 +50,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingCheckout()).toEqual(false);
+            expect(statuses.isUpdatingCheckout()).toBe(false);
             expect(selectors.checkout.isUpdating).toHaveBeenCalled();
         });
     });
@@ -58,7 +61,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCreatingCustomerAccount()).toEqual(true);
+            expect(statuses.isCreatingCustomerAccount()).toBe(true);
             expect(selectors.customer.isCreatingCustomerAccount).toHaveBeenCalled();
         });
 
@@ -67,7 +70,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCreatingCustomerAccount()).toEqual(false);
+            expect(statuses.isCreatingCustomerAccount()).toBe(false);
             expect(selectors.customer.isCreatingCustomerAccount).toHaveBeenCalled();
         });
     });
@@ -78,7 +81,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isExecutingSpamCheck()).toEqual(true);
+            expect(statuses.isExecutingSpamCheck()).toBe(true);
             expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
 
@@ -87,7 +90,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isExecutingSpamCheck()).toEqual(false);
+            expect(statuses.isExecutingSpamCheck()).toBe(false);
             expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
     });
@@ -98,7 +101,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSubmittingOrder()).toEqual(true);
+            expect(statuses.isSubmittingOrder()).toBe(true);
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
@@ -107,7 +110,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSubmittingOrder()).toEqual(false);
+            expect(statuses.isSubmittingOrder()).toBe(false);
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
@@ -116,7 +119,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSubmittingOrder()).toEqual(true);
+            expect(statuses.isSubmittingOrder()).toBe(true);
             expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
 
@@ -125,7 +128,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSubmittingOrder()).toEqual(false);
+            expect(statuses.isSubmittingOrder()).toBe(false);
             expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
     });
@@ -136,7 +139,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isFinalizingOrder()).toEqual(true);
+            expect(statuses.isFinalizingOrder()).toBe(true);
             expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
         });
 
@@ -145,7 +148,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isFinalizingOrder()).toEqual(false);
+            expect(statuses.isFinalizingOrder()).toBe(false);
             expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
         });
     });
@@ -156,7 +159,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingOrder()).toEqual(true);
+            expect(statuses.isLoadingOrder()).toBe(true);
             expect(selectors.order.isLoading).toHaveBeenCalled();
         });
 
@@ -165,7 +168,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingOrder()).toEqual(false);
+            expect(statuses.isLoadingOrder()).toBe(false);
             expect(selectors.order.isLoading).toHaveBeenCalled();
         });
     });
@@ -176,7 +179,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingCart()).toEqual(true);
+            expect(statuses.isLoadingCart()).toBe(true);
             expect(selectors.cart.isLoading).toHaveBeenCalled();
         });
 
@@ -185,7 +188,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingCart()).toEqual(false);
+            expect(statuses.isLoadingCart()).toBe(false);
             expect(selectors.cart.isLoading).toHaveBeenCalled();
         });
     });
@@ -196,7 +199,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingBillingCountries()).toEqual(true);
+            expect(statuses.isLoadingBillingCountries()).toBe(true);
             expect(selectors.countries.isLoading).toHaveBeenCalled();
         });
 
@@ -205,7 +208,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingBillingCountries()).toEqual(false);
+            expect(statuses.isLoadingBillingCountries()).toBe(false);
             expect(selectors.countries.isLoading).toHaveBeenCalled();
         });
     });
@@ -216,7 +219,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingShippingCountries()).toEqual(true);
+            expect(statuses.isLoadingShippingCountries()).toBe(true);
             expect(selectors.shippingCountries.isLoading).toHaveBeenCalled();
         });
 
@@ -225,7 +228,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingShippingCountries()).toEqual(false);
+            expect(statuses.isLoadingShippingCountries()).toBe(false);
             expect(selectors.shippingCountries.isLoading).toHaveBeenCalled();
         });
     });
@@ -236,7 +239,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingPaymentMethods()).toEqual(true);
+            expect(statuses.isLoadingPaymentMethods()).toBe(true);
             expect(selectors.paymentMethods.isLoading).toHaveBeenCalled();
         });
 
@@ -245,7 +248,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingPaymentMethods()).toEqual(false);
+            expect(statuses.isLoadingPaymentMethods()).toBe(false);
             expect(selectors.paymentMethods.isLoading).toHaveBeenCalled();
         });
     });
@@ -256,7 +259,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingPaymentMethod('braintree')).toEqual(true);
+            expect(statuses.isLoadingPaymentMethod('braintree')).toBe(true);
             expect(selectors.paymentMethods.isLoadingMethod).toHaveBeenCalledWith('braintree');
         });
 
@@ -265,7 +268,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingPaymentMethod('braintree')).toEqual(false);
+            expect(statuses.isLoadingPaymentMethod('braintree')).toBe(false);
             expect(selectors.paymentMethods.isLoadingMethod).toHaveBeenCalledWith('braintree');
         });
     });
@@ -280,14 +283,14 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingPayment('foobar')).toEqual(true);
+            expect(statuses.isInitializingPayment('foobar')).toBe(true);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing payment', () => {
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingPayment('foobar')).toEqual(false);
+            expect(statuses.isInitializingPayment('foobar')).toBe(false);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
@@ -298,7 +301,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSigningIn()).toEqual(true);
+            expect(statuses.isSigningIn()).toBe(true);
             expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
         });
 
@@ -307,7 +310,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSigningIn()).toEqual(false);
+            expect(statuses.isSigningIn()).toBe(false);
             expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
         });
     });
@@ -322,37 +325,47 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSigningOut()).toEqual(true);
+            expect(statuses.isSigningOut()).toBe(true);
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
 
         it('returns false if not signing out', () => {
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSigningOut()).toEqual(false);
+            expect(statuses.isSigningOut()).toBe(false);
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
     });
 
     describe('#isExecutingPaymentMethodCheckout()', () => {
         beforeEach(() => {
-            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(false);
+            jest.spyOn(
+                selectors.customerStrategies,
+                'isExecutingPaymentMethodCheckout',
+            ).mockReturnValue(false);
         });
 
         it('returns true if executing payment method checkout', () => {
-            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(true);
+            jest.spyOn(
+                selectors.customerStrategies,
+                'isExecutingPaymentMethodCheckout',
+            ).mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isExecutingPaymentMethodCheckout()).toEqual(true);
-            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+            expect(statuses.isExecutingPaymentMethodCheckout()).toBe(true);
+            expect(
+                selectors.customerStrategies.isExecutingPaymentMethodCheckout,
+            ).toHaveBeenCalled();
         });
 
         it('returns false if not executing payment method checkout', () => {
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isExecutingPaymentMethodCheckout()).toEqual(false);
-            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+            expect(statuses.isExecutingPaymentMethodCheckout()).toBe(false);
+            expect(
+                selectors.customerStrategies.isExecutingPaymentMethodCheckout,
+            ).toHaveBeenCalled();
         });
     });
 
@@ -362,7 +375,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingCustomer('foobar')).toEqual(true);
+            expect(statuses.isInitializingCustomer('foobar')).toBe(true);
             expect(selectors.customerStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
@@ -371,7 +384,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingCustomer('foobar')).toEqual(false);
+            expect(statuses.isInitializingCustomer('foobar')).toBe(false);
             expect(selectors.customerStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
@@ -382,7 +395,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingShippingOptions()).toEqual(true);
+            expect(statuses.isLoadingShippingOptions()).toBe(true);
             expect(selectors.consignments.isLoadingShippingOptions).toHaveBeenCalled();
         });
 
@@ -391,7 +404,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingShippingOptions()).toEqual(false);
+            expect(statuses.isLoadingShippingOptions()).toBe(false);
             expect(selectors.consignments.isLoadingShippingOptions).toHaveBeenCalled();
         });
     });
@@ -402,7 +415,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSelectingShippingOption()).toEqual(true);
+            expect(statuses.isSelectingShippingOption()).toBe(true);
             expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
         });
 
@@ -411,7 +424,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSelectingShippingOption()).toEqual(false);
+            expect(statuses.isSelectingShippingOption()).toBe(false);
             expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
         });
     });
@@ -422,7 +435,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSendingSignInEmail()).toEqual(true);
+            expect(statuses.isSendingSignInEmail()).toBe(true);
             expect(selectors.signInEmail.isSending).toHaveBeenCalled();
         });
 
@@ -431,7 +444,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isSendingSignInEmail()).toEqual(false);
+            expect(statuses.isSendingSignInEmail()).toBe(false);
             expect(selectors.signInEmail.isSending).toHaveBeenCalled();
         });
     });
@@ -442,7 +455,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingBillingAddress()).toEqual(true);
+            expect(statuses.isUpdatingBillingAddress()).toBe(true);
             expect(selectors.billingAddress.isUpdating).toHaveBeenCalled();
         });
 
@@ -451,7 +464,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingBillingAddress()).toEqual(false);
+            expect(statuses.isUpdatingBillingAddress()).toBe(false);
             expect(selectors.billingAddress.isUpdating).toHaveBeenCalled();
         });
     });
@@ -462,7 +475,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingSubscriptions()).toEqual(true);
+            expect(statuses.isUpdatingSubscriptions()).toBe(true);
             expect(selectors.subscriptions.isUpdating).toHaveBeenCalled();
         });
 
@@ -471,7 +484,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingSubscriptions()).toEqual(false);
+            expect(statuses.isUpdatingSubscriptions()).toBe(false);
             expect(selectors.subscriptions.isUpdating).toHaveBeenCalled();
         });
     });
@@ -482,7 +495,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isContinuingAsGuest()).toEqual(true);
+            expect(statuses.isContinuingAsGuest()).toBe(true);
             expect(selectors.billingAddress.isContinuingAsGuest).toHaveBeenCalled();
         });
 
@@ -491,7 +504,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isContinuingAsGuest()).toEqual(false);
+            expect(statuses.isContinuingAsGuest()).toBe(false);
             expect(selectors.billingAddress.isContinuingAsGuest).toHaveBeenCalled();
         });
     });
@@ -502,7 +515,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingShippingAddress()).toEqual(true);
+            expect(statuses.isUpdatingShippingAddress()).toBe(true);
             expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
         });
 
@@ -511,7 +524,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingShippingAddress()).toEqual(false);
+            expect(statuses.isUpdatingShippingAddress()).toBe(false);
             expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
         });
     });
@@ -522,7 +535,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingConsignment()).toEqual(true);
+            expect(statuses.isUpdatingConsignment()).toBe(true);
             expect(selectors.consignments.isUpdating).toHaveBeenCalled();
         });
 
@@ -531,7 +544,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isUpdatingConsignment()).toEqual(false);
+            expect(statuses.isUpdatingConsignment()).toBe(false);
             expect(selectors.consignments.isUpdating).toHaveBeenCalled();
         });
     });
@@ -542,7 +555,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isDeletingConsignment()).toEqual(true);
+            expect(statuses.isDeletingConsignment()).toBe(true);
             expect(selectors.consignments.isDeleting).toHaveBeenCalled();
         });
 
@@ -551,7 +564,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isDeletingConsignment()).toEqual(false);
+            expect(statuses.isDeletingConsignment()).toBe(false);
             expect(selectors.consignments.isDeleting).toHaveBeenCalled();
         });
     });
@@ -562,7 +575,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCreatingConsignments()).toEqual(true);
+            expect(statuses.isCreatingConsignments()).toBe(true);
             expect(selectors.consignments.isCreating).toHaveBeenCalled();
         });
 
@@ -571,7 +584,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCreatingConsignments()).toEqual(false);
+            expect(statuses.isCreatingConsignments()).toBe(false);
             expect(selectors.consignments.isCreating).toHaveBeenCalled();
         });
     });
@@ -582,7 +595,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingShipping('foobar')).toEqual(true);
+            expect(statuses.isInitializingShipping('foobar')).toBe(true);
             expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
@@ -591,7 +604,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isInitializingShipping('foobar')).toEqual(false);
+            expect(statuses.isInitializingShipping('foobar')).toBe(false);
             expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
@@ -602,7 +615,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isApplyingCoupon()).toEqual(true);
+            expect(statuses.isApplyingCoupon()).toBe(true);
             expect(selectors.coupons.isApplying).toHaveBeenCalled();
         });
 
@@ -611,7 +624,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isApplyingCoupon()).toEqual(false);
+            expect(statuses.isApplyingCoupon()).toBe(false);
             expect(selectors.coupons.isApplying).toHaveBeenCalled();
         });
     });
@@ -622,7 +635,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isRemovingCoupon()).toEqual(true);
+            expect(statuses.isRemovingCoupon()).toBe(true);
             expect(selectors.coupons.isRemoving).toHaveBeenCalled();
         });
 
@@ -631,7 +644,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isRemovingCoupon()).toEqual(false);
+            expect(statuses.isRemovingCoupon()).toBe(false);
             expect(selectors.coupons.isRemoving).toHaveBeenCalled();
         });
     });
@@ -642,7 +655,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isApplyingGiftCertificate()).toEqual(true);
+            expect(statuses.isApplyingGiftCertificate()).toBe(true);
             expect(selectors.giftCertificates.isApplying).toHaveBeenCalled();
         });
 
@@ -651,7 +664,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isApplyingGiftCertificate()).toEqual(false);
+            expect(statuses.isApplyingGiftCertificate()).toBe(false);
             expect(selectors.giftCertificates.isApplying).toHaveBeenCalled();
         });
     });
@@ -662,7 +675,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isRemovingGiftCertificate()).toEqual(true);
+            expect(statuses.isRemovingGiftCertificate()).toBe(true);
             expect(selectors.giftCertificates.isRemoving).toHaveBeenCalled();
         });
 
@@ -671,7 +684,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isRemovingGiftCertificate()).toEqual(false);
+            expect(statuses.isRemovingGiftCertificate()).toBe(false);
             expect(selectors.giftCertificates.isRemoving).toHaveBeenCalled();
         });
     });
@@ -682,7 +695,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingInstruments()).toEqual(true);
+            expect(statuses.isLoadingInstruments()).toBe(true);
             expect(selectors.instruments.isLoading).toHaveBeenCalled();
         });
 
@@ -691,7 +704,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingInstruments()).toEqual(false);
+            expect(statuses.isLoadingInstruments()).toBe(false);
             expect(selectors.instruments.isLoading).toHaveBeenCalled();
         });
     });
@@ -702,7 +715,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isDeletingInstrument('123')).toEqual(true);
+            expect(statuses.isDeletingInstrument('123')).toBe(true);
             expect(selectors.instruments.isDeleting).toHaveBeenCalledWith('123');
         });
 
@@ -711,7 +724,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isDeletingInstrument('123')).toEqual(false);
+            expect(statuses.isDeletingInstrument('123')).toBe(false);
             expect(selectors.instruments.isDeleting).toHaveBeenCalledWith('123');
         });
     });
@@ -722,7 +735,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingConfig()).toEqual(true);
+            expect(statuses.isLoadingConfig()).toBe(true);
             expect(selectors.config.isLoading).toHaveBeenCalledWith();
         });
 
@@ -731,7 +744,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingConfig()).toEqual(false);
+            expect(statuses.isLoadingConfig()).toBe(false);
             expect(selectors.config.isLoading).toHaveBeenCalled();
         });
     });
@@ -742,7 +755,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(statuses.isPaymentStepPending()).toBe(true);
             expect(selectors.paymentStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
@@ -751,7 +764,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(statuses.isPaymentStepPending()).toBe(false);
             expect(selectors.paymentStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
@@ -760,7 +773,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(statuses.isPaymentStepPending()).toBe(true);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -769,7 +782,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(statuses.isPaymentStepPending()).toBe(false);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -778,7 +791,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(statuses.isPaymentStepPending()).toBe(true);
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
@@ -787,7 +800,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(statuses.isPaymentStepPending()).toBe(false);
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
@@ -796,7 +809,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(statuses.isPaymentStepPending()).toBe(true);
             expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
         });
 
@@ -805,7 +818,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(statuses.isPaymentStepPending()).toBe(false);
             expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
         });
     });
@@ -816,7 +829,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(statuses.isCustomerStepPending()).toBe(true);
             expect(selectors.customerStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
@@ -825,26 +838,36 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(statuses.isCustomerStepPending()).toBe(false);
             expect(selectors.customerStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
         it('returns true if payment method checkout is executing', () => {
-            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(true);
+            jest.spyOn(
+                selectors.customerStrategies,
+                'isExecutingPaymentMethodCheckout',
+            ).mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(true);
-            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+            expect(statuses.isCustomerStepPending()).toBe(true);
+            expect(
+                selectors.customerStrategies.isExecutingPaymentMethodCheckout,
+            ).toHaveBeenCalled();
         });
 
         it('returns false if payment method checkout is not executing', () => {
-            jest.spyOn(selectors.customerStrategies, 'isExecutingPaymentMethodCheckout').mockReturnValue(false);
+            jest.spyOn(
+                selectors.customerStrategies,
+                'isExecutingPaymentMethodCheckout',
+            ).mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(false);
-            expect(selectors.customerStrategies.isExecutingPaymentMethodCheckout).toHaveBeenCalled();
+            expect(statuses.isCustomerStepPending()).toBe(false);
+            expect(
+                selectors.customerStrategies.isExecutingPaymentMethodCheckout,
+            ).toHaveBeenCalled();
         });
 
         it('returns true if strategy is initializing', () => {
@@ -852,7 +875,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(statuses.isCustomerStepPending()).toBe(true);
             expect(selectors.customerStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -861,7 +884,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(statuses.isCustomerStepPending()).toBe(false);
             expect(selectors.customerStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -870,7 +893,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(statuses.isCustomerStepPending()).toBe(true);
             expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
         });
 
@@ -879,7 +902,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(statuses.isCustomerStepPending()).toBe(false);
             expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
         });
 
@@ -888,7 +911,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(statuses.isCustomerStepPending()).toBe(true);
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
 
@@ -897,7 +920,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(statuses.isCustomerStepPending()).toBe(false);
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
     });
@@ -908,7 +931,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(statuses.isShippingStepPending()).toBe(true);
             expect(selectors.shippingStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
@@ -917,7 +940,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(statuses.isShippingStepPending()).toBe(false);
             expect(selectors.shippingStrategies.isWidgetInteracting).toHaveBeenCalled();
         });
 
@@ -926,7 +949,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(statuses.isShippingStepPending()).toBe(true);
             expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -935,7 +958,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(statuses.isShippingStepPending()).toBe(false);
             expect(selectors.shippingStrategies.isInitializing).toHaveBeenCalled();
         });
 
@@ -944,7 +967,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(statuses.isShippingStepPending()).toBe(true);
             expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
         });
 
@@ -953,7 +976,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(statuses.isShippingStepPending()).toBe(false);
             expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
         });
 
@@ -962,7 +985,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(true);
+            expect(statuses.isShippingStepPending()).toBe(true);
             expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
         });
 
@@ -971,7 +994,7 @@ describe('CheckoutStoreStatusSelector', () => {
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isShippingStepPending()).toEqual(false);
+            expect(statuses.isShippingStepPending()).toBe(false);
             expect(selectors.shippingStrategies.isSelectingOption).toHaveBeenCalled();
         });
     });

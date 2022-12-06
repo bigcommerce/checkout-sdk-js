@@ -4,9 +4,19 @@ import { noop } from 'lodash';
 import { BuyNowCartRequestBody, CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, UnsupportedBrowserError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    UnsupportedBrowserError,
+} from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { BraintreeError, BraintreeSDKCreator, BraintreeTokenizePayload, BraintreeVenmoCheckout } from '../../../payment/strategies/braintree';
+import {
+    BraintreeError,
+    BraintreeSDKCreator,
+    BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
+} from '../../../payment/strategies/braintree';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 import { CheckoutButtonMethodType } from '../index';
@@ -33,7 +43,9 @@ const venmoButtonStyleHover = {
     backgroundColor: '#0a7fc2',
 };
 
-type BuyNowInitializeOptions = { getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void; }
+interface BuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+}
 
 export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrategy {
     private _onError = noop;
@@ -43,17 +55,21 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _braintreeSDKCreator: BraintreeSDKCreator,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { braintreevenmo, containerId, methodId } = options;
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.methodId" argument is not provided.',
+            );
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+        );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         if (!paymentMethod.clientToken) {
@@ -61,15 +77,22 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
 
         if (!containerId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.containerId" argument is not provided.`,
+            );
         }
 
         this._onError = braintreevenmo?.onError || this._handleError;
 
         this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
         await this._braintreeSDKCreator.getVenmoCheckout(
-            braintreeVenmoCheckout => this._handleInitializationVenmoSuccess(braintreeVenmoCheckout, containerId, braintreevenmo?.buyNowInitializeOptions),
-            error => this._handleInitializationVenmoError(error, containerId)
+            (braintreeVenmoCheckout) =>
+                this._handleInitializationVenmoSuccess(
+                    braintreeVenmoCheckout,
+                    containerId,
+                    braintreevenmo?.buyNowInitializeOptions,
+                ),
+            (error) => this._handleInitializationVenmoError(error, containerId),
         );
     }
 
@@ -83,11 +106,22 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         throw new Error(error.message);
     }
 
-    private _handleInitializationVenmoSuccess(braintreeVenmoCheckout: BraintreeVenmoCheckout, parentContainerId: string, buyNowInitializeOptions?: BuyNowInitializeOptions): void {
-        return this._renderVenmoButton(braintreeVenmoCheckout, parentContainerId, buyNowInitializeOptions);
+    private _handleInitializationVenmoSuccess(
+        braintreeVenmoCheckout: BraintreeVenmoCheckout,
+        parentContainerId: string,
+        buyNowInitializeOptions?: BuyNowInitializeOptions,
+    ): void {
+        return this._renderVenmoButton(
+            braintreeVenmoCheckout,
+            parentContainerId,
+            buyNowInitializeOptions,
+        );
     }
 
-    private _handleInitializationVenmoError(error: BraintreeError | UnsupportedBrowserError, containerId: string): void {
+    private _handleInitializationVenmoError(
+        error: BraintreeError | UnsupportedBrowserError,
+        containerId: string,
+    ): void {
         this._removeVenmoContainer(containerId);
 
         return this._onError(error);
@@ -101,11 +135,17 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private _renderVenmoButton(braintreeVenmoCheckout: BraintreeVenmoCheckout, containerId: string, buyNowInitializeOptions?: BuyNowInitializeOptions): void {
+    private _renderVenmoButton(
+        braintreeVenmoCheckout: BraintreeVenmoCheckout,
+        containerId: string,
+        buyNowInitializeOptions?: BuyNowInitializeOptions,
+    ): void {
         const venmoButton = document.getElementById(containerId);
 
         if (!venmoButton) {
-            throw new InvalidArgumentError('Unable to create wallet button without valid container ID.');
+            throw new InvalidArgumentError(
+                'Unable to create wallet button without valid container ID.',
+            );
         }
 
         venmoButton.setAttribute('aria-label', 'Venmo');
@@ -117,15 +157,17 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             const buyBowCart = await this._createBuyNowCart(buyNowInitializeOptions);
 
             if (braintreeVenmoCheckout.tokenize) {
-                braintreeVenmoCheckout.tokenize(async (error: BraintreeError, payload: BraintreeTokenizePayload) => {
-                    venmoButton.removeAttribute('disabled');
+                braintreeVenmoCheckout.tokenize(
+                    async (error: BraintreeError, payload: BraintreeTokenizePayload) => {
+                        venmoButton.removeAttribute('disabled');
 
-                    if (error) {
-                        return this._onError(error);
-                    }
+                        if (error) {
+                            return this._onError(error);
+                        }
 
-                    await this._handlePostForm(payload, buyBowCart?.id);
-                });
+                        await this._handlePostForm(payload, buyBowCart?.id);
+                    },
+                );
             }
         });
 
@@ -147,7 +189,9 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             }
 
             try {
-                const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
+                const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(
+                    cartRequestBody,
+                );
 
                 return buyNowCart;
             } catch (error) {
@@ -156,7 +200,10 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
     }
 
-    private async _handlePostForm(payload: BraintreeTokenizePayload, buyNowCartId?: string): Promise<void> {
+    private async _handlePostForm(
+        payload: BraintreeTokenizePayload,
+        buyNowCartId?: string,
+    ): Promise<void> {
         const { deviceData } = await this._braintreeSDKCreator.getDataCollector();
         const { nonce, details } = payload;
 
@@ -168,7 +215,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             action: 'set_external_checkout',
             billing_address: JSON.stringify(mapToLegacyBillingAddress(details)),
             shipping_address: JSON.stringify(mapToLegacyShippingAddress(details)),
-            ...buyNowCartId && { cart_id: buyNowCartId },
+            ...(buyNowCartId && { cart_id: buyNowCartId }),
         });
     }
 }

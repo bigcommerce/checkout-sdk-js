@@ -1,7 +1,7 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import CartSelector, { createCartSelectorFactory, CartSelectorFactory } from './cart-selector';
+import CartSelector, { CartSelectorFactory, createCartSelectorFactory } from './cart-selector';
 
 describe('CartSelector', () => {
     let cartSelector: CartSelector;
@@ -47,13 +47,13 @@ describe('CartSelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(cartSelector.isLoading()).toEqual(true);
+            expect(cartSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading cart', () => {
             cartSelector = createCartSelector(state.cart);
 
-            expect(cartSelector.isLoading()).toEqual(false);
+            expect(cartSelector.isLoading()).toBe(false);
         });
     });
 });

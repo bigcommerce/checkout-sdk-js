@@ -29,9 +29,7 @@ export function getCheckout(): Checkout {
         customer: getCustomer(),
         customerMessage: 'comment',
         billingAddress: getBillingAddress(),
-        consignments: [
-            getConsignment(),
-        ],
+        consignments: [getConsignment()],
         taxes: [
             {
                 name: 'Tax',
@@ -72,29 +70,21 @@ export function getCheckout(): Checkout {
 export function getCheckoutWithPayments(): Checkout {
     return {
         ...getCheckout(),
-        payments: [
-            getCheckoutPayment(),
-        ],
+        payments: [getCheckoutPayment()],
     };
 }
 
 export function getCheckoutWithCoupons(): Checkout {
     return {
         ...getCheckout(),
-        coupons: [
-            getCoupon(),
-            getShippingCoupon(),
-        ],
+        coupons: [getCoupon(), getShippingCoupon()],
     };
 }
 
 export function getCheckoutWithGiftCertificates(): Checkout {
     return {
         ...getCheckout(),
-        giftCertificates: [
-            getGiftCertificate(),
-            { ...getGiftCertificate(), code: 'gc2' },
-        ],
+        giftCertificates: [getGiftCertificate(), { ...getGiftCertificate(), code: 'gc2' }],
     };
 }
 

@@ -6,9 +6,19 @@ export interface CardinalSDK {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
     off(params: CardinalEventType): void;
-    setup<K extends keyof CardinalInitializationDataMap>(initializationType: K, initializationData: CardinalInitializationDataMap[K]): void;
-    trigger(event: CardinalTriggerEvents, data?: string): Promise<CardinalBinProcessResponse | void>;
-    continue(paymentBrand: CardinalPaymentBrand, continueObject: CardinalContinue, order: CardinalPartialOrder): void;
+    setup<K extends keyof CardinalInitializationDataMap>(
+        initializationType: K,
+        initializationData: CardinalInitializationDataMap[K],
+    ): void;
+    trigger(
+        event: CardinalTriggerEvents,
+        data?: string,
+    ): Promise<CardinalBinProcessResponse | void>;
+    continue(
+        paymentBrand: CardinalPaymentBrand,
+        continueObject: CardinalContinue,
+        order: CardinalPartialOrder,
+    ): void;
     start(paymentBrand: CardinalPaymentBrand, order: CardinalPartialOrder, jwt?: string): void;
 }
 

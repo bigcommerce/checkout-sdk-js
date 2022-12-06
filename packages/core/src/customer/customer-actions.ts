@@ -27,35 +27,35 @@ export enum CustomerActionType {
 }
 
 export type CustomerAction =
-    SignInCustomerAction |
-    SignOutCustomerAction |
-    CreateCustomerAddressAction |
-    CreateCustomerAction;
+    | SignInCustomerAction
+    | SignOutCustomerAction
+    | CreateCustomerAddressAction
+    | CreateCustomerAction;
 
 export type CreateCustomerAction =
-    CreateCustomerRequestedAction |
-    CreateCustomerSucceededAction |
-    CreateCustomerFailedAction |
-    SpamProtectionAction |
-    LoadCheckoutAction;
+    | CreateCustomerRequestedAction
+    | CreateCustomerSucceededAction
+    | CreateCustomerFailedAction
+    | SpamProtectionAction
+    | LoadCheckoutAction;
 
 export type CreateCustomerAddressAction =
-    CreateCustomerAddressRequestedAction |
-    CreateCustomerAddressSucceededAction |
-    CreateCustomerAddressFailedAction |
-    LoadCheckoutAction;
+    | CreateCustomerAddressRequestedAction
+    | CreateCustomerAddressSucceededAction
+    | CreateCustomerAddressFailedAction
+    | LoadCheckoutAction;
 
 export type SignInCustomerAction =
-    SignInCustomerRequestedAction |
-    SignInCustomerSucceededAction |
-    SignInCustomerFailedAction |
-    LoadCheckoutAction;
+    | SignInCustomerRequestedAction
+    | SignInCustomerSucceededAction
+    | SignInCustomerFailedAction
+    | LoadCheckoutAction;
 
 export type SignOutCustomerAction =
-    SignOutCustomerRequestedAction |
-    SignOutCustomerSucceededAction |
-    SignOutCustomerFailedAction |
-    LoadCheckoutAction;
+    | SignOutCustomerRequestedAction
+    | SignOutCustomerSucceededAction
+    | SignOutCustomerFailedAction
+    | LoadCheckoutAction;
 
 export interface SignInCustomerRequestedAction extends Action {
     type: CustomerActionType.SignInCustomerRequested;

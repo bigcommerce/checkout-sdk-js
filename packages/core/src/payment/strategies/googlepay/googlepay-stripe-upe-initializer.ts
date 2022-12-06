@@ -5,19 +5,23 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodFailedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizePayload,
+} from './googlepay';
 
 export default class GooglePayStripeUPEInitializer implements GooglePayInitializer {
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        return Promise.resolve(this._getGooglePayPaymentDataRequest(
-            checkout,
-            paymentMethod,
-            hasShippingAddress
-        ));
+        return Promise.resolve(
+            this._getGooglePayPaymentDataRequest(checkout, paymentMethod, hasShippingAddress),
+        );
     }
 
     teardown(): Promise<void> {
@@ -26,13 +30,20 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
 
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         let payload;
+
         try {
             payload = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
         } catch (err) {
             throw new InvalidArgumentError('Unable to parse response from Google Pay.');
         }
 
-        if (!payload.id || !payload.type || !payload.card || !payload.card.brand || !payload.card.last4) {
+        if (
+            !payload.id ||
+            !payload.type ||
+            !payload.card ||
+            !payload.card.brand ||
+            !payload.card.last4
+        ) {
             throw new PaymentMethodFailedError('Unable to parse response from Google Pay.');
         }
 
@@ -49,12 +60,12 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
     private _getGooglePayPaymentDataRequest(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         const {
             outstandingBalance,
             cart: {
-                currency: { code: currencyCode, decimalPlaces: decimalPlaces },
+                currency: { code: currencyCode, decimalPlaces },
             },
         } = checkout;
 
@@ -78,26 +89,30 @@ export default class GooglePayStripeUPEInitializer implements GooglePayInitializ
                 merchantId,
                 merchantName,
             },
-            allowedPaymentMethods: [{
-                type: 'CARD',
-                parameters: {
-                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: supportedCards.map(card => card === 'MC' ? 'MASTERCARD' : card),
-                    billingAddressRequired: true,
-                    billingAddressParameters: {
-                        format: BillingAddressFormat.Full,
-                        phoneNumberRequired: true,
-                    },
-                },
-                tokenizationSpecification: {
-                    type: 'PAYMENT_GATEWAY',
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
                     parameters: {
-                        gateway: 'stripe',
-                        'stripe:version': stripeVersion,
-                        'stripe:publishableKey': `${stripePublishableKey}/${stripeConnectedAccount}`,
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks: supportedCards.map((card) =>
+                            card === 'MC' ? 'MASTERCARD' : card,
+                        ),
+                        billingAddressRequired: true,
+                        billingAddressParameters: {
+                            format: BillingAddressFormat.Full,
+                            phoneNumberRequired: true,
+                        },
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: 'stripe',
+                            'stripe:version': stripeVersion,
+                            'stripe:publishableKey': `${stripePublishableKey}/${stripeConnectedAccount}`,
+                        },
                     },
                 },
-            }],
+            ],
             transactionInfo: {
                 currencyCode,
                 totalPriceStatus: 'FINAL',

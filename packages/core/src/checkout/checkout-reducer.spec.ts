@@ -23,7 +23,14 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
+            data: omit(action.payload, [
+                'billingAddress',
+                'cart',
+                'customer',
+                'consignments',
+                'coupons',
+                'giftCertificates',
+            ]),
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
@@ -40,7 +47,10 @@ describe('checkoutReducer', () => {
     });
 
     it('returns error state', () => {
-        const action = createAction(CheckoutActionType.LoadCheckoutFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            CheckoutActionType.LoadCheckoutFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
@@ -54,55 +64,126 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
+            data: omit(action.payload, [
+                'billingAddress',
+                'cart',
+                'customer',
+                'consignments',
+                'coupons',
+                'giftCertificates',
+            ]),
             errors: { updateError: undefined },
             statuses: { isUpdating: false },
         });
     });
 
     it('returns new state when consignment gets created', () => {
-        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout(), { id: '123' });
+        const action = createAction(
+            ConsignmentActionType.CreateConsignmentsSucceeded,
+            getCheckout(),
+            { id: '123' },
+        );
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, [
+                    'billingAddress',
+                    'cart',
+                    'customer',
+                    'consignments',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            }),
+        );
     });
 
     it('returns new state when consignment gets updated', () => {
-        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout(), { id: '123' });
+        const action = createAction(
+            ConsignmentActionType.UpdateConsignmentSucceeded,
+            getCheckout(),
+            { id: '123' },
+        );
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, [
+                    'billingAddress',
+                    'cart',
+                    'customer',
+                    'consignments',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            }),
+        );
     });
 
     it('returns new state when Load Shipping options succeeded', () => {
-        const action = createAction(ConsignmentActionType.LoadShippingOptionsSucceeded, getCheckout());
+        const action = createAction(
+            ConsignmentActionType.LoadShippingOptionsSucceeded,
+            getCheckout(),
+        );
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, [
+                    'billingAddress',
+                    'cart',
+                    'customer',
+                    'consignments',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            }),
+        );
     });
 
     it('returns new state when consignment gets deleted', () => {
-        const action = createAction(ConsignmentActionType.DeleteConsignmentSucceeded, getCheckout(), { id: '123' });
+        const action = createAction(
+            ConsignmentActionType.DeleteConsignmentSucceeded,
+            getCheckout(),
+            { id: '123' },
+        );
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, [
+                    'billingAddress',
+                    'cart',
+                    'customer',
+                    'consignments',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            }),
+        );
     });
 
     it('returns new state when shipping option gets updated', () => {
-        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout(), { id: '123' });
+        const action = createAction(
+            ConsignmentActionType.UpdateShippingOptionSucceeded,
+            getCheckout(),
+            { id: '123' },
+        );
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, [
+                    'billingAddress',
+                    'cart',
+                    'customer',
+                    'consignments',
+                    'coupons',
+                    'giftCertificates',
+                ]),
+            }),
+        );
     });
 
     it('returns loading state', () => {
@@ -116,7 +197,10 @@ describe('checkoutReducer', () => {
     });
 
     it('returns error state', () => {
-        const action = createAction(CheckoutActionType.UpdateCheckoutFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            CheckoutActionType.UpdateCheckoutFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
@@ -129,26 +213,32 @@ describe('checkoutReducer', () => {
         const action = createAction(SpamProtectionActionType.ExecuteRequested);
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            statuses: { isExecutingSpamCheck: true },
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                statuses: { isExecutingSpamCheck: true },
+            }),
+        );
     });
 
     it('returns new status when spam check is executed successfully', () => {
         const action = createAction(SpamProtectionActionType.ExecuteSucceeded);
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            statuses: { isExecutingSpamCheck: false },
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                statuses: { isExecutingSpamCheck: false },
+            }),
+        );
     });
 
     it('returns new status when spam check is failed to execute', () => {
         const action = createAction(SpamProtectionActionType.ExecuteFailed);
         const output = checkoutReducer(initialState, action);
 
-        expect(output).toEqual(expect.objectContaining({
-            statuses: { isExecutingSpamCheck: false },
-        }));
+        expect(output).toEqual(
+            expect.objectContaining({
+                statuses: { isExecutingSpamCheck: false },
+            }),
+        );
     });
 });

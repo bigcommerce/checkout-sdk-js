@@ -1,5 +1,11 @@
 import GooglePayAdyenV2Initializer from './googlepay-adyenv2-initializer';
-import { getAdyenV2PaymentDataMock, getAdyenV2PaymentDataRequest, getAdyenV2PaymentMethodMock, getAdyenV2TokenizedPayload, getCheckoutMock } from './googlepay.mock';
+import {
+    getAdyenV2PaymentDataMock,
+    getAdyenV2PaymentDataRequest,
+    getAdyenV2PaymentMethodMock,
+    getAdyenV2TokenizedPayload,
+    getCheckoutMock,
+} from './googlepay.mock';
 
 describe('GooglePayAdyenV2Initializer', () => {
     let googlePayInitializer: GooglePayAdyenV2Initializer;
@@ -17,7 +23,7 @@ describe('GooglePayAdyenV2Initializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getAdyenV2PaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getAdyenV2PaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayAdyenV2Initializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getAdyenV2PaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getAdyenV2PaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getAdyenV2TokenizedPayload());
         });

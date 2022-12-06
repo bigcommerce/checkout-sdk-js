@@ -39,7 +39,10 @@ describe('signInEmailReducer', () => {
     });
 
     it('returns error when subscriptions failed to update', () => {
-        const action = createAction(SignInEmailActionType.SendSignInEmailFailed, new RequestError(getErrorResponse()));
+        const action = createAction(
+            SignInEmailActionType.SendSignInEmailFailed,
+            new RequestError(getErrorResponse()),
+        );
         const output = signInEmailReducer(initialState, action);
 
         expect(output).toEqual({

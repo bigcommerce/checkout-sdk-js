@@ -1,6 +1,13 @@
 export default interface KlarnaCredit {
-    authorize(params: any, data: KlarnaUpdateSessionParams, callback: (res: KlarnaAuthorizationResponse) => void): void;
-    authorize(data: KlarnaUpdateSessionParams, callback: (res: KlarnaAuthorizationResponse) => void): void;
+    authorize(
+        params: any,
+        data: KlarnaUpdateSessionParams,
+        callback: (res: KlarnaAuthorizationResponse) => void,
+    ): void;
+    authorize(
+        data: KlarnaUpdateSessionParams,
+        callback: (res: KlarnaAuthorizationResponse) => void,
+    ): void;
     init(params: KlarnaInitParams): void;
     load(params: KlarnaLoadParams, callback: (res: KlarnaLoadResponse) => void): void;
 }

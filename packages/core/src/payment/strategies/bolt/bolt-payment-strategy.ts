@@ -1,11 +1,22 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { isAnalyticsTrackerWindow } from '../../../analytics/is-analytics-step-tracker-window';
 import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
+import { isAnalyticsTrackerWindow } from '../../../analytics/is-analytics-step-tracker-window';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError, PaymentMethodInvalidError } from '../../errors';
+import {
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError,
+    PaymentMethodFailedError,
+    PaymentMethodInvalidError,
+} from '../../errors';
 import { withAccountCreation } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -13,7 +24,13 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { BoltCheckout, BoltEmbedded, BoltEmbeddedTokenize, BoltEmbededField, BoltTransaction } from './bolt';
+import {
+    BoltCheckout,
+    BoltEmbedded,
+    BoltEmbeddedTokenize,
+    BoltEmbededField,
+    BoltTransaction,
+} from './bolt';
 import BoltError from './bolt-error';
 import BoltScriptLoader from './bolt-script-loader';
 
@@ -31,15 +48,17 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _boltScriptLoader: BoltScriptLoader,
-        private _analyticsExtraItemsManager: AnalyticsExtraItemsManager
-    ) { }
+        private _analyticsExtraItemsManager: AnalyticsExtraItemsManager,
+    ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { bolt, methodId } = options;
         const { containerId, onPaymentSelect, useBigCommerceCheckout } = bolt || {};
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.methodId" argument is not provided.',
+            );
         }
 
         if (useBigCommerceCheckout) {
@@ -47,32 +66,46 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
             const { initializationData, config } = paymentMethod || {};
-            const { publishableKey, developerConfig, embeddedOneClickEnabled } = initializationData || {};
+            const { publishableKey, developerConfig, embeddedOneClickEnabled } =
+                initializationData || {};
             const { testMode } = config || {};
 
             if (!paymentMethod || !publishableKey) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            this._boltClient = await this._boltScriptLoader.loadBoltClient(publishableKey, testMode, developerConfig);
+            this._boltClient = await this._boltScriptLoader.loadBoltClient(
+                publishableKey,
+                testMode,
+                developerConfig,
+            );
 
             this._useBoltClient = useBigCommerceCheckout && !embeddedOneClickEnabled;
             this._useBoltEmbedded = useBigCommerceCheckout && embeddedOneClickEnabled;
 
             if (this._useBoltEmbedded) {
                 if (!containerId) {
-                    throw new InvalidArgumentError('Unable to initialize payment because "options.bolt.containerId" argument is not provided.');
+                    throw new InvalidArgumentError(
+                        'Unable to initialize payment because "options.bolt.containerId" argument is not provided.',
+                    );
                 }
 
                 if (!onPaymentSelect) {
-                    throw new InvalidArgumentError('Unable to initialize payment because "options.bolt.onPaymentSelect" argument is not provided.');
+                    throw new InvalidArgumentError(
+                        'Unable to initialize payment because "options.bolt.onPaymentSelect" argument is not provided.',
+                    );
                 }
 
-                this._boltEmbedded = await this._boltScriptLoader.loadBoltEmbedded(publishableKey, testMode, developerConfig);
+                this._boltEmbedded = await this._boltScriptLoader.loadBoltEmbedded(
+                    publishableKey,
+                    testMode,
+                    developerConfig,
+                );
 
                 this._mountBoltEmbeddedField(containerId);
 
                 const hasBoltAccount = await this._hasBoltAccount();
+
                 onPaymentSelect(hasBoltAccount);
             }
         } else {
@@ -94,7 +127,10 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         this._setExtraItemsForAnalytics();
 
         if (this._useBoltClient) {
@@ -115,7 +151,10 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
      * @param options PaymentRequestOptions
      * @returns Promise<InternalCheckoutSelectors>
      */
-    private async _executeWithBoltClient(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    private async _executeWithBoltClient(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const boltClient = this._getBoltClient();
 
@@ -125,13 +164,19 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store
+            .getState()
+            .checkout.getCheckoutOrThrow();
 
         if (useStoreCredit !== undefined) {
-            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+            await this._store.dispatch(
+                this._storeCreditActionCreator.applyStoreCredit(useStoreCredit),
+            );
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options),
+        );
         const paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
 
         if (!paymentMethod || !paymentMethod.clientToken) {
@@ -141,9 +186,13 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         const orderToken = paymentMethod.clientToken;
 
         const transaction: BoltTransaction = await new Promise((resolve, reject) => {
-            const onSuccess = (transaction: BoltTransaction,  callback: () => void) => {
+            const onSuccess = (transaction: BoltTransaction, callback: () => void) => {
                 if (!transaction.reference) {
-                    reject(new PaymentMethodFailedError('Unable to proceed because transaction reference is unavailable. Please try again later.'));
+                    reject(
+                        new PaymentMethodFailedError(
+                            'Unable to proceed because transaction reference is unavailable. Please try again later.',
+                        ),
+                    );
                 } else {
                     resolve(transaction);
                 }
@@ -184,7 +233,10 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
      * @param options PaymentRequestOptions
      * @returns Promise<InternalCheckoutSelectors>
      */
-    private async _executeWithBoltEmbedded(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    private async _executeWithBoltEmbedded(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const { methodId, paymentData } = payment || {};
 
@@ -243,7 +295,10 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
      * @param options PaymentRequestOptions
      * @returns Promise<InternalCheckoutSelectors>
      */
-    private async _executeWithBoltFullCheckout(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    private async _executeWithBoltFullCheckout(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const boltClient = this._getBoltClient();
 
@@ -271,13 +326,15 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             throw new PaymentMethodInvalidError();
         }
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment({
-            methodId,
-            paymentData: {
-                ...paymentData,
-                nonce: transactionReference,
-            },
-        }));
+        return this._store.dispatch(
+            this._paymentActionCreator.submitPayment({
+                methodId,
+                paymentData: {
+                    ...paymentData,
+                    nonce: transactionReference,
+                },
+            }),
+        );
     }
 
     private _getBoltClient() {
@@ -334,6 +391,7 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             styles,
             renderSeparateFields: true,
         });
+
         embeddedField.mount(`#${containerId}`);
 
         this._embeddedField = embeddedField;
@@ -343,15 +401,15 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
         const { token, last4, bin, expiration } = tokenizeResult;
         const lastFourDigits = +last4;
         const iin = +bin;
-        const expirationMonth = +('' + expiration).split('-')[1];
-        const expirationYear = +('' + expiration).split('-')[0];
+        const expirationMonth = +`${expiration}`.split('-')[1];
+        const expirationYear = +`${expiration}`.split('-')[0];
 
         if (
-            !token
-            || isNaN(lastFourDigits)
-            || isNaN(iin)
-            || isNaN(expirationMonth)
-            || isNaN(expirationYear)
+            !token ||
+            isNaN(lastFourDigits) ||
+            isNaN(iin) ||
+            isNaN(expirationMonth) ||
+            isNaN(expirationYear)
         ) {
             throw new PaymentArgumentInvalidError();
         }
@@ -370,9 +428,11 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
             config?.storeConfig.checkoutSettings.isAnalyticsEnabled &&
             isAnalyticsTrackerWindow(window)
         ) {
-            const { cart: { id, lineItems } } = checkout;
+            const {
+                cart: { id, lineItems },
+            } = checkout;
 
-            this._analyticsExtraItemsManager.saveExtraItemsData(id, lineItems)
+            this._analyticsExtraItemsManager.saveExtraItemsData(id, lineItems);
         }
     }
 }

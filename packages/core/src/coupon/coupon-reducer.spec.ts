@@ -17,43 +17,62 @@ describe('couponReducer()', () => {
     const initialState: CouponState = { errors: {}, statuses: {} };
 
     it('returns new state when coupon gets applied', () => {
-        const action = createAction(CouponActionType.ApplyCouponSucceeded, getCheckoutWithCoupons());
+        const action = createAction(
+            CouponActionType.ApplyCouponSucceeded,
+            getCheckoutWithCoupons(),
+        );
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload && action.payload.coupons,
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: action.payload && action.payload.coupons,
+            }),
+        );
     });
 
     it('returns new state when coupon gets removed', () => {
         const action = createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: [],
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: [],
+            }),
+        );
     });
 
     it('returns new state when shipping option is updated', () => {
-        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout());
+        const action = createAction(
+            ConsignmentActionType.UpdateShippingOptionSucceeded,
+            getCheckout(),
+        );
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: [],
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: [],
+            }),
+        );
     });
 
     it('returns new state when checkout gets loaded', () => {
-        const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckoutWithCoupons());
+        const action = createAction(
+            CheckoutActionType.LoadCheckoutSucceeded,
+            getCheckoutWithCoupons(),
+        );
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload && action.payload.coupons,
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: action.payload && action.payload.coupons,
+            }),
+        );
     });
 
     it('returns new state when order gets loaded', () => {
         const action = createAction(OrderActionType.LoadOrderSucceeded, getOrder());
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload && action.payload.coupons,
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: action.payload && action.payload.coupons,
+            }),
+        );
     });
 
     it('returns an error state if coupon failed to be applied', () => {
@@ -66,37 +85,48 @@ describe('couponReducer()', () => {
 
         const action = createErrorAction(
             CouponActionType.ApplyCouponFailed,
-            new RequestError(getErrorResponse(errorResponseBody))
+            new RequestError(getErrorResponse(errorResponseBody)),
         );
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { applyCouponError: action.payload },
-            statuses: { isApplyingCoupon: false },
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                errors: { applyCouponError: action.payload },
+                statuses: { isApplyingCoupon: false },
+            }),
+        );
     });
 
     it('returns an error state if coupon failed to be removed', () => {
-        const action = createErrorAction(CouponActionType.RemoveCouponFailed, new RequestError(getErrorResponse()));
+        const action = createErrorAction(
+            CouponActionType.RemoveCouponFailed,
+            new RequestError(getErrorResponse()),
+        );
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { removeCouponError: action.payload },
-            statuses: { isRemovingCoupon: false },
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                errors: { removeCouponError: action.payload },
+                statuses: { isRemovingCoupon: false },
+            }),
+        );
     });
 
     it('returns new state while applying a coupon', () => {
         const action = createAction(CouponActionType.ApplyCouponRequested);
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isApplyingCoupon: true },
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isApplyingCoupon: true },
+            }),
+        );
     });
 
     it('returns new state while removing a coupon', () => {
         const action = createAction(CouponActionType.RemoveCouponRequested);
 
-        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isRemovingCoupon: true },
-        }));
+        expect(couponReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isRemovingCoupon: true },
+            }),
+        );
     });
 });

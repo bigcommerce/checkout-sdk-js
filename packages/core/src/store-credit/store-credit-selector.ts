@@ -15,17 +15,15 @@ export type StoreCreditSelectorFactory = (state: StoreCreditState) => StoreCredi
 export function createStoreCreditSelectorFactory(): StoreCreditSelectorFactory {
     const getApplyError = createSelector(
         (state: StoreCreditState) => state.errors.applyError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isApplying = createSelector(
         (state: StoreCreditState) => !!state.statuses.isApplying,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: StoreCreditState = DEFAULT_STATE
-    ): StoreCreditSelector => {
+    return memoizeOne((state: StoreCreditState = DEFAULT_STATE): StoreCreditSelector => {
         return {
             getApplyError: getApplyError(state),
             isApplying: isApplying(state),

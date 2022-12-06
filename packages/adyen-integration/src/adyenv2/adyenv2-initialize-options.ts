@@ -1,6 +1,12 @@
 import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { AdyenV2ValidationState, AdyenAdditionalActionOptions, AdyenCreditCardComponentOptions, AdyenIdealComponentOptions, AdyenThreeDS2Options } from './adyenv2';
+import {
+    AdyenAdditionalActionOptions,
+    AdyenCreditCardComponentOptions,
+    AdyenIdealComponentOptions,
+    AdyenThreeDS2Options,
+    AdyenV2ValidationState,
+} from './adyenv2';
 
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.

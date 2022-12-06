@@ -27,7 +27,7 @@ export interface CustomerAddress extends Address {
     type: string;
 }
 
-export interface CustomerGroup  {
+export interface CustomerGroup {
     id: number;
     name: string;
 }

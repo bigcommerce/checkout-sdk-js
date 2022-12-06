@@ -1,4 +1,4 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { concat, from, Observable } from 'rxjs';
 import { map, toArray } from 'rxjs/operators';
 
@@ -7,20 +7,20 @@ import { default as cachableAction } from './cachable-action-decorator';
 
 describe('cachableActionDecorator()', () => {
     class Foo {
-        constructor(
-            private _fetch: (name: string) => Promise<string>
-        ) {}
+        constructor(private _fetch: (name: string) => Promise<string>) {}
 
         @cachableAction
         loadMessage(name: string, _options?: ActionOptions): Observable<Action> {
-            return from(this._fetch(name))
-                .pipe(map(response => createAction('GET_MESSAGE', response)));
+            return from(this._fetch(name)).pipe(
+                map((response) => createAction('GET_MESSAGE', response)),
+            );
         }
 
         @cachableAction
         loadUppercaseMessage(name: string, _options?: ActionOptions): Observable<Action> {
-            return from(this._fetch(name))
-                .pipe(map(response => createAction('GET_UPPERCASE_MESSAGE', response.toUpperCase())));
+            return from(this._fetch(name)).pipe(
+                map((response) => createAction('GET_UPPERCASE_MESSAGE', response.toUpperCase())),
+            );
         }
     }
 
@@ -28,14 +28,14 @@ describe('cachableActionDecorator()', () => {
     let foo: Foo;
 
     beforeEach(() => {
-        fetch = jest.fn(name => Promise.resolve(`Hello ${name}`));
+        fetch = jest.fn((name) => Promise.resolve(`Hello ${name}`));
         foo = new Foo(fetch);
     });
 
     it('returns cached action if `useCache` option is true', async () => {
         const actions = await concat(
             foo.loadMessage('Foo', { useCache: true }),
-            foo.loadMessage('Foo', { useCache: true })
+            foo.loadMessage('Foo', { useCache: true }),
         )
             .pipe(toArray())
             .toPromise();
@@ -52,7 +52,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadMessage('Foo', { useCache: true }),
             foo.loadMessage('Bar', { useCache: true }),
             foo.loadMessage('Foo', { useCache: true }),
-            foo.loadMessage('Bar', { useCache: true })
+            foo.loadMessage('Bar', { useCache: true }),
         )
             .pipe(toArray())
             .toPromise();
@@ -71,7 +71,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadMessage('Foo', { useCache: true }),
             foo.loadMessage('Foo', { useCache: true }),
             foo.loadUppercaseMessage('Foo', { useCache: true }),
-            foo.loadUppercaseMessage('Foo', { useCache: true })
+            foo.loadUppercaseMessage('Foo', { useCache: true }),
         )
             .pipe(toArray())
             .toPromise();
@@ -86,10 +86,7 @@ describe('cachableActionDecorator()', () => {
     });
 
     it('returns non-cached action if `useCache` option is omitted or false', async () => {
-        const actions = await concat(
-            foo.loadMessage('Foo'),
-            foo.loadMessage('Foo')
-        )
+        const actions = await concat(foo.loadMessage('Foo'), foo.loadMessage('Foo'))
             .pipe(toArray())
             .toPromise();
 

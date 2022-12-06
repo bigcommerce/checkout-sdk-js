@@ -3,7 +3,12 @@ import { Response } from '@bigcommerce/request-sender';
 import { PaymentResponse } from '../../payment';
 import { ErrorResponseBody } from '../error';
 
-export function getResponse<T>(body: T, headers = {}, status = 200, statusText = 'OK'): Response<T> {
+export function getResponse<T>(
+    body: T,
+    headers = {},
+    status = 200,
+    statusText = 'OK',
+): Response<T> {
     return {
         body,
         status,
@@ -15,7 +20,12 @@ export function getResponse<T>(body: T, headers = {}, status = 200, statusText =
     };
 }
 
-export function getPaymentResponse<T>(data: T, headers = {}, status = 200, statusText = 'OK'): PaymentResponse<T> {
+export function getPaymentResponse<T>(
+    data: T,
+    headers = {},
+    status = 200,
+    statusText = 'OK',
+): PaymentResponse<T> {
     return {
         data,
         status,
@@ -27,7 +37,12 @@ export function getPaymentResponse<T>(data: T, headers = {}, status = 200, statu
     };
 }
 
-export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request'): Response<any> {
+export function getErrorResponse(
+    body = getErrorResponseBody(),
+    headers = {},
+    status = 400,
+    statusText = 'Bad Request',
+): Response<any> {
     return {
         body,
         status,

@@ -5,27 +5,21 @@ describe('replace()', () => {
         const valueA = { message: 'foo' };
         const valueB = { message: 'bar' };
 
-        expect(replace(valueA, valueB))
-            .toBe(valueB);
+        expect(replace(valueA, valueB)).toBe(valueB);
     });
 
     it('retains current value if new value equals to current value but only differs in its reference', () => {
         const valueA = { message: 'foo' };
         const valueB = { message: 'foo' };
 
-        expect(replace(valueA, valueB))
-            .toBe(valueA);
+        expect(replace(valueA, valueB)).toBe(valueA);
     });
 
     it('replaces current value with empty value except `undefined`', () => {
-        expect(replace('foobar', undefined))
-            .toBe('foobar');
+        expect(replace('foobar', undefined)).toBe('foobar');
 
-        expect(replace(Number(123), 0))
-            .toBe(0);
-        expect(replace(String('foobar'), ''))
-            .toBe('');
-        expect(replace(Object({ message: 'foo' }), null))
-            .toBe(null);
+        expect(replace(Number(123), 0)).toBe(0);
+        expect(replace(String('foobar'), '')).toBe('');
+        expect(replace(Object({ message: 'foo' }), null)).toBeNull();
     });
 });

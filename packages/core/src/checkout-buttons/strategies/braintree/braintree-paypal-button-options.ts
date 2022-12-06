@@ -19,7 +19,10 @@ export interface BraintreePaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: Pick<
+        PaypalButtonStyleOptions,
+        'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'
+    >;
 
     /**
      * Address to be used for shipping.
@@ -58,5 +61,5 @@ export interface BraintreePaypalButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 }

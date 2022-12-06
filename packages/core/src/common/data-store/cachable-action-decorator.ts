@@ -4,7 +4,7 @@ import isActionOptions from './is-action-options';
 export default function cachableActionDecorator<TMethod extends (...args: any[]) => any>(
     _: object,
     key: string,
-    descriptor: TypedPropertyDescriptor<TMethod>
+    descriptor: TypedPropertyDescriptor<TMethod>,
 ): TypedPropertyDescriptor<TMethod> {
     const memoizedMethods = new WeakMap<object, { [key: string]: TMethod }>();
 

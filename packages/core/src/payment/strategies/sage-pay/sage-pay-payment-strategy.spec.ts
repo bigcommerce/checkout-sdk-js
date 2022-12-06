@@ -4,15 +4,26 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { noop, omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfig } from '../../../config/configs.mock';
 import { HostedFormFactory } from '../../../hosted-form';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    FinalizeOrderAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
@@ -43,14 +54,14 @@ describe('SagePayPaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         formPoster = createFormPoster();
@@ -63,24 +74,22 @@ describe('SagePayPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = noop) => callback());
+        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
+            callback(),
+        );
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         strategy = new SagePayPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             hostedFormFactory,
-            formPoster
+            formPoster,
         );
     });
 
@@ -90,7 +99,10 @@ describe('SagePayPaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+            omit(payload, 'payment'),
+            options,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -111,39 +123,46 @@ describe('SagePayPaymentStrategy', () => {
     });
 
     it('posts 3ds data to Sage if 3ds is enabled', async () => {
-        const error = new RequestError(getResponse({
-            ...getErrorPaymentResponseBody(),
-            errors: [
-                { code: 'three_d_secure_required' },
-            ],
-            three_ds_result: {
-                acs_url: 'https://acs/url',
-                callback_url: 'https://callback/url',
-                payer_auth_request: 'payer_auth_request',
-                merchant_data: 'merchant_data',
-            },
-            status: 'error',
-        }));
+        const error = new RequestError(
+            getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [{ code: 'three_d_secure_required' }],
+                three_ds_result: {
+                    acs_url: 'https://acs/url',
+                    callback_url: 'https://callback/url',
+                    payer_auth_request: 'payer_auth_request',
+                    merchant_data: 'merchant_data',
+                },
+                status: 'error',
+            }),
+        );
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
+        );
 
         strategy.execute(getOrderRequestBody());
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
-            PaReq: 'payer_auth_request',
-            TermUrl: 'https://callback/url',
-            MD: 'merchant_data',
-        }, undefined, '_top');
+        expect(formPoster.postForm).toHaveBeenCalledWith(
+            'https://acs/url',
+            {
+                PaReq: 'payer_auth_request',
+                TermUrl: 'https://callback/url',
+                MD: 'merchant_data',
+            },
+            undefined,
+            '_top',
+        );
     });
 
     it('does not post 3ds data to Sage if 3ds is not enabled', async () => {
         const respons = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, respons)));
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            of(createErrorAction(PaymentActionType.SubmitPaymentFailed, respons)),
+        );
 
         try {
             await strategy.execute(getOrderRequestBody());
@@ -155,11 +174,9 @@ describe('SagePayPaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.FINALIZE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize();
 
@@ -170,8 +187,7 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         try {
             await strategy.finalize();
@@ -185,8 +201,9 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.INITIALIZE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(
+            paymentStatusTypes.INITIALIZE,
+        );
 
         try {
             await strategy.finalize();
@@ -200,8 +217,7 @@ describe('SagePayPaymentStrategy', () => {
     it('throws error if order is missing', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         try {
             await strategy.finalize();
@@ -211,23 +227,22 @@ describe('SagePayPaymentStrategy', () => {
     });
 
     it('is special type of credit card strategy', () => {
-        expect(strategy)
-            .toBeInstanceOf(CreditCardPaymentStrategy);
+        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     describe('#Execute with 3DS2 experiment on', () => {
         beforeEach(() => {
             const config = getConfig();
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValue({
-                    ...config.storeConfig,
-                    checkoutSettings: {
-                        ...config.storeConfig.checkoutSettings,
-                        features: {
-                            'INT-4994.Opayo_3DS2': true,
-                        },
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...config.storeConfig,
+                checkoutSettings: {
+                    ...config.storeConfig.checkoutSettings,
+                    features: {
+                        'INT-4994.Opayo_3DS2': true,
                     },
-                });
+                },
+            });
         });
 
         it('submit payment with browser_info', async () => {
@@ -253,28 +268,34 @@ describe('SagePayPaymentStrategy', () => {
         });
 
         it('posts 3ds data to Sage if 3ds is enabled', async () => {
-            const error = new RequestError(getResponse({
-                ...getErrorPaymentResponseBody(),
-                errors: [
-                    { code: 'three_d_secure_required' },
-                ],
-                three_ds_result: {
-                    acs_url: 'https://acs/url',
-                    payer_auth_request: 'c_request',
-                },
-                status: 'error',
-            }));
+            const error = new RequestError(
+                getResponse({
+                    ...getErrorPaymentResponseBody(),
+                    errors: [{ code: 'three_d_secure_required' }],
+                    three_ds_result: {
+                        acs_url: 'https://acs/url',
+                        payer_auth_request: 'c_request',
+                    },
+                    status: 'error',
+                }),
+            );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
+            );
 
             strategy.execute(getOrderRequestBody());
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
-                creq: 'c_request',
-            }, undefined, '_top');
+            expect(formPoster.postForm).toHaveBeenCalledWith(
+                'https://acs/url',
+                {
+                    creq: 'c_request',
+                },
+                undefined,
+                '_top',
+            );
         });
     });
 });

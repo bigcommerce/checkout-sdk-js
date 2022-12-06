@@ -1,5 +1,11 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { BrowserStorage } from '../../../common/storage';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -21,16 +27,23 @@ export class PPSDKStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _subStrategyRegistry: SubStrategyRegistry,
         private _paymentResumer: PaymentResumer,
-        browserStorage: BrowserStorage
+        browserStorage: BrowserStorage,
     ) {
         this._completedPayments = new PPSDKCompletedPayments(browserStorage);
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
+        const { bigpayBaseUrl } = this._store
+            .getState()
+            .config.getStoreConfigOrThrow().paymentSettings;
 
         if (!options?.methodId) {
-            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to submit payment because "options.methodId" argument is not provided.',
+            );
         }
 
         const { methodId } = options;
@@ -61,13 +74,17 @@ export class PPSDKStrategy implements PaymentStrategy {
             return this._store.getState();
         }
 
-        const { bigpayBaseUrl } = this._store.getState().config.getStoreConfigOrThrow().paymentSettings;
+        const { bigpayBaseUrl } = this._store
+            .getState()
+            .config.getStoreConfigOrThrow().paymentSettings;
 
         if (!options?.methodId) {
-            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to submit payment because "options.methodId" argument is not provided.',
+            );
         }
 
-        const paymentId = this._store.getState().order.getPaymentId(options?.methodId);
+        const paymentId = this._store.getState().order.getPaymentId(options.methodId);
 
         if (!paymentId || !order || this._completedPayments.isCompleted(paymentId)) {
             throw new OrderFinalizationNotRequiredError();
@@ -75,18 +92,19 @@ export class PPSDKStrategy implements PaymentStrategy {
 
         const { orderId } = order;
 
-        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, orderId })
-            .catch(error => {
-                this._completedPayments.setCompleted(paymentId);
-                throw error;
-            });
+        await this._paymentResumer.resume({ paymentId, bigpayBaseUrl, orderId }).catch((error) => {
+            this._completedPayments.setCompleted(paymentId);
+            throw error;
+        });
 
         return this._store.getState();
     }
 
     async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (!options?.methodId) {
-            throw new InvalidArgumentError('Unable to submit payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to submit payment because "options.methodId" argument is not provided.',
+            );
         }
 
         const paymentMethod = getPPSDKMethod(this._store, options.methodId);

@@ -1,4 +1,4 @@
-import StandardError from "./standard-error";
+import StandardError from './standard-error';
 
 /**
  * This error should be thrown when the payment flow is cancelled. It could be
@@ -7,9 +7,9 @@ import StandardError from "./standard-error";
  */
 export default class PaymentMethodCancelledError extends StandardError {
     constructor(message?: string) {
-        super(message || "Payment process was cancelled.");
+        super(message || 'Payment process was cancelled.');
 
-        this.name = "PaymentMethodCancelledError";
-        this.type = "payment_cancelled";
+        this.name = 'PaymentMethodCancelledError';
+        this.type = 'payment_cancelled';
     }
 }

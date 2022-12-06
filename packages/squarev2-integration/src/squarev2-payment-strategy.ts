@@ -6,24 +6,23 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentStrategy,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithSquareV2PaymentInitializeOptions } from "./squarev2-payment-initialize-options";
-import SquareV2PaymentProcessor from "./squarev2-payment-processor";
+import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
+import SquareV2PaymentProcessor from './squarev2-payment-processor';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
-        private _squareV2PaymentProcessor: SquareV2PaymentProcessor
+        private _squareV2PaymentProcessor: SquareV2PaymentProcessor,
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions &
-            WithSquareV2PaymentInitializeOptions
+        options?: PaymentInitializeOptions & WithSquareV2PaymentInitializeOptions,
     ): Promise<void> {
         if (!options?.squarev2?.containerId) {
             throw new InvalidArgumentError(
-                'Unable to proceed because "containerId" argument is not provided.'
+                'Unable to proceed because "containerId" argument is not provided.',
             );
         }
 
@@ -31,9 +30,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         const {
             config: { testMode },
             initializationData: { applicationId, locationId },
-        } = this._paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow(methodId);
+        } = this._paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
 
         await this._squareV2PaymentProcessor.initialize({
             applicationId,
@@ -45,7 +42,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
 
     async execute({ payment }: OrderRequestBody): Promise<void> {
         if (!payment) {
-            throw new PaymentArgumentInvalidError(["payment"]);
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         let nonce = await this._squareV2PaymentProcessor.tokenize();
@@ -77,6 +74,6 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             .getState()
             .getStoreConfigOrThrow().checkoutSettings;
 
-        return features["PROJECT-3828.add_3ds_support_on_squarev2"];
+        return features['PROJECT-3828.add_3ds_support_on_squarev2'];
     }
 }

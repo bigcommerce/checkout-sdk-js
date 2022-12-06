@@ -5,7 +5,13 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutActionType,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../common/dom';
 import { ErrorResponseBody } from '../common/error';
@@ -14,7 +20,14 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
-import { GoogleRecaptcha, GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
+import {
+    GoogleRecaptcha,
+    GoogleRecaptchaScriptLoader,
+    GoogleRecaptchaWindow,
+    SpamProtectionActionCreator,
+    SpamProtectionActionType,
+    SpamProtectionRequestSender,
+} from '../spam-protection';
 
 import Customer from './customer';
 import CustomerActionCreator from './customer-action-creator';
@@ -38,9 +51,15 @@ describe('CustomerActionCreator', () => {
         const requestSender = createRequestSender();
         const mockWindow = { grecaptcha: {} } as GoogleRecaptchaWindow;
         const scriptLoader = new ScriptLoader();
-        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
+        const googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(
+            scriptLoader,
+            mockWindow,
+        );
         const mutationObserverFactory = new MutationObserverFactory();
-        const googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
+        const googleRecaptcha = new GoogleRecaptcha(
+            googleRecaptchaScriptLoader,
+            mutationObserverFactory,
+        );
 
         response = getResponse(getCustomerResponseBody());
         customerResponse = getResponse(getCustomer());
@@ -50,37 +69,45 @@ describe('CustomerActionCreator', () => {
         customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.resolve({}));
-        jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(Promise.resolve(customerResponse));
-        jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.resolve(response));
-        jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.resolve(response));
+        jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(
+            Promise.resolve(customerResponse),
+        );
+        jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(
+            Promise.resolve(response),
+        );
+        jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(
+            Promise.resolve(response),
+        );
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
-        jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
-            .mockReturnValue(() => from([
+        jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(() =>
+            from([
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
-            ]));
+            ]),
+        );
 
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             googleRecaptcha,
-            new SpamProtectionRequestSender(requestSender)
+            new SpamProtectionRequestSender(requestSender),
         );
 
-        jest.spyOn(spamProtectionActionCreator, 'execute')
-            .mockReturnValue(() => from([
+        jest.spyOn(spamProtectionActionCreator, 'execute').mockReturnValue(() =>
+            from([
                 createAction(SpamProtectionActionType.ExecuteRequested),
                 createAction(SpamProtectionActionType.ExecuteSucceeded, { token: 'token' }),
-            ]));
+            ]),
+        );
 
         customerActionCreator = new CustomerActionCreator(
             customerRequestSender,
             checkoutActionCreator,
-            spamProtectionActionCreator
+            spamProtectionActionCreator,
         );
     });
 
@@ -106,35 +133,8 @@ describe('CustomerActionCreator', () => {
         });
 
         it('emits error actions if unable to create customer', async () => {
-            jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.reject(errorResponse));
-
-            const customer = {
-                email: 'foo@bar.com',
-                password: 'foobar',
-                firstName: 'first',
-                lastName: 'last',
-            };
-
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await from(customerActionCreator.createCustomer(customer)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
-                .toPromise();
-
-            expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual([
-                { type: CustomerActionType.CreateCustomerRequested },
-                { type: CustomerActionType.CreateCustomerFailed, payload: errorResponse, error: true },
-            ]);
-        });
-
-        it('does not execute spam protection if disabled', async () => {
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-                merge(getConfig().storeConfig, {
-                    checkoutSettings: { isStorefrontSpamProtectionEnabled: false },
-                })
+            jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(
+                Promise.reject(errorResponse),
             );
 
             const customer = {
@@ -144,23 +144,54 @@ describe('CustomerActionCreator', () => {
                 lastName: 'last',
             };
 
-            await from(customerActionCreator.createCustomer(customer)(store))
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(customerActionCreator.createCustomer(customer)(store))
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
-            expect(spamProtectionActionCreator.execute)
-                .not.toHaveBeenCalled();
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.CreateCustomerRequested },
+                {
+                    type: CustomerActionType.CreateCustomerFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
+            ]);
+        });
 
-            expect(customerRequestSender.createAccount).toHaveBeenCalledWith({
-                ...customer,
-                token: undefined,
-            }, undefined);
+        it('does not execute spam protection if disabled', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                merge(getConfig().storeConfig, {
+                    checkoutSettings: { isStorefrontSpamProtectionEnabled: false },
+                }),
+            );
+
+            const customer = {
+                email: 'foo@bar.com',
+                password: 'foobar',
+                firstName: 'first',
+                lastName: 'last',
+            };
+
+            await from(customerActionCreator.createCustomer(customer)(store)).toPromise();
+
+            expect(spamProtectionActionCreator.execute).not.toHaveBeenCalled();
+
+            expect(customerRequestSender.createAccount).toHaveBeenCalledWith(
+                {
+                    ...customer,
+                    token: undefined,
+                },
+                undefined,
+            );
         });
 
         it('executes spam protection if enabled', async () => {
             jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
                 merge(getConfig().storeConfig, {
                     checkoutSettings: { isStorefrontSpamProtectionEnabled: true },
-                })
+                }),
             );
 
             const customer = {
@@ -174,13 +205,15 @@ describe('CustomerActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            expect(spamProtectionActionCreator.execute)
-                .toHaveBeenCalled();
+            expect(spamProtectionActionCreator.execute).toHaveBeenCalled();
 
-            expect(customerRequestSender.createAccount).toHaveBeenCalledWith({
-                ...customer,
-                token: 'token',
-            }, undefined);
+            expect(customerRequestSender.createAccount).toHaveBeenCalledWith(
+                {
+                    ...customer,
+                    token: 'token',
+                },
+                undefined,
+            );
 
             expect(actions).toEqual([
                 { type: CustomerActionType.CreateCustomerRequested },
@@ -197,7 +230,8 @@ describe('CustomerActionCreator', () => {
         it('emits actions if able to create customer address', async () => {
             const address = getShippingAddress();
 
-            const actions = await customerActionCreator.createAddress(address)
+            const actions = await customerActionCreator
+                .createAddress(address)
                 .pipe(toArray())
                 .toPromise();
 
@@ -208,22 +242,26 @@ describe('CustomerActionCreator', () => {
         });
 
         it('emits error actions if unable to create customer address', async () => {
-            jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
             const address = getShippingAddress();
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await customerActionCreator.createAddress(address)
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await customerActionCreator
+                .createAddress(address)
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CustomerActionType.CreateCustomerAddressRequested },
-                { type: CustomerActionType.CreateCustomerAddressFailed, payload: errorResponse, error: true },
+                {
+                    type: CustomerActionType.CreateCustomerAddressFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
             ]);
         });
     });
@@ -244,32 +282,33 @@ describe('CustomerActionCreator', () => {
         });
 
         it('emits error actions if unable to sign in customer', async () => {
-            jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
             const actions = await from(customerActionCreator.signInCustomer(credentials)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CustomerActionType.SignInCustomerRequested },
-                { type: CustomerActionType.SignInCustomerFailed, payload: errorResponse, error: true },
+                {
+                    type: CustomerActionType.SignInCustomerFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
             ]);
         });
 
         it('emits actions to reload current checkout', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
 
-            await from(customerActionCreator.signInCustomer(credentials)(store))
-                .toPromise();
+            await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
 
-            expect(checkoutActionCreator.loadCurrentCheckout)
-                .toHaveBeenCalled();
+            expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalled();
         });
     });
 
@@ -288,31 +327,32 @@ describe('CustomerActionCreator', () => {
         });
 
         it('emits error actions if unable to sign out customer', async () => {
-            jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
             const actions = await from(customerActionCreator.signOutCustomer()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CustomerActionType.SignOutCustomerRequested },
-                { type: CustomerActionType.SignOutCustomerFailed, payload: errorResponse, error: true },
+                {
+                    type: CustomerActionType.SignOutCustomerFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
             ]);
         });
 
         it('emits actions to reload current checkout', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
 
-            await from(customerActionCreator.signInCustomer(credentials)(store))
-                .toPromise();
+            await from(customerActionCreator.signInCustomer(credentials)(store)).toPromise();
 
-            expect(checkoutActionCreator.loadCurrentCheckout)
-                .toHaveBeenCalled();
+            expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalled();
         });
     });
 });

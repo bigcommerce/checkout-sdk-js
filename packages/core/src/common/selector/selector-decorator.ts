@@ -1,6 +1,6 @@
 import { memoize } from '@bigcommerce/memoize';
 
-import { bindDecorator, isEqual, isPrivate, CacheKeyResolver } from '../utility';
+import { bindDecorator, CacheKeyResolver, isEqual, isPrivate } from '../utility';
 
 /**
  * Decorates a class by patching all of its methods to cache their return values
@@ -11,25 +11,28 @@ import { bindDecorator, isEqual, isPrivate, CacheKeyResolver } from '../utility'
 export default function selectorDecorator<T extends Constructor<object>>(target: T): T {
     const decoratedTarget = class extends target {};
 
-    Object.getOwnPropertyNames(target.prototype)
-        .forEach(key => {
-            const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+    Object.getOwnPropertyNames(target.prototype).forEach((key) => {
+        const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
 
-            if (!descriptor || key === 'constructor') {
-                return;
-            }
+        if (!descriptor || key === 'constructor') {
+            return;
+        }
 
-            Object.defineProperty(
-                decoratedTarget.prototype,
-                key,
-                selectorMethodDecorator(target.prototype, key, descriptor)
-            );
-        });
+        Object.defineProperty(
+            decoratedTarget.prototype,
+            key,
+            selectorMethodDecorator(target.prototype, key, descriptor),
+        );
+    });
 
     return decoratedTarget;
 }
 
-function selectorMethodDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+function selectorMethodDecorator<T extends Method>(
+    target: object,
+    key: string,
+    descriptor: TypedPropertyDescriptor<T>,
+): TypedPropertyDescriptor<T> {
     if (typeof descriptor.value !== 'function') {
         return descriptor;
     }
@@ -49,7 +52,7 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
 
                 const newValue = method.call(this, ...args);
 
-                if (isEqual(newValue, cachedValue, { keyFilter: key => !isPrivate(key) })) {
+                if (isEqual(newValue, cachedValue, { keyFilter: (key) => !isPrivate(key) })) {
                     return cachedValue;
                 }
 

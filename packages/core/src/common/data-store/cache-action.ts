@@ -3,9 +3,7 @@ import { memoize } from '@bigcommerce/memoize';
 import { from, Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 
-export default function cacheAction<TFunction extends CreateActionFn>(
-    fn: TFunction
-): TFunction {
+export default function cacheAction<TFunction extends CreateActionFn>(fn: TFunction): TFunction {
     function decoratedFn(this: any, ...args: any[]) {
         const action = fn.call(this, ...args);
 
@@ -14,7 +12,7 @@ export default function cacheAction<TFunction extends CreateActionFn>(
         }
 
         if (typeof action === 'function') {
-            return memoize(store => from(action(store)).pipe(shareReplay()));
+            return memoize((store) => from(action(store)).pipe(shareReplay()));
         }
 
         return action;

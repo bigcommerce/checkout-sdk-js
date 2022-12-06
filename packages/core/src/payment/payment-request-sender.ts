@@ -7,12 +7,10 @@ import PaymentRequestBody from './payment-request-body';
  */
 export default class PaymentRequestSender {
     /**
-     * @constructor
+     * @class
      * @param {BigpayClient} client
      */
-    constructor(
-        private _client: any
-    ) {}
+    constructor(private _client: any) {}
 
     submitPayment(payload: PaymentRequestBody): Promise<Response<any>> {
         return new Promise((resolve, reject) => {

@@ -1,6 +1,5 @@
-
-import { createErrorAction, Action } from '@bigcommerce/data-store';
-import { throwError, Observable, Subscribable } from 'rxjs';
+import { Action, createErrorAction } from '@bigcommerce/data-store';
+import { Observable, Subscribable, throwError } from 'rxjs';
 
 import { createRequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
@@ -20,7 +19,7 @@ describe('createActionTransformer()', () => {
             const action$ = throwError(createErrorAction('FOOBAR', payload));
 
             transformer(action$).subscribe({
-                error: action => {
+                error: (action) => {
                     expect(action.payload).toBeInstanceOf(Error);
                 },
             });
@@ -31,7 +30,7 @@ describe('createActionTransformer()', () => {
             const action$ = throwError(createErrorAction('FOOBAR', payload));
 
             transformer(action$).subscribe({
-                error: action => {
+                error: (action) => {
                     expect(action.payload.message).toEqual(payload.body.detail);
                 },
             });
@@ -39,12 +38,13 @@ describe('createActionTransformer()', () => {
 
         it('uses the default message if none provided', () => {
             const payload = getErrorResponse();
+
             delete payload.body.detail;
 
             const action$ = throwError(createErrorAction('FOOBAR', payload));
 
             transformer(action$).subscribe({
-                error: action => {
+                error: (action) => {
                     expect(action.payload.message).toEqual(expect.any(String));
                 },
             });
@@ -57,7 +57,7 @@ describe('createActionTransformer()', () => {
             const action$ = throwError(createErrorAction('FOOBAR', payload));
 
             transformer(action$).subscribe({
-                error: action => {
+                error: (action) => {
                     expect(action.payload).toEqual(payload);
                 },
             });
@@ -68,7 +68,7 @@ describe('createActionTransformer()', () => {
             const action$ = throwError(createErrorAction('FOOBAR', payload));
 
             transformer(action$).subscribe({
-                error: action => {
+                error: (action) => {
                     expect(action.payload).toEqual(payload);
                 },
             });

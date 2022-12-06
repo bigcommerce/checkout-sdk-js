@@ -14,7 +14,7 @@ describe('KlarnaScriptLoader', () => {
         klarnaScriptLoader.load();
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//credit.klarnacdn.net/lib/v1/api.js'
+            '//credit.klarnacdn.net/lib/v1/api.js',
         );
     });
 });

@@ -30,16 +30,25 @@ describe('AffirmScriptLoader', () => {
 
         it('loads the Script with testMode equals to false', async () => {
             await affirmScriptLoader.load('apiKeyTest', false);
-            expect(affirmJS).toHaveBeenCalledWith('apiKeyTest', '//cdn1.affirm.com/js/v2/affirm.js');
+
+            expect(affirmJS).toHaveBeenCalledWith(
+                'apiKeyTest',
+                '//cdn1.affirm.com/js/v2/affirm.js',
+            );
         });
 
         it('loads the Script with testMode equals to true', async () => {
             await affirmScriptLoader.load('apiKeyTest', true);
-            expect(affirmJS).toHaveBeenCalledWith('apiKeyTest', '//cdn1-sandbox.affirm.com/js/v2/affirm.js');
+
+            expect(affirmJS).toHaveBeenCalledWith(
+                'apiKeyTest',
+                '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
+            );
         });
 
         it('returns the Script from the window', async () => {
             const Affirm = await affirmScriptLoader.load();
+
             expect(Affirm).toBe(affirmScript);
         });
 

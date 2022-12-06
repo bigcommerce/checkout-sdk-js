@@ -1,17 +1,34 @@
 import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
 import { Order, OrderActionCreator, OrderIncludes, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { Consignment } from '../../../shipping';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import {
+    PaymentArgumentInvalidError,
+    PaymentMethodCancelledError,
+    PaymentMethodInvalidError,
+} from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { Affirm, AffirmAddress, AffirmDiscount, AffirmFailResponse, AffirmItem, AffirmRequestData, AffirmSuccessResponse } from './affirm';
+import {
+    Affirm,
+    AffirmAddress,
+    AffirmDiscount,
+    AffirmFailResponse,
+    AffirmItem,
+    AffirmRequestData,
+    AffirmSuccessResponse,
+} from './affirm';
 import AffirmScriptLoader from './affirm-script-loader';
 
 export default class AffirmPaymentStrategy implements PaymentStrategy {
@@ -22,30 +39,37 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _affirmScriptLoader: AffirmScriptLoader
-    ) { }
+        private _affirmScriptLoader: AffirmScriptLoader,
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
-            .then(state => {
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
+            .then((state) => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                const { config: { testMode }, clientToken: publicKey } = paymentMethod;
+                const {
+                    config: { testMode },
+                    clientToken: publicKey,
+                } = paymentMethod;
 
                 return this._affirmScriptLoader.load(publicKey, testMode);
             })
-            .then(affirm => {
+            .then((affirm) => {
                 this._affirm = affirm;
 
                 return this._store.getState();
             });
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const methodId = payload.payment && payload.payment.methodId;
         const { useStoreCredit } = payload;
         const { _affirm } = this;
@@ -68,29 +92,36 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             },
         };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
+        return this._store
+            .dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
                 _affirm.checkout(this._getCheckoutInformation());
 
                 return new Promise((resolve, reject) => {
                     _affirm.checkout.open({
                         onFail: (failObject: AffirmFailResponse) => {
-                            failObject.reason === 'canceled' ? reject(new PaymentMethodCancelledError()) : reject(new PaymentMethodInvalidError());
+                            failObject.reason === 'canceled'
+                                ? reject(new PaymentMethodCancelledError())
+                                : reject(new PaymentMethodInvalidError());
                         },
-                        onSuccess: successObject => { resolve(successObject); },
+                        onSuccess: (successObject) => {
+                            resolve(successObject);
+                        },
                     });
                     _affirm.ui.error.on('close', () => {
                         reject(new PaymentMethodCancelledError());
                     });
                 });
             })
-            .then(result => {
+            .then((result) => {
                 const paymentPayload = {
                     methodId,
                     paymentData: { nonce: result.checkout_token },
                 };
 
-                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                return this._store.dispatch(
+                    this._paymentActionCreator.submitPayment(paymentPayload),
+                );
             });
     }
 
@@ -154,8 +185,9 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         const consignment = consignments[0];
 
-        return consignment && consignment.selectedShippingOption ?
-            consignment.selectedShippingOption.type : '';
+        return consignment && consignment.selectedShippingOption
+            ? consignment.selectedShippingOption.type
+            : '';
     }
 
     private _getBillingAddress(): AffirmAddress {
@@ -293,9 +325,9 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     private _getCategories(categories?: LineItemCategory[][]): string[][] {
         if (!categories) {
-            return[[]];
+            return [[]];
         }
 
-        return categories.map(categoryTree => categoryTree.map(category => category.name));
+        return categories.map((categoryTree) => categoryTree.map((category) => category.name));
     }
 }

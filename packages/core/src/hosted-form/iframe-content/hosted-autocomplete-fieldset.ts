@@ -11,17 +11,17 @@ export default class HostedAutocompleteFieldset {
     constructor(
         private _form: HTMLFormElement,
         private _fieldTypes: HostedFieldType[],
-        private _inputAggregator: HostedInputAggregator
+        private _inputAggregator: HostedInputAggregator,
     ) {
-        this._inputs = this._fieldTypes.map(type => this._createInput(type));
+        this._inputs = this._fieldTypes.map((type) => this._createInput(type));
     }
 
     attach(): void {
-        this._inputs.forEach(input => this._form.appendChild(input));
+        this._inputs.forEach((input) => this._form.appendChild(input));
     }
 
     detach(): void {
-        this._inputs.forEach(input => {
+        this._inputs.forEach((input) => {
             if (!input.parentElement) {
                 return;
             }
@@ -45,15 +45,16 @@ export default class HostedAutocompleteFieldset {
         return input;
     }
 
-    private _handleChange: (event: Event) => void = event => {
+    private _handleChange: (event: Event) => void = (event) => {
         const targetInput = event.target as HTMLInputElement;
 
         if (!targetInput) {
             throw new Error('Unable to get a reference to the target of the change event.');
         }
 
-        const targetHostedInput = this._inputAggregator.getInputs()
-            .find(input => this._getAutocompleteElementId(input.getType()) === targetInput.id);
+        const targetHostedInput = this._inputAggregator
+            .getInputs()
+            .find((input) => this._getAutocompleteElementId(input.getType()) === targetInput.id);
 
         if (!targetHostedInput) {
             return;

@@ -81,7 +81,7 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
-     googlepayadyenv3?: GooglePayCustomerInitializeOptions;
+    googlepayadyenv3?: GooglePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -93,7 +93,7 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
-     googlepaybnz?: GooglePayCustomerInitializeOptions;
+    googlepaybnz?: GooglePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -117,7 +117,7 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
-     googlepayorbital?: GooglePayCustomerInitializeOptions;
+    googlepayorbital?: GooglePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.
@@ -129,7 +129,7 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
-     googlepaystripeupe?: GooglePayCustomerInitializeOptions;
+    googlepaystripeupe?: GooglePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the Customer Stripe Upe payment method.

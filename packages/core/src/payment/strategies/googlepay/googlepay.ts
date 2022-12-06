@@ -1,13 +1,22 @@
 import { PaymentInitializeOptions } from '../..';
 import { Checkout, InternalCheckoutSelectors } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
-import { BraintreeModuleCreator, BraintreeVerifyPayload, GooglePayBraintreeSDK } from '../braintree';
+import {
+    BraintreeModuleCreator,
+    BraintreeVerifyPayload,
+    GooglePayBraintreeSDK,
+} from '../braintree';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
 export interface GooglePayInitializer {
-    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV2>;
+    initialize(
+        checkout: Checkout,
+        paymentMethod: PaymentMethod,
+        hasShippingAddress: boolean,
+        publishableKey?: string,
+    ): Promise<GooglePayPaymentDataRequestV2>;
     teardown(): Promise<void>;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
@@ -17,7 +26,7 @@ export interface GooglePayProviderProcessor {
     processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors>;
 }
 
-export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>
+export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
 
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;
@@ -33,7 +42,7 @@ export interface GooglePayIsReadyToPayResponse {
 export interface GooglePaySDK {
     payments: {
         api: {
-            PaymentsClient: new(options: GooglePayPaymentOptions) => GooglePayClient;
+            PaymentsClient: new (options: GooglePayPaymentOptions) => GooglePayClient;
         };
     };
 }
@@ -166,20 +175,22 @@ export interface GooglePayPaymentDataRequestV2 {
         merchantId?: string;
         merchantName?: string;
     };
-    allowedPaymentMethods: [{
-        type: string;
-        parameters: {
-            allowedAuthMethods: string[];
-            allowedCardNetworks: string[];
-            allowPrepaidCards?: boolean;
-            billingAddressRequired?: boolean;
-            billingAddressParameters?: {
-                format?: BillingAddressFormat;
-                phoneNumberRequired?: boolean;
+    allowedPaymentMethods: [
+        {
+            type: string;
+            parameters: {
+                allowedAuthMethods: string[];
+                allowedCardNetworks: string[];
+                allowPrepaidCards?: boolean;
+                billingAddressRequired?: boolean;
+                billingAddressParameters?: {
+                    format?: BillingAddressFormat;
+                    phoneNumberRequired?: boolean;
+                };
             };
-        };
-        tokenizationSpecification?: TokenizationSpecification;
-    }];
+            tokenizationSpecification?: TokenizationSpecification;
+        },
+    ];
     transactionInfo: {
         currencyCode: string;
         countryCode?: string;

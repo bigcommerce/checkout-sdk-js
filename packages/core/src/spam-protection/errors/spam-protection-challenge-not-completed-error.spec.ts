@@ -4,6 +4,6 @@ describe('SpamProtectionChallengeNotCompletedError', () => {
     it('returns error name', () => {
         const error = new SpamProtectionChallengeNotCompletedError();
 
-        expect(error.name).toEqual('SpamProtectionChallengeNotCompletedError');
+        expect(error.name).toBe('SpamProtectionChallengeNotCompletedError');
     });
 });

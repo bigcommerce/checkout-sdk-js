@@ -1,13 +1,17 @@
 import { InvalidArgumentError } from '../../../common/error/errors';
 
-import { PaypalCommerceFormFieldOptions, PaypalCommerceFormFieldStyles, PaypalCommerceFormFieldStylesMap } from './index';
+import {
+    PaypalCommerceFormFieldOptions,
+    PaypalCommerceFormFieldStyles,
+    PaypalCommerceFormFieldStylesMap,
+} from './index';
 
 export default class PaypalCommerceRegularField {
     private _input: HTMLInputElement;
 
     constructor(
         private _options: PaypalCommerceFormFieldOptions,
-        private _styles?: PaypalCommerceFormFieldStylesMap
+        private _styles?: PaypalCommerceFormFieldStylesMap,
     ) {
         this._input = document.createElement('input');
         this._input.style.backgroundColor = 'transparent';
@@ -51,7 +55,7 @@ export default class PaypalCommerceRegularField {
 
         const styleKeys = Object.keys(styles) as Array<keyof PaypalCommerceFormFieldStyles>;
 
-        styleKeys.forEach(key => {
+        styleKeys.forEach((key) => {
             this._input.style[key] = styles[key] || '';
         });
     }

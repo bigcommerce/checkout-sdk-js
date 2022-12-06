@@ -34,82 +34,98 @@ describe('Coupon Request Sender', () => {
     describe('#applyCoupon()', () => {
         it('applies coupon code', async () => {
             const response = getResponse(getCheckoutWithCoupons());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
-                body: { couponCode },
-                params: {
-                    include: defaultIncludes,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/coupons',
+                {
+                    body: { couponCode },
+                    params: {
+                        include: defaultIncludes,
+                    },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 },
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
-                },
-            });
+            );
         });
 
         it('applies coupon with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckoutWithCoupons());
+
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
-                ...options,
-                body: { couponCode },
-                params: {
-                    include: defaultIncludes,
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/coupons',
+                {
+                    ...options,
+                    body: { couponCode },
+                    params: {
+                        include: defaultIncludes,
+                    },
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
                 },
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
-                },
-            });
+            );
         });
     });
 
     describe('#removeCoupon()', () => {
         it('removes coupon code', async () => {
             const response = getResponse(getCheckoutWithCoupons());
+
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.delete).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234',
+                {
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes,
+                    },
                 },
-                params: {
-                    include: defaultIncludes,
-                },
-            });
+            );
         });
 
         it('removes coupon code with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckoutWithCoupons());
+
             jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {
-                ...options,
-                headers: {
-                    Accept: ContentType.JsonV1,
-                    ...SDK_VERSION_HEADERS,
+            expect(requestSender.delete).toHaveBeenCalledWith(
+                '/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234',
+                {
+                    ...options,
+                    headers: {
+                        Accept: ContentType.JsonV1,
+                        ...SDK_VERSION_HEADERS,
+                    },
+                    params: {
+                        include: defaultIncludes,
+                    },
                 },
-                params: {
-                    include: defaultIncludes,
-                },
-            });
+            );
         });
     });
 });

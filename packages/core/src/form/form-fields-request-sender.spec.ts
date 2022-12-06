@@ -21,8 +21,7 @@ describe('FormFieldsRequestSender', () => {
         beforeEach(() => {
             response = getResponse(getFormFields());
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
         });
 
         it('loads fields', async () => {

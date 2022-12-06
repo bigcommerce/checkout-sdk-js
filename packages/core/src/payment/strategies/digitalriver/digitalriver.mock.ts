@@ -5,7 +5,10 @@ import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
-import DigitalRiverJS, { DigitalRiverAdditionalProviderData, DigitalRiverInitializeToken } from './digitalriver';
+import DigitalRiverJS, {
+    DigitalRiverAdditionalProviderData,
+    DigitalRiverInitializeToken,
+} from './digitalriver';
 
 export function getDigitalRiverJSMock(): DigitalRiverJS {
     return {
@@ -71,7 +74,6 @@ export function getDigitalRiverInitializationDataMock() {
         publicKey: '1234',
         paymentLanguage: 'en-US',
     };
-
 }
 
 export function getDigitalRiverPaymentMethodMock(): PaymentMethod {
@@ -97,13 +99,15 @@ function getAdditionalActionErrorResponse(): DigitalRiverAdditionalProviderData 
 }
 
 export function getAdditionalActionError(): RequestError {
-    return new RequestError(getResponse({
-        ...getErrorPaymentResponseBody(),
-        provider_data: getAdditionalActionErrorResponse(),
+    return new RequestError(
+        getResponse({
+            ...getErrorPaymentResponseBody(),
+            provider_data: getAdditionalActionErrorResponse(),
             errors: [
                 {
                     code: 'additional_action_required',
                 },
             ],
-    }));
+        }),
+    );
 }

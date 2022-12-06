@@ -6,13 +6,13 @@ describe('RequestError', () => {
     it('sets type', () => {
         const error = new RequestError(getErrorResponse());
 
-        expect(error.type).toEqual('request');
+        expect(error.type).toBe('request');
     });
 
     it('sets name', () => {
         const error = new RequestError(getErrorResponse());
 
-        expect(error.name).toEqual('RequestError');
+        expect(error.name).toBe('RequestError');
     });
 
     it('sets body', () => {
@@ -32,8 +32,8 @@ describe('RequestError', () => {
     it('sets default data when none provided', () => {
         const error = new RequestError();
 
-        expect(error.message).toEqual('An unexpected error has occurred.');
-        expect(error.status).toEqual(0);
+        expect(error.message).toBe('An unexpected error has occurred.');
+        expect(error.status).toBe(0);
         expect(error.body).toEqual({});
         expect(error.headers).toEqual({});
     });

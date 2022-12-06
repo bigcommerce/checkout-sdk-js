@@ -1,5 +1,11 @@
 import GooglePayOrbitalInitializer from './googlepay-orbital-initializer';
-import { getCheckoutMock, getOrbitalPaymentDataMock, getOrbitalPaymentDataRequest, getOrbitalPaymentMethodMock, getOrbitalTokenizedPayload  } from './googlepay.mock';
+import {
+    getCheckoutMock,
+    getOrbitalPaymentDataMock,
+    getOrbitalPaymentDataRequest,
+    getOrbitalPaymentMethodMock,
+    getOrbitalTokenizedPayload,
+} from './googlepay.mock';
 
 describe('GooglePayCybersourceV2Initializer', () => {
     let googlePayInitializer: GooglePayOrbitalInitializer;
@@ -17,7 +23,7 @@ describe('GooglePayCybersourceV2Initializer', () => {
             const initialize = await googlePayInitializer.initialize(
                 getCheckoutMock(),
                 getOrbitalPaymentMethodMock(),
-                false
+                false,
             );
 
             expect(initialize).toEqual(getOrbitalPaymentDataRequest());
@@ -32,7 +38,9 @@ describe('GooglePayCybersourceV2Initializer', () => {
 
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
-            const tokenizePayload = await googlePayInitializer.parseResponse(getOrbitalPaymentDataMock());
+            const tokenizePayload = await googlePayInitializer.parseResponse(
+                getOrbitalPaymentDataMock(),
+            );
 
             expect(tokenizePayload).toEqual(getOrbitalTokenizedPayload());
         });

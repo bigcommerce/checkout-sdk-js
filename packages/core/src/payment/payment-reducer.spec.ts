@@ -13,10 +13,15 @@ describe('paymentReducer', () => {
     });
 
     it('returns new data if payment is submitted successfully', () => {
-        const action = createAction(PaymentActionType.SubmitPaymentSucceeded, getPaymentResponseBody());
+        const action = createAction(
+            PaymentActionType.SubmitPaymentSucceeded,
+            getPaymentResponseBody(),
+        );
 
-        expect(paymentReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload,
-        }));
+        expect(paymentReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: action.payload,
+            }),
+        );
     });
 });

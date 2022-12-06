@@ -1,4 +1,4 @@
-import { RequestOptions } from "../util-types";
+import { RequestOptions } from '../util-types';
 
 /**
  * The set of options for configuring any requests related to the payment step of

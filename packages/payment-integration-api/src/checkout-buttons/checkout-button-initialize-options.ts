@@ -1,4 +1,4 @@
-import RequestOptions from "../util-types/request-options";
+import RequestOptions from '../util-types/request-options';
 
 /**
  * The set of options for configuring the checkout button.
@@ -10,12 +10,10 @@ export interface CheckoutButtonOptions extends RequestOptions {
     methodId: string;
 }
 
-export default interface CheckoutButtonInitializeOptions
-    extends CheckoutButtonOptions {
+export default interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+    [key: string]: unknown;
     /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
-
-    [key: string]: unknown;
 }

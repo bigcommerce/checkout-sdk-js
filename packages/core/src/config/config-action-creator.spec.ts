@@ -25,15 +25,12 @@ describe('ConfigActionCreator', () => {
         response = getResponse(getConfig());
         errorResponse = getErrorResponse();
 
-        jest.spyOn(configRequestSender, 'loadConfig')
-            .mockReturnValue(Promise.resolve(response));
+        jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.resolve(response));
     });
 
     describe('#loadConfig()', () => {
         it('emits actions if able to load config', async () => {
-            const actions = await configActionCreator.loadConfig()
-                .pipe(toArray())
-                .toPromise();
+            const actions = await configActionCreator.loadConfig().pipe(toArray()).toPromise();
 
             expect(actions).toEqual([
                 { type: ConfigActionType.LoadConfigRequested },
@@ -42,14 +39,14 @@ describe('ConfigActionCreator', () => {
         });
 
         it('emits error actions if unable to load config', async () => {
-            jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await configActionCreator.loadConfig()
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await configActionCreator
+                .loadConfig()
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -62,7 +59,7 @@ describe('ConfigActionCreator', () => {
         it('dispatches actions using cached responses if available', async () => {
             const actions = await merge(
                 configActionCreator.loadConfig({ useCache: true }),
-                configActionCreator.loadConfig({ useCache: true })
+                configActionCreator.loadConfig({ useCache: true }),
             )
                 .pipe(toArray())
                 .toPromise();

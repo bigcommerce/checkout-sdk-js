@@ -31,21 +31,21 @@ describe('createFreezeProxy()', () => {
         const foobar = new Foobar({ name: 'foobar' });
         const proxy = createFreezeProxy(foobar);
 
-        expect(Object.isFrozen(foobar.getData())).toEqual(false);
-        expect(Object.isFrozen(proxy.getData())).toEqual(true);
+        expect(Object.isFrozen(foobar.getData())).toBe(false);
+        expect(Object.isFrozen(proxy.getData())).toBe(true);
     });
 
     it('freezes return value of inherited methods', () => {
         const proxy = createFreezeProxy(new ExtendedFoobar({ name: 'foobar' }));
 
-        expect(Object.isFrozen(proxy.getData())).toEqual(true);
-        expect(Object.isFrozen(proxy.getExtendedData())).toEqual(true);
+        expect(Object.isFrozen(proxy.getData())).toBe(true);
+        expect(Object.isFrozen(proxy.getExtendedData())).toBe(true);
     });
 
     it('ignores primitive return value', () => {
         const proxy = createFreezeProxy(new Foobar({ name: 'foobar' }));
 
-        expect(proxy.getName()).toEqual('foobar');
+        expect(proxy.getName()).toBe('foobar');
     });
 });
 
@@ -55,9 +55,9 @@ describe('createFreezeProxies()', () => {
         const extendedFoobar = new ExtendedFoobar({ name: 'extended_foobar' });
         const proxy = createFreezeProxies({ extendedFoobar, foobar });
 
-        expect(Object.isFrozen(foobar.getData())).toEqual(false);
-        expect(Object.isFrozen(extendedFoobar.getData())).toEqual(false);
-        expect(Object.isFrozen(proxy.foobar.getData())).toEqual(true);
-        expect(Object.isFrozen(proxy.extendedFoobar.getData())).toEqual(true);
+        expect(Object.isFrozen(foobar.getData())).toBe(false);
+        expect(Object.isFrozen(extendedFoobar.getData())).toBe(false);
+        expect(Object.isFrozen(proxy.foobar.getData())).toBe(true);
+        expect(Object.isFrozen(proxy.extendedFoobar.getData())).toBe(true);
     });
 });

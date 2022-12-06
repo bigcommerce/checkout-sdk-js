@@ -1,5 +1,8 @@
 import { SignInEmail } from './signin-email';
-import SignInEmailSelector, { createSignInEmailSelectorFactory, SignInEmailSelectorFactory } from './signin-email-selector';
+import SignInEmailSelector, {
+    createSignInEmailSelectorFactory,
+    SignInEmailSelectorFactory,
+} from './signin-email-selector';
 
 describe('SignInEmailSelector', () => {
     let signInEmailSelector: SignInEmailSelector;
@@ -64,7 +67,7 @@ describe('SignInEmailSelector', () => {
                 statuses: { isSending: true },
             });
 
-            expect(signInEmailSelector.isSending()).toEqual(true);
+            expect(signInEmailSelector.isSending()).toBe(true);
         });
 
         it('returns false if not sending email', () => {
@@ -73,7 +76,7 @@ describe('SignInEmailSelector', () => {
                 statuses: {},
             });
 
-            expect(signInEmailSelector.isSending()).toEqual(false);
+            expect(signInEmailSelector.isSending()).toBe(false);
         });
     });
 });

@@ -4,7 +4,7 @@ import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
 import { Address } from '../../address';
-import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { ErrorResponseBody } from '../../common/error';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
@@ -16,7 +16,13 @@ import InstrumentActionCreator from './instrument-action-creator';
 import { InstrumentActionType } from './instrument-actions';
 import InstrumentRequestSender from './instrument-request-sender';
 import { InstrumentsResponseBody } from './instrument-response-body';
-import { deleteInstrumentResponseBody, getInstrumentsMeta, getInstrumentsState, getLoadInstrumentsResponseBody, getVaultAccessToken } from './instrument.mock';
+import {
+    deleteInstrumentResponseBody,
+    getInstrumentsMeta,
+    getInstrumentsState,
+    getLoadInstrumentsResponseBody,
+    getVaultAccessToken,
+} from './instrument.mock';
 
 describe('InstrumentActionCreator', () => {
     const bigpayClient: any = {};
@@ -43,9 +49,15 @@ describe('InstrumentActionCreator', () => {
         loadInstrumentsResponse = getResponse(getLoadInstrumentsResponseBody());
         deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
-        jest.spyOn(instrumentRequestSender, 'getVaultAccessToken').mockResolvedValue(vaultAccessTokenResponse);
-        jest.spyOn(instrumentRequestSender, 'loadInstruments').mockResolvedValue(loadInstrumentsResponse);
-        jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockResolvedValue(deleteInstrumentResponse);
+        jest.spyOn(instrumentRequestSender, 'getVaultAccessToken').mockResolvedValue(
+            vaultAccessTokenResponse,
+        );
+        jest.spyOn(instrumentRequestSender, 'loadInstruments').mockResolvedValue(
+            loadInstrumentsResponse,
+        );
+        jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockResolvedValue(
+            deleteInstrumentResponse,
+        );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
@@ -61,35 +73,39 @@ describe('InstrumentActionCreator', () => {
         currencyCode = 'USD';
 
         const instrumentsMeta = getInstrumentsMeta();
+
         vaultAccessToken = instrumentsMeta.vaultAccessToken;
         vaultAccessExpiry = instrumentsMeta.vaultAccessExpiry;
     });
 
     describe('#loadInstruments()', () => {
         it('sends a request to get a list of instruments using shopper currency', async () => {
-            await from(instrumentActionCreator.loadInstruments()(store))
-                .toPromise();
+            await from(instrumentActionCreator.loadInstruments()(store)).toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddress
+                shippingAddress,
             );
         });
 
         it('sends a request to get a list of instruments using default currency when shopper currency is not transactional', async () => {
             store = createCheckoutStore({
                 ...state,
-                config: merge({}, getConfigState(), { data: { ...getConfig(), storeConfig: { shopperCurrency: { code: 'AUD', isTransactional: false } } } }),
+                config: merge({}, getConfigState(), {
+                    data: {
+                        ...getConfig(),
+                        storeConfig: { shopperCurrency: { code: 'AUD', isTransactional: false } },
+                    },
+                }),
             });
 
-            await from(instrumentActionCreator.loadInstruments()(store))
-                .toPromise();
+            await from(instrumentActionCreator.loadInstruments()(store)).toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddress
+                shippingAddress,
             );
         });
 
@@ -105,13 +121,12 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await from(instrumentActionCreator.loadInstruments()(store))
-                .toPromise();
+            await from(instrumentActionCreator.loadInstruments()(store)).toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddress
+                shippingAddress,
             );
         });
 
@@ -135,18 +150,19 @@ describe('InstrumentActionCreator', () => {
         it('emits error actions if unable to load instruments', async () => {
             jest.spyOn(instrumentRequestSender, 'loadInstruments').mockRejectedValue(errorResponse);
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
             const actions = await from(instrumentActionCreator.loadInstruments()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: InstrumentActionType.LoadInstrumentsRequested },
-                { type: InstrumentActionType.LoadInstrumentsFailed, payload: errorResponse, error: true },
+                {
+                    type: InstrumentActionType.LoadInstrumentsFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
             ]);
         });
 
@@ -158,15 +174,14 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toEqual('missing_data');
+                expect(e.type).toBe('missing_data');
             }
         });
     });
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
-                .toPromise();
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store)).toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.deleteInstrument).toHaveBeenCalledWith(
@@ -176,7 +191,7 @@ describe('InstrumentActionCreator', () => {
                     currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId
+                instrumentId,
             );
         });
 
@@ -192,8 +207,7 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
-                .toPromise();
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store)).toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
             expect(instrumentRequestSender.deleteInstrument).toHaveBeenCalledWith(
@@ -203,12 +217,14 @@ describe('InstrumentActionCreator', () => {
                     currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId
+                instrumentId,
             );
         });
 
         it('emits actions if able to delete an instrument', async () => {
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            const actions = await from(
+                instrumentActionCreator.deleteInstrument(instrumentId)(store),
+            )
                 .pipe(toArray())
                 .toPromise();
 
@@ -226,14 +242,15 @@ describe('InstrumentActionCreator', () => {
         });
 
         it('emits error actions if unable to delete an instrument', async () => {
-            jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockRejectedValue(errorResponse);
+            jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockRejectedValue(
+                errorResponse,
+            );
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                instrumentActionCreator.deleteInstrument(instrumentId)(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -259,7 +276,7 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toEqual('missing_data');
+                expect(e.type).toBe('missing_data');
             }
         });
     });

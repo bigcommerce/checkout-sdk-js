@@ -1,11 +1,11 @@
-import { BillingAddress } from "../billing";
-import { Cart } from "../cart";
-import { Coupon, GiftCertificate } from "../coupon";
-import { Customer } from "../customer";
-import { Discount } from "../discount";
-import { Promotion } from "../promotion";
-import { Consignment } from "../shipping";
-import { Tax } from "../tax";
+import { BillingAddress } from '../billing';
+import { Cart } from '../cart';
+import { Coupon, GiftCertificate } from '../coupon';
+import { Customer } from '../customer';
+import { Discount } from '../discount';
+import { Promotion } from '../promotion';
+import { Consignment } from '../shipping';
+import { Tax } from '../tax';
 
 export default interface Checkout {
     id: string;

@@ -1,6 +1,14 @@
 import { noop } from 'lodash';
+
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError,
+} from '../../../common/error/errors';
 import { RequestOptions } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotCompletedError } from '../../../order/errors';
@@ -27,11 +35,13 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
-        private _clearpayScriptLoader: ClearpayScriptLoader
+        private _clearpayScriptLoader: ClearpayScriptLoader,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = this._store.getState();
         const paymentMethod = getPaymentMethodOrThrow(options.methodId, options.gatewayId);
 
         this._clearpaySdk = await this._clearpayScriptLoader.load(paymentMethod);
@@ -45,33 +55,47 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         if (!payload.payment) {
             throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
+
         const { gatewayId, methodId } = payload.payment;
 
         if (!gatewayId || !methodId) {
             throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store
+            .getState()
+            .checkout.getCheckoutOrThrow();
         let state = this._store.getState();
 
         if (useStoreCredit !== undefined) {
-            state = await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+            state = await this._store.dispatch(
+                this._storeCreditActionCreator.applyStoreCredit(useStoreCredit),
+            );
         }
 
         await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
 
         const { countryCode } = this._store.getState().billingAddress.getBillingAddressOrThrow();
+
         if (!this._isCountrySupported(countryCode)) {
-            throw new InvalidArgumentError('Unable to proceed because billing country is not supported.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because billing country is not supported.',
+            );
         }
 
         state = await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        await this._redirectToClearpay(countryCode, state.paymentMethods.getPaymentMethod(methodId, gatewayId));
+        await this._redirectToClearpay(
+            countryCode,
+            state.paymentMethods.getPaymentMethod(methodId, gatewayId),
+        );
 
         // Clearpay will handle the rest of the flow so return a promise that doesn't really resolve
         return new Promise(noop);
@@ -98,7 +122,9 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
         await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            return await this._store.dispatch(
+                this._paymentActionCreator.submitPayment(paymentPayload),
+            );
         } catch (error) {
             await this._remoteCheckoutRequestSender.forgetCheckout();
             await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods());
@@ -112,22 +138,31 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        this._clearpaySdk.initialize({countryCode});
+        this._clearpaySdk.initialize({ countryCode });
         this._clearpaySdk.redirect({ token: paymentMethod.clientToken });
     }
 
-    private _isCountrySupported( countryCode: string): boolean {
+    private _isCountrySupported(countryCode: string): boolean {
         return countryCode === 'GB';
     }
 
-    private async _loadPaymentMethod(gatewayId: string, methodId: string, options?: RequestOptions): Promise<InternalCheckoutSelectors> {
+    private async _loadPaymentMethod(
+        gatewayId: string,
+        methodId: string,
+        options?: RequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         try {
             return await this._store.dispatch(
-                this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { ...options, params: { ...options?.params, method: methodId } })
+                this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
+                    ...options,
+                    params: { ...options?.params, method: methodId },
+                }),
             );
         } catch (error) {
-            if (error instanceof RequestError && error?.body?.status === 422) {
-                throw new InvalidArgumentError("Clearpay can't process your payment for this order, please try another payment method");
+            if (error instanceof RequestError && error.body?.status === 422) {
+                throw new InvalidArgumentError(
+                    "Clearpay can't process your payment for this order, please try another payment method",
+                );
             }
 
             throw error;

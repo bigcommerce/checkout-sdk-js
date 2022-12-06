@@ -1,5 +1,5 @@
 enum TypeA {
-    typeA = 'typeA',
+    TYPEA = 'typeA',
 }
 
 export default TypeA;

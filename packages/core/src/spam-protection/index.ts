@@ -7,4 +7,7 @@ export { default as GoogleRecaptcha } from './google-recaptcha';
 export { default as SpamProtectionActionCreator } from './spam-protection-action-creator';
 export { default as SpamProtectionRequestSender } from './spam-protection-request-sender';
 export { default as isSpamProtectionExecuteSucceededAction } from './is-spam-protection-succeeded-action';
-export { default as GoogleRecaptchaScriptLoader, GoogleRecaptchaWindow } from './google-recaptcha-script-loader';
+export {
+    default as GoogleRecaptchaScriptLoader,
+    GoogleRecaptchaWindow,
+} from './google-recaptcha-script-loader';

@@ -15,7 +15,7 @@ describe('mapFromInternalErrorResponse()', () => {
             status: 400,
             title: 'Error with payment provider',
             type: 'invalid_payment',
-            errors: [ 'Missing CCV.', 'Missing CC Type.' ],
+            errors: ['Missing CCV.', 'Missing CC Type.'],
         });
 
         error = mapFromInternalErrorResponse(response);
@@ -34,7 +34,7 @@ describe('mapFromInternalErrorResponse()', () => {
     });
 
     it('concatenates all errors, ignoring empty ones', () => {
-        expect(error.message).toEqual('Missing CCV. Missing CC Type.');
+        expect(error.message).toBe('Missing CCV. Missing CC Type.');
     });
 
     it('creates an array of error objects', () => {

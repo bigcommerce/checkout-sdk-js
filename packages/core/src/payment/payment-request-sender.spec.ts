@@ -1,5 +1,9 @@
 import PaymentRequestSender from './payment-request-sender';
-import { getErrorPaymentResponseBody, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
+import {
+    getErrorPaymentResponseBody,
+    getPaymentRequestBody,
+    getPaymentResponseBody,
+} from './payments.mock';
 
 describe('PaymentRequestSender', () => {
     let bigpayClient: any;
@@ -8,12 +12,14 @@ describe('PaymentRequestSender', () => {
     describe('#submitPayment()', () => {
         beforeEach(() => {
             bigpayClient = {
-                submitPayment: jest.fn((_, callback) => callback(null, {
-                    data: getPaymentResponseBody(),
-                    headers: { 'content-type': 'application/json' },
-                    status: 200,
-                    statusText: 'OK',
-                })),
+                submitPayment: jest.fn((_, callback) =>
+                    callback(null, {
+                        data: getPaymentResponseBody(),
+                        headers: { 'content-type': 'application/json' },
+                        status: 200,
+                        statusText: 'OK',
+                    }),
+                ),
             };
             paymentRequestSender = new PaymentRequestSender(bigpayClient);
         });
@@ -38,12 +44,14 @@ describe('PaymentRequestSender', () => {
         });
 
         it('returns error response if submission is unsuccessful', async () => {
-            bigpayClient.submitPayment = jest.fn((_, callback) => callback({
-                data: getErrorPaymentResponseBody(),
-                headers: { 'content-type': 'application/json' },
-                status: 400,
-                statusText: 'Bad Request',
-            }));
+            bigpayClient.submitPayment = jest.fn((_, callback) =>
+                callback({
+                    data: getErrorPaymentResponseBody(),
+                    headers: { 'content-type': 'application/json' },
+                    status: 400,
+                    statusText: 'Bad Request',
+                }),
+            );
 
             try {
                 await paymentRequestSender.submitPayment(getPaymentRequestBody());
@@ -71,7 +79,11 @@ describe('PaymentRequestSender', () => {
 
             paymentRequestSender.initializeOffsitePayment(payload);
 
-            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(payload, null, undefined);
+            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(
+                payload,
+                null,
+                undefined,
+            );
         });
 
         it('submits payment data to BigPay with custom target', () => {
@@ -79,7 +91,11 @@ describe('PaymentRequestSender', () => {
 
             paymentRequestSender.initializeOffsitePayment(payload, 'iframename');
 
-            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(payload, null, 'iframename');
+            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(
+                payload,
+                null,
+                'iframename',
+            );
         });
     });
 });

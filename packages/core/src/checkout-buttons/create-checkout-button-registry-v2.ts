@@ -4,10 +4,10 @@ import {
     CheckoutButtonStrategyResolveId,
     isResolvableModule,
     PaymentIntegrationService,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { ResolveIdRegistry } from "../common/registry";
-import * as defaultCheckoutButtonStrategyFactories from "../generated/checkout-button-strategies";
+import { ResolveIdRegistry } from '../common/registry';
+import * as defaultCheckoutButtonStrategyFactories from '../generated/checkout-button-strategies';
 
 export interface CheckoutButtonStrategyFactories {
     [key: string]: CheckoutButtonStrategyFactory<CheckoutButtonStrategy>;
@@ -15,7 +15,7 @@ export interface CheckoutButtonStrategyFactories {
 
 export default function createCheckoutButtonStrategyRegistry(
     paymentIntegrationService: PaymentIntegrationService,
-    checkoutButtonStrategyFactories: CheckoutButtonStrategyFactories = defaultCheckoutButtonStrategyFactories
+    checkoutButtonStrategyFactories: CheckoutButtonStrategyFactories = defaultCheckoutButtonStrategyFactories,
 ): ResolveIdRegistry<CheckoutButtonStrategy, CheckoutButtonStrategyResolveId> {
     const registry = new ResolveIdRegistry<
         CheckoutButtonStrategy,
@@ -23,7 +23,7 @@ export default function createCheckoutButtonStrategyRegistry(
     >();
 
     for (const [, createCheckoutButtonStrategy] of Object.entries(
-        checkoutButtonStrategyFactories
+        checkoutButtonStrategyFactories,
     )) {
         if (
             !isResolvableModule<
@@ -36,7 +36,7 @@ export default function createCheckoutButtonStrategyRegistry(
 
         for (const resolverId of createCheckoutButtonStrategy.resolveIds) {
             registry.register(resolverId, () =>
-                createCheckoutButtonStrategy(paymentIntegrationService)
+                createCheckoutButtonStrategy(paymentIntegrationService),
             );
         }
     }

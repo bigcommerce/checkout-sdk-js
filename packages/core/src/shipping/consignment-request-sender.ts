@@ -1,7 +1,13 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { Checkout, CheckoutParams } from '../checkout';
-import { joinIncludes, joinOrMergeIncludes, ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import {
+    ContentType,
+    joinIncludes,
+    joinOrMergeIncludes,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 import { ConsignmentsRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 
@@ -14,14 +20,12 @@ const DEFAULT_INCLUDES = [
 ];
 
 export default class ConsignmentRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
     createConsignments(
         checkoutId: string,
         consignments: ConsignmentsRequestBody,
-        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {}
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/consignments`;
         const headers = {
@@ -42,7 +46,7 @@ export default class ConsignmentRequestSender {
     updateConsignment(
         checkoutId: string,
         consignment: ConsignmentUpdateRequestBody,
-        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {}
+        { timeout, params: { include } = {} }: RequestOptions<CheckoutParams> = {},
     ): Promise<Response<Checkout>> {
         const { id, ...body } = consignment;
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${id}`;
@@ -64,7 +68,7 @@ export default class ConsignmentRequestSender {
     deleteConsignment(
         checkoutId: string,
         consignmentId: string,
-        { timeout }: RequestOptions = {}
+        { timeout }: RequestOptions = {},
     ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
         const headers = {

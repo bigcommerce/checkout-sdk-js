@@ -4,6 +4,6 @@ describe('InvalidArgumentError', () => {
     it('returns error name', () => {
         const error = new InvalidArgumentError();
 
-        expect(error.name).toEqual('InvalidArgumentError');
+        expect(error.name).toBe('InvalidArgumentError');
     });
 });

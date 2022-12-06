@@ -4,11 +4,22 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { PaymentActionCreator } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
+import {
+    ApproveCallbackActions,
+    ApproveCallbackPayload,
+    CompleteCallbackDataPayload,
+    PaypalCheckoutButtonOptions,
+    PayPalCommerceIntent,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+    ShippingAddressChangeCallbackPayload,
+    ShippingOptionChangeCallbackPayload,
+} from '../../../payment/strategies/paypal-commerce';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { ApproveCallbackActions, ApproveCallbackPayload, CompleteCallbackDataPayload, PaypalCheckoutButtonOptions, PayPalCommerceIntent, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, ShippingAddressChangeCallbackPayload, ShippingOptionChangeCallbackPayload } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-
 import CheckoutButtonStrategy from '../checkout-button-strategy';
+
 import { PaypalCommerceInlineCheckoutButtonInitializeOptions } from './paypal-commerce-inline-checkout-button-options';
 
 export default class PaypalCommerceInlineCheckoutButtonStrategy implements CheckoutButtonStrategy {
@@ -20,22 +31,28 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         private _orderActionCreator: OrderActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId, paypalcommerceinline } = options;
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.methodId" argument is not provided.',
+            );
         }
 
         if (!containerId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.containerId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.containerId" argument is not provided.',
+            );
         }
 
         if (!paypalcommerceinline) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.paypalcommerceinline" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.paypalcommerceinline" argument is not provided.',
+            );
         }
 
         await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
@@ -43,7 +60,11 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const state = this._store.getState();
         const currencyCode = state.cart.getCartOrThrow().currency.code;
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, false);
+        const paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(
+            paymentMethod,
+            currencyCode,
+            false,
+        );
 
         if (!paypalCommerceSdk) {
             throw new PaymentMethodClientUnavailableError();
@@ -62,15 +83,12 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         paypalCommerceSdk: PaypalCommerceSDK,
         paypalcommerceinline: PaypalCommerceInlineCheckoutButtonInitializeOptions,
     ): void {
-        const {
-            buttonContainerClassName,
-            style,
-            onComplete,
-            onError,
-        } = paypalcommerceinline;
+        const { buttonContainerClassName, style, onComplete, onError } = paypalcommerceinline;
 
         if (!onComplete || typeof onComplete !== 'function') {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommerceinline.onComplete" argument is not provided or it is not a function.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.paypalcommerceinline.onComplete" argument is not provided or it is not a function.`,
+            );
         }
 
         const fundingSource = paypalCommerceSdk.FUNDING.CARD;
@@ -80,10 +98,14 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             fundingSource,
             style,
             createOrder: () => this._createOrder(methodId),
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) => this._onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) => this._onShippingOptionsChange(data),
-            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) => this._onApprove(data, actions, methodId),
-            onComplete: (data: CompleteCallbackDataPayload) => this._onComplete(data, methodId, onComplete),
+            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                this._onShippingAddressChange(data),
+            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                this._onShippingOptionsChange(data),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
+                this._onApprove(data, actions, methodId),
+            onComplete: (data: CompleteCallbackDataPayload) =>
+                this._onComplete(data, methodId, onComplete),
             onError: (error: Error) => this._onError(error, onError),
         };
 
@@ -92,7 +114,11 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         if (paypalButtonRender.isEligible()) {
             const buttonContainerId = `${containerId}-paypal-accelerated-checkout-button`;
 
-            this._createPayPalButtonContainer(containerId, buttonContainerId, buttonContainerClassName);
+            this._createPayPalButtonContainer(
+                containerId,
+                buttonContainerId,
+                buttonContainerClassName,
+            );
             paypalButtonRender.render(`#${buttonContainerId}`);
         }
     }
@@ -106,7 +132,9 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         return orderId;
     }
 
-    private async _onShippingAddressChange(data: ShippingAddressChangeCallbackPayload): Promise<void> {
+    private async _onShippingAddressChange(
+        data: ShippingAddressChangeCallbackPayload,
+    ): Promise<void> {
         const address = this._getAddress({
             city: data.shippingAddress.city,
             countryCode: data.shippingAddress.country_code,
@@ -121,14 +149,20 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
         const shippingOption = this._getShippingOptionOrThrow();
 
-        await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
+        await this._store.dispatch(
+            this._consignmentActionCreator.selectShippingOption(shippingOption.id),
+        );
         await this._updateOrder();
     }
 
-    private async _onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void> {
-        const shippingOption = this._getShippingOptionOrThrow(data.selectedShippingOption?.id);
+    private async _onShippingOptionsChange(
+        data: ShippingOptionChangeCallbackPayload,
+    ): Promise<void> {
+        const shippingOption = this._getShippingOptionOrThrow(data.selectedShippingOption.id);
 
-        await this._store.dispatch(this._consignmentActionCreator.selectShippingOption(shippingOption.id));
+        await this._store.dispatch(
+            this._consignmentActionCreator.selectShippingOption(shippingOption.id),
+        );
         await this._updateOrder();
     }
 
@@ -143,7 +177,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
         if (cart.lineItems.physicalItems.length > 0) {
             const { payer, purchase_units } = orderDetails;
-            const shippingAddress = purchase_units?.[0]?.shipping?.address || {};
+            const shippingAddress = purchase_units[0]?.shipping?.address || {};
 
             const address = this._getAddress({
                 firstName: payer.name.given_name,
@@ -176,7 +210,9 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
         }
 
-        await this._store.dispatch(this._orderActionCreator.submitOrder({}, { params: { methodId } }));
+        await this._store.dispatch(
+            this._orderActionCreator.submitOrder({}, { params: { methodId } }),
+        );
         await this._submitPayment(methodId, data.orderID);
 
         return true;
@@ -185,7 +221,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
     private async _onComplete(
         data: CompleteCallbackDataPayload,
         methodId: string,
-        callback?: () => void
+        callback?: () => void,
     ): Promise<void> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -214,14 +250,14 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const consignment = state.consignments.getConsignmentsOrThrow()[0];
 
         await this._paypalCommerceRequestSender.updateOrder({
-            availableShippingOptions: consignment?.availableShippingOptions,
+            availableShippingOptions: consignment.availableShippingOptions,
             cartId: cart.id,
-            selectedShippingOption: consignment?.selectedShippingOption,
+            selectedShippingOption: consignment.selectedShippingOption,
         });
     }
 
     private async _submitPayment(methodId: string, orderId: string): Promise<void> {
-        const paymentData =  {
+        const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
@@ -233,24 +269,30 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             },
         };
 
-        await this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId, paymentData }));
+        await this._store.dispatch(
+            this._paymentActionCreator.submitPayment({ methodId, paymentData }),
+        );
     }
 
     private _getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
         const state = this._store.getState();
         const consignment = state.consignments.getConsignmentsOrThrow()[0];
 
-        const availableShippingOptions = consignment?.availableShippingOptions || [];
+        const availableShippingOptions = consignment.availableShippingOptions || [];
 
-        const recommendedShippingOption = availableShippingOptions.find(option => option.isRecommended);
+        const recommendedShippingOption = availableShippingOptions.find(
+            (option) => option.isRecommended,
+        );
         const selectedShippingOption = selectedShippingOptionId
-            ? availableShippingOptions.find(option => option.id === selectedShippingOptionId)
-            : availableShippingOptions.find(option => option.id === consignment?.selectedShippingOption?.id);
+            ? availableShippingOptions.find((option) => option.id === selectedShippingOptionId)
+            : availableShippingOptions.find(
+                  (option) => option.id === consignment.selectedShippingOption?.id,
+              );
 
         const shippingOptionToSelect = selectedShippingOption || recommendedShippingOption;
 
         if (!shippingOptionToSelect) {
-            throw new Error('Your order can\'t be shipped to this address');
+            throw new Error("Your order can't be shipped to this address");
         }
 
         return shippingOptionToSelect;
@@ -280,13 +322,14 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         buttonContainerClassName = 'PaypalCommerceInlineButton',
     ): void {
         const paypalButtonContainer = document.createElement('div');
+
         paypalButtonContainer.setAttribute('class', buttonContainerClassName);
         paypalButtonContainer.setAttribute('id', buttonContainerId);
 
         const container = document.getElementById(containerId);
 
         if (container) {
-            container.innerHTML = "";
+            container.innerHTML = '';
             container.append(paypalButtonContainer);
         }
     }

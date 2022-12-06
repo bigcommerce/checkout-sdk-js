@@ -28,15 +28,13 @@ describe('IframeEventListener', () => {
         handleLoaded = jest.fn();
         handleComplete = jest.fn();
 
-        jest.spyOn(window, 'addEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.addListener(type, listener);
-            });
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+            return eventEmitter.addListener(type, listener);
+        });
 
-        jest.spyOn(window, 'removeEventListener')
-            .mockImplementation((type, listener) => {
-                return eventEmitter.removeListener(type, listener);
-            });
+        jest.spyOn(window, 'removeEventListener').mockImplementation((type, listener) => {
+            return eventEmitter.removeListener(type, listener);
+        });
 
         listener.listen();
         listener.addListener(TestEventType.Loaded, handleLoaded);
@@ -109,7 +107,6 @@ describe('IframeEventListener', () => {
     });
 
     it('does nothing if trying to remove non-existent listener', () => {
-        expect(() => listener.removeListener(TestEventType.Error, () => {}))
-            .not.toThrow();
+        expect(() => listener.removeListener(TestEventType.Error, () => {})).not.toThrow();
     });
 });

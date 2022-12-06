@@ -1,5 +1,6 @@
 import { CheckoutSelectors, CheckoutService, createCheckoutService } from '../checkout';
-import BodlEmitterService from "./bodl-emitter-service";
+
+import BodlEmitterService from './bodl-emitter-service';
 import BodlEventsWindow, { BodlEvents } from './bodl-window';
 import createBodlService from './create-bodl-service';
 import NoopBodlService from './noop-bodl-service';
@@ -13,9 +14,9 @@ describe('createBodl', () => {
     beforeEach(() => {
         checkoutService = createCheckoutService();
 
-        subscriber = (() => {
+        subscriber = () => {
             return checkoutService.getState();
-        });
+        };
     });
 
     describe('#createBodlService()', () => {

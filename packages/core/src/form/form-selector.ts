@@ -20,40 +20,46 @@ export type FormSelectorFactory = (state: FormFieldsState) => FormSelector;
 export function createFormSelectorFactory(): FormSelectorFactory {
     const getShippingAddressFields = createSelector(
         (state: FormFieldsState) => state.data,
-        formFields => (countries: Country[] = [], countryCode: string) => {
-            const selectedCountry = find(countries, { code: countryCode });
-            const fields = formFields ? formFields.shippingAddress : [];
+        (formFields) =>
+            (countries: Country[] = [], countryCode: string) => {
+                const selectedCountry = find(countries, { code: countryCode });
+                const fields = formFields ? formFields.shippingAddress : [];
 
-            return fields.map((field: any) => processField(field, countries, selectedCountry));
-        }
+                return fields.map((field: any) => processField(field, countries, selectedCountry));
+            },
     );
 
     const getBillingAddressFields = createSelector(
         (state: FormFieldsState) => state.data,
-        formFields => (countries: Country[] = [], countryCode: string) => {
-            const selectedCountry = find(countries, { code: countryCode });
-            const fields = formFields ? formFields.billingAddress : [];
+        (formFields) =>
+            (countries: Country[] = [], countryCode: string) => {
+                const selectedCountry = find(countries, { code: countryCode });
+                const fields = formFields ? formFields.billingAddress : [];
 
-            return fields.map((field: any) => processField(field, countries, selectedCountry));
-        }
+                return fields.map((field: any) => processField(field, countries, selectedCountry));
+            },
     );
 
     const getCustomerAccountFields = createSelector(
         (state: FormFieldsState) => state.data,
-        formFields => () => formFields ? formFields.customerAccount : []
+        (formFields) => () => formFields ? formFields.customerAccount : [],
     );
 
     const getLoadError = createSelector(
         (state: FormFieldsState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isLoading = createSelector(
         (state: FormFieldsState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    function processField(field: FormField, countries: Country[], selectedCountry?: Country): FormField {
+    function processField(
+        field: FormField,
+        countries: Country[],
+        selectedCountry?: Country,
+    ): FormField {
         if (field.name === 'countryCode') {
             return processCountry(field, countries, selectedCountry);
         }
@@ -69,7 +75,11 @@ export function createFormSelectorFactory(): FormSelectorFactory {
         return field;
     }
 
-    function processCountry(field: FormField, countries: Country[] = [], country?: Country): FormField {
+    function processCountry(
+        field: FormField,
+        countries: Country[] = [],
+        country?: Country,
+    ): FormField {
         if (!countries.length) {
             return field;
         }
@@ -126,9 +136,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
         return { ...field, required: Boolean(hasPostalCodes) };
     }
 
-    return memoizeOne((
-        state: FormFieldsState = DEFAULT_STATE
-    ): FormSelector => {
+    return memoizeOne((state: FormFieldsState = DEFAULT_STATE): FormSelector => {
         return {
             getShippingAddressFields: getShippingAddressFields(state),
             getBillingAddressFields: getBillingAddressFields(state),

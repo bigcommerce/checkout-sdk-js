@@ -1,8 +1,6 @@
 import { noop, without } from 'lodash';
 
-import {
-    HostedForm as HostedFormInterface
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
@@ -13,9 +11,17 @@ import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
-import { HostedInputEnterEvent, HostedInputEventMap, HostedInputEventType, HostedInputSubmitSuccessEvent } from './iframe-content';
+import {
+    HostedInputEnterEvent,
+    HostedInputEventMap,
+    HostedInputEventType,
+    HostedInputSubmitSuccessEvent,
+} from './iframe-content';
 
-type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
+type HostedFormEventCallbacks = Pick<
+    HostedFormOptions,
+    'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'
+>;
 
 export default class HostedForm implements HostedFormInterface {
     private _bin?: string;
@@ -26,18 +32,37 @@ export default class HostedForm implements HostedFormInterface {
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _payloadTransformer: HostedFormOrderDataTransformer,
         private _eventCallbacks: HostedFormEventCallbacks,
-        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
     ) {
-        const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = this._eventCallbacks;
+        const {
+            onBlur = noop,
+            onCardTypeChange = noop,
+            onFocus = noop,
+            onValidate = noop,
+        } = this._eventCallbacks;
 
-        this._eventListener.addListener(HostedInputEventType.Blurred, ({ payload }) => onBlur(payload));
-        this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => onCardTypeChange(payload));
-        this._eventListener.addListener(HostedInputEventType.Focused, ({ payload }) => onFocus(payload));
-        this._eventListener.addListener(HostedInputEventType.Validated, ({ payload }) => onValidate(payload));
+        this._eventListener.addListener(HostedInputEventType.Blurred, ({ payload }) =>
+            onBlur(payload),
+        );
+        this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) =>
+            onCardTypeChange(payload),
+        );
+        this._eventListener.addListener(HostedInputEventType.Focused, ({ payload }) =>
+            onFocus(payload),
+        );
+        this._eventListener.addListener(HostedInputEventType.Validated, ({ payload }) =>
+            onValidate(payload),
+        );
         this._eventListener.addListener(HostedInputEventType.Entered, this._handleEnter);
 
-        this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => this._cardType = payload.cardType);
-        this._eventListener.addListener(HostedInputEventType.BinChanged, ({ payload }) => this._bin = payload.bin);
+        this._eventListener.addListener(
+            HostedInputEventType.CardTypeChanged,
+            ({ payload }) => (this._cardType = payload.cardType),
+        );
+        this._eventListener.addListener(
+            HostedInputEventType.BinChanged,
+            ({ payload }) => (this._bin = payload.bin),
+        );
     }
 
     getBin(): string | undefined {
@@ -55,42 +80,47 @@ export default class HostedForm implements HostedFormInterface {
         const otherFields = without(this._fields, field);
 
         await field.attach();
-        await Promise.all(otherFields.map(otherField => otherField.attach()));
+        await Promise.all(otherFields.map((otherField) => otherField.attach()));
     }
 
     detach(): void {
         this._eventListener.stopListen();
 
-        this._fields.forEach(field => {
+        this._fields.forEach((field) => {
             field.detach();
         });
     }
 
-    async submit(payload: OrderPaymentRequestBody, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent> {
+    async submit(
+        payload: OrderPaymentRequestBody,
+        additionalActionData?: PaymentAdditionalAction,
+    ): Promise<HostedInputSubmitSuccessEvent> {
         try {
             return await this._getFirstField().submitForm(
-                this._fields.map(field => field.getType()),
-                this._payloadTransformer.transform(payload, additionalActionData)
+                this._fields.map((field) => field.getType()),
+                this._payloadTransformer.transform(payload, additionalActionData),
             );
         } catch (error) {
             const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
 
             return await this._getFirstField().submitForm(
-                this._fields.map(field => field.getType()),
-                this._payloadTransformer.transform(payload, additionalAction)
+                this._fields.map((field) => field.getType()),
+                this._payloadTransformer.transform(payload, additionalAction),
             );
         }
     }
 
     async validate(): Promise<void> {
-        return await this._getFirstField().validateForm();
+        return this._getFirstField().validateForm();
     }
 
     private _getFirstField(): HostedField {
         const field = this._fields[0];
 
         if (!field) {
-            throw new InvalidHostedFormConfigError('Unable to proceed because the payment form has no field defined.');
+            throw new InvalidHostedFormConfigError(
+                'Unable to proceed because the payment form has no field defined.',
+            );
         }
 
         return field;

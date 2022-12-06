@@ -9,15 +9,16 @@ export enum PickupOptionActionType {
 }
 
 export type LoadPickupOptionsAction =
-    PickupOptionRequestedAction |
-    LoadPickupOptionsSucceededAction |
-    LoadPickupOptionsFailedAction;
+    | PickupOptionRequestedAction
+    | LoadPickupOptionsSucceededAction
+    | LoadPickupOptionsFailedAction;
 
 export interface PickupOptionRequestedAction extends Action {
     type: PickupOptionActionType.LoadPickupOptionsRequested;
 }
 
-export interface LoadPickupOptionsSucceededAction extends Action<PickupOptionResult[], PickupOptionMeta> {
+export interface LoadPickupOptionsSucceededAction
+    extends Action<PickupOptionResult[], PickupOptionMeta> {
     type: PickupOptionActionType.LoadPickupOptionsSucceeded;
 }
 

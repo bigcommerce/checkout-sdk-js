@@ -1,4 +1,4 @@
-import { FormFields } from "../form";
+import { FormFields } from '../form';
 
 export default interface Config {
     context: ContextConfig;
@@ -122,7 +122,7 @@ export interface CustomizationConfig {
     languageData: any[];
 }
 
-export type FlashMessageType = "error" | "info" | "warning" | "success";
+export type FlashMessageType = 'error' | 'info' | 'warning' | 'success';
 
 export interface FlashMessage {
     type: FlashMessageType;

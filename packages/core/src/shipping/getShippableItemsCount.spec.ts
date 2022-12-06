@@ -6,58 +6,75 @@ import getShippableLineItems from './getShippableLineItems';
 
 describe('getShippableLineItems()', () => {
     it('returns empty if only digital items', () => {
-        expect(getShippableLineItems({
-            ...getCart(),
-            lineItems: {
-                digitalItems: [ getDigitalItem() ],
-                physicalItems: [],
-                giftCertificates: [],
-            },
-        }, []))
-            .toHaveLength(0);
+        expect(
+            getShippableLineItems(
+                {
+                    ...getCart(),
+                    lineItems: {
+                        digitalItems: [getDigitalItem()],
+                        physicalItems: [],
+                        giftCertificates: [],
+                    },
+                },
+                [],
+            ),
+        ).toHaveLength(0);
     });
 
     it('returns empty if only gift certificates items', () => {
-        expect(getShippableLineItems({
-            ...getCart(),
-            lineItems: {
-                digitalItems: [],
-                physicalItems: [],
-                giftCertificates: [ getGiftCertificateItem() ],
-            },
-        }, []))
-            .toHaveLength(0);
+        expect(
+            getShippableLineItems(
+                {
+                    ...getCart(),
+                    lineItems: {
+                        digitalItems: [],
+                        physicalItems: [],
+                        giftCertificates: [getGiftCertificateItem()],
+                    },
+                },
+                [],
+            ),
+        ).toHaveLength(0);
     });
 
     it('returns empty if only physical items added by promotions', () => {
-        expect(getShippableLineItems({
-            ...getCart(),
-            lineItems: {
-                digitalItems: [],
-                physicalItems: [ {
-                    ...getPhysicalItem(),
-                    addedByPromotion: true,
-                }],
-                giftCertificates: [],
-            },
-        }, []))
-            .toHaveLength(0);
+        expect(
+            getShippableLineItems(
+                {
+                    ...getCart(),
+                    lineItems: {
+                        digitalItems: [],
+                        physicalItems: [
+                            {
+                                ...getPhysicalItem(),
+                                addedByPromotion: true,
+                            },
+                        ],
+                        giftCertificates: [],
+                    },
+                },
+                [],
+            ),
+        ).toHaveLength(0);
     });
 
     it('splits physical items quantities', () => {
-        const items = getShippableLineItems({
-            ...getCart(),
-            lineItems: {
-                digitalItems: [],
-                physicalItems: [
-                    {
-                        ...getPhysicalItem(),
-                        quantity: 2,
-                    },
-                ],
-                giftCertificates: [],
+        const items = getShippableLineItems(
+            {
+                ...getCart(),
+                lineItems: {
+                    digitalItems: [],
+                    physicalItems: [
+                        {
+                            ...getPhysicalItem(),
+                            quantity: 2,
+                        },
+                    ],
+                    giftCertificates: [],
+                },
             },
-        }, []);
+            [],
+        );
 
         expect(items).toHaveLength(2);
         expect(items[0]).toMatchObject(expect.objectContaining(getPhysicalItem()));
@@ -67,24 +84,25 @@ describe('getShippableLineItems()', () => {
     it('adds consignment information when available', () => {
         const consignment = {
             ...getConsignment(),
-            lineItemIds: [ getPhysicalItem().id as string ],
+            lineItemIds: [getPhysicalItem().id as string],
         };
 
-        const items = getShippableLineItems({
-            ...getCart(),
-            lineItems: {
-                digitalItems: [],
-                physicalItems: [
-                    {
-                        ...getPhysicalItem(),
-                        quantity: 2,
-                    },
-                ],
-                giftCertificates: [],
+        const items = getShippableLineItems(
+            {
+                ...getCart(),
+                lineItems: {
+                    digitalItems: [],
+                    physicalItems: [
+                        {
+                            ...getPhysicalItem(),
+                            quantity: 2,
+                        },
+                    ],
+                    giftCertificates: [],
+                },
             },
-        }, [
-            consignment,
-        ]);
+            [consignment],
+        );
 
         expect(items[0].consignment).toMatchObject(expect.objectContaining(consignment));
     });

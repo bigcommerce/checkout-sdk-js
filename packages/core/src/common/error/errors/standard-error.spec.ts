@@ -6,7 +6,7 @@ describe('StandardError', () => {
     it('returns error name', () => {
         const error = new TestError();
 
-        expect(error.name).toEqual('StandardError');
+        expect(error.name).toBe('StandardError');
     });
 
     it('sets error message if provided', () => {

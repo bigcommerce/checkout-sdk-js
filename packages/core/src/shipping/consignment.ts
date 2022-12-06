@@ -16,9 +16,9 @@ export default interface Consignment {
 }
 
 export type ConsignmentRequestBody =
-    ConsignmentCreateRequestBody |
-    ConsignmentUpdateRequestBody |
-    ConsignmentShippingOptionRequestBody;
+    | ConsignmentCreateRequestBody
+    | ConsignmentUpdateRequestBody
+    | ConsignmentShippingOptionRequestBody;
 
 export interface ConsignmentCreateRequestBody {
     address?: AddressRequestBody;
@@ -40,7 +40,8 @@ export interface ConsignmentAssignmentBaseRequestBodyWithShippingAddress {
 }
 
 export type ConsignmentAssignmentRequestBody =
-    ConsignmentAssignmentBaseRequestBodyWithShippingAddress | ConsignmentAssignmentBaseRequestBodyWithAddress;
+    | ConsignmentAssignmentBaseRequestBodyWithShippingAddress
+    | ConsignmentAssignmentBaseRequestBodyWithAddress;
 
 export interface ConsignmentUpdateRequestBody {
     id: string;

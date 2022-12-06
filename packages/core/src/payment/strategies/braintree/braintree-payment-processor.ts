@@ -6,12 +6,28 @@ import { NotInitializedError, NotInitializedErrorType } from '../../../common/er
 import { Overlay } from '../../../common/overlay';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
-import { PaymentArgumentInvalidError, PaymentInvalidFormError, PaymentInvalidFormErrorDetails, PaymentMethodCancelledError } from '../../errors';
+import {
+    PaymentArgumentInvalidError,
+    PaymentInvalidFormError,
+    PaymentInvalidFormErrorDetails,
+    PaymentMethodCancelledError,
+} from '../../errors';
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
-import { BraintreePaypal, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
+import {
+    BraintreePaypal,
+    BraintreeRequestData,
+    BraintreeShippingAddressOverride,
+    BraintreeThreeDSecure,
+    BraintreeTokenizePayload,
+    BraintreeVerifyPayload,
+} from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
-import { BraintreeFormOptions, BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
+import {
+    BraintreeFormOptions,
+    BraintreePaymentInitializeOptions,
+    BraintreeThreeDSecureOptions,
+} from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
 
@@ -30,7 +46,7 @@ export default class BraintreePaymentProcessor {
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _braintreeHostedForm: BraintreeHostedForm,
-        private _overlay: Overlay
+        private _overlay: Overlay,
     ) {}
 
     initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
@@ -46,7 +62,10 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.getPaypal();
     }
 
-    async tokenizeCard(payment: OrderPaymentRequestBody, billingAddress: Address): Promise<NonceInstrument> {
+    async tokenizeCard(
+        payment: OrderPaymentRequestBody,
+        billingAddress: Address,
+    ): Promise<NonceInstrument> {
         const { paymentData } = payment;
 
         if (!isCreditCardInstrumentLike(paymentData)) {
@@ -66,7 +85,11 @@ export default class BraintreePaymentProcessor {
         return { nonce: creditCards[0].nonce };
     }
 
-    async verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
+    async verifyCard(
+        payment: OrderPaymentRequestBody,
+        billingAddress: Address,
+        amount: number,
+    ): Promise<NonceInstrument> {
         const { nonce } = await this.tokenizeCard(payment, billingAddress);
 
         return this.challenge3DSVerification(nonce, amount);
@@ -75,8 +98,9 @@ export default class BraintreePaymentProcessor {
     paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
         const newWindowFlow = supportsPopups();
 
-        return this._braintreeSDKCreator.getPaypal()
-            .then(paypal => {
+        return this._braintreeSDKCreator
+            .getPaypal()
+            .then((paypal) => {
                 if (newWindowFlow) {
                     this._overlay.show({
                         onClick: () => paypal.focusWindow(),
@@ -90,12 +114,12 @@ export default class BraintreePaymentProcessor {
                     ...config,
                 });
             })
-            .then(response => {
+            .then((response) => {
                 this._overlay.remove();
 
                 return response;
             })
-            .catch(error => {
+            .catch((error) => {
                 this._overlay.remove();
 
                 throw error;
@@ -103,8 +127,7 @@ export default class BraintreePaymentProcessor {
     }
 
     getSessionId(): Promise<string | undefined> {
-        return this._braintreeSDKCreator.getDataCollector()
-            .then(({ deviceData }) => deviceData);
+        return this._braintreeSDKCreator.getDataCollector().then(({ deviceData }) => deviceData);
     }
 
     /**
@@ -112,12 +135,17 @@ export default class BraintreePaymentProcessor {
      */
     appendSessionId(processedPayment: Promise<NonceInstrument>): Promise<NonceInstrument> {
         return processedPayment
-            .then(paymentData => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
-            .then(([paymentData, { deviceData }]) => ({ ...paymentData, deviceSessionId: deviceData }));
+            .then((paymentData) =>
+                Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]),
+            )
+            .then(([paymentData, { deviceData }]) => ({
+                ...paymentData,
+                deviceSessionId: deviceData,
+            }));
     }
 
     async initializeHostedForm(options: BraintreeFormOptions): Promise<void> {
-        return await this._braintreeHostedForm.initialize(options);
+        return this._braintreeHostedForm.initialize(options);
     }
 
     isInitializedHostedForm(): boolean {
@@ -136,7 +164,10 @@ export default class BraintreePaymentProcessor {
         return this._braintreeHostedForm.tokenizeForStoredCardVerification();
     }
 
-    async verifyCardWithHostedForm(billingAddress: Address, amount: number): Promise<NonceInstrument> {
+    async verifyCardWithHostedForm(
+        billingAddress: Address,
+        amount: number,
+    ): Promise<NonceInstrument> {
         const { nonce } = await this._braintreeHostedForm.tokenize(billingAddress);
 
         return this.challenge3DSVerification(nonce, amount);
@@ -148,25 +179,28 @@ export default class BraintreePaymentProcessor {
         return this._present3DSChallenge(threeDSecure, amount, nonce);
     }
 
-    private _getErrorsRequiredFields(paymentData: CreditCardInstrument): PaymentInvalidFormErrorDetails {
-        const {
-            ccNumber,
-            ccExpiry,
-        } = paymentData;
+    private _getErrorsRequiredFields(
+        paymentData: CreditCardInstrument,
+    ): PaymentInvalidFormErrorDetails {
+        const { ccNumber, ccExpiry } = paymentData;
         const errors: PaymentInvalidFormErrorDetails = {};
 
         if (!ccNumber) {
-            errors.ccNumber = [{
-                message: 'Credit card number is required',
-                type: 'required',
-            }];
+            errors.ccNumber = [
+                {
+                    message: 'Credit card number is required',
+                    type: 'required',
+                },
+            ];
         }
 
         if (!ccExpiry) {
-            errors.ccExpiry = [{
-                message: 'Expiration date is required',
-                type: 'required',
-            }];
+            errors.ccExpiry = [
+                {
+                    message: 'Expiration date is required',
+                    type: 'required',
+                },
+            ];
         }
 
         return errors;
@@ -175,7 +209,7 @@ export default class BraintreePaymentProcessor {
     private _present3DSChallenge(
         threeDSecure: BraintreeThreeDSecure,
         amount: number,
-        nonce: string
+        nonce: string,
     ): Promise<BraintreeVerifyPayload> {
         if (!this._threeDSecureOptions || !nonce) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -204,13 +238,16 @@ export default class BraintreePaymentProcessor {
                 onLookupComplete: (_data, next) => {
                     next();
                 },
-            })
+            }),
         );
 
         return verification.promise;
     }
 
-    private _mapToCreditCard(creditCard: CreditCardInstrument, billingAddress?: Address): BraintreeRequestData {
+    private _mapToCreditCard(
+        creditCard: CreditCardInstrument,
+        billingAddress?: Address,
+    ): BraintreeRequestData {
         return {
             data: {
                 creditCard: {
@@ -226,9 +263,9 @@ export default class BraintreePaymentProcessor {
                         locality: billingAddress.city,
                         countryName: billingAddress.country,
                         postalCode: billingAddress.postalCode,
-                        streetAddress: billingAddress.address2 ?
-                            `${billingAddress.address1} ${billingAddress.address2}` :
-                            billingAddress.address1,
+                        streetAddress: billingAddress.address2
+                            ? `${billingAddress.address1} ${billingAddress.address2}`
+                            : billingAddress.address1,
                     },
                 },
             },

@@ -1,7 +1,10 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import BillingAddressSelector, { createBillingAddressSelectorFactory, BillingAddressSelectorFactory } from './billing-address-selector';
+import BillingAddressSelector, {
+    BillingAddressSelectorFactory,
+    createBillingAddressSelectorFactory,
+} from './billing-address-selector';
 
 describe('BillingAddressSelector', () => {
     let billingAddressSelector: BillingAddressSelector;
@@ -21,7 +24,10 @@ describe('BillingAddressSelector', () => {
         });
 
         it('returns undefined if quote is not available', () => {
-            billingAddressSelector = createBillingAddressSelector({ ...state.billingAddress, data: undefined });
+            billingAddressSelector = createBillingAddressSelector({
+                ...state.billingAddress,
+                data: undefined,
+            });
 
             expect(billingAddressSelector.getBillingAddress()).toBeFalsy();
         });
@@ -72,13 +78,13 @@ describe('BillingAddressSelector', () => {
                 statuses: { isUpdating: true },
             });
 
-            expect(billingAddressSelector.isUpdating()).toEqual(true);
+            expect(billingAddressSelector.isUpdating()).toBe(true);
         });
 
         it('returns false if not updating billing address', () => {
             billingAddressSelector = createBillingAddressSelector(state.billingAddress);
 
-            expect(billingAddressSelector.isUpdating()).toEqual(false);
+            expect(billingAddressSelector.isUpdating()).toBe(false);
         });
     });
 
@@ -89,13 +95,13 @@ describe('BillingAddressSelector', () => {
                 statuses: { isContinuingAsGuest: true },
             });
 
-            expect(billingAddressSelector.isContinuingAsGuest()).toEqual(true);
+            expect(billingAddressSelector.isContinuingAsGuest()).toBe(true);
         });
 
         it('returns false if not updating billing address', () => {
             billingAddressSelector = createBillingAddressSelector(state.billingAddress);
 
-            expect(billingAddressSelector.isContinuingAsGuest()).toEqual(false);
+            expect(billingAddressSelector.isContinuingAsGuest()).toBe(false);
         });
     });
 });

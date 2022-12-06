@@ -4,19 +4,23 @@ import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizePayload,
+} from './googlepay';
 
 export default class GooglePayStripeInitializer implements GooglePayInitializer {
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        return Promise.resolve(this._getGooglePayPaymentDataRequest(
-            checkout,
-            paymentMethod,
-            hasShippingAddress
-        ));
+        return Promise.resolve(
+            this._getGooglePayPaymentDataRequest(checkout, paymentMethod, hasShippingAddress),
+        );
     }
 
     teardown(): Promise<void> {
@@ -43,7 +47,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
     private _getGooglePayPaymentDataRequest(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         const {
             outstandingBalance,
@@ -66,7 +70,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
             supportedCards,
         } = paymentMethod;
 
-        const isPickup = consignments?.every(consignment => consignment.selectedPickupOption);
+        const isPickup = consignments.every((consignment) => consignment.selectedPickupOption);
 
         return {
             apiVersion: 2,
@@ -76,35 +80,40 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
                 merchantId,
                 merchantName,
             },
-            allowedPaymentMethods: [{
-                type: 'CARD',
-                parameters: {
-                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: supportedCards.map(card => card === 'MC' ? 'MASTERCARD' : card),
-                    billingAddressRequired: true,
-                    billingAddressParameters: {
-                        format: BillingAddressFormat.Full,
-                        phoneNumberRequired: true,
-                    },
-                },
-                tokenizationSpecification: {
-                    type: 'PAYMENT_GATEWAY',
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
                     parameters: {
-                        gateway: 'stripe',
-                        'stripe:version': stripeVersion,
-                        'stripe:publishableKey': `${stripePublishableKey}/${stripeConnectedAccount}`,
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks: supportedCards.map((card) =>
+                            card === 'MC' ? 'MASTERCARD' : card,
+                        ),
+                        billingAddressRequired: true,
+                        billingAddressParameters: {
+                            format: BillingAddressFormat.Full,
+                            phoneNumberRequired: true,
+                        },
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: 'stripe',
+                            'stripe:version': stripeVersion,
+                            'stripe:publishableKey': `${stripePublishableKey}/${stripeConnectedAccount}`,
+                        },
                     },
                 },
-            }],
+            ],
             transactionInfo: {
                 currencyCode,
                 totalPriceStatus: 'FINAL',
                 totalPrice: round(outstandingBalance, 2).toFixed(2),
             },
             emailRequired: true,
-            shippingAddressRequired: bopis?.enabled && isPickup && bopis?.requiredAddress === 'none'
-                ? false
-                : !hasShippingAddress,
+            shippingAddressRequired:
+                bopis?.enabled && isPickup && bopis?.requiredAddress === 'none'
+                    ? false
+                    : !hasShippingAddress,
             shippingAddressParameters: {
                 phoneNumberRequired: true,
             },

@@ -17,40 +17,42 @@ describe('PaypalScriptLoader', () => {
     });
 
     it('loads PayPal script without Merchant Id', async () => {
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalHostWindow).paypal = paypal;
+        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
+            (window as PaypalHostWindow).paypal = paypal;
 
-                return Promise.resolve();
-            });
+            return Promise.resolve();
+        });
 
         const output = await paypalLoader.loadPaypal();
 
-        expect(loader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js');
+        expect(loader.loadScript).toHaveBeenCalledWith(
+            '//www.paypalobjects.com/api/checkout.min.js',
+        );
         expect(output).toEqual(paypal);
     });
 
     it('loads PayPal script with Merchant Id', async () => {
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                (window as PaypalHostWindow).paypal = paypal;
+        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
+            (window as PaypalHostWindow).paypal = paypal;
 
-                return Promise.resolve();
-            });
+            return Promise.resolve();
+        });
 
         const output = await paypalLoader.loadPaypal('ABC');
 
-        expect(loader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js', {async: true, attributes: { 'data-merchant-id': 'ABC'}});
+        expect(loader.loadScript).toHaveBeenCalledWith(
+            '//www.paypalobjects.com/api/checkout.min.js',
+            { async: true, attributes: { 'data-merchant-id': 'ABC' } },
+        );
         expect(output).toEqual(paypal);
     });
 
     it('throws error if unable to load Paypal script', async () => {
         const expectedError = new Error('Unable to load script');
 
-        jest.spyOn(loader, 'loadScript')
-            .mockImplementation(() => {
-                throw expectedError;
-            });
+        jest.spyOn(loader, 'loadScript').mockImplementation(() => {
+            throw expectedError;
+        });
 
         try {
             await paypalLoader.loadPaypal();

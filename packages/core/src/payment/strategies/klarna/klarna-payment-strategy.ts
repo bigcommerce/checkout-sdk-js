@@ -3,7 +3,13 @@ import { includes } from 'lodash';
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -13,41 +19,48 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import { supportedCountries, supportedCountriesRequiringStates } from '../klarnav2';
 import PaymentStrategy from '../payment-strategy';
 
-import KlarnaCredit, { KlarnaAddress, KlarnaLoadResponse, KlarnaUpdateSessionParams } from './klarna-credit';
+import KlarnaCredit, {
+    KlarnaAddress,
+    KlarnaLoadResponse,
+    KlarnaUpdateSessionParams,
+} from './klarna-credit';
 import KlarnaScriptLoader from './klarna-script-loader';
 
 export default class KlarnaPaymentStrategy implements PaymentStrategy {
     private _klarnaCredit?: KlarnaCredit;
-    private _unsubscribe?: (() => void);
+    private _unsubscribe?: () => void;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _klarnaScriptLoader: KlarnaScriptLoader
+        private _klarnaScriptLoader: KlarnaScriptLoader,
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        return this._klarnaScriptLoader.load()
-            .then(klarnaCredit => { this._klarnaCredit = klarnaCredit; })
+        return this._klarnaScriptLoader
+            .load()
+            .then((klarnaCredit) => {
+                this._klarnaCredit = klarnaCredit;
+            })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
-                    state => {
+                    (state) => {
                         if (state.paymentStrategies.isInitialized(options.methodId)) {
                             this._loadWidget(options);
                         }
                     },
-                    state => {
+                    (state) => {
                         const checkout = state.checkout.getCheckout();
 
                         return checkout && checkout.outstandingBalance;
                     },
-                    state => {
+                    (state) => {
                         const checkout = state.checkout.getCheckout();
 
                         return checkout && checkout.coupons;
-                    }
+                    },
                 );
 
                 return this._loadWidget(options);
@@ -63,24 +76,40 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         if (!payload.payment) {
-            throw new InvalidArgumentError('Unable to proceed because "payload.payment" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "payload.payment" argument is not provided.',
+            );
         }
 
-        const { payment: { paymentData, ...paymentPayload } } = payload;
+        const {
+            payment: { paymentData, ...paymentPayload },
+        } = payload;
 
         return this._authorize()
-            .then(({ authorization_token: authorizationToken }) => this._store.dispatch(
-                this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, { authorizationToken })
-            ))
-            .then(() => this._store.dispatch(
-                this._orderActionCreator.submitOrder({
-                    ...payload,
-                    payment: paymentPayload,
-                    useStoreCredit: payload.useStoreCredit,
-                }, options)
-            ));
+            .then(({ authorization_token: authorizationToken }) =>
+                this._store.dispatch(
+                    this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, {
+                        authorizationToken,
+                    }),
+                ),
+            )
+            .then(() =>
+                this._store.dispatch(
+                    this._orderActionCreator.submitOrder(
+                        {
+                            ...payload,
+                            payment: paymentPayload,
+                            useStoreCredit: payload.useStoreCredit,
+                        },
+                        options,
+                    ),
+                ),
+            );
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -89,36 +118,56 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
 
     private _loadWidget(options: PaymentInitializeOptions): Promise<KlarnaLoadResponse> {
         if (!options.klarna) {
-            throw new InvalidArgumentError('Unable to load widget because "options.klarna" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to load widget because "options.klarna" argument is not provided.',
+            );
         }
 
-        const { methodId, klarna: { container, onLoad } } = options;
+        const {
+            methodId,
+            klarna: { container, onLoad },
+        } = options;
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => new Promise<KlarnaLoadResponse>(resolve => {
-                const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then(
+                (state) =>
+                    new Promise<KlarnaLoadResponse>((resolve) => {
+                        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-                if (!paymentMethod) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
+                        if (!paymentMethod) {
+                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                        }
 
-                if (!this._klarnaCredit || !paymentMethod.clientToken) {
-                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                }
+                        if (!this._klarnaCredit || !paymentMethod.clientToken) {
+                            throw new NotInitializedError(
+                                NotInitializedErrorType.PaymentNotInitialized,
+                            );
+                        }
 
-                this._klarnaCredit.init({ client_token: paymentMethod.clientToken });
+                        this._klarnaCredit.init({ client_token: paymentMethod.clientToken });
 
-                this._klarnaCredit.load({ container }, response => {
-                    if (onLoad) {
-                        onLoad(response);
-                    }
-                    resolve(response);
-                });
-            }));
+                        this._klarnaCredit.load({ container }, (response) => {
+                            if (onLoad) {
+                                onLoad(response);
+                            }
+
+                            resolve(response);
+                        });
+                    }),
+            );
     }
 
-    private _getUpdateSessionData(billingAddress: BillingAddress, shippingAddress?: Address): KlarnaUpdateSessionParams {
-        if (!includes([...supportedCountries, ...supportedCountriesRequiringStates], billingAddress.countryCode)) {
+    private _getUpdateSessionData(
+        billingAddress: BillingAddress,
+        shippingAddress?: Address,
+    ): KlarnaUpdateSessionParams {
+        if (
+            !includes(
+                [...supportedCountries, ...supportedCountriesRequiringStates],
+                billingAddress.countryCode,
+            )
+        ) {
             return {};
         }
 
@@ -145,7 +194,9 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
             given_name: address.firstName,
             family_name: address.lastName,
             postal_code: address.postalCode,
-            region: this._needsStateCode(address.countryCode) ? address.stateOrProvinceCode : address.stateOrProvince,
+            region: this._needsStateCode(address.countryCode)
+                ? address.stateOrProvinceCode
+                : address.stateOrProvince,
             email,
         };
 
@@ -175,7 +226,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
 
             const updateSessionData = this._getUpdateSessionData(billingAddress, shippingAddress);
 
-            this._klarnaCredit.authorize(updateSessionData, res => {
+            this._klarnaCredit.authorize(updateSessionData, (res) => {
                 if (res.approved) {
                     return resolve(res);
                 }

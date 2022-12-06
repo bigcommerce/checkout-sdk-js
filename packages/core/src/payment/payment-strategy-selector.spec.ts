@@ -1,6 +1,9 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import PaymentStrategySelector, { createPaymentStrategySelectorFactory, PaymentStrategySelectorFactory } from './payment-strategy-selector';
+import PaymentStrategySelector, {
+    createPaymentStrategySelectorFactory,
+    PaymentStrategySelectorFactory,
+} from './payment-strategy-selector';
 import { DEFAULT_STATE } from './payment-strategy-state';
 
 describe('PaymentStrategySelector', () => {
@@ -70,7 +73,7 @@ describe('PaymentStrategySelector', () => {
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getInitializeError('bar')).toEqual(undefined);
+            expect(selector.getInitializeError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -79,7 +82,7 @@ describe('PaymentStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getInitializeError()).toEqual(undefined);
+            expect(selector.getInitializeError()).toBeUndefined();
         });
     });
 
@@ -87,7 +90,10 @@ describe('PaymentStrategySelector', () => {
         it('returns error if widget interaction failed', () => {
             selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
-                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+                errors: {
+                    widgetInteractionError: getErrorResponse(),
+                    widgetInteractionMethodId: 'foobar',
+                },
             });
 
             expect(selector.getWidgetInteractingError()).toEqual(getErrorResponse());
@@ -100,7 +106,7 @@ describe('PaymentStrategySelector', () => {
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
-            expect(selector.getInitializeError('bar')).toEqual(undefined);
+            expect(selector.getInitializeError('bar')).toBeUndefined();
         });
 
         it('does not return error if able to initialize', () => {
@@ -109,7 +115,7 @@ describe('PaymentStrategySelector', () => {
                 errors: {},
             });
 
-            expect(selector.getInitializeError()).toEqual(undefined);
+            expect(selector.getInitializeError()).toBeUndefined();
         });
     });
 
@@ -120,13 +126,13 @@ describe('PaymentStrategySelector', () => {
                 statuses: { isExecuting: true },
             });
 
-            expect(selector.isExecuting()).toEqual(true);
+            expect(selector.isExecuting()).toBe(true);
         });
 
         it('returns false if not updating address', () => {
             selector = createPaymentStrategySelector(state.paymentStrategy);
 
-            expect(selector.isExecuting()).toEqual(false);
+            expect(selector.isExecuting()).toBe(false);
         });
     });
 
@@ -137,13 +143,13 @@ describe('PaymentStrategySelector', () => {
                 statuses: { isFinalizing: true },
             });
 
-            expect(selector.isFinalizing()).toEqual(true);
+            expect(selector.isFinalizing()).toBe(true);
         });
 
         it('returns false if not selecting option', () => {
             selector = createPaymentStrategySelector(state.paymentStrategy);
 
-            expect(selector.isFinalizing()).toEqual(false);
+            expect(selector.isFinalizing()).toBe(false);
         });
     });
 
@@ -154,7 +160,7 @@ describe('PaymentStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing()).toEqual(true);
+            expect(selector.isInitializing()).toBe(true);
         });
 
         it('returns true if initializing specific method', () => {
@@ -163,8 +169,8 @@ describe('PaymentStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
-            expect(selector.isInitializing('foobar')).toEqual(true);
-            expect(selector.isInitializing('bar')).toEqual(false);
+            expect(selector.isInitializing('foobar')).toBe(true);
+            expect(selector.isInitializing('bar')).toBe(false);
         });
 
         it('returns false if not initializing method', () => {
@@ -173,7 +179,7 @@ describe('PaymentStrategySelector', () => {
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
 
-            expect(selector.isInitializing()).toEqual(false);
+            expect(selector.isInitializing()).toBe(false);
         });
     });
 
@@ -184,7 +190,7 @@ describe('PaymentStrategySelector', () => {
                 statuses: { initializeMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(true);
+            expect(selector.isWidgetInteracting()).toBe(true);
         });
 
         it('returns true if widget interacting for a specific method', () => {
@@ -193,8 +199,8 @@ describe('PaymentStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
 
-            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
-            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+            expect(selector.isWidgetInteracting('foobar')).toBe(true);
+            expect(selector.isWidgetInteracting('bar')).toBe(false);
         });
 
         it('returns false if widget not interacting for a specific method', () => {
@@ -203,7 +209,7 @@ describe('PaymentStrategySelector', () => {
                 statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
             });
 
-            expect(selector.isWidgetInteracting()).toEqual(false);
+            expect(selector.isWidgetInteracting()).toBe(false);
         });
     });
 });

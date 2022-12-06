@@ -14,21 +14,14 @@ export function getConsignment(): Consignment {
         selectedShippingOption: getShippingOption(),
         shippingCost: 0,
         handlingCost: 0,
-        lineItemIds: [
-            '12e11c8f-7dce-4da3-9413-b649533f8bad',
-        ],
+        lineItemIds: ['12e11c8f-7dce-4da3-9413-b649533f8bad'],
         shippingAddress: omit(getShippingAddress(), 'id') as Address,
-        availableShippingOptions: [
-            getShippingOption(),
-        ],
+        availableShippingOptions: [getShippingOption()],
     };
 }
 
 export function getConsignments(): Consignment[] {
-    return [
-        getConsignment(),
-        getConsignment(),
-    ];
+    return [getConsignment(), getConsignment()];
 }
 
 export function getConsignmentsState(): ConsignmentState {
@@ -51,10 +44,12 @@ export function getConsignmentRequestBody(): ConsignmentUpdateRequestBody {
     return {
         id: '55c96cda6f04c',
         address: getShippingAddress(),
-        lineItems: [{
-            itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
-            quantity: 1,
-        }],
+        lineItems: [
+            {
+                itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
+                quantity: 1,
+            },
+        ],
         shippingAddress: getShippingAddress(),
     };
 }

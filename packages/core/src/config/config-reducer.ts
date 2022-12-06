@@ -1,4 +1,4 @@
-import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
@@ -9,7 +9,7 @@ import ConfigState, { ConfigErrorsState, ConfigStatusesState, DEFAULT_STATE } fr
 
 export default function configReducer(
     state: ConfigState = DEFAULT_STATE,
-    action: Action
+    action: Action,
 ): ConfigState {
     const reducer = combineReducers<ConfigState>({
         data: dataReducer,
@@ -20,48 +20,45 @@ export default function configReducer(
     return reducer(state, action);
 }
 
-function dataReducer(
-    data: Config | undefined,
-    action: LoadConfigAction
-): Config | undefined {
+function dataReducer(data: Config | undefined, action: LoadConfigAction): Config | undefined {
     switch (action.type) {
-    case ConfigActionType.LoadConfigSucceeded:
-        return objectMerge(data, action.payload);
+        case ConfigActionType.LoadConfigSucceeded:
+            return objectMerge(data, action.payload);
 
-    default:
-        return data;
+        default:
+            return data;
     }
 }
 
 function errorsReducer(
     errors: ConfigErrorsState = DEFAULT_STATE.errors,
-    action: LoadConfigAction
+    action: LoadConfigAction,
 ): ConfigErrorsState {
     switch (action.type) {
-    case ConfigActionType.LoadConfigSucceeded:
-        return objectSet(errors, 'loadError', undefined);
+        case ConfigActionType.LoadConfigSucceeded:
+            return objectSet(errors, 'loadError', undefined);
 
-    case ConfigActionType.LoadConfigFailed:
-        return objectSet(errors, 'loadError', action.payload);
+        case ConfigActionType.LoadConfigFailed:
+            return objectSet(errors, 'loadError', action.payload);
 
-    default:
-        return errors;
+        default:
+            return errors;
     }
 }
 
 function statusesReducer(
     statuses: ConfigStatusesState = DEFAULT_STATE.statuses,
-    action: LoadConfigAction
+    action: LoadConfigAction,
 ): ConfigStatusesState {
     switch (action.type) {
-    case ConfigActionType.LoadConfigRequested:
-        return objectSet(statuses, 'isLoading', true);
+        case ConfigActionType.LoadConfigRequested:
+            return objectSet(statuses, 'isLoading', true);
 
-    case ConfigActionType.LoadConfigSucceeded:
-    case ConfigActionType.LoadConfigFailed:
-        return objectSet(statuses, 'isLoading', false);
+        case ConfigActionType.LoadConfigSucceeded:
+        case ConfigActionType.LoadConfigFailed:
+            return objectSet(statuses, 'isLoading', false);
 
-    default:
-        return statuses;
+        default:
+            return statuses;
     }
 }

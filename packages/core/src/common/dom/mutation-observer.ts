@@ -1,6 +1,6 @@
 export interface MutationObeserverCreator {
     prototype: MutationObserver;
-    new(callback: MutationCallback): MutationObserver;
+    new (callback: MutationCallback): MutationObserver;
 }
 
 export interface MutationObserverWindow extends Window {
@@ -8,9 +8,7 @@ export interface MutationObserverWindow extends Window {
 }
 
 export class MutationObserverFactory {
-    constructor(
-        private _window: MutationObserverWindow = window as MutationObserverWindow
-    ) {}
+    constructor(private _window: MutationObserverWindow = window as MutationObserverWindow) {}
 
     create(callback: MutationCallback): MutationObserver {
         return new this._window.MutationObserver(callback);

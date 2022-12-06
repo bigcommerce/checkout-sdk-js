@@ -4,9 +4,7 @@ import { Affirm, AffirmHostWindow, AffirmScripts } from './affirm';
 import loadAffirmJS from './affirmJs';
 
 export default class AffirmScriptLoader {
-    constructor(
-        public _window: AffirmHostWindow = window
-    ) { }
+    constructor(public _window: AffirmHostWindow = window) {}
 
     load(apikey = '', testMode?: boolean): Promise<Affirm> {
         const scriptURI = this._getScriptURI(testMode);

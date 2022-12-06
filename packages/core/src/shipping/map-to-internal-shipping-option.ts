@@ -6,7 +6,10 @@ import ShippingOption from './shipping-option';
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export default function mapToInternalShippingOption(option: ShippingOption, isSelected: boolean): InternalShippingOption {
+export default function mapToInternalShippingOption(
+    option: ShippingOption,
+    isSelected: boolean,
+): InternalShippingOption {
     return {
         description: option.description,
         module: option.type,

@@ -4,7 +4,10 @@ import { CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { getBraintree } from '../payment-methods.mock';
 
-import InstrumentSelector, { createInstrumentSelectorFactory, InstrumentSelectorFactory } from './instrument-selector';
+import InstrumentSelector, {
+    createInstrumentSelectorFactory,
+    InstrumentSelectorFactory,
+} from './instrument-selector';
 import { getInstruments, getInstrumentsMeta } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
@@ -23,9 +26,12 @@ describe('InstrumentSelector', () => {
             set(state, 'instruments.data[0].method', 'card');
 
             instrumentSelector = createInstrumentSelector(state.instruments);
+
             const result = instrumentSelector.getInstruments();
 
-            expect(result).toContainEqual(expect.objectContaining({ provider: 'authorizenet', last4: expect.any(String) }));
+            expect(result).toContainEqual(
+                expect.objectContaining({ provider: 'authorizenet', last4: expect.any(String) }),
+            );
             expect(result).not.toContainEqual(expect.objectContaining({ provider: 'invalid' }));
         });
 
@@ -40,23 +46,26 @@ describe('InstrumentSelector', () => {
         it('returns instrument with given ID', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getCardInstrument('123'))
-                .toEqual(find(getInstruments(), { bigpayToken: '123' }));
+            expect(instrumentSelector.getCardInstrument('123')).toEqual(
+                find(getInstruments(), { bigpayToken: '123' }),
+            );
         });
 
         it('returns nothing if instrument is not found', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getCardInstrument('1123123312'))
-                .toBeUndefined();
+            expect(instrumentSelector.getCardInstrument('1123123312')).toBeUndefined();
         });
 
         it('only returns card instrument', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
             // tslint:disable-next-line:no-non-null-assertion
-            expect(instrumentSelector.getCardInstrument(find(getInstruments(), { method: 'paypal' })!.bigpayToken))
-                .toBeUndefined();
+            expect(
+                instrumentSelector.getCardInstrument(
+                    find(getInstruments(), { method: 'paypal' })!.bigpayToken,
+                ),
+            ).toBeUndefined();
         });
     });
 
@@ -64,15 +73,20 @@ describe('InstrumentSelector', () => {
         it('returns the instruments for a particular method', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getInstrumentsByPaymentMethod(getBraintree()))
-                .toEqual([ expect.objectContaining({ provider: 'braintree', method: 'credit_card' }) ]);
+            expect(instrumentSelector.getInstrumentsByPaymentMethod(getBraintree())).toEqual([
+                expect.objectContaining({ provider: 'braintree', method: 'credit_card' }),
+            ]);
         });
 
         it('returns an empty array if the method is not supported', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getInstrumentsByPaymentMethod({ ...getBraintree(), id: 'nonexistent' }))
-                .toEqual([]);
+            expect(
+                instrumentSelector.getInstrumentsByPaymentMethod({
+                    ...getBraintree(),
+                    id: 'nonexistent',
+                }),
+            ).toEqual([]);
         });
 
         it('returns an empty array if there are no instruments', () => {
@@ -179,13 +193,13 @@ describe('InstrumentSelector', () => {
                 statuses: { isLoading: true },
             });
 
-            expect(instrumentSelector.isLoading()).toEqual(true);
+            expect(instrumentSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading instruments', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.isLoading()).toEqual(false);
+            expect(instrumentSelector.isLoading()).toBe(false);
         });
     });
 
@@ -198,7 +212,7 @@ describe('InstrumentSelector', () => {
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });
 
-            expect(instrumentSelector.isDeleting(mockInstrumentId)).toEqual(true);
+            expect(instrumentSelector.isDeleting(mockInstrumentId)).toBe(true);
         });
 
         it('returns false if not deleting an instrument', () => {
@@ -207,7 +221,7 @@ describe('InstrumentSelector', () => {
                 statuses: { isDeleting: false, deletingInstrument: undefined },
             });
 
-            expect(instrumentSelector.isDeleting(mockInstrumentId)).toEqual(false);
+            expect(instrumentSelector.isDeleting(mockInstrumentId)).toBe(false);
         });
 
         it('returns false if not deleting specific instrument', () => {
@@ -216,7 +230,7 @@ describe('InstrumentSelector', () => {
                 statuses: { isDeleting: true, deletingInstrument: '321' },
             });
 
-            expect(instrumentSelector.isDeleting(mockInstrumentId)).toEqual(false);
+            expect(instrumentSelector.isDeleting(mockInstrumentId)).toBe(false);
         });
 
         it('returns any deleting status if instrument id is not passed', () => {
@@ -225,7 +239,7 @@ describe('InstrumentSelector', () => {
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });
 
-            expect(instrumentSelector.isDeleting()).toEqual(true);
+            expect(instrumentSelector.isDeleting()).toBe(true);
         });
     });
 });

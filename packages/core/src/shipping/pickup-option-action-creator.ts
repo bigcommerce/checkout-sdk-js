@@ -1,4 +1,9 @@
-import { createAction, createErrorAction, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import {
+    createAction,
+    createErrorAction,
+    ReadableDataStore,
+    ThunkAction,
+} from '@bigcommerce/data-store';
 import { includes } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
@@ -11,41 +16,62 @@ import { LoadPickupOptionsAction, PickupOptionActionType } from './pickup-option
 import PickupOptionRequestSender from './pickup-option-request-sender';
 
 export default class PickupOptionActionCreator {
-    constructor(
-        private _pickupOptionRequestSender: PickupOptionRequestSender
-    ) {}
+    constructor(private _pickupOptionRequestSender: PickupOptionRequestSender) {}
 
-    loadPickupOptions(query: PickupOptionRequestBody): ThunkAction<LoadPickupOptionsAction, InternalCheckoutSelectors> {
-        return store => new Observable((observer: Observer<LoadPickupOptionsAction>) => {
-            const apiQuery = this._hydrateApiQuery(store, query);
-            observer.next(createAction(PickupOptionActionType.LoadPickupOptionsRequested));
+    loadPickupOptions(
+        query: PickupOptionRequestBody,
+    ): ThunkAction<LoadPickupOptionsAction, InternalCheckoutSelectors> {
+        return (store) =>
+            new Observable((observer: Observer<LoadPickupOptionsAction>) => {
+                const apiQuery = this._hydrateApiQuery(store, query);
 
-            this._pickupOptionRequestSender.fetchPickupOptions(apiQuery)
-                .then(response => {
-                    observer.next(createAction(PickupOptionActionType.LoadPickupOptionsSucceeded, response.body.results, query));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(PickupOptionActionType.LoadPickupOptionsFailed, response));
-                });
-        });
+                observer.next(createAction(PickupOptionActionType.LoadPickupOptionsRequested));
+
+                this._pickupOptionRequestSender
+                    .fetchPickupOptions(apiQuery)
+                    .then((response) => {
+                        observer.next(
+                            createAction(
+                                PickupOptionActionType.LoadPickupOptionsSucceeded,
+                                response.body.results,
+                                query,
+                            ),
+                        );
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.error(
+                            createErrorAction(
+                                PickupOptionActionType.LoadPickupOptionsFailed,
+                                response,
+                            ),
+                        );
+                    });
+            });
     }
 
-    private _hydrateApiQuery(store: ReadableDataStore<InternalCheckoutSelectors>, query: PickupOptionRequestBody): PickupOptionAPIRequestBody {
+    private _hydrateApiQuery(
+        store: ReadableDataStore<InternalCheckoutSelectors>,
+        query: PickupOptionRequestBody,
+    ): PickupOptionAPIRequestBody {
         const state = store.getState();
         const cart = state.cart.getCartOrThrow();
+
         if (!cart) {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
+
         const consignment = state.consignments.getConsignmentById(query.consignmentId);
+
         if (!consignment) {
             throw new MissingDataError(MissingDataErrorType.MissingConsignments);
         }
+
         const consignmentLineItems = consignment.lineItemIds;
         const physicalItems = cart.lineItems.physicalItems;
         const cartItems = physicalItems
             .filter((item: LineItem) => includes(consignmentLineItems, item.id))
-            .map(item => ({
+            .map((item) => ({
                 variantId: item.variantId,
                 quantity: item.quantity,
             }));

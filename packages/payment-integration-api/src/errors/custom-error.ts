@@ -6,9 +6,9 @@ export default interface CustomError extends Error {
 
 export function isCustomError(error: any): error is CustomError {
     return (
-        typeof error.message === "string" &&
-        typeof error.type === "string" &&
-        (typeof error.subtype === "string" || !error.subtype) &&
+        typeof error.message === 'string' &&
+        typeof error.type === 'string' &&
+        (typeof error.subtype === 'string' || !error.subtype) &&
         error instanceof Error
     );
 }

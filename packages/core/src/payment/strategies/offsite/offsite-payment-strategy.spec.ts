@@ -3,13 +3,29 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    FinalizeOrderAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
+import {
+    getIncompleteOrder,
+    getOrderRequestBody,
+    getSubmittedOrder,
+} from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -36,16 +52,18 @@ describe('OffsitePaymentStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
+        initializeOffsitePaymentAction = of(
+            createAction(PaymentActionType.InitializeOffsitePaymentRequested),
+        );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         options = { methodId: 'foobar' };
         payload = merge(getOrderRequestBody(), {
@@ -57,14 +75,13 @@ describe('OffsitePaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
-            .mockReturnValue(initializeOffsitePaymentAction);
+        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment').mockReturnValue(
+            initializeOffsitePaymentAction,
+        );
 
         strategy = new OffsitePaymentStrategy(store, orderActionCreator, paymentActionCreator);
     });
@@ -72,7 +89,10 @@ describe('OffsitePaymentStrategy', () => {
     it('submits order without payment data', async () => {
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+            omit(payload, 'payment'),
+            options,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -115,11 +135,11 @@ describe('OffsitePaymentStrategy', () => {
     it('finalizes order if order is created and payment is acknowledged', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(
+            paymentStatusTypes.ACKNOWLEDGE,
+        );
 
         await strategy.finalize(options);
 
@@ -130,11 +150,9 @@ describe('OffsitePaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.FINALIZE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize(options);
 
@@ -159,11 +177,13 @@ describe('OffsitePaymentStrategy', () => {
     it('does not finalize order if order is not finalized or acknowledged', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
-            payment: {
-                status: paymentStatusTypes.INITIALIZE,
-            },
-        }));
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(
+            merge({}, getSubmittedOrder(), {
+                payment: {
+                    status: paymentStatusTypes.INITIALIZE,
+                },
+            }),
+        );
 
         try {
             await strategy.finalize();
@@ -177,8 +197,7 @@ describe('OffsitePaymentStrategy', () => {
     it('throws error if unable to finalize due to missing data', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         try {
             await strategy.finalize();

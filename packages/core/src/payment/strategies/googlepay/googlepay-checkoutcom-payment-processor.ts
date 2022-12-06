@@ -12,7 +12,10 @@ export default class GooglePayCheckoutcomPaymentProcessor implements GooglePayPr
     }
 
     async processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
-        if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'three_d_secure_required'})) {
+        if (
+            !(error instanceof RequestError) ||
+            !some(error.body.errors, { code: 'three_d_secure_required' })
+        ) {
             return Promise.reject(error);
         }
 

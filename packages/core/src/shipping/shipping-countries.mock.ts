@@ -3,10 +3,7 @@ import { Country, CountryResponseBody } from '../geography';
 import ShippingCountryState from './shipping-country-state';
 
 export function getShippingCountries(): Country[] {
-    return [
-        getAustralia(),
-        getJapan(),
-    ];
+    return [getAustralia(), getJapan()];
 }
 
 export function getShippingCountriesResponseBody(): CountryResponseBody {
@@ -28,9 +25,7 @@ export function getAustralia(): Country {
     return {
         code: 'AU',
         name: 'Australia',
-        subdivisions: [
-            { code: 'NSW', name: 'New South Wales' },
-        ],
+        subdivisions: [{ code: 'NSW', name: 'New South Wales' }],
         hasPostalCodes: true,
         requiresState: true,
     };

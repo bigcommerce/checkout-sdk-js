@@ -1,8 +1,15 @@
 import { merge } from 'lodash';
 
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
-import { getCheckoutStoreStateWithOrder, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
+import {
+    CheckoutStoreState,
+    createInternalCheckoutSelectors,
+    InternalCheckoutSelectors,
+} from '../checkout';
+import {
+    getCheckoutStoreStateWithOrder,
+    getCheckoutWithGiftCertificates,
+} from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
@@ -15,7 +22,12 @@ import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import { getInstrumentsMeta } from './instrument/instrument.mock';
 import Payment from './payment';
-import { getAdyenAmex, getAuthorizenet, getPaymentMethodsMeta, getStripeV3 } from './payment-methods.mock';
+import {
+    getAdyenAmex,
+    getAuthorizenet,
+    getPaymentMethodsMeta,
+    getStripeV3,
+} from './payment-methods.mock';
 import PaymentRequestTransformer from './payment-request-transformer';
 import { getPayment, getPaymentRequestBody } from './payments.mock';
 
@@ -34,32 +46,31 @@ describe('PaymentRequestTransformer', () => {
         };
         paymentRequestTransformer = new PaymentRequestTransformer();
 
-        jest.spyOn(selectors.billingAddress, 'getBillingAddress')
-            .mockReturnValue(getBillingAddress());
-        jest.spyOn(selectors.checkout, 'getCheckout')
-            .mockReturnValue(getCheckoutWithGiftCertificates());
-        jest.spyOn(selectors.customer, 'getCustomer')
-            .mockReturnValue(getCustomer());
-        jest.spyOn(selectors.order, 'getOrder')
-            .mockReturnValue(getOrder());
-        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(getAuthorizenet());
-        jest.spyOn(selectors.shippingAddress, 'getShippingAddress')
-            .mockReturnValue(getShippingAddress());
-        jest.spyOn(selectors.consignments, 'getConsignments')
-            .mockReturnValue(getConsignments());
-        jest.spyOn(selectors.consignments, 'getShippingOption')
-            .mockReturnValue(getShippingOption());
-        jest.spyOn(selectors.config, 'getStoreConfig')
-            .mockReturnValue(getConfig().storeConfig);
-        jest.spyOn(selectors.config, 'getContextConfig')
-            .mockReturnValue(getConfig().context);
-        jest.spyOn(selectors.instruments, 'getInstrumentsMeta')
-            .mockReturnValue(getInstrumentsMeta());
-        jest.spyOn(selectors.paymentMethods, 'getPaymentMethodsMeta')
-            .mockReturnValue(getPaymentMethodsMeta());
-        jest.spyOn(selectors.order, 'getOrderMeta')
-            .mockReturnValue(getOrderMeta());
+        jest.spyOn(selectors.billingAddress, 'getBillingAddress').mockReturnValue(
+            getBillingAddress(),
+        );
+        jest.spyOn(selectors.checkout, 'getCheckout').mockReturnValue(
+            getCheckoutWithGiftCertificates(),
+        );
+        jest.spyOn(selectors.customer, 'getCustomer').mockReturnValue(getCustomer());
+        jest.spyOn(selectors.order, 'getOrder').mockReturnValue(getOrder());
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(getAuthorizenet());
+        jest.spyOn(selectors.shippingAddress, 'getShippingAddress').mockReturnValue(
+            getShippingAddress(),
+        );
+        jest.spyOn(selectors.consignments, 'getConsignments').mockReturnValue(getConsignments());
+        jest.spyOn(selectors.consignments, 'getShippingOption').mockReturnValue(
+            getShippingOption(),
+        );
+        jest.spyOn(selectors.config, 'getStoreConfig').mockReturnValue(getConfig().storeConfig);
+        jest.spyOn(selectors.config, 'getContextConfig').mockReturnValue(getConfig().context);
+        jest.spyOn(selectors.instruments, 'getInstrumentsMeta').mockReturnValue(
+            getInstrumentsMeta(),
+        );
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethodsMeta').mockReturnValue(
+            getPaymentMethodsMeta(),
+        );
+        jest.spyOn(selectors.order, 'getOrderMeta').mockReturnValue(getOrderMeta());
     });
 
     it('transform a payload to PaymentRequestBody', () => {
@@ -69,17 +80,18 @@ describe('PaymentRequestTransformer', () => {
     });
 
     it('throws when authToken is not generated', () => {
-        jest.spyOn(selectors.payment, 'getPaymentToken')
-            .mockReturnValue(undefined);
+        jest.spyOn(selectors.payment, 'getPaymentToken').mockReturnValue(undefined);
 
-        expect(() => paymentRequestTransformer.transform(payment, selectors)).toThrow(MissingDataError);
+        expect(() => paymentRequestTransformer.transform(payment, selectors)).toThrow(
+            MissingDataError,
+        );
     });
 
     it('returns paymentMethod as undefined when state does not have paymentMethods', () => {
-        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(undefined);
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
         const expectedPaymentRequestBody = getPaymentRequestBody();
+
         expectedPaymentRequestBody.paymentMethod = undefined;
 
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
@@ -89,29 +101,33 @@ describe('PaymentRequestTransformer', () => {
 
     it('returns paymentMethod format when is a multi-option gateway', () => {
         const paymentMethod = getAdyenAmex();
+
         paymentMethod.gateway = undefined;
 
-        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
 
         const expectedPaymentRequestBody = getPaymentRequestBody();
+
         expectedPaymentRequestBody.paymentMethod = { ...paymentMethod, gateway: paymentMethod.id };
 
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
 
-        expect(paymentRequestBodyResponse.paymentMethod).toEqual(expectedPaymentRequestBody.paymentMethod);
+        expect(paymentRequestBodyResponse.paymentMethod).toEqual(
+            expectedPaymentRequestBody.paymentMethod,
+        );
     });
 
     it('returns paymentMethod format when contains initializationData', () => {
         const paymentMethod = getAuthorizenet();
+
         paymentMethod.initializationData = {
             gateway: 'authorizenet',
         };
 
-        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
 
         const expectedPaymentRequestBody = getPaymentRequestBody();
+
         expectedPaymentRequestBody.paymentMethod = {
             ...paymentMethod,
             id: paymentMethod.initializationData.gateway,
@@ -119,7 +135,9 @@ describe('PaymentRequestTransformer', () => {
 
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
 
-        expect(paymentRequestBodyResponse.paymentMethod).toEqual(expectedPaymentRequestBody.paymentMethod);
+        expect(paymentRequestBodyResponse.paymentMethod).toEqual(
+            expectedPaymentRequestBody.paymentMethod,
+        );
     });
 
     it('transforms from hosted form data', () => {
@@ -131,15 +149,16 @@ describe('PaymentRequestTransformer', () => {
                 [HostedFieldType.CardExpiry]: '10 / 20',
             },
             getHostedFormOrderData(),
-            'nonce'
+            'nonce',
         );
 
-        expect(result)
-            .toEqual(merge({}, getPaymentRequestBody(), {
+        expect(result).toEqual(
+            merge({}, getPaymentRequestBody(), {
                 payment: {
                     hostedFormNonce: 'nonce',
                 },
-            }));
+            }),
+        );
     });
 
     it('transforms from hosted form data for paying with stored card', () => {
@@ -154,16 +173,15 @@ describe('PaymentRequestTransformer', () => {
                     instrumentId: 'abcdefg',
                 },
             },
-            'nonce'
+            'nonce',
         );
 
-        expect(result.payment)
-            .toEqual({
-                ccNumber: '4111111111111111',
-                ccCvv: '123',
-                hostedFormNonce: 'nonce',
-                instrumentId: 'abcdefg',
-            });
+        expect(result.payment).toEqual({
+            ccNumber: '4111111111111111',
+            ccCvv: '123',
+            hostedFormNonce: 'nonce',
+            instrumentId: 'abcdefg',
+        });
     });
 
     it('transforms from hosted form data with additional data', () => {
@@ -185,16 +203,17 @@ describe('PaymentRequestTransformer', () => {
                 ...getHostedFormOrderData(),
                 additionalAction,
             },
-            'nonce'
+            'nonce',
         );
 
-        expect(result)
-            .toEqual(merge({}, getPaymentRequestBody(), {
+        expect(result).toEqual(
+            merge({}, getPaymentRequestBody(), {
                 additionalAction,
                 payment: {
                     hostedFormNonce: 'nonce',
                 },
-            }));
+            }),
+        );
     });
 
     it('returns additinalAction within request if provided in payment parameter', () => {
@@ -204,6 +223,7 @@ describe('PaymentRequestTransformer', () => {
                 human_verification_token: 'googleRecaptchaToken',
             },
         };
+
         payment.additionalAction = additionalActionMock;
 
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
@@ -214,20 +234,21 @@ describe('PaymentRequestTransformer', () => {
     describe('BOPIS', () => {
         it('should pass nothing in for shipping object', () => {
             const paymentMethod = getStripeV3();
+
             paymentMethod.initializationData.bopis.enabled = true;
             paymentMethod.initializationData.bopis.requiredAddress = 'none';
 
-            jest.spyOn(selectors.paymentMethods, 'getPaymentMethod')
-                .mockReturnValue(paymentMethod);
+            jest.spyOn(selectors.paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
 
-            jest.spyOn(selectors.consignments, 'getConsignments')
-                .mockReturnValue([{
+            jest.spyOn(selectors.consignments, 'getConsignments').mockReturnValue([
+                {
                     ...getConsignment(),
                     selectedShippingOption: null,
                     selectedPickupOption: {
                         pickupMethodId: 1,
                     },
-                }]);
+                },
+            ]);
 
             const paymentRequestBody = paymentRequestTransformer.transform(payment, selectors);
 

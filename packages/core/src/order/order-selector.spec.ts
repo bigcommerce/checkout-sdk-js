@@ -1,13 +1,18 @@
 import { set } from 'lodash';
 
-import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
+import {
+    CheckoutStoreState,
+    createInternalCheckoutSelectors,
+    InternalCheckoutSelectors,
+} from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { GatewayOrderPayment } from '.';
 import OrderSelector, { createOrderSelectorFactory, OrderSelectorFactory } from './order-selector';
 import { getOrder, getOrderState } from './orders.mock';
+
+import { GatewayOrderPayment } from '.';
 
 describe('OrderSelector', () => {
     let createOrderSelector: OrderSelectorFactory;
@@ -23,7 +28,11 @@ describe('OrderSelector', () => {
 
     describe('#getOrder()', () => {
         it('returns the current order', () => {
-            orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                state.order,
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
             expect(orderSelector.getOrder()).toEqual({
                 ...getOrder(),
@@ -35,7 +44,11 @@ describe('OrderSelector', () => {
 
     describe('#getOrderMeta()', () => {
         it('returns order meta', () => {
-            orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                state.order,
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
             expect(orderSelector.getOrderMeta()).toEqual(state.order.meta);
         });
@@ -45,16 +58,24 @@ describe('OrderSelector', () => {
         it('returns error if unable to load', () => {
             const loadError = new RequestError(getErrorResponse());
 
-            orderSelector = createOrderSelector({
-                ...state.order,
-                errors: { loadError },
-            }, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                {
+                    ...state.order,
+                    errors: { loadError },
+                },
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
             expect(orderSelector.getLoadError()).toEqual(loadError);
         });
 
         it('does not returns error if able to load', () => {
-            orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                state.order,
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
             expect(orderSelector.getLoadError()).toBeUndefined();
         });
@@ -73,15 +94,23 @@ describe('OrderSelector', () => {
 
                 const orderState = set(getOrderState(), 'data.payments', [orderPayment]);
 
-                orderSelector = createOrderSelector(orderState, selectors.billingAddress, selectors.coupons);
+                orderSelector = createOrderSelector(
+                    orderState,
+                    selectors.billingAddress,
+                    selectors.coupons,
+                );
 
-                expect(orderSelector.getPaymentId('some-provider-id')).toEqual('abc');
+                expect(orderSelector.getPaymentId('some-provider-id')).toBe('abc');
             });
         });
 
         describe('when there is no matching payment method', () => {
             it('returns undefined', () => {
-                orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+                orderSelector = createOrderSelector(
+                    state.order,
+                    selectors.billingAddress,
+                    selectors.coupons,
+                );
 
                 expect(orderSelector.getPaymentId('some-non-matching-id')).toBeUndefined();
             });
@@ -90,18 +119,26 @@ describe('OrderSelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading order', () => {
-            orderSelector = createOrderSelector({
-                ...state.order,
-                statuses: { isLoading: true },
-            }, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                {
+                    ...state.order,
+                    statuses: { isLoading: true },
+                },
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
-            expect(orderSelector.isLoading()).toEqual(true);
+            expect(orderSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading order', () => {
-            orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+            orderSelector = createOrderSelector(
+                state.order,
+                selectors.billingAddress,
+                selectors.coupons,
+            );
 
-            expect(orderSelector.isLoading()).toEqual(false);
+            expect(orderSelector.isLoading()).toBe(false);
         });
     });
 });

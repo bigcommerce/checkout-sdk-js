@@ -1,5 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
-import { concat, defer, of, Observable } from 'rxjs';
+import { concat, defer, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { throwErrorAction } from '../common/error';
@@ -10,13 +10,11 @@ import { SendSignInEmailAction, SignInEmailActionType } from './signin-email-act
 import SignInEmailRequestSender from './signin-email-request-sender';
 
 export default class SignInEmailActionCreator {
-    constructor(
-        private _requestSender: SignInEmailRequestSender
-    ) {}
+    constructor(private _requestSender: SignInEmailRequestSender) {}
 
     sendSignInEmail(
         emailRequest: SignInEmailRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Observable<SendSignInEmailAction> {
         return concat(
             of(createAction(SignInEmailActionType.SendSignInEmailRequested)),
@@ -24,9 +22,11 @@ export default class SignInEmailActionCreator {
                 const { body } = await this._requestSender.sendSignInEmail(emailRequest, options);
 
                 return createAction(SignInEmailActionType.SendSignInEmailSucceeded, body);
-            })
+            }),
         ).pipe(
-            catchError(error => throwErrorAction(SignInEmailActionType.SendSignInEmailFailed, error))
+            catchError((error) =>
+                throwErrorAction(SignInEmailActionType.SendSignInEmailFailed, error),
+            ),
         );
     }
 }

@@ -1,4 +1,4 @@
-import { Timeout } from "@bigcommerce/request-sender";
+import { Timeout } from '@bigcommerce/request-sender';
 
 /**
  * A set of options for configuring an asynchronous request.

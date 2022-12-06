@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -48,39 +48,35 @@ describe('CyberSourcePaymentStrategy', () => {
 
         state = store.getState();
 
-        jest.spyOn(store, 'dispatch')
-            .mockResolvedValue(state);
+        jest.spyOn(store, 'dispatch').mockResolvedValue(state);
 
-        jest.spyOn(store, 'getState')
-            .mockReturnValue(state);
+        jest.spyOn(store, 'getState').mockReturnValue(state);
 
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(paymentMethod);
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
 
         strategy = new CyberSourcePaymentStrategy(
             store,
             orderActionCreator as OrderActionCreator,
             paymentActionCreator as PaymentActionCreator,
             hostedFormFactory,
-            threeDSecureFlow as CardinalThreeDSecureFlow
+            threeDSecureFlow as CardinalThreeDSecureFlow,
         );
     });
 
     it('is special type of credit card strategy', () => {
-        expect(strategy)
-            .toBeInstanceOf(CreditCardPaymentStrategy);
+        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     describe('#initialize', () => {
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
             try {
                 await strategy.initialize({ methodId: paymentMethod.id });
             } catch (error) {
-                expect(error)
-                    .toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(Error);
             }
         });
 
@@ -89,8 +85,7 @@ describe('CyberSourcePaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare)
-                .not.toHaveBeenCalled();
+            expect(threeDSecureFlow.prepare).not.toHaveBeenCalled();
         });
 
         it('prepares 3DS flow if enabled', async () => {
@@ -98,8 +93,7 @@ describe('CyberSourcePaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare)
-                .toHaveBeenCalled();
+            expect(threeDSecureFlow.prepare).toHaveBeenCalled();
         });
     });
 
@@ -116,14 +110,14 @@ describe('CyberSourcePaymentStrategy', () => {
         });
 
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockImplementation(() => { throw new Error(); });
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+                throw new Error();
+            });
 
             try {
                 await strategy.execute(payload);
             } catch (error) {
-                expect(error)
-                    .toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(Error);
             }
         });
 
@@ -132,8 +126,7 @@ describe('CyberSourcePaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start)
-                .not.toHaveBeenCalled();
+            expect(threeDSecureFlow.start).not.toHaveBeenCalled();
         });
 
         it('starts 3DS flow if enabled', async () => {
@@ -141,8 +134,7 @@ describe('CyberSourcePaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start)
-                .toHaveBeenCalled();
+            expect(threeDSecureFlow.start).toHaveBeenCalled();
         });
     });
 });

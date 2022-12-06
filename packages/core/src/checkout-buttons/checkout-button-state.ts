@@ -2,13 +2,13 @@ import { CheckoutButtonMethodType } from './strategies';
 
 export default interface CheckoutButtonState {
     data: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonDataState | undefined
+        [key in CheckoutButtonMethodType]?: CheckoutButtonDataState | undefined;
     };
     errors: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined
+        [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined;
     };
     statuses: {
-        [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined
+        [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined;
     };
 }
 

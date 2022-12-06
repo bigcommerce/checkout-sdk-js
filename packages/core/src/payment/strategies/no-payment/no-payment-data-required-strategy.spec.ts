@@ -1,9 +1,14 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -20,31 +25,40 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
         jest.spyOn(store, 'dispatch');
 
-        noPaymentDataRequiredPaymentStrategy = new NoPaymentDataRequiredPaymentStrategy(store, orderActionCreator);
+        noPaymentDataRequiredPaymentStrategy = new NoPaymentDataRequiredPaymentStrategy(
+            store,
+            orderActionCreator,
+        );
     });
 
     describe('#execute()', () => {
         it('calls submit order with the right data', async () => {
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), undefined);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(getOrderRequestBody(), 'payment'), undefined);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                omit(getOrderRequestBody(), 'payment'),
+                undefined,
+            );
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
         it('passes the options to submitOrder', async () => {
             const options = { myOptions: 'option1', methodId: 'testgateway' };
+
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                expect.any(Object),
+                options,
+            );
         });
     });
 

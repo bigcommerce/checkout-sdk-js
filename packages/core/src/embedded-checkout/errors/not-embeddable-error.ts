@@ -15,7 +15,7 @@ export enum NotEmbeddableErrorType {
 export default class NotEmbeddableError extends StandardError {
     constructor(
         message?: string,
-        public subtype: NotEmbeddableErrorType = NotEmbeddableErrorType.UnknownError
+        public subtype: NotEmbeddableErrorType = NotEmbeddableErrorType.UnknownError,
     ) {
         super(message || 'Unable to embed the checkout form.');
 

@@ -14,24 +14,18 @@ export const createSubStrategyRegistry = (
     orderActionCreator: OrderActionCreator,
     requestSender: RequestSender,
     stepHandler: StepHandler,
-    hostedFormFactory: HostedFormFactory
+    hostedFormFactory: HostedFormFactory,
 ) => {
     const registry = new SubStrategyRegistry();
 
     registry.register(
         SubStrategyType.CARD,
-        () => new CardSubStrategy(store, orderActionCreator, hostedFormFactory, stepHandler)
+        () => new CardSubStrategy(store, orderActionCreator, hostedFormFactory, stepHandler),
     );
 
-    registry.register(
-        SubStrategyType.NONE,
-        () => new NoneSubStrategy(requestSender, stepHandler)
-    );
+    registry.register(SubStrategyType.NONE, () => new NoneSubStrategy(requestSender, stepHandler));
 
-    registry.register(
-        SubStrategyType.UNSUPPORTED,
-        () => undefined
-    );
+    registry.register(SubStrategyType.UNSUPPORTED, () => undefined);
 
     return registry;
 };

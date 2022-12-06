@@ -30,17 +30,19 @@ export enum RemoteCheckoutActionType {
     UpdateRemoteCheckout = 'UPDATE_REMOTE_CHECKOUT',
 }
 
-export type RemoteCheckoutAction = ForgetCheckoutRemoteCustomerAction |
-    InitializeRemoteBillingAction |
-    InitializeRemoteShippingAction |
-    InitializeRemotePaymentAction |
-    SignOutRemoteCustomerAction |
-    LoadRemoteSettingsAction |
-    UpdateRemoteCheckoutAction;
+export type RemoteCheckoutAction =
+    | ForgetCheckoutRemoteCustomerAction
+    | InitializeRemoteBillingAction
+    | InitializeRemoteShippingAction
+    | InitializeRemotePaymentAction
+    | SignOutRemoteCustomerAction
+    | LoadRemoteSettingsAction
+    | UpdateRemoteCheckoutAction;
 
-export type ForgetCheckoutRemoteCustomerAction = ForgetCheckoutRemoteCustomerRequestedAction |
-    ForgetCheckoutRemoteCustomerSucceededAction |
-    ForgetCheckoutRemoteCustomerFailedAction;
+export type ForgetCheckoutRemoteCustomerAction =
+    | ForgetCheckoutRemoteCustomerRequestedAction
+    | ForgetCheckoutRemoteCustomerSucceededAction
+    | ForgetCheckoutRemoteCustomerFailedAction;
 
 export interface ForgetCheckoutRemoteCustomerRequestedAction extends Action {
     type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerRequested;
@@ -54,9 +56,10 @@ export interface ForgetCheckoutRemoteCustomerFailedAction extends Action {
     type: RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerFailed;
 }
 
-export type InitializeRemoteBillingAction = InitializeRemoteBillingSucceededAction |
-    InitializeRemoteBillingFailedAction |
-    InitializeRemoteBillingRequestedAction;
+export type InitializeRemoteBillingAction =
+    | InitializeRemoteBillingSucceededAction
+    | InitializeRemoteBillingFailedAction
+    | InitializeRemoteBillingRequestedAction;
 
 export interface InitializeRemoteBillingSucceededAction extends Action<AmazonPayRemoteCheckout> {
     type: RemoteCheckoutActionType.InitializeRemoteBillingSucceeded;
@@ -70,9 +73,10 @@ export interface InitializeRemoteBillingRequestedAction extends Action {
     type: RemoteCheckoutActionType.InitializeRemoteBillingRequested;
 }
 
-export type InitializeRemoteShippingAction = InitializeRemoteShippingSucceededAction |
-    InitializeRemoteShippingFailedAction |
-    InitializeRemoteShippingRequestedAction;
+export type InitializeRemoteShippingAction =
+    | InitializeRemoteShippingSucceededAction
+    | InitializeRemoteShippingFailedAction
+    | InitializeRemoteShippingRequestedAction;
 
 export interface InitializeRemoteShippingSucceededAction extends Action<AmazonPayRemoteCheckout> {
     type: RemoteCheckoutActionType.InitializeRemoteShippingSucceeded;
@@ -86,9 +90,10 @@ export interface InitializeRemoteShippingRequestedAction extends Action {
     type: RemoteCheckoutActionType.InitializeRemoteShippingRequested;
 }
 
-export type InitializeRemotePaymentAction = InitializeRemotePaymentSucceededAction |
-    InitializeRemotePaymentFailedAction |
-    InitializeRemotePaymentRequestedAction;
+export type InitializeRemotePaymentAction =
+    | InitializeRemotePaymentSucceededAction
+    | InitializeRemotePaymentFailedAction
+    | InitializeRemotePaymentRequestedAction;
 
 export interface InitializeRemotePaymentSucceededAction extends Action {
     type: RemoteCheckoutActionType.InitializeRemotePaymentSucceeded;
@@ -102,9 +107,10 @@ export interface InitializeRemotePaymentRequestedAction extends Action {
     type: RemoteCheckoutActionType.InitializeRemotePaymentRequested;
 }
 
-export type SignOutRemoteCustomerAction = SignOutRemoteCustomerSucceededAction |
-    SignOutRemoteCustomerFailedAction |
-    SignOutRemoteCustomerRequestedAction;
+export type SignOutRemoteCustomerAction =
+    | SignOutRemoteCustomerSucceededAction
+    | SignOutRemoteCustomerFailedAction
+    | SignOutRemoteCustomerRequestedAction;
 
 export interface SignOutRemoteCustomerSucceededAction extends Action {
     type: RemoteCheckoutActionType.SignOutRemoteCustomerSucceeded;
@@ -118,9 +124,10 @@ export interface SignOutRemoteCustomerRequestedAction extends Action {
     type: RemoteCheckoutActionType.SignOutRemoteCustomerRequested;
 }
 
-export type LoadRemoteSettingsAction = LoadRemoteSettingsSucceededAction |
-    LoadRemoteSettingsRequestedAction |
-    LoadRemoteSettingsFailedAction;
+export type LoadRemoteSettingsAction =
+    | LoadRemoteSettingsSucceededAction
+    | LoadRemoteSettingsRequestedAction
+    | LoadRemoteSettingsFailedAction;
 
 export interface LoadRemoteSettingsSucceededAction extends Action {
     type: RemoteCheckoutActionType.LoadRemoteSettingsSucceeded;

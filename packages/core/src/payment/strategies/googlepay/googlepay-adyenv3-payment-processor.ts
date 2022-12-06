@@ -2,16 +2,33 @@ import { some } from 'lodash';
 
 import { Payment, PaymentActionCreator, PaymentInitializeOptions } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError,
+} from '../../../common/error/errors';
 import { PaymentMethodCancelledError } from '../../errors';
-import { AdyenAction, AdyenAdditionalAction, AdyenAdditionalActionState, AdyenClient, AdyenError, AdyenV3ScriptLoader } from '../adyenv3';
+import {
+    AdyenAction,
+    AdyenAdditionalAction,
+    AdyenAdditionalActionState,
+    AdyenClient,
+    AdyenError,
+    AdyenV3ScriptLoader,
+} from '../adyenv3';
 
 import { GooglePayProviderProcessor } from './googlepay';
 
 export default class GooglePayAdyenV3PaymentProcessor implements GooglePayProviderProcessor {
     private _adyenClient?: AdyenClient;
 
-    constructor(private _store: CheckoutStore, private _paymentActionCreator: PaymentActionCreator, private _scriptLoader: AdyenV3ScriptLoader) {}
+    constructor(
+        private _store: CheckoutStore,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _scriptLoader: AdyenV3ScriptLoader,
+    ) {}
 
     async initialize(options: PaymentInitializeOptions) {
         const state = this._store.getState();
@@ -31,7 +48,10 @@ export default class GooglePayAdyenV3PaymentProcessor implements GooglePayProvid
     }
 
     async processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors> {
-        if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
+        if (
+            !(error instanceof RequestError) ||
+            !some(error.body.errors, { code: 'additional_action_required' })
+        ) {
             return Promise.reject(error);
         }
 

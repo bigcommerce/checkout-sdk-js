@@ -9,32 +9,32 @@ export default function isExtendInterfaceConfig(config: unknown): config is Exte
         return false;
     }
 
-    return config.entries.every(entry => {
+    return config.entries.every((entry) => {
         if (!(entry instanceof Object)) {
             return false;
         }
 
-        if (!hasKey(entry, 'inputPath') || typeof entry['inputPath'] !== 'string') {
+        if (!hasKey(entry, 'inputPath') || typeof entry.inputPath !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'outputPath') || typeof entry['outputPath'] !== 'string') {
+        if (!hasKey(entry, 'outputPath') || typeof entry.outputPath !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'outputMemberName') || typeof entry['outputMemberName'] !== 'string') {
+        if (!hasKey(entry, 'outputMemberName') || typeof entry.outputMemberName !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'memberPattern') || typeof entry['memberPattern'] !== 'string') {
+        if (!hasKey(entry, 'memberPattern') || typeof entry.memberPattern !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'targetPath') || typeof entry['targetPath'] !== 'string') {
+        if (!hasKey(entry, 'targetPath') || typeof entry.targetPath !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'targetMemberName') || typeof entry['targetMemberName'] !== 'string') {
+        if (!hasKey(entry, 'targetMemberName') || typeof entry.targetMemberName !== 'string') {
             return false;
         }
 
@@ -46,6 +46,9 @@ function isArray(array: unknown): array is unknown[] {
     return Array.isArray(array);
 }
 
-function hasKey<T extends object, K extends string | number | symbol>(object: T, key: K): object is T & Record<K, unknown> {
+function hasKey<T extends object, K extends string | number | symbol>(
+    object: T,
+    key: K,
+): object is T & Record<K, unknown> {
     return key in object;
 }

@@ -26,7 +26,7 @@ export default interface PaymentSelector {
 
 export type PaymentSelectorFactory = (
     checkout: CheckoutSelector,
-    order: OrderSelector
+    order: OrderSelector,
 ) => PaymentSelector;
 
 interface PaymentSelectorDependencies {
@@ -37,33 +37,36 @@ interface PaymentSelectorDependencies {
 export function createPaymentSelectorFactory(): PaymentSelectorFactory {
     const getInternalPayment = createSelector(
         ({ order }: PaymentSelectorDependencies) => order.getOrderMeta,
-        getOrderMeta => () => {
+        (getOrderMeta) => () => {
             const meta = getOrderMeta();
 
             return meta && meta.payment;
-        }
+        },
     );
 
     const getGatewayPayment = createSelector(
         ({ order }: PaymentSelectorDependencies) => order.getOrder,
-        getOrder => () => {
+        (getOrder) => () => {
             const order = getOrder();
 
-            return find(order && order.payments, ({ providerId }) =>
-                providerId !== 'giftcertificate' && providerId !== 'storecredit'
+            return find(
+                order && order.payments,
+                ({ providerId }) =>
+                    providerId !== 'giftcertificate' && providerId !== 'storecredit',
             ) as GatewayOrderPayment;
-        }
+        },
     );
 
     const getHostedPayment = createSelector(
         ({ checkout }: PaymentSelectorDependencies) => checkout.getCheckout,
-        getCheckout => () => {
+        (getCheckout) => () => {
             const checkout = getCheckout();
 
-            return find(checkout && checkout.payments, ({ providerType }) =>
-                providerType === HOSTED
+            return find(
+                checkout && checkout.payments,
+                ({ providerType }) => providerType === HOSTED,
             );
-        }
+        },
     );
 
     const getPaymentId = createSelector(
@@ -88,15 +91,15 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
                     gatewayId: payment.gatewayId,
                 };
             }
-        }
+        },
     );
 
-    const getPaymentIdOrThrow = createSelector(
-        getPaymentId,
-        getPaymentId => () => {
-            return guard(getPaymentId(), () => new MissingDataError(MissingDataErrorType.MissingPaymentId));
-        }
-    );
+    const getPaymentIdOrThrow = createSelector(getPaymentId, (getPaymentId) => () => {
+        return guard(
+            getPaymentId(),
+            () => new MissingDataError(MissingDataErrorType.MissingPaymentId),
+        );
+    });
 
     const getPaymentStatus = createSelector(
         getInternalPayment,
@@ -114,72 +117,70 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
             if (payment) {
                 return payment.detail.step;
             }
-        }
+        },
     );
 
-    const getPaymentStatusOrThrow = createSelector(
-        getPaymentStatus,
-        getPaymentStatus => () => {
-            return guard(getPaymentStatus(), () => new MissingDataError(MissingDataErrorType.MissingPaymentStatus));
-        }
-    );
+    const getPaymentStatusOrThrow = createSelector(getPaymentStatus, (getPaymentStatus) => () => {
+        return guard(
+            getPaymentStatus(),
+            () => new MissingDataError(MissingDataErrorType.MissingPaymentStatus),
+        );
+    });
 
     const getPaymentToken = createSelector(
         ({ order }: PaymentSelectorDependencies) => order.getOrderMeta,
-        getOrderMeta => () => {
+        (getOrderMeta) => () => {
             const meta = getOrderMeta();
 
             return meta && meta.token;
-        }
+        },
     );
 
-    const getPaymentTokenOrThrow = createSelector(
-        getPaymentToken,
-        getPaymentToken => () => {
-            return guard(getPaymentToken(), () => new MissingDataError(MissingDataErrorType.MissingPaymentToken));
-        }
-    );
+    const getPaymentTokenOrThrow = createSelector(getPaymentToken, (getPaymentToken) => () => {
+        return guard(
+            getPaymentToken(),
+            () => new MissingDataError(MissingDataErrorType.MissingPaymentToken),
+        );
+    });
 
-    const getPaymentRedirectUrl = createSelector(
-        getInternalPayment,
-        getInternalPayment => () => {
-            const payment = getInternalPayment();
+    const getPaymentRedirectUrl = createSelector(getInternalPayment, (getInternalPayment) => () => {
+        const payment = getInternalPayment();
 
-            return payment && payment.redirectUrl;
-        }
-    );
+        return payment && payment.redirectUrl;
+    });
 
     const getPaymentRedirectUrlOrThrow = createSelector(
         getPaymentRedirectUrl,
-        getPaymentRedirectUrl => () => {
-            return guard(getPaymentRedirectUrl(), () => new MissingDataError(MissingDataErrorType.MissingPaymentRedirectUrl));
-        }
+        (getPaymentRedirectUrl) => () => {
+            return guard(
+                getPaymentRedirectUrl(),
+                () => new MissingDataError(MissingDataErrorType.MissingPaymentRedirectUrl),
+            );
+        },
     );
 
     const isPaymentDataRequired = createSelector(
         ({ checkout }: PaymentSelectorDependencies) => checkout.getOutstandingBalance,
-        getOutstandingBalance => (useStoreCredit = false) => {
-            const grandTotal = getOutstandingBalance(useStoreCredit);
+        (getOutstandingBalance) =>
+            (useStoreCredit = false) => {
+                const grandTotal = getOutstandingBalance(useStoreCredit);
 
-            return grandTotal ? grandTotal > 0 : false;
-        }
+                return grandTotal ? grandTotal > 0 : false;
+            },
     );
 
     const isPaymentDataSubmitted = createSelector(
         getPaymentStatus,
-        getPaymentStatus => (paymentMethod?: PaymentMethod) => {
+        (getPaymentStatus) => (paymentMethod?: PaymentMethod) => {
             if (paymentMethod && paymentMethod.nonce) {
                 return true;
             }
 
             return getPaymentStatus() === ACKNOWLEDGE || getPaymentStatus() === FINALIZE;
-        }
+        },
     );
 
-    return memoizeOne((
-        checkout: CheckoutSelector,
-        order: OrderSelector
-    ): PaymentSelector => {
+    return memoizeOne((checkout: CheckoutSelector, order: OrderSelector): PaymentSelector => {
         return {
             getPaymentId: getPaymentId({ checkout, order }),
             getPaymentIdOrThrow: getPaymentIdOrThrow({ checkout, order }),

@@ -7,18 +7,22 @@ import ShippingStrategy from '../shipping-strategy';
 export default class DefaultShippingStrategy implements ShippingStrategy {
     constructor(
         private _store: CheckoutStore,
-        private _consignmentActionCreator: ConsignmentActionCreator
+        private _consignmentActionCreator: ConsignmentActionCreator,
     ) {}
 
-    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(
-            this._consignmentActionCreator.updateAddress(address, options)
-        );
+    updateAddress(
+        address: AddressRequestBody,
+        options?: ShippingRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(this._consignmentActionCreator.updateAddress(address, options));
     }
 
-    selectOption(optionId: string, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    selectOption(
+        optionId: string,
+        options?: ShippingRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._consignmentActionCreator.selectShippingOption(optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options),
         );
     }
 

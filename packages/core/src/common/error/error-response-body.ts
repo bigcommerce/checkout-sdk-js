@@ -1,6 +1,7 @@
-type ErrorResponseBody = StorefrontErrorResponseBody |
-    InternalErrorResponseBody |
-    PaymentErrorResponseBody;
+type ErrorResponseBody =
+    | StorefrontErrorResponseBody
+    | InternalErrorResponseBody
+    | PaymentErrorResponseBody;
 
 export interface StorefrontErrorResponseBody {
     title: string;

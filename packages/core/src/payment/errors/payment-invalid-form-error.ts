@@ -5,10 +5,7 @@ export interface PaymentInvalidFormErrorDetails {
 }
 
 export default class PaymentInvalidFormError extends StandardError {
-    constructor(
-        public details: PaymentInvalidFormErrorDetails,
-        message?: string
-    ) {
+    constructor(public details: PaymentInvalidFormErrorDetails, message?: string) {
         super(message || 'Unable to proceed because the payment form contains invalid data.');
 
         this.name = 'PaymentInvalidFormError';

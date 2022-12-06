@@ -1,10 +1,13 @@
 import { merge } from 'lodash';
 
-import { createCartSelectorFactory, CartSelector } from '../cart';
+import { CartSelector, createCartSelectorFactory } from '../cart';
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import ConsignmentSelector, { createConsignmentSelectorFactory, ConsignmentSelectorFactory } from './consignment-selector';
+import ConsignmentSelector, {
+    ConsignmentSelectorFactory,
+    createConsignmentSelectorFactory,
+} from './consignment-selector';
 import ConsignmentState from './consignment-state';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
@@ -49,8 +52,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if no address matches a consignment', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getConsignmentByAddress(nonexistentAddress))
-                .toEqual(undefined);
+            expect(selector.getConsignmentByAddress(nonexistentAddress)).toBeUndefined();
         });
     });
 
@@ -66,8 +68,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if no id matches a consignment', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getConsignmentById('none'))
-                .toEqual(undefined);
+            expect(selector.getConsignmentById('none')).toBeUndefined();
         });
     });
 
@@ -81,7 +82,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getConsignments()).toEqual(undefined);
+            expect(selector.getConsignments()).toBeUndefined();
         });
     });
 
@@ -95,7 +96,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getConsignments()).toEqual(undefined);
+            expect(selector.getConsignments()).toBeUndefined();
         });
     });
 
@@ -103,9 +104,12 @@ describe('ConsignmentSelector', () => {
         it('returns load error', () => {
             const loadError = new Error();
 
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                errors: { loadError },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    errors: { loadError },
+                }),
+                cartSelector,
+            );
 
             expect(selector.getLoadError()).toEqual(loadError);
         });
@@ -113,7 +117,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getLoadError()).toEqual(undefined);
+            expect(selector.getLoadError()).toBeUndefined();
         });
     });
 
@@ -121,9 +125,12 @@ describe('ConsignmentSelector', () => {
         it('returns create error', () => {
             const createError = new Error();
 
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                errors: { createError },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    errors: { createError },
+                }),
+                cartSelector,
+            );
 
             expect(selector.getCreateError()).toEqual(createError);
         });
@@ -131,7 +138,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getCreateError()).toEqual(undefined);
+            expect(selector.getCreateError()).toBeUndefined();
         });
     });
 
@@ -139,9 +146,12 @@ describe('ConsignmentSelector', () => {
         it('returns shipping options load error', () => {
             const loadShippingOptionsError = new Error();
 
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                errors: { loadShippingOptionsError },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    errors: { loadShippingOptionsError },
+                }),
+                cartSelector,
+            );
 
             expect(selector.getLoadShippingOptionsError()).toEqual(loadShippingOptionsError);
         });
@@ -149,27 +159,31 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.getLoadShippingOptionsError()).toEqual(undefined);
+            expect(selector.getLoadShippingOptionsError()).toBeUndefined();
         });
     });
 
     describe('#getUpdateShippingOptionError()', () => {
         it('returns undefined if none errored', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.getUpdateShippingOptionError()).toEqual(undefined);
+
+            expect(selector.getUpdateShippingOptionError()).toBeUndefined();
         });
 
         describe('when only one consignment errored', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    errors: {
-                        updateShippingOptionError: {
-                            foo: error,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        errors: {
+                            updateShippingOptionError: {
+                                foo: error,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns first encountered error', () => {
@@ -181,7 +195,7 @@ describe('ConsignmentSelector', () => {
             });
 
             it('returns undefined if requested id did not error', () => {
-                expect(selector.getUpdateShippingOptionError('bar')).toEqual(undefined);
+                expect(selector.getUpdateShippingOptionError('bar')).toBeUndefined();
             });
         });
     });
@@ -189,20 +203,24 @@ describe('ConsignmentSelector', () => {
     describe('#getUpdateError()', () => {
         it('returns undefined if none errored', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.getUpdateError()).toEqual(undefined);
+
+            expect(selector.getUpdateError()).toBeUndefined();
         });
 
         describe('when only one consignment errored', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    errors: {
-                        updateError: {
-                            foo: error,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        errors: {
+                            updateError: {
+                                foo: error,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns first encountered error', () => {
@@ -214,7 +232,7 @@ describe('ConsignmentSelector', () => {
             });
 
             it('returns undefined if requested id did not error', () => {
-                expect(selector.getUpdateError('bar')).toEqual(undefined);
+                expect(selector.getUpdateError('bar')).toBeUndefined();
             });
         });
     });
@@ -222,20 +240,24 @@ describe('ConsignmentSelector', () => {
     describe('#getDeleteError()', () => {
         it('returns undefined if none errored', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.getDeleteError()).toEqual(undefined);
+
+            expect(selector.getDeleteError()).toBeUndefined();
         });
 
         describe('when only one consignment errored', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    errors: {
-                        deleteError: {
-                            foo: error,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        errors: {
+                            deleteError: {
+                                foo: error,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns first encountered error', () => {
@@ -247,7 +269,7 @@ describe('ConsignmentSelector', () => {
             });
 
             it('returns undefined if requested id did not error', () => {
-                expect(selector.getDeleteError('bar')).toEqual(undefined);
+                expect(selector.getDeleteError('bar')).toBeUndefined();
             });
         });
     });
@@ -257,14 +279,17 @@ describe('ConsignmentSelector', () => {
         const createError = new Error();
 
         beforeEach(() => {
-            selector = createConsignmentSelector(merge(state.consignments, {
-                errors: {
-                    updateError: {
-                        '55c96cda6f04c': updateError,
+            selector = createConsignmentSelector(
+                merge(state.consignments, {
+                    errors: {
+                        updateError: {
+                            '55c96cda6f04c': updateError,
+                        },
+                        createError,
                     },
-                    createError,
-                },
-            }), cartSelector);
+                }),
+                cartSelector,
+            );
         });
 
         it('returns first encountered error for consignment with matching address', () => {
@@ -290,11 +315,13 @@ describe('ConsignmentSelector', () => {
             jest.spyOn(cartSelector, 'getCart').mockReturnValue({
                 ...state.cart,
                 lineItems: {
-                    physicalItems: [{
-                        // tslint:disable-next-line:no-non-null-assertion
-                        ...state.cart.data!.lineItems.physicalItems[0],
-                        id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
-                    }],
+                    physicalItems: [
+                        {
+                            // tslint:disable-next-line:no-non-null-assertion
+                            ...state.cart.data!.lineItems.physicalItems[0],
+                            id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
+                        },
+                    ],
                 },
             });
 
@@ -325,80 +352,93 @@ describe('ConsignmentSelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading', () => {
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                statuses: { isLoading: true },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    statuses: { isLoading: true },
+                }),
+                cartSelector,
+            );
 
-            expect(selector.isLoading()).toEqual(true);
+            expect(selector.isLoading()).toBe(true);
         });
 
         it('returns false if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.isLoading()).toEqual(false);
+            expect(selector.isLoading()).toBe(false);
         });
     });
 
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading', () => {
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                statuses: { isLoadingShippingOptions: true },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    statuses: { isLoadingShippingOptions: true },
+                }),
+                cartSelector,
+            );
 
-            expect(selector.isLoadingShippingOptions()).toEqual(true);
+            expect(selector.isLoadingShippingOptions()).toBe(true);
         });
 
         it('returns false if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.isLoadingShippingOptions()).toEqual(false);
+            expect(selector.isLoadingShippingOptions()).toBe(false);
         });
     });
 
     describe('#isCreating()', () => {
         it('returns true if creating', () => {
-            selector = createConsignmentSelector(merge({}, emptyState, {
-                statuses: { isCreating: true },
-            }), cartSelector);
+            selector = createConsignmentSelector(
+                merge({}, emptyState, {
+                    statuses: { isCreating: true },
+                }),
+                cartSelector,
+            );
 
-            expect(selector.isCreating()).toEqual(true);
+            expect(selector.isCreating()).toBe(true);
         });
 
         it('returns false if unavailable', () => {
             selector = createConsignmentSelector(emptyState, cartSelector);
 
-            expect(selector.isCreating()).toEqual(false);
+            expect(selector.isCreating()).toBe(false);
         });
     });
 
     describe('#isUpdating()', () => {
         it('returns false if none is updating', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.isUpdating()).toEqual(false);
+
+            expect(selector.isUpdating()).toBe(false);
         });
 
         describe('when only one consignment is being updated', () => {
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    statuses: {
-                        isUpdating: {
-                            foo: true,
-                            bar: false,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        statuses: {
+                            isUpdating: {
+                                foo: true,
+                                bar: false,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns true if updating any', () => {
-                expect(selector.isUpdating()).toEqual(true);
+                expect(selector.isUpdating()).toBe(true);
             });
 
             it('returns true if requested id is being updated', () => {
-                expect(selector.isUpdating('foo')).toEqual(true);
+                expect(selector.isUpdating('foo')).toBe(true);
             });
 
             it('returns false if requested id is not being updated', () => {
-                expect(selector.isUpdating('bar')).toEqual(false);
+                expect(selector.isUpdating('bar')).toBe(false);
             });
         });
     });
@@ -406,84 +446,95 @@ describe('ConsignmentSelector', () => {
     describe('#isDeleting()', () => {
         it('returns false if none is deleting', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.isDeleting()).toEqual(false);
+
+            expect(selector.isDeleting()).toBe(false);
         });
 
         describe('when only one consignment is being deleted', () => {
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    statuses: {
-                        isDeleting: {
-                            foo: true,
-                            bar: false,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        statuses: {
+                            isDeleting: {
+                                foo: true,
+                                bar: false,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns true if deleting any', () => {
-                expect(selector.isDeleting()).toEqual(true);
+                expect(selector.isDeleting()).toBe(true);
             });
 
             it('returns true if requested id is being deleted', () => {
-                expect(selector.isDeleting('foo')).toEqual(true);
+                expect(selector.isDeleting('foo')).toBe(true);
             });
 
             it('returns false if requested id is not being deleted', () => {
-                expect(selector.isDeleting('bar')).toEqual(false);
+                expect(selector.isDeleting('bar')).toBe(false);
             });
         });
     });
 
     describe('#isAssigningItems()', () => {
         beforeEach(() => {
-            selector = createConsignmentSelector(merge(state.consignments, {
-                statuses: {
-                    isUpdating: {
-                        '55c96cda6f04c': true,
+            selector = createConsignmentSelector(
+                merge(state.consignments, {
+                    statuses: {
+                        isUpdating: {
+                            '55c96cda6f04c': true,
+                        },
+                        isCreating: false,
                     },
-                    isCreating: false,
-                },
-            }), cartSelector);
+                }),
+                cartSelector,
+            );
         });
 
         it('returns isUpdating state for consignment that matches given address', () => {
-            expect(selector.isAssigningItems(existingAddress)).toEqual(true);
+            expect(selector.isAssigningItems(existingAddress)).toBe(true);
         });
 
         it('returns isCreating state when no consignment matches address', () => {
-            expect(selector.isAssigningItems(nonexistentAddress)).toEqual(false);
+            expect(selector.isAssigningItems(nonexistentAddress)).toBe(false);
         });
     });
 
     describe('#isUpdatingShippingOption()', () => {
         it('returns false if none is updating', () => {
             selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
-            expect(selector.isUpdatingShippingOption()).toEqual(false);
+
+            expect(selector.isUpdatingShippingOption()).toBe(false);
         });
 
         describe('when only one consignment is being updated', () => {
             beforeEach(() => {
-                selector = createConsignmentSelector(merge({}, emptyState, {
-                    statuses: {
-                        isUpdatingShippingOption: {
-                            foo: true,
-                            bar: false,
+                selector = createConsignmentSelector(
+                    merge({}, emptyState, {
+                        statuses: {
+                            isUpdatingShippingOption: {
+                                foo: true,
+                                bar: false,
+                            },
                         },
-                    },
-                }), cartSelector);
+                    }),
+                    cartSelector,
+                );
             });
 
             it('returns true if updating any', () => {
-                expect(selector.isUpdatingShippingOption()).toEqual(true);
+                expect(selector.isUpdatingShippingOption()).toBe(true);
             });
 
             it('returns true if requested id is being updated', () => {
-                expect(selector.isUpdatingShippingOption('foo')).toEqual(true);
+                expect(selector.isUpdatingShippingOption('foo')).toBe(true);
             });
 
             it('returns false if requested id is not being updated', () => {
-                expect(selector.isUpdatingShippingOption('bar')).toEqual(false);
+                expect(selector.isUpdatingShippingOption('bar')).toBe(false);
             });
         });
     });

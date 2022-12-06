@@ -4,7 +4,10 @@ import { PaymentAction, PaymentActionType } from './payment-actions';
 import PaymentResponseBody from './payment-response-body';
 import PaymentState from './payment-state';
 
-export default function paymentReducer(state: PaymentState = {}, action: PaymentAction): PaymentState {
+export default function paymentReducer(
+    state: PaymentState = {},
+    action: PaymentAction,
+): PaymentState {
     const reducer = combineReducers<PaymentState, PaymentAction>({
         data: dataReducer,
     });
@@ -12,12 +15,15 @@ export default function paymentReducer(state: PaymentState = {}, action: Payment
     return reducer(state, action);
 }
 
-function dataReducer(data: PaymentResponseBody | undefined, action: PaymentAction): PaymentResponseBody | undefined {
+function dataReducer(
+    data: PaymentResponseBody | undefined,
+    action: PaymentAction,
+): PaymentResponseBody | undefined {
     switch (action.type) {
-    case PaymentActionType.SubmitPaymentSucceeded:
-        return action.payload;
+        case PaymentActionType.SubmitPaymentSucceeded:
+            return action.payload;
 
-    default:
-        return data;
+        default:
+            return data;
     }
 }

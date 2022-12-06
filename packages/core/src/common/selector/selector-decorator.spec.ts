@@ -3,9 +3,7 @@ import { default as selector } from './selector-decorator';
 describe('SelectorDecorator', () => {
     @selector
     class Foo {
-        constructor(
-            private name: string
-        ) {}
+        constructor(private name: string) {}
 
         serialize(message?: string): { name: string; message?: string } {
             return { name: this.name, message };
@@ -15,9 +13,7 @@ describe('SelectorDecorator', () => {
     // tslint:disable-next-line:max-classes-per-file
     @selector
     class Bar {
-        constructor(
-            private name: string
-        ) {}
+        constructor(private name: string) {}
 
         serialize(message?: string): { name: string; message?: string } {
             return { name: this.name, message };

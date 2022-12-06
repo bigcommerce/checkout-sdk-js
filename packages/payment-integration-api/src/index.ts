@@ -1,18 +1,18 @@
-export { Address, AddressRequestBody } from "./address";
-export { BillingAddress, BillingAddressRequestBody } from "./billing";
+export { Address, AddressRequestBody } from './address';
+export { BillingAddress, BillingAddressRequestBody } from './billing';
 export {
     CheckoutButtonStrategy,
     CheckoutButtonStrategyFactory,
     CheckoutButtonStrategyResolveId,
     CheckoutButtonInitializeOptions,
-} from "./checkout-buttons";
-export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from "./cart";
-export { Checkout } from "./checkout";
+} from './checkout-buttons';
+export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
+export { Checkout } from './checkout';
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
 export { Omit, PartialDeep } from './common/types';
-export { Config, StoreConfig, CheckoutSettings } from "./config";
-export { Coupon } from "./coupon";
-export { Currency } from "./currency";
+export { Config, StoreConfig, CheckoutSettings } from './config';
+export { Coupon } from './coupon';
+export { Currency } from './currency';
 export {
     CustomerStrategy,
     CustomerStrategyFactory,
@@ -21,8 +21,8 @@ export {
     CustomerRequestOptions,
     CustomerInitializeOptions,
     ExecutePaymentMethodCheckoutOptions,
-} from "./customer";
-export { Discount } from "./discount";
+} from './customer';
+export { Discount } from './discount';
 export {
     InvalidArgumentError,
     MissingDataError,
@@ -38,9 +38,9 @@ export {
     PaymentMethodClientUnavailableError,
     RequestError,
     isRequestError,
-} from "./errors";
-export { HostedForm, HostedFormOptions, HostedFieldType } from "./hosted-form";
-export { Order, OrderPaymentRequestBody, OrderRequestBody } from "./order";
+} from './errors';
+export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
+export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
 export {
     CardInstrument,
     CreditCardInstrument,
@@ -58,16 +58,16 @@ export {
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,
-} from "./payment";
-export { default as PaymentIntegrationSelectors } from "./payment-integration-selectors";
-export { default as PaymentIntegrationService } from "./payment-integration-service";
+} from './payment';
+export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
+export { default as PaymentIntegrationService } from './payment-integration-service';
 export {
     Consignment,
     ShippingAddress,
     ShippingOption,
     ShippingAddressRequestBody,
-} from "./shipping";
-export { RequestOptions, guard } from "./util-types";
-export { default as ResolvableModule } from "./resolvable-module";
-export { default as isResolvableModule } from "./is-resolvable-module";
-export { default as toResolvableModule } from "./to-resolvable-module";
+} from './shipping';
+export { RequestOptions, guard } from './util-types';
+export { default as ResolvableModule } from './resolvable-module';
+export { default as isResolvableModule } from './is-resolvable-module';
+export { default as toResolvableModule } from './to-resolvable-module';

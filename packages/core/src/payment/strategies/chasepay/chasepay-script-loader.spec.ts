@@ -30,22 +30,30 @@ describe('ChasePayScriptLoader', () => {
 
         it('loads the Script', async () => {
             await chasePayScriptLoader.load(false);
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//pwc.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1');
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                '//pwc.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1',
+            );
         });
 
         it('returns the Script from the window', async () => {
             const JPMC = await chasePayScriptLoader.load();
+
             expect(JPMC).toBe(chasePayScript);
         });
 
         describe('when testMode is on', () => {
             it('loads the Script in sandbox mode', async () => {
                 await chasePayScriptLoader.load(true);
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//pwcpsb.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1');
+
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//pwcpsb.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1',
+                );
             });
 
             it('returns the Script from the window', async () => {
                 const JPMC = await chasePayScriptLoader.load(true);
+
                 expect(JPMC).toBe(chasePayScript);
             });
         });

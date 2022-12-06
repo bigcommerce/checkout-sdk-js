@@ -1,11 +1,24 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
+} from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutPaymentSuccessPayload, VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
+import {
+    BraintreeVisaCheckoutPaymentProcessor,
+    VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutScriptLoader,
+} from '../../../payment/strategies/braintree';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import {
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    ExecutePaymentMethodCheckoutOptions,
+} from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import CustomerStrategy from '../customer-strategy';
 
@@ -21,18 +34,21 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
         private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
 
         if (!visaCheckoutOptions || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "options.braintreevisacheckout" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.braintreevisacheckout" argument is not provided.',
+            );
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then((state) => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 const checkout = state.checkout.getCheckout();
@@ -50,10 +66,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                const {
-                    container,
-                    onError = () => {},
-                } = visaCheckoutOptions;
+                const { container, onError = () => {} } = visaCheckoutOptions;
 
                 const initOptions = {
                     locale: storeConfig.storeProfile.storeLanguage,
@@ -64,38 +77,51 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
 
                 return Promise.all([
                     this._visaCheckoutScriptLoader.load(this._paymentMethod.config.testMode),
-                    this._braintreeVisaCheckoutPaymentProcessor.initialize(this._paymentMethod.clientToken, initOptions),
+                    this._braintreeVisaCheckoutPaymentProcessor.initialize(
+                        this._paymentMethod.clientToken,
+                        initOptions,
+                    ),
                 ])
-                .then(([visaCheckout, initOptions]) => {
-                    const signInButton = this._createSignInButton(container, this._buttonClassName);
+                    .then(([visaCheckout, initOptions]) => {
+                        const signInButton = this._createSignInButton(
+                            container,
+                            this._buttonClassName,
+                        );
 
-                    visaCheckout.init(initOptions);
-                    visaCheckout.on('payment.success', (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
-                        this._paymentInstrumentSelected(paymentSuccessPayload)
-                            .catch(error => onError(error))
-                    );
-                    visaCheckout.on('payment.error', (_, error) => onError(error));
+                        visaCheckout.init(initOptions);
+                        visaCheckout.on(
+                            'payment.success',
+                            (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
+                                this._paymentInstrumentSelected(paymentSuccessPayload).catch(
+                                    (error) => onError(error),
+                                ),
+                        );
+                        visaCheckout.on('payment.error', (_, error) => onError(error));
 
-                    return signInButton;
-                })
-                .then(signInButton => { signInButton.style.visibility = 'visible'; });
+                        return signInButton;
+                    })
+                    .then((signInButton) => {
+                        signInButton.style.visibility = 'visible';
+                    });
             })
             .then(() => this._store.getState());
     }
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via VisaCheckout, the shopper must click on "Visa Checkout" button.'
+            'In order to sign in via VisaCheckout, the shopper must click on "Visa Checkout" button.',
         );
     }
 
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options)
+            this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options),
         );
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<InternalCheckoutSelectors> {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());
@@ -104,7 +130,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
     deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
-        return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
+        return this._braintreeVisaCheckoutPaymentProcessor
+            .deinitialize()
             .then(() => this._store.getState());
     }
 
@@ -118,17 +145,25 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         const { id: methodId } = this._paymentMethod;
 
         return this._store.dispatch(
-            this._customerStrategyActionCreator.widgetInteraction(() => {
-                return this._braintreeVisaCheckoutPaymentProcessor.handleSuccess(
-                    paymentSuccessPayload,
-                    state.shippingAddress.getShippingAddress(),
-                    state.billingAddress.getBillingAddress()
-                )
-                .then(async () => {
-                    await this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
-                    this._onPaymentSelectComplete();
-                });
-        }, { methodId }), { queueId: 'widgetInteraction' });
+            this._customerStrategyActionCreator.widgetInteraction(
+                () => {
+                    return this._braintreeVisaCheckoutPaymentProcessor
+                        .handleSuccess(
+                            paymentSuccessPayload,
+                            state.shippingAddress.getShippingAddress(),
+                            state.billingAddress.getBillingAddress(),
+                        )
+                        .then(async () => {
+                            await this._store.dispatch(
+                                this._checkoutActionCreator.loadCurrentCheckout(),
+                            );
+                            this._onPaymentSelectComplete();
+                        });
+                },
+                { methodId },
+            ),
+            { queueId: 'widgetInteraction' },
+        );
     }
 
     private _onPaymentSelectComplete(): void {
@@ -147,12 +182,15 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             throw new Error('Need a container to place the button');
         }
 
-        return (container.querySelector('.' + buttonClass) as HTMLElement) ||
-            this._insertVisaCheckoutButton(container, buttonClass);
+        return (
+            (container.querySelector(`.${buttonClass}`) as HTMLElement) ||
+            this._insertVisaCheckoutButton(container, buttonClass)
+        );
     }
 
     private _insertVisaCheckoutButton(container: Element, buttonClass: string): HTMLElement {
-        const buttonSource = 'https://secure.checkout.visa.com/wallet-services-web/xo/button.png?acceptCanadianVisaDebit=false&cobrand=true&height=34&width=178';
+        const buttonSource =
+            'https://secure.checkout.visa.com/wallet-services-web/xo/button.png?acceptCanadianVisaDebit=false&cobrand=true&height=34&width=178';
         const buttonTemplate = `
             <img
                 alt="Visa Checkout"
@@ -163,6 +201,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             <a class="v-learn v-learn-default" style="text-align: right; display: block; font-size: 10px; color: #003366;" href="#" data-locale="en_US">Tell Me More</a>`;
 
         const visaCheckoutButton = document.createElement('div');
+
         visaCheckoutButton.style.display = 'flex';
         visaCheckoutButton.style.flexDirection = 'column';
         visaCheckoutButton.style.visibility = 'hidden';

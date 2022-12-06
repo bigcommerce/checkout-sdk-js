@@ -2,13 +2,24 @@ import { createAction } from '@bigcommerce/data-store';
 import { FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../../checkout';
 import { getCheckoutStoreState } from '../../../../checkout/checkouts.mock';
 import { InvalidArgumentError, NotInitializedError } from '../../../../common/error/errors';
 import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../../hosted-form';
-import { LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderPaymentRequestBody, OrderRequestSender } from '../../../../order';
+import {
+    LoadOrderSucceededAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderPaymentRequestBody,
+    OrderRequestSender,
+} from '../../../../order';
 import { getOrder } from '../../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../../errors';
@@ -19,7 +30,10 @@ import { createStepHandler } from '../step-handler';
 import { CardSubStrategy } from './card-sub-strategy';
 
 describe('CardSubStrategy', () => {
-    const stepHandler = createStepHandler(new FormPoster(), new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
+    const stepHandler = createStepHandler(
+        new FormPoster(),
+        new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
+    );
     const requestSender = createRequestSender();
 
     let formFactory: HostedFormFactory;
@@ -34,7 +48,7 @@ describe('CardSubStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
         formFactory = new HostedFormFactory(store);
 
@@ -42,7 +56,9 @@ describe('CardSubStrategy', () => {
 
         form = {
             attach: jest.fn(() => Promise.resolve()),
-            submit: jest.fn(() => Promise.resolve({ payload: { response: { body: { type: 'success' } } } })),
+            submit: jest.fn(() =>
+                Promise.resolve({ payload: { response: { body: { type: 'success' } } } }),
+            ),
             validate: jest.fn(() => Promise.resolve()),
         };
         initializeOptions = {
@@ -59,11 +75,9 @@ describe('CardSubStrategy', () => {
         };
         loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
 
-        jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-            .mockReturnValue(loadOrderAction);
+        jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
-        jest.spyOn(formFactory, 'create')
-            .mockReturnValue(form);
+        jest.spyOn(formFactory, 'create').mockReturnValue(form);
 
         jest.spyOn(store, 'dispatch');
     });
@@ -72,25 +86,24 @@ describe('CardSubStrategy', () => {
         it('creates hosted form', async () => {
             await cardSubStrategy.initialize(initializeOptions);
 
-            expect(formFactory.create)
-                .toHaveBeenCalledWith(
-                    'https://bigpay.integration.zone',
-                    // tslint:disable-next-line:no-non-null-assertion
-                    initializeOptions.creditCard!.form!
-                );
+            expect(formFactory.create).toHaveBeenCalledWith(
+                'https://bigpay.integration.zone',
+                // tslint:disable-next-line:no-non-null-assertion
+                initializeOptions.creditCard!.form,
+            );
         });
 
         it('attaches hosted form to container', async () => {
             await cardSubStrategy.initialize(initializeOptions);
 
-            expect(form.attach)
-                .toHaveBeenCalled();
+            expect(form.attach).toHaveBeenCalled();
         });
 
-        it('throws error form when fields does not exist ', async () => {
+        it('throws error form when fields does not exist', async () => {
             initializeOptions = {
                 methodId: 'cabbage_pay.card',
             };
+
             try {
                 await cardSubStrategy.initialize(initializeOptions);
             } catch (error) {

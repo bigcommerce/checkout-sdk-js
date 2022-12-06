@@ -1,7 +1,12 @@
 import { cloneDeep, memoize } from 'lodash';
 
-function cloneDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
+function cloneDecorator<T extends Method>(
+    target: object,
+    key: string,
+    descriptor: TypedPropertyDescriptor<T>,
+): TypedPropertyDescriptor<T>;
 function cloneDecorator<T extends Constructor<object>>(target: T): T;
+
 function cloneDecorator(target: any, key?: any, descriptor?: any): any {
     if (!key || !descriptor) {
         return cloneClassDecorator(target);
@@ -15,25 +20,28 @@ export default cloneDecorator;
 export function cloneClassDecorator<T extends Constructor<object>>(target: T): T {
     const decoratedTarget = class extends target {};
 
-    Object.getOwnPropertyNames(target.prototype)
-        .forEach(key => {
-            const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+    Object.getOwnPropertyNames(target.prototype).forEach((key) => {
+        const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
 
-            if (!descriptor || key === 'constructor') {
-                return;
-            }
+        if (!descriptor || key === 'constructor') {
+            return;
+        }
 
-            Object.defineProperty(
-                decoratedTarget.prototype,
-                key,
-                cloneMethodDecorator(target.prototype, key, descriptor)
-            );
-        });
+        Object.defineProperty(
+            decoratedTarget.prototype,
+            key,
+            cloneMethodDecorator(target.prototype, key, descriptor),
+        );
+    });
 
     return decoratedTarget;
 }
 
-export function cloneMethodDecorator<T extends Method>(_: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+export function cloneMethodDecorator<T extends Method>(
+    _: object,
+    key: string,
+    descriptor: TypedPropertyDescriptor<T>,
+): TypedPropertyDescriptor<T> {
     if (typeof descriptor.value !== 'function') {
         return descriptor;
     }
@@ -51,9 +59,7 @@ export function cloneMethodDecorator<T extends Method>(_: object, key: string, d
             const value = ((...args: any[]) => {
                 const result = method.apply(this, args);
 
-                return result && typeof result === 'object'
-                    ? memoizedCloneDeep(result)
-                    : result;
+                return result && typeof result === 'object' ? memoizedCloneDeep(result) : result;
             }) as T;
 
             Object.defineProperty(this, key, { ...descriptor, value });

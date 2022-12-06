@@ -1,6 +1,10 @@
 export * from './form-fields-actions';
 
-export { default as FormSelector, FormSelectorFactory, createFormSelectorFactory } from './form-selector';
+export {
+    default as FormSelector,
+    FormSelectorFactory,
+    createFormSelectorFactory,
+} from './form-selector';
 export { default as FormField, FormFields } from './form-field';
 export { default as FormFieldsRequestSender } from './form-fields-request-sender';
 

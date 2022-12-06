@@ -1,6 +1,12 @@
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 
-import { VisaCheckoutAddress, VisaCheckoutPaymentSuccessPayload, VisaCheckoutSDK, VisaCheckoutTokenizedPayload, VisaCheckoutUserData } from './visacheckout';
+import {
+    VisaCheckoutAddress,
+    VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutSDK,
+    VisaCheckoutTokenizedPayload,
+    VisaCheckoutUserData,
+} from './visacheckout';
 
 export function getVisaCheckoutSDKMock(): VisaCheckoutSDK {
     return {
@@ -40,7 +46,8 @@ export function getPaymentSuccessPayload(): VisaCheckoutPaymentSuccessPayload {
     return {
         callid: 'caller_id',
         encKey: '25848dbb9c6772e1c6b24271a27e55a558c91507',
-        encPaymentData: 'a397bb59616f5de338ed6759657dac07fff4737a6d3dbdca933d6e5fc9d82edbc310a47b91118cdf',
+        encPaymentData:
+            'a397bb59616f5de338ed6759657dac07fff4737a6d3dbdca933d6e5fc9d82edbc310a47b91118cdf',
         partialShippingAddress: {
             countryCode: 'ES',
             postalCode: '2007',
@@ -53,6 +60,7 @@ export function getPaymentSuccessPayload(): VisaCheckoutPaymentSuccessPayload {
         },
     };
 }
+
 export function getVisaCheckoutAddress(): VisaCheckoutAddress {
     return {
         countryCode: 'ES',

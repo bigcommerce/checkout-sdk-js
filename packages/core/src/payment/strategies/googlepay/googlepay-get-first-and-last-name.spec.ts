@@ -15,6 +15,9 @@ describe('With a two part name', () => {
 describe('With a three or more part name', () => {
     it('assigns the final part as the last name and all others as the first name', () => {
         expect(getFirstAndLastName('Neil deGrasse Tyson')).toEqual(['Neil deGrasse', 'Tyson']);
-        expect(getFirstAndLastName('Ignacio Arsenio Travieso Scull')).toEqual(['Ignacio Arsenio Travieso', 'Scull']);
+        expect(getFirstAndLastName('Ignacio Arsenio Travieso Scull')).toEqual([
+            'Ignacio Arsenio Travieso',
+            'Scull',
+        ]);
     });
 });
