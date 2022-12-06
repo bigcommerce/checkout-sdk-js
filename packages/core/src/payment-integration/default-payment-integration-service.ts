@@ -21,10 +21,10 @@ import PaymentMethodActionCreator from '../payment/payment-method-action-creator
 import { ConsignmentActionCreator } from '../shipping';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
-import BuyNowCartRequestBody from "../cart/buy-now-cart-request-body";
-import { RequestSender, Response } from "@bigcommerce/request-sender";
-import Cart from "../cart/cart";
-import { ContentType, SDK_VERSION_HEADERS } from "../common/http-request";
+import BuyNowCartRequestBody from '../cart/buy-now-cart-request-body';
+import { RequestSender, Response } from '@bigcommerce/request-sender';
+import Cart from '../cart/cart';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {
     private _storeProjection: DataStoreProjection<PaymentIntegrationSelectors>;
