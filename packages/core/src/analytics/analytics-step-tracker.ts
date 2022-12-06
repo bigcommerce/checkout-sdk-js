@@ -391,7 +391,7 @@ export default class AnalyticsStepTracker implements StepTracker {
         const customItems: AnalyticsProduct[] = (lineItems.customItems || []).map((item) => ({
             product_id: item.id,
             sku: item.sku,
-            price: item.listPrice,
+            price: this.toShopperCurrency(item.listPrice),
             quantity: item.quantity,
             name: item.name,
         }));
@@ -419,7 +419,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             return {
                 product_id: item.productId,
                 sku: item.sku,
-                price: item.salePrice,
+                price: this.toShopperCurrency(item.salePrice),
                 image_url: item.imageUrl,
                 name: item.name,
                 quantity: item.quantity,
