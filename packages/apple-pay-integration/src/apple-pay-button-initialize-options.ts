@@ -1,4 +1,4 @@
-import { BuyNowCartRequestBody } from '../../payment-integration-api/src/cart';
+import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize ApplePay in cart.
