@@ -7,8 +7,6 @@ import NoPaymentDataRequiredPaymentStrategy from './no-payment-data-required-str
 
 const createNoPaymentStrategy: PaymentStrategyFactory<NoPaymentDataRequiredPaymentStrategy> = (
     paymentIntegrationService,
-) => {
-    return new NoPaymentDataRequiredPaymentStrategy(paymentIntegrationService);
-};
+) => new NoPaymentDataRequiredPaymentStrategy(paymentIntegrationService);
 
 export default toResolvableModule(createNoPaymentStrategy, [{ id: 'nopaymentdatarequired' }]);

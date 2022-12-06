@@ -6,7 +6,10 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { NoPaymentDataRequiredPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
+import {
+    createNoPaymentStrategy,
+    NoPaymentDataRequiredPaymentStrategy,
+} from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -64,7 +67,7 @@ describe('PaymentStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
-    let noPaymentDataStrategy: PaymentStrategyV2;
+    let noPaymentDataStrategy: NoPaymentDataRequiredPaymentStrategy;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
@@ -104,7 +107,7 @@ describe('PaymentStrategyActionCreator', () => {
             ),
             new HostedFormFactory(store),
         );
-        noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(paymentIntegrationService);
+        noPaymentDataStrategy = createNoPaymentStrategy(paymentIntegrationService);
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             spamProtection,
             new SpamProtectionRequestSender(requestSender),

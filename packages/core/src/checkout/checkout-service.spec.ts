@@ -4,7 +4,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { get, map, merge } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 
-import { NoPaymentDataRequiredPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
+import {
+    createNoPaymentStrategy,
+    NoPaymentDataRequiredPaymentStrategy,
+} from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -678,7 +681,7 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadCheckout();
 
-            noPaymentDataRequiredPaymentStrategy = new NoPaymentDataRequiredPaymentStrategy(
+            noPaymentDataRequiredPaymentStrategy = createNoPaymentStrategy(
                 paymentIntegrationService,
             );
 
