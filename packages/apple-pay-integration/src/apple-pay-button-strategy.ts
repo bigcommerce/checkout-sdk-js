@@ -18,7 +18,7 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
+import ApplePayButtonInitializeOptions, { WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -36,7 +36,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
-    private _buyNowInitializeOptions: any;
+    private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -110,6 +110,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
     private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
+        console.log('BUY NOW', this._buyNowInitializeOptions);
 
         const state = this._paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
