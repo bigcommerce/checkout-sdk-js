@@ -36,6 +36,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _buyNowInitializeOptions: any;
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -57,7 +58,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize } = applepay;
+        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions } = applepay;
+
+        console.log('buyNowInitializeOptions', buyNowInitializeOptions);
+
+        this._buyNowInitializeOptions = buyNowInitializeOptions;
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
