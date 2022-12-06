@@ -168,7 +168,7 @@ declare interface AdyenComponentEvents_2 {
     onFieldValid?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
 }
 
-declare type AdyenComponentState = (CardState | WechatState);
+declare type AdyenComponentState = CardState | WechatState;
 
 declare interface AdyenComponent_2 {
     componentRef?: {
@@ -5907,7 +5907,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = (CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation);
+declare type OrderPaymentInstrument = CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -6699,7 +6699,7 @@ declare class RequestError<TBody = any> extends StandardError {
         message?: string;
     }>;
     status: number;
-    constructor(response?: Response<TBody | {}>, { message, errors }?: {
+    constructor(response?: Response<TBody | {}>, { message, errors, }?: {
         message?: string;
         errors?: Array<{
             code: string;
@@ -7244,6 +7244,7 @@ declare interface StripeUPECustomerInitializeOptions {
     gatewayId: string;
     /**
      * A callback that gets called whenever the Stripe Link Authentication Element's value changes.
+     *
      * @param authenticated - if the email is authenticated on Stripe.
      * @param email - The new value of the email.
      */
@@ -7304,6 +7305,10 @@ declare interface StripeUPEPaymentInitializeOptions {
  */
 declare interface StripeUPEShippingInitializeOptions {
     /**
+     * Available countries configured on BC shipping setup.
+     */
+    availableCountries: string;
+    /**
      * The ID of a container which the stripe iframe should be inserted.
      */
     container?: string;
@@ -7322,10 +7327,6 @@ declare interface StripeUPEShippingInitializeOptions {
      */
     onChangeShipping(shipping: StripeEventType): void;
     /**
-     * Available countries configured on BC shipping setup.
-     */
-    availableCountries: string;
-    /**
      * get styles from store theme
      */
     getStyles?(): {
@@ -7333,6 +7334,7 @@ declare interface StripeUPEShippingInitializeOptions {
     };
     /**
      * get the state code needed for shipping stripe element
+     *
      * @param country
      * @param state
      */
