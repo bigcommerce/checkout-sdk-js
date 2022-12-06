@@ -166,7 +166,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
             );
         });
 
-        it('check if googlepay payment processor deinitialize is called', async () => {
+        it('check if Google Pay payment processor deinitialize is called', async () => {
             await strategy.initialize(checkoutButtonOptions);
 
             strategy.deinitialize();
