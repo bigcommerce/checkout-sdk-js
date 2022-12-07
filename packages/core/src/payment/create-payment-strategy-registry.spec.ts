@@ -38,7 +38,6 @@ import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
-import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy } from './strategies/opy';
@@ -309,12 +308,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.SQUARE);
 
         expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
-    });
-
-    it('can instantiate nopaymentdatarequired', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
-
-        expect(paymentStrategy).toBeInstanceOf(NoPaymentDataRequiredPaymentStrategy);
     });
 
     it('can instantiate googlepaybraintree', () => {

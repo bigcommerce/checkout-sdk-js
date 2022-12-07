@@ -27,6 +27,9 @@
             "@bigcommerce/checkout-sdk/external-integration": [
                 "packages/external-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/no-payment-integration": [
+                "packages/no-payment-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/payment-integration-api": [
                 "packages/payment-integration-api/src/index.ts"
             ],

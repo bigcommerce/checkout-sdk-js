@@ -87,9 +87,9 @@ export default class PaymentStrategyActionCreator {
                             strategy = this._strategyRegistry.getByMethod(method);
                         }
                     } else {
-                        strategy = this._strategyRegistry.get(
-                            PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
-                        );
+                        strategy = this._strategyRegistryV2.get({
+                            id: PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
+                        });
                     }
 
                     const promise: Promise<InternalCheckoutSelectors | void> = strategy.execute(
@@ -133,8 +133,8 @@ export default class PaymentStrategyActionCreator {
 
                     try {
                         if (
-                            method.id === PaymentStrategyType.APPLEPAY &&
-                            method.gateway === PaymentStrategyType.MOLLIE
+                            method.id == PaymentStrategyType.APPLEPAY &&
+                            method.gateway == PaymentStrategyType.MOLLIE
                         ) {
                             strategy = this._strategyRegistry.getByMethod(method);
                         } else {

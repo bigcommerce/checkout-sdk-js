@@ -4,6 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { get, map, merge } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 
+import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -58,7 +59,6 @@ import {
     getPaymentMethods,
 } from '../payment/payment-methods.mock';
 import { PaymentStrategy } from '../payment/strategies';
-import { NoPaymentDataRequiredPaymentStrategy } from '../payment/strategies/no-payment';
 import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import {
     ConsignmentActionCreator,
@@ -671,19 +671,15 @@ describe('CheckoutService', () => {
     });
 
     describe('#submitOrder()', () => {
-        let noPaymentDataRequiredPaymentStrategy: NoPaymentDataRequiredPaymentStrategy;
+        let noPaymentDataRequiredPaymentStrategy: PaymentStrategyV2;
 
         beforeEach(async () => {
+            const paymentIntegrationService = createPaymentIntegrationService(store);
+
             await checkoutService.loadCheckout();
 
-            noPaymentDataRequiredPaymentStrategy = new NoPaymentDataRequiredPaymentStrategy(
-                store,
-                orderActionCreator,
-            );
-
-            jest.spyOn(noPaymentDataRequiredPaymentStrategy, 'execute').mockResolvedValue(
-                store.getState(),
-            );
+            noPaymentDataRequiredPaymentStrategy =
+                createNoPaymentStrategy(paymentIntegrationService);
 
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
 

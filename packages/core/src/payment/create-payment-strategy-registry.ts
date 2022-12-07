@@ -115,7 +115,6 @@ import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { MonerisPaymentStrategy } from './strategies/moneris';
-import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -155,7 +154,6 @@ import { ZipPaymentStrategy } from './strategies/zip';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
-
     paymentClient: any,
     requestSender: RequestSender,
     spamProtection: GoogleRecaptcha,
@@ -755,11 +753,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 storeCreditActionCreator,
             ),
-    );
-
-    registry.register(
-        PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
-        () => new NoPaymentDataRequiredPaymentStrategy(store, orderActionCreator),
     );
 
     registry.register(

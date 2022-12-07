@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -52,7 +53,6 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
-import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 
 describe('PaymentStrategyActionCreator', () => {
     let orderActionCreator: OrderActionCreator;
@@ -64,7 +64,7 @@ describe('PaymentStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
-    let noPaymentDataStrategy: PaymentStrategy;
+    let noPaymentDataStrategy: PaymentStrategyV2;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
     let actionCreator: PaymentStrategyActionCreator;
@@ -104,12 +104,11 @@ describe('PaymentStrategyActionCreator', () => {
             ),
             new HostedFormFactory(store),
         );
-        noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(store, orderActionCreator);
+        noPaymentDataStrategy = createNoPaymentStrategy(paymentIntegrationService);
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             spamProtection,
             new SpamProtectionRequestSender(requestSender),
         );
-
         actionCreator = new PaymentStrategyActionCreator(
             registry,
             registryV2,
@@ -390,9 +389,7 @@ describe('PaymentStrategyActionCreator', () => {
         beforeEach(() => {
             jest.spyOn(strategy, 'execute').mockReturnValue(Promise.resolve(store.getState()));
 
-            jest.spyOn(noPaymentDataStrategy, 'execute').mockReturnValue(
-                Promise.resolve(store.getState()),
-            );
+            jest.spyOn(noPaymentDataStrategy, 'execute').mockReturnValue(Promise.resolve());
         });
 
         it('finds payment strategy by method', async () => {
@@ -537,7 +534,7 @@ describe('PaymentStrategyActionCreator', () => {
                 'en_US',
             );
 
-            jest.spyOn(registry, 'get').mockReturnValue(noPaymentDataStrategy);
+            jest.spyOn(registryV2, 'get').mockReturnValue(noPaymentDataStrategy);
 
             const actionCreator = new PaymentStrategyActionCreator(
                 registry,
@@ -549,7 +546,7 @@ describe('PaymentStrategyActionCreator', () => {
 
             await from(actionCreator.execute(payload)(store)).toPromise();
 
-            expect(registry.get).toHaveBeenCalledWith('nopaymentdatarequired');
+            expect(registryV2.get).toHaveBeenCalledWith({ id: 'nopaymentdatarequired' });
             expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(payload, {
                 methodId: payload.payment && payload.payment.methodId,
                 gatewayId: payload.payment && payload.payment.gatewayId,
