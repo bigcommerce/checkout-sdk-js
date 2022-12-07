@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.309.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.4...v1.309.5) (2022-12-07)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-6405 Refactor no payment data required method ([#1717](https://github.com/bigcommerce/checkout-sdk-js/issues/1717)) ([5e627c6](https://github.com/bigcommerce/checkout-sdk-js/commit/5e627c64f77da6480b3bc0aaca702740ea58327c))
+
 ### [1.309.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.3...v1.309.4) (2022-12-07)
 
 
