@@ -1,5 +1,6 @@
 /// <reference types="applepayjs" />
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
@@ -5035,141 +5036,11 @@ declare type GuestCredentials = Partial<Subscriptions> & {
     email: string;
 };
 
-declare interface HostedCardFieldOptions {
-    accessibilityLabel?: string;
-    containerId: string;
-    placeholder?: string;
-}
-
-declare interface HostedCardFieldOptionsMap {
-    [HostedFieldType.CardCode]?: HostedCardFieldOptions;
-    [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
-    [HostedFieldType.CardName]: HostedCardFieldOptions;
-    [HostedFieldType.CardNumber]: HostedCardFieldOptions;
-}
-
 declare type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
-
-declare type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
-
-declare type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
-
-declare type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
-
-declare type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
-
-declare type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
-
-declare type HostedFieldStyles = HostedInputStyles;
-
-declare interface HostedFieldStylesMap {
-    default?: HostedFieldStyles;
-    error?: HostedFieldStyles;
-    focus?: HostedFieldStyles;
-}
-
-declare enum HostedFieldType {
-    CardCode = "cardCode",
-    CardCodeVerification = "cardCodeVerification",
-    CardExpiry = "cardExpiry",
-    CardName = "cardName",
-    CardNumber = "cardNumber",
-    CardNumberVerification = "cardNumberVerification"
-}
-
-declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
-
-declare interface HostedFormOptions {
-    fields: HostedFieldOptionsMap;
-    styles?: HostedFieldStylesMap;
-    onBlur?(data: HostedFieldBlurEventData): void;
-    onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
-    onEnter?(data: HostedFieldEnterEventData): void;
-    onFocus?(data: HostedFieldFocusEventData): void;
-    onValidate?(data: HostedFieldValidateEventData): void;
-}
-
-declare interface HostedInputBlurEvent {
-    type: HostedInputEventType.Blurred;
-    payload: {
-        fieldType: HostedFieldType;
-    };
-}
-
-declare interface HostedInputCardTypeChangeEvent {
-    type: HostedInputEventType.CardTypeChanged;
-    payload: {
-        cardType?: string;
-    };
-}
-
-declare interface HostedInputEnterEvent {
-    type: HostedInputEventType.Entered;
-    payload: {
-        fieldType: HostedFieldType;
-    };
-}
-
-declare enum HostedInputEventType {
-    AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
-    AttachFailed = "HOSTED_INPUT:ATTACH_FAILED",
-    BinChanged = "HOSTED_INPUT:BIN_CHANGED",
-    Blurred = "HOSTED_INPUT:BLURRED",
-    Changed = "HOSTED_INPUT:CHANGED",
-    CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
-    Entered = "HOSTED_INPUT:ENTERED",
-    Focused = "HOSTED_INPUT:FOCUSED",
-    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
-    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
-    Validated = "HOSTED_INPUT:VALIDATED"
-}
-
-declare interface HostedInputFocusEvent {
-    type: HostedInputEventType.Focused;
-    payload: {
-        fieldType: HostedFieldType;
-    };
-}
-
-declare type HostedInputStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
-
-declare interface HostedInputValidateErrorData {
-    fieldType: string;
-    message: string;
-    type: string;
-}
-
-declare interface HostedInputValidateErrorDataMap {
-    [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardCodeVerification]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardNumberVerification]?: HostedInputValidateErrorData[];
-}
-
-declare interface HostedInputValidateEvent {
-    type: HostedInputEventType.Validated;
-    payload: HostedInputValidateResults;
-}
-
-declare interface HostedInputValidateResults {
-    errors: HostedInputValidateErrorDataMap;
-    isValid: boolean;
-}
 
 declare interface HostedInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
-}
-
-declare interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
-    instrumentId: string;
-}
-
-declare interface HostedStoredCardFieldOptionsMap {
-    [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
-    [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
 }
 
 declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
