@@ -1,12 +1,13 @@
 import { EventEmitter } from 'events';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import {
     HostedFieldEventMap,
     HostedFieldEventType,
     HostedFieldSubmitRequestEvent,
 } from '../hosted-field-events';
-import HostedFieldType from '../hosted-field-type';
 
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';

@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options to initialize credit card payment methods, unless those

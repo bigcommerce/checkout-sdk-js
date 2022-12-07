@@ -1,7 +1,8 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaymentErrorData, PaymentErrorResponseBody } from '../../common/error';
-import HostedFieldType from '../hosted-field-type';
 
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';

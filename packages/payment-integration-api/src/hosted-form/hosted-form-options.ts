@@ -28,14 +28,14 @@ type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
 type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
 
-interface HostedCardFieldOptionsMap {
+export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
     [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
     [HostedFieldType.CardName]: HostedCardFieldOptions;
     [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-interface HostedStoredCardFieldOptionsMap {
+export interface HostedStoredCardFieldOptionsMap {
     [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
     [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
 }
@@ -50,7 +50,7 @@ interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
     instrumentId: string;
 }
 
-interface HostedFieldStylesMap {
+export interface HostedFieldStylesMap {
     default?: HostedFieldStyles;
     error?: HostedFieldStyles;
     focus?: HostedFieldStyles;

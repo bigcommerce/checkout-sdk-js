@@ -1,8 +1,9 @@
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { IframeEventListener } from '../../common/iframe';
 import { getCardInstrument } from '../../payment/instrument/instrument.mock';
 import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
-import HostedFieldType from '../hosted-field-type';
 
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';

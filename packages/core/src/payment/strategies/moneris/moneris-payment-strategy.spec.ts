@@ -5,6 +5,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     Checkout,
     CheckoutRequestSender,
@@ -19,7 +21,7 @@ import {
     MissingDataError,
     NotInitializedError,
 } from '../../../common/error/errors';
-import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
 import {
     LoadOrderSucceededAction,
     OrderActionCreator,

@@ -1,4 +1,4 @@
-import HostedFieldType from '../hosted-field-type';
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedAutocompleteFieldset from './hosted-autocomplete-fieldset';
 import HostedInput from './hosted-input';

@@ -5,6 +5,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -15,7 +17,7 @@ import {
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory } from '../../../hosted-form';
 import {
     LoadOrderSucceededAction,
     OrderActionCreator,

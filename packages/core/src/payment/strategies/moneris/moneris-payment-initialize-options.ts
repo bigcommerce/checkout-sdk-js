@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import MonerisStylingProps from './moneris';
 

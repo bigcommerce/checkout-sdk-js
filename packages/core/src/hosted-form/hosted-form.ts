@@ -1,6 +1,9 @@
 import { noop, without } from 'lodash';
 
-import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    HostedForm as HostedFormInterface,
+    HostedFormOptions,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IframeEventListener } from '../common/iframe';
 import { OrderPaymentRequestBody } from '../order';
@@ -9,7 +12,6 @@ import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
-import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import {
     HostedInputEnterEvent,

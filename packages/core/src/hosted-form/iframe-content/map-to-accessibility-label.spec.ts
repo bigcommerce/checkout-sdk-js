@@ -1,4 +1,4 @@
-import HostedFieldType from '../hosted-field-type';
+import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import mapToAccessibilityLabel from './map-to-accessibility-label';
 
