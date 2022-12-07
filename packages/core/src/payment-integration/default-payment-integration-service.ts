@@ -2,6 +2,7 @@ import {
     BillingAddressRequestBody,
     HostedForm,
     HostedFormOptions,
+    InitializeOffsitePaymentConfig,
     OrderRequestBody,
     Payment,
     PaymentIntegrationSelectors,
@@ -53,6 +54,30 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
+    async initializeOffsitePayment(
+        initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
+    ): Promise<PaymentIntegrationSelectors> {
+        const {
+            methodId,
+            gatewayId,
+            instrumentId,
+            shouldSaveInstrument,
+            shouldSetAsDefaultInstrument,
+        } = initializeOffsitePaymentConfig;
+
+        await this._store.dispatch(
+            this._paymentActionCreator.initializeOffsitePayment({
+                methodId,
+                gatewayId,
+                instrumentId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            }),
+        );
+
+        return this._storeProjection.getState();
+    }
+
     async loadCheckout(): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
 
@@ -71,8 +96,11 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
-    async submitOrder(payload?: OrderRequestBody): Promise<PaymentIntegrationSelectors> {
-        await this._store.dispatch(this._orderActionCreator.submitOrder(payload));
+    async submitOrder(
+        payload?: OrderRequestBody,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
 
         return this._storeProjection.getState();
     }
@@ -83,13 +111,13 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
-    async finalizeOrder(): Promise<PaymentIntegrationSelectors> {
+    async finalizeOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
         const {
             order: { getOrderOrThrow },
         } = this._store.getState();
 
         await this._store.dispatch(
-            this._orderActionCreator.finalizeOrder(getOrderOrThrow().orderId),
+            this._orderActionCreator.finalizeOrder(getOrderOrThrow().orderId, options),
         );
 
         return this._storeProjection.getState();

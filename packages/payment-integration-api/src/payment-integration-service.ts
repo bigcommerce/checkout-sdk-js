@@ -1,7 +1,7 @@
 import { BillingAddressRequestBody } from './billing';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
-import { Payment } from './payment';
+import { InitializeOffsitePaymentConfig, Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
@@ -22,6 +22,10 @@ export default interface PaymentIntegrationService {
 
     loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors>;
 
+    initializeOffsitePayment(
+        initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
+    ): Promise<PaymentIntegrationSelectors>;
+
     submitOrder(
         payload?: OrderRequestBody,
         options?: RequestOptions,
@@ -29,7 +33,7 @@ export default interface PaymentIntegrationService {
 
     submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors>;
 
-    finalizeOrder(): Promise<PaymentIntegrationSelectors>;
+    finalizeOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     selectShippingOption(
         id: string,

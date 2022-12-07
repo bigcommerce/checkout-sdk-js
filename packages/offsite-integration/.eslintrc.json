@@ -1,4 +1,11 @@
 {
     "extends": ["../../.eslintrc.json"],
-    "overrides": []
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+            "rules": {
+                "@typescript-eslint/naming-convention": "off"
+            }
+        }
+    ]
 }

@@ -1,3 +1,4 @@
+export { default as InitializeOffsitePaymentConfig } from './initialize-offsite-payment-config';
 export { AccountInstrument, CardInstrument } from './instrument';
 
 export {
@@ -38,3 +39,4 @@ export { default as PaymentResponseBody } from './payment-response-body';
 export { default as PaymentStrategy } from './payment-strategy';
 export { default as PaymentStrategyFactory } from './payment-strategy-factory';
 export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
+export { default as PaymentStatusTypes } from './payment-status-types';
