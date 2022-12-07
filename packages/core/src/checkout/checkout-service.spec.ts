@@ -4,10 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { get, map, merge } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 
-import {
-    createNoPaymentStrategy,
-    NoPaymentDataRequiredPaymentStrategy,
-} from '@bigcommerce/checkout-sdk/no-payment-integration';
+import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -674,7 +671,7 @@ describe('CheckoutService', () => {
     });
 
     describe('#submitOrder()', () => {
-        let noPaymentDataRequiredPaymentStrategy: NoPaymentDataRequiredPaymentStrategy;
+        let noPaymentDataRequiredPaymentStrategy: PaymentStrategyV2;
 
         beforeEach(async () => {
             const paymentIntegrationService = createPaymentIntegrationService(store);
