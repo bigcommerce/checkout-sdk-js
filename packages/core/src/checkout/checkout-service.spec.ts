@@ -5,6 +5,7 @@ import { get, map, merge } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 
 import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
+import { createOfflinePaymentStrategy } from '@bigcommerce/checkout-sdk/offline-integration';
 import {
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
@@ -58,8 +59,6 @@ import {
     getPaymentMethod,
     getPaymentMethods,
 } from '../payment/payment-methods.mock';
-import { PaymentStrategy } from '../payment/strategies';
-import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
@@ -121,7 +120,7 @@ describe('CheckoutService', () => {
     let orderRequestSender: OrderRequestSender;
     let paymentMethodRequestSender: PaymentMethodRequestSender;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let paymentStrategy: PaymentStrategy;
+    let paymentStrategy: PaymentStrategyV2;
     let paymentStrategyActionCreator: PaymentStrategyActionCreator;
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let paymentStrategyRegistryV2: ResolveIdRegistry<PaymentStrategyV2, PaymentStrategyResolveId>;
@@ -200,19 +199,19 @@ describe('CheckoutService', () => {
             getResponse(getCountriesResponseBody()),
         );
 
-        paymentStrategy = new OfflinePaymentStrategy(store, orderActionCreator);
-
-        jest.spyOn(paymentStrategy, 'execute').mockResolvedValue(store.getState());
-
-        jest.spyOn(paymentStrategy, 'finalize').mockResolvedValue(store.getState());
-
-        jest.spyOn(paymentStrategy, 'initialize').mockResolvedValue(store.getState());
-
-        jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(store.getState());
-
         paymentStrategyRegistry = new PaymentStrategyRegistry(store);
 
         const paymentIntegrationService = createPaymentIntegrationService(store);
+
+        paymentStrategy = createOfflinePaymentStrategy(paymentIntegrationService);
+
+        jest.spyOn(paymentStrategy, 'execute').mockResolvedValue(Promise.resolve());
+
+        jest.spyOn(paymentStrategy, 'finalize').mockResolvedValue(Promise.resolve());
+
+        jest.spyOn(paymentStrategy, 'initialize').mockResolvedValue(Promise.resolve());
+
+        jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(Promise.resolve());
 
         paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);

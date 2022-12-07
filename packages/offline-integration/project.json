@@ -1,0 +1,22 @@
+{
+    "root": "packages/external-integration",
+    "sourceRoot": "packages/external-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/external-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/external-integration"],
+            "options": {
+                "jestConfig": "packages/external-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}

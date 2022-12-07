@@ -30,6 +30,9 @@
             "@bigcommerce/checkout-sdk/no-payment-integration": [
                 "packages/no-payment-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/offline-integration": [
+                "packages/offline-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/payment-integration-api": [
                 "packages/payment-integration-api/src/index.ts"
             ],
