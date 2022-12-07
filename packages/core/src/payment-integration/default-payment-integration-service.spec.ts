@@ -52,7 +52,7 @@ describe('DefaultPaymentIntegrationService', () => {
         'submitPayment' | 'initializeOffsitePayment'
     >;
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
-    let requestSender: Pick<any, any>
+    let requestSender: Pick<any, any>;
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);

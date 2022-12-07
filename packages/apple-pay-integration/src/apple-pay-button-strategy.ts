@@ -3,6 +3,7 @@ import { noop } from 'lodash';
 
 import {
     AddressRequestBody,
+    BuyNowCartCreationError,
     Cart,
     Checkout,
     CheckoutButtonInitializeOptions,
@@ -22,7 +23,6 @@ import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
-import { BuyNowCartCreationError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;

@@ -8,7 +8,7 @@ export default class BuyNowCartCreationError extends StandardError {
     constructor(message?: string) {
         super(
             message ||
-            'An unexpected error has occurred during buy now cart creation process. Please try again later.',
+                'An unexpected error has occurred during buy now cart creation process. Please try again later.',
         );
 
         this.name = 'BuyNowCartCreationError';
