@@ -510,6 +510,10 @@ describe('MolliePaymentStrategy', () => {
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
@@ -557,6 +561,26 @@ describe('MolliePaymentStrategy', () => {
             await strategy.deinitialize();
 
             expect(form.detach).toHaveBeenCalled();
+        });
+
+        it('should unmount the elements of the card when adding a new one', async () => {
+            const options = getInitializeOptions();
+
+            await strategy.initialize(initializeOptions);
+            await strategy.deinitialize();
+
+            expect(form.detach).toHaveBeenCalled();
+
+            await strategy.initialize(options);
+
+            jest.runAllTimers();
+            expect(mollieClient.createComponent).toBeCalledTimes(4);
+            expect(mollieElement.mount).toBeCalledTimes(4);
+            jest.spyOn(document, 'getElementById');
+
+            await strategy.deinitialize(initializeOptions);
+
+            expect(mollieElement.unmount).toBeCalledTimes(4);
         });
     });
 

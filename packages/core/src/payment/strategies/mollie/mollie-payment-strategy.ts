@@ -187,7 +187,12 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 element.remove();
             }
         } else if (options && options.methodId && this.isCreditCard(options.methodId)) {
-            if (this._cardHolderElement && this._cardNumberElement && this._verificationCodeElement && this._expiryDateElement) {
+            if (
+                this._cardHolderElement &&
+                this._cardNumberElement &&
+                this._verificationCodeElement &&
+                this._expiryDateElement
+            ) {
                 this._cardHolderElement.unmount();
                 this._cardHolderElement = undefined;
 
