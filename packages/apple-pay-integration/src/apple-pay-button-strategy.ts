@@ -141,12 +141,16 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const config = state.getStoreConfigOrThrow();
         const checkout = state.getCheckoutOrThrow();
 
+        console.log('DATA', state, cart, config, checkout);
+
         if (!this._paymentMethod || !this._paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+        console.log('REQUEST', request);
         const applePaySession = this._sessionFactory.create(request);
+        console.log('APPLEPAY SESSION', applePaySession);
 
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
