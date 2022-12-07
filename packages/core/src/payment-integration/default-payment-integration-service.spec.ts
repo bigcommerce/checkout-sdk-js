@@ -51,7 +51,7 @@ describe('DefaultPaymentIntegrationService', () => {
         'submitPayment' | 'initializeOffsitePayment'
     >;
     let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
-    let requestSender: Pick<any, any>
+    let requestSender: Pick<any, any>;
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
@@ -107,9 +107,7 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
-        requestSender = {
-
-        };
+        requestSender = {};
 
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,

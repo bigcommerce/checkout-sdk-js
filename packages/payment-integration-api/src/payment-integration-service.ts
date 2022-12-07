@@ -7,7 +7,7 @@ import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Response } from '@bigcommerce/request-sender';
-import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Cart } from '../src/cart';
 
 export default interface PaymentIntegrationService {
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;
