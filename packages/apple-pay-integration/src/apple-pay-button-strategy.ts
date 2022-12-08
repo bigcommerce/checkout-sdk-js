@@ -39,7 +39,6 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
-    private _buyNowCartID?: string;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -114,25 +113,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return button;
     }
 
-    private _handleWalletButtonClick(event: Event) {
+    private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
         console.log('BUY NOW', this._buyNowInitializeOptions);
-        if (
-            this._buyNowInitializeOptions &&
-            typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
-        ) {
-            const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
-            console.log('CART REQUEST BODY', cartRequestBody);
-            if (!cartRequestBody) {
-                throw new MissingDataError(MissingDataErrorType.MissingCart);
-            }
-
-            try {
-                this._cteateBuyNowCart(cartRequestBody);
-            } catch (error) {
-                throw new BuyNowCartCreationError();
-            }
-        }
 
         const state = this._paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
@@ -152,14 +135,27 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
-        applePaySession.begin();
-    }
+        if (
+            this._buyNowInitializeOptions &&
+            typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        ) {
+            const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
+            console.log('CART REQUEST BODY', cartRequestBody);
+            if (!cartRequestBody) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
 
-    private _cteateBuyNowCart(cartRequestBody: any) {
-        this._paymentIntegrationService.createBuyNowCart(
-            cartRequestBody
-        ).then( response => console.log(response));
-        // await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
+            try {
+                const { body: buyNowCart } = await this._paymentIntegrationService.createBuyNowCart(
+                    cartRequestBody,
+                );
+                await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
+            } catch (error) {
+                throw new BuyNowCartCreationError();
+            }
+        }
+
+        applePaySession.begin();
     }
 
     private _getBaseRequest(
