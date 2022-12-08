@@ -19,6 +19,8 @@
 - [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
+- [HostedFieldType](enums/HostedFieldType.md)
+- [HostedInputEventType](enums/HostedInputEventType.md)
 - [IconStyle](enums/IconStyle.md)
 - [PaypalButtonStyleColorOption](enums/PaypalButtonStyleColorOption.md)
 - [PaypalButtonStyleLabelOption](enums/PaypalButtonStyleLabelOption.md)
@@ -220,7 +222,21 @@
 - [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
+- [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
+- [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
+- [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
+- [HostedFormOptions](interfaces/HostedFormOptions.md)
+- [HostedInputBlurEvent](interfaces/HostedInputBlurEvent.md)
+- [HostedInputCardTypeChangeEvent](interfaces/HostedInputCardTypeChangeEvent.md)
+- [HostedInputEnterEvent](interfaces/HostedInputEnterEvent.md)
+- [HostedInputFocusEvent](interfaces/HostedInputFocusEvent.md)
+- [HostedInputValidateErrorData](interfaces/HostedInputValidateErrorData.md)
+- [HostedInputValidateErrorDataMap](interfaces/HostedInputValidateErrorDataMap.md)
+- [HostedInputValidateEvent](interfaces/HostedInputValidateEvent.md)
+- [HostedInputValidateResults](interfaces/HostedInputValidateResults.md)
 - [HostedInstrument](interfaces/HostedInstrument.md)
+- [HostedStoredCardFieldOptions](interfaces/HostedStoredCardFieldOptions.md)
+- [HostedStoredCardFieldOptionsMap](interfaces/HostedStoredCardFieldOptionsMap.md)
 - [IbanElementOptions](interfaces/IbanElementOptions.md)
 - [IdealElementOptions](interfaces/IdealElementOptions.md)
 - [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
@@ -388,6 +404,14 @@
 - [FormFieldType](README.md#formfieldtype)
 - [GuestCredentials](README.md#guestcredentials)
 - [HostedCreditCardInstrument](README.md#hostedcreditcardinstrument)
+- [HostedFieldBlurEventData](README.md#hostedfieldblureventdata)
+- [HostedFieldCardTypeChangeEventData](README.md#hostedfieldcardtypechangeeventdata)
+- [HostedFieldEnterEventData](README.md#hostedfieldentereventdata)
+- [HostedFieldFocusEventData](README.md#hostedfieldfocuseventdata)
+- [HostedFieldOptionsMap](README.md#hostedfieldoptionsmap)
+- [HostedFieldStyles](README.md#hostedfieldstyles)
+- [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
+- [HostedInputStyles](README.md#hostedinputstyles)
 - [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
 - [Instrument](README.md#instrument)
 - [Omit](README.md#omit)
@@ -553,6 +577,54 @@ ___
 ### HostedCreditCardInstrument
 
 Ƭ **HostedCreditCardInstrument**: [`Omit`](README.md#omit)<[`CreditCardInstrument`](interfaces/CreditCardInstrument.md), ``"ccExpiry"`` \| ``"ccName"`` \| ``"ccNumber"`` \| ``"ccCvv"``\>
+
+___
+
+### HostedFieldBlurEventData
+
+Ƭ **HostedFieldBlurEventData**: [`HostedInputBlurEvent`](interfaces/HostedInputBlurEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldCardTypeChangeEventData
+
+Ƭ **HostedFieldCardTypeChangeEventData**: [`HostedInputCardTypeChangeEvent`](interfaces/HostedInputCardTypeChangeEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldEnterEventData
+
+Ƭ **HostedFieldEnterEventData**: [`HostedInputEnterEvent`](interfaces/HostedInputEnterEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldFocusEventData
+
+Ƭ **HostedFieldFocusEventData**: [`HostedInputFocusEvent`](interfaces/HostedInputFocusEvent.md)[``"payload"``]
+
+___
+
+### HostedFieldOptionsMap
+
+Ƭ **HostedFieldOptionsMap**: [`HostedCardFieldOptionsMap`](interfaces/HostedCardFieldOptionsMap.md) \| [`HostedStoredCardFieldOptionsMap`](interfaces/HostedStoredCardFieldOptionsMap.md)
+
+___
+
+### HostedFieldStyles
+
+Ƭ **HostedFieldStyles**: [`HostedInputStyles`](README.md#hostedinputstyles)
+
+___
+
+### HostedFieldValidateEventData
+
+Ƭ **HostedFieldValidateEventData**: [`HostedInputValidateEvent`](interfaces/HostedInputValidateEvent.md)[``"payload"``]
+
+___
+
+### HostedInputStyles
+
+Ƭ **HostedInputStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
 
 ___
 

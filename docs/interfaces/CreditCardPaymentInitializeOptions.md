@@ -88,4 +88,4 @@ service.initializePayment({
 
 ### form
 
-• **form**: `default`
+• **form**: [`HostedFormOptions`](HostedFormOptions.md)
