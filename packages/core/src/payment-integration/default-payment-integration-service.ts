@@ -57,22 +57,8 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     async initializeOffsitePayment(
         initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
     ): Promise<PaymentIntegrationSelectors> {
-        const {
-            methodId,
-            gatewayId,
-            instrumentId,
-            shouldSaveInstrument,
-            shouldSetAsDefaultInstrument,
-        } = initializeOffsitePaymentConfig;
-
         await this._store.dispatch(
-            this._paymentActionCreator.initializeOffsitePayment({
-                methodId,
-                gatewayId,
-                instrumentId,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            }),
+            this._paymentActionCreator.initializeOffsitePayment(initializeOffsitePaymentConfig),
         );
 
         return this._storeProjection.getState();
