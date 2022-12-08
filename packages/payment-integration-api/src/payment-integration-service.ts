@@ -16,15 +16,15 @@ export default interface PaymentIntegrationService {
 
     getState(): PaymentIntegrationSelectors;
 
+    initializeOffsitePayment(
+        initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
+    ): Promise<PaymentIntegrationSelectors>;
+
     loadCheckout(): Promise<PaymentIntegrationSelectors>;
 
     loadDefaultCheckout(): Promise<PaymentIntegrationSelectors>;
 
     loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors>;
-
-    initializeOffsitePayment(
-        initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
-    ): Promise<PaymentIntegrationSelectors>;
 
     submitOrder(
         payload?: OrderRequestBody,

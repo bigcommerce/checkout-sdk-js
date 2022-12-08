@@ -4,6 +4,7 @@ export {
     getCheckout,
     getConfig,
     getConsignment,
+    getOrder,
     getOrderRequestBody,
     getShippingOption,
     getPayment,

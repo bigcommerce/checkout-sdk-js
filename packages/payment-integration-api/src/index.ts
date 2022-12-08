@@ -40,7 +40,15 @@ export {
     isRequestError,
 } from './errors';
 export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
-export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
+export {
+    GatewayOrderPayment,
+    GiftCertificateOrderPayment,
+    Order,
+    OrderConsignment,
+    OrderShippingConsignment,
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+} from './order';
 export {
     CardInstrument,
     CreditCardInstrument,

@@ -1,1 +1,1 @@
-export * from './lib/offsite-integration';
+export { default as createOffsitePaymentStrategy } from './create-offsite-payment-strategy';

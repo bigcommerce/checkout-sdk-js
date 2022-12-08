@@ -6,6 +6,14 @@
             "rules": {
                 "@typescript-eslint/naming-convention": "off"
             }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-unsafe-call": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off"
+            }
         }
     ]
 }

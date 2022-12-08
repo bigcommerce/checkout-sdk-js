@@ -58,6 +58,8 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
             (status === PaymentStatusTypes.ACKNOWLEDGE || status === PaymentStatusTypes.FINALIZE)
         ) {
             await this._paymentIntegrationService.finalizeOrder(options);
+
+            return;
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
