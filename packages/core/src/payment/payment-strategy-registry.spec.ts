@@ -5,7 +5,6 @@ import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import {
-    getAdyenAmex,
     getAmazonPay,
     getBankDeposit,
     getBraintree,
@@ -50,9 +49,6 @@ describe('PaymentStrategyRegistry', () => {
     class OfflinePaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class OffsitePaymentStrategy extends BasePaymentStrategy {}
-
-    // tslint:disable-next-line:max-classes-per-file
     class AmazonPayPaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
@@ -77,9 +73,9 @@ describe('PaymentStrategyRegistry', () => {
                 PaymentStrategyType.CREDIT_CARD,
                 () => new CreditCardPaymentStrategy(store),
             );
+
             registry.register(PaymentStrategyType.LEGACY, () => new LegacyPaymentStrategy(store));
             registry.register(PaymentStrategyType.OFFLINE, () => new OfflinePaymentStrategy(store));
-            registry.register(PaymentStrategyType.OFFSITE, () => new OffsitePaymentStrategy(store));
             registry.register(PaymentStrategyType.PPSDK, () => new PPSDKPaymentStrategy(store));
         });
 
@@ -93,10 +89,6 @@ describe('PaymentStrategyRegistry', () => {
 
         it('throws error if none is registered with method name (expected V1 behavior)', () => {
             expect(() => registry.getByMethod(getBraintree())).toThrow(InvalidArgumentError);
-        });
-
-        it('returns offsite strategy if none is registered with method name and method is hosted', () => {
-            expect(registry.getByMethod(getAdyenAmex())).toBeInstanceOf(OffsitePaymentStrategy);
         });
 
         it('returns offline strategy if none is registered with method name and method is offline', () => {

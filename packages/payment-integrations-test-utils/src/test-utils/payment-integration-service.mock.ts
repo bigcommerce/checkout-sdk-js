@@ -21,7 +21,6 @@ const state = {
 
 const createHostedForm = jest.fn();
 const getState = jest.fn(() => state);
-const createHostedForm = jest.fn();
 const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
@@ -39,7 +38,6 @@ const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
         createHostedForm,
         subscribe,
         getState,
-        createHostedForm,
         initializeOffsitePayment,
         loadCheckout,
         loadDefaultCheckout,

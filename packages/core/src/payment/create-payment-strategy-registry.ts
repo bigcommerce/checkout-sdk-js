@@ -114,7 +114,6 @@ import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { MonerisPaymentStrategy } from './strategies/moneris';
-import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import {
     PaypalExpressPaymentStrategy,
@@ -740,11 +739,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 storeCreditActionCreator,
             ),
-    );
-
-    registry.register(
-        PaymentStrategyType.OFFSITE,
-        () => new OffsitePaymentStrategy(store, orderActionCreator, paymentActionCreator),
     );
 
     registry.register(
