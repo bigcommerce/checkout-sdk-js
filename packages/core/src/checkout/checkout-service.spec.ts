@@ -199,8 +199,6 @@ describe('CheckoutService', () => {
             getResponse(getCountriesResponseBody()),
         );
 
-        paymentStrategyRegistry = new PaymentStrategyRegistry(store);
-
         const paymentIntegrationService = createPaymentIntegrationService(store);
 
         paymentStrategy = createOfflinePaymentStrategy(paymentIntegrationService);
@@ -213,6 +211,7 @@ describe('CheckoutService', () => {
 
         jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(Promise.resolve());
 
+        paymentStrategyRegistry = new PaymentStrategyRegistry(store);
         paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
