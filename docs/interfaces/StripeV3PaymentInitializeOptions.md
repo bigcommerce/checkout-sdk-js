@@ -65,7 +65,7 @@ ___
 
 ### form
 
-• `Optional` **form**: `default`
+• `Optional` **form**: [`HostedFormOptions`](HostedFormOptions.md)
 
 Hosted Form Validation Options
 
