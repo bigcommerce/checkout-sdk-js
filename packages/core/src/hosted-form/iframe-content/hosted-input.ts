@@ -1,7 +1,5 @@
 import { kebabCase } from 'lodash';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { parseUrl } from '../../common/url';
 import {
@@ -9,6 +7,7 @@ import {
     HostedFieldEventType,
     HostedFieldValidateRequestEvent,
 } from '../hosted-field-events';
+import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';

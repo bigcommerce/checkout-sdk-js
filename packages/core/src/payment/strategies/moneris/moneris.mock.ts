@@ -1,5 +1,4 @@
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
+import { HostedFieldType } from '../../../hosted-form';
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 

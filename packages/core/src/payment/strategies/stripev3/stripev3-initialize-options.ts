@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedFormOptions } from '../../../hosted-form';
 
 import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
 

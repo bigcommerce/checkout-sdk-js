@@ -1,11 +1,10 @@
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { appendWww, parseUrl } from '../../common/url';
 import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
 import { CardInstrument } from '../../payment/instrument';
+import HostedFieldType from '../hosted-field-type';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';

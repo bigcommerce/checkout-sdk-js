@@ -1,5 +1,3 @@
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { DetachmentObserver } from '../common/dom';
 import { RequestError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -9,6 +7,7 @@ import { getErrorPaymentResponseBody } from '../payment/payments.mock';
 import { InvalidHostedFormConfigError, InvalidHostedFormError } from './errors';
 import HostedField from './hosted-field';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
+import HostedFieldType from './hosted-field-type';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 

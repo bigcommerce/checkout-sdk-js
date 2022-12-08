@@ -1,13 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { pick } from 'lodash';
 
-import {
-    HostedCardFieldOptionsMap,
-    HostedFieldType,
-    HostedFormOptions,
-    HostedStoredCardFieldOptionsMap,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { ReadableCheckoutStore } from '../checkout';
 import { DetachmentObserver, MutationObserverFactory } from '../common/dom';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
@@ -16,7 +9,12 @@ import { CardInstrument } from '../payment/instrument';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
+import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
+import HostedFormOptions, {
+    HostedCardFieldOptionsMap,
+    HostedStoredCardFieldOptionsMap,
+} from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 
 export default class HostedFormFactory {
