@@ -117,24 +117,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         event.preventDefault();
         console.log('BUY NOW', this._buyNowInitializeOptions);
 
-        const state = this._paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-        const config = state.getStoreConfigOrThrow();
-        const checkout = state.getCheckoutOrThrow();
-
-        console.log('DATA', state, cart, config, checkout);
-
-        if (!this._paymentMethod || !this._paymentMethod.initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
-        console.log('REQUEST', request);
-        const applePaySession = this._sessionFactory.create(request);
-        console.log('APPLEPAY SESSION', applePaySession);
-
-        this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
-
         if (
             this._buyNowInitializeOptions &&
             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
@@ -154,6 +136,24 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 throw new BuyNowCartCreationError();
             }
         }
+
+        const state = this._paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const config = state.getStoreConfigOrThrow();
+        const checkout = state.getCheckoutOrThrow();
+
+        console.log('DATA', state, cart, config, checkout);
+
+        if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+        console.log('REQUEST', request);
+        const applePaySession = this._sessionFactory.create(request);
+        console.log('APPLEPAY SESSION', applePaySession);
+
+        this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
         applePaySession.begin();
     }
