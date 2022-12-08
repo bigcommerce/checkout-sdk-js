@@ -1,6 +1,6 @@
 import { kebabCase } from 'lodash';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import mapToAutocompleteType from './map-to-autocomplete-type';

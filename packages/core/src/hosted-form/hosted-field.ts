@@ -2,11 +2,6 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
-import {
-    HostedFieldStylesMap,
-    HostedFieldType,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { DetachmentObserver } from '../common/dom';
 import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
@@ -19,6 +14,8 @@ import {
     InvalidHostedFormValueError,
 } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
+import HostedFieldType from './hosted-field-type';
+import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,

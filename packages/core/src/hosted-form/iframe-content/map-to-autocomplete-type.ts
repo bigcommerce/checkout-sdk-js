@@ -1,4 +1,4 @@
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import HostedFieldType from '../hosted-field-type';
 
 export default function mapToAutocompleteType(type: HostedFieldType): string {
     switch (type) {

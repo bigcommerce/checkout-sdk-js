@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { getCardInstrument } from '../../payment/instrument/instrument.mock';
+import HostedFieldType from '../hosted-field-type';
 
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';

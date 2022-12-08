@@ -1,10 +1,9 @@
 import { number } from 'card-validator';
 import { get } from 'lodash';
 
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { HostedFieldEventMap } from '../hosted-field-events';
+import HostedFieldType from '../hosted-field-type';
 
 import CardNumberFormatter from './card-number-formatter';
 import HostedAutocompleteFieldset from './hosted-autocomplete-fieldset';

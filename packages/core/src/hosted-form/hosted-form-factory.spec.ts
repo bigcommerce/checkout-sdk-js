@@ -1,7 +1,6 @@
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { createCheckoutStore, ReadableCheckoutStore } from '../checkout';
 
+import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
 
