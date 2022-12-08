@@ -39,6 +39,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _buyNowCartID?: string;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -113,7 +114,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return button;
     }
 
-    private async _handleWalletButtonClick(event: Event) {
+    private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
         console.log('BUY NOW', this._buyNowInitializeOptions);
         if (
@@ -127,10 +128,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             }
 
             try {
-                const { body: buyNowCart } = await this._paymentIntegrationService.createBuyNowCart(
-                    cartRequestBody,
-                );
-                await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
+                this._cteateBuyNowCart(cartRequestBody);
             } catch (error) {
                 throw new BuyNowCartCreationError();
             }
@@ -155,6 +153,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
         applePaySession.begin();
+    }
+
+    private _cteateBuyNowCart(cartRequestBody: any) {
+        this._paymentIntegrationService.createBuyNowCart(
+            cartRequestBody
+        ).then( response => console.log(response));
+        // await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
     }
 
     private _getBaseRequest(
