@@ -1,1 +1,1 @@
-export * from './lib/legacy-integration';
+export { default as createLegacyPaymentStrategy } from './create-legacy-payment-strategy';

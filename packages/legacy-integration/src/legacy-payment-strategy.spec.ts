@@ -1,5 +1,3 @@
-import { omit } from 'lodash';
-
 import {
     OrderFinalizationNotRequiredError,
     PaymentIntegrationService,
@@ -37,7 +35,7 @@ describe('LegacyPaymentStrategy', () => {
             await strategy.execute(getOrderRequestBody(), options);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
-                omit(getOrderRequestBody(), 'payment'),
+                getOrderRequestBody(),
                 options,
             );
         });
