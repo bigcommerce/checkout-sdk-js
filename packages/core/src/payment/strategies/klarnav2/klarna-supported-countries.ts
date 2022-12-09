@@ -9,6 +9,7 @@ export const supportedCountries = [
     'FI',
     'FR',
     'GB',
+    'GR',
     'IE',
     'IT',
     'NL',
