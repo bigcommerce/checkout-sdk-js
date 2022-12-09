@@ -1,11 +1,11 @@
-# external-integration
+# offline-integration
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test external-integration` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test offline-integration` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
 
-Run `nx lint external-integration` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint offline-integration` to execute the lint via [ESLint](https://eslint.org/).

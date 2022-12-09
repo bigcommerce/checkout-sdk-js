@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: "external-integration",
+    displayName: "offline-integration",
     preset: "../../jest.preset.js",
     globals: {
         "ts-jest": {
@@ -8,5 +8,5 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ["../../jest-setup.js"],
-    coverageDirectory: "../../coverage/packages/external-integration",
+    coverageDirectory: "../../coverage/packages/offline-integration",
 };

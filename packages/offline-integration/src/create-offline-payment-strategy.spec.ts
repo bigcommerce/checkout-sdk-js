@@ -1,10 +1,10 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import createExternalPaymentStrategy from './create-offline-payment-strategy';
+import createOfflinePaymentStrategy from './create-offline-payment-strategy';
 import OfflinePaymentStrategy from './offline-payment-strategy';
 
-describe('createExternalPaymentStrategy', () => {
+describe('createOfflinePaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
@@ -12,8 +12,8 @@ describe('createExternalPaymentStrategy', () => {
             new PaymentIntegrationServiceMock() as PaymentIntegrationService;
     });
 
-    it('instantiates external payment strategy', () => {
-        const strategy = createExternalPaymentStrategy(paymentIntegrationService);
+    it('instantiates offline payment strategy', () => {
+        const strategy = createOfflinePaymentStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(OfflinePaymentStrategy);
     });

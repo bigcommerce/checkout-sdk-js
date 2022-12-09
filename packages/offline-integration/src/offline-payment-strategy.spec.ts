@@ -16,7 +16,8 @@ describe('OfflinePaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService = new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService =
+            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
         strategy = new OfflinePaymentStrategy(paymentIntegrationService);
     });
 
@@ -44,11 +45,7 @@ describe('OfflinePaymentStrategy', () => {
 
     describe('#finalize()', () => {
         it('throws error to inform that order finalization is not required', async () => {
-            try {
-                await strategy.finalize();
-            } catch (error) {
-                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-            }
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
 

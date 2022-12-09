@@ -9,6 +9,4 @@ const createOfflinePaymentStrategy: PaymentStrategyFactory<OfflinePaymentStrateg
     paymentIntegrationService,
 ) => new OfflinePaymentStrategy(paymentIntegrationService);
 
-export default toResolvableModule(createOfflinePaymentStrategy, [
-    { type: 'PAYMENT_TYPE_OFFLINE' },
-]);
+export default toResolvableModule(createOfflinePaymentStrategy, [{ type: 'PAYMENT_TYPE_OFFLINE' }]);

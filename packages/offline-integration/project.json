@@ -1,20 +1,20 @@
 {
-    "root": "packages/external-integration",
-    "sourceRoot": "packages/external-integration/src",
+    "root": "packages/offline-integration",
+    "sourceRoot": "packages/offline-integration/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/external-integration/**/*.ts"]
+                "lintFilePatterns": ["packages/offline-integration/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/external-integration"],
+            "outputs": ["coverage/packages/offline-integration"],
             "options": {
-                "jestConfig": "packages/external-integration/jest.config.js"
+                "jestConfig": "packages/offline-integration/jest.config.js"
             }
         }
     },
