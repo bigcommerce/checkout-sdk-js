@@ -5,6 +5,7 @@
         "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
         "external-integration": "packages/external-integration",
+        "mexico-integration": "packages/mexico-integration",
         "no-payment-integration": "packages/no-payment-integration",
         "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
