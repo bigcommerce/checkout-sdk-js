@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.310.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.6...v1.310.0) (2022-12-09)
+
+
+### Features
+
+* **payment:** INT-6727 add Klarna support for greece ([#1688](https://github.com/bigcommerce/checkout-sdk-js/issues/1688)) ([7a039ba](https://github.com/bigcommerce/checkout-sdk-js/commit/7a039ba34671492f1633ca6fc9ebed12ab142ceb))
+
+
+### Bug Fixes
+
+* **payment:** INT-6928 [Mollie] No Ability To Use A Different Card To Pay ([#1702](https://github.com/bigcommerce/checkout-sdk-js/issues/1702)) ([5555568](https://github.com/bigcommerce/checkout-sdk-js/commit/555556811a82c728f691c90a303342a388cb0858))
+
 ### [1.309.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.5...v1.309.6) (2022-12-08)
 
 ### [1.309.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.4...v1.309.5) (2022-12-07)
