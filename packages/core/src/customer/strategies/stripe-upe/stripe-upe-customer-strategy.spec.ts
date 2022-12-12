@@ -31,6 +31,7 @@ import {
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
 import { getQuote } from '../../../quote/internal-quotes.mock';
+import { getConsignment } from '../../../shipping/consignments.mock';
 import {
     GoogleRecaptcha,
     GoogleRecaptchaScriptLoader,
@@ -44,6 +45,7 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomer, getGuestCustomer } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
+import { ConsignmentActionCreator, ConsignmentActionType, ConsignmentRequestSender } from '../../../shipping';
 
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import {
@@ -64,6 +66,7 @@ describe('StripeUpeCustomerStrategy', () => {
     );
     const requestSender = createRequestSender();
 
+    let consignmentActionCreator: ConsignmentActionCreator;
     let customerActionCreator: CustomerActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -94,6 +97,11 @@ describe('StripeUpeCustomerStrategy', () => {
             }),
         );
         stripeScriptLoader = new StripeScriptLoader(createScriptLoader());
+
+        consignmentActionCreator = new ConsignmentActionCreator(
+            new ConsignmentRequestSender(requestSender),
+            new CheckoutRequestSender(requestSender),
+        );
 
         customerActionCreator = new CustomerActionCreator(
             new CustomerRequestSender(requestSender),
@@ -128,6 +136,7 @@ describe('StripeUpeCustomerStrategy', () => {
             stripeScriptLoader,
             customerActionCreator,
             paymentMethodActionCreator,
+            consignmentActionCreator,
         );
     });
 
@@ -171,6 +180,85 @@ describe('StripeUpeCustomerStrategy', () => {
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
+        it('triggers onChange event callback, dispatches delete consignments action and mounts component', async () => {
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
+            };
+
+            const expectedAction = {
+                type: CustomerActionType.StripeLinkAuthenticated,
+                payload: true,
+            };
+
+            const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
+            const action = of(createAction(ConsignmentActionType.DeleteConsignmentSucceeded));
+
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                getConsignment(),
+            ]);
+            jest.spyOn(consignmentActionCreator, 'deleteConsignment').mockReturnValue(action);
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
+                stripeUPEJsMockWithElement,
+            );
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toEqual(
+                store.getState(),
+            );
+
+            expect(consignmentActionCreator.deleteConsignment).toHaveBeenNthCalledWith(1, getConsignment().id);
+            expect(store.dispatch).toHaveBeenNthCalledWith(2, expectedAction);
+            expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(
+                true,
+                'foo@bar',
+            );
+            expect(customerInitialization.stripeupe?.isLoading).toHaveBeenCalled();
+            expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
+        });
+
+        it('triggers onChange event callback without delete consignments action and mounts component', async () => {
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
+            };
+
+            const expectedAction = {
+                type: CustomerActionType.StripeLinkAuthenticated,
+                payload: true,
+            };
+
+            const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
+            const action = of(createAction(ConsignmentActionType.DeleteConsignmentSucceeded));
+
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                getConsignment(),
+            ]);
+            jest.spyOn(consignmentActionCreator, 'deleteConsignment').mockReturnValue(action);
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
+                stripeUPEJsMockWithElement,
+            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                {...getGuestCustomer, isStripeLinkAuthenticated: true},
+            );
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toEqual(
+                store.getState(),
+            );
+
+            expect(consignmentActionCreator.deleteConsignment).not.toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenNthCalledWith(2, expectedAction);
+            expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(
+                true,
+                'foo@bar',
+            );
+            expect(customerInitialization.stripeupe?.isLoading).toHaveBeenCalled();
+            expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
         });
 
         it('triggers onChange event callback, dispatches correct action and mounts component', async () => {

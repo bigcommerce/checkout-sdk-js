@@ -356,6 +356,10 @@ export default function createCustomerStrategyRegistry(
                 new StripeScriptLoader(scriptLoader),
                 customerActionCreator,
                 paymentMethodActionCreator,
+                new ConsignmentActionCreator(
+                    new ConsignmentRequestSender(requestSender),
+                    new CheckoutRequestSender(requestSender)
+                ),
             ),
     );
 
