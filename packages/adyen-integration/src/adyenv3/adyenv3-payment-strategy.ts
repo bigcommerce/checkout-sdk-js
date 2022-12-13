@@ -82,6 +82,15 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             clientKey,
             paymentMethodsResponse,
             showPayButton: false,
+            translations: {
+                es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-ES': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-MX': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-CL': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-CO': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+                'es-PE': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
+            },
         });
 
         this._paymentComponent = await this._mountPaymentComponent(paymentMethod);

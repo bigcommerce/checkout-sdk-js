@@ -239,6 +239,26 @@ export interface AdyenConfiguration {
      */
     paymentMethodsResponse?: PaymentMethodsResponse;
 
+    /**
+     * If your shoppers use a language that isn't supported by the Components, you can create your own localization.
+     * To create a localization:
+     * Add a translations object to your payment page, specifying:
+     * The localization you want to create.
+     * An object containing the fields that are used in the Components, as well as the text you want displayed for each field.
+     *
+     * "en": {
+     *  "paymentMethods.moreMethodsButton": "More payment methods",
+     *  "payButton": "Pay",
+     *  "storeDetails": "Save for my next payment",
+     *   ...
+     * }
+     */
+    translations?: {
+        [index: string]: {
+            [index: string]: string;
+        };
+    };
+
     /*
      * Specify the function that you created, for example, handleOnChange. If you wish
      * to override this function, you can also define an onChange event on the Component
