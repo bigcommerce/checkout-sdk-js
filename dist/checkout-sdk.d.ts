@@ -1,5 +1,7 @@
 /// <reference types="applepayjs" />
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
+import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
@@ -4377,8 +4379,8 @@ declare interface CreditCardInstrument {
  * });
  * ```
  */
-declare interface CreditCardPaymentInitializeOptions {
-    form: HostedFormOptions;
+declare interface CreditCardPaymentInitializeOptions_2 {
+    form: HostedFormOptions_2;
 }
 
 declare interface CreditCardPlaceHolder {
@@ -5999,7 +6001,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7629,6 +7631,10 @@ declare interface WithCheckoutcomSEPAInstrument {
 
 declare interface WithCheckoutcomiDealInstrument {
     bic: string;
+}
+
+declare interface WithCreditCardPaymentInitializeOptions {
+    creditCard?: CreditCardPaymentInitializeOptions_2;
 }
 
 declare interface WithDocumentInstrument {

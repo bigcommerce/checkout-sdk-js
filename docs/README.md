@@ -177,7 +177,7 @@
 - [Country](interfaces/Country.md)
 - [Coupon](interfaces/Coupon.md)
 - [CreditCardInstrument](interfaces/CreditCardInstrument.md)
-- [CreditCardPaymentInitializeOptions](interfaces/CreditCardPaymentInitializeOptions.md)
+- [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
 - [CreditCardPlaceHolder_2](interfaces/CreditCardPlaceHolder_2.md)
 - [CssProperties](interfaces/CssProperties.md)
@@ -373,6 +373,7 @@
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
 - [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
+- [WithCreditCardPaymentInitializeOptions](interfaces/WithCreditCardPaymentInitializeOptions.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
 - [WithSquareV2PaymentInitializeOptions](interfaces/WithSquareV2PaymentInitializeOptions.md)
@@ -667,7 +668,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 
