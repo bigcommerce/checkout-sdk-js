@@ -46,6 +46,10 @@ import {
     GooglePayStripeUPEInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
+import {
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+} from '../payment/strategies/paypal-commerce';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
@@ -71,6 +75,7 @@ import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
+import { PaypalCommerceCustomerStrategy } from './strategies/paypalcommerce';
 import { SquareCustomerStrategy } from './strategies/square';
 import { StripeUPECustomerStrategy } from './strategies/stripe-upe';
 
@@ -106,6 +111,26 @@ export default function createCustomerStrategyRegistry(
         checkoutActionCreator,
         spamProtectionActionCreator,
     );
+    const billingAddressActionCreator = new BillingAddressActionCreator(
+        new BillingAddressRequestSender(requestSender),
+        new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
+    );
+    const consignmentActionCreator = new ConsignmentActionCreator(
+        new ConsignmentRequestSender(requestSender),
+        new CheckoutRequestSender(requestSender),
+    );
+    const orderActionCreator = new OrderActionCreator(
+        new OrderRequestSender(requestSender),
+        new CheckoutValidator(checkoutRequestSender),
+    );
+    const paymentActionCreator = new PaymentActionCreator(
+        new PaymentRequestSender(paymentClient),
+        orderActionCreator,
+        new PaymentRequestTransformer(),
+        new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
+    );
+    const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
+    const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
 
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
@@ -319,29 +344,29 @@ export default function createCustomerStrategyRegistry(
                 checkoutActionCreator,
                 requestSender,
                 paymentMethodActionCreator,
-                new ConsignmentActionCreator(
-                    new ConsignmentRequestSender(requestSender),
-                    new CheckoutRequestSender(requestSender),
-                ),
-                new BillingAddressActionCreator(
-                    new BillingAddressRequestSender(requestSender),
-                    new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
-                ),
-                new PaymentActionCreator(
-                    new PaymentRequestSender(paymentClient),
-                    new OrderActionCreator(
-                        new OrderRequestSender(requestSender),
-                        new CheckoutValidator(checkoutRequestSender),
-                    ),
-                    new PaymentRequestTransformer(),
-                    new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-                ),
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
                 remoteCheckoutActionCreator,
-                new OrderActionCreator(
-                    new OrderRequestSender(requestSender),
-                    new CheckoutValidator(checkoutRequestSender),
-                ),
+                orderActionCreator,
                 new ApplePaySessionFactory(),
+            ),
+    );
+
+    registry.register(
+        'paypalcommerce',
+        () =>
+            new PaypalCommerceCustomerStrategy(
+                store,
+                customerActionCreator,
+                formPoster,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                orderActionCreator,
             ),
     );
 
