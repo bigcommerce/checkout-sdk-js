@@ -1,3 +1,5 @@
+import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
@@ -9,7 +11,6 @@ import {
     BraintreeVisaCheckoutPaymentInitializeOptions,
 } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
-import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
 import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';

@@ -2,7 +2,11 @@ import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../common/error/errors';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
@@ -91,7 +95,7 @@ export default class PaymentStrategyRegistry extends Registry<
             return PaymentStrategyType.OFFSITE;
         }
 
-        return PaymentStrategyType.CREDIT_CARD;
+        throw new InvalidArgumentError(`'${methodId}' is not registered.`);
     }
 
     private _hasFactoryForMethod(methodId: string): methodId is PaymentStrategyType {

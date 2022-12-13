@@ -1,0 +1,22 @@
+{
+    "root": "packages/credit-card-integration",
+    "sourceRoot": "packages/credit-card-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/credit-card-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/credit-card-integration"],
+            "options": {
+                "jestConfig": "packages/credit-card-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}

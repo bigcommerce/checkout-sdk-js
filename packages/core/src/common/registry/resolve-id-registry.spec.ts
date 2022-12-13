@@ -6,9 +6,9 @@ describe('ResolveIdRegistry', () => {
     }
 
     interface TestResolveId {
+        [key: string]: unknown;
         id?: string;
         type?: string;
-        [key: string]: unknown;
     }
 
     class FooStrategy implements TestStrategy {
@@ -29,6 +29,12 @@ describe('ResolveIdRegistry', () => {
         }
     }
 
+    class DefaultStrategy implements TestStrategy {
+        execute() {
+            return true;
+        }
+    }
+
     let subject: ResolveIdRegistry<TestStrategy, TestResolveId>;
 
     beforeEach(() => {
@@ -36,6 +42,7 @@ describe('ResolveIdRegistry', () => {
         subject.register({ id: 'foo' }, () => new FooStrategy());
         subject.register({ type: 'bar' }, () => new BarStrategy());
         subject.register({ id: 'foo', type: 'bar' }, () => new FoobarStrategy());
+        subject.register({ default: true }, () => new DefaultStrategy());
     });
 
     it('returns strategy if able to resolve to one by id', () => {
@@ -50,7 +57,23 @@ describe('ResolveIdRegistry', () => {
         expect(subject.get({ id: 'foo', type: 'bar' })).toBeInstanceOf(FoobarStrategy);
     });
 
-    it('throws error if unable to resolve to one', () => {
+    it('throws error if unable to resolve to one when useFallback is false', () => {
         expect(() => subject.get({ type: 'hello' })).toThrow();
+    });
+
+    it('returns default strategy if unable to resolve to one when useFallback is true', () => {
+        subject = new ResolveIdRegistry(true);
+        subject.register({ default: true }, () => new DefaultStrategy());
+
+        expect(subject.get({ type: 'bigbigpaypay' })).toBeInstanceOf(DefaultStrategy);
+    });
+
+    it('returns new strategy instance if multiple methods fallback to default strategy', () => {
+        subject = new ResolveIdRegistry(true);
+        subject.register({ default: true }, () => new DefaultStrategy());
+
+        expect(subject.get({ type: 'bigbigpay' })).toBeInstanceOf(DefaultStrategy);
+        expect(subject.get({ type: 'bigpaypay' })).toBeInstanceOf(DefaultStrategy);
+        expect(subject.get({ type: 'bigbigpay' })).not.toBe(subject.get({ type: 'bigpaypay' }));
     });
 });
