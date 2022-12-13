@@ -114,7 +114,6 @@ import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { MonerisPaymentStrategy } from './strategies/moneris';
-import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import {
@@ -741,11 +740,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 storeCreditActionCreator,
             ),
-    );
-
-    registry.register(
-        PaymentStrategyType.OFFLINE,
-        () => new OfflinePaymentStrategy(store, orderActionCreator),
     );
 
     registry.register(

@@ -7,6 +7,7 @@
         "credit-card-integration": "packages/credit-card-integration",
         "external-integration": "packages/external-integration",
         "no-payment-integration": "packages/no-payment-integration",
+        "offline-integration": "packages/offline-integration",
         "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
         "squarev2-integration": "packages/squarev2-integration",
