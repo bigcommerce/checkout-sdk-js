@@ -149,23 +149,33 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                 await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
             }
 
-            if (isVaultedInstrument(paymentData)) {
-                await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-
-                const { instrumentId } = paymentData;
-
-                return await this._executeWithVaulted(
-                    payment,
-                    instrumentId,
-                    shouldSetAsDefaultInstrument,
-                );
-            }
-
             const state = await this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(`${gatewayId}`, {
                     params: { method: methodId },
                 }),
             );
+
+            if (isVaultedInstrument(paymentData)) {
+                await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+
+                const { instrumentId } = paymentData;
+                const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(
+                    payment.methodId,
+                );
+                const clientToken = paymentMethod.clientToken;
+
+                if (!clientToken) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                }
+
+                return await this._executeWithVaulted(
+                    payment,
+                    instrumentId,
+                    shouldSetAsDefaultInstrument,
+                    clientToken,
+                );
+            }
+
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             const result = await this._confirmStripePayment(paymentMethod);
             const { clientToken, method } = paymentMethod;
@@ -325,10 +335,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         payment: OrderPaymentRequestBody,
         token: string,
         shouldSetAsDefaultInstrument: boolean | undefined,
+        clientToken: string,
     ): Promise<InternalCheckoutSelectors> {
         const formattedPayload = {
             bigpay_token: { token },
             confirm: true,
+            client_token: clientToken,
             set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
         };
 

@@ -355,6 +355,7 @@ describe('StripeV3PaymentStrategy', () => {
                             bigpay_token: {
                                 token: 'token',
                             },
+                            client_token: 'myToken',
                             confirm: true,
                             set_as_default_stored_instrument: true,
                         },
@@ -1506,8 +1507,16 @@ describe('StripeV3PaymentStrategy', () => {
                 validate: jest.fn(() => Promise.resolve()),
                 detach: jest.fn(),
             };
+            paymentMethodMock = { ...getStripeV3('card', false, true), clientToken: 'myToken' };
             initializeOptions = getHostedFormInitializeOptions();
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
+            loadPaymentMethodAction = of(
+                createAction(
+                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    paymentMethodMock,
+                    { methodId: `stripev3?method=${paymentMethodMock.id}` },
+                ),
+            );
             state = store.getState();
 
             jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
@@ -1517,6 +1526,10 @@ describe('StripeV3PaymentStrategy', () => {
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
+
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+                loadPaymentMethodAction,
+            );
         });
 
         it('creates hosted form', async () => {
