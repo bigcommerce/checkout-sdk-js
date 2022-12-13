@@ -139,6 +139,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const {
             initializationData: { merchantCapabilities, supportedNetworks },
         } = paymentMethod;
+        console.log('jjj');
 
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
         const total: ApplePayJS.ApplePayLineItem = requiresShipping
