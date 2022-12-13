@@ -180,15 +180,34 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             this._hostedForm.detach();
         }
 
-        this._mollieClient = undefined;
-
-        if (options && options.methodId && options.gatewayId) {
+        if (options && options.methodId && options.gatewayId && !this._hostedForm) {
             const element = document.getElementById(`${options.gatewayId}-${options.methodId}`);
 
             if (element) {
                 element.remove();
             }
+        } else if (options && options.methodId && this.isCreditCard(options.methodId)) {
+            if (
+                this._cardHolderElement &&
+                this._cardNumberElement &&
+                this._verificationCodeElement &&
+                this._expiryDateElement
+            ) {
+                this._cardHolderElement.unmount();
+                this._cardHolderElement = undefined;
+
+                this._cardNumberElement.unmount();
+                this._cardNumberElement = undefined;
+
+                this._verificationCodeElement.unmount();
+                this._verificationCodeElement = undefined;
+
+                this._expiryDateElement.unmount();
+                this._expiryDateElement = undefined;
+            }
         }
+
+        this._mollieClient = undefined;
 
         return Promise.resolve(this._store.getState());
     }

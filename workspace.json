@@ -4,6 +4,7 @@
         "adyen-integration": "packages/adyen-integration",
         "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
+        "credit-card-integration": "packages/credit-card-integration",
         "external-integration": "packages/external-integration",
         "no-payment-integration": "packages/no-payment-integration",
         "offline-integration": "packages/offline-integration",

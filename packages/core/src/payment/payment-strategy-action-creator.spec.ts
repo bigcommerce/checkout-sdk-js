@@ -8,6 +8,11 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
+    createCreditCardPaymentStrategy,
+    CreditCardPaymentStrategy as CreditCardPaymentStrategyV2,
+} from '@bigcommerce/checkout-sdk/credit-card-integration';
+import {
+    OrderFinalizationNotRequiredError as OrderFinalizationNotRequiredErrorV2,
     PaymentStrategyResolveId,
     PaymentStrategy as PaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -27,6 +32,7 @@ import {
 import { MissingDataError } from '../common/error/errors';
 import { ResolveIdRegistry } from '../common/registry';
 import { getCustomerState } from '../customer/customers.mock';
+import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
@@ -64,6 +70,7 @@ describe('PaymentStrategyActionCreator', () => {
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
+    let strategyV2: PaymentStrategyV2;
     let noPaymentDataStrategy: PaymentStrategyV2;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let paymentHumanVerificationHandler: PaymentHumanVerificationHandler;
@@ -92,7 +99,11 @@ describe('PaymentStrategyActionCreator', () => {
 
         const paymentIntegrationService = createPaymentIntegrationService(store);
 
-        registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
+        registryV2 = createPaymentStrategyRegistryV2(
+            paymentIntegrationService,
+            defaultPaymentStrategyFactories,
+            { useFallback: true },
+        );
         strategy = new CreditCardPaymentStrategy(
             store,
             orderActionCreator,
@@ -105,6 +116,7 @@ describe('PaymentStrategyActionCreator', () => {
             new HostedFormFactory(store),
         );
         noPaymentDataStrategy = createNoPaymentStrategy(paymentIntegrationService);
+        strategyV2 = createCreditCardPaymentStrategy(paymentIntegrationService);
         spamProtectionActionCreator = new SpamProtectionActionCreator(
             spamProtection,
             new SpamProtectionRequestSender(requestSender),
@@ -117,6 +129,7 @@ describe('PaymentStrategyActionCreator', () => {
         );
 
         jest.spyOn(registry, 'getByMethod').mockReturnValue(strategy);
+        jest.spyOn(registryV2, 'get').mockReturnValue(strategyV2);
     });
 
     describe('#initialize()', () => {
@@ -137,15 +150,10 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
-        it('finds payment strategy by method when methodId is apple pay and gatewayId is mollie', async () => {
-            const method = {
-                ...getPaymentMethod(),
-                id: 'applepay',
-                gateway: 'mollie',
-            };
+        it('uses registryV2  if registryV1 is unalbe to resolve', async () => {
+            const method = getPaymentMethod();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
-            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
+            jest.spyOn(registry, 'getByMethod').mockRestore();
 
             await from(
                 actionCreator.initialize({
@@ -154,7 +162,11 @@ describe('PaymentStrategyActionCreator', () => {
                 })(store),
             ).toPromise();
 
-            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+            expect(registryV2.get).toHaveBeenCalledWith({
+                gateway: undefined,
+                id: 'authorizenet',
+                type: 'PAYMENT_TYPE_API',
+            });
         });
 
         it('initializes payment strategy', async () => {
@@ -283,15 +295,8 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
-        it('finds payment strategy by method when methodId is apple pay and gatewayId is mollie', async () => {
-            const method = {
-                ...getPaymentMethod(),
-                id: 'applepay',
-                gateway: 'mollie',
-            };
-
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
-            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+        it('uses registryV2  if registryV1 is unalbe to resolve', async () => {
+            jest.spyOn(registry, 'getByMethod').mockRestore();
 
             await from(
                 actionCreator.deinitialize({
@@ -300,7 +305,11 @@ describe('PaymentStrategyActionCreator', () => {
                 })(store),
             ).toPromise();
 
-            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+            expect(registryV2.get).toHaveBeenCalledWith({
+                gateway: undefined,
+                id: 'authorizenet',
+                type: 'PAYMENT_TYPE_API',
+            });
         });
 
         it('deinitializes payment strategy', async () => {
@@ -400,19 +409,17 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
-        it('finds payment strategy by method when methodId is apple pay and gatewayId is mollie', async () => {
-            const method = {
-                ...getPaymentMethod(),
-                id: 'applepay',
-                gateway: 'mollie',
-            };
-
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
-            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
+        it('uses registryV2  if registryV1 is unalbe to resolve', async () => {
+            jest.spyOn(registry, 'getByMethod').mockRestore();
+            jest.spyOn(strategyV2, 'execute').mockReturnValue(Promise.resolve());
 
             await from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
 
-            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+            expect(registryV2.get).toHaveBeenCalledWith({
+                gateway: undefined,
+                id: 'authorizenet',
+                type: 'PAYMENT_TYPE_API',
+            });
         });
 
         it('executes payment strategy', async () => {
@@ -574,19 +581,18 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
         });
 
-        it('finds payment strategy by method when methodId is apple pay and gatewayId is mollie', async () => {
-            const method = {
-                ...getPaymentMethod(),
-                id: 'applepay',
-                gateway: 'mollie',
-            };
+        it('uses registryV2  if registryV1 is unalbe to resolve', async () => {
+            jest.spyOn(registry, 'getByMethod').mockRestore();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(method);
-            jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(false);
-
-            await from(actionCreator.finalize()(store)).toPromise();
-
-            expect(registry.getByMethod).toHaveBeenCalledWith(method);
+            try {
+                await from(actionCreator.finalize()(store)).toPromise();
+            } catch {
+                expect(registryV2.get).toHaveBeenCalledWith({
+                    gateway: undefined,
+                    id: 'authorizenet',
+                    type: 'PAYMENT_TYPE_API',
+                });
+            }
         });
 
         it('finalizes order using payment strategy', async () => {
@@ -658,11 +664,16 @@ describe('PaymentStrategyActionCreator', () => {
                 orderActionCreator,
                 spamProtectionActionCreator,
             );
+            const strategyV2 = new CreditCardPaymentStrategyV2(
+                createPaymentIntegrationService(store),
+            );
+
+            jest.spyOn(registryV2, 'get').mockReturnValue(strategyV2);
 
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
             } catch (action) {
-                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredError);
+                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredErrorV2);
             }
         });
 

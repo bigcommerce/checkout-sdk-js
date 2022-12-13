@@ -1,6 +1,7 @@
 import {
     CreditCardInstrument,
     Payment,
+    PaymentMethod,
     PaymentResponseBody,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -9,6 +10,20 @@ export function getPayment(): Payment {
     return {
         methodId: 'authorizenet',
         paymentData: getCreditCardInstrument(),
+    };
+}
+
+export function getPaymentMethod(): PaymentMethod {
+    return {
+        id: 'authorizenet',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [],
+        config: {
+            displayName: 'Authorizenet',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
     };
 }
 

@@ -1,4 +1,5 @@
 import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../checkout';
+import { InvalidArgumentError } from '../common/error/errors';
 import { getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
@@ -8,7 +9,6 @@ import {
     getAmazonPay,
     getBankDeposit,
     getBraintree,
-    getBraintreePaypal,
     getCybersource,
     getPPSDK,
 } from './payment-methods.mock';
@@ -91,18 +91,8 @@ describe('PaymentStrategyRegistry', () => {
             expect(registry.getByMethod(getAmazonPay())).toBeInstanceOf(AmazonPayPaymentStrategy);
         });
 
-        it('returns credit card strategy if none is registered with method name', () => {
-            expect(registry.getByMethod(getBraintree())).toBeInstanceOf(CreditCardPaymentStrategy);
-        });
-
-        it('returns new strategy instance if multiple methods belong to same type', () => {
-            expect(registry.getByMethod(getBraintree())).toBeInstanceOf(CreditCardPaymentStrategy);
-            expect(registry.getByMethod(getBraintreePaypal())).toBeInstanceOf(
-                CreditCardPaymentStrategy,
-            );
-            expect(registry.getByMethod(getBraintree())).not.toBe(
-                registry.getByMethod(getBraintreePaypal()),
-            );
+        it('throws error if none is registered with method name (expected V1 behavior)', () => {
+            expect(() => registry.getByMethod(getBraintree())).toThrow(InvalidArgumentError);
         });
 
         it('returns offsite strategy if none is registered with method name and method is hosted', () => {
