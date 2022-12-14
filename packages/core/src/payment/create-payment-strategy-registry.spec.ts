@@ -37,7 +37,6 @@ import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
-import { OffsitePaymentStrategy } from './strategies/offsite';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
 import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
@@ -246,12 +245,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.LEGACY);
 
         expect(paymentStrategy).toBeInstanceOf(LegacyPaymentStrategy);
-    });
-
-    it('can instantiate offsite', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.OFFSITE);
-
-        expect(paymentStrategy).toBeInstanceOf(OffsitePaymentStrategy);
     });
 
     it('can instantiate openpay', () => {

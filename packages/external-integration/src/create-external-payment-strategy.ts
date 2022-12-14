@@ -9,9 +9,7 @@ import ExternalPaymentStrategy from './external-payment-strategy';
 
 const createExternalPaymentStrategy: PaymentStrategyFactory<ExternalPaymentStrategy> = (
     paymentIntegrationService,
-) => {
-    return new ExternalPaymentStrategy(createFormPoster(), paymentIntegrationService);
-};
+) => new ExternalPaymentStrategy(createFormPoster(), paymentIntegrationService);
 
 export default toResolvableModule(createExternalPaymentStrategy, [
     { id: 'laybuy' },

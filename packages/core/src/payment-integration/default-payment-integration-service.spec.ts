@@ -45,7 +45,10 @@ describe('DefaultPaymentIntegrationService', () => {
         'updateAddress' | 'selectShippingOption'
     >;
     let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
-    let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
+    let paymentActionCreator: Pick<
+        PaymentActionCreator,
+        'submitPayment' | 'initializeOffsitePayment'
+    >;
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
@@ -96,6 +99,9 @@ describe('DefaultPaymentIntegrationService', () => {
 
         paymentActionCreator = {
             submitPayment: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
+            initializeOffsitePayment: jest.fn(
+                async () => () => createAction('INITIALIZE_OFFSITE_PAYMENT_REQUESTED'),
+            ),
         };
 
         subject = new DefaultPaymentIntegrationService(
@@ -179,6 +185,21 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentActionCreator.submitPayment(getPayment()),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#initializeOffsitePayment', () => {
+        it('initializes offsite payment', async () => {
+            const config = {
+                methodId: 'test',
+            };
+            const output = await subject.initializeOffsitePayment(config);
+
+            expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                paymentActionCreator.initializeOffsitePayment(config),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });

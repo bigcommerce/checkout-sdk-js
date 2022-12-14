@@ -40,13 +40,22 @@ export {
     isRequestError,
 } from './errors';
 export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
-export { Order, OrderPaymentRequestBody, OrderRequestBody } from './order';
+export {
+    GatewayOrderPayment,
+    GiftCertificateOrderPayment,
+    Order,
+    OrderConsignment,
+    OrderShippingConsignment,
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+} from './order';
 export {
     CardInstrument,
     CreditCardInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     HostedInstrument,
+    InitializeOffsitePaymentConfig,
     Payment,
     PaymentActionType,
     SubmitPaymentAction,
@@ -54,6 +63,7 @@ export {
     PaymentMethod,
     PaymentRequestOptions,
     PaymentResponseBody,
+    PaymentStatusTypes,
     PaymentStrategy,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,

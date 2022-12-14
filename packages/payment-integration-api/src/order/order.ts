@@ -10,6 +10,7 @@ export default interface Order {
     baseAmount: number;
     billingAddress: BillingAddress;
     cartId: string;
+    channelId: number;
     coupons: Coupon[];
     consignments: OrderConsignment;
     currency: Currency;
