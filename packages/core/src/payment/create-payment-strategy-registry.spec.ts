@@ -35,7 +35,6 @@ import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
-import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
@@ -239,12 +238,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.KLARNA);
 
         expect(paymentStrategy).toBeInstanceOf(KlarnaPaymentStrategy);
-    });
-
-    it('can instantiate legacy', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.LEGACY);
-
-        expect(paymentStrategy).toBeInstanceOf(LegacyPaymentStrategy);
     });
 
     it('can instantiate openpay', () => {

@@ -4,13 +4,7 @@ import { getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
-import {
-    getAmazonPay,
-    getBankDeposit,
-    getBraintree,
-    getCybersource,
-    getPPSDK,
-} from './payment-methods.mock';
+import { getAmazonPay, getBankDeposit, getBraintree, getPPSDK } from './payment-methods.mock';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
@@ -43,9 +37,6 @@ describe('PaymentStrategyRegistry', () => {
     class CreditCardPaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class LegacyPaymentStrategy extends BasePaymentStrategy {}
-
-    // tslint:disable-next-line:max-classes-per-file
     class OfflinePaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
@@ -74,7 +65,6 @@ describe('PaymentStrategyRegistry', () => {
                 () => new CreditCardPaymentStrategy(store),
             );
 
-            registry.register(PaymentStrategyType.LEGACY, () => new LegacyPaymentStrategy(store));
             registry.register(PaymentStrategyType.OFFLINE, () => new OfflinePaymentStrategy(store));
             registry.register(PaymentStrategyType.PPSDK, () => new PPSDKPaymentStrategy(store));
         });
@@ -93,10 +83,6 @@ describe('PaymentStrategyRegistry', () => {
 
         it('returns offline strategy if none is registered with method name and method is offline', () => {
             expect(registry.getByMethod(getBankDeposit())).toBeInstanceOf(OfflinePaymentStrategy);
-        });
-
-        it('returns legacy strategy if none is registered with method name and client-side payment is not supported by method', () => {
-            expect(registry.getByMethod(getCybersource())).toBeInstanceOf(LegacyPaymentStrategy);
         });
     });
 });
