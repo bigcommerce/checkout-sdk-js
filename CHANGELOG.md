@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.311.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.3...v1.311.0) (2022-12-14)
+
+
+### Features
+
+* **payment:** STRIPE-165 V3 Initialize payment for vaulted cards ([#1641](https://github.com/bigcommerce/checkout-sdk-js/issues/1641)) ([1c07aad](https://github.com/bigcommerce/checkout-sdk-js/commit/1c07aadfd41ae21b265db9ee2fda400cbcb16c06))
+
 ### [1.310.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.2...v1.310.3) (2022-12-13)
 
 
