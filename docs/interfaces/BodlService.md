@@ -11,6 +11,7 @@
 - [customerEmailEntry](BodlService.md#customeremailentry)
 - [customerPaymentMethodExecuted](BodlService.md#customerpaymentmethodexecuted)
 - [customerSuggestionExecute](BodlService.md#customersuggestionexecute)
+- [customerSuggestionInit](BodlService.md#customersuggestioninit)
 - [exitCheckout](BodlService.md#exitcheckout)
 - [orderPurchased](BodlService.md#orderpurchased)
 - [paymentComplete](BodlService.md#paymentcomplete)
@@ -82,6 +83,22 @@ ___
 ### customerSuggestionExecute
 
 ▸ **customerSuggestionExecute**(): `void`
+
+#### Returns
+
+`void`
+
+___
+
+### customerSuggestionInit
+
+▸ **customerSuggestionInit**(`payload?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `payload?` | [`BodlEventsPayload`](BodlEventsPayload.md) |
 
 #### Returns
 

@@ -1469,6 +1469,7 @@ declare interface BodlService {
     orderPurchased(): void;
     stepCompleted(step?: string): void;
     customerEmailEntry(email?: string): void;
+    customerSuggestionInit(payload?: BodlEventsPayload): void;
     customerSuggestionExecute(): void;
     customerPaymentMethodExecuted(payload?: BodlEventsPayload): void;
     showShippingMethods(): void;
