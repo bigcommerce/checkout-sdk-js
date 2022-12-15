@@ -120,6 +120,10 @@ export default class BodlEmitterService implements BodlService {
         this.bodlEvents.emit('bodl_checkout_email_entry_began');
     }
 
+    customerSuggestionInit(payload?: BodlEventsPayload) {
+        this.bodlEvents.emit('bodl_checkout_customer_suggestion_initialization', payload);
+    }
+
     customerSuggestionExecute() {
         this.bodlEvents.emit('bodl_checkout_customer_suggestion_execute');
     }
