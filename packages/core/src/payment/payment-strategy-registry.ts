@@ -14,6 +14,7 @@ import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategyType from './payment-strategy-type';
 import { isPPSDKPaymentMethod } from './ppsdk-payment-method';
 import { PaymentStrategy } from './strategies';
+import StandardError from "../common/error/errors/standard-error";
 
 const checkoutcomStrategies: {
     [key: string]: PaymentStrategyType;
@@ -51,6 +52,16 @@ export default class PaymentStrategyRegistry extends Registry<
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
+        const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
+
+        if (
+            paymentMethod.id === 'squarev2' &&
+            features &&
+            features['PROJECT-4113.squarev2_web_payments_sdk']
+        ) {
+            throw new Error('SquareV2 requires using registryV2');
+        }
+
         if (isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
