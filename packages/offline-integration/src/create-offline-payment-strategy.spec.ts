@@ -1,8 +1,9 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import createOfflinePaymentStrategy from './create-offline-payment-strategy';
 import OfflinePaymentStrategy from './offline-payment-strategy';
+
+import { createOfflinePaymentStrategy } from './';
 
 describe('createOfflinePaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;

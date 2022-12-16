@@ -20,7 +20,7 @@ describe('OfflinePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        it('calls submit order with the right data', async () => {
+        it('calls submit order with payment data', async () => {
             await strategy.execute(getOrderRequestBody(), undefined);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
@@ -29,6 +29,18 @@ describe('OfflinePaymentStrategy', () => {
                     payment: {
                         methodId: 'authorizenet',
                     },
+                },
+                undefined,
+            );
+        });
+
+        it('calls submit order without payment data if no payment data provided', async () => {
+            await strategy.execute({ ...getOrderRequestBody(), payment: undefined }, undefined);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                {
+                    ...getOrderRequestBody(),
+                    payment: undefined,
                 },
                 undefined,
             );
