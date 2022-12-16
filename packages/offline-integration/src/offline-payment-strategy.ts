@@ -1,5 +1,3 @@
-import { omit } from 'lodash';
-
 import {
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
@@ -12,7 +10,13 @@ export default class OfflinePaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
-        await this._paymentIntegrationService.submitOrder(omit(payload, 'payment'), options);
+        await this._paymentIntegrationService.submitOrder(
+            {
+                ...payload,
+                payment: payload.payment ? { methodId: payload.payment.methodId } : undefined,
+            },
+            options,
+        );
 
         return Promise.resolve();
     }
