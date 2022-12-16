@@ -1,5 +1,3 @@
-import { omit } from 'lodash';
-
 import {
     OrderFinalizationNotRequiredError,
     PaymentIntegrationService,
@@ -22,11 +20,28 @@ describe('OfflinePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        it('calls submit order with the right data', async () => {
+        it('calls submit order with payment data', async () => {
             await strategy.execute(getOrderRequestBody(), undefined);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
-                omit(getOrderRequestBody(), 'payment'),
+                {
+                    ...getOrderRequestBody(),
+                    payment: {
+                        methodId: 'authorizenet',
+                    },
+                },
+                undefined,
+            );
+        });
+
+        it('calls submit order without payment data if no payment data provided', async () => {
+            await strategy.execute({ ...getOrderRequestBody(), payment: undefined }, undefined);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                {
+                    ...getOrderRequestBody(),
+                    payment: undefined,
+                },
                 undefined,
             );
         });
@@ -37,7 +52,12 @@ describe('OfflinePaymentStrategy', () => {
             await strategy.execute(getOrderRequestBody(), options);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
-                omit(getOrderRequestBody(), 'payment'),
+                {
+                    ...getOrderRequestBody(),
+                    payment: {
+                        methodId: 'authorizenet',
+                    },
+                },
                 options,
             );
         });
