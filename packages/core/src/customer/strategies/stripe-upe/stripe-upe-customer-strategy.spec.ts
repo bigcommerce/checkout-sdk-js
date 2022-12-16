@@ -31,6 +31,11 @@ import {
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
 import { getQuote } from '../../../quote/internal-quotes.mock';
+import {
+    ConsignmentActionCreator,
+    ConsignmentActionType,
+    ConsignmentRequestSender,
+} from '../../../shipping';
 import { getConsignment } from '../../../shipping/consignments.mock';
 import {
     GoogleRecaptcha,
@@ -45,7 +50,6 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerRequestSender from '../../customer-request-sender';
 import { getCustomer, getGuestCustomer } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
-import { ConsignmentActionCreator, ConsignmentActionType, ConsignmentRequestSender } from '../../../shipping';
 
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import {
@@ -210,7 +214,10 @@ describe('StripeUpeCustomerStrategy', () => {
                 store.getState(),
             );
 
-            expect(consignmentActionCreator.deleteConsignment).toHaveBeenNthCalledWith(1, getConsignment().id);
+            expect(consignmentActionCreator.deleteConsignment).toHaveBeenNthCalledWith(
+                1,
+                getConsignment().id,
+            );
             expect(store.dispatch).toHaveBeenNthCalledWith(2, expectedAction);
             expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(
                 true,
@@ -243,9 +250,10 @@ describe('StripeUpeCustomerStrategy', () => {
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
                 stripeUPEJsMockWithElement,
             );
-            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
-                {...getGuestCustomer, isStripeLinkAuthenticated: true},
-            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
+                ...getGuestCustomer,
+                isStripeLinkAuthenticated: true,
+            });
 
             await expect(strategy.initialize(customerInitialization)).resolves.toEqual(
                 store.getState(),

@@ -15,6 +15,7 @@ import {
     StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
+import { ConsignmentActionCreator } from '../../../shipping';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
@@ -24,7 +25,6 @@ import {
     ExecutePaymentMethodCheckoutOptions,
 } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
-import { ConsignmentActionCreator } from '../../../shipping';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
@@ -112,10 +112,11 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             const {
-                billingAddress: { getBillingAddress }, consignments: { getConsignmentsOrThrow },
+                billingAddress: { getBillingAddress },
+                consignments: { getConsignmentsOrThrow },
             } = this._store.getState();
             const { id } = getConsignmentsOrThrow()[0] || '';
-            const { email: billingEmail }  = getBillingAddress() || {};
+            const { email: billingEmail } = getBillingAddress() || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement =
                 this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
@@ -136,10 +137,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 if (isLoading) {
                     isLoading(false);
                 }
+
                 if (isStripeLinkAuthenticated === undefined && event.authenticated && id) {
-                    this._store.dispatch(
-                        this._consignmentActionCreator.deleteConsignment(id)
-                    );
+                    this._store.dispatch(this._consignmentActionCreator.deleteConsignment(id));
                 }
             });
 

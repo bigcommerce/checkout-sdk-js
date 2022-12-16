@@ -358,7 +358,7 @@ export default function createCustomerStrategyRegistry(
                 paymentMethodActionCreator,
                 new ConsignmentActionCreator(
                     new ConsignmentRequestSender(requestSender),
-                    new CheckoutRequestSender(requestSender)
+                    new CheckoutRequestSender(requestSender),
                 ),
             ),
     );
