@@ -1,12 +1,28 @@
 import { createAction } from '@bigcommerce/data-store';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { StripeElements, StripeElementType, StripeScriptLoader, StripeUPEClient, StripeEventType, StripeUPEAppearanceOptions } from '../../../payment/strategies/stripe-upe';
+import {
+    StripeElements,
+    StripeElementType,
+    StripeEventType,
+    StripeScriptLoader,
+    StripeUPEAppearanceOptions,
+    StripeUPEClient,
+} from '../../../payment/strategies/stripe-upe';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import {
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    ExecutePaymentMethodCheckoutOptions,
+} from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
@@ -16,30 +32,40 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         private _store: CheckoutStore,
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         let stripeUPEClient: StripeUPEClient;
+
         if (!options.stripeupe) {
-            throw new InvalidArgumentError(`Unable to proceed because "options" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to proceed because "options" argument is not provided.`,
+            );
         }
 
-        const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } = options.stripeupe;
+        const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } =
+            options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
             if (!value) {
-                throw new InvalidArgumentError(`Unable to proceed because "${key}" argument is not provided.`);
+                throw new InvalidArgumentError(
+                    `Unable to proceed because "${key}" argument is not provided.`,
+                );
             }
         });
 
         const {
-            paymentMethods: { getPaymentMethodOrThrow }, customer: { getCustomerOrThrow },
+            paymentMethods: { getPaymentMethodOrThrow },
+            customer: { getCustomerOrThrow },
         } = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, { params: { method: methodId } })
+            this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
+                params: { method: methodId },
+            }),
         );
         const {
-            clientToken, initializationData: { stripePublishableKey, stripeConnectedAccount } = {}
+            clientToken,
+            initializationData: { stripePublishableKey, stripeConnectedAccount } = {},
         } = getPaymentMethodOrThrow(methodId, gatewayId);
         const { email } = getCustomerOrThrow();
 
@@ -67,13 +93,16 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                             color: styles.fieldText,
                             boxShadow: styles.fieldInnerShadow,
                         },
-                    }
+                    },
                 };
             } else {
-                appearance = {}
+                appearance = {};
             }
 
-            stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(stripePublishableKey, stripeConnectedAccount);
+            stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
+                stripePublishableKey,
+                stripeConnectedAccount,
+            );
 
             this._stripeElements = this._stripeUPEScriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
@@ -81,17 +110,23 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
 
             const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-            const { email: billingEmail }  = billingAddress || {};
+            const { email: billingEmail } = billingAddress || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
-            const linkAuthenticationElement = this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
+            const linkAuthenticationElement =
+                this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);
 
             linkAuthenticationElement.on('change', (event: StripeEventType) => {
                 if (!('authenticated' in event)) {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
-                this._store.dispatch(createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated));
-                event.complete ? onEmailChange(event.authenticated, event.value.email) : onEmailChange(false, '');
+
+                this._store.dispatch(
+                    createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated),
+                );
+                event.complete
+                    ? onEmailChange(event.authenticated, event.value.email)
+                    : onEmailChange(false, '');
 
                 if (isLoading) {
                     isLoading(false);
@@ -110,19 +145,22 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(
+        credentials: CustomerCredentials,
+        options?: CustomerRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._customerActionCreator.signInCustomer(credentials, options)
+            this._customerActionCreator.signInCustomer(credentials, options),
         );
     }
 
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerActionCreator.signOutCustomer(options)
-        );
+        return this._store.dispatch(this._customerActionCreator.signOutCustomer(options));
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<InternalCheckoutSelectors> {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());

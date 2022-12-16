@@ -15,18 +15,21 @@ export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
         orderActionCreator: OrderActionCreator,
         paymentActionCreator: PaymentActionCreator,
         hostedFormFactory: HostedFormFactory,
-        private _wepayRiskClient: WepayRiskClient
+        private _wepayRiskClient: WepayRiskClient,
     ) {
         super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        this._wepayRiskClient.initialize();
+        void this._wepayRiskClient.initialize();
 
         return super.initialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const token = this._wepayRiskClient.getRiskToken();
         const payloadWithToken = merge({}, payload, {
             payment: {

@@ -14,19 +14,17 @@ export enum CouponActionType {
     RemoveCouponFailed = 'REMOVE_COUPON_FAILED',
 }
 
-export type CouponAction =
-    ApplyCouponAction |
-    RemoveCouponAction;
+export type CouponAction = ApplyCouponAction | RemoveCouponAction;
 
 export type ApplyCouponAction =
-    ApplyCouponRequestedAction |
-    ApplyCouponSucceededAction |
-    ApplyCouponFailedAction;
+    | ApplyCouponRequestedAction
+    | ApplyCouponSucceededAction
+    | ApplyCouponFailedAction;
 
 export type RemoveCouponAction =
-    RemoveCouponRequestedAction |
-    RemoveCouponSucceededAction |
-    RemoveCouponFailedAction;
+    | RemoveCouponRequestedAction
+    | RemoveCouponSucceededAction
+    | RemoveCouponFailedAction;
 
 export interface ApplyCouponRequestedAction extends Action {
     type: CouponActionType.ApplyCouponRequested;

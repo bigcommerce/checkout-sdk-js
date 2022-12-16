@@ -1,8 +1,8 @@
-import ResolvableModule from "./resolvable-module";
+import ResolvableModule from './resolvable-module';
 
 export default function toResolvableModule<TModule, TIdentifier>(
     module: TModule,
-    resolveIds: TIdentifier[]
+    resolveIds: TIdentifier[],
 ): ResolvableModule<TModule, TIdentifier> {
     return Object.assign(module, { resolveIds });
 }

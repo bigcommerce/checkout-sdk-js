@@ -16,11 +16,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if initializing shipping', () => {
-        const action = createAction(
-            ShippingStrategyActionType.InitializeRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.InitializeRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             initializeMethodId: 'foobar',
@@ -29,11 +27,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if shipping has initialized successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.InitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.InitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             initializeMethodId: undefined,
@@ -42,11 +38,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns initialization flag as true if customer has initialized successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.InitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.InitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).data).toEqual({
             foobar: { isInitialized: true },
@@ -54,11 +48,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns error if shipping has failed to initialize', () => {
-        const action = createErrorAction(
-            ShippingStrategyActionType.InitializeFailed,
-            new Error(),
-            { methodId: 'foobar' }
-        );
+        const action = createErrorAction(ShippingStrategyActionType.InitializeFailed, new Error(), {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).errors).toEqual({
             initializeMethodId: 'foobar',
@@ -71,11 +63,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if deinitializing shipping', () => {
-        const action = createAction(
-            ShippingStrategyActionType.DeinitializeRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.DeinitializeRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             deinitializeMethodId: 'foobar',
@@ -84,11 +74,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if shipping has deinitialized successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.DeinitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.DeinitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             deinitializeMethodId: undefined,
@@ -97,11 +85,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns initialization flag as false if customer has deinitialized successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.DeinitializeSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.DeinitializeSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).data).toEqual({
             foobar: { isInitialized: false },
@@ -112,7 +98,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createErrorAction(
             ShippingStrategyActionType.DeinitializeFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).errors).toEqual({
@@ -126,11 +112,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if updating shipping address', () => {
-        const action = createAction(
-            ShippingStrategyActionType.UpdateAddressRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             updateAddressMethodId: 'foobar',
@@ -139,11 +123,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if shipping has updated address successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.UpdateAddressSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             updateAddressMethodId: undefined,
@@ -159,7 +141,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createErrorAction(
             ShippingStrategyActionType.UpdateAddressFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).errors).toEqual({
@@ -169,11 +151,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as true if selecting shipping option', () => {
-        const action = createAction(
-            ShippingStrategyActionType.SelectOptionRequested,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.SelectOptionRequested, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             selectOptionMethodId: 'foobar',
@@ -182,11 +162,9 @@ describe('shippingStrategyReducer()', () => {
     });
 
     it('returns pending flag as false if shipping has selected shipping option successfully', () => {
-        const action = createAction(
-            ShippingStrategyActionType.SelectOptionSucceeded,
-            undefined,
-            { methodId: 'foobar' }
-        );
+        const action = createAction(ShippingStrategyActionType.SelectOptionSucceeded, undefined, {
+            methodId: 'foobar',
+        });
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             selectOptionMethodId: undefined,
@@ -198,7 +176,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createErrorAction(
             ShippingStrategyActionType.SelectOptionFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).errors).toEqual({
@@ -215,7 +193,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createAction(
             ShippingStrategyActionType.WidgetInteractionStarted,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
@@ -228,7 +206,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createAction(
             ShippingStrategyActionType.WidgetInteractionFinished,
             undefined,
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
@@ -241,7 +219,7 @@ describe('shippingStrategyReducer()', () => {
         const action = createErrorAction(
             ShippingStrategyActionType.WidgetInteractionFailed,
             new Error(),
-            { methodId: 'foobar' }
+            { methodId: 'foobar' },
         );
 
         expect(shippingStrategyReducer(initialState, action).errors).toEqual({

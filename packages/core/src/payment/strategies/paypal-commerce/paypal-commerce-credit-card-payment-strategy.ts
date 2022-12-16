@@ -1,5 +1,9 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -8,7 +12,11 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { PaypalCommerceCreditCardPaymentInitializeOptions, PaypalCommerceHostedForm, PaypalCommercePaymentInitializeOptions } from './index';
+import {
+    PaypalCommerceCreditCardPaymentInitializeOptions,
+    PaypalCommerceHostedForm,
+    PaypalCommercePaymentInitializeOptions,
+} from './index';
 
 export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentStrategy {
     constructor(
@@ -16,15 +24,22 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paypalCommerceHostedForm: PaypalCommerceHostedForm,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {}
 
-    async initialize({ methodId, paypalcommerce }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize({
+        methodId,
+        paypalcommerce,
+    }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (!paypalcommerce || !this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
-            throw new InvalidArgumentError('Unable to proceed because "options.paypalcommerce.form" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.paypalcommerce.form" argument is not provided.',
+            );
         }
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+        );
         const cart = state.cart.getCartOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
@@ -37,7 +52,10 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         return this._store.getState();
     }
 
-    async execute(payload: OrderRequestBody, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -46,12 +64,18 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
 
         this._paypalCommerceHostedForm.validate();
 
-        const { paymentMethods: { getPaymentMethodOrThrow } } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId));
-        const { orderId } = await this._paypalCommerceHostedForm.submit(getPaymentMethodOrThrow(payment.methodId).config.is3dsEnabled);
+        const {
+            paymentMethods: { getPaymentMethodOrThrow },
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId),
+        );
+        const { orderId } = await this._paypalCommerceHostedForm.submit(
+            getPaymentMethodOrThrow(payment.methodId).config.is3dsEnabled,
+        );
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-        const paymentData =  {
+        const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
@@ -62,7 +86,9 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             },
         };
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
+        return this._store.dispatch(
+            this._paymentActionCreator.submitPayment({ ...payment, paymentData }),
+        );
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {
@@ -75,7 +101,11 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         return Promise.resolve(this._store.getState());
     }
 
-    private _isPaypalCommerceOptionsPayments(options: PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions): options is PaypalCommerceCreditCardPaymentInitializeOptions {
+    private _isPaypalCommerceOptionsPayments(
+        options:
+            | PaypalCommercePaymentInitializeOptions
+            | PaypalCommerceCreditCardPaymentInitializeOptions,
+    ): options is PaypalCommerceCreditCardPaymentInitializeOptions {
         return !!(options as PaypalCommerceCreditCardPaymentInitializeOptions).form;
     }
 }

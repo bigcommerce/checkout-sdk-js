@@ -1,4 +1,5 @@
 import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay';
+
 export default interface GooglePayCustomerInitializeOptions {
     /**
      * This container is used to set an event listener, provide an element ID if you want
@@ -12,13 +13,13 @@ export default interface GooglePayCustomerInitializeOptions {
      *  black (default): a black button suitable for use on white or light backgrounds.
      *  white: a white button suitable for use on colorful backgrounds.
      */
-     buttonColor?: ButtonColor;
+    buttonColor?: ButtonColor;
 
-     /**
-      * The size of the GooglePay button that will be inserted.
-      *  long: "Buy with Google Pay" button (default). A translated button label may appear
-      *         if a language specified in the viewer's browser matches an available language.
-      *  short: Google Pay payment button without the "Buy with" text.
-      */
-     buttonType?: ButtonType;
+    /**
+     * The size of the GooglePay button that will be inserted.
+     *  long: "Buy with Google Pay" button (default). A translated button label may appear
+     *         if a language specified in the viewer's browser matches an available language.
+     *  short: Google Pay payment button without the "Buy with" text.
+     */
+    buttonType?: ButtonType;
 }

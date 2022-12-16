@@ -2,14 +2,31 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { PaymentActionCreator } from '../..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import { getCart } from '../../../cart/carts.mock';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+    InternalCheckoutSelectors,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { HostedForm, HostedFormFactory } from '../../../hosted-form';
-import { FinalizeOrderAction, LoadOrderSucceededAction, OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import {
+    FinalizeOrderAction,
+    LoadOrderSucceededAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+} from '../../../order';
 import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -19,11 +36,20 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
-import {  MollieClient, MollieElement, MollieHostWindow } from './mollie';
+import { MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
 import MollieScriptLoader from './mollie-script-loader';
-import { getHostedFormInitializeOptions, getInitializeOptions, getMollieClient, getOrderRequestBodyAPMs, getOrderRequestBodyVaultedCC, getOrderRequestBodyVaultAPMs, getOrderRequestBodyVaultCC, getOrderRequestBodyWithoutPayment, getOrderRequestBodyWithCreditCard } from './mollie.mock';
-import { getCart } from "../../../cart/carts.mock";
+import {
+    getHostedFormInitializeOptions,
+    getInitializeOptions,
+    getMollieClient,
+    getOrderRequestBodyAPMs,
+    getOrderRequestBodyVaultAPMs,
+    getOrderRequestBodyVaultCC,
+    getOrderRequestBodyVaultedCC,
+    getOrderRequestBodyWithCreditCard,
+    getOrderRequestBodyWithoutPayment,
+} from './mollie.mock';
 
 describe('MolliePaymentStrategy', () => {
     let orderRequestSender: OrderRequestSender;
@@ -46,19 +72,21 @@ describe('MolliePaymentStrategy', () => {
             unmount: jest.fn(),
             addEventListener: jest.fn(),
         };
+
         const scriptLoader = createScriptLoader();
         const requestSender = createRequestSender();
+
         mockWindow = {} as MollieHostWindow;
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         mollieScriptLoader = new MollieScriptLoader(scriptLoader, mockWindow);
@@ -72,20 +100,15 @@ describe('MolliePaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(mollieScriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(mollieClient));
+        jest.spyOn(mollieScriptLoader, 'load').mockReturnValue(Promise.resolve(mollieClient));
 
-        jest.spyOn(mollieClient, 'createComponent')
-            .mockReturnValue(mollieElement);
+        jest.spyOn(mollieClient, 'createComponent').mockReturnValue(mollieElement);
         jest.spyOn(document, 'querySelectorAll');
 
         formFactory = new HostedFormFactory(store);
@@ -94,7 +117,7 @@ describe('MolliePaymentStrategy', () => {
             store,
             mollieScriptLoader,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
         );
     });
 
@@ -104,11 +127,13 @@ describe('MolliePaymentStrategy', () => {
         beforeEach(() => {
             options = getInitializeOptions();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getMollie());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                getMollie(),
+            );
 
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue({ storeProfile: { storeLanguage:  'en_US' } });
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                storeProfile: { storeLanguage: 'en_US' },
+            });
         });
 
         afterEach(() => {
@@ -118,6 +143,7 @@ describe('MolliePaymentStrategy', () => {
         describe('Initialize', () => {
             it('does not load Mollie if initialization options are not provided', () => {
                 options.mollie = undefined;
+
                 const response = strategy.initialize(options);
 
                 return expect(response).rejects.toThrow(InvalidArgumentError);
@@ -126,24 +152,31 @@ describe('MolliePaymentStrategy', () => {
             it('does initialize mollie and create 4 components', async () => {
                 await strategy.initialize(options);
 
-                expect(mollieScriptLoader.load).toBeCalledWith('test_T0k3n', 'en_US', true);
+                expect(mollieScriptLoader.load).toHaveBeenCalledWith('test_T0k3n', 'en_US', true);
+
                 jest.runAllTimers();
-                expect(mollieClient.createComponent).toBeCalledTimes(4);
-                expect(mollieElement.mount).toBeCalledTimes(4);
-                expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-components-controller');
+
+                expect(mollieClient.createComponent).toHaveBeenCalledTimes(4);
+                expect(mollieElement.mount).toHaveBeenCalledTimes(4);
+                expect(document.querySelectorAll).toHaveBeenNthCalledWith(
+                    1,
+                    '.mollie-components-controller',
+                );
             });
 
             it('does initialize without containerId', async () => {
                 delete options.mollie?.containerId;
                 await strategy.initialize(options);
 
-                expect(mollieScriptLoader.load).toBeCalledWith('test_T0k3n', 'en_US', true);
+                expect(mollieScriptLoader.load).toHaveBeenCalledWith('test_T0k3n', 'en_US', true);
+
                 jest.runAllTimers();
-                expect(mollieClient.createComponent).toBeCalledTimes(4);
-                expect(mollieElement.mount).toBeCalledTimes(4);
+
+                expect(mollieClient.createComponent).toHaveBeenCalledTimes(4);
+                expect(mollieElement.mount).toHaveBeenCalledTimes(4);
             });
 
-            it('does render a message when the cart contain digital items',  async () => {
+            it('does render a message when the cart contain digital items', async () => {
                 const disableButtonMock = jest.fn();
                 const optionsMock = {
                     ...getInitializeOptions(),
@@ -154,33 +187,34 @@ describe('MolliePaymentStrategy', () => {
                         cardExpiryId: 'mollie-card-expiry-component-field',
                         cardHolderId: 'mollie-card-holder-component-field',
                         cardNumberId: 'mollie-card-number-component-field',
-                        styles: {valid: '#0f0'},
+                        styles: { valid: '#0f0' },
                         unsupportedMethodMessage: 'This payment method is not supported',
                         disableButton: disableButtonMock,
-                    }
-                }
+                    },
+                };
 
                 const cartMock = getCart();
                 const container = {
                     appendChild: jest.fn(),
-                }
+                };
                 const paragraph = {
                     innerText: '',
                     setAttribute: jest.fn(),
-                }
+                };
 
                 const mollieMethod = {
                     ...getMollie(),
                     config: {
                         ...getMollie().config,
-                        isHostedFormEnabled : false,
-                    }
-                }
+                        isHostedFormEnabled: false,
+                    },
+                };
 
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue( mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow')
-                    .mockReturnValue(cartMock);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(mollieMethod);
+                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
                 jest.spyOn(document, 'createElement').mockReturnValue(paragraph);
                 jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
@@ -194,7 +228,7 @@ describe('MolliePaymentStrategy', () => {
                 expect(disableButtonMock).toHaveBeenCalledWith(true);
             });
 
-            it('does not display a message when the cart contains no digital items',  async () => {
+            it('does not display a message when the cart contains no digital items', async () => {
                 const disableButtonMock = jest.fn();
 
                 const optionsMock = {
@@ -206,35 +240,37 @@ describe('MolliePaymentStrategy', () => {
                         cardExpiryId: 'mollie-card-expiry-component-field',
                         cardHolderId: 'mollie-card-holder-component-field',
                         cardNumberId: 'mollie-card-number-component-field',
-                        styles: {valid: '#0f0'},
+                        styles: { valid: '#0f0' },
                         unsupportedMethodMessage: 'This payment method is not supported',
                         disableButton: disableButtonMock,
-                    }
-                }
+                    },
+                };
 
                 const cartMock = {
                     ...getCart(),
                     lineItems: {
                         ...getCart().lineItems,
-                        digitalItems: []
-                    }
-                }
+                        digitalItems: [],
+                    },
+                };
 
                 const mollieMethod = {
                     ...getMollie(),
                     config: {
                         ...getMollie().config,
-                        isHostedFormEnabled : false,
-                    }
-                }
+                        isHostedFormEnabled: false,
+                    },
+                };
 
                 const paragraph = {
                     innerText: '',
                     setAttribute: jest.fn(),
-                }
+                };
 
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(mollieMethod);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(mollieMethod);
                 jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
@@ -248,7 +284,7 @@ describe('MolliePaymentStrategy', () => {
                 expect(disableButtonMock).not.toHaveBeenCalled();
             });
 
-            it('throws MissingDataError when the state.cart is not available',  async () => {
+            it('throws MissingDataError when the state.cart is not available', async () => {
                 const disableButtonMock = jest.fn();
 
                 const optionsMock = {
@@ -260,37 +296,38 @@ describe('MolliePaymentStrategy', () => {
                         cardExpiryId: 'mollie-card-expiry-component-field',
                         cardHolderId: 'mollie-card-holder-component-field',
                         cardNumberId: 'mollie-card-number-component-field',
-                        styles: {valid: '#0f0'},
+                        styles: { valid: '#0f0' },
                         unsupportedMethodMessage: 'This payment method is not supported',
                         disableButton: disableButtonMock,
-                    }
-                }
+                    },
+                };
 
                 const mollieMethod = {
                     ...getMollie(),
                     config: {
                         ...getMollie().config,
                         isHostedFormEnabled: false,
-                    }
-                }
+                    },
+                };
 
                 const rejection = new MissingDataError(MissingDataErrorType.MissingCart);
 
                 const paragraph = {
                     innerText: '',
                     setAttribute: jest.fn(),
-                }
+                };
 
-                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                    .mockReturnValue(mollieMethod);
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(mollieMethod);
                 jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(rejection);
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
+                const response = strategy.initialize(optionsMock);
 
-                const response = strategy.initialize(optionsMock)
-
-                expect(response).rejects.toThrowError(rejection);
+                expect(response).rejects.toThrow(rejection);
                 expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
@@ -310,23 +347,27 @@ describe('MolliePaymentStrategy', () => {
                         cardExpiryId: 'mollie-card-expiry-component-field',
                         cardHolderId: 'mollie-card-holder-component-field',
                         cardNumberId: 'mollie-card-number-component-field',
-                        styles: {valid: '#0f0'},
+                        styles: { valid: '#0f0' },
                         unsupportedMethodMessage: 'This payment method is not supported',
                         disableButton: disableButtonMock,
-                    }
-                }
+                    },
+                };
 
                 const container = {
                     remove: jest.fn(),
                     appendChild: jest.fn(),
-                }
+                };
 
-                jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+                jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(
+                    true,
+                );
                 jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
                 await strategy.initialize(optionsMock);
 
-                expect(document.getElementById).toHaveBeenCalledWith(`${optionsMock.gatewayId}-${optionsMock.methodId}-paragraph`);
+                expect(document.getElementById).toHaveBeenCalledWith(
+                    `${optionsMock.gatewayId}-${optionsMock.methodId}-paragraph`,
+                );
                 expect(container.remove).toHaveBeenCalled();
                 expect(disableButtonMock).toHaveBeenCalledWith(false);
             });
@@ -334,8 +375,7 @@ describe('MolliePaymentStrategy', () => {
 
         describe('#execute', () => {
             beforeEach(() => {
-                jest.spyOn(mollieClient, 'createToken')
-                    .mockResolvedValue({token : 'tkn_test'});
+                jest.spyOn(mollieClient, 'createToken').mockResolvedValue({ token: 'tkn_test' });
             });
 
             it('throws an error when payment is not present', async () => {
@@ -351,8 +391,8 @@ describe('MolliePaymentStrategy', () => {
                 jest.runAllTimers();
                 await strategy.execute(getOrderRequestBodyWithCreditCard());
 
-                expect(mollieClient.createToken).toBeCalled();
-                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                expect(mollieClient.createToken).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'credit_card',
                     paymentData: {
@@ -365,7 +405,7 @@ describe('MolliePaymentStrategy', () => {
                                 screen_width: 0,
                                 time_zone_offset: new Date().getTimezoneOffset().toString(),
                             },
-                            credit_card_token : {
+                            credit_card_token: {
                                 token: 'tkn_test',
                             },
                             shopper_locale: 'en-US',
@@ -377,9 +417,12 @@ describe('MolliePaymentStrategy', () => {
             it('should call submitPayment when saving vaulted', async () => {
                 await strategy.initialize(options);
                 jest.runAllTimers();
+
                 const { payment } = getOrderRequestBodyVaultCC();
+
                 await strategy.execute({ payment });
-                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'credit_card',
                     paymentData: {
@@ -392,7 +435,7 @@ describe('MolliePaymentStrategy', () => {
                                 screen_width: 0,
                                 time_zone_offset: new Date().getTimezoneOffset().toString(),
                             },
-                            credit_card_token : {
+                            credit_card_token: {
                                 token: 'tkn_test',
                             },
                             set_as_default_stored_instrument: true,
@@ -407,7 +450,7 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyAPMs());
 
-                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
                     paymentData: {
@@ -425,7 +468,7 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyVaultAPMs());
 
-                expect(paymentActionCreator.submitPayment).toBeCalledWith({
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
                     paymentData: {
@@ -458,31 +501,32 @@ describe('MolliePaymentStrategy', () => {
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
             state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getMollie());
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                getMollie(),
+            );
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder')
-                .mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
-            jest.spyOn(formFactory, 'create')
-                .mockReturnValue(form);
+            jest.spyOn(formFactory, 'create').mockReturnValue(form);
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
         });
 
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create)
-                .toHaveBeenCalledWith(
-                    'https://bigpay.integration.zone',
-                    initializeOptions.mollie?.form
-                );
+            expect(formFactory.create).toHaveBeenCalledWith(
+                'https://bigpay.integration.zone',
+                initializeOptions.mollie?.form,
+            );
         });
 
         it('attaches hosted form to container', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(form.attach)
-                .toHaveBeenCalled();
+            expect(form.attach).toHaveBeenCalled();
         });
 
         it('submits payment data with hosted form', async () => {
@@ -491,28 +535,24 @@ describe('MolliePaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(form.submit)
-                .toHaveBeenCalledWith(payload.payment);
+            expect(form.submit).toHaveBeenCalledWith(payload.payment);
         });
 
         it('validates user input before submitting data', async () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(getOrderRequestBodyVaultedCC());
 
-            expect(form.validate)
-                .toHaveBeenCalled();
+            expect(form.validate).toHaveBeenCalled();
         });
 
         it('does not submit payment data with hosted form if validation fails', async () => {
-            jest.spyOn(form, 'validate')
-                .mockRejectedValue(new Error());
+            jest.spyOn(form, 'validate').mockRejectedValue(new Error());
 
             try {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBodyVaultedCC());
             } catch (error) {
-                expect(form.submit)
-                    .not.toHaveBeenCalled();
+                expect(form.submit).not.toHaveBeenCalled();
             }
         });
 
@@ -520,14 +560,34 @@ describe('MolliePaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.deinitialize();
 
-            expect(form.detach)
-                .toHaveBeenCalled();
+            expect(form.detach).toHaveBeenCalled();
+        });
+
+        it('should unmount the elements of the card when adding a new one', async () => {
+            const options = getInitializeOptions();
+
+            await strategy.initialize(initializeOptions);
+            await strategy.deinitialize();
+
+            expect(form.detach).toHaveBeenCalled();
+
+            await strategy.initialize(options);
+
+            jest.runAllTimers();
+            expect(mollieClient.createComponent).toBeCalledTimes(4);
+            expect(mollieElement.mount).toBeCalledTimes(4);
+            jest.spyOn(document, 'getElementById');
+
+            await strategy.deinitialize(initializeOptions);
+
+            expect(mollieElement.unmount).toBeCalledTimes(4);
         });
     });
 
     describe('#finalize()', () => {
         it('finalize mollie', () => {
             const promise = strategy.finalize();
+
             expect(promise).resolves.toBe(store.getState());
         });
     });
@@ -539,24 +599,35 @@ describe('MolliePaymentStrategy', () => {
         beforeEach(() => {
             options = getInitializeOptions();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue(getMollie());
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                getMollie(),
+            );
 
-            jest.spyOn(store.getState().config, 'getStoreConfig')
-                .mockReturnValue({ storeProfile: { storeLanguage:  'en_US' } });
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                storeProfile: { storeLanguage: 'en_US' },
+            });
         });
 
         it('deinitialize mollie payment strategy', async () => {
             await strategy.initialize(options);
 
             jest.runAllTimers();
-            expect(mollieClient.createComponent).toBeCalledTimes(4);
-            expect(mollieElement.mount).toBeCalledTimes(4);
+
+            expect(mollieClient.createComponent).toHaveBeenCalledTimes(4);
+            expect(mollieElement.mount).toHaveBeenCalledTimes(4);
+
             jest.spyOn(document, 'getElementById');
+
             const promise = strategy.deinitialize(initializeOptions);
 
-            expect(document.getElementById).toHaveBeenNthCalledWith(1, `${options.gatewayId}-${options.methodId}`);
-            expect(document.querySelectorAll).toHaveBeenNthCalledWith(1, '.mollie-components-controller');
+            expect(document.getElementById).toHaveBeenNthCalledWith(
+                1,
+                `${options.gatewayId}-${options.methodId}`,
+            );
+            expect(document.querySelectorAll).toHaveBeenNthCalledWith(
+                1,
+                '.mollie-components-controller',
+            );
 
             return expect(promise).resolves.toBe(store.getState());
         });

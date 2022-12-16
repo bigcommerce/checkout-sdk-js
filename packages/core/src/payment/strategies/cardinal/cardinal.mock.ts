@@ -3,7 +3,16 @@ import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { ThreeDsResult } from '../../payment-response-body';
 import { getCreditCardInstrument } from '../../payments.mock';
 
-import { CardinalBinProcessResponse, CardinalOrderData, CardinalPaymentType, CardinalSignatureVerification, CardinalSDK, CardinalValidatedAction, CardinalValidatedData, CardinalWindow } from '.';
+import {
+    CardinalBinProcessResponse,
+    CardinalOrderData,
+    CardinalPaymentType,
+    CardinalSDK,
+    CardinalSignatureVerification,
+    CardinalValidatedAction,
+    CardinalValidatedData,
+    CardinalWindow,
+} from '.';
 
 const CardinalWindowMock: CardinalWindow = window;
 
@@ -32,11 +41,15 @@ export function getCardinalBinProcessResponse(status: boolean): CardinalBinProce
     };
 }
 
-export function getCardinalValidatedData(actionCode: CardinalValidatedAction, status: boolean, errorNumber?: number): CardinalValidatedData {
+export function getCardinalValidatedData(
+    actionCode: CardinalValidatedAction,
+    status: boolean,
+    errorNumber?: number,
+): CardinalValidatedData {
     return {
         ActionCode: actionCode,
         ErrorDescription: '',
-        ErrorNumber: errorNumber ? errorNumber : 0,
+        ErrorNumber: errorNumber || 0,
         Validated: status,
         Payment: {
             ExtendedData: {
@@ -59,6 +72,7 @@ export function getCardinalThreeDSResult(): ThreeDsResult {
 
 export function getCardinalOrderData(): CardinalOrderData {
     const billingAddress = getBillingAddress();
+
     billingAddress.address2 = 'Address 2';
 
     return {

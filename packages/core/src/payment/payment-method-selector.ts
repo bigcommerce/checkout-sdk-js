@@ -13,7 +13,7 @@ export default interface PaymentMethodSelector {
     getPaymentMethods(): PaymentMethod[] | undefined;
     getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
-    getPaymentMethodOrThrow(methodId: string, gatewayId ?: string): PaymentMethod;
+    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
     getLoadError(): Error | undefined;
     getLoadMethodError(methodId?: string): Error | undefined;
     isLoading(): boolean;
@@ -25,33 +25,36 @@ export type PaymentMethodSelectorFactory = (state: PaymentMethodState) => Paymen
 export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFactory {
     const getPaymentMethods = createSelector(
         (state: PaymentMethodState) => state.data,
-        paymentMethods => () => paymentMethods
+        (paymentMethods) => () => paymentMethods,
     );
 
     const getPaymentMethodsMeta = createSelector(
         (state: PaymentMethodState) => state.meta,
-        meta => () => meta
+        (meta) => () => meta,
     );
 
     const getPaymentMethod = createSelector(
         (state: PaymentMethodState) => state.data,
-        paymentMethods => (methodId: string, gatewayId?: string) => {
-            return gatewayId ?
-                find(paymentMethods, { id: methodId, gateway: gatewayId }) :
-                find(paymentMethods, { id: methodId });
-        }
+        (paymentMethods) => (methodId: string, gatewayId?: string) => {
+            return gatewayId
+                ? find(paymentMethods, { id: methodId, gateway: gatewayId })
+                : find(paymentMethods, { id: methodId });
+        },
     );
 
     const getPaymentMethodOrThrow = createSelector(
         getPaymentMethod,
-        getPaymentMethod => (methodId: string, gatewayId?: string) => {
-            return guard(getPaymentMethod(methodId, gatewayId), () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
-        }
+        (getPaymentMethod) => (methodId: string, gatewayId?: string) => {
+            return guard(
+                getPaymentMethod(methodId, gatewayId),
+                () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod),
+            );
+        },
     );
 
     const getLoadError = createSelector(
         (state: PaymentMethodState) => state.errors.loadError,
-        loadError => () => loadError
+        (loadError) => () => loadError,
     );
 
     const getLoadMethodError = createSelector(
@@ -63,12 +66,12 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
             }
 
             return loadMethodError;
-        }
+        },
     );
 
     const isLoading = createSelector(
         (state: PaymentMethodState) => state.statuses.isLoading,
-        isLoading => () => !!isLoading
+        (isLoading) => () => !!isLoading,
     );
 
     const isLoadingMethod = createSelector(
@@ -80,12 +83,10 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
             }
 
             return !!isLoadingMethod;
-        }
+        },
     );
 
-    return memoizeOne((
-        state: PaymentMethodState = DEFAULT_STATE
-    ): PaymentMethodSelector => {
+    return memoizeOne((state: PaymentMethodState = DEFAULT_STATE): PaymentMethodSelector => {
         return {
             getPaymentMethods: getPaymentMethods(state),
             getPaymentMethodsMeta: getPaymentMethodsMeta(state),

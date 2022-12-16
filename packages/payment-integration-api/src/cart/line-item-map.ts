@@ -1,9 +1,4 @@
-import {
-    CustomItem,
-    DigitalItem,
-    GiftCertificateItem,
-    PhysicalItem,
-} from "./line-item";
+import { CustomItem, DigitalItem, GiftCertificateItem, PhysicalItem } from './line-item';
 
 export default interface LineItemMap {
     physicalItems: PhysicalItem[];

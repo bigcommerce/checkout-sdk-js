@@ -1,12 +1,21 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { AmazonPayV2PaymentProcessor, AmazonPayV2Placement, createAmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
+import {
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2Placement,
+    createAmazonPayV2PaymentProcessor,
+} from '../../../payment/strategies/amazon-pay-v2';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import AmazonPayV2ButtonStrategy from './amazon-pay-v2-button-strategy';
@@ -30,28 +39,22 @@ describe('AmazonPayV2ButtonStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockResolvedValue(
+            store.getState(),
+        );
 
         paymentProcessor = createAmazonPayV2PaymentProcessor();
 
-        jest.spyOn(paymentProcessor, 'initialize')
-            .mockResolvedValue(undefined);
+        jest.spyOn(paymentProcessor, 'initialize').mockResolvedValue(undefined);
 
-        jest.spyOn(paymentProcessor, 'renderAmazonPayButton')
-            .mockResolvedValue('foo');
+        jest.spyOn(paymentProcessor, 'renderAmazonPayButton').mockResolvedValue('foo');
 
-        jest.spyOn(paymentProcessor, 'deinitialize')
-            .mockResolvedValue(undefined);
+        jest.spyOn(paymentProcessor, 'deinitialize').mockResolvedValue(undefined);
 
-        strategy = new AmazonPayV2ButtonStrategy(
-            store,
-            checkoutActionCreator,
-            paymentProcessor
-        );
+        strategy = new AmazonPayV2ButtonStrategy(store, checkoutActionCreator, paymentProcessor);
     });
 
     describe('#initialize', () => {
@@ -97,7 +100,9 @@ describe('AmazonPayV2ButtonStrategy', () => {
             });
 
             test('if containerId is not provided', async () => {
-                checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(Mode.UndefinedContainer);
+                checkoutButtonOptions = getAmazonPayV2CheckoutButtonOptions(
+                    Mode.UndefinedContainer,
+                );
 
                 const initialize = strategy.initialize(checkoutButtonOptions);
 
@@ -107,11 +112,12 @@ describe('AmazonPayV2ButtonStrategy', () => {
             test('if there is no payment method data', async () => {
                 const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
                 const state = { ...getCheckoutStoreState(), paymentMethods };
+
                 store = createCheckoutStore(state);
                 strategy = new AmazonPayV2ButtonStrategy(
                     store,
                     checkoutActionCreator,
-                    paymentProcessor
+                    paymentProcessor,
                 );
 
                 const initialize = strategy.initialize(checkoutButtonOptions);

@@ -1,9 +1,9 @@
-import { AnalyticStepOrder, AnalyticStepType } from './analytics-steps';
 import { LineItemMap } from '../cart';
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
-import BodlService from "./bodl-service";
+import { AnalyticStepOrder, AnalyticStepType } from './analytics-steps';
+import BodlService from './bodl-service';
 import { BodlEventsCheckout, BodlEventsPayload, BODLProduct } from './bodl-window';
 
 export default class BodlEmitterService implements BodlService {
@@ -15,9 +15,9 @@ export default class BodlEmitterService implements BodlService {
 
     constructor(
         private subscribe: (subscriber: (state: CheckoutSelectors) => void) => void,
-        private bodlEvents: BodlEventsCheckout
+        private bodlEvents: BodlEventsCheckout,
     ) {
-        this.subscribe(state => {
+        this.subscribe((state) => {
             this.setState(state.data);
 
             const config = this.state?.getConfig();
@@ -44,13 +44,7 @@ export default class BodlEmitterService implements BodlService {
         }
 
         const {
-            cart: {
-                cartAmount,
-                currency,
-                lineItems,
-                id,
-                coupons,
-            },
+            cart: { cartAmount, currency, lineItems, id, coupons },
             channelId,
         } = checkout;
 
@@ -58,9 +52,9 @@ export default class BodlEmitterService implements BodlService {
             event_id: id,
             currency: currency.code,
             cart_value: cartAmount,
-            coupon_codes: coupons.map(coupon => coupon.code.toUpperCase()),
+            coupon_codes: coupons.map((coupon) => coupon.code.toUpperCase()),
             line_items: this._getProducts(lineItems, currency.code),
-            channel_id: channelId
+            channel_id: channelId,
         });
 
         this._checkoutStarted = true;
@@ -97,7 +91,7 @@ export default class BodlEmitterService implements BodlService {
             tax: taxTotal,
             channel_id: channelId,
             cart_value: orderAmount,
-            coupon_codes: coupons.map(coupon => coupon.code.toUpperCase()),
+            coupon_codes: coupons.map((coupon) => coupon.code.toUpperCase()),
             shipping_cost: shippingCostTotal,
             line_items: this._getProducts(lineItems, currency.code),
         });
@@ -124,6 +118,10 @@ export default class BodlEmitterService implements BodlService {
 
         this._emailEntryBegan = true;
         this.bodlEvents.emit('bodl_checkout_email_entry_began');
+    }
+
+    customerSuggestionInit(payload?: BodlEventsPayload) {
+        this.bodlEvents.emit('bodl_checkout_customer_suggestion_initialization', payload);
     }
 
     customerSuggestionExecute() {
@@ -164,7 +162,7 @@ export default class BodlEmitterService implements BodlService {
     }
 
     private _getProducts(lineItems: LineItemMap, currencyCode: string): BODLProduct[] {
-        const customItems: BODLProduct[] = (lineItems.customItems || []).map(item => ({
+        const customItems: BODLProduct[] = (lineItems.customItems || []).map((item) => ({
             product_id: item.id,
             sku: item.sku,
             base_price: item.listPrice,
@@ -175,7 +173,7 @@ export default class BodlEmitterService implements BodlService {
             currency: currencyCode,
         }));
 
-        const giftCertificateItems: BODLProduct[] = lineItems.giftCertificates.map(item => {
+        const giftCertificateItems: BODLProduct[] = lineItems.giftCertificates.map((item) => {
             return {
                 product_id: item.id,
                 gift_certificate_id: item.id,
@@ -193,11 +191,11 @@ export default class BodlEmitterService implements BodlService {
         const physicalAndDigitalItems: BODLProduct[] = [
             ...lineItems.physicalItems,
             ...lineItems.digitalItems,
-        ].map(item => {
+        ].map((item) => {
             let itemAttributes;
 
             if (item.options && item.options.length) {
-                itemAttributes = item.options.map(option => `${option.name}:${option.value}`);
+                itemAttributes = item.options.map((option) => `${option.name}:${option.value}`);
                 itemAttributes.sort();
             }
 
@@ -217,11 +215,7 @@ export default class BodlEmitterService implements BodlService {
             };
         });
 
-        return [
-            ...customItems,
-            ...physicalAndDigitalItems,
-            ...giftCertificateItems,
-        ];
+        return [...customItems, ...physicalAndDigitalItems, ...giftCertificateItems];
     }
 
     private _trackCompletedStep(step: AnalyticStepType) {
@@ -233,4 +227,3 @@ export default class BodlEmitterService implements BodlService {
         return this._completedSteps[step];
     }
 }
-

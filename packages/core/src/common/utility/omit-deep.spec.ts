@@ -13,10 +13,7 @@ describe('omitDeep()', () => {
 
         const expected = {
             id: 1,
-            items: [
-                { id: 2 },
-                { id: 3 },
-            ],
+            items: [{ id: 2 }, { id: 3 }],
         };
 
         expect(omitDeep(object, (_, key) => key === '$$key')).toEqual(expected);

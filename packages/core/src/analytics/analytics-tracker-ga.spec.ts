@@ -6,7 +6,7 @@ import { getOrder } from '../order/orders.mock';
 import { AnalyticsProduct, ExtraItemsData } from './analytics-step-tracker';
 import { isPayloadSizeLimitReached } from './analytics-tracker-ga';
 
-describe('analytics step tracker helpers',  () => {
+describe('analytics step tracker helpers', () => {
     test('should return false on small order', () => {
         const order = getOrder();
 
@@ -17,7 +17,7 @@ describe('analytics step tracker helpers',  () => {
             shipping: order.shippingCostTotal,
             tax: order.taxTotal,
             discount: order.discountAmount,
-            coupon: (order.coupons || []).map(coupon => coupon.code.toUpperCase()).join(','),
+            coupon: (order.coupons || []).map((coupon) => coupon.code.toUpperCase()).join(','),
             currency: 'USD',
             products: getPayloadProducts({}, order.lineItems),
         });
@@ -26,15 +26,12 @@ describe('analytics step tracker helpers',  () => {
     });
 
     test('should return true on large order', () => {
-
         const order = getOrder();
 
         const lineItems = {
             physicalItems: Array.from(new Array(100)).map(() => getPhysicalItem()),
             digitalItems: [],
-            giftCertificates: [
-                getGiftCertificateItem(),
-            ],
+            giftCertificates: [getGiftCertificateItem()],
             customItems: [],
         };
 
@@ -45,7 +42,7 @@ describe('analytics step tracker helpers',  () => {
             shipping: order.shippingCostTotal,
             tax: order.taxTotal,
             discount: order.discountAmount,
-            coupon: (order.coupons || []).map(coupon => coupon.code.toUpperCase()).join(','),
+            coupon: (order.coupons || []).map((coupon) => coupon.code.toUpperCase()).join(','),
             currency: 'USD',
             products: getPayloadProducts({}, lineItems),
         });
@@ -55,7 +52,7 @@ describe('analytics step tracker helpers',  () => {
 });
 
 function getPayloadProducts(itemsData: ExtraItemsData, lineItems: LineItemMap): AnalyticsProduct[] {
-    const customItems: AnalyticsProduct[] = (lineItems.customItems || []).map(item => ({
+    const customItems: AnalyticsProduct[] = (lineItems.customItems || []).map((item) => ({
         product_id: item.id,
         sku: item.sku,
         price: item.listPrice,
@@ -63,7 +60,7 @@ function getPayloadProducts(itemsData: ExtraItemsData, lineItems: LineItemMap): 
         name: item.name,
     }));
 
-    const giftCertificateItems: AnalyticsProduct[] = lineItems.giftCertificates.map(item => {
+    const giftCertificateItems: AnalyticsProduct[] = lineItems.giftCertificates.map((item) => {
         return {
             product_id: item.id,
             price: item.amount,
@@ -75,11 +72,11 @@ function getPayloadProducts(itemsData: ExtraItemsData, lineItems: LineItemMap): 
     const physicalAndDigitalItems: AnalyticsProduct[] = [
         ...lineItems.physicalItems,
         ...lineItems.digitalItems,
-    ].map(item => {
+    ].map((item) => {
         let itemAttributes;
 
         if (item.options && item.options.length) {
-            itemAttributes = item.options.map(option => `${option.name}:${option.value}`);
+            itemAttributes = item.options.map((option) => `${option.name}:${option.value}`);
             itemAttributes.sort();
         }
 
@@ -96,9 +93,5 @@ function getPayloadProducts(itemsData: ExtraItemsData, lineItems: LineItemMap): 
         };
     });
 
-    return [
-        ...customItems,
-        ...physicalAndDigitalItems,
-        ...giftCertificateItems,
-    ];
+    return [...customItems, ...physicalAndDigitalItems, ...giftCertificateItems];
 }

@@ -15,15 +15,15 @@ export enum SpamProtectionActionType {
 }
 
 export type SpamProtectionAction =
-    InitializeRequestedAction |
-    InitializeSucceededAction |
-    InitializeFailedAction |
-    ExecuteRequestedAction |
-    ExecuteSucceededAction |
-    ExecuteFailedAction |
-    CheckoutVerifyRequestedAction |
-    CheckoutVerifyFailedAction |
-    CheckoutVerifySucceededAction;
+    | InitializeRequestedAction
+    | InitializeSucceededAction
+    | InitializeFailedAction
+    | ExecuteRequestedAction
+    | ExecuteSucceededAction
+    | ExecuteFailedAction
+    | CheckoutVerifyRequestedAction
+    | CheckoutVerifyFailedAction
+    | CheckoutVerifySucceededAction;
 
 export interface InitializeRequestedAction extends Action {
     type: SpamProtectionActionType.InitializeRequested;

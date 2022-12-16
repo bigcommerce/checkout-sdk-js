@@ -17,15 +17,15 @@ export enum CheckoutButtonActionType {
 export type CheckoutButtonAction = InitializeButtonAction | DeinitializeButtonAction;
 
 export type InitializeButtonAction =
-    InitializeButtonRequestedAction |
-    InitializeButtonSucceededAction |
-    InitializeButtonFailedAction |
-    LoadPaymentMethodAction;
+    | InitializeButtonRequestedAction
+    | InitializeButtonSucceededAction
+    | InitializeButtonFailedAction
+    | LoadPaymentMethodAction;
 
 export type DeinitializeButtonAction =
-    DeinitializeButtonRequestedAction |
-    DeinitializeButtonSucceededAction |
-    DeinitializeButtonFailedAction;
+    | DeinitializeButtonRequestedAction
+    | DeinitializeButtonSucceededAction
+    | DeinitializeButtonFailedAction;
 
 export interface CheckoutButtonActionMeta {
     methodId: CheckoutButtonMethodType;
@@ -35,11 +35,13 @@ export interface InitializeButtonActionMeta extends CheckoutButtonActionMeta {
     containerId: string;
 }
 
-export interface InitializeButtonRequestedAction extends Action<undefined, InitializeButtonActionMeta> {
+export interface InitializeButtonRequestedAction
+    extends Action<undefined, InitializeButtonActionMeta> {
     type: CheckoutButtonActionType.InitializeButtonRequested;
 }
 
-export interface InitializeButtonSucceededAction extends Action<undefined, InitializeButtonActionMeta> {
+export interface InitializeButtonSucceededAction
+    extends Action<undefined, InitializeButtonActionMeta> {
     type: CheckoutButtonActionType.InitializeButtonSucceeded;
 }
 
@@ -47,11 +49,13 @@ export interface InitializeButtonFailedAction extends Action<Error, InitializeBu
     type: CheckoutButtonActionType.InitializeButtonFailed;
 }
 
-export interface DeinitializeButtonRequestedAction extends Action<undefined, CheckoutButtonActionMeta> {
+export interface DeinitializeButtonRequestedAction
+    extends Action<undefined, CheckoutButtonActionMeta> {
     type: CheckoutButtonActionType.DeinitializeButtonRequested;
 }
 
-export interface DeinitializeButtonSucceededAction extends Action<undefined, CheckoutButtonActionMeta> {
+export interface DeinitializeButtonSucceededAction
+    extends Action<undefined, CheckoutButtonActionMeta> {
     type: CheckoutButtonActionType.DeinitializeButtonSucceeded;
 }
 

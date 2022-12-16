@@ -6,10 +6,7 @@ import Cart from './cart';
 
 export default class CartComparator {
     isEqual(cartA: Cart, cartB: Cart): boolean {
-        return isEqual(
-            this._normalize(cartA),
-            this._normalize(cartB)
-        );
+        return isEqual(this._normalize(cartA), this._normalize(cartB));
     }
 
     private _normalize(cart: Cart): PartialDeep<Cart> {
@@ -21,9 +18,11 @@ export default class CartComparator {
                 digitalItems: cart.lineItems.digitalItems
                     .slice()
                     .sort((itemA, itemB) =>
-                        `${itemA.productId}${itemA.variantId}`.localeCompare(`${itemB.productId}${itemB.variantId}`)
+                        `${itemA.productId}${itemA.variantId}`.localeCompare(
+                            `${itemB.productId}${itemB.variantId}`,
+                        ),
                     )
-                    .map(item => ({
+                    .map((item) => ({
                         extendedSalePrice: item.extendedSalePrice,
                         productId: item.productId,
                         quantity: item.quantity,
@@ -32,16 +31,18 @@ export default class CartComparator {
                 giftCertificates: cart.lineItems.giftCertificates
                     .slice()
                     .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
-                    .map(item => ({
+                    .map((item) => ({
                         amount: item.amount,
                         recipient: item.recipient,
                     })),
                 physicalItems: cart.lineItems.physicalItems
                     .slice()
                     .sort((itemA, itemB) =>
-                        `${itemA.productId}${itemA.variantId}`.localeCompare(`${itemB.productId}${itemB.variantId}`)
+                        `${itemA.productId}${itemA.variantId}`.localeCompare(
+                            `${itemB.productId}${itemB.variantId}`,
+                        ),
                     )
-                    .map(item => ({
+                    .map((item) => ({
                         extendedSalePrice: item.extendedSalePrice,
                         productId: item.productId,
                         quantity: item.quantity,

@@ -9,5 +9,5 @@ export const AnalyticStepOrder: AnalyticStepType[] = [
     AnalyticStepType.CUSTOMER,
     AnalyticStepType.SHIPPING,
     AnalyticStepType.BILLING,
-    AnalyticStepType.PAYMENT
+    AnalyticStepType.PAYMENT,
 ];

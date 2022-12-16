@@ -4,6 +4,6 @@ describe('PaymentMethodCancelledError', () => {
     it('returns error name', () => {
         const error = new PaymentInstrumentNotValidError();
 
-        expect(error.name).toEqual('PaymentInstrumentNotValidError');
+        expect(error.name).toBe('PaymentInstrumentNotValidError');
     });
 });

@@ -19,7 +19,9 @@ export interface AmazonPayV2Button {
     /**
      * Initiates the Amazon Pay checkout.
      */
-    initCheckout(requestConfig: { createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig }): void;
+    initCheckout(requestConfig: {
+        createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
+    }): void;
 }
 
 export type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;

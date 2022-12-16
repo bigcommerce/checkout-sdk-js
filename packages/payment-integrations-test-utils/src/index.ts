@@ -4,11 +4,13 @@ export {
     getCheckout,
     getConfig,
     getConsignment,
+    getOrder,
     getOrderRequestBody,
     getShippingOption,
     getPayment,
+    getPaymentMethod,
     getResponse,
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
-} from "./test-utils";
+} from './test-utils';

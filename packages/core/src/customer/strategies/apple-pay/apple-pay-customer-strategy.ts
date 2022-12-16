@@ -4,20 +4,42 @@ import { noop } from 'lodash';
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { Cart } from '../../../cart';
-import { Checkout, CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import {
+    Checkout,
+    CheckoutActionCreator,
+    CheckoutStore,
+    InternalCheckoutSelectors,
+} from '../../../checkout';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
+} from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { StoreConfig } from '../../../config';
 import { OrderActionCreator } from '../../../order';
-import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import {
+    Payment,
+    PaymentActionCreator,
+    PaymentMethod,
+    PaymentMethodActionCreator,
+} from '../../../payment';
 import { PaymentMethodCancelledError } from '../../../payment/errors';
-import { assertApplePayWindow, ApplePaySessionFactory } from '../../../payment/strategies/apple-pay';
+import {
+    ApplePaySessionFactory,
+    assertApplePayWindow,
+} from '../../../payment/strategies/apple-pay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { ConsignmentActionCreator, ShippingOption } from '../../../shipping';
-import { CustomerInitializeOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import {
+    CustomerInitializeOptions,
+    ExecutePaymentMethodCheckoutOptions,
+} from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
-const validationEndpoint = (bigPayEndpoint: string) => `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
+const validationEndpoint = (bigPayEndpoint: string) =>
+    `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
 
 enum DefaultLabels {
     Subtotal = 'Subtotal',
@@ -57,11 +79,11 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _sessionFactory: ApplePaySessionFactory
+        private _sessionFactory: ApplePaySessionFactory,
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId, applepay }  = options;
+        const { methodId, applepay } = options;
 
         assertApplePayWindow(window);
 
@@ -82,7 +104,10 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
 
-        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
+        const state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+        );
+
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         this._applePayButton = this._createButton(container);
@@ -97,17 +122,17 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via Apple, the shopper must click on "Apple Pay" button.'
+            'In order to sign in via Apple, the shopper must click on "Apple Pay" button.',
         );
     }
 
     signOut(): Promise<InternalCheckoutSelectors> {
-        throw new NotImplementedError(
-            'Need to do signout via apple.'
-        );
+        throw new NotImplementedError('Need to do signout via apple.');
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<InternalCheckoutSelectors> {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());
@@ -117,7 +142,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         const container = document.getElementById(containerId);
 
         if (!container) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
+            throw new InvalidArgumentError(
+                'Unable to create sign-in button without valid container ID.',
+            );
         }
 
         const button = document.createElement('button');
@@ -133,6 +160,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     @bind
     private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
+
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const config = state.config.getStoreConfigOrThrow();
@@ -141,8 +169,10 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         if (!this._paymentMethod || !this._paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+
         const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
         const applePaySession = this._sessionFactory.create(request);
+
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
         applePaySession.begin();
@@ -152,23 +182,31 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         cart: Cart,
         checkout: Checkout,
         config: StoreConfig,
-        paymentMethod: PaymentMethod
+        paymentMethod: PaymentMethod,
     ): ApplePayJS.ApplePayPaymentRequest {
-        const { storeProfile: { storeCountryCode, storeName } } = config;
-        const { currency: { code, decimalPlaces} } = cart;
+        const {
+            storeProfile: { storeCountryCode, storeName },
+        } = config;
+        const {
+            currency: { code, decimalPlaces },
+        } = cart;
 
-        const { initializationData : { merchantCapabilities, supportedNetworks } } = paymentMethod;
+        const {
+            initializationData: { merchantCapabilities, supportedNetworks },
+        } = paymentMethod;
 
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
-        const total: ApplePayJS.ApplePayLineItem = requiresShipping ? {
-            label: storeName,
-            amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-            type: 'pending',
-        } : {
-            label: storeName,
-            amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-            type: 'final',
-        };
+        const total: ApplePayJS.ApplePayLineItem = requiresShipping
+            ? {
+                  label: storeName,
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                  type: 'pending',
+              }
+            : {
+                  label: storeName,
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                  type: 'final',
+              };
 
         const request: ApplePayJS.ApplePayPaymentRequest = {
             requiredBillingContactFields: ['postalAddress'],
@@ -185,11 +223,15 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             request.requiredShippingContactFields?.push('postalAddress');
         } else {
             const lineItems: ApplePayJS.ApplePayLineItem[] = [
-                { label: this._subTotalLabel, amount: `${checkout.subtotal.toFixed(decimalPlaces)}`},
+                {
+                    label: this._subTotalLabel,
+                    amount: `${checkout.subtotal.toFixed(decimalPlaces)}`,
+                },
             ];
 
-            checkout.taxes.forEach(tax =>
-                lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }));
+            checkout.taxes.forEach((tax) =>
+                lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }),
+            );
 
             request.lineItems = lineItems;
         }
@@ -200,47 +242,55 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _handleApplePayEvents(
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        config: StoreConfig
+        config: StoreConfig,
     ) {
-        applePaySession.onvalidatemerchant = async event => {
+        applePaySession.onvalidatemerchant = async (event) => {
             try {
-                const { body: merchantSession } = await this._onValidateMerchant(paymentMethod, event);
+                const { body: merchantSession } = await this._onValidateMerchant(
+                    paymentMethod,
+                    event,
+                );
+
                 applePaySession.completeMerchantValidation(merchantSession);
             } catch (err) {
                 this._onError(err);
             }
         };
 
-        applePaySession.onshippingcontactselected = async event =>
+        applePaySession.onshippingcontactselected = async (event) =>
             this._handleShippingContactSelected(applePaySession, config, event);
 
-        applePaySession.onshippingmethodselected = async event =>
+        applePaySession.onshippingmethodselected = async (event) =>
             this._handleShippingMethodSelected(applePaySession, config, event);
 
         applePaySession.oncancel = async () => {
             try {
-                await this._store.dispatch(this._remoteCheckoutActionCreator.signOut(paymentMethod.id));
+                await this._store.dispatch(
+                    this._remoteCheckoutActionCreator.signOut(paymentMethod.id),
+                );
 
-                return this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout());
+                return await this._store.dispatch(
+                    this._checkoutActionCreator.loadCurrentCheckout(),
+                );
             } catch (error) {
                 return this._onError(new PaymentMethodCancelledError());
             }
         };
 
-        applePaySession.onpaymentauthorized = async event =>
+        applePaySession.onpaymentauthorized = async (event) =>
             this._onPaymentAuthorized(event, applePaySession, paymentMethod);
     }
 
     private async _handleShippingContactSelected(
         applePaySession: ApplePaySession,
         config: StoreConfig,
-        event: ApplePayJS.ApplePayShippingContactSelectedEvent
+        event: ApplePayJS.ApplePayShippingContactSelectedEvent,
     ) {
         const shippingAddress = this._transformContactToAddress(event.shippingContact);
 
         try {
             await this._store.dispatch(
-                this._consignmentActionCreator.updateAddress(shippingAddress)
+                this._consignmentActionCreator.updateAddress(shippingAddress),
             );
         } catch (error) {
             applePaySession.abort();
@@ -248,28 +298,39 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             return this._onError(error);
         }
 
-        const { storeProfile: { storeName } } = config;
+        const {
+            storeProfile: { storeName },
+        } = config;
         let state = this._store.getState();
-        const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
+        const {
+            currency: { decimalPlaces },
+        } = state.cart.getCartOrThrow();
         let checkout = state.checkout.getCheckoutOrThrow();
         const selectionShippingOptionId = checkout.consignments[0].selectedShippingOption?.id;
         const availableOptions = checkout.consignments[0].availableShippingOptions;
-        const selectedOption = availableOptions?.find(({id}) => id === selectionShippingOptionId);
-        const unselectedOptions = availableOptions?.filter(option => option.id !== selectionShippingOptionId);
-        const shippingOptions: ApplePayJS.ApplePayShippingMethod[] = selectedOption ? [{
-            label: selectedOption.description,
-            amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
-            detail: selectedOption.additionalDescription,
-            identifier: selectedOption.id,
-        }] : [];
-        unselectedOptions?.forEach(option => shippingOptions.push(
-            {
+        const selectedOption = availableOptions?.find(({ id }) => id === selectionShippingOptionId);
+        const unselectedOptions = availableOptions?.filter(
+            (option) => option.id !== selectionShippingOptionId,
+        );
+        const shippingOptions: ApplePayJS.ApplePayShippingMethod[] = selectedOption
+            ? [
+                  {
+                      label: selectedOption.description,
+                      amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
+                      detail: selectedOption.additionalDescription,
+                      identifier: selectedOption.id,
+                  },
+              ]
+            : [];
+
+        unselectedOptions?.forEach((option) =>
+            shippingOptions.push({
                 label: option.description,
                 amount: `${option.cost.toFixed(decimalPlaces)}`,
                 detail: option.additionalDescription,
                 identifier: option.id,
-            }
-        ));
+            }),
+        );
 
         if (!isShippingOptions(availableOptions)) {
             throw new Error('Shipping options not available.');
@@ -284,18 +345,17 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                     label: storeName,
                     amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                 },
-                []
+                [],
             );
 
             return;
         }
 
-        const recommendedOption = availableOptions.find(
-            option => option.isRecommended
-        );
+        const recommendedOption = availableOptions.find((option) => option.isRecommended);
 
         const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
         const selectedOptionId = selectedOption ? selectedOption.id : optionId;
+
         try {
             await this._updateShippingOption(selectedOptionId);
         } catch (error) {
@@ -319,10 +379,15 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private async _handleShippingMethodSelected(
         applePaySession: ApplePaySession,
         config: StoreConfig,
-        event: ApplePayJS.ApplePayShippingMethodSelectedEvent
+        event: ApplePayJS.ApplePayShippingMethodSelectedEvent,
     ) {
-        const { storeProfile: { storeName } } = config;
-        const { shippingMethod: { identifier: optionId } } = event;
+        const {
+            storeProfile: { storeName },
+        } = config;
+        const {
+            shippingMethod: { identifier: optionId },
+        } = event;
+
         try {
             await this._updateShippingOption(optionId);
         } catch (error) {
@@ -332,7 +397,9 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         }
 
         const state = this._store.getState();
-        const { currency: { decimalPlaces } } = state.cart.getCartOrThrow();
+        const {
+            currency: { decimalPlaces },
+        } = state.cart.getCartOrThrow();
         const checkout = state.checkout.getCheckoutOrThrow();
 
         applePaySession.completeShippingMethodSelection({
@@ -345,25 +412,33 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         });
     }
 
-    private _getUpdatedLineItems(checkout: Checkout, decimalPlaces: number): ApplePayJS.ApplePayLineItem[] {
+    private _getUpdatedLineItems(
+        checkout: Checkout,
+        decimalPlaces: number,
+    ): ApplePayJS.ApplePayLineItem[] {
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
-            { label: this._subTotalLabel, amount: `${checkout.subtotal.toFixed(decimalPlaces)}`},
+            { label: this._subTotalLabel, amount: `${checkout.subtotal.toFixed(decimalPlaces)}` },
         ];
 
-        checkout.taxes.forEach(tax =>
-            lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }));
-        lineItems.push({ label: this._shippingLabel, amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`});
+        checkout.taxes.forEach((tax) =>
+            lineItems.push({ label: tax.name, amount: `${tax.amount.toFixed(decimalPlaces)}` }),
+        );
+        lineItems.push({
+            label: this._shippingLabel,
+            amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
+        });
 
         return lineItems;
     }
 
     private async _updateShippingOption(optionId: string) {
-        return await this._store.dispatch(
-            this._consignmentActionCreator.selectShippingOption(optionId)
-        );
+        return this._store.dispatch(this._consignmentActionCreator.selectShippingOption(optionId));
     }
 
-    private async _onValidateMerchant(paymentData: PaymentMethod, event: ApplePayJS.ApplePayValidateMerchantEvent) {
+    private async _onValidateMerchant(
+        paymentData: PaymentMethod,
+        event: ApplePayJS.ApplePayValidateMerchantEvent,
+    ) {
         const body = [
             `validationUrl=${event.validationURL}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,
@@ -371,21 +446,24 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             `domainName=${window.location.hostname}`,
         ].join('&');
 
-        return this._requestSender.post(validationEndpoint(paymentData.initializationData.paymentsUrl), {
-            credentials: false,
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-XSRF-TOKEN': null,
+        return this._requestSender.post(
+            validationEndpoint(paymentData.initializationData.paymentsUrl),
+            {
+                credentials: false,
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-XSRF-TOKEN': null,
+                },
+                body,
             },
-            body,
-        });
+        );
     }
 
     private async _onPaymentAuthorized(
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
-        paymentMethod: PaymentMethod
+        paymentMethod: PaymentMethod,
     ) {
         const { token, billingContact, shippingContact } = event.payment;
         const state = this._store.getState();
@@ -415,19 +493,19 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                     ...transformedBillingAddress,
                     email: emailAddress,
                     phone,
-                })
+                }),
             );
 
             if (requiresShipping) {
                 await this._store.dispatch(
-                    this._consignmentActionCreator.updateAddress(transformedShippingAddress)
+                    this._consignmentActionCreator.updateAddress(transformedShippingAddress),
                 );
             }
 
-            await this._store.dispatch(this._orderActionCreator.submitOrder(
-                {
+            await this._store.dispatch(
+                this._orderActionCreator.submitOrder({
                     useStoreCredit: false,
-                })
+                }),
             );
             await this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
@@ -440,14 +518,16 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         }
     }
 
-    private _transformContactToAddress(contact?: ApplePayJS.ApplePayPaymentContact): AddressRequestBody {
+    private _transformContactToAddress(
+        contact?: ApplePayJS.ApplePayPaymentContact,
+    ): AddressRequestBody {
         return {
             firstName: contact?.givenName || '',
             lastName: contact?.familyName || '',
             city: contact?.locality || '',
             company: '',
-            address1: contact?.addressLines && contact?.addressLines[0] || '',
-            address2: contact?.addressLines && contact?.addressLines[1] || '',
+            address1: (contact?.addressLines && contact.addressLines[0]) || '',
+            address2: (contact?.addressLines && contact.addressLines[1]) || '',
             postalCode: contact?.postalCode || '',
             countryCode: contact?.countryCode || '',
             phone: contact?.phoneNumber || '',

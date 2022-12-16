@@ -1,15 +1,20 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import {
+    ContentType,
+    INTERNAL_USE_ONLY,
+    RequestOptions,
+    SDK_VERSION_HEADERS,
+} from '../common/http-request';
 
 import PaymentMethod from './payment-method';
 
 export default class PaymentMethodRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    loadPaymentMethods({ timeout, params }: RequestOptions = {}): Promise<Response<PaymentMethod[]>> {
+    loadPaymentMethods({ timeout, params }: RequestOptions = {}): Promise<
+        Response<PaymentMethod[]>
+    > {
         const url = '/api/storefront/payments';
 
         return this._requestSender.get(url, {
@@ -23,7 +28,10 @@ export default class PaymentMethodRequestSender {
         });
     }
 
-    loadPaymentMethod(methodId: string, { timeout, params }: RequestOptions = {}): Promise<Response<PaymentMethod>> {
+    loadPaymentMethod(
+        methodId: string,
+        { timeout, params }: RequestOptions = {},
+    ): Promise<Response<PaymentMethod>> {
         const url = `/api/storefront/payments/${methodId}`;
 
         return this._requestSender.get(url, {

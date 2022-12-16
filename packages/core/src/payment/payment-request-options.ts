@@ -1,12 +1,16 @@
+import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import { BoltPaymentInitializeOptions } from './strategies/bolt';
-import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
+import {
+    BraintreePaymentInitializeOptions,
+    BraintreeVisaCheckoutPaymentInitializeOptions,
+} from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
-import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
 import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
@@ -162,7 +166,7 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the GooglePay Authorize.Net
      * payment method. They can be omitted unless you need to support GooglePay.
      */
-     googlepayadyenv3?: GooglePayPaymentInitializeOptions;
+    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay Authorize.Net

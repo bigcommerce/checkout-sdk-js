@@ -1,10 +1,16 @@
-import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { noop } from 'lodash';
+
+import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { guard } from '../../../../src/common/utility';
 import { StoreProfile } from '../../../../src/config';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -24,44 +30,59 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor
-    ) { }
+        private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor,
+    ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, amazonpay } = options;
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "methodId" argument is not provided.',
+            );
         }
 
         const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { initializationData: { paymentToken, region } } = paymentMethod;
+        const paymentMethod = this._store
+            .getState()
+            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const {
+            initializationData: { paymentToken, region },
+        } = paymentMethod;
 
         await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
         if (this._isReadyToPay(paymentToken)) {
             if (amazonpay?.editButtonId) {
-                this._bindEditButton(amazonpay.editButtonId, paymentToken, 'changePayment', this._isModalFlow(region));
+                this._bindEditButton(
+                    amazonpay.editButtonId,
+                    paymentToken,
+                    'changePayment',
+                    this._isModalFlow(region),
+                );
             }
         } else {
             const { id: containerId } = this._createContainer();
 
-            this._amazonPayButton =
-                this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
-                    checkoutState: this._store.getState(),
-                    containerId,
-                    decoupleCheckoutInitiation:
-                        this._isOneTimeTransaction(features, region.toUpperCase()),
-                    methodId,
-                    placement: AmazonPayV2Placement.Checkout,
-                });
+            this._amazonPayButton = this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
+                checkoutState: this._store.getState(),
+                containerId,
+                decoupleCheckoutInitiation: this._isOneTimeTransaction(
+                    features,
+                    region.toUpperCase(),
+                ),
+                methodId,
+                placement: AmazonPayV2Placement.Checkout,
+            });
         }
 
         return this._store.getState();
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment } = payload;
 
         if (!payment) {
@@ -71,9 +92,14 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         const { methodId } = payment;
 
         const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
-        const { region, paymentToken } = this._store.getState().paymentMethods.getPaymentMethodOrThrow(methodId).initializationData;
+        const { region, paymentToken } = this._store
+            .getState()
+            .paymentMethods.getPaymentMethodOrThrow(methodId).initializationData;
 
-        if (this._isReadyToPay(paymentToken) || this._isOneTimeTransaction(features, region.toUpperCase())) {
+        if (
+            this._isReadyToPay(paymentToken) ||
+            this._isOneTimeTransaction(features, region.toUpperCase())
+        ) {
             const paymentPayload = {
                 methodId,
                 paymentData: { nonce: paymentToken || 'apb' },
@@ -82,16 +108,25 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             await this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
 
             try {
-                return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                return await this._store.dispatch(
+                    this._paymentActionCreator.submitPayment(paymentPayload),
+                );
             } catch (error) {
-                if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+                if (
+                    error instanceof RequestError &&
+                    error.body.status === 'additional_action_required'
+                ) {
                     if (paymentToken) {
                         return new Promise(() =>
-                            window.location.assign(error.body.additional_action_required.data.redirect_url)
+                            window.location.assign(
+                                error.body.additional_action_required.data.redirect_url,
+                            ),
                         );
                     }
 
-                    this._amazonPayV2PaymentProcessor.prepareCheckout(JSON.parse(error.body.additional_action_required.data.redirect_url));
+                    this._amazonPayV2PaymentProcessor.prepareCheckout(
+                        JSON.parse(error.body.additional_action_required.data.redirect_url),
+                    );
                 } else {
                     throw error;
                 }
@@ -106,7 +141,11 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
             return new Promise((_, reject) => {
                 const onFocus = () => {
                     window.removeEventListener('focus', onFocus);
-                    reject(new PaymentMethodCancelledError('Shopper needs to login to Amazonpay to continue'));
+                    reject(
+                        new PaymentMethodCancelledError(
+                            'Shopper needs to login to Amazonpay to continue',
+                        ),
+                    );
                 };
 
                 window.addEventListener('focus', onFocus);
@@ -128,7 +167,12 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
         return this._store.getState();
     }
 
-    private _bindEditButton(buttonId: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType, isModalFlow: boolean): void {
+    private _bindEditButton(
+        buttonId: string,
+        sessionId: string,
+        changeAction: AmazonPayV2ChangeActionType,
+        isModalFlow: boolean,
+    ): void {
         const button = document.getElementById(buttonId);
 
         if (!button || !button.parentNode) {
@@ -137,6 +181,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
 
         if (!isModalFlow) {
             const clone = button.cloneNode(true);
+
             button.parentNode.replaceChild(clone, button);
 
             clone.addEventListener('click', () => this._showLoadingSpinner());
@@ -152,7 +197,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     private _showLoadingSpinner(): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._paymentStrategyActionCreator.widgetInteraction(() => new Promise(noop)),
-            { queueId: 'widgetInteraction' }
+            { queueId: 'widgetInteraction' },
         );
     }
 
@@ -171,18 +216,19 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     }
 
     private _getAmazonPayButton() {
-        return guard(this._amazonPayButton, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+        return guard(
+            this._amazonPayButton,
+            () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+        );
     }
 
     private _isOneTimeTransaction(
         features: CheckoutSettings['features'],
-        storeCountryCode: StoreProfile['storeCountryCode']
+        storeCountryCode: StoreProfile['storeCountryCode'],
     ): boolean {
         return (
-            this._amazonPayV2PaymentProcessor.isPh4Enabled(
-                features,
-                storeCountryCode
-            ) && features['INT-6399.amazon_pay_apb']
+            this._amazonPayV2PaymentProcessor.isPh4Enabled(features, storeCountryCode) &&
+            features['INT-6399.amazon_pay_apb']
         );
     }
 

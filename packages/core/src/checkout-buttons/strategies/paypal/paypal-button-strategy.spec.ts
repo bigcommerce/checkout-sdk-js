@@ -6,13 +6,27 @@ import { EventEmitter } from 'events';
 import { merge } from 'lodash';
 import { from } from 'rxjs';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutActionType,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaypalExpress } from '../../../payment/payment-methods.mock';
-import { PaypalActions, PaypalButtonOptions, PaypalButtonStyleColorOption, PaypalButtonStyleShapeOption, PaypalButtonStyleSizeOption, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import {
+    PaypalActions,
+    PaypalButtonOptions,
+    PaypalButtonStyleColorOption,
+    PaypalButtonStyleShapeOption,
+    PaypalButtonStyleSizeOption,
+    PaypalScriptLoader,
+    PaypalSDK,
+} from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -37,7 +51,7 @@ describe('PaypalButtonStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender()))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
         );
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());
@@ -60,59 +74,67 @@ describe('PaypalButtonStrategy', () => {
 
         actionsMock = {
             payment: {
-                get: jest.fn().mockReturnValue(Promise.resolve({
-                    payer: {
-                        payer_info: 'PAYER_INFO',
-                    },
-                })),
+                get: jest.fn().mockReturnValue(
+                    Promise.resolve({
+                        payer: {
+                            payer_info: 'PAYER_INFO',
+                        },
+                    }),
+                ),
             },
             request: {
                 post: jest.fn().mockReturnValue(Promise.resolve()),
             },
         };
 
-        jest.spyOn(paypal.Button, 'render')
-            .mockImplementation((options: PaypalButtonOptions) => {
-                eventEmitter.on('payment', () => {
-                    if (options.payment) {
-                        options.payment({
-                            payerId: 'PAYER_ID',
-                            paymentID: 'PAYMENT_ID',
-                            payerID: 'PAYER_ID',
-                        }, actionsMock).catch(() => {
-                        });
-                    }
-                });
-
-                eventEmitter.on('authorize', () => {
-                    if (options.onAuthorize) {
-                        options.onAuthorize({
-                            payerId: 'PAYER_ID',
-                            paymentID: 'PAYMENT_ID',
-                            payerID: 'PAYER_ID',
-                        }, actionsMock).catch(() => {
-                        });
-                    }
-                });
+        jest.spyOn(paypal.Button, 'render').mockImplementation((options: PaypalButtonOptions) => {
+            eventEmitter.on('payment', () => {
+                if (options.payment) {
+                    options
+                        .payment(
+                            {
+                                payerId: 'PAYER_ID',
+                                paymentID: 'PAYMENT_ID',
+                                payerID: 'PAYER_ID',
+                            },
+                            actionsMock,
+                        )
+                        .catch(() => {});
+                }
             });
 
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockReturnValue(() => from([
+            eventEmitter.on('authorize', () => {
+                if (options.onAuthorize) {
+                    options
+                        .onAuthorize(
+                            {
+                                payerId: 'PAYER_ID',
+                                paymentID: 'PAYMENT_ID',
+                                payerID: 'PAYER_ID',
+                            },
+                            actionsMock,
+                        )
+                        .catch(() => {});
+                }
+            });
+        });
+
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockReturnValue(() =>
+            from([
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
-            ]));
+            ]),
+        );
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypal')
-            .mockReturnValue(Promise.resolve(paypal));
+        jest.spyOn(paypalScriptLoader, 'loadPaypal').mockReturnValue(Promise.resolve(paypal));
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockImplementation(() => {});
+        jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
         strategy = new PaypalButtonStrategy(
             store,
             checkoutActionCreator,
             paypalScriptLoader,
-            formPoster
+            formPoster,
         );
     });
 
@@ -123,7 +145,7 @@ describe('PaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 paypalScriptLoader,
-                formPoster
+                formPoster,
             );
 
             options = {
@@ -144,7 +166,7 @@ describe('PaypalButtonStrategy', () => {
                 store,
                 checkoutActionCreator,
                 paypalScriptLoader,
-                formPoster
+                formPoster,
             );
 
             options = {
@@ -167,8 +189,7 @@ describe('PaypalButtonStrategy', () => {
     it('throws error if unable to initialize Paypal or PayPal JS client', async () => {
         const expectedError = new Error('Unable to load JS client');
 
-        jest.spyOn(paypalScriptLoader, 'loadPaypal')
-            .mockReturnValue(Promise.reject(expectedError));
+        jest.spyOn(paypalScriptLoader, 'loadPaypal').mockReturnValue(Promise.reject(expectedError));
 
         try {
             await strategy.initialize(options);
@@ -180,22 +201,25 @@ describe('PaypalButtonStrategy', () => {
     it('renders PayPal checkout button', async () => {
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith({
-            env: 'production',
-            client: {
-                production: 'abc',
+        expect(paypal.Button.render).toHaveBeenCalledWith(
+            {
+                env: 'production',
+                client: {
+                    production: 'abc',
+                },
+                commit: false,
+                onAuthorize: expect.any(Function),
+                payment: expect.any(Function),
+                style: {
+                    shape: 'rect',
+                },
+                funding: {
+                    allowed: [],
+                    disallowed: [paypal.FUNDING.CREDIT],
+                },
             },
-            commit: false,
-            onAuthorize: expect.any(Function),
-            payment: expect.any(Function),
-            style: {
-                shape: 'rect',
-            },
-            funding: {
-                allowed: [],
-                disallowed: [paypal.FUNDING.CREDIT],
-            },
-        }, 'checkout-button');
+            'checkout-button',
+        );
     });
 
     it('customizes style of PayPal checkout button', async () => {
@@ -213,22 +237,24 @@ describe('PaypalButtonStrategy', () => {
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render).toHaveBeenCalledWith(expect.objectContaining({
-            style: {
-                color: 'blue',
-                shape: 'pill',
-                size: 'responsive',
-            },
-        }), 'checkout-button');
+        expect(paypal.Button.render).toHaveBeenCalledWith(
+            expect.objectContaining({
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    size: 'responsive',
+                },
+            }),
+            'checkout-button',
+        );
     });
 
     it('throws error if unable to render PayPal button', async () => {
         const expectedError = new Error('Unable to render PayPal button');
 
-        jest.spyOn(paypal.Button, 'render')
-            .mockImplementation(() => {
-                throw expectedError;
-            });
+        jest.spyOn(paypal.Button, 'render').mockImplementation(() => {
+            throw expectedError;
+        });
 
         try {
             await strategy.initialize(options);
@@ -238,25 +264,27 @@ describe('PaypalButtonStrategy', () => {
     });
 
     it('renders PayPal checkout button in sandbox environment if payment method is in test mode', async () => {
-        store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
-            paymentMethods: {
-                data: [
-                    merge({}, getPaypalExpress(), { config: { testMode: true } }),
-                ],
-            },
-        }));
+        store = createCheckoutStore(
+            merge({}, getCheckoutStoreState(), {
+                paymentMethods: {
+                    data: [merge({}, getPaypalExpress(), { config: { testMode: true } })],
+                },
+            }),
+        );
 
         strategy = new PaypalButtonStrategy(
             store,
             checkoutActionCreator,
             paypalScriptLoader,
-            formPoster
+            formPoster,
         );
 
         await strategy.initialize(options);
 
-        expect(paypal.Button.render)
-            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }), 'checkout-button');
+        expect(paypal.Button.render).toHaveBeenCalledWith(
+            expect.objectContaining({ env: 'sandbox' }),
+            'checkout-button',
+        );
     });
 
     it('posts payment details to server to set checkout data when PayPal payment details are tokenized', async () => {
@@ -264,17 +292,21 @@ describe('PaypalButtonStrategy', () => {
 
         eventEmitter.emit('authorize');
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
-            payment_type: 'paypal',
-            provider: 'paypalexpress',
-            action: 'set_external_checkout',
-            paymentId: 'PAYMENT_ID',
-            payerId: 'PAYER_ID',
-            payerInfo: JSON.stringify('PAYER_INFO'),
-        }));
+        expect(formPoster.postForm).toHaveBeenCalledWith(
+            '/checkout.php',
+            expect.objectContaining({
+                payment_type: 'paypal',
+                provider: 'paypalexpress',
+                action: 'set_external_checkout',
+                paymentId: 'PAYMENT_ID',
+                payerId: 'PAYER_ID',
+                payerInfo: JSON.stringify('PAYER_INFO'),
+            }),
+        );
     });
+
     describe('if PayPal Credit is offered', () => {
         beforeEach(() => {
             options = {
@@ -289,22 +321,25 @@ describe('PaypalButtonStrategy', () => {
         it('renders PayPal Credit checkout button', async () => {
             await strategy.initialize(options);
 
-            expect(paypal.Button.render).toHaveBeenCalledWith({
-                client: {
-                    production: 'abc',
+            expect(paypal.Button.render).toHaveBeenCalledWith(
+                {
+                    client: {
+                        production: 'abc',
+                    },
+                    commit: false,
+                    env: 'production',
+                    onAuthorize: expect.any(Function),
+                    payment: expect.any(Function),
+                    style: {
+                        shape: 'rect',
+                    },
+                    funding: {
+                        allowed: [paypal.FUNDING.CREDIT],
+                        disallowed: [],
+                    },
                 },
-                commit: false,
-                env: 'production',
-                onAuthorize: expect.any(Function),
-                payment: expect.any(Function),
-                style: {
-                    shape: 'rect',
-                },
-                funding: {
-                    allowed: [paypal.FUNDING.CREDIT],
-                    disallowed: [],
-                },
-            }, 'checkout-button');
+                'checkout-button',
+            );
         });
     });
 
@@ -313,12 +348,18 @@ describe('PaypalButtonStrategy', () => {
 
         eventEmitter.emit('payment');
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
 
-        const expectedBody = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', merchantId: 'h3hxn44tdd8wxkzd' };
+        const expectedBody = {
+            cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+            merchantId: 'h3hxn44tdd8wxkzd',
+        };
 
-        expect(actionsMock.request.post)
-            .toHaveBeenCalledWith('/api/storefront/payment/paypalexpress', expectedBody, expect.any(Object));
+        expect(actionsMock.request.post).toHaveBeenCalledWith(
+            '/api/storefront/payment/paypalexpress',
+            expectedBody,
+            expect.any(Object),
+        );
     });
 
     describe('with a supplied host', () => {
@@ -328,7 +369,7 @@ describe('PaypalButtonStrategy', () => {
                 checkoutActionCreator,
                 paypalScriptLoader,
                 formPoster,
-                'https://example.com'
+                'https://example.com',
             );
         });
 
@@ -337,12 +378,18 @@ describe('PaypalButtonStrategy', () => {
 
             eventEmitter.emit('payment');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            const expectedBody = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', merchantId: 'h3hxn44tdd8wxkzd' };
+            const expectedBody = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                merchantId: 'h3hxn44tdd8wxkzd',
+            };
 
-            expect(actionsMock.request.post)
-                .toHaveBeenCalledWith('https://example.com/api/storefront/payment/paypalexpress', expectedBody, expect.any(Object));
+            expect(actionsMock.request.post).toHaveBeenCalledWith(
+                'https://example.com/api/storefront/payment/paypalexpress',
+                expectedBody,
+                expect.any(Object),
+            );
         });
     });
 });

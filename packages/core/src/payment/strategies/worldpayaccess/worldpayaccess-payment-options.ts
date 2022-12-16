@@ -1,19 +1,19 @@
 export interface WorldpayAccessAdditionalAction {
     additional_action_required: {
         data: {
-            redirect_url: string
-        }
+            redirect_url: string;
+        };
     };
     provider_data: {
         data: string;
-        source_id: string
-    }
+        source_id: string;
+    };
 }
 
 export interface WorldpayAccess3DSOptions {
-    acs_url: string,
-    merchant_data: string,
-    payer_auth_request: string
+    acs_url: string;
+    merchant_data: string;
+    payer_auth_request: string;
 }
 
 export interface WorldpayAccessPaymentInitializeOptions {
@@ -29,4 +29,3 @@ export interface WorldpayAccessPaymentInitializeOptions {
      */
     onLoad(iframe: HTMLIFrameElement, cancel: () => void): void;
 }
-

@@ -1,4 +1,5 @@
 import { noop } from 'lodash';
+
 import { PaymentInitializeOptions } from '../..';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -15,8 +16,8 @@ export function getNonceGenerationErrors(): NonceGenerationError[] {
             field: 'some-field',
         },
     ];
-
 }
+
 export function getCardData(): CardData {
     return {
         card_brand: CardBrand.masterCard,
@@ -40,7 +41,7 @@ export function getPayloadCreditCard(): OrderRequestBody {
 export function getPayloadVaulted(): OrderRequestBody {
     return {
         useStoreCredit: true,
-        payment:  {
+        payment: {
             paymentData: {
                 instrumentId: 'string',
             },

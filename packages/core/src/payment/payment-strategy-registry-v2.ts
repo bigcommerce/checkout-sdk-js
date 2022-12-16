@@ -1,12 +1,10 @@
 import {
+    PaymentStrategy,
     PaymentStrategyResolveId,
-    PaymentStrategy,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { ResolveIdRegistry } from "../common/registry";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-type PaymentStrategyRegistry = ResolveIdRegistry<
-    PaymentStrategy,
-    PaymentStrategyResolveId
->;
+import { ResolveIdRegistry } from '../common/registry';
+
+type PaymentStrategyRegistry = ResolveIdRegistry<PaymentStrategy, PaymentStrategyResolveId>;
 
 export default PaymentStrategyRegistry;

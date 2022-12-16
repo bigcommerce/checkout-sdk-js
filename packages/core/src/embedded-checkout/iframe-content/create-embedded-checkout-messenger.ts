@@ -1,4 +1,8 @@
-import { setupContentWindowForIframeResizer, IframeEventListener, IframeEventPoster } from '../../common/iframe';
+import {
+    IframeEventListener,
+    IframeEventPoster,
+    setupContentWindowForIframeResizer,
+} from '../../common/iframe';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
@@ -33,7 +37,9 @@ import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
  * @param options - Options for creating `EmbeddedCheckoutMessenger`
  * @returns - An instance of `EmbeddedCheckoutMessenger`
  */
-export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger {
+export default function createEmbeddedCheckoutMessenger(
+    options: EmbeddedCheckoutMessengerOptions,
+): EmbeddedCheckoutMessenger {
     setupContentWindowForIframeResizer();
 
     const parentWindow = options.parentWindow || window.parent;
@@ -47,6 +53,6 @@ export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
         new IframeEventListener<EmbeddedContentEventMap>(options.parentOrigin),
         new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, parentWindow),
         new IframeEventPoster<EmbeddedCheckoutEvent>('*', parentWindow),
-        { [EmbeddedCheckoutEventType.FrameLoaded]: handleFrameLoadedEvent }
+        { [EmbeddedCheckoutEventType.FrameLoaded]: handleFrameLoadedEvent },
     );
 }

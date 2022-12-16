@@ -4,15 +4,31 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { noop } from 'lodash';
 import { of } from 'rxjs';
 
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentActionType, ConsignmentRequestSender, ShippingStrategyActionCreator } from '../..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    ConsignmentActionCreator,
+    ConsignmentActionType,
+    ConsignmentRequestSender,
+    createShippingStrategyRegistry,
+    ShippingStrategyActionCreator,
+} from '../..';
+import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import {
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../../../payment';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createAmazonPayV2PaymentProcessor, AmazonPayV2PaymentProcessor } from '../../../payment/strategies/amazon-pay-v2';
+import {
+    AmazonPayV2PaymentProcessor,
+    createAmazonPayV2PaymentProcessor,
+} from '../../../payment/strategies/amazon-pay-v2';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
-import { getShippingAddress, getShippingAddressWithCustomFields } from '../../shipping-addresses.mock';
+import {
+    getShippingAddress,
+    getShippingAddressWithCustomFields,
+} from '../../shipping-addresses.mock';
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
 import AmazonPayV2ShippingStrategy from './amazon-pay-v2-shipping-strategy';
@@ -34,16 +50,18 @@ describe('AmazonPayV2ShippingStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         consignmentActionCreator = new ConsignmentActionCreator(
             new ConsignmentRequestSender(createRequestSender()),
-            new CheckoutRequestSender(createRequestSender())
+            new CheckoutRequestSender(createRequestSender()),
         );
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
-            createShippingStrategyRegistry(store, requestSender)
+            createShippingStrategyRegistry(store, requestSender),
         );
         amazonPayV2PaymentProcessor = createAmazonPayV2PaymentProcessor();
         requestSender = createRequestSender();
         formPoster = createFormPoster();
 
-        const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
+        const paymentMethodRequestSender: PaymentMethodRequestSender =
+            new PaymentMethodRequestSender(requestSender);
+
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         paymentMethodMock = getAmazonPayV2();
 
@@ -57,39 +75,39 @@ describe('AmazonPayV2ShippingStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'initialize')
-            .mockReturnValue(Promise.resolve());
+        jest.spyOn(amazonPayV2PaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize')
-            .mockReturnValue(Promise.resolve());
+        jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize').mockReturnValue(Promise.resolve());
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'createButton')
-            .mockReturnValue(container);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'createButton').mockReturnValue(container);
 
-        jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton')
-            .mockImplementation(noop);
+        jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton').mockImplementation(noop);
 
-        jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((_url, _data, callback = noop) => callback());
+        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
+            callback(),
+        );
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
 
         strategy = new AmazonPayV2ShippingStrategy(
             store,
             consignmentActionCreator,
             paymentMethodActionCreator,
             amazonPayV2PaymentProcessor,
-            shippingStrategyActionCreator
+            shippingStrategyActionCreator,
         );
     });
 
     afterEach(() => {
         document.body.removeChild(container);
+
         if (editShippingButton.parentElement === document.body) {
             document.body.removeChild(editShippingButton);
         } else {
             const shippingButton = document.getElementById('edit-ship-address-button');
+
             if (shippingButton) {
                 document.body.removeChild(shippingButton);
             }
@@ -118,11 +136,14 @@ describe('AmazonPayV2ShippingStrategy', () => {
             paymentMethodMock.initializationData.region = 'de';
             jest.spyOn(shippingStrategyActionCreator, 'widgetInteraction');
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
             const editButton = document.getElementById(shippingId);
+
             if (editButton) {
                 editButton.click();
             }
@@ -133,11 +154,14 @@ describe('AmazonPayV2ShippingStrategy', () => {
         it('avoid dispatching update shipping when clicking previously binded buttons if US', async () => {
             jest.spyOn(shippingStrategyActionCreator, 'widgetInteraction');
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
             const editButton = document.getElementById(shippingId);
+
             if (editButton) {
                 editButton.click();
             }
@@ -155,13 +179,14 @@ describe('AmazonPayV2ShippingStrategy', () => {
         it('fails to initialize the strategy if there is no payment method data', async () => {
             const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
             const state = { ...getCheckoutStoreState(), paymentMethods };
+
             store = createCheckoutStore(state);
             strategy = new AmazonPayV2ShippingStrategy(
                 store,
                 consignmentActionCreator,
                 paymentMethodActionCreator,
                 amazonPayV2PaymentProcessor,
-                shippingStrategyActionCreator
+                shippingStrategyActionCreator,
             );
 
             await expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
@@ -169,13 +194,19 @@ describe('AmazonPayV2ShippingStrategy', () => {
 
         it('binds edit address button if paymentToken is present on initializationData', async () => {
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
             expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
-            expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(shippingId, paymentToken, 'changeAddress');
+            expect(amazonPayV2PaymentProcessor.bindButton).toHaveBeenCalledWith(
+                shippingId,
+                paymentToken,
+                'changeAddress',
+            );
         });
 
         it('does not initialize the paymentProcessor if no options.methodId are provided', () => {
@@ -188,13 +219,14 @@ describe('AmazonPayV2ShippingStrategy', () => {
         it('does not initialize the paymentProcessor if there is no payment method data', () => {
             const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
             const state = { ...getCheckoutStoreState(), paymentMethods };
+
             store = createCheckoutStore(state);
             strategy = new AmazonPayV2ShippingStrategy(
                 store,
                 consignmentActionCreator,
                 paymentMethodActionCreator,
                 amazonPayV2PaymentProcessor,
-                shippingStrategyActionCreator
+                shippingStrategyActionCreator,
             );
 
             expect(strategy.initialize(initializeOptions)).rejects.toThrow(MissingDataError);
@@ -204,19 +236,26 @@ describe('AmazonPayV2ShippingStrategy', () => {
         it('fails to initialize the strategy if no options.methodId is provided', async () => {
             initializeOptions.methodId = '';
 
-            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(InvalidArgumentError);
+            await expect(strategy.initialize(initializeOptions)).rejects.toThrow(
+                InvalidArgumentError,
+            );
         });
 
         it('does not bind edit billing address button if button do not exist', async () => {
             document.body.removeChild(editShippingButton);
             paymentMethodMock.initializationData.paymentToken = paymentToken;
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
 
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.createButton).not.toHaveBeenCalled();
             expect(amazonPayV2PaymentProcessor.initialize).toHaveBeenCalledWith(paymentMethodMock);
-            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalledWith(`#${shippingId}`, paymentToken);
+            expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalledWith(
+                `#${shippingId}`,
+                paymentToken,
+            );
 
             document.body.appendChild(editShippingButton);
         });
@@ -227,14 +266,16 @@ describe('AmazonPayV2ShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
-        jest.spyOn(consignmentActionCreator, 'selectShippingOption')
-            .mockReturnValue(action);
+        jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
 
         const output = await strategy.selectOption(method.id, options);
 
-        expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(method.id, options);
+        expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(
+            method.id,
+            options,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
@@ -245,17 +286,19 @@ describe('AmazonPayV2ShippingStrategy', () => {
         const address = getShippingAddressWithCustomFields();
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
-        jest.spyOn(consignmentActionCreator, 'updateAddress')
-            .mockReturnValue(action);
+        jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
 
         const output = await strategy.updateAddress(address, options);
 
-        expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith({
-            ...amazonShippingAddress,
-            customFields: address.customFields,
-        }, options);
+        expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(
+            {
+                ...amazonShippingAddress,
+                customFields: address.customFields,
+            },
+            options,
+        );
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });

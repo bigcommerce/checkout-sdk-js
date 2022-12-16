@@ -1,7 +1,11 @@
 import { getResponse } from '../../common/http-request/responses.mock';
 import { IframeEventPoster } from '../../common/iframe';
 import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
-import { getErrorPaymentResponseBody, getPaymentRequestBody, getPaymentResponseBody } from '../../payment/payments.mock';
+import {
+    getErrorPaymentResponseBody,
+    getPaymentRequestBody,
+    getPaymentResponseBody,
+} from '../../payment/payments.mock';
 import { HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 import HostedFormOrderData from '../hosted-form-order-data';
@@ -42,7 +46,7 @@ describe('HostedInputPaymentHandler', () => {
             inputStorage as HostedInputStorage,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             requestSender as PaymentRequestSender,
-            requestTransformer as PaymentRequestTransformer
+            requestTransformer as PaymentRequestTransformer,
         );
 
         data = getHostedFormOrderData();
@@ -71,14 +75,13 @@ describe('HostedInputPaymentHandler', () => {
             },
         };
 
-        jest.spyOn(inputAggregator, 'getInputValues')
-            .mockReturnValue(values);
+        jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue(values);
 
-        jest.spyOn(inputValidator, 'validate')
-            .mockReturnValue(validationResults);
+        jest.spyOn(inputValidator, 'validate').mockReturnValue(validationResults);
 
-        jest.spyOn(requestSender, 'submitPayment')
-            .mockResolvedValue(getResponse(getPaymentResponseBody()));
+        jest.spyOn(requestSender, 'submitPayment').mockResolvedValue(
+            getResponse(getPaymentResponseBody()),
+        );
     });
 
     it('validates user inputs', async () => {
@@ -89,8 +92,7 @@ describe('HostedInputPaymentHandler', () => {
             payload: { data, fields },
         });
 
-        expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values);
+        expect(inputValidator.validate).toHaveBeenCalledWith(values);
     });
 
     it('posts event when validation happens', async () => {
@@ -104,8 +106,7 @@ describe('HostedInputPaymentHandler', () => {
             },
         };
 
-        jest.spyOn(inputValidator, 'validate')
-            .mockResolvedValue(results);
+        jest.spyOn(inputValidator, 'validate').mockResolvedValue(results);
 
         jest.spyOn(eventPoster, 'post');
 
@@ -114,29 +115,30 @@ describe('HostedInputPaymentHandler', () => {
             payload: { data, fields },
         });
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.Validated,
-                payload: results,
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.Validated,
+            payload: results,
+        });
     });
 
     it('makes payment request with expected payload', async () => {
-        jest.spyOn(requestTransformer, 'transformWithHostedFormData')
-            .mockReturnValue(getPaymentRequestBody());
+        jest.spyOn(requestTransformer, 'transformWithHostedFormData').mockReturnValue(
+            getPaymentRequestBody(),
+        );
 
-        jest.spyOn(inputStorage, 'getNonce')
-            .mockReturnValue('nonce');
+        jest.spyOn(inputStorage, 'getNonce').mockReturnValue('nonce');
 
         await handler.handle({
             type: HostedFieldEventType.SubmitRequested,
             payload: { data, fields },
         });
 
-        expect(requestTransformer.transformWithHostedFormData)
-            .toHaveBeenCalledWith(values, data, 'nonce');
-        expect(requestSender.submitPayment)
-            .toHaveBeenCalledWith(getPaymentRequestBody());
+        expect(requestTransformer.transformWithHostedFormData).toHaveBeenCalledWith(
+            values,
+            data,
+            'nonce',
+        );
+        expect(requestSender.submitPayment).toHaveBeenCalledWith(getPaymentRequestBody());
     });
 
     it('posts event with payload if payment submission succeeds', async () => {
@@ -147,18 +149,17 @@ describe('HostedInputPaymentHandler', () => {
             payload: { data, fields },
         });
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.SubmitSucceeded,
-                payload: {
-                    response: {
-                        body: getPaymentResponseBody(),
-                        headers: { 'content-type': 'application/json' },
-                        status: 200,
-                        statusText: 'OK',
-                    },
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.SubmitSucceeded,
+            payload: {
+                response: {
+                    body: getPaymentResponseBody(),
+                    headers: { 'content-type': 'application/json' },
+                    status: 200,
+                    statusText: 'OK',
                 },
-            });
+            },
+        });
     });
 
     it('posts event if payment submission fails', async () => {
@@ -166,21 +167,19 @@ describe('HostedInputPaymentHandler', () => {
 
         jest.spyOn(eventPoster, 'post');
 
-        jest.spyOn(requestSender, 'submitPayment')
-            .mockRejectedValue(response);
+        jest.spyOn(requestSender, 'submitPayment').mockRejectedValue(response);
 
         await handler.handle({
             type: HostedFieldEventType.SubmitRequested,
             payload: { data, fields },
         });
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.SubmitFailed,
-                payload: {
-                    error: { code: 'insufficient_funds', message: 'Insufficient funds' },
-                    response,
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.SubmitFailed,
+            payload: {
+                error: { code: 'insufficient_funds', message: 'Insufficient funds' },
+                response,
+            },
+        });
     });
 });

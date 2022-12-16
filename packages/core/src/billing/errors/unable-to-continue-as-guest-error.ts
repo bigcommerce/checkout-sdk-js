@@ -6,7 +6,9 @@ import { StandardError } from '../../common/error/errors';
  */
 export default class UnableToContinueAsGuestError extends StandardError {
     constructor(message?: string) {
-        super(message || 'Unable to continue as a guest because the customer is already signed in.');
+        super(
+            message || 'Unable to continue as a guest because the customer is already signed in.',
+        );
 
         this.name = 'UnableToContinueAsGuestError';
         this.type = 'unable_to_continue_as_guest';

@@ -1,21 +1,48 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
+import {
+    BillingAddressActionCreator,
+    BillingAddressActionType,
+    BillingAddressRequestSender,
+} from '../../../billing';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    Checkout,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 import { getConfig } from '../../../config/configs.mock';
 import { getCustomer } from '../../../customer/customers.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import {
+    StoreCreditActionCreator,
+    StoreCreditActionType,
+    StoreCreditRequestSender,
+} from '../../../store-credit';
+import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -26,14 +53,23 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getVaultedInstrument } from '../../payments.mock';
-import { getAdditionalActionError, getClientMock, getDigitalRiverJSMock, getDigitalRiverPaymentMethodMock, getInitializeOptionsMock, getOrderRequestBodyWithVaultedInstrument } from '../digitalriver/digitalriver.mock';
+import {
+    getAdditionalActionError,
+    getClientMock,
+    getDigitalRiverJSMock,
+    getDigitalRiverPaymentMethodMock,
+    getInitializeOptionsMock,
+    getOrderRequestBodyWithVaultedInstrument,
+} from '../digitalriver/digitalriver.mock';
 
-import { AuthenticationSourceStatus, OnCancelOrErrorResponse, OnSuccessResponse } from './digitalriver';
+import {
+    AuthenticationSourceStatus,
+    OnCancelOrErrorResponse,
+    OnSuccessResponse,
+} from './digitalriver';
 import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
-import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
-import { SubscriptionsActionCreator, SubscriptionsRequestSender } from "../../../subscription";
 
 describe('DigitalRiverPaymentStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
@@ -59,6 +95,7 @@ describe('DigitalRiverPaymentStrategy', () => {
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
         const stylesheetLoader = createStylesheetLoader();
+
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         requestSender = createRequestSender();
@@ -67,58 +104,67 @@ describe('DigitalRiverPaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         storeCreditActionCreator = new StoreCreditActionCreator(
-            new StoreCreditRequestSender(createRequestSender())
+            new StoreCreditRequestSender(createRequestSender()),
         );
         billingAddressActionCreator = new BillingAddressActionCreator(
             billingAddressRequestSender,
-            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender))
+            new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
         );
 
-        paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: JSON.stringify(getClientMock())};
+        paymentMethodMock = {
+            ...getDigitalRiverPaymentMethodMock(),
+            clientToken: JSON.stringify(getClientMock()),
+        };
         digitalRiverScriptLoader = new DigitalRiverScriptLoader(scriptLoader, stylesheetLoader);
         store = createCheckoutStore(getCheckoutStoreState());
         checkoutMock = getCheckout();
         applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
-        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
+        loadPaymentMethodAction = of(
+            createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {
+                methodId: paymentMethodMock.id,
+            }),
+        );
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
-        updateAddressAction = of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
+        updateAddressAction = of(
+            createAction(BillingAddressActionType.UpdateBillingAddressRequested),
+        );
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
-            .mockReturnValue(checkoutMock);
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
-            .mockReturnValue(applyStoreCreditAction);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            applyStoreCreditAction,
+        );
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
 
-        jest.spyOn(billingAddressActionCreator, 'updateAddress')
-            .mockReturnValue(updateAddressAction);
+        jest.spyOn(billingAddressActionCreator, 'updateAddress').mockReturnValue(
+            updateAddressAction,
+        );
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         strategy = new DigitalRiverPaymentStrategy(
@@ -128,15 +174,17 @@ describe('DigitalRiverPaymentStrategy', () => {
             paymentActionCreator,
             storeCreditActionCreator,
             digitalRiverScriptLoader,
-            billingAddressActionCreator
+            billingAddressActionCreator,
         );
-
     });
 
     describe('#initialize()', () => {
         const digitalRiverLoadResponse = getDigitalRiverJSMock();
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
-        const digitalRiverElement = digitalRiverLoadResponse.createElement(expect.any(Object), expect.any(Object));
+        const digitalRiverElement = digitalRiverLoadResponse.createElement(
+            expect.any(Object),
+            expect.any(Object),
+        );
         const customer = getCustomer();
         let options: PaymentInitializeOptions;
         let onErrorCallback: (error: OnCancelOrErrorResponse) => void;
@@ -144,11 +192,19 @@ describe('DigitalRiverPaymentStrategy', () => {
         let container: HTMLDivElement;
 
         beforeEach(() => {
-            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(
+                getBillingAddress(),
+            );
             jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
-            jest.spyOn(digitalRiverLoadResponse, 'createElement').mockReturnValue(digitalRiverElement);
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
+                Promise.resolve(digitalRiverLoadResponse),
+            );
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
+                digitalRiverComponent,
+            );
+            jest.spyOn(digitalRiverLoadResponse, 'createElement').mockReturnValue(
+                digitalRiverElement,
+            );
 
             options = getInitializeOptionsMock();
             container = document.createElement('div');
@@ -168,10 +224,13 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('loads DigitalRiver script with vaulting enable and customer email', async () => {
-            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
-                .mockReturnValue({...getBillingAddress(), email: undefined});
-            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
-                .mockReturnValue({ ...getCustomer(), email: 'customer@bigcommerce.com'});
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(
+                { ...getBillingAddress(), email: undefined },
+            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
+                ...getCustomer(),
+                email: 'customer@bigcommerce.com',
+            });
 
             if (options.digitalriver) {
                 options.digitalriver.configuration.showSavePaymentAgreement = true;
@@ -181,27 +240,30 @@ describe('DigitalRiverPaymentStrategy', () => {
 
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
             expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
-            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
                 expect.objectContaining({
                     options: expect.objectContaining({
                         showSavePaymentAgreement: true,
                     }),
-                })
+                }),
             );
-            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
                 expect.objectContaining({
                     billingAddress: expect.objectContaining({
                         email: 'customer@bigcommerce.com',
                     }),
-                })
+                }),
             );
         });
 
         it('loads DigitalRiver script without vaulting enable and customer email', async () => {
-            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow')
-                .mockReturnValue({...getBillingAddress(), email: undefined});
-            jest.spyOn(store.getState().customer, 'getCustomerOrThrow')
-                .mockReturnValue({ ...getCustomer(), email: 'customer@bigcommerce.com'});
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(
+                { ...getBillingAddress(), email: undefined },
+            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
+                ...getCustomer(),
+                email: 'customer@bigcommerce.com',
+            });
 
             if (options.digitalriver) {
                 options.digitalriver.configuration.showSavePaymentAgreement = true;
@@ -210,23 +272,23 @@ describe('DigitalRiverPaymentStrategy', () => {
             await strategy.initialize(options);
 
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
-            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
                 expect.objectContaining({
                     options: expect.objectContaining({
                         showSavePaymentAgreement: false,
                     }),
-                })
+                }),
             );
-            expect(digitalRiverLoadResponse.createDropin).toBeCalledWith(
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
                 expect.objectContaining({
                     billingAddress: expect.objectContaining({
                         email: 'customer@bigcommerce.com',
                     }),
-                })
+                }),
             );
         });
 
-        it('loads DigitalRiver when widget was updated ', async () => {
+        it('loads DigitalRiver when widget was updated', async () => {
             jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
             jest.spyOn(document, 'getElementById').mockReturnValue('mock');
             jest.spyOn(document, 'getElementById').mockReturnValue(container);
@@ -239,12 +301,14 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('loads DigitalRiver and disable PayPal when feature is off', async () => {
             const storeConfigMock = getConfig().storeConfig;
+
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-4802.digital_river_paypal_support': false,
             };
 
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValueOnce(storeConfigMock);
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+                storeConfigMock,
+            );
 
             await strategy.initialize(options);
 
@@ -253,7 +317,9 @@ describe('DigitalRiverPaymentStrategy', () => {
                 sessionId: '',
                 options: {
                     ...options.digitalriver?.configuration,
-                    showSavePaymentAgreement: Boolean(customer.email) && options.digitalriver?.configuration.showSavePaymentAgreement,
+                    showSavePaymentAgreement:
+                        Boolean(customer.email) &&
+                        options.digitalriver?.configuration.showSavePaymentAgreement,
                 },
                 billingAddress: {
                     firstName: billingAddressMock.firstName,
@@ -270,7 +336,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                     },
                 },
                 paymentMethodConfiguration: {
-                    disabledPaymentMethods: ['payPal']
+                    disabledPaymentMethods: ['payPal'],
                 },
                 onSuccess: jest.fn(),
                 onReady: jest.fn(),
@@ -278,17 +344,21 @@ describe('DigitalRiverPaymentStrategy', () => {
             };
 
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
-            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(digitalRiverConfigurationExpected);
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
+                digitalRiverConfigurationExpected,
+            );
         });
 
         it('loads DigitalRiver and does not disabled PayPal when feature is on', async () => {
             const storeConfigMock = getConfig().storeConfig;
+
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-4802.digital_river_paypal_support': true,
             };
 
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow')
-                .mockReturnValueOnce(storeConfigMock);
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+                storeConfigMock,
+            );
 
             await strategy.initialize(options);
 
@@ -297,7 +367,9 @@ describe('DigitalRiverPaymentStrategy', () => {
                 sessionId: '',
                 options: {
                     ...options.digitalriver?.configuration,
-                    showSavePaymentAgreement: Boolean(customer.email) && options.digitalriver?.configuration.showSavePaymentAgreement,
+                    showSavePaymentAgreement:
+                        Boolean(customer.email) &&
+                        options.digitalriver?.configuration.showSavePaymentAgreement,
                 },
                 billingAddress: {
                     firstName: billingAddressMock.firstName,
@@ -314,7 +386,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                     },
                 },
                 paymentMethodConfiguration: {
-                    disabledPaymentMethods: []
+                    disabledPaymentMethods: [],
                 },
                 onSuccess: jest.fn(),
                 onReady: jest.fn(),
@@ -322,16 +394,19 @@ describe('DigitalRiverPaymentStrategy', () => {
             };
 
             expect(digitalRiverScriptLoader.load).toHaveBeenCalled();
-            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(digitalRiverConfigurationExpected);
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalledWith(
+                digitalRiverConfigurationExpected,
+            );
         });
 
-
         it('calls onSuccess callback from DigitalRiver', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
-                onSuccessCallback = configuration.onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                (configuration) => {
+                    onSuccessCallback = configuration.onSuccess;
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onSuccessCallback({
@@ -342,52 +417,61 @@ describe('DigitalRiverPaymentStrategy', () => {
                 readyForStorage: true,
             });
 
-            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
         it('calls onReady callback from DigitalRiver', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onReady}) => {
-                onReady({
-                    paymentMethodTypes: ['creditCard', 'paypal'],
-                });
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                ({ onReady }) => {
+                    onReady({
+                        paymentMethodTypes: ['creditCard', 'paypal'],
+                    });
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
 
-            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
         it('calls onError callback from DigitalRiver', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onError}) => {
-                onErrorCallback = onError;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                ({ onError }) => {
+                    onErrorCallback = onError;
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onErrorCallback({
-                errors: [{
-                    code: 'code',
-                    message: 'message',
-                }],
+                errors: [
+                    {
+                        code: 'code',
+                        message: 'message',
+                    },
+                ],
             });
 
-            expect(options.digitalriver?.onError).toBeCalled();
-            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(options.digitalriver?.onError).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
         it('throws an error when load response is empty or not provided', () => {
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
+                Promise.resolve(undefined),
+            );
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrowError(DigitalRiverError);
+            return expect(promise).rejects.toThrow(DigitalRiverError);
         });
 
         it('throws an error when DigitalRiver options is not provided', () => {
             const error = new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+
             options.digitalriver = undefined;
 
             const promise = strategy.initialize(options);
@@ -396,40 +480,57 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver clientToken is not provided', () => {
-            paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: ''};
-            loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
+            paymentMethodMock = { ...getDigitalRiverPaymentMethodMock(), clientToken: '' };
+            loadPaymentMethodAction = of(
+                createAction(
+                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    paymentMethodMock,
+                    { methodId: paymentMethodMock.id },
+                ),
+            );
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrowError(DigitalRiverError);
+            return expect(promise).rejects.toThrow(DigitalRiverError);
         });
 
-        it('throws an error when DigitalRiver clientToken is not receiving correct data ', () => {
-            paymentMethodMock = {...getDigitalRiverPaymentMethodMock(), clientToken: 'ok'};
-            loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {methodId: paymentMethodMock.id}));
+        it('throws an error when DigitalRiver clientToken is not receiving correct data', () => {
+            paymentMethodMock = { ...getDigitalRiverPaymentMethodMock(), clientToken: 'ok' };
+            loadPaymentMethodAction = of(
+                createAction(
+                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    paymentMethodMock,
+                    { methodId: paymentMethodMock.id },
+                ),
+            );
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrowError(DigitalRiverError);
+            return expect(promise).rejects.toThrow(DigitalRiverError);
         });
 
         it('throws an error when data on onSuccess event is not provided', async () => {
-            const expectedError = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onSuccess}) => {
-                try {
-                    onSuccessCallback = onSuccess;
-                } catch (error) {
-                    expect(error).toEqual(expectedError);
-                }
+            const expectedError = new InvalidArgumentError(
+                'Unable to initialize payment because success argument is not provided.',
+            );
 
-                return digitalRiverComponent;
-            });
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                ({ onSuccess }) => {
+                    try {
+                        onSuccessCallback = onSuccess;
+                    } catch (error) {
+                        expect(error).toEqual(expectedError);
+                    }
+
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onSuccessCallback(undefined);
 
-            expect(options.digitalriver?.onError).toBeCalled();
-            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(options.digitalriver?.onError).toHaveBeenCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
     });
 
@@ -441,11 +542,14 @@ describe('DigitalRiverPaymentStrategy', () => {
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
 
         beforeEach(() => {
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
+                Promise.resolve(digitalRiverLoadResponse),
+            );
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
+                digitalRiverComponent,
+            );
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-            jest.spyOn(orderActionCreator, 'submitOrder')
-                .mockReturnValue(submitOrderAction);
+            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
             options = getInitializeOptionsMock();
             payload = merge({}, getOrderRequestBody(), {
                 payment: {
@@ -455,18 +559,20 @@ describe('DigitalRiverPaymentStrategy', () => {
                     },
                     payment: {
                         methodId: 'digitalriver',
-                        paymentData: {instrumentId: '123', shouldSetAsDefaultInstrument: true},
+                        paymentData: { instrumentId: '123', shouldSetAsDefaultInstrument: true },
                     },
                 },
             });
         });
 
         it('creates the order and submit payment with credit card', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
-                onSuccessCallback = configuration.onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                (configuration) => {
+                    onSuccessCallback = configuration.onSuccess;
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onSuccessCallback({
@@ -481,30 +587,28 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
-            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith(
-                {
-                    methodId: 'authorizenet',
-                    paymentData: {
-                        formattedPayload: {
-                            credit_card_token: {
-                                token: JSON.stringify({
-                                    checkoutId: '12345676543',
+            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'authorizenet',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: JSON.stringify({
+                                checkoutId: '12345676543',
+                                source: {
                                     source: {
-                                        source: {
-                                            id: '1',
-                                            reusable: false,
-                                        },
-                                        readyForStorage: true,
+                                        id: '1',
+                                        reusable: false,
                                     },
-                                    sessionId: '1234',
-                                }),
-                            },
-                            set_as_default_stored_instrument: false,
-                            vault_payment_instrument: true,
+                                    readyForStorage: true,
+                                },
+                                sessionId: '1234',
+                            }),
                         },
+                        set_as_default_stored_instrument: false,
+                        vault_payment_instrument: true,
                     },
-                }
-            );
+                },
+            });
         });
 
         it('creates the order and should update the billing address', async () => {
@@ -512,80 +616,81 @@ describe('DigitalRiverPaymentStrategy', () => {
                 ...payload,
                 payment: {
                     ...payload.payment,
-                    methodId: 'paypal'
-                }
-            }
+                    methodId: 'paypal',
+                },
+            };
 
             const owner = {
                 address: {
-                    city: "Minnetonka",
-                    country: "US",
-                    line1: "10380 Bren Road W",
-                    postalCode: "55343",
-                    state: "MN"
+                    city: 'Minnetonka',
+                    country: 'US',
+                    line1: '10380 Bren Road W',
+                    postalCode: '55343',
+                    state: 'MN',
                 },
-                email: "test@digitalriver.com",
-                firstName: "John",
-                lastName: "Doe",
-                phoneNumber: "000-000-0000"
+                email: 'test@digitalriver.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                phoneNumber: '000-000-0000',
             };
 
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(configuration => {
-                onSuccessCallback = configuration.onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                (configuration) => {
+                    onSuccessCallback = configuration.onSuccess;
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onSuccessCallback({
                 source: {
                     id: '1',
                     reusable: false,
-                    owner: owner,
+                    owner,
                 },
                 readyForStorage: true,
             });
 
-            expect(digitalRiverLoadResponse.createDropin).toBeCalled();
+            expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
             expect(await strategy.execute(payPalOptions)).toEqual(store.getState());
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
-            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith(
-                {
-                    methodId: 'paypal',
-                    paymentData: {
-                        formattedPayload: {
-                            credit_card_token: {
-                                token: JSON.stringify({
-                                    checkoutId: '12345676543',
+            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'paypal',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: JSON.stringify({
+                                checkoutId: '12345676543',
+                                source: {
                                     source: {
-                                        source: {
-                                            id: '1',
-                                            reusable: false,
-                                            owner: owner,
-                                        },
-                                        readyForStorage: true,
+                                        id: '1',
+                                        reusable: false,
+                                        owner,
                                     },
-                                    sessionId: '1234',
-                                }),
-                            },
-                            set_as_default_stored_instrument: false,
-                            vault_payment_instrument: true,
+                                    readyForStorage: true,
+                                },
+                                sessionId: '1234',
+                            }),
                         },
+                        set_as_default_stored_instrument: false,
+                        vault_payment_instrument: true,
                     },
-                }
-            );
+                },
+            });
         });
 
-
         it('executes the strategy successfully and applies the store credit', async () => {
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(({onSuccess}) => {
-                onSuccessCallback = onSuccess;
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                ({ onSuccess }) => {
+                    onSuccessCallback = onSuccess;
 
-                return digitalRiverComponent;
-            });
+                    return digitalRiverComponent;
+                },
+            );
 
             await strategy.initialize(options);
             onSuccessCallback({
@@ -602,30 +707,28 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
-            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith(
-                {
-                    methodId: 'authorizenet',
-                    paymentData: {
-                        formattedPayload: {
-                            credit_card_token: {
-                                token: JSON.stringify({
-                                    checkoutId: '12345676543',
+            expect(await paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId: 'authorizenet',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: JSON.stringify({
+                                checkoutId: '12345676543',
+                                source: {
                                     source: {
-                                        source: {
-                                            id: '1',
-                                            reusable: false,
-                                        },
-                                        readyForStorage: true,
+                                        id: '1',
+                                        reusable: false,
                                     },
-                                    sessionId: '1234',
-                                }),
-                            },
-                            set_as_default_stored_instrument: false,
-                            vault_payment_instrument: true,
+                                    readyForStorage: true,
+                                },
+                                sessionId: '1234',
+                            }),
                         },
+                        set_as_default_stored_instrument: false,
+                        vault_payment_instrument: true,
                     },
-                }
-            );
+                },
+            });
         });
 
         it('throws an error when payment is not provided', () => {
@@ -644,11 +747,20 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         describe('using vaulted cards', () => {
             it('calls authenticateSource method when paying with vaulted instrument and 3DS is required', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, getAdditionalActionError())));
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(submitPaymentAction);
-                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(Promise.resolve({status: 'complete'}));
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    of(
+                        createErrorAction(
+                            PaymentActionType.SubmitPaymentFailed,
+                            getAdditionalActionError(),
+                        ),
+                    ),
+                );
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    submitPaymentAction,
+                );
+                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(
+                    Promise.resolve({ status: 'complete' }),
+                );
 
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
@@ -658,12 +770,23 @@ describe('DigitalRiverPaymentStrategy', () => {
             });
 
             it('calls authenticateSource method, authentication fails and execute method fails', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, getAdditionalActionError())));
-                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(Promise.resolve({status: AuthenticationSourceStatus.failed}));
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    of(
+                        createErrorAction(
+                            PaymentActionType.SubmitPaymentFailed,
+                            getAdditionalActionError(),
+                        ),
+                    ),
+                );
+                jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(
+                    Promise.resolve({ status: AuthenticationSourceStatus.failed }),
+                );
 
                 await strategy.initialize(options);
-                await expect(strategy.execute(getOrderRequestBodyWithVaultedInstrument())).rejects.toThrow();
+
+                await expect(
+                    strategy.execute(getOrderRequestBodyWithVaultedInstrument()),
+                ).rejects.toThrow();
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                 expect(digitalRiverLoadResponse.authenticateSource).toHaveBeenCalled();
@@ -688,13 +811,16 @@ describe('DigitalRiverPaymentStrategy', () => {
                     },
                 };
 
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(submitPaymentAction);
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    submitPaymentAction,
+                );
 
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
 
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPaymentPayload);
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expectedPaymentPayload,
+                );
             });
         });
     });
@@ -714,16 +840,23 @@ describe('DigitalRiverPaymentStrategy', () => {
         let options: PaymentInitializeOptions;
 
         beforeEach(() => {
-            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(getBillingAddress());
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddressOrThrow').mockReturnValue(
+                getBillingAddress(),
+            );
             jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(Promise.resolve(digitalRiverLoadResponse));
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(digitalRiverComponent);
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
+                Promise.resolve(digitalRiverLoadResponse),
+            );
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
+                digitalRiverComponent,
+            );
             jest.spyOn(document, 'getElementById').mockReturnValue('');
             options = getInitializeOptionsMock();
         });
 
         it('returns the state', async () => {
             await strategy.initialize(options);
+
             expect(await strategy.deinitialize()).toEqual(store.getState());
         });
     });

@@ -9,20 +9,13 @@ export default class CurrencyFormatter {
     private _thousandsSeparator: string;
     private _decimalSeparator: string;
 
-    constructor(
-        currencySettings: CurrencyConfig
-    ) {
+    constructor(currencySettings: CurrencyConfig) {
         if (!currencySettings) {
             throw new Error('Currency settings missing');
         }
 
-        const {
-            decimalPlaces,
-            symbolLocation,
-            symbol,
-            thousandsSeparator,
-            decimalSeparator,
-        } = currencySettings;
+        const { decimalPlaces, symbolLocation, symbol, thousandsSeparator, decimalSeparator } =
+            currencySettings;
 
         if (
             typeof symbolLocation !== 'string' ||
@@ -50,33 +43,34 @@ export default class CurrencyFormatter {
 
         const formattedCurrency = this._formatCurrency(formattedNumber);
 
-        return amount < 0 ?
-            `-${formattedCurrency}` :
-            formattedCurrency;
+        return amount < 0 ? `-${formattedCurrency}` : formattedCurrency;
     }
 
     private _formatNumber(amount: number): string {
         const positiveAmount = Math.abs(amount);
-        const [ integerAmount, decimalAmount = '' ] = (this._toFixed(positiveAmount, this._decimalPlaces)).split('.');
-        const parsedIntegerAmount = integerAmount.replace(/\B(?=(\d{3})+(?!\d))/g, this._thousandsSeparator);
+        const [integerAmount, decimalAmount = ''] = this._toFixed(
+            positiveAmount,
+            this._decimalPlaces,
+        ).split('.');
+        const parsedIntegerAmount = integerAmount.replace(
+            /\B(?=(\d{3})+(?!\d))/g,
+            this._thousandsSeparator,
+        );
 
         if (this._decimalPlaces < 1) {
             return parsedIntegerAmount;
         }
 
-        return [
-            parsedIntegerAmount,
-            decimalAmount,
-        ].join(this._decimalSeparator);
+        return [parsedIntegerAmount, decimalAmount].join(this._decimalSeparator);
     }
 
     private _formatCurrency(formattedNumber: string): string {
-        return (this._symbolLocation.toLowerCase() === 'left') ?
-            `${this._symbol}${formattedNumber}` :
-            `${formattedNumber}${this._symbol}`;
+        return this._symbolLocation.toLowerCase() === 'left'
+            ? `${this._symbol}${formattedNumber}`
+            : `${formattedNumber}${this._symbol}`;
     }
 
     private _toFixed(value: number, precision: number): string {
-        return (+(Math.round(+(value + 'e' + precision)) + 'e' + -precision)).toFixed(precision);
+        return (+`${Math.round(+`${value}e${precision}`)}e${-precision}`).toFixed(precision);
     }
 }

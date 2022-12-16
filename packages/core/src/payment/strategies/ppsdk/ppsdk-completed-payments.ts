@@ -1,12 +1,11 @@
 import { BrowserStorage } from '../../../common/storage';
 
 type CompletedPayments = string[];
+
 const COMPLETED_PAYMENTS_KEY = 'completed-payments';
 
 export class PPSDKCompletedPayments {
-    constructor(
-        private _browserStorage: BrowserStorage
-    ) { }
+    constructor(private _browserStorage: BrowserStorage) {}
 
     isCompleted(paymentId: string): boolean {
         return this.getCompletedPayments().indexOf(paymentId) >= 0;

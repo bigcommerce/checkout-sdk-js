@@ -4,8 +4,8 @@ interface Item {
 }
 
 export enum RadiusUnit {
-    KM = "KM",
-    MI = "MI",
+    KM = 'KM',
+    MI = 'MI',
 }
 
 interface Radius {

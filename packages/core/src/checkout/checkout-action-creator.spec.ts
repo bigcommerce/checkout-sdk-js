@@ -28,22 +28,27 @@ describe('CheckoutActionCreator', () => {
 
     beforeEach(() => {
         const requestSender = createRequestSender();
+
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         configRequestSender = new ConfigRequestSender(requestSender);
         formFieldsRequestSender = new FormFieldsRequestSender(requestSender);
         store = createCheckoutStore(getCheckoutStoreState());
 
-        jest.spyOn(formFieldsRequestSender, 'loadFields')
-            .mockReturnValue(Promise.resolve(getResponse(getFormFields())));
+        jest.spyOn(formFieldsRequestSender, 'loadFields').mockReturnValue(
+            Promise.resolve(getResponse(getFormFields())),
+        );
 
-        jest.spyOn(configRequestSender, 'loadConfig')
-            .mockReturnValue(Promise.resolve(getResponse(getConfig())));
+        jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(
+            Promise.resolve(getResponse(getConfig())),
+        );
 
-        jest.spyOn(checkoutRequestSender, 'loadCheckout')
-            .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+        jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+            Promise.resolve(getResponse(getCheckout())),
+        );
 
-        jest.spyOn(checkoutRequestSender, 'updateCheckout')
-            .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+        jest.spyOn(checkoutRequestSender, 'updateCheckout').mockReturnValue(
+            Promise.resolve(getResponse(getCheckout())),
+        );
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
 
@@ -53,86 +58,105 @@ describe('CheckoutActionCreator', () => {
 
         jest.spyOn(formFieldsActionCreator, 'loadFormFields');
 
-        actionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator, formFieldsActionCreator);
+        actionCreator = new CheckoutActionCreator(
+            checkoutRequestSender,
+            configActionCreator,
+            formFieldsActionCreator,
+        );
     });
 
     describe('#loadCheckout', () => {
         it('emits action to notify loading progress', async () => {
             const { id } = getCheckout();
-            const actions = await actionCreator.loadCheckout(id)
-                .pipe(toArray())
-                .toPromise();
+            const actions = await actionCreator.loadCheckout(id).pipe(toArray()).toPromise();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, undefined);
 
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: ConfigActionType.LoadConfigRequested },
-                { type: FormFieldsActionType.LoadFormFieldsRequested },
-                { type: FormFieldsActionType.LoadFormFieldsSucceeded, payload: getFormFields() },
-                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
-                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: CheckoutActionType.LoadCheckoutRequested },
+                    { type: ConfigActionType.LoadConfigRequested },
+                    { type: FormFieldsActionType.LoadFormFieldsRequested },
+                    {
+                        type: FormFieldsActionType.LoadFormFieldsSucceeded,
+                        payload: getFormFields(),
+                    },
+                    { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
+                    { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                ]),
+            );
         });
 
         it('emits error action if unable to load checkout', async () => {
-            jest.spyOn(checkoutRequestSender, 'loadCheckout')
-                .mockReturnValue(Promise.reject(getErrorResponse()));
+            jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+                Promise.reject(getErrorResponse()),
+            );
 
             const { id } = getCheckout();
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
-            const actions = await actionCreator.loadCheckout(id)
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const actions = await actionCreator
+                .loadCheckout(id)
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: ConfigActionType.LoadConfigRequested },
-                { type: FormFieldsActionType.LoadFormFieldsRequested },
-                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: CheckoutActionType.LoadCheckoutRequested },
+                    { type: ConfigActionType.LoadConfigRequested },
+                    { type: FormFieldsActionType.LoadFormFieldsRequested },
+                    { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
+                    {
+                        type: CheckoutActionType.LoadCheckoutFailed,
+                        error: true,
+                        payload: getErrorResponse(),
+                    },
+                ]),
+            );
         });
 
         it('emits error action if unable to load config', async () => {
             const errorResponse = getErrorResponse();
 
-            jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(concat(
+            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(
+                concat(
                     of(createAction(ConfigActionType.LoadConfigRequested)),
-                    throwError(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse))
-                ));
+                    throwError(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse)),
+                ),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
-            const actions = await actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await actionCreator
+                .loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual(expect.arrayContaining([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: ConfigActionType.LoadConfigRequested },
-                { type: ConfigActionType.LoadConfigFailed, error: true, payload: errorResponse },
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: errorResponse },
-            ]));
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: CheckoutActionType.LoadCheckoutRequested },
+                    { type: ConfigActionType.LoadConfigRequested },
+                    {
+                        type: ConfigActionType.LoadConfigFailed,
+                        error: true,
+                        payload: errorResponse,
+                    },
+                    {
+                        type: CheckoutActionType.LoadCheckoutFailed,
+                        error: true,
+                        payload: errorResponse,
+                    },
+                ]),
+            );
         });
 
         it('calls loadConfig in parallel', () => {
             const { id } = getCheckout();
 
-            jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(new Promise(() => {}));
+            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(new Promise(() => {}));
 
-            actionCreator.loadCheckout(id)
-                .toPromise();
+            actionCreator.loadCheckout(id).toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
@@ -160,16 +184,14 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('emits error action if unable to load checkout', async () => {
-            jest.spyOn(checkoutRequestSender, 'loadCheckout')
-                .mockReturnValue(Promise.reject(getErrorResponse()));
+            jest.spyOn(checkoutRequestSender, 'loadCheckout').mockReturnValue(
+                Promise.reject(getErrorResponse()),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
             const actions = await from(actionCreator.loadDefaultCheckout()(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -179,13 +201,16 @@ describe('CheckoutActionCreator', () => {
                 { type: FormFieldsActionType.LoadFormFieldsRequested },
                 { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
                 { type: FormFieldsActionType.LoadFormFieldsSucceeded, payload: getFormFields() },
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+                {
+                    type: CheckoutActionType.LoadCheckoutFailed,
+                    error: true,
+                    payload: getErrorResponse(),
+                },
             ]);
         });
 
         it('does not call loadCheckout until loadConfig resolves', () => {
-            jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(new Promise(() => {}));
+            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(new Promise(() => {}));
 
             from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
@@ -198,7 +223,8 @@ describe('CheckoutActionCreator', () => {
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
-                '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f', undefined
+                '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
+                undefined,
             );
         });
     });
@@ -209,16 +235,17 @@ describe('CheckoutActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            expect(checkoutRequestSender.updateCheckout)
-                .toHaveBeenCalledWith(
-                    'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-                    { customerMessage: 'foo' },
-                    undefined
-                );
+            expect(checkoutRequestSender.updateCheckout).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                { customerMessage: 'foo' },
+                undefined,
+            );
         });
 
         it('emits action to notify updating progress', async () => {
-            const actions = await from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+            const actions = await from(
+                actionCreator.updateCheckout({ customerMessage: 'foo' })(store),
+            )
                 .pipe(toArray())
                 .toPromise();
 
@@ -229,41 +256,45 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('emits error action if unable to update checkout', async () => {
-            jest.spyOn(checkoutRequestSender, 'updateCheckout')
-                .mockReturnValue(Promise.reject(getErrorResponse()));
+            jest.spyOn(checkoutRequestSender, 'updateCheckout').mockReturnValue(
+                Promise.reject(getErrorResponse()),
+            );
 
-            const errorHandler = jest.fn(action => of(action));
+            const errorHandler = jest.fn((action) => of(action));
 
-            const actions = await from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
-                .pipe(
-                    catchError(errorHandler),
-                    toArray()
-                )
+            const actions = await from(
+                actionCreator.updateCheckout({ customerMessage: 'foo' })(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CheckoutActionType.UpdateCheckoutRequested },
-                { type: CheckoutActionType.UpdateCheckoutFailed, error: true, payload: getErrorResponse() },
+                {
+                    type: CheckoutActionType.UpdateCheckoutFailed,
+                    error: true,
+                    payload: getErrorResponse(),
+                },
             ]);
         });
     });
 
     describe('#loadCurrentCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await from(actionCreator.loadCurrentCheckout()(store))
-                .toPromise();
+            await from(actionCreator.loadCurrentCheckout()(store)).toPromise();
 
-            expect(checkoutRequestSender.loadCheckout)
-                .toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', undefined);
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                undefined,
+            );
         });
 
         it('throws error if there is no existing checkout id', async () => {
             store = createCheckoutStore();
 
             try {
-                await from(actionCreator.loadCurrentCheckout()(store))
-                    .toPromise();
+                await from(actionCreator.loadCurrentCheckout()(store)).toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -282,19 +313,19 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadDefaultCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await from(actionCreator.loadDefaultCheckout()(store))
-                .toPromise();
+            await from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
-            expect(checkoutRequestSender.loadCheckout)
-                .toHaveBeenCalledWith('6a6071cc-82ba-45aa-adb0-ebec42d6ff6f', undefined);
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
+                '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
+                undefined,
+            );
         });
 
         it('throws error if there is no existing checkout id', async () => {
             store = createCheckoutStore();
 
             try {
-                await from(actionCreator.loadDefaultCheckout()(store))
-                    .toPromise();
+                await from(actionCreator.loadDefaultCheckout()(store)).toPromise();
             } catch ({ payload }) {
                 expect(payload).toBeInstanceOf(StandardError);
             }

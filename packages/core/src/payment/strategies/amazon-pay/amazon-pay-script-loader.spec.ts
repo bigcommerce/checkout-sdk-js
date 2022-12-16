@@ -15,7 +15,7 @@ describe('AmazonPayScriptLoader', () => {
     let setUseCookieSpy: jest.Mock;
 
     const MockLogin: AmazonPayLogin = {
-        authorize(): void { return },
+        authorize(): void {},
 
         setClientId(clientId: string): void {
             setClientIdSpy(clientId);
@@ -33,12 +33,11 @@ describe('AmazonPayScriptLoader', () => {
         setUseCookieSpy = jest.fn();
         hostWindow = window;
 
-        jest.spyOn(scriptLoader, 'loadScript')
-            .mockImplementation(() => {
-                hostWindow.amazon = { Login: MockLogin };
+        jest.spyOn(scriptLoader, 'loadScript').mockImplementation(() => {
+            hostWindow.amazon = { Login: MockLogin };
 
-                Promise.resolve(new Event('load'));
-            });
+            Promise.resolve(new Event('load'));
+        });
     });
 
     it('loads widget script', () => {
@@ -47,7 +46,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js?sellerId=${method.config.merchantId}`,
         );
     });
 
@@ -57,7 +56,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-eu.payments-amazon.com/OffAmazonPayments/eu/lpa/js/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-eu.payments-amazon.com/OffAmazonPayments/eu/lpa/js/Widgets.js?sellerId=${method.config.merchantId}`,
         );
     });
 
@@ -67,7 +66,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js?sellerId=${method.config.merchantId}`,
         );
     });
 
@@ -76,7 +75,7 @@ describe('AmazonPayScriptLoader', () => {
 
         amazonPayScriptLoader.loadWidget(method);
 
-        expect(hostWindow.onAmazonLoginReady).not.toBeUndefined();
+        expect(hostWindow.onAmazonLoginReady).toBeDefined();
 
         if (hostWindow.onAmazonLoginReady) {
             hostWindow.onAmazonLoginReady();

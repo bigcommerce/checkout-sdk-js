@@ -19,29 +19,24 @@ export type CartSelectorFactory = (state: CartState) => CartSelector;
 export function createCartSelectorFactory() {
     const getCart = createSelector(
         (state: CartState) => state.data,
-        cart => () => cart
+        (cart) => () => cart,
     );
 
-    const getCartOrThrow = createSelector(
-        getCart,
-        getCart => () => {
-          return guard(getCart(), () => new MissingDataError(MissingDataErrorType.MissingCart));
-        }
-    );
+    const getCartOrThrow = createSelector(getCart, (getCart) => () => {
+        return guard(getCart(), () => new MissingDataError(MissingDataErrorType.MissingCart));
+    });
 
     const getLoadError = createSelector(
         (state: CartState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isLoading = createSelector(
         (state: CartState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: CartState = DEFAULT_STATE
-    ): CartSelector => {
+    return memoizeOne((state: CartState = DEFAULT_STATE): CartSelector => {
         return {
             getCart: getCart(state),
             getCartOrThrow: getCartOrThrow(state),

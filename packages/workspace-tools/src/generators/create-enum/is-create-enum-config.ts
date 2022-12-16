@@ -9,24 +9,24 @@ export default function isExtendInterfaceConfig(config: unknown): config is Crea
         return false;
     }
 
-    return config.entries.every(entry => {
+    return config.entries.every((entry) => {
         if (!(entry instanceof Object)) {
             return false;
         }
 
-        if (!hasKey(entry, 'inputPaths') || !Array.isArray(entry['inputPaths'])) {
+        if (!hasKey(entry, 'inputPaths') || !Array.isArray(entry.inputPaths)) {
             return false;
         }
 
-        if (!hasKey(entry, 'inputMemberPattern') || typeof entry['inputMemberPattern'] !== 'string') {
+        if (!hasKey(entry, 'inputMemberPattern') || typeof entry.inputMemberPattern !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'outputPath') || typeof entry['outputPath'] !== 'string') {
+        if (!hasKey(entry, 'outputPath') || typeof entry.outputPath !== 'string') {
             return false;
         }
 
-        if (!hasKey(entry, 'outputMemberName') || typeof entry['outputMemberName'] !== 'string') {
+        if (!hasKey(entry, 'outputMemberName') || typeof entry.outputMemberName !== 'string') {
             return false;
         }
 
@@ -38,6 +38,9 @@ function isArray(array: unknown): array is unknown[] {
     return Array.isArray(array);
 }
 
-function hasKey<T extends object, K extends string | number | symbol>(object: T, key: K): object is T & Record<K, unknown> {
+function hasKey<T extends object, K extends string | number | symbol>(
+    object: T,
+    key: K,
+): object is T & Record<K, unknown> {
     return key in object;
 }

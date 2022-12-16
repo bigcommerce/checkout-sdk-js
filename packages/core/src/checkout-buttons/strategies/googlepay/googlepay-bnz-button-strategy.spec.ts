@@ -4,7 +4,12 @@ import { InvalidArgumentError } from '@bigcommerce/checkout-sdk/payment-integrat
 
 import { Cart, CartRequestSender } from '../../../cart';
 import { getCart, getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
@@ -12,7 +17,11 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { createGooglePayPaymentProcessor, GooglePayBNZInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import {
+    createGooglePayPaymentProcessor,
+    GooglePayBNZInitializer,
+    GooglePayPaymentProcessor,
+} from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
@@ -51,13 +60,10 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         checkoutActionCreator = checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
-        paymentProcessor = createGooglePayPaymentProcessor(
-            store,
-            new GooglePayBNZInitializer()
-        );
+        paymentProcessor = createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer());
 
         formPoster = createFormPoster();
 
@@ -68,7 +74,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
             formPoster,
             checkoutActionCreator,
             paymentProcessor,
-            cartRequestSender
+            cartRequestSender,
         );
 
         jest.spyOn(store, 'dispatch')

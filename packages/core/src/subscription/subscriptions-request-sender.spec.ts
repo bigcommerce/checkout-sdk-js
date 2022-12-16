@@ -27,34 +27,29 @@ describe('SubscriptionsRequestSender', () => {
         it('signs out customer', async () => {
             await subscriptionsRequestSender.updateSubscriptions(subscriptionsRequestBody);
 
-            expect(requestSender.post).toHaveBeenCalledWith(
-                '/api/storefront/subscriptions',
-                {
-                    body: subscriptionsRequestBody,
-                    headers: {
-                        Accept: ContentType.JsonV1,
-                        ...SDK_VERSION_HEADERS,
-                    },
-                    timeout: undefined,
-                }
-            );
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/subscriptions', {
+                body: subscriptionsRequestBody,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
+                },
+                timeout: undefined,
+            });
         });
 
         it('signs out customer with timeout', async () => {
             const options = { timeout: createTimeout() };
+
             await subscriptionsRequestSender.updateSubscriptions(subscriptionsRequestBody, options);
 
-            expect(requestSender.post).toHaveBeenCalledWith(
-                '/api/storefront/subscriptions',
-                {
-                    ...options,
-                    body: subscriptionsRequestBody,
-                    headers: {
-                        Accept: ContentType.JsonV1,
-                        ...SDK_VERSION_HEADERS,
-                    },
-                }
-            );
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/subscriptions', {
+                ...options,
+                body: subscriptionsRequestBody,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
+                },
+            });
         });
     });
 });

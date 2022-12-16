@@ -17,16 +17,18 @@ import { BlueSnapV2PaymentInitializeOptions } from './bluesnapv2-payment-options
 const IFRAME_NAME = 'bluesnapv2_hosted_payment_page';
 
 export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
-
     private _initializeOptions?: BlueSnapV2PaymentInitializeOptions;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator
+        private _paymentActionCreator: PaymentActionCreator,
     ) {}
 
-    async execute(orderRequest: OrderRequestBody, options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        orderRequest: OrderRequestBody,
+        options?: PaymentInitializeOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment } = orderRequest;
 
         if (!payment) {
@@ -34,9 +36,7 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
         }
 
         if (!this._initializeOptions) {
-            throw new NotInitializedError(
-                NotInitializedErrorType.PaymentNotInitialized
-            );
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         const { onLoad, style } = this._initializeOptions;
@@ -47,13 +47,15 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(orderRequest, options));
 
-        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment({
-            methodId: payment.methodId,
-            gatewayId: payment.gatewayId,
-            shouldSaveInstrument: false,
-            target: frame.name,
-            promise: promise.promise,
-        }));
+        return this._store.dispatch(
+            this._paymentActionCreator.initializeOffsitePayment({
+                methodId: payment.methodId,
+                gatewayId: payment.gatewayId,
+                shouldSaveInstrument: false,
+                target: frame.name,
+                promise: promise.promise,
+            }),
+        );
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -61,8 +63,13 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
         const order = state.order.getOrder();
         const status = state.payment.getPaymentStatus();
 
-        if (order && (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)) {
-            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
+        if (
+            order &&
+            (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)
+        ) {
+            return this._store.dispatch(
+                this._orderActionCreator.finalizeOrder(order.orderId, options),
+            );
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());
@@ -80,9 +87,14 @@ export default class BlueSnapV2PaymentStrategy implements PaymentStrategy {
 
     private _createIframe(name: string, style?: BlueSnapV2StyleProps): HTMLIFrameElement {
         const iframe = document.createElement('iframe');
-        iframe.setAttribute("sandbox", "allow-top-navigation allow-scripts allow-forms allow-same-origin");
+
+        iframe.setAttribute(
+            'sandbox',
+            'allow-top-navigation allow-scripts allow-forms allow-same-origin',
+        );
 
         iframe.name = name;
+
         if (style) {
             const { border, height, width } = style;
 

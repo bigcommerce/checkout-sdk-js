@@ -5,7 +5,6 @@ import mapToInternalCart from './map-to-internal-cart';
 
 describe('mapToInternalLineItems()', () => {
     it('maps to internal line items', () => {
-        expect(mapToInternalCart(getCheckoutWithGiftCertificates()))
-            .toEqual(getInternalCart());
+        expect(mapToInternalCart(getCheckoutWithGiftCertificates())).toEqual(getInternalCart());
     });
 });

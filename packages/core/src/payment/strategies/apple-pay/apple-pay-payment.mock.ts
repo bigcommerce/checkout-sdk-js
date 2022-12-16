@@ -32,5 +32,5 @@ export class MockApplePaySession {
         return event;
     }
 
-    oncancel() { return }
+    oncancel() {}
 }

@@ -7,7 +7,9 @@ export enum Mode {
     Incomplete,
 }
 
-export function getAmazonPayV2CustomerInitializeOptions(mode: Mode = Mode.Full): CustomerInitializeOptions {
+export function getAmazonPayV2CustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
     const methodId = { methodId: 'amazonpay' };
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'amazonpayCheckoutButton' };
@@ -18,11 +20,14 @@ export function getAmazonPayV2CustomerInitializeOptions(mode: Mode = Mode.Full):
     switch (mode) {
         case Mode.Incomplete:
             return { ...methodId };
+
         case Mode.UndefinedMethodId:
             return { ...undefinedMethodId, ...amazonPayV2 };
+
         case Mode.InvalidContainer:
             return { ...methodId, ...amazonPayV2WithInvalidContainer };
+
         default:
             return { ...methodId, ...amazonPayV2 };
-     }
+    }
 }

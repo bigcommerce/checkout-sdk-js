@@ -1,4 +1,7 @@
-import SubscriptionsSelector, { createSubscriptionsSelectorFactory, SubscriptionsSelectorFactory } from './subscriptions-selector';
+import SubscriptionsSelector, {
+    createSubscriptionsSelectorFactory,
+    SubscriptionsSelectorFactory,
+} from './subscriptions-selector';
 
 describe('SubscriptionsSelector', () => {
     let subscriptionsSelector: SubscriptionsSelector;
@@ -37,7 +40,7 @@ describe('SubscriptionsSelector', () => {
                 statuses: { isUpdating: true },
             });
 
-            expect(subscriptionsSelector.isUpdating()).toEqual(true);
+            expect(subscriptionsSelector.isUpdating()).toBe(true);
         });
 
         it('returns false if not updating subscriptions', () => {
@@ -46,7 +49,7 @@ describe('SubscriptionsSelector', () => {
                 statuses: {},
             });
 
-            expect(subscriptionsSelector.isUpdating()).toEqual(false);
+            expect(subscriptionsSelector.isUpdating()).toBe(false);
         });
     });
 });

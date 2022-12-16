@@ -1,6 +1,6 @@
-import { InternalLineItem } from "../cart";
-import { InternalCoupon, InternalGiftCertificate } from "../coupon";
-import { DiscountNotification } from "../discount";
+import { InternalLineItem } from '../cart';
+import { InternalCoupon, InternalGiftCertificate } from '../coupon';
+import { DiscountNotification } from '../discount';
 
 export default interface InternalOrder {
     id: number;

@@ -21,14 +21,17 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender
-    ) { }
+        private _storefrontPaymentRequestSender: StorefrontPaymentRequestSender,
+    ) {}
 
     initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -38,8 +41,11 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
         const { methodId } = payment;
         const {
             paymentMethods: { getPaymentMethodOrThrow },
-        } = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options));
-        const { clientToken, initializationData: { redirectUrl } = {} } = getPaymentMethodOrThrow(methodId);
+        } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId, options),
+        );
+        const { clientToken, initializationData: { redirectUrl } = {} } =
+            getPaymentMethodOrThrow(methodId);
 
         if (!clientToken || !redirectUrl) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -56,17 +62,26 @@ export default class QuadpayPaymentStrategy implements PaymentStrategy {
             paymentData: { nonce },
         };
 
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store
+            .getState()
+            .checkout.getCheckoutOrThrow();
 
         await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
-        await this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }));
+        await this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializePayment(methodId, { useStoreCredit }),
+        );
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
         await this._prepareForReferredRegistration(methodId, nonce);
 
         try {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            return await this._store.dispatch(
+                this._paymentActionCreator.submitPayment(paymentPayload),
+            );
         } catch (error) {
-            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+            if (
+                error instanceof RequestError &&
+                error.body.status === 'additional_action_required'
+            ) {
                 window.location.replace(redirectUrl);
 
                 return new Promise(noop);

@@ -1,4 +1,7 @@
 /// <reference types="applepayjs" />
+import { CardClassSelectors } from '@square/web-payments-sdk-types';
+import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
@@ -167,7 +170,7 @@ declare interface AdyenComponentEvents_2 {
     onFieldValid?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
 }
 
-declare type AdyenComponentState = (CardState | WechatState);
+declare type AdyenComponentState = CardState | WechatState;
 
 declare interface AdyenComponent_2 {
     componentRef?: {
@@ -1466,6 +1469,7 @@ declare interface BodlService {
     orderPurchased(): void;
     stepCompleted(step?: string): void;
     customerEmailEntry(email?: string): void;
+    customerSuggestionInit(payload?: BodlEventsPayload): void;
     customerSuggestionExecute(): void;
     customerPaymentMethodExecuted(payload?: BodlEventsPayload): void;
     showShippingMethods(): void;
@@ -4376,8 +4380,8 @@ declare interface CreditCardInstrument {
  * });
  * ```
  */
-declare interface CreditCardPaymentInitializeOptions {
-    form: HostedFormOptions;
+declare interface CreditCardPaymentInitializeOptions_2 {
+    form: HostedFormOptions_2;
 }
 
 declare interface CreditCardPlaceHolder {
@@ -5906,7 +5910,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = (CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | CreditCardInstrument & WithDocumentInstrument | CreditCardInstrument & WithCheckoutcomFawryInstrument | CreditCardInstrument & WithCheckoutcomSEPAInstrument | CreditCardInstrument & WithCheckoutcomiDealInstrument | HostedInstrument & WithMollieIssuerInstrument | WithAccountCreation);
+declare type OrderPaymentInstrument = CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -5998,7 +6002,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -6698,7 +6702,7 @@ declare class RequestError<TBody = any> extends StandardError {
         message?: string;
     }>;
     status: number;
-    constructor(response?: Response<TBody | {}>, { message, errors }?: {
+    constructor(response?: Response<TBody | {}>, { message, errors, }?: {
         message?: string;
         errors?: Array<{
             code: string;
@@ -6905,6 +6909,64 @@ declare interface SquarePaymentInitializeOptions {
      * A callback that gets called when an error occurs in the card nonce generation
      */
     onError?(errors?: NonceGenerationError[]): void;
+}
+
+/**
+ * A set of options that are required to initialize the Square payment method.
+ *
+ * Once Square payment is initialized, an iframed payment element will be
+ * inserted into the current page. These options provide a location, styling,
+ * and a callback function that advises when it's safe to pay.
+ *
+ * @example
+ *
+ * ```html
+ * <!-- These container is where the hosted (iframed) payment method element will be inserted -->
+ * <div id="card-payment"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'squarev2',
+ *     squarev2: {
+ *         containerId: 'card-payment',
+ *         style: {
+ *             input: {
+ *                 backgroundColor: '#F7F8F9',
+ *                 color: '#373F4A',
+ *                 fontFamily: 'Helvetica Neue',
+ *                 fontSize: '16px',
+ *                 fontWeight: 'normal'
+ *             }
+ *         },
+ *         onValidationChange: (isReadyToPay: boolean) => {
+ *             if (isReadyToPay) {
+ *                 // Show or hide some component or message...
+ *             }
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface SquareV2PaymentInitializeOptions {
+    /**
+     * The ID of a container which the payment widget should insert into.
+     */
+    containerId: string;
+    /**
+     * A map of .css classes and values that customize the style of the
+     * input fields from the card element.
+     *
+     * For more information about applying custom styles to the card form, see
+     * the available [CardClassSelectors](https://developer.squareup.com/reference/sdks/web/payments/objects/CardClassSelectors)
+     * for styling.
+     */
+    style?: CardClassSelectors;
+    /**
+     * A callback that gets called when the validity of the
+     * payment component changes.
+     */
+    onValidationChange?: (isReadyToPay: boolean) => void;
 }
 
 /**
@@ -7185,6 +7247,7 @@ declare interface StripeUPECustomerInitializeOptions {
     gatewayId: string;
     /**
      * A callback that gets called whenever the Stripe Link Authentication Element's value changes.
+     *
      * @param authenticated - if the email is authenticated on Stripe.
      * @param email - The new value of the email.
      */
@@ -7245,6 +7308,10 @@ declare interface StripeUPEPaymentInitializeOptions {
  */
 declare interface StripeUPEShippingInitializeOptions {
     /**
+     * Available countries configured on BC shipping setup.
+     */
+    availableCountries: string;
+    /**
      * The ID of a container which the stripe iframe should be inserted.
      */
     container?: string;
@@ -7263,10 +7330,6 @@ declare interface StripeUPEShippingInitializeOptions {
      */
     onChangeShipping(shipping: StripeEventType): void;
     /**
-     * Available countries configured on BC shipping setup.
-     */
-    availableCountries: string;
-    /**
      * get styles from store theme
      */
     getStyles?(): {
@@ -7274,6 +7337,7 @@ declare interface StripeUPEShippingInitializeOptions {
     };
     /**
      * get the state code needed for shipping stripe element
+     *
      * @param country
      * @param state
      */
@@ -7570,6 +7634,10 @@ declare interface WithCheckoutcomiDealInstrument {
     bic: string;
 }
 
+declare interface WithCreditCardPaymentInitializeOptions {
+    creditCard?: CreditCardPaymentInitializeOptions_2;
+}
+
 declare interface WithDocumentInstrument {
     ccDocument: string;
 }
@@ -7577,6 +7645,14 @@ declare interface WithDocumentInstrument {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WithSquareV2PaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Square payment method.
+     * They can be omitted unless you need to support Square.
+     */
+    squarev2?: SquareV2PaymentInitializeOptions;
 }
 
 declare interface WorldpayAccessPaymentInitializeOptions {

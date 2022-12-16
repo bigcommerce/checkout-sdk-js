@@ -12,7 +12,7 @@ describe('StripeUPEPayScriptLoader', () => {
     let mockWindow: StripeHostWindow;
 
     beforeEach(() => {
-        mockWindow = { } as StripeHostWindow;
+        mockWindow = {} as StripeHostWindow;
         scriptLoader = {} as ScriptLoader;
         stripeUPEScriptLoader = new StripeUPEScriptLoader(scriptLoader, mockWindow);
     });
@@ -32,21 +32,22 @@ describe('StripeUPEPayScriptLoader', () => {
         it('loads a single instance of StripeUPEClient', async () => {
             await stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT'
+                'STRIPE_CONNECTED_ACCOUNT',
             );
             await stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT'
+                'STRIPE_CONNECTED_ACCOUNT',
             );
 
-            expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1,'https://js.stripe.com/v3/');
+            expect(scriptLoader.loadScript).toHaveBeenNthCalledWith(1, 'https://js.stripe.com/v3/');
         });
 
         it('loads a single instance of StripeElements', async () => {
             const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT'
+                'STRIPE_CONNECTED_ACCOUNT',
             );
+
             await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
             await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
 
@@ -59,9 +60,10 @@ describe('StripeUPEPayScriptLoader', () => {
 
                 return Promise.resolve();
             });
+
             const result = stripeUPEScriptLoader.getStripeClient(
                 'STRIPE_PUBLIC_KEY',
-                'STRIPE_CONNECTED_ACCOUNT'
+                'STRIPE_CONNECTED_ACCOUNT',
             );
 
             await expect(result).rejects.toBeInstanceOf(StandardError);

@@ -1,11 +1,21 @@
 import { merge } from 'lodash';
 
-import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
-import { getCheckoutStoreStateWithOrder, getCheckoutWithPayments } from '../checkout/checkouts.mock';
+import {
+    CheckoutStoreState,
+    createInternalCheckoutSelectors,
+    InternalCheckoutSelectors,
+} from '../checkout';
+import {
+    getCheckoutStoreStateWithOrder,
+    getCheckoutWithPayments,
+} from '../checkout/checkouts.mock';
 import { getCompleteOrder as getInternalCompleteOrder } from '../order/internal-orders.mock';
 
 import { getPaymentMethod } from './payment-methods.mock';
-import PaymentSelector, { createPaymentSelectorFactory, PaymentSelectorFactory } from './payment-selector';
+import PaymentSelector, {
+    createPaymentSelectorFactory,
+    PaymentSelectorFactory,
+} from './payment-selector';
 import { ACKNOWLEDGE, FINALIZE } from './payment-status-types';
 
 describe('PaymentSelector', () => {
@@ -26,7 +36,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment && payment.providerId).toEqual('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
 
         it('returns payment ID from internal order if order has just been created before order is loaded', () => {
@@ -42,7 +52,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment && payment.providerId).toEqual('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
 
         it('returns payment ID from checkout if order has not been created', () => {
@@ -61,7 +71,7 @@ describe('PaymentSelector', () => {
 
             const payment = paymentSelector.getPaymentId();
 
-            expect(payment && payment.providerId).toEqual('authorizenet');
+            expect(payment && payment.providerId).toBe('authorizenet');
         });
     });
 
@@ -122,13 +132,13 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentRedirectUrl()).toEqual('/checkout.php');
+            expect(paymentSelector.getPaymentRedirectUrl()).toBe('/checkout.php');
         });
 
         it('returns undefined if unavailable', () => {
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentRedirectUrl()).toEqual(undefined);
+            expect(paymentSelector.getPaymentRedirectUrl()).toBeUndefined();
         });
     });
 
@@ -136,7 +146,9 @@ describe('PaymentSelector', () => {
         it('returns payment token if available', () => {
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentToken()).toEqual(state.order.meta && state.order.meta.token);
+            expect(paymentSelector.getPaymentToken()).toEqual(
+                state.order.meta && state.order.meta.token,
+            );
         });
 
         it('returns undefined if unavailable', () => {
@@ -150,7 +162,7 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentToken()).toEqual(undefined);
+            expect(paymentSelector.getPaymentToken()).toBeUndefined();
         });
     });
 
@@ -158,33 +170,37 @@ describe('PaymentSelector', () => {
         it('returns true if payment is required', () => {
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataRequired()).toEqual(true);
+            expect(paymentSelector.isPaymentDataRequired()).toBe(true);
         });
 
         it('returns false if store credit exceeds grand total', () => {
-            selectors = createInternalCheckoutSelectors(merge({}, state, {
-                customer: {
-                    data: {
-                        storeCredit: 100000000000,
+            selectors = createInternalCheckoutSelectors(
+                merge({}, state, {
+                    customer: {
+                        data: {
+                            storeCredit: 100000000000,
+                        },
                     },
-                },
-            }));
+                }),
+            );
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataRequired(true)).toEqual(false);
+            expect(paymentSelector.isPaymentDataRequired(true)).toBe(false);
         });
 
         it('returns true if store credit exceeds grand total but not using store credit', () => {
-            selectors = createInternalCheckoutSelectors(merge({}, state, {
-                customer: {
-                    data: {
-                        storeCredit: 100000000000,
+            selectors = createInternalCheckoutSelectors(
+                merge({}, state, {
+                    customer: {
+                        data: {
+                            storeCredit: 100000000000,
+                        },
                     },
-                },
-            }));
+                }),
+            );
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataRequired(false)).toEqual(true);
+            expect(paymentSelector.isPaymentDataRequired(false)).toBe(true);
         });
     });
 
@@ -194,9 +210,10 @@ describe('PaymentSelector', () => {
                 ...getPaymentMethod(),
                 nonce: '8903d867-6f7b-475c-8ab2-0b47ec6e000d',
             };
+
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataSubmitted(paymentMethod)).toEqual(true);
+            expect(paymentSelector.isPaymentDataSubmitted(paymentMethod)).toBe(true);
         });
 
         it('returns true if payment is acknowledged', () => {
@@ -209,7 +226,7 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toBe(true);
         });
 
         it('returns true if payment is finalized', () => {
@@ -228,7 +245,7 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toBe(true);
         });
 
         it('returns false if payment is not tokenized, acknowledged or finalized', () => {
@@ -242,7 +259,7 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(false);
+            expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toBe(false);
         });
     });
 });

@@ -1,9 +1,22 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotImplementedError,
+} from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { formatLocale, getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import {
+    formatLocale,
+    getCallbackUrl,
+    MasterpassScriptLoader,
+} from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { CustomerInitializeOptions, CustomerRequestOptions, ExecutePaymentMethodCheckoutOptions } from '../../customer-request-options';
+import {
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    ExecutePaymentMethodCheckoutOptions,
+} from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class MasterpassCustomerStrategy implements CustomerStrategy {
@@ -15,20 +28,23 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader,
-        private _locale: string
+        private _locale: string,
     ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { masterpass: masterpassOptions, methodId } = options;
 
         if (!masterpassOptions || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "options.masterpass" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.masterpass" argument is not provided.',
+            );
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
-
+        return this._store
+            .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then((state) => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
                 if (!this._paymentMethod || !this._paymentMethod.initializationData.checkoutId) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
@@ -58,8 +74,9 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                     checkoutId: this._paymentMethod.initializationData.checkoutId,
                 };
 
-                return this._masterpassScriptLoader.load(masterpassScriptLoaderParams)
-                    .then(Masterpass => {
+                return this._masterpassScriptLoader
+                    .load(masterpassScriptLoaderParams)
+                    .then((Masterpass) => {
                         this._signInButton = this._createSignInButton(container);
 
                         this._signInButton.addEventListener('click', () => {
@@ -83,7 +100,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via Masterpass, the shopper must click on "Masterpass" button.'
+            'In order to sign in via Masterpass, the shopper must click on "Masterpass" button.',
         );
     }
 
@@ -96,11 +113,13 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         }
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
+            this._remoteCheckoutActionCreator.signOut(payment.providerId, options),
         );
     }
 
-    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(
+        options?: ExecutePaymentMethodCheckoutOptions,
+    ): Promise<InternalCheckoutSelectors> {
         options?.continueWithCheckoutCallback?.();
 
         return Promise.resolve(this._store.getState());
@@ -114,7 +133,9 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         }
 
         if (!container) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
+            throw new InvalidArgumentError(
+                'Unable to create sign-in button without valid container ID.',
+            );
         }
 
         const button = document.createElement('input');
@@ -136,8 +157,10 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
                 params.join('&'),
             ].join('?');
         } else {
-            button.src = 'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
+            button.src =
+                'https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_160x037px.svg';
         }
+
         container.appendChild(button);
 
         return button;

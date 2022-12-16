@@ -2,12 +2,30 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
-import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutStoreState,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
+import {
+    getCheckoutPayment,
+    getCheckoutStoreState,
+    getCheckoutStoreStateWithOrder,
+} from '../../../checkout/checkouts.mock';
 import { getCustomer } from '../../../customer/internal-customers.mock';
-import { FinalizeOrderAction, InternalOrder, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import {
+    FinalizeOrderAction,
+    InternalOrder,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
 import PaymentMethod from '../../payment-method';
@@ -34,7 +52,7 @@ describe('PaypalExpressPaymentStrategy', () => {
     beforeEach(() => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
 
         paypalSdk = {
@@ -77,24 +95,28 @@ describe('PaypalExpressPaymentStrategy', () => {
 
         paymentMethod = getPaypalExpress();
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderSucceeded, { customer: getCustomer(), order }));
+        submitOrderAction = of(
+            createAction(OrderActionType.SubmitOrderSucceeded, { customer: getCustomer(), order }),
+        );
 
-        jest.spyOn(scriptLoader, 'loadPaypal')
-            .mockImplementation(() => {
-                mockWindow.paypal = paypalSdk;
+        jest.spyOn(scriptLoader, 'loadPaypal').mockImplementation(() => {
+            mockWindow.paypal = paypalSdk;
 
-                return Promise.resolve(paypalSdk);
-            });
+            return Promise.resolve(paypalSdk);
+        });
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+        strategy = new PaypalExpressPaymentStrategy(
+            store,
+            orderActionCreator,
+            scriptLoader,
+            mockWindow,
+        );
     });
 
     describe('#initialize()', () => {
@@ -108,10 +130,13 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('initializes Paypal SDK', async () => {
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(paypalSdk.checkout.setup).toHaveBeenCalledWith(paymentMethod.config.merchantId, {
-                    button: 'paypal-button',
-                    environment: 'production',
-                });
+                expect(paypalSdk.checkout.setup).toHaveBeenCalledWith(
+                    paymentMethod.config.merchantId,
+                    {
+                        button: 'paypal-button',
+                        environment: 'production',
+                    },
+                );
             });
 
             it('returns checkout state', async () => {
@@ -128,12 +153,20 @@ describe('PaypalExpressPaymentStrategy', () => {
                     paymentMethods: {
                         ...state.paymentMethods,
                         data: [
-                            { ...paymentMethod, config: { ...paymentMethod.config, merchantId: '' } },
+                            {
+                                ...paymentMethod,
+                                config: { ...paymentMethod.config, merchantId: '' },
+                            },
                         ],
                     },
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
             });
 
             it('does not load Paypal SDK', async () => {
@@ -172,16 +205,18 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('opens in-context modal', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).toHaveBeenCalled();
             });
 
             it('starts in-context payment flow', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paypalSdk.checkout.startFlow).toHaveBeenCalledWith(order.payment.redirectUrl);
+                expect(paypalSdk.checkout.startFlow).toHaveBeenCalledWith(
+                    order.payment.redirectUrl,
+                );
             });
 
             it('does not open in-context modal if payment is already acknowledged', async () => {
@@ -189,20 +224,27 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     checkout: merge(state.checkout, {
                         data: {
-                            payments: [{
-                                ...getCheckoutPayment(),
-                                detail: {
-                                    step: paymentStatusTypes.ACKNOWLEDGE,
+                            payments: [
+                                {
+                                    ...getCheckoutPayment(),
+                                    detail: {
+                                        step: paymentStatusTypes.ACKNOWLEDGE,
+                                    },
                                 },
-                            }],
+                            ],
                         },
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
 
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
@@ -213,20 +255,27 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     checkout: merge(state.checkout, {
                         data: {
-                            payments: [{
-                                ...getCheckoutPayment(),
-                                detail: {
-                                    step: paymentStatusTypes.FINALIZE,
+                            payments: [
+                                {
+                                    ...getCheckoutPayment(),
+                                    detail: {
+                                        step: paymentStatusTypes.FINALIZE,
+                                    },
                                 },
-                            }],
+                            ],
                         },
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
 
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
@@ -236,7 +285,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 const options = { methodId: 'paypalexpress' };
 
                 strategy.execute(payload, options);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
@@ -244,9 +293,9 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('does not redirect shopper directly if order submission is successful', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toBe('/checkout');
             });
         });
 
@@ -256,29 +305,32 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     paymentMethods: {
                         ...state.paymentMethods,
-                        data: [
-                            { ...paymentMethod, config: { merchantId: '' } },
-                        ],
+                        data: [{ ...paymentMethod, config: { merchantId: '' } }],
                     },
                 });
 
                 jest.spyOn(store, 'dispatch');
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
 
                 await strategy.initialize({ methodId: paymentMethod.id });
             });
 
             it('does not open in-context modal', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
             });
 
             it('does not start in-context payment flow', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
             });
@@ -287,7 +339,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 const options = { methodId: 'paypalexpress' };
 
                 strategy.execute(payload, options);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
@@ -295,7 +347,7 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('redirects shopper directly if order submission is successful', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
             });
@@ -305,22 +357,29 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     checkout: merge(state.checkout, {
                         data: {
-                            payments: [{
-                                ...getCheckoutPayment(),
-                                detail: {
-                                    step: paymentStatusTypes.ACKNOWLEDGE,
+                            payments: [
+                                {
+                                    ...getCheckoutPayment(),
+                                    detail: {
+                                        step: paymentStatusTypes.ACKNOWLEDGE,
+                                    },
                                 },
-                            }],
+                            ],
                         },
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
 
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toBe('/checkout');
             });
 
             it('does not redirect shopper if payment is already finalized', async () => {
@@ -328,22 +387,29 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     checkout: merge(state.checkout, {
                         data: {
-                            payments: [{
-                                ...getCheckoutPayment(),
-                                detail: {
-                                    step: paymentStatusTypes.FINALIZE,
+                            payments: [
+                                {
+                                    ...getCheckoutPayment(),
+                                    detail: {
+                                        step: paymentStatusTypes.FINALIZE,
+                                    },
                                 },
-                            }],
+                            ],
                         },
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
 
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toEqual('/checkout');
+                expect(mockWindow.top.location.href).toBe('/checkout');
             });
         });
 
@@ -359,14 +425,14 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('does not start in-context payment flow', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
             });
 
             it('redirects shopper directly if order submission is successful', async () => {
                 strategy.execute(payload);
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
             });
@@ -376,10 +442,16 @@ describe('PaypalExpressPaymentStrategy', () => {
     describe('#finalize()', () => {
         beforeEach(async () => {
             store = createCheckoutStore(getCheckoutStoreStateWithOrder());
-            strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+            strategy = new PaypalExpressPaymentStrategy(
+                store,
+                orderActionCreator,
+                scriptLoader,
+                mockWindow,
+            );
 
-            jest.spyOn(store.getState().payment, 'getPaymentRedirectUrl')
-                .mockReturnValue('https://s1504075966.bcapp.dev/checkout');
+            jest.spyOn(store.getState().payment, 'getPaymentRedirectUrl').mockReturnValue(
+                'https://s1504075966.bcapp.dev/checkout',
+            );
 
             jest.spyOn(store, 'dispatch');
 
@@ -387,8 +459,9 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('finalizes order if order is created and payment is acknowledged', async () => {
-            jest.spyOn(store.getState().payment, 'getPaymentStatus')
-                .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
+            jest.spyOn(store.getState().payment, 'getPaymentStatus').mockReturnValue(
+                paymentStatusTypes.ACKNOWLEDGE,
+            );
 
             await strategy.finalize();
 
@@ -397,8 +470,9 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('finalizes order if order is created and payment is finalized', async () => {
-            jest.spyOn(store.getState().payment, 'getPaymentStatus')
-                .mockReturnValue(paymentStatusTypes.FINALIZE);
+            jest.spyOn(store.getState().payment, 'getPaymentStatus').mockReturnValue(
+                paymentStatusTypes.FINALIZE,
+            );
 
             await strategy.finalize();
 
@@ -407,8 +481,7 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('does not finalize order if order is not created', async () => {
-            jest.spyOn(store.getState().order, 'getOrder')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(undefined);
 
             try {
                 await strategy.finalize();
@@ -420,8 +493,7 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('does not finalize order if order is not finalized or acknowledged', async () => {
-            jest.spyOn(store.getState().payment, 'getPaymentStatus')
-                .mockReturnValue(undefined);
+            jest.spyOn(store.getState().payment, 'getPaymentStatus').mockReturnValue(undefined);
 
             try {
                 await strategy.finalize();
@@ -459,13 +531,16 @@ describe('PaypalExpressPaymentStrategy', () => {
                     ...state,
                     paymentMethods: {
                         ...state.paymentMethods,
-                        data: [
-                            { ...paymentMethod, config: { merchantId: '' } },
-                        ],
+                        data: [{ ...paymentMethod, config: { merchantId: '' } }],
                     },
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader, mockWindow);
+                strategy = new PaypalExpressPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    scriptLoader,
+                    mockWindow,
+                );
             });
 
             it('does not end paypal flow', async () => {

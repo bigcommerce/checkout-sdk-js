@@ -22,9 +22,9 @@
  * });
  * ```
  */
- export default interface OpyPaymentInitializeOptions {
+export default interface OpyPaymentInitializeOptions {
     /**
      * The ID of a container which the payment widget should insert into.
      */
-     containerId: string;
+    containerId: string;
 }

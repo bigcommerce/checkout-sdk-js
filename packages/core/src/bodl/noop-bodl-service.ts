@@ -1,4 +1,4 @@
-import BodlService from "./bodl-service";
+import BodlService from './bodl-service';
 
 export default class NoopBodlService implements BodlService {
     checkoutBegin(): void {}
@@ -9,7 +9,9 @@ export default class NoopBodlService implements BodlService {
 
     customerEmailEntry(): void {}
 
-    customerSuggestionExecute(): void {};
+    customerSuggestionInit(): void {}
+
+    customerSuggestionExecute(): void {}
 
     customerPaymentMethodExecuted(): void {}
 
@@ -19,9 +21,9 @@ export default class NoopBodlService implements BodlService {
 
     clickPayButton(): void {}
 
-    paymentRejected(): void {};
+    paymentRejected(): void {}
 
-    paymentComplete(): void {};
+    paymentComplete(): void {}
 
-    exitCheckout(): void {};
+    exitCheckout(): void {}
 }

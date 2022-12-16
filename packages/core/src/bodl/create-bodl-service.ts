@@ -1,8 +1,9 @@
-import BodlService from "./bodl-service";
-import NoopBodlService from "./noop-bodl-service";
-import BodlEmitterService from "./bodl-emitter-service";
-import { isBodlEnabled } from "./is-bodl-enabled";
-import { CheckoutSelectors } from "../checkout";
+import { CheckoutSelectors } from '../checkout';
+
+import BodlEmitterService from './bodl-emitter-service';
+import BodlService from './bodl-service';
+import { isBodlEnabled } from './is-bodl-enabled';
+import NoopBodlService from './noop-bodl-service';
 
 /**
  * Creates an instance of `BodlService`.
@@ -22,10 +23,7 @@ export default function createBodlService(
     subscribe: (subscriber: (state: CheckoutSelectors) => void) => void,
 ): BodlService {
     if (isBodlEnabled(window)) {
-        return new BodlEmitterService(
-            subscribe,
-            window.bodlEvents.checkout
-        );
+        return new BodlEmitterService(subscribe, window.bodlEvents.checkout);
     }
 
     return new NoopBodlService();

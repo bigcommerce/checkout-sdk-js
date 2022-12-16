@@ -1,13 +1,23 @@
 import { filter, find, keyBy, reduce } from 'lodash';
 
-import { mapToInternalLineItems, LineItem } from '../cart';
+import { LineItem, mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
 import { AmountTransformer } from '../common/utility';
 import { mapToInternalCoupon } from '../coupon';
 import { HOSTED } from '../payment';
 
-import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, InternalOrderPayment, InternalSocialDataList } from './internal-order';
-import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
+import InternalOrder, {
+    InternalGiftCertificateList,
+    InternalIncompleteOrder,
+    InternalOrderPayment,
+    InternalSocialDataList,
+} from './internal-order';
+import Order, {
+    GatewayOrderPayment,
+    GiftCertificateOrderPayment,
+    OrderPayment,
+    OrderPayments,
+} from './order';
 import { OrderMetaState } from './order-state';
 
 /**
@@ -15,7 +25,10 @@ import { OrderMetaState } from './order-state';
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaState = {}): InternalOrder {
+export default function mapToInternalOrder(
+    order: Order,
+    orderMeta: OrderMetaState = {},
+): InternalOrder {
     const decimalPlaces = order.currency.decimalPlaces;
     const amountTransformer = new AmountTransformer(decimalPlaces);
 
@@ -31,9 +44,13 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
             integerAmount: amountTransformer.toInteger(order.baseAmount),
         },
         coupon: {
-            discountedAmount: reduce(order.coupons, (sum, coupon) => {
-                return sum + coupon.discountedAmount;
-            }, 0),
+            discountedAmount: reduce(
+                order.coupons,
+                (sum, coupon) => {
+                    return sum + coupon.discountedAmount;
+                },
+                0,
+            ),
             coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
@@ -53,7 +70,9 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
             amount: order.shippingCostTotal,
             integerAmount: amountTransformer.toInteger(order.shippingCostTotal),
             amountBeforeDiscount: order.shippingCostBeforeDiscount,
-            integerAmountBeforeDiscount: amountTransformer.toInteger(order.shippingCostBeforeDiscount),
+            integerAmountBeforeDiscount: amountTransformer.toInteger(
+                order.shippingCostBeforeDiscount,
+            ),
         },
         storeCredit: {
             amount: mapToStoreCredit(order.payments),
@@ -80,11 +99,13 @@ export function mapToInternalIncompleteOrder(checkout: Checkout): InternalIncomp
     return {
         orderId: null,
         isComplete: false,
-        payment: !payment ? {} : {
-            id: payment.providerId,
-            gateway: payment.gatewayId,
-            status: mapToInternalPaymentStatus(payment.detail.step),
-        },
+        payment: !payment
+            ? {}
+            : {
+                  id: payment.providerId,
+                  gateway: payment.gatewayId,
+                  status: mapToInternalPaymentStatus(payment.detail.step),
+              },
     };
 }
 
@@ -99,24 +120,32 @@ function mapToStoreCredit(payments?: OrderPayments): number {
 }
 
 function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificateList {
-    const items = filter(payments, { providerId: 'giftcertificate' }) as GiftCertificateOrderPayment[];
+    const items = filter(payments, {
+        providerId: 'giftcertificate',
+    }) as GiftCertificateOrderPayment[];
 
     return {
         totalDiscountedAmount: reduce(items, (sum, item) => item.amount + sum, 0),
-        appliedGiftCertificates: keyBy(items.map(item => ({
-            code: item.detail.code,
-            discountedAmount: item.amount,
-            remainingBalance: item.detail.remaining,
-            giftCertificate: {
-                balance: item.amount + item.detail.remaining,
+        appliedGiftCertificates: keyBy(
+            items.map((item) => ({
                 code: item.detail.code,
-                purchaseDate: '',
-            },
-        })), 'code'),
+                discountedAmount: item.amount,
+                remainingBalance: item.detail.remaining,
+                giftCertificate: {
+                    balance: item.amount + item.detail.remaining,
+                    code: item.detail.code,
+                    purchaseDate: '',
+                },
+            })),
+            'code',
+        ),
     };
 }
 
-function mapToInternalOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
+function mapToInternalOrderPayment(
+    payments?: OrderPayments,
+    payment: InternalOrderPayment = {},
+): InternalOrderPayment {
     const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
 
     if (!item) {
@@ -135,14 +164,13 @@ function isDefaultOrderPayment(payment: OrderPayment): payment is GatewayOrderPa
     return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
 }
 
-function mapToInternalSocialDataList(order: Order): { [itemId: string]: InternalSocialDataList } | undefined {
+function mapToInternalSocialDataList(
+    order: Order,
+): { [itemId: string]: InternalSocialDataList } | undefined {
     const socialDataObject: { [itemId: string]: InternalSocialDataList } = {};
-    const items = [
-        ...order.lineItems.physicalItems,
-        ...order.lineItems.digitalItems,
-    ];
+    const items = [...order.lineItems.physicalItems, ...order.lineItems.digitalItems];
 
-    items.forEach(item => {
+    items.forEach((item) => {
         socialDataObject[item.id] = mapToInternalSocialData(item);
     });
 
@@ -153,7 +181,8 @@ function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
     const codes = ['fb', 'tw', 'gp'];
 
     return codes.reduce((socialData, code) => {
-        const item = lineItem.socialMedia && find(lineItem.socialMedia, item => item.code === code);
+        const item =
+            lineItem.socialMedia && find(lineItem.socialMedia, (item) => item.code === code);
 
         if (!item) {
             return socialData;

@@ -12,10 +12,10 @@ import mapToInternalLineItem from './map-to-internal-line-item';
 export default function mapToInternalLineItems(
     itemMap: LineItemMap,
     decimalPlaces: number,
-    idKey: keyof LineItem = 'id'
+    idKey: keyof LineItem = 'id',
 ): InternalLineItem[] {
-    return (Object.keys(itemMap) as Array<keyof LineItemMap>)
-        .reduce((result, key) => [
+    return (Object.keys(itemMap) as Array<keyof LineItemMap>).reduce(
+        (result, key) => [
             ...result,
             ...(itemMap[key] as LineItem[]).map((item: any) => {
                 if (key === 'giftCertificates') {
@@ -26,10 +26,12 @@ export default function mapToInternalLineItems(
                     item,
                     mapToInternalLineItemType(key),
                     decimalPlaces,
-                    idKey
+                    idKey,
                 );
             }),
-        ], [] as InternalLineItem[]);
+        ],
+        [] as InternalLineItem[],
+    );
 }
 
 function mapToInternalLineItemType(type: string): string {

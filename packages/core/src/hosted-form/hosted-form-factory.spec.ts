@@ -23,7 +23,6 @@ describe('HostedFormFactory', () => {
             },
         });
 
-        expect(result)
-            .toBeInstanceOf(HostedForm);
+        expect(result).toBeInstanceOf(HostedForm);
     });
 });

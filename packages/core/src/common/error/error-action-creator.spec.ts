@@ -13,7 +13,6 @@ describe('ErrorActionCreator', () => {
     it('creates "clear error" action', () => {
         const error = new Error('Unexpected error');
 
-        expect(actions.clearError(error))
-            .toEqual(createAction(ErrorActionType.ClearError, error));
+        expect(actions.clearError(error)).toEqual(createAction(ErrorActionType.ClearError, error));
     });
 });

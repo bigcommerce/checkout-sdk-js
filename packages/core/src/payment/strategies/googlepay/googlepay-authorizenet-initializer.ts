@@ -3,7 +3,14 @@ import { round } from 'lodash';
 import { PaymentMethod } from '../..';
 import { Checkout } from '../../../checkout';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizationSpecification, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizationSpecification,
+    TokenizePayload,
+} from './googlepay';
 
 const baseRequest = {
     apiVersion: 2,
@@ -14,10 +21,10 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
     initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
         return Promise.resolve(
-            this._getGooglePaymentDataRequest(checkout, paymentMethod, hasShippingAddress)
+            this._getGooglePaymentDataRequest(checkout, paymentMethod, hasShippingAddress),
         );
     }
 
@@ -30,10 +37,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
             paymentMethodData: {
                 type,
                 tokenizationData: { token },
-                info: {
-                    cardNetwork: cardType,
-                    cardDetails: lastFour,
-                },
+                info: { cardNetwork: cardType, cardDetails: lastFour },
             },
         } = paymentData;
 
@@ -47,7 +51,11 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
         });
     }
 
-    private _getGooglePaymentDataRequest(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean): GooglePayPaymentDataRequestV2 {
+    private _getGooglePaymentDataRequest(
+        checkout: Checkout,
+        paymentMethod: PaymentMethod,
+        hasShippingAddress: boolean,
+    ): GooglePayPaymentDataRequestV2 {
         const {
             outstandingBalance,
             cart: {
@@ -67,7 +75,10 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
         } = paymentMethod;
 
         const paymentGatewaySpecification = this._getPaymentGatewaySpecification(gatewayMerchantId);
-        const cardPaymentMethod = this._getCardPaymentMethod(paymentGatewaySpecification, supportedCards);
+        const cardPaymentMethod = this._getCardPaymentMethod(
+            paymentGatewaySpecification,
+            supportedCards,
+        );
 
         return {
             ...baseRequest,
@@ -78,7 +89,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
                 currencyCode,
                 countryCode,
             },
-            merchantInfo : {
+            merchantInfo: {
                 merchantName,
                 merchantId,
                 authJwt,
@@ -101,12 +112,17 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
         };
     }
 
-    private _getCardPaymentMethod(tokenizationSpecification: TokenizationSpecification, supportedCards: string[]) {
+    private _getCardPaymentMethod(
+        tokenizationSpecification: TokenizationSpecification,
+        supportedCards: string[],
+    ) {
         return {
             type: 'CARD',
             parameters: {
                 allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: supportedCards.map(card => card === 'MC' ? 'MASTERCARD' : card),
+                allowedCardNetworks: supportedCards.map((card) =>
+                    card === 'MC' ? 'MASTERCARD' : card,
+                ),
                 billingAddressRequired: true,
                 billingAddressParameters: {
                     format: BillingAddressFormat.Full,

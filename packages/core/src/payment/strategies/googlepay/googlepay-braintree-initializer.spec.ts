@@ -5,7 +5,13 @@ import PaymentMethod from '../../payment-method';
 import { BraintreeScriptLoader, BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
 
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
-import { getBraintreePaymentDataPayload, getCheckoutMock, getGooglePaymentDataMock, getGooglePayBraintreeMock, getPaymentMethodMock } from './googlepay.mock';
+import {
+    getBraintreePaymentDataPayload,
+    getCheckoutMock,
+    getGooglePayBraintreeMock,
+    getGooglePaymentDataMock,
+    getPaymentMethodMock,
+} from './googlepay.mock';
 
 describe('GooglePayBraintreeInitializer', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
@@ -14,44 +20,57 @@ describe('GooglePayBraintreeInitializer', () => {
 
     beforeEach(() => {
         googlePayMock = getGooglePayBraintreeMock();
-        braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(createScriptLoader()));
+        braintreeSDKCreator = new BraintreeSDKCreator(
+            new BraintreeScriptLoader(createScriptLoader()),
+        );
         googlePayInitializer = new GooglePayBraintreeInitializer(braintreeSDKCreator);
         braintreeSDKCreator.initialize = jest.fn();
-        braintreeSDKCreator.getGooglePaymentComponent = jest.fn(() => Promise.resolve(googlePayMock));
+        braintreeSDKCreator.getGooglePaymentComponent = jest.fn(() =>
+            Promise.resolve(googlePayMock),
+        );
     });
 
     describe('#initialize', () => {
         it('initializes the google pay configuration for braintree', async () => {
-            await googlePayInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false)
+            await googlePayInitializer
+                .initialize(getCheckoutMock(), getPaymentMethodMock(), false)
                 .then(() => {
                     expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalled();
                     expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalledTimes(1);
-                    expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalledWith(getBraintreePaymentDataPayload());
+                    expect(googlePayMock.createPaymentDataRequest).toHaveBeenCalledWith(
+                        getBraintreePaymentDataPayload(),
+                    );
                 });
         });
 
         it('initializes the google pay configuration for braintree and fail to create google pay payload', async () => {
             jest.spyOn(googlePayMock, 'createPaymentDataRequest').mockReturnValue(Promise.reject());
 
-            await googlePayInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false)
-                .catch(error => {
-                    expect(error.message).toEqual(`Cannot read property 'authJwt' of undefined`);
+            await googlePayInitializer
+                .initialize(getCheckoutMock(), getPaymentMethodMock(), false)
+                .catch((error) => {
+                    expect(error.message).toBe(`Cannot read property 'authJwt' of undefined`);
                 });
         });
 
         it('initializes the google pay configuration for braintree and platformToken is missing', async () => {
             const paymentMethod: PaymentMethod = getPaymentMethodMock();
+
             paymentMethod.initializationData = {};
 
-            await googlePayInitializer.initialize(getCheckoutMock(), paymentMethod, false)
-                .catch(error => {
+            await googlePayInitializer
+                .initialize(getCheckoutMock(), paymentMethod, false)
+                .catch((error) => {
                     expect(error).toBeInstanceOf(Error);
-                    expect(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message).toEqual(error.message);
+                    expect(
+                        new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message,
+                    ).toEqual(error.message);
                 });
         });
 
         it('initializes the google pay configuration for braintree and clientToken is missing', () => {
             const paymentMethod: PaymentMethod = getPaymentMethodMock();
+
             paymentMethod.clientToken = undefined;
 
             try {
@@ -59,7 +78,9 @@ describe('GooglePayBraintreeInitializer', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(error).toBeTruthy();
-                expect(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message).toEqual(error.message);
+                expect(
+                    new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message,
+                ).toEqual(error.message);
             }
         });
 
@@ -91,6 +112,7 @@ describe('GooglePayBraintreeInitializer', () => {
     describe('#parseResponse', () => {
         it('parses a response from google pay payload received', async () => {
             await googlePayInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false);
+
             const tokenizePayload = googlePayInitializer.parseResponse(getGooglePaymentDataMock());
 
             expect(tokenizePayload).toBeTruthy();

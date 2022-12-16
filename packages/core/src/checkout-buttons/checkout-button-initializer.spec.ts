@@ -3,8 +3,12 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../checkout';
-import { createPaymentClient, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import { CheckoutStore, createCheckoutStore } from '../checkout';
+import {
+    createPaymentClient,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+} from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
@@ -23,21 +27,31 @@ describe('CheckoutButtonInitializer', () => {
 
     beforeEach(() => {
         store = createCheckoutStore();
+
         const paymentClient = createPaymentClient(store);
+
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, paymentClient, createRequestSender(), createFormPoster(), 'en'),
+            createCheckoutButtonRegistry(
+                store,
+                paymentClient,
+                createRequestSender(),
+                createFormPoster(),
+                'en',
+            ),
             createCheckoutButtonRegistryV2(createPaymentIntegrationService(store)),
-            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
+            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender())),
         );
 
         jest.spyOn(store, 'dispatch');
         jest.spyOn(store, 'subscribe');
 
-        jest.spyOn(buttonActionCreator, 'initialize')
-            .mockReturnValue(of(createAction(CheckoutButtonActionType.InitializeButtonRequested)));
+        jest.spyOn(buttonActionCreator, 'initialize').mockReturnValue(
+            of(createAction(CheckoutButtonActionType.InitializeButtonRequested)),
+        );
 
-        jest.spyOn(buttonActionCreator, 'deinitialize')
-            .mockReturnValue(of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)));
+        jest.spyOn(buttonActionCreator, 'deinitialize').mockReturnValue(
+            of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)),
+        );
 
         initializer = new CheckoutButtonInitializer(store, buttonActionCreator);
     });
@@ -51,21 +65,22 @@ describe('CheckoutButtonInitializer', () => {
         await initializer.initializeButton(options);
 
         expect(buttonActionCreator.initialize).toHaveBeenCalledWith(options);
-        expect(store.dispatch).toHaveBeenCalledWith(
-            buttonActionCreator.initialize(options),
-            { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}:${options.containerId}` }
-        );
+        expect(store.dispatch).toHaveBeenCalledWith(buttonActionCreator.initialize(options), {
+            queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}:${options.containerId}`,
+        });
     });
 
     it('dispatches multiple actions to initialize button strategy if multiple containers can be found', async () => {
         const container = document.createElement('div');
+
         container.className = 'checkout-button';
 
         const containers: HTMLElement[] = [];
+
         containers.push(container);
         containers.push(container.cloneNode() as HTMLElement);
         containers.push(container.cloneNode() as HTMLElement);
-        containers.forEach(container => document.body.appendChild(container));
+        containers.forEach((container) => document.body.appendChild(container));
 
         const options = {
             methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
@@ -81,12 +96,15 @@ describe('CheckoutButtonInitializer', () => {
         });
 
         expect(store.dispatch).toHaveBeenCalledTimes(3);
-        expect(store.dispatch).toHaveBeenCalledWith(
-            buttonActionCreator.initialize(options),
-            { queueId: expect.stringMatching(new RegExp(`checkoutButtonStrategy:${options.methodId}:${options.methodId}-container.+`)) }
-        );
+        expect(store.dispatch).toHaveBeenCalledWith(buttonActionCreator.initialize(options), {
+            queueId: expect.stringMatching(
+                new RegExp(
+                    `checkoutButtonStrategy:${options.methodId}:${options.methodId}-container.+`,
+                ),
+            ),
+        });
 
-        containers.forEach(container => container.remove());
+        containers.forEach((container) => container.remove());
     });
 
     it('dispatches action to deinitialize button strategy', async () => {
@@ -98,10 +116,9 @@ describe('CheckoutButtonInitializer', () => {
         await initializer.deinitializeButton(options);
 
         expect(buttonActionCreator.deinitialize).toHaveBeenCalledWith(options);
-        expect(store.dispatch).toHaveBeenCalledWith(
-            buttonActionCreator.deinitialize(options),
-            { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}` }
-        );
+        expect(store.dispatch).toHaveBeenCalledWith(buttonActionCreator.deinitialize(options), {
+            queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}`,
+        });
     });
 
     it('registers subscribers with data store', () => {
@@ -123,10 +140,11 @@ describe('CheckoutButtonInitializer', () => {
     it('has methods that can be destructed', () => {
         const { initializeButton } = initializer;
 
-        expect(() => initializeButton({
-            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
-            containerId: 'checkout-button',
-        }))
-            .not.toThrow(TypeError);
+        expect(() =>
+            initializeButton({
+                methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+                containerId: 'checkout-button',
+            }),
+        ).not.toThrow(TypeError);
     });
 });

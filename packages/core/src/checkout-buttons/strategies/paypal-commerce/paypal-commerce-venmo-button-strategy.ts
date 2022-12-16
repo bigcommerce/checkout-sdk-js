@@ -1,11 +1,22 @@
 import { FormPoster } from '@bigcommerce/form-poster';
+
 import { CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
-
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../../../common/error/errors';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
-import { ApproveCallbackPayload, ButtonsOptions, PaypalButtonStyleOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import {
+    ApproveCallbackPayload,
+    ButtonsOptions,
+    PaypalButtonStyleOptions,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+} from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -23,41 +34,60 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         private _cartRequestSender: CartRequestSender,
         private _formPoster: FormPoster,
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender
+        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { paypalcommercevenmo, containerId, methodId } = options;
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.methodId" argument is not provided.',
+            );
         }
 
         if (!containerId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.containerId" argument is not provided.`,
+            );
         }
 
         if (!paypalcommercevenmo) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommercevenmo" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.paypalcommercevenmo" argument is not provided.`,
+            );
         }
 
-        const { buyNowInitializeOptions, currencyCode, initializesOnCheckoutPage } = paypalcommercevenmo;
+        const { buyNowInitializeOptions, currencyCode, initializesOnCheckoutPage } =
+            paypalcommercevenmo;
 
         if (buyNowInitializeOptions) {
             const state = this._store.getState();
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
             if (!currencyCode) {
-                throw new InvalidArgumentError(`Unable to initialize payment because "options.paypalcommercevenmo.currencyCode" argument is not provided.`);
+                throw new InvalidArgumentError(
+                    `Unable to initialize payment because "options.paypalcommercevenmo.currencyCode" argument is not provided.`,
+                );
             }
 
-            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, currencyCode, initializesOnCheckoutPage);
+            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(
+                paymentMethod,
+                currencyCode,
+                initializesOnCheckoutPage,
+            );
         } else {
-            const state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+            const state = await this._store.dispatch(
+                this._checkoutActionCreator.loadDefaultCheckout(),
+            );
             const cart = state.cart.getCartOrThrow();
             const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
-            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(paymentMethod, cart.currency.code, initializesOnCheckoutPage);
+            this._paypalCommerceSdk = await this._paypalScriptLoader.getPayPalSDK(
+                paymentMethod,
+                cart.currency.code,
+                initializesOnCheckoutPage,
+            );
         }
 
         this._renderButton(containerId, methodId, paypalcommercevenmo);
@@ -67,7 +97,11 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
         return Promise.resolve();
     }
 
-    private _renderButton(containerId: string, methodId: string, paypalcommercevenmo: PaypalCommerceVenmoButtonInitializeOptions): void {
+    private _renderButton(
+        containerId: string,
+        methodId: string,
+        paypalcommercevenmo: PaypalCommerceVenmoButtonInitializeOptions,
+    ): void {
         const { buyNowInitializeOptions, initializesOnCheckoutPage, style } = paypalcommercevenmo;
 
         const paypalCommerceSdk = this._getPayPalCommerceSdkOrThrow();
@@ -80,7 +114,8 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
             style: validButtonStyle,
             onClick: () => this._handleClick(buyNowInitializeOptions),
             createOrder: () => this._createOrder(initializesOnCheckoutPage),
-            onApprove: ({ orderID }: ApproveCallbackPayload) => this._tokenizePayment(methodId, orderID),
+            onApprove: ({ orderID }: ApproveCallbackPayload) =>
+                this._tokenizePayment(methodId, orderID),
         };
 
         const paypalButtonRender = paypalCommerceSdk.Buttons(buttonRenderOptions);
@@ -95,7 +130,10 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
     private async _handleClick(
         buyNowInitializeOptions: PaypalCommerceButtonInitializeOptions['buyNowInitializeOptions'],
     ): Promise<void> {
-        if (buyNowInitializeOptions && typeof buyNowInitializeOptions.getBuyNowCartRequestBody === 'function') {
+        if (
+            buyNowInitializeOptions &&
+            typeof buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        ) {
             const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
 
             if (!cartRequestBody) {
@@ -103,7 +141,9 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
             }
 
             try {
-                const { body: cart } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
+                const { body: cart } = await this._cartRequestSender.createBuyNowCart(
+                    cartRequestBody,
+                );
 
                 this._buyNowCartId = cart.id;
             } catch (error) {
@@ -115,7 +155,9 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
     private async _createOrder(initializesOnCheckoutPage?: boolean): Promise<string> {
         const cartId = this._buyNowCartId || this._store.getState().cart.getCartOrThrow().id;
 
-        const providerId = initializesOnCheckoutPage ? 'paypalcommercevenmocheckout': 'paypalcommercevenmo';
+        const providerId = initializesOnCheckoutPage
+            ? 'paypalcommercevenmocheckout'
+            : 'paypalcommercevenmo';
 
         const { orderId } = await this._paypalCommerceRequestSender.createOrder(cartId, providerId);
 
@@ -132,7 +174,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
             action: 'set_external_checkout',
             provider: methodId,
             order_id: orderId,
-            ...this._buyNowCartId && { cart_id: this._buyNowCartId },
+            ...(this._buyNowCartId && { cart_id: this._buyNowCartId }),
         });
     }
 

@@ -7,15 +7,16 @@ import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 export default class PaypalScriptLoader {
     private _window: PaypalHostWindow;
 
-    constructor(
-        private _scriptLoader: ScriptLoader
-    ) {
+    constructor(private _scriptLoader: ScriptLoader) {
         this._window = window;
     }
 
     async loadPaypal(merchantId = ''): Promise<PaypalSDK> {
         const scriptSrc = '//www.paypalobjects.com/api/checkout.min.js';
-        const options: LoadScriptOptions = { async: true, attributes: { 'data-merchant-id': merchantId } };
+        const options: LoadScriptOptions = {
+            async: true,
+            attributes: { 'data-merchant-id': merchantId },
+        };
 
         merchantId
             ? await this._scriptLoader.loadScript(scriptSrc, options)

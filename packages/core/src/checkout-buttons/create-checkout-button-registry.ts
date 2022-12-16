@@ -122,217 +122,228 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_ADYENV2, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_ADYENV2,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayAdyenV2Initializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayAdyenV2Initializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_ADYENV3, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_ADYENV3,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayAdyenV3Initializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayAuthorizeNetInitializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_BNZ, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_BNZ,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayBNZInitializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayBraintreeInitializer(braintreeSdkCreator)
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(
+                    store,
+                    new GooglePayBraintreeInitializer(braintreeSdkCreator),
+                ),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayCheckoutcomInitializer(requestSender)
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(
+                    store,
+                    new GooglePayCheckoutcomInitializer(requestSender),
+                ),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayCybersourceV2Initializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_ORBITAL, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_ORBITAL,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayOrbitalInitializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_STRIPE, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_STRIPE,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayStripeInitializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE, () =>
-        new GooglePayButtonStrategy(
-            store,
-            formPoster,
-            checkoutActionCreator,
-            createGooglePayPaymentProcessor(
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE,
+        () =>
+            new GooglePayButtonStrategy(
                 store,
-                new GooglePayStripeUPEInitializer()
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
+                cartRequestSender
             ),
-            cartRequestSender
-        )
     );
 
-    registry.register(CheckoutButtonMethodType.MASTERPASS, () =>
-        new MasterpassButtonStrategy(
-            store,
-            checkoutActionCreator,
-            new MasterpassScriptLoader(scriptLoader),
-            locale
-        ));
-
-    registry.register(CheckoutButtonMethodType.PAYPALEXPRESS, () =>
-        new PaypalButtonStrategy(
-            store,
-            checkoutActionCreator,
-            new PaypalScriptLoader(scriptLoader),
-            formPoster,
-            host
-        )
+    registry.register(
+        CheckoutButtonMethodType.MASTERPASS,
+        () =>
+            new MasterpassButtonStrategy(
+                store,
+                checkoutActionCreator,
+                new MasterpassScriptLoader(scriptLoader),
+                locale,
+            ),
     );
 
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE, () =>
-        new PaypalCommerceButtonStrategy(
-            store,
-            checkoutActionCreator,
-            cartRequestSender,
-            formPoster,
-            paypalScriptLoader,
-            paypalCommerceRequestSender,
-            consignmentActionCreator,
-            billingAddressActionCreator,
-            paymentActionCreator,
-            orderActionCreator
-        )
+    registry.register(
+        CheckoutButtonMethodType.PAYPALEXPRESS,
+        () =>
+            new PaypalButtonStrategy(
+                store,
+                checkoutActionCreator,
+                new PaypalScriptLoader(scriptLoader),
+                formPoster,
+                host,
+            ),
     );
 
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_CREDIT, () =>
-        new PaypalCommerceCreditButtonStrategy(
-            store,
-            checkoutActionCreator,
-            cartRequestSender,
-            formPoster,
-            paypalScriptLoader,
-            paypalCommerceRequestSender,
-            orderActionCreator,
-            consignmentActionCreator,
-            billingAddressActionCreator,
-            paymentActionCreator
-        )
+    registry.register(
+        CheckoutButtonMethodType.PAYPALCOMMERCE,
+        () =>
+            new PaypalCommerceButtonStrategy(
+                store,
+                checkoutActionCreator,
+                cartRequestSender,
+                formPoster,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
+                orderActionCreator,
+            ),
     );
 
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_APMS, () =>
-        new PaypalCommerceAlternativeMethodsButtonStrategy(
-            store,
-            checkoutActionCreator,
-            cartRequestSender,
-            formPoster,
-            paypalScriptLoader,
-            paypalCommerceRequestSender
-        )
+    registry.register(
+        CheckoutButtonMethodType.PAYPALCOMMERCE_CREDIT,
+        () =>
+            new PaypalCommerceCreditButtonStrategy(
+                store,
+                checkoutActionCreator,
+                cartRequestSender,
+                formPoster,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+                orderActionCreator,
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
+            ),
     );
 
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE, () =>
-        new PaypalCommerceInlineCheckoutButtonStrategy(
-            store,
-            checkoutActionCreator,
-            paypalScriptLoader,
-            paypalCommerceRequestSender,
-            orderActionCreator,
-            consignmentActionCreator,
-            billingAddressActionCreator,
-            paymentActionCreator
-        )
+    registry.register(
+        CheckoutButtonMethodType.PAYPALCOMMERCE_APMS,
+        () =>
+            new PaypalCommerceAlternativeMethodsButtonStrategy(
+                store,
+                checkoutActionCreator,
+                cartRequestSender,
+                formPoster,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+            ),
     );
 
-    registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE_VENMO, () =>
-        new PaypalCommerceVenmoButtonStrategy(
-            store,
-            checkoutActionCreator,
-            cartRequestSender,
-            formPoster,
-            paypalScriptLoader,
-            paypalCommerceRequestSender
-        )
+    registry.register(
+        CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
+        () =>
+            new PaypalCommerceInlineCheckoutButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+                orderActionCreator,
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
+            ),
+    );
+
+    registry.register(
+        CheckoutButtonMethodType.PAYPALCOMMERCE_VENMO,
+        () =>
+            new PaypalCommerceVenmoButtonStrategy(
+                store,
+                checkoutActionCreator,
+                cartRequestSender,
+                formPoster,
+                paypalScriptLoader,
+                paypalCommerceRequestSender,
+            ),
     );
 
     return registry;

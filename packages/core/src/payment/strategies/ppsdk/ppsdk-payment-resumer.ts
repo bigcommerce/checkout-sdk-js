@@ -12,10 +12,7 @@ interface ResumeSettings {
 }
 
 export class PaymentResumer {
-    constructor(
-        private _requestSender: RequestSender,
-        private _stepHandler: StepHandler
-    ) {}
+    constructor(private _requestSender: RequestSender, private _stepHandler: StepHandler) {}
 
     async resume({ paymentId, bigpayBaseUrl, orderId }: ResumeSettings): Promise<void> {
         const token = await this._getToken(orderId).catch(() => {
@@ -30,8 +27,9 @@ export class PaymentResumer {
             },
         };
 
-        return this._requestSender.get<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments/${paymentId}`, options)
-            .then(response => this._stepHandler.handle(response));
+        return this._requestSender
+            .get<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments/${paymentId}`, options)
+            .then((response) => this._stepHandler.handle(response));
     }
 
     private async _getToken(orderId: number): Promise<string> {

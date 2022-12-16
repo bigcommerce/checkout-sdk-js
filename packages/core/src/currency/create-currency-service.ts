@@ -19,8 +19,6 @@ import CurrencyService from './currency-service';
  * @param config - The config object containing the currency configuration
  * @returns an instance of `CurrencyService`.
  */
-export default function createCurrencyService(
-    config: StoreConfig
-): CurrencyService {
+export default function createCurrencyService(config: StoreConfig): CurrencyService {
     return new CurrencyService(config);
 }

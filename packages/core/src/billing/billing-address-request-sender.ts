@@ -16,21 +16,32 @@ const DEFAULT_PARAMS = {
 };
 
 export default class BillingAddressRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    createAddress(checkoutId: string, address: Partial<AddressRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    createAddress(
+        checkoutId: string,
+        address: Partial<AddressRequestBody>,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address`;
         const headers = {
             Accept: ContentType.JsonV1,
             ...SDK_VERSION_HEADERS,
         };
 
-        return this._requestSender.post(url, { body: address, params: DEFAULT_PARAMS, headers, timeout });
+        return this._requestSender.post(url, {
+            body: address,
+            params: DEFAULT_PARAMS,
+            headers,
+            timeout,
+        });
     }
 
-    updateAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    updateAddress(
+        checkoutId: string,
+        address: Partial<BillingAddressUpdateRequestBody>,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const { id, ...body } = address;
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
         const headers = {

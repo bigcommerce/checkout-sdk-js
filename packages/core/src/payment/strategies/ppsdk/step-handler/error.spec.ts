@@ -1,6 +1,6 @@
 import { RequestError } from '../../../../common/error/errors';
 
-import { handleError, isError, ErrorResponse } from './error';
+import { ErrorResponse, handleError, isError } from './error';
 
 describe('handleError', () => {
     it('rejects with RequestError', async () => {

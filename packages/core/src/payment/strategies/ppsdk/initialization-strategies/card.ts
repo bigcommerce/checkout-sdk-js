@@ -1,4 +1,5 @@
 import { InitializationStrategy } from '../../../';
+
 interface Card {
     type: 'card_ui';
 }

@@ -19,7 +19,7 @@ export default class CardinalThreeDSecureFlowV2 {
     constructor(
         private _store: CheckoutStore,
         private _paymentActionCreator: PaymentActionCreator,
-        private _cardinalClient: CardinalClient
+        private _cardinalClient: CardinalClient,
     ) {}
 
     async prepare(method: PaymentMethod): Promise<void> {
@@ -30,16 +30,21 @@ export default class CardinalThreeDSecureFlowV2 {
         execute: PaymentStrategy['execute'],
         payload: OrderRequestBody,
         options?: PaymentRequestOptions,
-        hostedForm?: HostedForm
+        hostedForm?: HostedForm,
     ): Promise<InternalCheckoutSelectors> {
-        const { instruments: { getCardInstrument } } = this._store.getState();
+        const {
+            instruments: { getCardInstrument },
+        } = this._store.getState();
         const { payment = { methodId: '' } } = payload;
         const { paymentData = {} } = payment;
 
         try {
             return await execute(payload, options);
         } catch (error) {
-            if (error instanceof RequestError && error.body.status === 'additional_action_required') {
+            if (
+                error instanceof RequestError &&
+                error.body.status === 'additional_action_required'
+            ) {
                 const token = error.body.additional_action_required?.data?.token;
                 const xid = error.body.three_ds_result?.payer_auth_request;
 
@@ -54,11 +59,17 @@ export default class CardinalThreeDSecureFlowV2 {
                 try {
                     return await this._submitPayment(payment, { xid }, hostedForm);
                 } catch (error) {
-                    if (error instanceof RequestError && some(error.body.errors, {code: 'three_d_secure_required'})) {
+                    if (
+                        error instanceof RequestError &&
+                        some(error.body.errors, { code: 'three_d_secure_required' })
+                    ) {
                         const threeDsResult = error.body.three_ds_result;
                         const token = threeDsResult?.payer_auth_request;
 
-                        await this._cardinalClient.getThreeDSecureData(threeDsResult, this._getOrderData());
+                        await this._cardinalClient.getThreeDSecureData(
+                            threeDsResult,
+                            this._getOrderData(),
+                        );
 
                         return await this._submitPayment(payment, { token }, hostedForm);
                     }
@@ -75,7 +86,12 @@ export default class CardinalThreeDSecureFlowV2 {
         const store = this._store.getState();
         const billingAddress = store.billingAddress.getBillingAddressOrThrow();
         const shippingAddress = store.shippingAddress.getShippingAddress();
-        const { cart: { currency: { code: currencyCode }, cartAmount: amount } } = store.checkout.getCheckoutOrThrow();
+        const {
+            cart: {
+                currency: { code: currencyCode },
+                cartAmount: amount,
+            },
+        } = store.checkout.getCheckoutOrThrow();
         const id = store.order.getOrderOrThrow().orderId.toString();
 
         return { billingAddress, shippingAddress, currencyCode, id, amount };
@@ -84,12 +100,12 @@ export default class CardinalThreeDSecureFlowV2 {
     private async _submitPayment(
         payment: OrderPaymentRequestBody,
         threeDSecure: CardinalThreeDSecureToken,
-        hostedForm?: HostedForm
+        hostedForm?: HostedForm,
     ): Promise<InternalCheckoutSelectors> {
         const paymentPayload = merge({}, payment, { paymentData: { threeDSecure } });
 
         if (!hostedForm) {
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         }
 
         await hostedForm.submit(paymentPayload);
@@ -100,15 +116,12 @@ export default class CardinalThreeDSecureFlowV2 {
     private _getBin(
         paymentData: NonNullable<OrderPaymentRequestBody['paymentData']>,
         getCardInstrument: InstrumentSelector['getCardInstrument'],
-        hostedForm?: HostedForm
+        hostedForm?: HostedForm,
     ): string {
-        const instrument = isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
+        const instrument =
+            isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
         const ccNumber = isCreditCardLike(paymentData) && paymentData.ccNumber;
-        const bin = instrument ?
-            instrument.iin :
-            hostedForm ?
-                hostedForm?.getBin() :
-                ccNumber;
+        const bin = instrument ? instrument.iin : hostedForm ? hostedForm.getBin() : ccNumber;
 
         return bin || '';
     }

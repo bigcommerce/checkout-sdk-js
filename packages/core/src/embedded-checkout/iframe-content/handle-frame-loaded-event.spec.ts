@@ -21,17 +21,21 @@ describe('handleFrameLoadedEvent()', () => {
             payload: { contentId: content.id },
         });
 
-        expect(content.hasAttribute('data-iframe-height'))
-            .toEqual(true);
+        expect(content.hasAttribute('data-iframe-height')).toBe(true);
     });
 
     it('does not throw error if `contentId` is not passed', () => {
-        expect(() => handleFrameLoadedEvent({ type: EmbeddedCheckoutEventType.FrameLoaded }))
-            .not.toThrow();
+        expect(() =>
+            handleFrameLoadedEvent({ type: EmbeddedCheckoutEventType.FrameLoaded }),
+        ).not.toThrow();
     });
 
     it('does not throw error if element cannot be found', () => {
-        expect(() => handleFrameLoadedEvent({ type: EmbeddedCheckoutEventType.FrameLoaded, payload: { contentId: 'abc' } }))
-            .not.toThrow();
+        expect(() =>
+            handleFrameLoadedEvent({
+                type: EmbeddedCheckoutEventType.FrameLoaded,
+                payload: { contentId: 'abc' },
+            }),
+        ).not.toThrow();
     });
 });

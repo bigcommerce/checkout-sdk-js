@@ -13,14 +13,14 @@
  * });
  * ```
  */
- export default interface ApplePayPaymentInitializeOptions {
+export default interface ApplePayPaymentInitializeOptions {
     /**
      * Shipping label to be passed to apple sheet.
      */
-     shippingLabel?: string;
+    shippingLabel?: string;
 
     /**
      * Sub total label to be passed to apple sheet.
      */
-     subtotalLabel?: string;
+    subtotalLabel?: string;
 }

@@ -1,17 +1,24 @@
-import { BillingAddressRequestBody } from "./billing";
-import { OrderRequestBody } from "./order";
-import { Payment } from "./payment";
-import PaymentIntegrationSelectors from "./payment-integration-selectors";
-import { RequestOptions } from "./util-types";
-import { ShippingAddressRequestBody } from "./shipping";
+import { BillingAddressRequestBody } from './billing';
+import { HostedForm, HostedFormOptions } from './hosted-form';
+import { OrderRequestBody } from './order';
+import { InitializeOffsitePaymentConfig, Payment } from './payment';
+import PaymentIntegrationSelectors from './payment-integration-selectors';
+import { ShippingAddressRequestBody } from './shipping';
+import { RequestOptions } from './util-types';
 
 export default interface PaymentIntegrationService {
+    createHostedForm(host: string, options: HostedFormOptions): HostedForm;
+
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
         ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>
     ): () => void;
 
     getState(): PaymentIntegrationSelectors;
+
+    initializeOffsitePayment(
+        initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
+    ): Promise<PaymentIntegrationSelectors>;
 
     loadCheckout(): Promise<PaymentIntegrationSelectors>;
 
@@ -21,23 +28,21 @@ export default interface PaymentIntegrationService {
 
     submitOrder(
         payload?: OrderRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
     submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors>;
 
-    finalizeOrder(): Promise<PaymentIntegrationSelectors>;
+    finalizeOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     selectShippingOption(
         id: string,
-        options?: RequestOptions
+        options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
-    updateBillingAddress(
-        payload: BillingAddressRequestBody
-    ): Promise<PaymentIntegrationSelectors>;
+    updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
 
     updateShippingAddress(
-        payload: ShippingAddressRequestBody
+        payload: ShippingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors>;
 }

@@ -13,9 +13,5 @@ export default function createBraintreePaymentProcessor(scriptLoader: ScriptLoad
     const braintreeHostedForm = new BraintreeHostedForm(braintreeSDKCreator);
     const overlay = new Overlay();
 
-    return new BraintreePaymentProcessor(
-        braintreeSDKCreator,
-        braintreeHostedForm,
-        overlay
-    );
+    return new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
 }

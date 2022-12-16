@@ -7,10 +7,10 @@ describe('toSingleLine()', () => {
             Foo bar.
         `;
 
-        expect(toSingleLine(message)).toEqual('Hello world. Foo bar.');
+        expect(toSingleLine(message)).toBe('Hello world. Foo bar.');
     });
 
     it('returns empty string when no arguments are supplied', () => {
-        expect(toSingleLine()).toEqual('');
+        expect(toSingleLine()).toBe('');
     });
 });

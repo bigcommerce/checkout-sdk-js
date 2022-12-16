@@ -41,7 +41,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         const googlePayOptions = this._getGooglePayOptions(options);
 
         if (!containerId || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "containerId" argument is not provided.',
+            );
         }
 
         this._methodId = methodId;
@@ -70,12 +72,18 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
-    private _createSignInButton(containerId: string, buttonOptions: GooglePayButtonInitializeOptions, currencyCode?: string): HTMLElement {
+    private _createSignInButton(
+        containerId: string,
+        buttonOptions: GooglePayButtonInitializeOptions,
+        currencyCode?: string,
+    ): HTMLElement {
         const container = document.getElementById(containerId);
         const { buttonType, buttonColor, buyNowInitializeOptions } = buttonOptions;
 
         if (!container) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
+            throw new InvalidArgumentError(
+                'Unable to create sign-in button without valid container ID.',
+            );
         }
 
         const googlePayButton = this._googlePayPaymentProcessor.createButton((event: Event) => (
@@ -95,17 +103,27 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._methodId;
     }
 
-    private _getGooglePayOptions(options: CheckoutButtonInitializeOptions): GooglePayButtonInitializeOptions {
-
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV2 && options.googlepayadyenv2) {
+    private _getGooglePayOptions(
+        options: CheckoutButtonInitializeOptions,
+    ): GooglePayButtonInitializeOptions {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV2 &&
+            options.googlepayadyenv2
+        ) {
             return options.googlepayadyenv2;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV3 && options.googlepayadyenv3) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ADYENV3 &&
+            options.googlepayadyenv3
+        ) {
             return options.googlepayadyenv3;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET && options.googlepayauthorizenet) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET &&
+            options.googlepayauthorizenet
+        ) {
             return options.googlepayauthorizenet;
         }
 
@@ -113,27 +131,45 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             return options.googlepaybnz;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE && options.googlepaybraintree) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE &&
+            options.googlepaybraintree
+        ) {
             return options.googlepaybraintree;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM && options.googlepaycheckoutcom) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM &&
+            options.googlepaycheckoutcom
+        ) {
             return options.googlepaycheckoutcom;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2 && options.googlepaycybersourcev2) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2 &&
+            options.googlepaycybersourcev2
+        ) {
             return options.googlepaycybersourcev2;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ORBITAL && options.googlepayorbital) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_ORBITAL &&
+            options.googlepayorbital
+        ) {
             return options.googlepayorbital;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPE && options.googlepaystripe) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPE &&
+            options.googlepaystripe
+        ) {
             return options.googlepaystripe;
         }
 
-        if (options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE && options.googlepaystripeupe) {
+        if (
+            options.methodId === CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE &&
+            options.googlepaystripeupe
+        ) {
             return options.googlepaystripeupe;
         }
 
@@ -180,10 +216,15 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
+
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
+
             if (hasPhysicalItems && paymentData.shippingAddress) {
-                await this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
+                await this._googlePayPaymentProcessor.updateShippingAddress(
+                    paymentData.shippingAddress,
+                );
             }
+
             await this._onPaymentSelectComplete();
         } catch (error) {
             if (error && error.message !== 'CANCELED') {

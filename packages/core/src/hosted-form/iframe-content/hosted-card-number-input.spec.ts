@@ -15,7 +15,10 @@ import HostedInputValidator from './hosted-input-validator';
 describe('HostedCardNumberInput', () => {
     let autocompleteFieldset: HostedAutocompleteFieldset;
     let container: HTMLFormElement;
-    let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
+    let eventListener: Pick<
+        IframeEventListener<HostedFieldEventMap>,
+        'addListener' | 'listen' | 'stopListen'
+    >;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
@@ -31,7 +34,7 @@ describe('HostedCardNumberInput', () => {
         autocompleteFieldset = new HostedAutocompleteFieldset(
             container,
             [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
-            new HostedInputAggregator(window.parent)
+            new HostedInputAggregator(window.parent),
         );
         eventListener = {
             addListener: jest.fn(),
@@ -44,12 +47,14 @@ describe('HostedCardNumberInput', () => {
         };
         inputAggregator = { getInputValues: jest.fn() };
         inputValidator = {
-            validate: jest.fn(() => Promise.resolve({
-                isValid: true,
-                errors: {},
-            })),
+            validate: jest.fn(() =>
+                Promise.resolve({
+                    isValid: true,
+                    errors: {},
+                }),
+            ),
         };
-        numberFormatter = { format: jest.fn(), unformat: value => value.replace(/ /g, '') };
+        numberFormatter = { format: jest.fn(), unformat: (value) => value.replace(/ /g, '') };
         paymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
@@ -67,7 +72,7 @@ describe('HostedCardNumberInput', () => {
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
             autocompleteFieldset,
-            numberFormatter as CardNumberFormatter
+            numberFormatter as CardNumberFormatter,
         );
     });
 
@@ -76,13 +81,11 @@ describe('HostedCardNumberInput', () => {
     });
 
     it('returns input type', () => {
-        expect(input.getType())
-            .toEqual(HostedFieldType.CardNumber);
+        expect(input.getType()).toEqual(HostedFieldType.CardNumber);
     });
 
     it('notifies card type change', () => {
-        jest.spyOn(numberFormatter, 'format')
-            .mockReturnValue('4111');
+        jest.spyOn(numberFormatter, 'format').mockReturnValue('4111');
 
         jest.spyOn(eventPoster, 'post');
 
@@ -94,18 +97,16 @@ describe('HostedCardNumberInput', () => {
         element.value = '4111';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.CardTypeChanged,
-                payload: {
-                    cardType: 'visa',
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.CardTypeChanged,
+            payload: {
+                cardType: 'visa',
+            },
+        });
     });
 
     it('notifies bin number change', () => {
-        jest.spyOn(numberFormatter, 'format')
-            .mockReturnValue('4111 1111 1111 1111');
+        jest.spyOn(numberFormatter, 'format').mockReturnValue('4111 1111 1111 1111');
 
         jest.spyOn(eventPoster, 'post');
 
@@ -117,29 +118,28 @@ describe('HostedCardNumberInput', () => {
         element.value = '4111111111111111';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.BinChanged,
-                payload: {
-                    bin: '411111',
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.BinChanged,
+            payload: {
+                bin: '411111',
+            },
+        });
 
         element.value = '4987 6511 1111 1111';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.BinChanged,
-                payload: {
-                    bin: '498765',
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.BinChanged,
+            payload: {
+                bin: '498765',
+            },
+        });
     });
 
     it('notifies when bin number can no longer be detected', () => {
-        jest.spyOn(numberFormatter, 'format')
-            .mockImplementation(value => value === '4111111111111111' ? '4111 1111 1111 1111' : value);
+        jest.spyOn(numberFormatter, 'format').mockImplementation((value) =>
+            value === '4111111111111111' ? '4111 1111 1111 1111' : value,
+        );
 
         jest.spyOn(eventPoster, 'post');
 
@@ -154,18 +154,16 @@ describe('HostedCardNumberInput', () => {
         element.value = '41';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .toHaveBeenCalledWith({
-                type: HostedInputEventType.BinChanged,
-                payload: {
-                    bin: '',
-                },
-            });
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.BinChanged,
+            payload: {
+                bin: '',
+            },
+        });
     });
 
     it('does not notify if bin number is invalid', () => {
-        jest.spyOn(numberFormatter, 'format')
-            .mockReturnValue('0000 0000 0000 0000');
+        jest.spyOn(numberFormatter, 'format').mockReturnValue('0000 0000 0000 0000');
 
         jest.spyOn(eventPoster, 'post');
 
@@ -177,15 +175,15 @@ describe('HostedCardNumberInput', () => {
         element.value = '0000000000000000';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(eventPoster.post)
-            .not.toHaveBeenCalledWith(expect.objectContaining({
+        expect(eventPoster.post).not.toHaveBeenCalledWith(
+            expect.objectContaining({
                 type: HostedInputEventType.BinChanged,
-            }));
+            }),
+        );
     });
 
     it('formats input on change', () => {
-        jest.spyOn(numberFormatter, 'format')
-            .mockReturnValue('4111 1111 1111 1111');
+        jest.spyOn(numberFormatter, 'format').mockReturnValue('4111 1111 1111 1111');
 
         input.attach();
 
@@ -195,10 +193,8 @@ describe('HostedCardNumberInput', () => {
         element.value = '4111111111111111';
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        expect(numberFormatter.format)
-            .toHaveBeenCalledWith('4111111111111111');
-        expect(element.value)
-            .toEqual('4111 1111 1111 1111');
+        expect(numberFormatter.format).toHaveBeenCalledWith('4111111111111111');
+        expect(element.value).toBe('4111 1111 1111 1111');
     });
 
     it('attaches autocomplete fieldset', () => {
@@ -206,7 +202,6 @@ describe('HostedCardNumberInput', () => {
 
         input.attach();
 
-        expect(autocompleteFieldset.attach)
-            .toHaveBeenCalled();
+        expect(autocompleteFieldset.attach).toHaveBeenCalled();
     });
 });

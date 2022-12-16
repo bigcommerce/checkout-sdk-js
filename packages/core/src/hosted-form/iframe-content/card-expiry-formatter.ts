@@ -6,7 +6,8 @@ export default class CardExpiryFormatter {
     format(value: string): string {
         const [month = '', year = ''] = value.split(new RegExp(`\\s*${NUMBER_SEPARATOR}\\s*`));
         const trimmedMonth = month.slice(0, 2);
-        const trimmedYear = year.length === 4 ? year.slice(-2) : (year ? year.slice(0, 2) : month.slice(2));
+        const trimmedYear =
+            year.length === 4 ? year.slice(-2) : year ? year.slice(0, 2) : month.slice(2);
 
         // i.e.: '1'
         if (value.length < 2) {

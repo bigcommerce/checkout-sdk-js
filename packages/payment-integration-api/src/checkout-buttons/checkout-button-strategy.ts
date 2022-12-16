@@ -1,4 +1,4 @@
-import CheckoutButtonInitializeOptions from "./checkout-button-initialize-options";
+import CheckoutButtonInitializeOptions from './checkout-button-initialize-options';
 
 export default interface CheckoutButtonStrategy {
     initialize(options: CheckoutButtonInitializeOptions): Promise<void>;

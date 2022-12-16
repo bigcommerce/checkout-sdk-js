@@ -1,20 +1,36 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { createPaymentIntegrationService } from '../../../payment-integration';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import {
+    createSpamProtection,
+    PaymentHumanVerificationHandler,
+    SpamProtectionActionCreator,
+    SpamProtectionRequestSender,
+} from '../../../spam-protection';
 import createPaymentClient from '../../create-payment-client';
 import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
 import createPaymentStrategyRegistryV2 from '../../create-payment-strategy-registry-v2';
@@ -53,7 +69,11 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
         const requestSender = createRequestSender();
-        braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender);
+
+        braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(
+            scriptLoader,
+            requestSender,
+        );
         braintreeVisaCheckoutPaymentProcessor.initialize = jest.fn(() => Promise.resolve());
         braintreeVisaCheckoutPaymentProcessor.handleSuccess = jest.fn(() => Promise.resolve());
 
@@ -62,18 +82,28 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
         visaCheckoutSDK = {} as VisaCheckoutSDK;
         visaCheckoutSDK.init = jest.fn();
         visaCheckoutSDK.on = jest.fn();
 
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
-        jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() => Promise.resolve(visaCheckoutSDK));
+        jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() =>
+            Promise.resolve(visaCheckoutSDK),
+        );
 
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
+        const registry = createPaymentStrategyRegistry(
+            store,
+            paymentClient,
+            requestSender,
+            spamProtection,
+            'en_US',
+        );
         const paymentIntegrationService = createPaymentIntegrationService(store);
         const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
@@ -82,24 +112,29 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            checkoutValidator
+            checkoutValidator,
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             registry,
             registryV2,
             orderActionCreator,
-            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+            new SpamProtectionActionCreator(
+                spamProtection,
+                new SpamProtectionRequestSender(requestSender),
+            ),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
 
         strategy = new BraintreeVisaCheckoutPaymentStrategy(
@@ -110,7 +145,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             braintreeVisaCheckoutPaymentProcessor,
-            visaCheckoutScriptLoader
+            visaCheckoutScriptLoader,
         );
 
         container = document.createElement('div');
@@ -152,12 +187,15 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         it('initialises the visa checkout payment processor with the right data', async () => {
             await strategy.initialize(visaCheckoutOptions);
 
-            expect(braintreeVisaCheckoutPaymentProcessor.initialize).toHaveBeenCalledWith('clientToken', {
-                collectShipping: false,
-                currencyCode: 'USD',
-                locale: 'en_US',
-                subtotal: 190,
-            });
+            expect(braintreeVisaCheckoutPaymentProcessor.initialize).toHaveBeenCalledWith(
+                'clientToken',
+                {
+                    collectShipping: false,
+                    currencyCode: 'USD',
+                    locale: 'en_US',
+                    subtotal: 190,
+                },
+            );
         });
 
         it('calls the visa checkout sdk init method with the processed options', async () => {
@@ -179,14 +217,21 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             visaCheckoutSDK.on = jest.fn((_, callback) => callback());
             await strategy.initialize(visaCheckoutOptions);
 
-            expect(visaCheckoutSDK.on).toHaveBeenCalledWith('payment.success', expect.any(Function));
+            expect(visaCheckoutSDK.on).toHaveBeenCalledWith(
+                'payment.success',
+                expect.any(Function),
+            );
             expect(visaCheckoutSDK.on).toHaveBeenCalledWith('payment.error', expect.any(Function));
         });
 
         describe('when payment.success', () => {
             beforeEach(() => {
-                visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.success' ? callback('data') : undefined);
-                jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(cb => cb());
+                visaCheckoutSDK.on = jest.fn((type, callback) =>
+                    type === 'payment.success' ? callback('data') : undefined,
+                );
+                jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(
+                    (cb) => cb(),
+                );
             });
 
             it('triggers payment success handler in BraintreeVisaCheckoutPaymentProcessor', async () => {
@@ -195,7 +240,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 expect(braintreeVisaCheckoutPaymentProcessor.handleSuccess).toHaveBeenCalledWith(
                     'data',
                     getShippingAddress(),
-                    getBillingAddress()
+                    getBillingAddress(),
                 );
             });
 
@@ -207,18 +252,29 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
                 expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalledTimes(1);
                 expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(2);
-                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('braintreevisacheckout');
+                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                    'braintreevisacheckout',
+                );
             });
 
             it('triggers a widgetInteraction action', async () => {
-                const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
-                jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(() => widgetInteractionAction);
+                const widgetInteractionAction = of(
+                    createAction(PaymentStrategyActionType.WidgetInteractionStarted),
+                );
+
+                jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(
+                    () => widgetInteractionAction,
+                );
 
                 await strategy.initialize(visaCheckoutOptions);
 
-                expect(store.dispatch).toHaveBeenCalledWith(widgetInteractionAction, { queueId: 'widgetInteraction' });
-                expect(paymentStrategyActionCreator.widgetInteraction)
-                    .toHaveBeenCalledWith(expect.any(Function), { methodId: 'braintreevisacheckout' });
+                expect(store.dispatch).toHaveBeenCalledWith(widgetInteractionAction, {
+                    queueId: 'widgetInteraction',
+                });
+                expect(paymentStrategyActionCreator.widgetInteraction).toHaveBeenCalledWith(
+                    expect.any(Function),
+                    { methodId: 'braintreevisacheckout' },
+                );
             });
 
             it('fires onPaymentSelect when there is been a change in payment method', async () => {
@@ -231,7 +287,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                     },
                 });
 
-                await new Promise(resolve => process.nextTick(resolve));
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(onPaymentSelect).toHaveBeenCalled();
             });
@@ -241,7 +297,9 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             const onError = jest.fn();
             const errorMock = new Error();
 
-            visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.error' ? callback('data', errorMock) : undefined);
+            visaCheckoutSDK.on = jest.fn((type, callback) =>
+                type === 'payment.error' ? callback('data', errorMock) : undefined,
+            );
 
             await strategy.initialize({
                 ...visaCheckoutOptions,
@@ -275,6 +333,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         it('calls submit order with the order request information', async () => {
             await strategy.initialize(visaCheckoutOptions);
             await strategy.execute(orderRequestBody, visaCheckoutOptions);
+
             const { payment, ...order } = orderRequestBody;
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, expect.any(Object));
@@ -285,7 +344,10 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             await strategy.initialize(visaCheckoutOptions);
             await strategy.execute(orderRequestBody, visaCheckoutOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), visaCheckoutOptions);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                expect.any(Object),
+                visaCheckoutOptions,
+            );
         });
 
         it('submitPayment with the right information', async () => {
@@ -319,11 +381,15 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
     describe('#deinitialize()', () => {
         beforeEach(async () => {
             braintreeVisaCheckoutPaymentProcessor.deinitialize = jest.fn(() => Promise.resolve());
-            await strategy.initialize({ methodId: 'braintreevisacheckout', braintreevisacheckout: {} });
+            await strategy.initialize({
+                methodId: 'braintreevisacheckout',
+                braintreevisacheckout: {},
+            });
         });
 
         it('deinitializes BraintreeVisaCheckoutPaymentProcessor', async () => {
             await strategy.deinitialize();
+
             expect(braintreeVisaCheckoutPaymentProcessor.deinitialize).toHaveBeenCalled();
         });
     });

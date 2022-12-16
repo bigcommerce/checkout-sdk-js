@@ -10,7 +10,7 @@ describe('VisaCheckoutScriptLoader', () => {
     let mockWindow: VisaCheckoutHostWindow;
 
     beforeEach(() => {
-        mockWindow = { } as VisaCheckoutHostWindow;
+        mockWindow = {} as VisaCheckoutHostWindow;
         scriptLoader = {} as ScriptLoader;
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader, mockWindow);
     });
@@ -29,22 +29,30 @@ describe('VisaCheckoutScriptLoader', () => {
 
         it('loads the SDK', async () => {
             await visaCheckoutScriptLoader.load();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js');
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                '//assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+            );
         });
 
         it('returns the SDK from the window', async () => {
             const sdk = await visaCheckoutScriptLoader.load();
+
             expect(sdk).toBe(visaCheckoutSDKMock);
         });
 
         describe('when testMode is on', () => {
             it('loads the SDK in sandbox mode', async () => {
                 await visaCheckoutScriptLoader.load(true);
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js');
+
+                expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                    '//sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js',
+                );
             });
 
             it('returns the SDK from the window', async () => {
                 const sdk = await visaCheckoutScriptLoader.load(true);
+
                 expect(sdk).toBe(visaCheckoutSDKMock);
             });
         });

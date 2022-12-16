@@ -21,9 +21,7 @@ import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
 
 export default class HostedInputFactory {
-    constructor(
-        private _parentOrigin: string
-    ) {}
+    constructor(private _parentOrigin: string) {}
 
     create(
         form: HTMLFormElement,
@@ -32,27 +30,68 @@ export default class HostedInputFactory {
         fontUrls: string[] = [],
         placeholder = '',
         accessibilityLabel: string = mapToAccessibilityLabel(type),
-        cardInstrument?: CardInstrument
+        cardInstrument?: CardInstrument,
     ): HostedInput {
         const autocomplete = mapToAutocompleteType(type);
 
         if (type === HostedFieldType.CardNumber) {
-            return this._createNumberInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+            return this._createNumberInput(
+                type,
+                form,
+                styles,
+                fontUrls,
+                placeholder,
+                accessibilityLabel,
+                autocomplete,
+            );
         }
 
         if (type === HostedFieldType.CardNumberVerification) {
-            return this._createNumberInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createNumberInput(
+                type,
+                form,
+                styles,
+                fontUrls,
+                placeholder,
+                accessibilityLabel,
+                autocomplete,
+                cardInstrument,
+            );
         }
 
         if (type === HostedFieldType.CardExpiry) {
-            return this._createExpiryInput(form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+            return this._createExpiryInput(
+                form,
+                styles,
+                fontUrls,
+                placeholder,
+                accessibilityLabel,
+                autocomplete,
+            );
         }
 
         if (type === HostedFieldType.CardCodeVerification) {
-            return this._createInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createInput(
+                type,
+                form,
+                styles,
+                fontUrls,
+                placeholder,
+                accessibilityLabel,
+                autocomplete,
+                cardInstrument,
+            );
         }
 
-        return this._createInput(type, form, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
+        return this._createInput(
+            type,
+            form,
+            styles,
+            fontUrls,
+            placeholder,
+            accessibilityLabel,
+            autocomplete,
+        );
     }
 
     normalizeParentOrigin(origin: string): void {
@@ -60,8 +99,10 @@ export default class HostedInputFactory {
             return;
         }
 
-        if (this._parentOrigin !== appendWww(parseUrl(origin)).origin &&
-            origin !== appendWww(parseUrl(this._parentOrigin)).origin) {
+        if (
+            this._parentOrigin !== appendWww(parseUrl(origin)).origin &&
+            origin !== appendWww(parseUrl(this._parentOrigin)).origin
+        ) {
             return;
         }
 
@@ -78,7 +119,7 @@ export default class HostedInputFactory {
         fontUrls: string[],
         placeholder: string,
         accessibilityLabel = '',
-        autocomplete = ''
+        autocomplete = '',
     ): HostedCardExpiryInput {
         return new HostedCardExpiryInput(
             form,
@@ -92,7 +133,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createPaymentHandler(),
-            new CardExpiryFormatter()
+            new CardExpiryFormatter(),
         );
     }
 
@@ -104,7 +145,7 @@ export default class HostedInputFactory {
         placeholder: string,
         accessibilityLabel = '',
         autocomplete = '',
-        cardInstrument?: CardInstrument
+        cardInstrument?: CardInstrument,
     ): HostedCardNumberInput {
         return new HostedCardNumberInput(
             type,
@@ -122,9 +163,9 @@ export default class HostedInputFactory {
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
-                new HostedInputAggregator(window.parent)
+                new HostedInputAggregator(window.parent),
             ),
-            new CardNumberFormatter()
+            new CardNumberFormatter(),
         );
     }
 
@@ -136,7 +177,7 @@ export default class HostedInputFactory {
         placeholder: string,
         accessibilityLabel = '',
         autocomplete = '',
-        cardInstrument?: CardInstrument
+        cardInstrument?: CardInstrument,
     ): HostedInput {
         return new HostedInput(
             type,
@@ -150,20 +191,18 @@ export default class HostedInputFactory {
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
-            this._createPaymentHandler(cardInstrument)
+            this._createPaymentHandler(cardInstrument),
         );
     }
 
-    private _createPaymentHandler(
-        cardInstrument?: CardInstrument
-    ): HostedInputPaymentHandler {
+    private _createPaymentHandler(cardInstrument?: CardInstrument): HostedInputPaymentHandler {
         return new HostedInputPaymentHandler(
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new PaymentRequestSender(createBigpayClient()),
-            new PaymentRequestTransformer()
+            new PaymentRequestTransformer(),
         );
     }
 }

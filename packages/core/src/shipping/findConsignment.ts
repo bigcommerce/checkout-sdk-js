@@ -4,7 +4,7 @@ import { Consignment } from './index';
 
 export default function findConsignment(
     consignments: Consignment[],
-    itemId: string
+    itemId: string,
 ): Consignment | undefined {
-    return find(consignments, consignment => includes(consignment.lineItemIds, itemId));
+    return find(consignments, (consignment) => includes(consignment.lineItemIds, itemId));
 }

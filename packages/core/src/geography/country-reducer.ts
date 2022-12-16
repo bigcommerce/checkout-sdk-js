@@ -1,15 +1,19 @@
-import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 
 import Country from './country';
 import { CountryActionType, LoadCountriesAction } from './country-actions';
-import CountryState, { CountryErrorsState, CountryStatusesState, DEFAULT_STATE } from './country-state';
+import CountryState, {
+    CountryErrorsState,
+    CountryStatusesState,
+    DEFAULT_STATE,
+} from './country-state';
 
 export default function countryReducer(
     state: CountryState = DEFAULT_STATE,
-    action: Action
+    action: Action,
 ): CountryState {
     const reducer = combineReducers<CountryState>({
         data: dataReducer,
@@ -22,47 +26,47 @@ export default function countryReducer(
 
 function dataReducer(
     data: Country[] | undefined,
-    action: LoadCountriesAction
+    action: LoadCountriesAction,
 ): Country[] | undefined {
     switch (action.type) {
-    case CountryActionType.LoadCountriesSucceeded:
-        return arrayReplace(data, action.payload);
+        case CountryActionType.LoadCountriesSucceeded:
+            return arrayReplace(data, action.payload);
 
-    default:
-        return data;
+        default:
+            return data;
     }
 }
 
 function errorsReducer(
     errors: CountryErrorsState = DEFAULT_STATE.errors,
-    action: LoadCountriesAction
+    action: LoadCountriesAction,
 ): CountryErrorsState {
     switch (action.type) {
-    case CountryActionType.LoadCountriesRequested:
-    case CountryActionType.LoadCountriesSucceeded:
-        return objectSet(errors, 'loadError', undefined);
+        case CountryActionType.LoadCountriesRequested:
+        case CountryActionType.LoadCountriesSucceeded:
+            return objectSet(errors, 'loadError', undefined);
 
-    case CountryActionType.LoadCountriesFailed:
-        return objectSet(errors, 'loadError', action.payload);
+        case CountryActionType.LoadCountriesFailed:
+            return objectSet(errors, 'loadError', action.payload);
 
-    default:
-        return errors;
+        default:
+            return errors;
     }
 }
 
 function statusesReducer(
     statuses: CountryStatusesState = DEFAULT_STATE.statuses,
-    action: LoadCountriesAction
+    action: LoadCountriesAction,
 ): CountryStatusesState {
     switch (action.type) {
-    case CountryActionType.LoadCountriesRequested:
-        return objectSet(statuses, 'isLoading', true);
+        case CountryActionType.LoadCountriesRequested:
+            return objectSet(statuses, 'isLoading', true);
 
-    case CountryActionType.LoadCountriesSucceeded:
-    case CountryActionType.LoadCountriesFailed:
-        return objectSet(statuses, 'isLoading', false);
+        case CountryActionType.LoadCountriesSucceeded:
+        case CountryActionType.LoadCountriesFailed:
+            return objectSet(statuses, 'isLoading', false);
 
-    default:
-        return statuses;
+        default:
+            return statuses;
     }
 }

@@ -1,15 +1,10 @@
 import { LegacyAddress } from '../../../address';
 import { BraintreeDetails } from '../../../payment/strategies/braintree';
 
-export default function mapToLegacyBillingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
-    const {
-        billingAddress,
-        email,
-        firstName,
-        lastName,
-        phone,
-        shippingAddress,
-    } = details;
+export default function mapToLegacyBillingAddress(
+    details: BraintreeDetails,
+): Partial<LegacyAddress> {
+    const { billingAddress, email, firstName, lastName, phone, shippingAddress } = details;
 
     const address = billingAddress || shippingAddress;
 
@@ -26,4 +21,3 @@ export default function mapToLegacyBillingAddress(details: BraintreeDetails): Pa
         postal_code: address?.postalCode,
     };
 }
-

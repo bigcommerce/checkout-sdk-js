@@ -1,11 +1,22 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
-import { CartRequestSender, Cart } from '../../../cart';
+import { Cart, CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    StandardError,
+} from '../../../common/error/errors';
 import PaymentMethod from '../../../payment/payment-method';
-import { mapToBraintreeShippingAddressOverride, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
+import {
+    BraintreeError,
+    BraintreePaypalCheckout,
+    BraintreeSDKCreator,
+    BraintreeTokenizePayload,
+    mapToBraintreeShippingAddressOverride,
+} from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -15,7 +26,10 @@ import getValidButtonStyle from './get-valid-button-style';
 import mapToLegacyBillingAddress from './map-to-legacy-billing-address';
 import mapToLegacyShippingAddress from './map-to-legacy-shipping-address';
 
-type BuyNowInitializeOptions = Pick<BraintreePaypalButtonInitializeOptions, 'buyNowInitializeOptions'>;
+type BuyNowInitializeOptions = Pick<
+    BraintreePaypalButtonInitializeOptions,
+    'buyNowInitializeOptions'
+>;
 
 export default class BraintreePaypalButtonStrategy implements CheckoutButtonStrategy {
     private _buyNowCart?: Cart;
@@ -26,7 +40,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         private _cartRequestSender: CartRequestSender,
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _formPoster: FormPoster,
-        private _window: PaypalHostWindow
+        private _window: PaypalHostWindow,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -34,34 +48,42 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const { messagingContainerId, onError } = braintreepaypal || {};
 
         if (!methodId) {
-            throw new InvalidArgumentError('Unable to initialize payment because "options.methodId" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.methodId" argument is not provided.',
+            );
         }
 
         if (!containerId) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.containerId" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.containerId" argument is not provided.`,
+            );
         }
 
         if (!braintreepaypal) {
-            throw new InvalidArgumentError(`Unable to initialize payment because "options.braintreepaypal" argument is not provided.`);
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.braintreepaypal" argument is not provided.`,
+            );
         }
 
         let state: InternalCheckoutSelectors;
         let paymentMethod: PaymentMethod;
         let currencyCode: string;
 
-        if (braintreepaypal?.buyNowInitializeOptions) {
+        if (braintreepaypal.buyNowInitializeOptions) {
             state = this._store.getState();
             paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
             if (!braintreepaypal.currencyCode) {
-                throw new InvalidArgumentError(`Unable to initialize payment because "options.braintreepaypal.currencyCode" argument is not provided.`);
+                throw new InvalidArgumentError(
+                    `Unable to initialize payment because "options.braintreepaypal.currencyCode" argument is not provided.`,
+                );
             }
 
             currencyCode = braintreepaypal.currencyCode;
         } else {
             state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
             paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-            currencyCode = state.cart.getCartOrThrow()?.currency.code;
+            currencyCode = state.cart.getCartOrThrow().currency.code;
         }
 
         if (!paymentMethod.clientToken) {
@@ -69,13 +91,15 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         }
 
         const paypalCheckoutOptions = { currency: currencyCode };
-        const paypalCheckoutSuccessCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) => {
+        const paypalCheckoutSuccessCallback = (
+            braintreePaypalCheckout: BraintreePaypalCheckout,
+        ) => {
             this._renderPayPalComponents(
                 braintreePaypalCheckout,
                 braintreepaypal,
                 containerId,
                 methodId,
-                Boolean(paymentMethod.config.testMode)
+                Boolean(paymentMethod.config.testMode),
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -85,7 +109,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutSuccessCallback,
-            paypalCheckoutErrorCallback
+            paypalCheckoutErrorCallback,
         );
     }
 
@@ -100,12 +124,18 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         braintreepaypal: BraintreePaypalButtonInitializeOptions,
         containerId: string,
         methodId: string,
-        testMode: boolean
+        testMode: boolean,
     ): void {
         const { messagingContainerId } = braintreepaypal;
 
         this._renderPayPalMessages(messagingContainerId);
-        this._renderPayPalButton(braintreePaypalCheckout, braintreepaypal, containerId, methodId, testMode);
+        this._renderPayPalButton(
+            braintreePaypalCheckout,
+            braintreepaypal,
+            containerId,
+            methodId,
+            testMode,
+        );
     }
 
     private _renderPayPalButton(
@@ -113,7 +143,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         braintreepaypal: BraintreePaypalButtonInitializeOptions,
         containerId: string,
         methodId: string,
-        testMode: boolean
+        testMode: boolean,
     ): void {
         const { style, shouldProcessPayment, onAuthorizeError } = braintreepaypal;
 
@@ -130,7 +160,13 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 style: validButtonStyle,
                 createOrder: () => this._setupPayment(braintreePaypalCheckout, braintreepaypal),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>
-                    this._tokenizePayment(authorizeData, braintreePaypalCheckout, methodId, shouldProcessPayment, onAuthorizeError),
+                    this._tokenizePayment(
+                        authorizeData,
+                        braintreePaypalCheckout,
+                        methodId,
+                        shouldProcessPayment,
+                        onAuthorizeError,
+                    ),
             });
 
             if (paypalButtonRender.isEligible()) {
@@ -142,14 +178,19 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
     }
 
     private _renderPayPalMessages(messagingContainerId?: string): void {
-        const isMessageContainerAvailable = messagingContainerId && Boolean(document.getElementById(messagingContainerId));
+        const isMessageContainerAvailable =
+            messagingContainerId && Boolean(document.getElementById(messagingContainerId));
         const { paypal } = this._window;
 
         if (paypal && isMessageContainerAvailable) {
             const state = this._store.getState();
             const cart = state.cart.getCartOrThrow();
 
-            const paypalMessagesRender = paypal.Messages({ amount: cart.cartAmount, placement: 'cart' });
+            const paypalMessagesRender = paypal.Messages({
+                amount: cart.cartAmount,
+                placement: 'cart',
+            });
+
             paypalMessagesRender.render(`#${messagingContainerId}`);
         } else {
             this._removeElement(messagingContainerId);
@@ -158,7 +199,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
     private async _setupPayment(
         braintreePaypalCheckout: BraintreePaypalCheckout,
-        braintreepaypal: BraintreePaypalButtonInitializeOptions
+        braintreepaypal: BraintreePaypalButtonInitializeOptions,
     ): Promise<string> {
         const { buyNowInitializeOptions, shippingAddress, onPaymentError } = braintreepaypal;
         let state: InternalCheckoutSelectors;
@@ -169,16 +210,23 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             if (this._buyNowCart) {
                 state = this._store.getState();
             } else {
-                state = await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+                state = await this._store.dispatch(
+                    this._checkoutActionCreator.loadDefaultCheckout(),
+                );
             }
 
             const customer = state.customer.getCustomer();
 
-            const amount = this._buyNowCart ? this._buyNowCart?.cartAmount : state.checkout.getCheckoutOrThrow().outstandingBalance;
-            const currencyCode = braintreepaypal.currencyCode ?? state.config.getStoreConfigOrThrow().currency.code;
+            const amount = this._buyNowCart
+                ? this._buyNowCart.cartAmount
+                : state.checkout.getCheckoutOrThrow().outstandingBalance;
+            const currencyCode =
+                braintreepaypal.currencyCode ?? state.config.getStoreConfigOrThrow().currency.code;
 
-            const address = shippingAddress || customer?.addresses?.[0];
-            const shippingAddressOverride = address ? mapToBraintreeShippingAddressOverride(address) : undefined;
+            const address = shippingAddress || customer?.addresses[0];
+            const shippingAddressOverride = address
+                ? mapToBraintreeShippingAddressOverride(address)
+                : undefined;
 
             return await braintreePaypalCheckout.createPayment({
                 flow: 'checkout',
@@ -207,7 +255,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             }
 
             try {
-                const { body: cart } = await this._cartRequestSender.createBuyNowCart(cartRequestBody);
+                const { body: cart } = await this._cartRequestSender.createBuyNowCart(
+                    cartRequestBody,
+                );
 
                 return cart;
             } catch (error) {
@@ -221,10 +271,12 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         braintreePaypalCheckout: BraintreePaypalCheckout,
         methodId: string,
         shouldProcessPayment?: boolean,
-        onError?: (error: BraintreeError | StandardError) => void
+        onError?: (error: BraintreeError | StandardError) => void,
     ): Promise<BraintreeTokenizePayload> {
         try {
-            const { deviceData } = await this._braintreeSDKCreator.getDataCollector({ paypal: true });
+            const { deviceData } = await this._braintreeSDKCreator.getDataCollector({
+                paypal: true,
+            });
             const tokenizePayload = await braintreePaypalCheckout.tokenizePayment(authorizeData);
             const { details, nonce } = tokenizePayload;
             const buyNowCartId = this._buyNowCart?.id;
@@ -237,7 +289,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 device_data: deviceData,
                 billing_address: JSON.stringify(mapToLegacyBillingAddress(details)),
                 shipping_address: JSON.stringify(mapToLegacyShippingAddress(details)),
-                ...buyNowCartId && { cart_id: buyNowCartId },
+                ...(buyNowCartId && { cart_id: buyNowCartId }),
             });
 
             return tokenizePayload;
@@ -254,7 +306,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         error: BraintreeError,
         buttonContainerId: string,
         messagingContainerId?: string,
-        onErrorCallback?: (error: BraintreeError) => void
+        onErrorCallback?: (error: BraintreeError) => void,
     ): void {
         this._removeElement(buttonContainerId);
         this._removeElement(messagingContainerId);

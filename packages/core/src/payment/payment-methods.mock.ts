@@ -4,16 +4,10 @@ import PaymentMethodState from './payment-method-state';
 export function getBraintree(): PaymentMethod {
     return {
         id: 'braintree',
-        logoUrl: 'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
+        logoUrl:
+            'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
         method: 'credit-card',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-            'DISCOVER',
-            'JCB',
-            'DINERS',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
         config: {
             displayName: 'Credit Card',
             cardCode: true,
@@ -324,11 +318,7 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod {
         },
         logoUrl: '',
         method: 'credit-card',
-        supportedCards: [
-            'VISA' ,
-            'AMEX',
-            'MC',
-        ],
+        supportedCards: ['VISA', 'AMEX', 'MC'],
         type: 'PAYMENT_TYPE_API',
     };
 }
@@ -390,14 +380,7 @@ export function getStripe(): PaymentMethod {
         id: 'stripe',
         logoUrl: '',
         method: 'credit-card',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-            'DISCOVER',
-            'JCB',
-            'DINERS',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
         config: {
             displayName: 'Credit Card',
             cardCode: true,
@@ -415,14 +398,7 @@ export function getSquare(): PaymentMethod {
         id: 'square',
         logoUrl: '',
         method: 'credit-card',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-            'DISCOVER',
-            'JCB',
-            'DINERS',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
         config: {
             displayName: 'Credit Card',
             cardCode: true,
@@ -465,11 +441,7 @@ export function getMasterpass(): PaymentMethod {
         id: 'masterpass',
         logoUrl: '',
         method: 'masterpass',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Masterpass',
             testMode: false,
@@ -483,14 +455,7 @@ export function getWepay(): PaymentMethod {
         id: 'wepay',
         logoUrl: '',
         method: 'credit-card',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-            'DISCOVER',
-            'JCB',
-            'DINERS',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
         config: {
             displayName: 'Credit Card',
             enablePaypal: false,
@@ -507,11 +472,7 @@ export function getGooglePay(): PaymentMethod {
         id: 'googlepay',
         logoUrl: '',
         method: 'googlepay',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Google Pay',
             merchantId: '',
@@ -534,11 +495,7 @@ export function getGooglePayAdyenV2(): PaymentMethod {
         id: 'googlepayadyenv2',
         logoUrl: '',
         method: 'googlepay',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Google Pay',
             merchantId: '',
@@ -563,11 +520,7 @@ export function getGooglePayAdyenV3(): PaymentMethod {
         id: 'googlepayadyenv3',
         logoUrl: '',
         method: 'googlepay',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Google Pay',
             merchantId: '',
@@ -591,11 +544,7 @@ export function getGooglePayCybersourceV2(): PaymentMethod {
         id: 'googlepaycybersourcev2',
         logoUrl: '',
         method: 'googlepay',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Google Pay',
             merchantId: '',
@@ -620,11 +569,7 @@ export function getGooglePayOrbital(): PaymentMethod {
         id: 'googlepayorbital',
         logoUrl: '',
         method: 'googlepay',
-        supportedCards: [
-            'VISA',
-            'MC',
-            'AMEX',
-        ],
+        supportedCards: ['VISA', 'MC', 'AMEX'],
         config: {
             displayName: 'Google Pay',
             merchantId: '',
@@ -680,7 +625,11 @@ export function getQuadpay(): PaymentMethod {
     };
 }
 
-export function getStripeV3(method = 'card', shouldUseIndividualCardFields = false, isHostedFormEnabled = false): PaymentMethod {
+export function getStripeV3(
+    method = 'card',
+    shouldUseIndividualCardFields = false,
+    isHostedFormEnabled = false,
+): PaymentMethod {
     return {
         id: method,
         gateway: 'stripev3',
@@ -795,14 +744,10 @@ export function getMollie(): PaymentMethod {
     return {
         id: 'mollie',
         gateway: '',
-        logoUrl: 'https://charlsieremade-cloud-dev-vm.store.bcdev/rHEAD/modules/checkout/mollie/images/mollie.png',
+        logoUrl:
+            'https://charlsieremade-cloud-dev-vm.store.bcdev/rHEAD/modules/checkout/mollie/images/mollie.png',
         method: 'multi-options',
-        supportedCards: [
-            'VISA',
-            'AMEX',
-            'MC',
-            'MAESTRO',
-        ],
+        supportedCards: ['VISA', 'AMEX', 'MC', 'MAESTRO'],
         config: {
             displayName: 'Mollie',
             hasDefaultStoredInstrument: false,
@@ -969,16 +914,9 @@ export function getApplePay() {
             storeName: 'test store',
             countryCode: 'US',
             currencyCode: 'USD',
-            supportedNetworks: [
-                'visa',
-                'masterCard',
-                'amex',
-                'discover',
-            ],
+            supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
             gateway: 'adyenv2',
-            merchantCapabilities: [
-                'supports3DS',
-            ],
+            merchantCapabilities: ['supports3DS'],
             merchantId: 'abc',
             paymentsUrl: 'https://bigpay.service.bcdev',
         },

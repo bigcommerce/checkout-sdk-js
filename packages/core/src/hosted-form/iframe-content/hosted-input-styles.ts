@@ -1,10 +1,6 @@
-type HostedInputStyles = Partial<Pick<
-    CSSStyleDeclaration,
-    'color' |
-    'fontFamily' |
-    'fontSize' |
-    'fontWeight'
->>;
+type HostedInputStyles = Partial<
+    Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>
+>;
 
 export default HostedInputStyles;
 

@@ -19,14 +19,13 @@ export interface EmbeddedCheckoutEventMap {
     [EmbeddedCheckoutEventType.SignedOut]: EmbeddedCheckoutSignedOutEvent;
 }
 
-export type EmbeddedCheckoutEvent = (
-    EmbeddedCheckoutCompleteEvent |
-    EmbeddedCheckoutErrorEvent |
-    EmbeddedCheckoutFrameErrorEvent |
-    EmbeddedCheckoutFrameLoadedEvent |
-    EmbeddedCheckoutLoadedEvent |
-    EmbeddedCheckoutSignedOutEvent
-);
+export type EmbeddedCheckoutEvent =
+    | EmbeddedCheckoutCompleteEvent
+    | EmbeddedCheckoutErrorEvent
+    | EmbeddedCheckoutFrameErrorEvent
+    | EmbeddedCheckoutFrameLoadedEvent
+    | EmbeddedCheckoutLoadedEvent
+    | EmbeddedCheckoutSignedOutEvent;
 
 export interface EmbeddedCheckoutCompleteEvent {
     type: EmbeddedCheckoutEventType.CheckoutComplete;

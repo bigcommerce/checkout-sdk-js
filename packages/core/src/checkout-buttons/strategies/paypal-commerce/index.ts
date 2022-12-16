@@ -13,8 +13,8 @@ export { default as PaypalCommerceCreditButtonStrategy } from './paypal-commerce
 /**
  * PayPal Commerce Alternative Payment Methods
  */
- export { PaypalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods-button-options';
- export { default as PaypalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods-button-strategy';
+export { PaypalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods-button-options';
+export { default as PaypalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods-button-strategy';
 
 /**
  * PayPal Commerce Inline Checkout

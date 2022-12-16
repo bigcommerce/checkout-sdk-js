@@ -15,37 +15,37 @@ export default interface GiftCertificateSelector {
     isRemoving(): boolean;
 }
 
-export type GiftCertificateSelectorFactory = (state: GiftCertificateState) => GiftCertificateSelector;
+export type GiftCertificateSelectorFactory = (
+    state: GiftCertificateState,
+) => GiftCertificateSelector;
 
 export function createGiftCertificateSelectorFactory(): GiftCertificateSelectorFactory {
     const getGiftCertificates = createSelector(
         (state: GiftCertificateState) => state.data,
-        data => () => data
+        (data) => () => data,
     );
 
     const getRemoveError = createSelector(
         (state: GiftCertificateState) => state.errors.removeGiftCertificateError,
-        error => () => error
+        (error) => () => error,
     );
 
     const getApplyError = createSelector(
         (state: GiftCertificateState) => state.errors.applyGiftCertificateError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isApplying = createSelector(
         (state: GiftCertificateState) => !!state.statuses.isApplyingGiftCertificate,
-        status => () => status
+        (status) => () => status,
     );
 
     const isRemoving = createSelector(
         (state: GiftCertificateState) => !!state.statuses.isRemovingGiftCertificate,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: GiftCertificateState = DEFAULT_STATE
-    ): GiftCertificateSelector => {
+    return memoizeOne((state: GiftCertificateState = DEFAULT_STATE): GiftCertificateSelector => {
         return {
             getGiftCertificates: getGiftCertificates(state),
             getRemoveError: getRemoveError(state),

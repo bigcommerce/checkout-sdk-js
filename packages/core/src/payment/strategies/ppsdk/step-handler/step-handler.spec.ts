@@ -9,7 +9,10 @@ import { StepHandler } from './step-handler';
 
 describe('StepHandler', () => {
     const formPoster = createFormPoster();
-    const continueHandler = new ContinueHandler(formPoster, new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())));
+    const continueHandler = new ContinueHandler(
+        formPoster,
+        new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
+    );
     const handler = new StepHandler(continueHandler);
 
     describe('#handler', () => {
@@ -30,7 +33,9 @@ describe('StepHandler', () => {
 
         describe('with a continue body', () => {
             it('passes the body to the continueHandler', async () => {
-                const continueHandlerSpy = jest.spyOn(continueHandler, 'handle').mockImplementation(jest.fn);
+                const continueHandlerSpy = jest
+                    .spyOn(continueHandler, 'handle')
+                    .mockImplementation(jest.fn);
 
                 const body = {
                     type: 'continue',
@@ -96,7 +101,9 @@ describe('StepHandler', () => {
                     headers: [],
                 };
 
-                await expect(handler.handle(unsupportedResponse)).rejects.toBeInstanceOf(RequestError);
+                await expect(handler.handle(unsupportedResponse)).rejects.toBeInstanceOf(
+                    RequestError,
+                );
             });
         });
     });

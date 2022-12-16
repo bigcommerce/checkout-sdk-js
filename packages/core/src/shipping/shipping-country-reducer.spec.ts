@@ -35,7 +35,13 @@ describe('shippingCountryReducer()', () => {
         const action: LoadShippingCountriesAction = {
             type: ShippingCountryActionType.LoadShippingCountriesSucceeded,
             payload: [
-                { code: 'JP', name: 'Japan', hasPostalCodes: false, subdivisions: [], requiresState: false },
+                {
+                    code: 'JP',
+                    name: 'Japan',
+                    hasPostalCodes: false,
+                    subdivisions: [],
+                    requiresState: false,
+                },
             ],
         };
 
@@ -49,7 +55,7 @@ describe('shippingCountryReducer()', () => {
     it('returns a new state when countries cannot be fetched', () => {
         const action = createErrorAction(
             ShippingCountryActionType.LoadShippingCountriesFailed,
-            new RequestErrorFactory().createError(getErrorResponse())
+            new RequestErrorFactory().createError(getErrorResponse()),
         );
 
         expect(shippingCountryReducer(initialState, action)).toEqual({

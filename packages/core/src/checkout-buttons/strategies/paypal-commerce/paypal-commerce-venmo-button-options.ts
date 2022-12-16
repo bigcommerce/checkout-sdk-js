@@ -22,5 +22,5 @@ export interface PaypalCommerceVenmoButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 }

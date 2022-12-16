@@ -1,6 +1,7 @@
-import { PaymentIntegrationSelectors } from "@bigcommerce/checkout-sdk/payment-integration-api";
-import { cloneResult as clone } from "../common/utility";
-import { InternalCheckoutSelectors } from "../checkout";
+import { PaymentIntegrationSelectors } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { InternalCheckoutSelectors } from '../checkout';
+import { cloneResult as clone } from '../common/utility';
 
 export default function createPaymentIntegrationSelectors({
     billingAddress: { getBillingAddress, getBillingAddressOrThrow },

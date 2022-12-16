@@ -1,4 +1,9 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
 
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -22,8 +27,7 @@ describe('PaymentMethodRequestSender', () => {
         beforeEach(() => {
             response = getResponse(getPaymentMethods());
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
         });
 
         it('loads payment methods', async () => {
@@ -41,8 +45,7 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment methods with timeout', async () => {
             const options = { timeout: createTimeout() };
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
 
             expect(await paymentMethodRequestSender.loadPaymentMethods(options)).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments', {
@@ -58,8 +61,7 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment methods with params', async () => {
             const options = { params: { method: 'method-id' } };
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
 
             expect(await paymentMethodRequestSender.loadPaymentMethods(options)).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments', {
@@ -79,15 +81,15 @@ describe('PaymentMethodRequestSender', () => {
         beforeEach(() => {
             response = getResponse(getPaymentMethod());
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
         });
 
         it('loads payment method', async () => {
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
 
-            expect(await paymentMethodRequestSender.loadPaymentMethod('braintree')).toEqual(response);
+            expect(await paymentMethodRequestSender.loadPaymentMethod('braintree')).toEqual(
+                response,
+            );
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/braintree', {
                 timeout: undefined,
                 headers: {
@@ -101,10 +103,11 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment method with timeout', async () => {
             const options = { timeout: createTimeout() };
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
 
-            expect(await paymentMethodRequestSender.loadPaymentMethod('braintree', options)).toEqual(response);
+            expect(
+                await paymentMethodRequestSender.loadPaymentMethod('braintree', options),
+            ).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/braintree', {
                 ...options,
                 headers: {
@@ -118,10 +121,11 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment method with params', async () => {
             const options = { params: { method: 'method-id' } };
 
-            jest.spyOn(requestSender, 'get')
-                .mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
 
-            expect(await paymentMethodRequestSender.loadPaymentMethod('afterpay', options)).toEqual(response);
+            expect(await paymentMethodRequestSender.loadPaymentMethod('afterpay', options)).toEqual(
+                response,
+            );
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/afterpay', {
                 ...options,
                 headers: {

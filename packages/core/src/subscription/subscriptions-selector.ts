@@ -14,17 +14,15 @@ export type SubscriptionsSelectorFactory = (state: SubscriptionsState) => Subscr
 export function createSubscriptionsSelectorFactory(): SubscriptionsSelectorFactory {
     const getUpdateError = createSelector(
         (state: SubscriptionsState) => state.errors.updateError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isUpdating = createSelector(
         (state: SubscriptionsState) => !!state.statuses.isUpdating,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: SubscriptionsState = DEFAULT_STATE
-    ): SubscriptionsSelector => {
+    return memoizeOne((state: SubscriptionsState = DEFAULT_STATE): SubscriptionsSelector => {
         return {
             getUpdateError: getUpdateError(state),
             isUpdating: isUpdating(state),

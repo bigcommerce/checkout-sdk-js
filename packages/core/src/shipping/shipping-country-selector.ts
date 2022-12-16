@@ -11,27 +11,27 @@ export default interface ShippingCountrySelector {
     isLoading(): boolean;
 }
 
-export type ShippingCountrySelectorFactory = (state: ShippingCountryState) => ShippingCountrySelector;
+export type ShippingCountrySelectorFactory = (
+    state: ShippingCountryState,
+) => ShippingCountrySelector;
 
 export function createShippingCountrySelectorFactory(): ShippingCountrySelectorFactory {
     const getShippingCountries = createSelector(
         (state: ShippingCountryState) => state.data,
-        data => () => data
+        (data) => () => data,
     );
 
     const getLoadError = createSelector(
         (state: ShippingCountryState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isLoading = createSelector(
         (state: ShippingCountryState) => state.statuses.isLoading,
-        status => () => !!status
+        (status) => () => !!status,
     );
 
-    return memoizeOne((
-        state: ShippingCountryState = DEFAULT_STATE
-    ): ShippingCountrySelector => {
+    return memoizeOne((state: ShippingCountryState = DEFAULT_STATE): ShippingCountrySelector => {
         return {
             getShippingCountries: getShippingCountries(state),
             getLoadError: getLoadError(state),

@@ -12,7 +12,7 @@ export default function initializeHostedInput(options: HostedInputOptions): Prom
     const initializer = new HostedInputInitializer(
         new HostedInputFactory(parentOrigin),
         getHostedInputStorage(),
-        new IframeEventListener<HostedFieldEventMap>(parentOrigin)
+        new IframeEventListener<HostedFieldEventMap>(parentOrigin),
     );
 
     return initializer.initialize(containerId, nonce);

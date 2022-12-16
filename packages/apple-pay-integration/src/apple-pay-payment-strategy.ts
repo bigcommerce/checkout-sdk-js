@@ -1,4 +1,5 @@
-import { RequestSender } from "@bigcommerce/request-sender";
+import { RequestSender } from '@bigcommerce/request-sender';
+
 import {
     Cart,
     Checkout,
@@ -16,10 +17,10 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
     StoreConfig,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import ApplePaySessionFactory from "./apple-pay-session-factory";
-import { WithApplePayPaymentInitializeOptions } from "./apple-pay-payment-initialize-options";
+import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+import ApplePaySessionFactory from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -30,8 +31,8 @@ interface ApplePayPromise {
 }
 
 enum DefaultLabels {
-    Shipping = "Shipping",
-    Subtotal = "Subtotal",
+    Shipping = 'Shipping',
+    Subtotal = 'Subtotal',
 }
 
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
@@ -41,30 +42,26 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     constructor(
         private _requestSender: RequestSender,
         private _paymentIntegrationService: PaymentIntegrationService,
-        private _sessionFactory: ApplePaySessionFactory
+        private _sessionFactory: ApplePaySessionFactory,
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions &
-            WithApplePayPaymentInitializeOptions
+        options?: PaymentInitializeOptions & WithApplePayPaymentInitializeOptions,
     ): Promise<void> {
         if (!options?.methodId) {
             throw new InvalidArgumentError(
-                'Unable to submit payment because "options.methodId" argument is not provided.'
+                'Unable to submit payment because "options.methodId" argument is not provided.',
             );
         }
+
         const { methodId } = options;
-        this._shippingLabel =
-            options?.applepay?.shippingLabel || DefaultLabels.Shipping;
-        this._subTotalLabel =
-            options?.applepay?.subtotalLabel || DefaultLabels.Subtotal;
+
+        this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
+        this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
     }
 
-    async execute(
-        payload: OrderRequestBody,
-        options?: PaymentRequestOptions
-    ): Promise<void> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment } = payload;
         const state = this._paymentIntegrationService.getState();
         const checkout = state.getCheckoutOrThrow();
@@ -72,25 +69,21 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const config = state.getStoreConfigOrThrow();
 
         if (!payment) {
-            throw new PaymentArgumentInvalidError(["payment"]);
+            throw new PaymentArgumentInvalidError(['payment']);
         }
+
         const { methodId } = payment;
 
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        const request = this._getBaseRequest(
-            cart,
-            checkout,
-            config,
-            paymentMethod
-        );
+        const request = this._getBaseRequest(cart, checkout, config, paymentMethod);
         const applePaySession = this._sessionFactory.create(request);
 
         await this._paymentIntegrationService.submitOrder(
             {
                 useStoreCredit: payload.useStoreCredit,
             },
-            options
+            options,
         );
 
         applePaySession.begin();
@@ -115,7 +108,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         cart: Cart,
         checkout: Checkout,
         config: StoreConfig,
-        paymentMethod: PaymentMethod
+        paymentMethod: PaymentMethod,
     ): ApplePayJS.ApplePayPaymentRequest {
         const {
             storeProfile: { storeCountryCode, storeName },
@@ -137,7 +130,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             lineItems.push({
                 label: tax.name,
                 amount: `${tax.amount.toFixed()}`,
-            })
+            }),
         );
 
         lineItems.push({
@@ -153,10 +146,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             lineItems,
             total: {
                 label: storeName,
-                amount: `${checkout.grandTotal.toFixed(
-                    cart.currency.decimalPlaces
-                )}`,
-                type: "final",
+                amount: `${checkout.grandTotal.toFixed(cart.currency.decimalPlaces)}`,
+                type: 'final',
             },
         };
     }
@@ -164,56 +155,50 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _handleApplePayEvents(
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        promise: ApplePayPromise
+        promise: ApplePayPromise,
     ) {
         applePaySession.onvalidatemerchant = async (event) => {
             try {
-                const { body: merchantSession } =
-                    await this._onValidateMerchant(paymentMethod, event);
+                const { body: merchantSession } = await this._onValidateMerchant(
+                    paymentMethod,
+                    event,
+                );
+
                 applePaySession.completeMerchantValidation(merchantSession);
             } catch (err) {
-                throw new Error("Merchant validation failed");
+                throw new Error('Merchant validation failed');
             }
         };
 
         applePaySession.oncancel = async () =>
-            promise.reject(
-                new PaymentMethodCancelledError("Continue with applepay")
-            );
+            promise.reject(new PaymentMethodCancelledError('Continue with applepay'));
 
-        applePaySession.onpaymentauthorized = (
-            event: ApplePayJS.ApplePayPaymentAuthorizedEvent
-        ) =>
-            this._onPaymentAuthorized(
-                event,
-                applePaySession,
-                paymentMethod,
-                promise
-            );
+        applePaySession.onpaymentauthorized = (event: ApplePayJS.ApplePayPaymentAuthorizedEvent) =>
+            this._onPaymentAuthorized(event, applePaySession, paymentMethod, promise);
     }
 
     private async _onValidateMerchant(
         paymentData: PaymentMethod,
-        event: ApplePayJS.ApplePayValidateMerchantEvent
+        event: ApplePayJS.ApplePayValidateMerchantEvent,
     ) {
         const body = [
             `validationUrl=${event.validationURL}`,
             `merchantIdentifier=${paymentData.initializationData.merchantId}`,
             `displayName=${paymentData.initializationData.storeName}`,
             `domainName=${window.location.hostname}`,
-        ].join("&");
+        ].join('&');
 
         return this._requestSender.post(
             validationEndpoint(paymentData.initializationData.paymentsUrl),
             {
                 credentials: false,
                 headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-XSRF-TOKEN": null,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-XSRF-TOKEN': null,
                 },
                 body,
-            }
+            },
         );
     }
 
@@ -221,7 +206,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        promise: ApplePayPromise
+        promise: ApplePayPromise,
     ) {
         const { token } = event.payment;
         const payment: Payment = {
@@ -246,9 +231,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
             return promise.reject(
-                new NotInitializedError(
-                    NotInitializedErrorType.PaymentNotInitialized
-                )
+                new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
             );
         }
     }

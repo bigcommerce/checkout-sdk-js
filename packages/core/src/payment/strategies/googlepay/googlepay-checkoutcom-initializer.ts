@@ -8,21 +8,25 @@ import { PaymentMethodFailedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import { CheckoutcomGooglePayToken, CheckoutcomToken } from '../checkoutcom';
 
-import { BillingAddressFormat, GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
+import {
+    BillingAddressFormat,
+    GooglePayInitializer,
+    GooglePaymentData,
+    GooglePayPaymentDataRequestV2,
+    TokenizePayload,
+} from './googlepay';
 
 export default class GooglePayCheckoutcomInitializer implements GooglePayInitializer {
     private _publishableKey = '';
     private _testMode = true;
     private _errorMessage = 'Unable to parse response from GooglePay.';
 
-    constructor(
-       private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
     async initialize(
         checkout: Checkout,
         paymentMethod: PaymentMethod,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
         this._publishableKey = paymentMethod.initializationData.checkoutcomkey;
         this._testMode = !!paymentMethod.config.testMode;
@@ -30,7 +34,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         return this._mapGooglePayCheckoutcomDataRequestToGooglePayDataRequestV2(
             checkout,
             paymentMethod.initializationData,
-            hasShippingAddress
+            hasShippingAddress,
         );
     }
 
@@ -40,6 +44,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
 
     async parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         let token;
+
         try {
             token = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
         } catch (err) {
@@ -49,6 +54,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         if (!token.signature || !token.protocolVersion || !token.signedMessage) {
             throw new PaymentMethodFailedError(this._errorMessage);
         }
+
         const finalToken = await this._convertToken(this._testMode, this._publishableKey, token);
 
         const payload: TokenizePayload = {
@@ -68,11 +74,19 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         return payload;
     }
 
-    private async _convertToken(testMode: boolean, checkoutcomkey: string, token: CheckoutcomGooglePayToken): Promise<CheckoutcomToken> {
-        const checkoutcomToken: CheckoutcomToken = await this._requestCheckoutcomTokenize(testMode, checkoutcomkey, {
-            type: 'googlepay',
-            token_data: token,
-        });
+    private async _convertToken(
+        testMode: boolean,
+        checkoutcomkey: string,
+        token: CheckoutcomGooglePayToken,
+    ): Promise<CheckoutcomToken> {
+        const checkoutcomToken: CheckoutcomToken = await this._requestCheckoutcomTokenize(
+            testMode,
+            checkoutcomkey,
+            {
+                type: 'googlepay',
+                token_data: token,
+            },
+        );
 
         if (!checkoutcomToken || !checkoutcomToken.token) {
             throw new PaymentMethodFailedError('Unable to parse response from Checkout.com');
@@ -81,7 +95,11 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
         return checkoutcomToken;
     }
 
-    private async _requestCheckoutcomTokenize(testMode: boolean, checkoutcomKey: string, data = {}): Promise<CheckoutcomToken> {
+    private async _requestCheckoutcomTokenize(
+        testMode: boolean,
+        checkoutcomKey: string,
+        data = {},
+    ): Promise<CheckoutcomToken> {
         const TEST_URL = 'https://api.sandbox.checkout.com/tokens';
         const LIVE_URL = 'https://api.checkout.com/tokens';
 
@@ -103,7 +121,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
     private _mapGooglePayCheckoutcomDataRequestToGooglePayDataRequestV2(
         checkout: Checkout,
         initializationData: any,
-        hasShippingAddress: boolean
+        hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         return {
             apiVersion: 2,
@@ -113,25 +131,27 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
                 merchantId: initializationData.googleMerchantId,
                 merchantName: initializationData.googleMerchantName,
             },
-            allowedPaymentMethods: [{
-                type: 'CARD',
-                parameters: {
-                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
-                    billingAddressRequired: true,
-                    billingAddressParameters: {
-                        format: BillingAddressFormat.Full,
-                        phoneNumberRequired: true,
-                    },
-                },
-                tokenizationSpecification: {
-                    type: 'PAYMENT_GATEWAY',
+            allowedPaymentMethods: [
+                {
+                    type: 'CARD',
                     parameters: {
-                        gateway: 'checkoutltd',
-                        gatewayMerchantId: initializationData.checkoutcomkey,
+                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                        billingAddressRequired: true,
+                        billingAddressParameters: {
+                            format: BillingAddressFormat.Full,
+                            phoneNumberRequired: true,
+                        },
+                    },
+                    tokenizationSpecification: {
+                        type: 'PAYMENT_GATEWAY',
+                        parameters: {
+                            gateway: 'checkoutltd',
+                            gatewayMerchantId: initializationData.checkoutcomkey,
+                        },
                     },
                 },
-            }],
+            ],
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
                 totalPriceStatus: 'FINAL',

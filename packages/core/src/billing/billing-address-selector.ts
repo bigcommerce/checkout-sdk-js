@@ -23,49 +23,50 @@ export type BillingAddressSelectorFactory = (state: BillingAddressState) => Bill
 export function createBillingAddressSelectorFactory(): BillingAddressSelectorFactory {
     const getBillingAddress = createSelector(
         (state: BillingAddressState) => state.data,
-        data => () => data
+        (data) => () => data,
     );
 
     const getBillingAddressOrThrow = createSelector(
         getBillingAddress,
-        getBillingAddress => () => {
-            return guard(getBillingAddress(), () => new MissingDataError(MissingDataErrorType.MissingBillingAddress));
-        }
+        (getBillingAddress) => () => {
+            return guard(
+                getBillingAddress(),
+                () => new MissingDataError(MissingDataErrorType.MissingBillingAddress),
+            );
+        },
     );
 
     const getUpdateError = createSelector(
         (state: BillingAddressState) => state.errors.updateError,
-        error => () => error
+        (error) => () => error,
     );
 
     const getContinueAsGuestError = createSelector(
         (state: BillingAddressState) => state.errors.continueAsGuestError,
-        error => () => error
+        (error) => () => error,
     );
 
     const getLoadError = createSelector(
         (state: BillingAddressState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isUpdating = createSelector(
         (state: BillingAddressState) => !!state.statuses.isUpdating,
-        status => () => status
+        (status) => () => status,
     );
 
     const isContinuingAsGuest = createSelector(
         (state: BillingAddressState) => !!state.statuses.isContinuingAsGuest,
-        status => () => status
+        (status) => () => status,
     );
 
     const isLoading = createSelector(
         (state: BillingAddressState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: BillingAddressState = DEFAULT_STATE
-    ): BillingAddressSelector => {
+    return memoizeOne((state: BillingAddressState = DEFAULT_STATE): BillingAddressSelector => {
         return {
             getBillingAddress: getBillingAddress(state),
             getBillingAddressOrThrow: getBillingAddressOrThrow(state),

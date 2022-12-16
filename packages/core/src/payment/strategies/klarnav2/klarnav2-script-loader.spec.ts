@@ -14,7 +14,7 @@ describe('KlarnaV2ScriptLoader', () => {
         klarnav2ScriptLoader.load();
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            'https://x.klarnacdn.net/kp/lib/v1/api.js'
+            'https://x.klarnacdn.net/kp/lib/v1/api.js',
         );
     });
 });

@@ -1,13 +1,12 @@
-import { Consignment, ShippingAddress } from "./shipping";
-
-import { BillingAddress } from "./billing";
-import { CardInstrument } from "./payment/instrument";
-import { Cart } from "./cart";
-import { Checkout } from "./checkout";
-import { Customer } from "./customer";
-import { Order } from "./order";
-import PaymentMethod from "./payment/payment-method";
-import { StoreConfig } from "./config";
+import { BillingAddress } from './billing';
+import { Cart } from './cart';
+import { Checkout } from './checkout';
+import { StoreConfig } from './config';
+import { Customer } from './customer';
+import { Order } from './order';
+import { CardInstrument } from './payment/instrument';
+import PaymentMethod from './payment/payment-method';
+import { Consignment, ShippingAddress } from './shipping';
 
 export default interface PaymentIntegrationSelectors {
     getHost(): string | undefined;
@@ -49,14 +48,8 @@ export default interface PaymentIntegrationSelectors {
     getPaymentRedirectUrl(): string | undefined;
     getPaymentRedirectUrlOrThrow(): string;
 
-    getPaymentMethod(
-        methodId: string,
-        gatewayId?: string
-    ): PaymentMethod | undefined;
-    getPaymentMethodOrThrow(
-        methodId: string,
-        gatewayId?: string
-    ): PaymentMethod;
+    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
 
     getShippingAddress(): ShippingAddress | undefined;
     getShippingAddressOrThrow(): ShippingAddress;

@@ -6,17 +6,36 @@ import { EventEmitter } from 'events';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
-import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator, createCheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
-import { PaymentActionCreator, PaymentMethod, PaymentRequestSender, PaymentRequestTransformer } from '../../../payment';
+import {
+    PaymentActionCreator,
+    PaymentMethod,
+    PaymentRequestSender,
+    PaymentRequestTransformer,
+} from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import { getPaypalCommerce } from '../../../payment/payment-methods.mock';
 import { PaypalHostWindow } from '../../../payment/strategies/paypal';
-import { PayPalAddress, PaypalCheckoutButtonOptions, PaypalCommerceRequestSender, PaypalCommerceScriptLoader, PaypalCommerceSDK, PayPalOrderDetails, PayPalSelectedShippingOption } from '../../../payment/strategies/paypal-commerce';
+import {
+    PayPalAddress,
+    PaypalCheckoutButtonOptions,
+    PaypalCommerceRequestSender,
+    PaypalCommerceScriptLoader,
+    PaypalCommerceSDK,
+    PayPalOrderDetails,
+    PayPalSelectedShippingOption,
+} from '../../../payment/strategies/paypal-commerce';
 import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import { getConsignment } from '../../../shipping/consignments.mock';
@@ -25,6 +44,7 @@ import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
+
 import { PaypalCommerceInlineCheckoutButtonInitializeOptions } from './paypal-commerce-inline-checkout-button-options';
 import PaypalCommerceInlineCheckoutButtonStrategy from './paypal-commerce-inline-checkout-button-strategy';
 
@@ -72,15 +92,15 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
         methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
-        containerId: containerId,
+        containerId,
         paypalcommerceinline: paypalCommerceInlineOptions,
     };
 
     const paypalShippingAddressPayloadMock: PayPalAddress = {
-        city: "San Jose",
-        state: "CA",
-        country_code: "US",
-        postal_code: "95131",
+        city: 'San Jose',
+        state: 'CA',
+        country_code: 'US',
+        postal_code: '95131',
     };
 
     const paypalSelectedShippingOptionPayloadMock: PayPalSelectedShippingOption = {
@@ -108,17 +128,35 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-        orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
-        consignmentActionCreator = new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender);
-        subscriptionsActionCreator = new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender));
-        billingAddressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender), subscriptionsActionCreator);
+        orderActionCreator = new OrderActionCreator(
+            new OrderRequestSender(requestSender),
+            checkoutValidator,
+        );
+        consignmentActionCreator = new ConsignmentActionCreator(
+            new ConsignmentRequestSender(requestSender),
+            checkoutRequestSender,
+        );
+        subscriptionsActionCreator = new SubscriptionsActionCreator(
+            new SubscriptionsRequestSender(requestSender),
+        );
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            new BillingAddressRequestSender(requestSender),
+            subscriptionsActionCreator,
+        );
         paymentRequestSender = new PaymentRequestSender(requestSender);
-        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, new PaymentRequestTransformer(), paymentHumanVerificationHandler);
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
+            createSpamProtection(createScriptLoader()),
+        );
+        paymentActionCreator = new PaymentActionCreator(
+            paymentRequestSender,
+            orderActionCreator,
+            new PaymentRequestTransformer(),
+            paymentHumanVerificationHandler,
+        );
 
         strategy = new PaypalCommerceInlineCheckoutButtonStrategy(
             store,
@@ -128,13 +166,17 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             orderActionCreator,
             consignmentActionCreator,
             billingAddressActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
         );
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
-        jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([getConsignment()]);
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+            getConsignment(),
+        ]);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
 
         jest.spyOn(billingAddressActionCreator, 'updateAddress').mockReturnValue(true);
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockReturnValue(true);
@@ -148,8 +190,8 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdkMock);
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
-        jest.spyOn(paypalSdkMock, 'Buttons')
-            .mockImplementation((options: PaypalCheckoutButtonOptions) => {
+        jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(
+            (options: PaypalCheckoutButtonOptions) => {
                 eventEmitter.on('createOrder', () => {
                     if (options.createOrder) {
                         options.createOrder().catch(() => {});
@@ -176,11 +218,14 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
-                        options.onApprove({ orderID: paypalOrderId }, {
-                            order: {
-                                get: jest.fn(),
-                            }
-                        });
+                        options.onApprove(
+                            { orderID: paypalOrderId },
+                            {
+                                order: {
+                                    get: jest.fn(),
+                                },
+                            },
+                        );
                     }
                 });
 
@@ -200,7 +245,8 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                     render: jest.fn(),
                     isEligible: jest.fn(() => true),
                 };
-            });
+            },
+        );
     });
 
     afterEach(() => {
@@ -215,7 +261,9 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
     describe('#initialize', () => {
         it('throws an error if methodId is not provided', async () => {
-            const options = { containerId: initializationOptions.containerId } as CheckoutButtonInitializeOptions;
+            const options = {
+                containerId: initializationOptions.containerId,
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -225,7 +273,9 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         });
 
         it('throws an error if containerId is not provided', async () => {
-            const options = { methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE } as CheckoutButtonInitializeOptions;
+            const options = {
+                methodId: CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
+            } as CheckoutButtonInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -290,11 +340,10 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         it('renders PayPal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation(() => ({
-                    render: paypalCommerceSdkRenderMock,
-                    isEligible: jest.fn(() => true),
-                }));
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => ({
+                render: paypalCommerceSdkRenderMock,
+                isEligible: jest.fn(() => true),
+            }));
 
             await strategy.initialize(initializationOptions);
 
@@ -304,11 +353,10 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
         it('does not render PayPal button container if PayPal button is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation(() => ({
-                    render: paypalCommerceSdkRenderMock,
-                    isEligible: jest.fn(() => false),
-                }));
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => ({
+                render: paypalCommerceSdkRenderMock,
+                isEligible: jest.fn(() => false),
+            }));
 
             await strategy.initialize(initializationOptions);
 
@@ -318,15 +366,20 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
     describe('#_createOrder button callback', () => {
         it('creates PayPal order', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({ orderID: paypalOrderId });
+            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({
+                orderID: paypalOrderId,
+            });
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(cartMock.id, initializationOptions.methodId);
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+                cartMock.id,
+                initializationOptions.methodId,
+            );
         });
     });
 
@@ -352,7 +405,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onShippingAddressChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(providedAddress);
             expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(providedAddress);
@@ -367,7 +420,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             const consignment = {
                 ...getConsignment(),
                 availableShippingOptions: [recommendedShippingOption],
-                selectedShippingOption: null
+                selectedShippingOption: null,
             };
 
             const updatedConsignment = {
@@ -377,29 +430,32 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
                 .mockReturnValueOnce([consignment])
-                .mockReturnValue([updatedConsignment])
+                .mockReturnValue([updatedConsignment]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(recommendedShippingOption.id);
+            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(
+                recommendedShippingOption.id,
+            );
         });
 
         it('updates PayPal order', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
-                .mockReturnValue([consignment]);
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                consignment,
+            ]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalledWith({
                 availableShippingOptions: consignment.availableShippingOptions,
@@ -420,19 +476,25 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             const consignment = {
                 ...getConsignment(),
-                availableShippingOptions: [recommendedShippingOption, shippingOptionThatShouldBeSelected],
+                availableShippingOptions: [
+                    recommendedShippingOption,
+                    shippingOptionThatShouldBeSelected,
+                ],
             };
 
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
-                .mockReturnValue([consignment]);
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                consignment,
+            ]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(shippingOptionThatShouldBeSelected.id);
+            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(
+                shippingOptionThatShouldBeSelected.id,
+            );
         });
 
         it('selects recommended shipping option if there is no match with payload from paypal', async () => {
@@ -448,31 +510,37 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 availableShippingOptions: [recommendedShippingOption, anotherShippingOption],
             };
 
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
-                .mockReturnValue([consignment]);
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                consignment,
+            ]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(consignmentActionCreator.selectShippingOption).not.toHaveBeenCalledWith(paypalSelectedShippingOptionPayloadMock.id);
-            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(recommendedShippingOption.id);
+            expect(consignmentActionCreator.selectShippingOption).not.toHaveBeenCalledWith(
+                paypalSelectedShippingOptionPayloadMock.id,
+            );
+            expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(
+                recommendedShippingOption.id,
+            );
         });
 
         it('updates PayPal order', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
-                .mockReturnValue([consignment]);
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                consignment,
+            ]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalledWith({
                 availableShippingOptions: consignment.availableShippingOptions,
@@ -488,41 +556,44 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 {
                     shipping: {
                         address: {
-                            address_line_1: "2 E 61st St",
-                            admin_area_2: "New York",
-                            admin_area_1: "NY",
-                            postal_code: "10065",
-                            country_code: "US"
+                            address_line_1: '2 E 61st St',
+                            admin_area_2: 'New York',
+                            admin_area_1: 'NY',
+                            postal_code: '10065',
+                            country_code: 'US',
                         },
                     },
                 },
             ],
             payer: {
                 name: {
-                    given_name: "John",
-                    surname: "Doe",
+                    given_name: 'John',
+                    surname: 'Doe',
                 },
-                email_address: "john@doe.com",
+                email_address: 'john@doe.com',
                 address: {
-                    address_line_1: "1 Main St",
-                    admin_area_2: "San Jose",
-                    admin_area_1: "CA",
-                    postal_code: "95131",
-                    country_code: "US",
+                    address_line_1: '1 Main St',
+                    admin_area_2: 'San Jose',
+                    admin_area_1: 'CA',
+                    postal_code: '95131',
+                    country_code: 'US',
                 },
             },
         };
 
         beforeEach(() => {
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation((options: PaypalCheckoutButtonOptions) => {
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(
+                (options: PaypalCheckoutButtonOptions) => {
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
-                            options.onApprove({ orderID: paypalOrderId }, {
-                                order: {
-                                    get: jest.fn(() => paypalOrderDetails),
-                                }
-                            });
+                            options.onApprove(
+                                { orderID: paypalOrderId },
+                                {
+                                    order: {
+                                        get: jest.fn(() => paypalOrderDetails),
+                                    },
+                                },
+                            );
                         }
                     });
 
@@ -530,21 +601,25 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                         render: jest.fn(),
                         isEligible: jest.fn(() => true),
                     };
-                });
+                },
+            );
         });
 
         it('takes order details data from paypal', async () => {
             const getOrderActionMock = jest.fn(() => paypalOrderDetails);
 
-            jest.spyOn(paypalSdkMock, 'Buttons')
-                .mockImplementation((options: PaypalCheckoutButtonOptions) => {
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(
+                (options: PaypalCheckoutButtonOptions) => {
                     eventEmitter.on('onApprove', () => {
                         if (options.onApprove) {
-                            options.onApprove({ orderID: paypalOrderId }, {
-                                order: {
-                                    get: getOrderActionMock,
-                                }
-                            });
+                            options.onApprove(
+                                { orderID: paypalOrderId },
+                                {
+                                    order: {
+                                        get: getOrderActionMock,
+                                    },
+                                },
+                            );
                         }
                     });
 
@@ -552,16 +627,17 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                         render: jest.fn(),
                         isEligible: jest.fn(() => true),
                     };
-                });
+                },
+            );
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(getOrderActionMock).toHaveBeenCalled();
-            expect(getOrderActionMock).toReturnWith(paypalOrderDetails);
+            expect(getOrderActionMock).toHaveReturnedWith(paypalOrderDetails);
         });
 
         it('updates only billing address with valid customers data from order details if there is no shipping needed', async () => {
@@ -574,7 +650,9 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 },
             };
 
-            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartWithoutShipping);
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(
+                cartWithoutShipping,
+            );
 
             const address = {
                 firstName: paypalOrderDetails.payer.name.given_name,
@@ -596,7 +674,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
         });
@@ -611,13 +689,15 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 },
             };
 
-            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartWithoutShipping);
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(
+                cartWithoutShipping,
+            );
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(consignmentActionCreator.updateAddress).not.toHaveBeenCalled();
             expect(paypalCommerceRequestSender.updateOrder).not.toHaveBeenCalled();
@@ -636,21 +716,23 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 countryCode: paypalOrderDetails.purchase_units[0].shipping.address.country_code,
                 postalCode: paypalOrderDetails.purchase_units[0].shipping.address.postal_code,
                 stateOrProvince: '',
-                stateOrProvinceCode: paypalOrderDetails.purchase_units[0].shipping.address.admin_area_1,
+                stateOrProvinceCode:
+                    paypalOrderDetails.purchase_units[0].shipping.address.admin_area_1,
                 customFields: [],
             };
 
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.updateAddress call
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow')
-                .mockReturnValue([consignment]);
+            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+                consignment,
+            ]);
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
             expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(address);
@@ -666,7 +748,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 {},
@@ -680,7 +762,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
         it('submits BC payment to update BC order data', async () => {
             const methodId = initializationOptions.methodId;
-            const paymentData =  {
+            const paymentData = {
                 formattedPayload: {
                     vault_payment_instrument: null,
                     set_as_default_stored_instrument: null,
@@ -696,9 +778,12 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onApprove');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId, paymentData });
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData,
+            });
         });
     });
 
@@ -712,10 +797,12 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 },
             };
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethod,
+            );
 
             const methodId = initializationOptions.methodId;
-            const paymentData =  {
+            const paymentData = {
                 formattedPayload: {
                     vault_payment_instrument: null,
                     set_as_default_stored_instrument: null,
@@ -731,9 +818,12 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onComplete');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({ methodId, paymentData });
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData,
+            });
         });
 
         it('do not call submit payment for authorize only transactions', async () => {
@@ -745,13 +835,15 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
                 },
             };
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethod,
+            );
 
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onComplete');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
@@ -761,7 +853,7 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
 
             eventEmitter.emit('onComplete');
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceInlineOptions.onComplete).toHaveBeenCalled();
         });
@@ -786,4 +878,4 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             }
         });
     });
-})
+});

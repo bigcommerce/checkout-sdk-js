@@ -1,13 +1,17 @@
 import { InvalidArgumentError } from '../../../common/error/errors';
 
-import { BraintreeFormFieldOptions, BraintreeFormFieldStyles, BraintreeFormFieldStylesMap } from './braintree-payment-options';
+import {
+    BraintreeFormFieldOptions,
+    BraintreeFormFieldStyles,
+    BraintreeFormFieldStylesMap,
+} from './braintree-payment-options';
 
 export default class BraintreeRegularField {
     private _input: HTMLInputElement;
 
     constructor(
         private _options: BraintreeFormFieldOptions,
-        private _styles?: BraintreeFormFieldStylesMap
+        private _styles?: BraintreeFormFieldStylesMap,
     ) {
         this._input = document.createElement('input');
         this._input.style.backgroundColor = 'transparent';
@@ -61,7 +65,7 @@ export default class BraintreeRegularField {
 
         const styleKeys = Object.keys(styles) as Array<keyof BraintreeFormFieldStyles>;
 
-        styleKeys.forEach(key => {
+        styleKeys.forEach((key) => {
             this._input.style[key] = styles[key] || '';
         });
     }

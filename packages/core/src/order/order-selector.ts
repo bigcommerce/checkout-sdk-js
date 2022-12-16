@@ -21,7 +21,7 @@ export default interface OrderSelector {
 export type OrderSelectorFactory = (
     state: OrderState,
     billingAddress: BillingAddressSelector,
-    coupons: CouponSelector
+    coupons: CouponSelector,
 ) => OrderSelector;
 
 interface OrderSelectorDependencies {
@@ -32,64 +32,66 @@ interface OrderSelectorDependencies {
 export function createOrderSelectorFactory(): OrderSelectorFactory {
     const getOrder = createSelector(
         (state: OrderState) => state.data,
-        (_: OrderState, { billingAddress }: OrderSelectorDependencies) => billingAddress.getBillingAddress(),
+        (_: OrderState, { billingAddress }: OrderSelectorDependencies) =>
+            billingAddress.getBillingAddress(),
         (_: OrderState, { coupons }: OrderSelectorDependencies) => coupons.getCoupons(),
-        (data, billingAddress, coupons = []) => () => {
-            if (!data || !billingAddress) {
-                return;
-            }
+        (data, billingAddress, coupons = []) =>
+            () => {
+                if (!data || !billingAddress) {
+                    return;
+                }
 
-            return {
-                ...data,
-                billingAddress,
-                coupons,
-            };
-        }
+                return {
+                    ...data,
+                    billingAddress,
+                    coupons,
+                };
+            },
     );
 
-    const getOrderOrThrow = createSelector(
-        getOrder,
-        getOrder => () => {
-            return guard(getOrder(), () => new MissingDataError(MissingDataErrorType.MissingOrder));
-        }
-    );
+    const getOrderOrThrow = createSelector(getOrder, (getOrder) => () => {
+        return guard(getOrder(), () => new MissingDataError(MissingDataErrorType.MissingOrder));
+    });
 
     const getOrderMeta = createSelector(
         (state: OrderState) => state.meta,
-        meta => () => meta
+        (meta) => () => meta,
     );
 
     const getLoadError = createSelector(
         (state: OrderState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const getPaymentId = createSelector(
         (state: OrderState) => state.data?.payments,
-        (payments = []) => (methodId: string) => {
-            const currentPayment = payments.find(({ providerId }) => providerId === methodId);
+        (payments = []) =>
+            (methodId: string) => {
+                const currentPayment = payments.find(({ providerId }) => providerId === methodId);
 
-            return currentPayment?.paymentId;
-        }
+                return currentPayment?.paymentId;
+            },
     );
 
     const isLoading = createSelector(
         (state: OrderState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: OrderState = DEFAULT_STATE,
-        billingAddress: BillingAddressSelector,
-        coupons: CouponSelector
-    ): OrderSelector => {
-        return {
-            getOrder: getOrder(state, { billingAddress, coupons }),
-            getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
-            getOrderMeta: getOrderMeta(state),
-            getLoadError: getLoadError(state),
-            getPaymentId: getPaymentId(state),
-            isLoading: isLoading(state),
-        };
-    });
+    return memoizeOne(
+        (
+            state: OrderState = DEFAULT_STATE,
+            billingAddress: BillingAddressSelector,
+            coupons: CouponSelector,
+        ): OrderSelector => {
+            return {
+                getOrder: getOrder(state, { billingAddress, coupons }),
+                getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
+                getOrderMeta: getOrderMeta(state),
+                getLoadError: getLoadError(state),
+                getPaymentId: getPaymentId(state),
+                isLoading: isLoading(state),
+            };
+        },
+    );
 }

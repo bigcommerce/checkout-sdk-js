@@ -10,6 +10,6 @@ export {
     StorefrontErrorResponseBody,
     PaymentErrorData,
     PaymentErrorResponseBody,
-    InternalErrorResponseBody
+    InternalErrorResponseBody,
 } from './error-response-body';
 export { default as RequestErrorFactory } from './request-error-factory';

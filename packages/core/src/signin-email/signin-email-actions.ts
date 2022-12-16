@@ -8,9 +8,9 @@ export enum SignInEmailActionType {
     SendSignInEmailFailed = 'SEND_SIGNIN_EMAIL_FAILED',
 }
 export type SendSignInEmailAction =
-    SendSignInEmailRequestedAction |
-    SendSignInEmailSucceededAction |
-    SendSignInEmailFailedAction;
+    | SendSignInEmailRequestedAction
+    | SendSignInEmailSucceededAction
+    | SendSignInEmailFailedAction;
 
 export interface SendSignInEmailRequestedAction extends Action {
     type: SignInEmailActionType.SendSignInEmailRequested;

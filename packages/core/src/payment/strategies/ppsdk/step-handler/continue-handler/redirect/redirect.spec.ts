@@ -27,7 +27,9 @@ describe('handleRedirect', () => {
                     url: 'http://some-url.com',
                 };
 
-                handleRedirect(redirectContinueResponse, formPoster).then(resolveMock).catch(rejectMock);
+                handleRedirect(redirectContinueResponse, formPoster)
+                    .then(resolveMock)
+                    .catch(rejectMock);
 
                 expect(assignSpy).toHaveBeenCalledWith('http://some-url.com');
                 expect(resolveMock).not.toHaveBeenCalled();
@@ -51,7 +53,9 @@ describe('handleRedirect', () => {
                     form_fields,
                 };
 
-                handleRedirect(redirectContinueResponse, formPoster).then(resolveMock).catch(rejectMock);
+                handleRedirect(redirectContinueResponse, formPoster)
+                    .then(resolveMock)
+                    .catch(rejectMock);
 
                 expect(postFormSpy).toHaveBeenCalledWith('http://some-post-url.com', form_fields);
                 expect(resolveMock).not.toHaveBeenCalled();
@@ -68,7 +72,9 @@ describe('handleRedirect', () => {
 
             handleRedirect(redirectContinueResponse, formPoster);
 
-            await expect(handleRedirect(redirectContinueResponse, formPoster)).rejects.toBeInstanceOf(PaymentMethodCancelledError);
+            await expect(
+                handleRedirect(redirectContinueResponse, formPoster),
+            ).rejects.toBeInstanceOf(PaymentMethodCancelledError);
         });
     });
 });

@@ -22,19 +22,19 @@ const SCRIPTS_US: AfterpayScripts = {
 
 /** Class responsible for loading the Afterpay SDK */
 export default class AfterpayScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader
-    ) {}
+    constructor(private _scriptLoader: ScriptLoader) {}
 
     /**
      * Loads the appropriate Afterpay SDK depending on the payment method data.
+     *
      * @param method the payment method data
      */
     load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk> {
         const testMode = method.config.testMode || false;
         const scriptURI = this._getScriptURI(countryCode, testMode);
 
-        return this._scriptLoader.loadScript(scriptURI)
+        return this._scriptLoader
+            .loadScript(scriptURI)
             .then(() => (window as unknown as AfterpayWindow).AfterPay);
     }
 
@@ -45,5 +45,4 @@ export default class AfterpayScriptLoader {
 
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
-
 }

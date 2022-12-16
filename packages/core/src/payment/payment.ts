@@ -10,22 +10,36 @@ export default interface Payment {
     additionalAction?: PaymentAdditionalAction;
 }
 
-export type PaymentInstrument = (
-    CreditCardInstrument |
-    CreditCardInstrument & WithHostedFormNonce |
-    CreditCardInstrument & WithDocumentInstrument |
-    CreditCardInstrument & WithCheckoutcomiDealInstrument |
-    CreditCardInstrument & WithCheckoutcomFawryInstrument |
-    CreditCardInstrument & WithCheckoutcomSEPAInstrument |
-    CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | AppleInstrument | BoltInstrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument | WithDocumentInstrument | WithCheckoutcomiDealInstrument | WithCheckoutcomFawryInstrument | WithCheckoutcomSEPAInstrument | StripeV3Intent | StripeUPEIntent | WithMollieIssuerInstrument | StripeV3FormattedPayload> |
-    HostedInstrument |
-    NonceInstrument |
-    ThreeDSVaultedInstrument |
-    VaultedInstrument |
-    VaultedInstrument & WithHostedFormNonce |
-    WithAccountCreation
-);
+export type PaymentInstrument =
+    | CreditCardInstrument
+    | (CreditCardInstrument & WithHostedFormNonce)
+    | (CreditCardInstrument & WithDocumentInstrument)
+    | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+    | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
+    | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
+    | CryptogramInstrument
+    | FormattedPayload<
+          | AdyenV2Instrument
+          | AppleInstrument
+          | BoltInstrument
+          | PaypalInstrument
+          | FormattedHostedInstrument
+          | FormattedVaultedInstrument
+          | WithDocumentInstrument
+          | WithCheckoutcomiDealInstrument
+          | WithCheckoutcomFawryInstrument
+          | WithCheckoutcomSEPAInstrument
+          | StripeV3Intent
+          | StripeUPEIntent
+          | WithMollieIssuerInstrument
+          | StripeV3FormattedPayload
+      >
+    | HostedInstrument
+    | NonceInstrument
+    | ThreeDSVaultedInstrument
+    | VaultedInstrument
+    | (VaultedInstrument & WithHostedFormNonce)
+    | WithAccountCreation;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -78,7 +92,10 @@ export interface WithHostedFormNonce {
     hostedFormNonce: string;
 }
 
-export type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
+export type HostedCreditCardInstrument = Omit<
+    CreditCardInstrument,
+    'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'
+>;
 
 export type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
@@ -200,13 +217,16 @@ export interface FormattedHostedInstrument {
 }
 
 export interface FormattedVaultedInstrument {
-    bigpay_token: {
-        token: string;
-        credit_card_number_confirmation?: string;
-        expiry_month?: string;
-        expiry_year?: string;
-        verification_value?: string;
-    } | string | null;
+    bigpay_token:
+        | {
+              token: string;
+              credit_card_number_confirmation?: string;
+              expiry_month?: string;
+              expiry_year?: string;
+              verification_value?: string;
+          }
+        | string
+        | null;
 }
 
 export interface FormattedPayload<T> {
@@ -223,5 +243,5 @@ export interface StripeV3FormattedPayload {
     client_token?: string;
     bigpay_token?: {
         token: string;
-    }
+    };
 }

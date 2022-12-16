@@ -1,9 +1,7 @@
 import { default as storage } from 'local-storage-fallback';
 
 export default class BrowserStorage {
-    constructor(
-        private _namespace: string
-    ) {}
+    constructor(private _namespace: string) {}
 
     getItem<TValue = any>(key: string): TValue | null {
         const rawValue = storage.getItem(this.withNamespace(key));

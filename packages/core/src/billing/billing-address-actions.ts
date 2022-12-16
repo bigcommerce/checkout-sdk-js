@@ -12,19 +12,17 @@ export enum BillingAddressActionType {
     ContinueAsGuestFailed = 'CONTINUE_AS_GUEST_FAILED',
 }
 
-export type BillingAddressAction =
-    ContinueAsGuestAction |
-    UpdateBillingAddressAction;
+export type BillingAddressAction = ContinueAsGuestAction | UpdateBillingAddressAction;
 
 export type UpdateBillingAddressAction =
-    UpdateBillingAddressRequested |
-    UpdateBillingAddressSucceeded |
-    UpdateBillingAddressFailed;
+    | UpdateBillingAddressRequested
+    | UpdateBillingAddressSucceeded
+    | UpdateBillingAddressFailed;
 
 export type ContinueAsGuestAction =
-    ContinueAsGuestRequested |
-    ContinueAsGuestSucceeded |
-    ContinueAsGuestFailed;
+    | ContinueAsGuestRequested
+    | ContinueAsGuestSucceeded
+    | ContinueAsGuestFailed;
 
 export interface UpdateBillingAddressRequested extends Action {
     type: BillingAddressActionType.UpdateBillingAddressRequested;

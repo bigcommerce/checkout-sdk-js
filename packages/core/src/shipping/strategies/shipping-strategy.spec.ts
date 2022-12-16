@@ -1,4 +1,4 @@
-import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 
 import ShippingStrategy from './shipping-strategy';
 
@@ -6,9 +6,7 @@ describe('ShippingStrategy', () => {
     let store: CheckoutStore;
 
     class FoobarShippingStrategy implements ShippingStrategy {
-        constructor(
-            private _store: CheckoutStore
-        ) {}
+        constructor(private _store: CheckoutStore) {}
 
         updateAddress(): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());

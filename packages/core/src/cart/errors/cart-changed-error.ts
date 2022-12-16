@@ -10,11 +10,10 @@ export default class CartChangedError extends StandardError {
      */
     data: { previous: ComparableCheckout; updated: ComparableCheckout };
 
-    constructor(
-        previous: ComparableCheckout,
-        updated: ComparableCheckout
-    ) {
-        super('An update to your shopping cart has been detected and your available shipping costs have been updated.');
+    constructor(previous: ComparableCheckout, updated: ComparableCheckout) {
+        super(
+            'An update to your shopping cart has been detected and your available shipping costs have been updated.',
+        );
 
         this.name = 'CartChangedError';
         this.type = 'cart_changed';

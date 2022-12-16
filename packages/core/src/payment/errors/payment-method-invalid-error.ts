@@ -9,7 +9,9 @@ import { RequestError } from '../../common/error/errors';
  */
 export default class PaymentMethodInvalidError<T = any> extends RequestError<T> {
     constructor(response?: Response<T>) {
-        super(response, { message: 'There is a problem processing your payment. Please try again later.' });
+        super(response, {
+            message: 'There is a problem processing your payment. Please try again later.',
+        });
 
         this.name = 'PaymentMethodInvalidError';
         this.type = 'payment_method_invalid';

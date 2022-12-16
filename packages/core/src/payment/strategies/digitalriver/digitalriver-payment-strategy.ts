@@ -1,19 +1,36 @@
 import { some } from 'lodash';
 
+import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
-import { isVaultedInstrument, HostedInstrument } from '../../index';
-import { BillingAddressActionCreator } from '../../../billing';
+import { HostedInstrument, isVaultedInstrument } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import DigitalRiverJS, { AuthenticationSourceStatus, DigitalRiverAdditionalProviderData, DigitalRiverAuthenticateSourceResponse, DigitalRiverDropIn, DigitalRiverElementOptions, DigitalRiverInitializeToken, OnCancelOrErrorResponse, OnReadyResponse, OnSuccessResponse } from './digitalriver';
+import DigitalRiverJS, {
+    AuthenticationSourceStatus,
+    DigitalRiverAdditionalProviderData,
+    DigitalRiverAuthenticateSourceResponse,
+    DigitalRiverDropIn,
+    DigitalRiverElementOptions,
+    DigitalRiverInitializeToken,
+    OnCancelOrErrorResponse,
+    OnReadyResponse,
+    OnSuccessResponse,
+} from './digitalriver';
 import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentInitializeOptions from './digitalriver-payment-initialize-options';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
@@ -24,7 +41,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _submitFormEvent?: () => void;
     private _loadSuccessResponse?: OnSuccessResponse;
     private _digitalRiverCheckoutData?: DigitalRiverInitializeToken;
-    private _unsubscribe?: (() => void);
+    private _unsubscribe?: () => void;
     private _digitalRiverInitializeOptions?: DigitalRiverPaymentInitializeOptions;
 
     constructor(
@@ -34,41 +51,47 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _digitalRiverScriptLoader: DigitalRiverScriptLoader,
-        private _billingAddressActionCreator: BillingAddressActionCreator
+        private _billingAddressActionCreator: BillingAddressActionCreator,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._digitalRiverInitializeOptions = options.digitalriver;
-        const paymentMethod = this._store.getState().paymentMethods.getPaymentMethodOrThrow(options.methodId);
+
+        const paymentMethod = this._store
+            .getState()
+            .paymentMethods.getPaymentMethodOrThrow(options.methodId);
         const { publicKey, paymentLanguage: locale } = paymentMethod.initializationData;
         const { containerId } = this._getDigitalRiverInitializeOptions();
 
         this._digitalRiverJS = await this._digitalRiverScriptLoader.load(publicKey, locale);
 
         this._unsubscribe = await this._store.subscribe(
-            async state => {
+            async (state) => {
                 if (state.paymentStrategies.isInitialized(options.methodId)) {
                     const container = document.getElementById(containerId);
 
                     if (container) {
                         container.innerHTML = '';
 
-                        this._digitalRiverJS = await this._digitalRiverScriptLoader.load(publicKey, locale);
+                        this._digitalRiverJS = await this._digitalRiverScriptLoader.load(
+                            publicKey,
+                            locale,
+                        );
                     }
 
                     await this._loadWidget(options);
                 }
             },
-            state => {
+            (state) => {
                 const checkout = state.checkout.getCheckout();
 
                 return checkout && checkout.outstandingBalance;
             },
-            state => {
+            (state) => {
                 const checkout = state.checkout.getCheckout();
 
                 return checkout && checkout.coupons;
-            }
+            },
         );
 
         return this._loadWidget(options);
@@ -89,7 +112,10 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(
+        orderRequest: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
 
         if (!payment || !payment.paymentData) {
@@ -98,10 +124,14 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         const { paymentData, methodId } = payment;
         const { shouldSetAsDefaultInstrument = false } = paymentData as HostedInstrument;
-        const { isStoreCreditApplied: useStoreCredit } = this._store.getState().checkout.getCheckoutOrThrow();
+        const { isStoreCreditApplied: useStoreCredit } = this._store
+            .getState()
+            .checkout.getCheckoutOrThrow();
 
         if (useStoreCredit !== undefined) {
-            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+            await this._store.dispatch(
+                this._storeCreditActionCreator.applyStoreCredit(useStoreCredit),
+            );
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
@@ -112,7 +142,13 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         if (isVaultedInstrument(paymentData)) {
             try {
-                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutData.checkoutId, shouldSetAsDefaultInstrument, false);
+                return await this._submitVaultedInstrument(
+                    methodId,
+                    paymentData.instrumentId,
+                    this._digitalRiverCheckoutData.checkoutData.checkoutId,
+                    shouldSetAsDefaultInstrument,
+                    false,
+                );
             } catch (error) {
                 if (!this._isAuthenticateSourceAction(error)) {
                     throw error;
@@ -120,7 +156,13 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
                 const confirm = await this._authenticateSource(error.body.provider_data);
 
-                return await this._submitVaultedInstrument(methodId, paymentData.instrumentId, this._digitalRiverCheckoutData.checkoutData.checkoutId, shouldSetAsDefaultInstrument, confirm);
+                return await this._submitVaultedInstrument(
+                    methodId,
+                    paymentData.instrumentId,
+                    this._digitalRiverCheckoutData.checkoutData.checkoutId,
+                    shouldSetAsDefaultInstrument,
+                    confirm,
+                );
             }
         } else {
             if (!this._loadSuccessResponse) {
@@ -144,7 +186,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                 },
             };
 
-            return await this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
         }
     }
 
@@ -163,29 +205,33 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
     private _getErrorMessage(error: OnCancelOrErrorResponse): string {
         const { errors } = error;
 
-        return errors.map(e => 'code: ' + e.code + ' message: ' + e.message).join('\n');
+        return errors.map((e) => `code: ${e.code} message: ${e.message}`).join('\n');
     }
 
     private async _onSuccessResponse(data?: OnSuccessResponse): Promise<void> {
-        const error = new InvalidArgumentError('Unable to initialize payment because success argument is not provided.');
+        const error = new InvalidArgumentError(
+            'Unable to initialize payment because success argument is not provided.',
+        );
 
         if (data && this._submitFormEvent) {
             const { browserInfo, owner } = data.source;
 
-            this._loadSuccessResponse = browserInfo ? {
-                source: {
-                    id: data.source.id,
-                    reusable: data.source.reusable,
-                    ...browserInfo,
-                },
-                readyForStorage: data.readyForStorage,
-            } : {
-                source: {
-                    id: data.source.id,
-                    reusable: data.source.reusable,
-                },
-                readyForStorage: data.readyForStorage,
-            };
+            this._loadSuccessResponse = browserInfo
+                ? {
+                      source: {
+                          id: data.source.id,
+                          reusable: data.source.reusable,
+                          ...browserInfo,
+                      },
+                      readyForStorage: data.readyForStorage,
+                  }
+                : {
+                      source: {
+                          id: data.source.id,
+                          reusable: data.source.reusable,
+                      },
+                      readyForStorage: data.readyForStorage,
+                  };
 
             if (owner) {
                 const billingAddressPayPal = {
@@ -203,14 +249,17 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     customFields: [],
                     email: owner.email || owner.email,
                 };
+
                 this._loadSuccessResponse.source.owner = data.source.owner;
-                await this._store.dispatch(this._billingAddressActionCreator.updateAddress(billingAddressPayPal))
+                await this._store.dispatch(
+                    this._billingAddressActionCreator.updateAddress(billingAddressPayPal),
+                );
             }
 
             return this._submitFormEvent();
-        } else {
-            return this._getDigitalRiverInitializeOptions().onError?.(error);
         }
+
+        return this._getDigitalRiverInitializeOptions().onError?.(error);
     }
 
     private _onReadyResponse(data?: OnReadyResponse): void {
@@ -227,15 +276,20 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         return this._digitalRiverInitializeOptions;
     }
 
-    private async _loadWidget(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    private async _loadWidget(
+        options: PaymentInitializeOptions,
+    ): Promise<InternalCheckoutSelectors> {
         try {
-            const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId));
+            const state = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(options.methodId),
+            );
             const billing = state.billingAddress.getBillingAddressOrThrow();
             const customer = state.customer.getCustomerOrThrow();
             const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
-            const {paymentMethodConfiguration} = this._getDigitalRiverInitializeOptions().configuration;
-            const {containerId, configuration} = this._getDigitalRiverInitializeOptions();
-            const {clientToken} = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+            const { paymentMethodConfiguration } =
+                this._getDigitalRiverInitializeOptions().configuration;
+            const { containerId, configuration } = this._getDigitalRiverInitializeOptions();
+            const { clientToken } = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
             if (!clientToken) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -251,13 +305,16 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
             this._submitFormEvent = this._getDigitalRiverInitializeOptions().onSubmitForm;
 
-            const disabledPaymentMethods = features['PROJECT-4802.digital_river_paypal_support'] ? [] : ['payPal'];
+            const disabledPaymentMethods = features['PROJECT-4802.digital_river_paypal_support']
+                ? []
+                : ['payPal'];
 
             const digitalRiverConfiguration = {
                 sessionId: this._digitalRiverCheckoutData.sessionId,
                 options: {
                     ...configuration,
-                    showSavePaymentAgreement: Boolean(customer.email) && configuration.showSavePaymentAgreement,
+                    showSavePaymentAgreement:
+                        Boolean(customer.email) && configuration.showSavePaymentAgreement,
                 },
                 billingAddress: {
                     firstName: billing.firstName,
@@ -275,7 +332,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                 },
                 paymentMethodConfiguration: {
                     ...paymentMethodConfiguration,
-                    disabledPaymentMethods
+                    disabledPaymentMethods,
                 },
                 onSuccess: (data?: OnSuccessResponse) => {
                     this._onSuccessResponse(data);
@@ -285,44 +342,66 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                 },
                 onError: (error: OnCancelOrErrorResponse) => {
                     const descriptiveError = new Error(this._getErrorMessage(error));
+
                     this._getDigitalRiverInitializeOptions().onError?.(descriptiveError);
                 },
             };
-            this._digitalRiverDropComponent = await this._getDigitalRiverJs().createDropin(digitalRiverConfiguration);
+
+            this._digitalRiverDropComponent = await this._getDigitalRiverJs().createDropin(
+                digitalRiverConfiguration,
+            );
             this._digitalRiverDropComponent.mount(containerId);
 
             return state;
         } catch {
             throw new DigitalRiverError(
                 'payment.digitalriver_checkout_error',
-                'digitalRiverCheckoutError'
+                'digitalRiverCheckoutError',
             );
         }
     }
 
     private _isAuthenticateSourceAction(error: unknown): boolean {
-        return  !(!(error instanceof RequestError) || !some(error.body.errors, { code: 'additional_action_required' }));
+        return !(
+            !(error instanceof RequestError) ||
+            !some(error.body.errors, { code: 'additional_action_required' })
+        );
     }
 
-    private async _authenticateSource(additionalAction: DigitalRiverAdditionalProviderData): Promise<boolean> {
+    private async _authenticateSource(
+        additionalAction: DigitalRiverAdditionalProviderData,
+    ): Promise<boolean> {
         if (!this._digitalRiverCheckoutData) {
-            throw new InvalidArgumentError('Unable to proceed because payload payment argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because payload payment argument is not provided.',
+            );
         }
 
-        const authenticateSourceResponse: DigitalRiverAuthenticateSourceResponse = await this._getDigitalRiverJs().authenticateSource({
-            sessionId: this._digitalRiverCheckoutData.sessionId,
-            sourceId: additionalAction.source_id,
-            sourceClientSecret: additionalAction.source_client_secret,
-        });
+        const authenticateSourceResponse: DigitalRiverAuthenticateSourceResponse =
+            await this._getDigitalRiverJs().authenticateSource({
+                sessionId: this._digitalRiverCheckoutData.sessionId,
+                sourceId: additionalAction.source_id,
+                sourceClientSecret: additionalAction.source_client_secret,
+            });
 
         if (authenticateSourceResponse.status === AuthenticationSourceStatus.failed) {
             throw new Error('Source authentication failed, please try again');
         }
 
-        return authenticateSourceResponse.status === AuthenticationSourceStatus.complete || authenticateSourceResponse.status === AuthenticationSourceStatus.authentication_not_required;
+        return (
+            authenticateSourceResponse.status === AuthenticationSourceStatus.complete ||
+            authenticateSourceResponse.status ===
+                AuthenticationSourceStatus.authentication_not_required
+        );
     }
 
-    private async _submitVaultedInstrument(methodId: string, instrumentId: string, checkoutId: string, shouldSetAsDefaultInstrument: boolean, confirm: boolean): Promise<InternalCheckoutSelectors> {
+    private async _submitVaultedInstrument(
+        methodId: string,
+        instrumentId: string,
+        checkoutId: string,
+        shouldSetAsDefaultInstrument: boolean,
+        confirm: boolean,
+    ): Promise<InternalCheckoutSelectors> {
         const paymentPayload = {
             methodId,
             paymentData: {
@@ -359,16 +438,25 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         if (complianceDiv) {
             complianceDiv.innerHTML = '';
 
-            const complianceElement = this._getDigitalRiverJs().createElement('compliance', complianceOptions);
+            const complianceElement = this._getDigitalRiverJs().createElement(
+                'compliance',
+                complianceOptions,
+            );
+
             complianceElement.mount('compliance');
         } else {
             const drfooter = document.createElement('div');
+
             drfooter.setAttribute('id', 'compliance');
             drfooter.style.cssText = 'min-height: 45px;';
             drfooter.classList.add('layout');
             document.body.appendChild(drfooter);
 
-            const complianceElement = this._getDigitalRiverJs().createElement('compliance', complianceOptions);
+            const complianceElement = this._getDigitalRiverJs().createElement(
+                'compliance',
+                complianceOptions,
+            );
+
             complianceElement.mount('compliance');
         }
     }

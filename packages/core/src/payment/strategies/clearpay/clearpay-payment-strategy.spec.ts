@@ -1,20 +1,43 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
+import {
+    getCheckout,
+    getCheckoutPayment,
+    getCheckoutStoreState,
+} from '../../../checkout/checkouts.mock';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    RequestError,
+} from '../../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotCompletedError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import {
+    StoreCreditActionCreator,
+    StoreCreditActionType,
+    StoreCreditRequestSender,
+} from '../../../store-credit';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -59,7 +82,9 @@ describe('ClearpayPaymentStrategy', () => {
             ...getCheckoutStoreState(),
             billingAddress: { data: getBillingAddress(), errors: {}, statuses: {} },
         });
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(
+            new PaymentMethodRequestSender(createRequestSender()),
+        );
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
@@ -68,10 +93,10 @@ describe('ClearpayPaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
         storeCreditActionCreator = new StoreCreditActionCreator(
-            new StoreCreditRequestSender(createRequestSender())
+            new StoreCreditRequestSender(createRequestSender()),
         );
         scriptLoader = new ClearpayScriptLoader(createScriptLoader());
         strategy = new ClearpayPaymentStrategy(
@@ -82,7 +107,7 @@ describe('ClearpayPaymentStrategy', () => {
             paymentMethodActionCreator,
             remoteCheckoutRequestSender,
             storeCreditActionCreator,
-            scriptLoader
+            scriptLoader,
         );
 
         paymentMethod = getClearpay();
@@ -94,11 +119,13 @@ describe('ClearpayPaymentStrategy', () => {
             },
         });
 
-        loadPaymentMethodAction = of(createAction(
-            PaymentMethodActionType.LoadPaymentMethodSucceeded,
-            { ...paymentMethod, id: 'clearpay' },
-            { methodId: paymentMethod.gateway }
-        ));
+        loadPaymentMethodAction = of(
+            createAction(
+                PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                { ...paymentMethod, id: 'clearpay' },
+                { methodId: paymentMethod.gateway },
+            ),
+        );
 
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
@@ -112,34 +139,35 @@ describe('ClearpayPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(checkoutValidator, 'validate')
-            .mockReturnValue(new Promise<void>(resolve => resolve()));
+        jest.spyOn(checkoutValidator, 'validate').mockReturnValue(
+            new Promise<void>((resolve) => resolve()),
+        );
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(loadPaymentMethodAction);
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            loadPaymentMethodAction,
+        );
 
-        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
-            .mockReturnValue(of(createAction(StoreCreditActionType.ApplyStoreCreditSucceeded)));
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            of(createAction(StoreCreditActionType.ApplyStoreCreditSucceeded)),
+        );
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(scriptLoader, 'load')
-            .mockReturnValue(Promise.resolve(clearpaySdk));
+        jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(clearpaySdk));
 
-        jest.spyOn(clearpaySdk, 'initialize')
-            .mockImplementation(noop);
+        jest.spyOn(clearpaySdk, 'initialize').mockImplementation(noop);
 
-        jest.spyOn(clearpaySdk, 'redirect')
-            .mockImplementation(noop);
+        jest.spyOn(clearpaySdk, 'redirect').mockImplementation(noop);
     });
 
     describe('#initialize()', () => {
         it('loads script when initializing strategy', async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
         });
@@ -149,11 +177,14 @@ describe('ClearpayPaymentStrategy', () => {
         const successHandler = jest.fn();
 
         beforeEach(async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             strategy.execute(payload).then(successHandler);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
         });
 
         it('redirects to Clearpay', () => {
@@ -170,14 +201,15 @@ describe('ClearpayPaymentStrategy', () => {
         });
 
         it('rejects with error if execution is unsuccessful', async () => {
-            jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
-                .mockReturnValue(of(createErrorAction(StoreCreditActionType.ApplyStoreCreditFailed, new Error())));
+            jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+                of(createErrorAction(StoreCreditActionType.ApplyStoreCreditFailed, new Error())),
+            );
 
             const errorHandler = jest.fn();
 
             strategy.execute(payload).catch(errorHandler);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
             expect(errorHandler).toHaveBeenCalled();
         });
@@ -193,12 +225,11 @@ describe('ClearpayPaymentStrategy', () => {
         });
 
         it('throws InvalidArgumentError if loadPaymentMethod fails', async () => {
-            const errorResponse = merge(
-                getErrorResponse(), {
-                    body: {
-                        status: 422,
-                    },
-                });
+            const errorResponse = merge(getErrorResponse(), {
+                body: {
+                    status: 422,
+                },
+            });
 
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockImplementation(() => {
                 throw new RequestError(errorResponse);
@@ -220,17 +251,23 @@ describe('ClearpayPaymentStrategy', () => {
         });
 
         it('loads payment client token', () => {
-            expect(paymentMethodActionCreator.loadPaymentMethod)
-                .toHaveBeenCalledWith(paymentMethod.gateway, { params: { method: paymentMethod.id } });
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                paymentMethod.gateway,
+                { params: { method: paymentMethod.id } },
+            );
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
 
-        it('throws error if GB isn\'t the courtryCode in the billing address', async () => {
+        it("throws error if GB isn't the courtryCode in the billing address", async () => {
             await strategy.deinitialize();
 
             store = createCheckoutStore({
                 ...getCheckoutStoreState(),
-                billingAddress: { data: {...getBillingAddress(), countryCode: '' }, errors: {}, statuses: {} },
+                billingAddress: {
+                    data: { ...getBillingAddress(), countryCode: '' },
+                    errors: {},
+                    statuses: {},
+                },
             });
             strategy = new ClearpayPaymentStrategy(
                 store,
@@ -240,7 +277,7 @@ describe('ClearpayPaymentStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutRequestSender,
                 storeCreditActionCreator,
-                scriptLoader
+                scriptLoader,
             );
 
             await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
@@ -251,24 +288,28 @@ describe('ClearpayPaymentStrategy', () => {
         const nonce = 'bar';
 
         beforeEach(() => {
-            store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
-                config: {
-                    data: {
-                        context: { payment: { token: nonce } },
+            store = createCheckoutStore(
+                merge({}, getCheckoutStoreState(), {
+                    config: {
+                        data: {
+                            context: { payment: { token: nonce } },
+                        },
                     },
-                },
-                checkout: {
-                    data: {
-                        ...getCheckout(),
-                        payments: [{
-                            ...getCheckoutPayment(),
-                            providerId: paymentMethod.id,
-                            gatewayId: paymentMethod.gateway,
-                        }],
+                    checkout: {
+                        data: {
+                            ...getCheckout(),
+                            payments: [
+                                {
+                                    ...getCheckoutPayment(),
+                                    providerId: paymentMethod.id,
+                                    gatewayId: paymentMethod.gateway,
+                                },
+                            ],
+                        },
                     },
-                },
-                order: {},
-            }));
+                    order: {},
+                }),
+            );
 
             strategy = new ClearpayPaymentStrategy(
                 store,
@@ -278,22 +319,28 @@ describe('ClearpayPaymentStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutRequestSender,
                 storeCreditActionCreator,
-                scriptLoader
+                scriptLoader,
             );
 
             jest.spyOn(store, 'dispatch');
         });
 
         it('submits the order and the payment', async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+            await strategy.finalize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 {},
-                { methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }
+                { methodId: paymentMethod.id, gatewayId: paymentMethod.gateway },
             );
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
@@ -316,35 +363,42 @@ describe('ClearpayPaymentStrategy', () => {
                 paymentMethodActionCreator,
                 remoteCheckoutRequestSender,
                 storeCreditActionCreator,
-                scriptLoader
+                scriptLoader,
             );
 
-            await expect(strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }))
-                .rejects
-                .toThrow(MissingDataError);
+            await expect(
+                strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }),
+            ).rejects.toThrow(MissingDataError);
         });
 
         it('throws OrderFinalizationNotCompleted error if unable to finalize order', async () => {
             const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
-            const paymentFailedErrorAction = of(createErrorAction(
-                PaymentActionType.SubmitPaymentFailed,
-                response)
+            const paymentFailedErrorAction = of(
+                createErrorAction(PaymentActionType.SubmitPaymentFailed, response),
             );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(paymentFailedErrorAction);
-            jest.spyOn(remoteCheckoutRequestSender, 'forgetCheckout')
-                .mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethods')
-                .mockReturnValue(of(createAction(
-                    PaymentMethodActionType.LoadPaymentMethodsSucceeded,
-                    [getClearpay()]
-                )));
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                paymentFailedErrorAction,
+            );
+            jest.spyOn(remoteCheckoutRequestSender, 'forgetCheckout').mockReturnValue(
+                Promise.resolve(),
+            );
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethods').mockReturnValue(
+                of(
+                    createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [
+                        getClearpay(),
+                    ]),
+                ),
+            );
 
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            await expect(strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }))
-                .rejects
-                .toThrow(OrderFinalizationNotCompletedError);
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await expect(
+                strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }),
+            ).rejects.toThrow(OrderFinalizationNotCompletedError);
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(paymentFailedErrorAction);

@@ -1,12 +1,19 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    Checkout,
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
@@ -17,11 +24,19 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form'
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { PaymentMethodActionCreator, PaymentRequestSender, StorefrontPaymentRequestSender } from '../../../payment';
+import {
+    PaymentMethodActionCreator,
+    PaymentRequestSender,
+    StorefrontPaymentRequestSender,
+} from '../../../payment';
 import { getPaymentMethodsState, getQuadpay } from '../../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
+import {
+    StoreCreditActionCreator,
+    StoreCreditActionType,
+    StoreCreditRequestSender,
+} from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -62,28 +77,28 @@ describe('QuadpayPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()))
+            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(requestSender)
+            new PaymentMethodRequestSender(requestSender),
         );
         storeCreditActionCreator = new StoreCreditActionCreator(
-            new StoreCreditRequestSender(requestSender)
+            new StoreCreditRequestSender(requestSender),
         );
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender),
-            checkoutActionCreator
+            checkoutActionCreator,
         );
         storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
@@ -95,29 +110,27 @@ describe('QuadpayPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            store.getState(),
+        );
 
-        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow')
-            .mockReturnValue(checkoutMock);
+        jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
-        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
-            .mockReturnValue(applyStoreCreditAction);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            applyStoreCreditAction,
+        );
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-            .mockResolvedValue(store.getState());
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockResolvedValue(
+            store.getState(),
+        );
 
-        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId')
-            .mockResolvedValue(undefined);
+        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId').mockResolvedValue(undefined);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(requestSender, 'post')
-            .mockReturnValue(Promise.resolve());
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         strategy = new QuadpayPaymentStrategy(
             store,
@@ -126,7 +139,7 @@ describe('QuadpayPaymentStrategy', () => {
             paymentMethodActionCreator,
             storeCreditActionCreator,
             remoteCheckoutActionCreator,
-            storefrontPaymentRequestSender
+            storefrontPaymentRequestSender,
         );
     });
 
@@ -169,9 +182,15 @@ describe('QuadpayPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, quadpayOptions);
 
                 expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
-                expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
+                expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(
+                    expectedPayment.methodId,
+                    { useStoreCredit: false },
+                );
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, quadpayOptions);
-                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(expectedPayment.methodId, expectedPayment.paymentData.nonce);
+                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(
+                    expectedPayment.methodId,
+                    expectedPayment.paymentData.nonce,
+                );
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             });
 
@@ -181,66 +200,93 @@ describe('QuadpayPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, quadpayOptions);
 
                 expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true);
-                expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: true });
+                expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(
+                    expectedPayment.methodId,
+                    { useStoreCredit: true },
+                );
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, quadpayOptions);
-                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(expectedPayment.methodId, expectedPayment.paymentData.nonce);
+                expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(
+                    expectedPayment.methodId,
+                    expectedPayment.paymentData.nonce,
+                );
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             });
         });
 
         it('redirects to Quadpay url', async () => {
-            const additionalActionRequiredError = new RequestError(getResponse({
-                ...getErrorPaymentResponseBody(),
-                status: 'additional_action_required',
-            }));
-            const paymentFailedErrorAction = of(createErrorAction(
-                PaymentActionType.SubmitPaymentFailed,
-                additionalActionRequiredError)
+            const additionalActionRequiredError = new RequestError(
+                getResponse({
+                    ...getErrorPaymentResponseBody(),
+                    status: 'additional_action_required',
+                }),
+            );
+            const paymentFailedErrorAction = of(
+                createErrorAction(
+                    PaymentActionType.SubmitPaymentFailed,
+                    additionalActionRequiredError,
+                ),
             );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(paymentFailedErrorAction);
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                paymentFailedErrorAction,
+            );
 
             window.location.replace = jest.fn();
 
             strategy.execute(orderRequestBody, quadpayOptions);
 
-            await new Promise(resolve => process.nextTick(resolve));
+            await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(window.location.replace).toBeCalledWith('http://some-url');
+            expect(window.location.replace).toHaveBeenCalledWith('http://some-url');
         });
 
         it('fails to execute if payment argument is invalid', async () => {
             orderRequestBody.payment = undefined;
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(PaymentArgumentInvalidError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(
+                PaymentArgumentInvalidError,
+            );
         });
 
         it('fails to execute if payment method is not found', async () => {
             orderRequestBody.payment = { methodId: '' };
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(
+                MissingDataError,
+            );
         });
 
         it('fails to execute if clientToken is not valid JSON', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getQuadpay(), clientToken: 'm4lf0rm3d j50n' });
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...getQuadpay(),
+                clientToken: 'm4lf0rm3d j50n',
+            });
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(SyntaxError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(
+                SyntaxError,
+            );
         });
 
         it('fails to execute if nonce is empty', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getQuadpay(), clientToken: JSON.stringify({ id: '' }) });
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...getQuadpay(),
+                clientToken: JSON.stringify({ id: '' }),
+            });
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(
+                MissingDataError,
+            );
         });
 
         it('fails to execute if redirectUrl is empty', async () => {
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow')
-                .mockReturnValue({ ...getQuadpay(), initializationData: { redirectUrl: ''} });
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                ...getQuadpay(),
+                initializationData: { redirectUrl: '' },
+            });
 
-            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(MissingDataError);
+            await expect(strategy.execute(orderRequestBody, quadpayOptions)).rejects.toThrow(
+                MissingDataError,
+            );
         });
     });
 

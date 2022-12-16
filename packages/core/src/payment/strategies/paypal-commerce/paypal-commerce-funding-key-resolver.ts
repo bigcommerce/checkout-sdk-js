@@ -20,26 +20,37 @@ export default class PaypalCommerceFundingKeyResolver {
             switch (methodId) {
                 case 'bancontact':
                     return 'BANCONTACT';
+
                 case 'giropay':
                     return 'GIROPAY';
+
                 case 'p24':
                     return 'P24';
+
                 case 'eps':
                     return 'EPS';
+
                 case 'ideal':
                     return 'IDEAL';
+
                 case 'mybank':
                     return 'MYBANK';
+
                 case 'sofort':
                     return 'SOFORT';
+
                 case 'blik':
                     return 'BLIK';
+
                 case 'trustly':
                     return 'TRUSTLY';
+
                 case 'sepa':
                     return 'SEPA';
+
                 case 'venmo':
                     return 'VENMO';
+
                 case 'oxxo':
                     return 'OXXO';
             }

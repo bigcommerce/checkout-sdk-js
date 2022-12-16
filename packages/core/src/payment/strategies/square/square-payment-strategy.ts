@@ -2,7 +2,15 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { get, isEmpty, noop, omit } from 'lodash';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    TimeoutError,
+    UnsupportedBrowserError,
+} from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -15,7 +23,18 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Contact, DeferredPromise, DigitalWalletType, SquareFormOptions, SquareIntent, SquarePaymentRequest, SquareVerificationError, SquareVerificationResult, VerificationDetails } from './square-form';
+import SquarePaymentForm, {
+    CardData,
+    Contact,
+    DeferredPromise,
+    DigitalWalletType,
+    SquareFormOptions,
+    SquareIntent,
+    SquarePaymentRequest,
+    SquareVerificationError,
+    SquareVerificationResult,
+    VerificationDetails,
+} from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
 import SquareScriptLoader from './square-script-loader';
 
@@ -33,14 +52,16 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _requestSender: RequestSender,
-        private _scriptLoader: SquareScriptLoader
+        private _scriptLoader: SquareScriptLoader,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, gatewayId, square: squareOptions } = options;
 
         if (!squareOptions) {
-            throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');
+            throw new InvalidArgumentError(
+                'Unable to proceed because "options.square" argument is not provided.',
+            );
         }
 
         this._squareOptions = squareOptions;

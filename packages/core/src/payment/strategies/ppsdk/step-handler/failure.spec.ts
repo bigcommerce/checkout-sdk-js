@@ -1,6 +1,6 @@
 import { RequestError } from '../../../../common/error/errors';
 
-import { handleFailure, isFailure, FailureResponse } from './failure';
+import { FailureResponse, handleFailure, isFailure } from './failure';
 
 describe('handleFailure', () => {
     it('rejects with RequestError', async () => {
@@ -18,7 +18,7 @@ describe('handleFailure', () => {
         await expect(handleFailure(failureResponse)).rejects.toStrictEqual(
             expect.objectContaining({
                 body: { errors: [{ code: 'any-failure' }] },
-            })
+            }),
         );
     });
 });

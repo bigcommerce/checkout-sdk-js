@@ -5,10 +5,7 @@ import { SubStrategy, SubStrategySettings } from '../ppsdk-sub-strategy';
 import { StepHandler } from '../step-handler';
 
 export class NoneSubStrategy implements SubStrategy {
-    constructor(
-        private _requestSender: RequestSender,
-        private _stepHandler: StepHandler
-    ) {}
+    constructor(private _requestSender: RequestSender, private _stepHandler: StepHandler) {}
 
     execute({ methodId, bigpayBaseUrl, token }: SubStrategySettings): Promise<void> {
         const body = { payment_method_id: methodId };
@@ -21,15 +18,14 @@ export class NoneSubStrategy implements SubStrategy {
             },
         };
 
-        return this._requestSender.post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, options)
-            .then(response => this._stepHandler.handle(response));
+        return this._requestSender
+            .post<PaymentsAPIResponse['body']>(`${bigpayBaseUrl}/payments`, options)
+            .then((response) => this._stepHandler.handle(response));
     }
 
     initialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    deinitialize(): void {
-        return;
-    }
+    deinitialize(): void {}
 }

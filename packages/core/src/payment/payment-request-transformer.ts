@@ -1,18 +1,26 @@
 import { pick } from 'lodash';
 
-import { mapToInternalAddress, Address } from '../address';
+import { Address, mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { CheckoutButtonMethodType } from '../checkout-buttons/strategies';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { HostedFormOrderData } from '../hosted-form';
-import { CardExpiryFormatter, CardNumberFormatter, HostedInputValues } from '../hosted-form/iframe-content';
+import {
+    CardExpiryFormatter,
+    CardNumberFormatter,
+    HostedInputValues,
+} from '../hosted-form/iframe-content';
 import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
 import isVaultedInstrument, { isFormattedVaultedInstrument } from './is-vaulted-instrument';
-import Payment, { HostedCreditCardInstrument, HostedVaultedInstrument, PaymentInstrument } from './payment';
+import Payment, {
+    HostedCreditCardInstrument,
+    HostedVaultedInstrument,
+    PaymentInstrument,
+} from './payment';
 import PaymentMethod from './payment-method';
 import PaymentRequestBody from './payment-request-body';
 
@@ -25,7 +33,10 @@ export default class PaymentRequestTransformer {
         const checkout = checkoutState.checkout.getCheckout();
         const customer = checkoutState.customer.getCustomer();
         const order = checkoutState.order.getOrder();
-        const paymentMethod = checkoutState.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
+        const paymentMethod = checkoutState.paymentMethods.getPaymentMethod(
+            payment.methodId,
+            payment.gatewayId,
+        );
         const shippingAddress = this._mapShippingAddress(checkoutState, paymentMethod);
         const consignments = checkoutState.consignments.getConsignments();
         const shippingOption = checkoutState.consignments.getShippingOption();
@@ -34,12 +45,16 @@ export default class PaymentRequestTransformer {
         const instrumentMeta = checkoutState.instruments.getInstrumentsMeta();
         const paymentMeta = checkoutState.paymentMethods.getPaymentMethodsMeta();
         const orderMeta = checkoutState.order.getOrderMeta();
-        const internalCustomer = customer && billingAddress && mapToInternalCustomer(customer, billingAddress);
+        const internalCustomer =
+            customer && billingAddress && mapToInternalCustomer(customer, billingAddress);
 
-        const authToken = instrumentMeta && payment.paymentData &&
-            (isVaultedInstrument(payment.paymentData) || isFormattedVaultedInstrument(payment.paymentData)) ?
-            `${checkoutState.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
-            checkoutState.payment.getPaymentToken();
+        const authToken =
+            instrumentMeta &&
+            payment.paymentData &&
+            (isVaultedInstrument(payment.paymentData) ||
+                isFormattedVaultedInstrument(payment.paymentData))
+                ? `${checkoutState.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}`
+                : checkoutState.payment.getPaymentToken();
 
         if (!authToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
@@ -73,8 +88,22 @@ export default class PaymentRequestTransformer {
         };
     }
 
-    transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): PaymentRequestBody {
-        const { additionalAction, authToken, checkout, config, order, orderMeta, payment = {}, paymentMethod, paymentMethodMeta } = data;
+    transformWithHostedFormData(
+        values: HostedInputValues,
+        data: HostedFormOrderData,
+        nonce: string,
+    ): PaymentRequestBody {
+        const {
+            additionalAction,
+            authToken,
+            checkout,
+            config,
+            order,
+            orderMeta,
+            payment = {},
+            paymentMethod,
+            paymentMethodMeta,
+        } = data;
         const consignment = checkout && checkout.consignments[0];
         const shippingAddress = consignment && consignment.shippingAddress;
         const shippingOption = consignment && consignment.selectedShippingOption;
@@ -83,9 +112,17 @@ export default class PaymentRequestTransformer {
             additionalAction,
             authToken,
             paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
-            customer: order && order.billingAddress && checkout && mapToInternalCustomer(checkout.customer, order.billingAddress),
-            billingAddress: order && order.billingAddress && mapToInternalAddress(order.billingAddress),
-            shippingAddress: shippingAddress && checkout && mapToInternalAddress(shippingAddress, checkout.consignments),
+            customer:
+                order &&
+                order.billingAddress &&
+                checkout &&
+                mapToInternalCustomer(checkout.customer, order.billingAddress),
+            billingAddress:
+                order && order.billingAddress && mapToInternalAddress(order.billingAddress),
+            shippingAddress:
+                shippingAddress &&
+                checkout &&
+                mapToInternalAddress(shippingAddress, checkout.consignments),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
             order: order && mapToInternalOrder(order, orderMeta),
@@ -98,12 +135,14 @@ export default class PaymentRequestTransformer {
                 },
             },
             source: 'bigcommerce-checkout-js-sdk',
-            store: config && pick(config.storeConfig.storeProfile, [
-                'storeHash',
-                'storeId',
-                'storeLanguage',
-                'storeName',
-            ]),
+            store:
+                config &&
+                pick(config.storeConfig.storeProfile, [
+                    'storeHash',
+                    'storeId',
+                    'storeLanguage',
+                    'storeName',
+                ]),
         };
     }
 
@@ -126,31 +165,36 @@ export default class PaymentRequestTransformer {
     private _transformHostedInputValues(
         values: HostedInputValues,
         payment: HostedCreditCardInstrument | HostedVaultedInstrument,
-        nonce: string
+        nonce: string,
     ): PaymentInstrument {
-        return 'instrumentId' in payment ?
-            {
-                ...payment,
-                ccCvv: values.cardCodeVerification,
-                ccNumber: values.cardNumberVerification && this._cardNumberFormatter.unformat(values.cardNumberVerification),
-                hostedFormNonce: nonce,
-            } :
-            {
-                ...payment,
-                ccCvv: values.cardCode,
-                ccExpiry: this._cardExpiryFormatter.toObject(values.cardExpiry || ''),
-                ccName: values.cardName || '',
-                ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
-                hostedFormNonce: nonce,
-            };
+        return 'instrumentId' in payment
+            ? {
+                  ...payment,
+                  ccCvv: values.cardCodeVerification,
+                  ccNumber:
+                      values.cardNumberVerification &&
+                      this._cardNumberFormatter.unformat(values.cardNumberVerification),
+                  hostedFormNonce: nonce,
+              }
+            : {
+                  ...payment,
+                  ccCvv: values.cardCode,
+                  ccExpiry: this._cardExpiryFormatter.toObject(values.cardExpiry || ''),
+                  ccName: values.cardName || '',
+                  ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
+                  hostedFormNonce: nonce,
+              };
     }
 
-    private _mapShippingAddress(checkoutState: InternalCheckoutSelectors, paymentMethod?: PaymentMethod): Address | undefined {
+    private _mapShippingAddress(
+        checkoutState: InternalCheckoutSelectors,
+        paymentMethod?: PaymentMethod,
+    ): Address | undefined {
         if (paymentMethod) {
             const isBopisEnabled = paymentMethod.initializationData?.bopis?.enabled;
             const requiredAddress = paymentMethod.initializationData?.bopis?.requiredAddress;
             const consignments = checkoutState.consignments.getConsignments();
-            const isPickup = consignments?.every(consignment => consignment.selectedPickupOption);
+            const isPickup = consignments?.every((consignment) => consignment.selectedPickupOption);
 
             if (isBopisEnabled && isPickup && requiredAddress === 'none') {
                 return undefined;

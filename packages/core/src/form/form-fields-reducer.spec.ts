@@ -2,6 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { FormFieldsActionType } from './form-fields-actions';
 import { getFormFields } from './form.mock';
+
 import { formFieldsReducer, FormFieldsState } from './index';
 
 describe('formFieldsReducer()', () => {

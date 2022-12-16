@@ -1,4 +1,4 @@
-export { default as default } from '../../generated/checkout-button-method-type';
+export { default } from '../../generated/checkout-button-method-type';
 
 export enum BaseCheckoutButtonMethodType {
     AMAZON_PAY_V2 = 'amazonpay',

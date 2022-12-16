@@ -4,7 +4,6 @@ export interface BoltHostWindow extends Window {
 }
 
 export interface BoltCheckout {
-    /* eslint-disable */
     configure(cart: BoltCart, hints: {}, callbacks?: BoltCallbacks): BoltClient;
     hasBoltAccount(email: string): Promise<boolean>;
     getTransactionReference(): Promise<string | undefined>;

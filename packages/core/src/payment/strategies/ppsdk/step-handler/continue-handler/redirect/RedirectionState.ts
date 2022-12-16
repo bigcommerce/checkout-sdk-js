@@ -1,4 +1,4 @@
-import { exclude, parseUrl, stringifyUrl, ParsedUrl } from 'query-string';
+import { exclude, ParsedUrl, parseUrl, stringifyUrl } from 'query-string';
 
 export const PENDING_REDIRECT_PARAM = 'redirecting';
 
@@ -48,6 +48,7 @@ export class RedirectionState {
                 [PENDING_REDIRECT_PARAM]: 'true',
             },
         };
+
         this.replaceCurrentUrl(stringifyUrl(updatedUrl));
     }
 
@@ -56,6 +57,6 @@ export class RedirectionState {
             return;
         }
 
-        this.replaceCurrentUrl(exclude(location.href, [PENDING_REDIRECT_PARAM]));
+        this.replaceCurrentUrl(exclude(window.location.href, [PENDING_REDIRECT_PARAM]));
     }
 }

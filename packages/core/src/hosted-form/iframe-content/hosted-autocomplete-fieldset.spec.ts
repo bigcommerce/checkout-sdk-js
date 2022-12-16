@@ -18,7 +18,7 @@ describe('HostedAutocompleteFieldset', () => {
         fieldset = new HostedAutocompleteFieldset(
             container,
             [HostedFieldType.CardExpiry, HostedFieldType.CardName],
-            inputAggregator as HostedInputAggregator
+            inputAggregator as HostedInputAggregator,
         );
     });
 
@@ -29,10 +29,8 @@ describe('HostedAutocompleteFieldset', () => {
     it('attaches autocomplete inputs to container', () => {
         fieldset.attach();
 
-        expect(container.querySelector('#autocomplete-card-expiry'))
-            .toBeTruthy();
-        expect(container.querySelector('#autocomplete-card-name'))
-            .toBeTruthy();
+        expect(container.querySelector('#autocomplete-card-expiry')).toBeTruthy();
+        expect(container.querySelector('#autocomplete-card-name')).toBeTruthy();
     });
 
     it('hides autocomplete input from user', () => {
@@ -41,12 +39,9 @@ describe('HostedAutocompleteFieldset', () => {
         // tslint:disable-next-line:no-non-null-assertion
         const input = container.querySelector<HTMLInputElement>('#autocomplete-card-expiry')!;
 
-        expect(input.style.opacity)
-            .toEqual('0');
-        expect(input.style.position)
-            .toEqual('absolute');
-        expect(input.tabIndex)
-            .toEqual(-1);
+        expect(input.style.opacity).toBe('0');
+        expect(input.style.position).toBe('absolute');
+        expect(input.tabIndex).toEqual(-1);
     });
 
     it('configures autocomplete property based on field type', () => {
@@ -57,10 +52,8 @@ describe('HostedAutocompleteFieldset', () => {
         // tslint:disable-next-line:no-non-null-assertion
         const nameInput = container.querySelector<HTMLInputElement>('#autocomplete-card-name')!;
 
-        expect(expiryInput.autocomplete)
-            .toEqual('cc-exp');
-        expect(nameInput.autocomplete)
-            .toEqual('cc-name');
+        expect(expiryInput.autocomplete).toBe('cc-exp');
+        expect(nameInput.autocomplete).toBe('cc-name');
     });
 
     it('updates corresponding hosted inputs when autocomplete inputs receive update', () => {
@@ -73,8 +66,10 @@ describe('HostedAutocompleteFieldset', () => {
             setValue: jest.fn(),
         };
 
-        jest.spyOn(inputAggregator, 'getInputs')
-            .mockReturnValue([hostedExpiryInput, hostedNameInput]);
+        jest.spyOn(inputAggregator, 'getInputs').mockReturnValue([
+            hostedExpiryInput,
+            hostedNameInput,
+        ]);
 
         fieldset.attach();
 
@@ -84,19 +79,15 @@ describe('HostedAutocompleteFieldset', () => {
         input.value = '10 / 20';
         input.dispatchEvent(new Event('change'));
 
-        expect(hostedExpiryInput.setValue)
-            .toHaveBeenCalledWith('10 / 20');
-        expect(hostedNameInput.setValue)
-            .not.toHaveBeenCalledWith('10 / 20');
+        expect(hostedExpiryInput.setValue).toHaveBeenCalledWith('10 / 20');
+        expect(hostedNameInput.setValue).not.toHaveBeenCalledWith('10 / 20');
     });
 
     it('removes autocomplete inputs when fieldset detaches', () => {
         fieldset.attach();
         fieldset.detach();
 
-        expect(container.querySelector('#autocomplete-card-expiry'))
-            .toBeFalsy();
-        expect(container.querySelector('#autocomplete-card-name'))
-            .toBeFalsy();
+        expect(container.querySelector('#autocomplete-card-expiry')).toBeFalsy();
+        expect(container.querySelector('#autocomplete-card-name')).toBeFalsy();
     });
 });

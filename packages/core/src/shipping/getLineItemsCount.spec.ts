@@ -4,15 +4,10 @@ import getLineItemsCount from './getLineItemsCount';
 
 describe('getLineItemsCount()', () => {
     it('returns zero if empty array', () => {
-        expect(getLineItemsCount([]))
-            .toEqual(0);
+        expect(getLineItemsCount([])).toBe(0);
     });
 
     it('returns the sum of quantities', () => {
-        expect(getLineItemsCount([
-            getPhysicalItem(),
-            getPhysicalItem(),
-        ]))
-            .toEqual(2);
+        expect(getLineItemsCount([getPhysicalItem(), getPhysicalItem()])).toBe(2);
     });
 });

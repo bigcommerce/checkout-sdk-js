@@ -4,9 +4,26 @@ import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { guard } from '../../../../src/common/utility';
 import { StoreProfile } from '../../../../src/config';
 import { CheckoutSettings } from '../../../../src/config/config';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../common/error/errors';
 
-import { AmazonPayV2Button, AmazonPayV2ButtonColor, AmazonPayV2ButtonParameters, AmazonPayV2ButtonRenderingOptions, AmazonPayV2ChangeActionType, AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams, AmazonPayV2PayOptions, AmazonPayV2Placement, AmazonPayV2SDK } from './amazon-pay-v2';
+import {
+    AmazonPayV2Button,
+    AmazonPayV2ButtonColor,
+    AmazonPayV2ButtonParameters,
+    AmazonPayV2ButtonRenderingOptions,
+    AmazonPayV2ChangeActionType,
+    AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2NewButtonParams,
+    AmazonPayV2PayOptions,
+    AmazonPayV2Placement,
+    AmazonPayV2SDK,
+} from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
 export default class AmazonPayV2PaymentProcessor {
@@ -14,13 +31,12 @@ export default class AmazonPayV2PaymentProcessor {
     private _buttonParentContainer?: HTMLDivElement;
     private _amazonPayV2Button?: AmazonPayV2Button;
 
-    constructor(
-        private _amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader
-    ) { }
+    constructor(private _amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
 
     async initialize(paymentMethod: PaymentMethod): Promise<void> {
         this._amazonPayV2SDK = await this._amazonPayV2ScriptLoader.load(paymentMethod);
-        this._buttonParentContainer = this._buttonParentContainer || this._createAmazonPayButtonParentContainer();
+        this._buttonParentContainer =
+            this._buttonParentContainer || this._createAmazonPayButtonParentContainer();
     }
 
     deinitialize(): Promise<void> {
@@ -32,7 +48,11 @@ export default class AmazonPayV2PaymentProcessor {
         return Promise.resolve();
     }
 
-    bindButton(buttonId: string, sessionId: string, changeAction: AmazonPayV2ChangeActionType): void {
+    bindButton(
+        buttonId: string,
+        sessionId: string,
+        changeAction: AmazonPayV2ChangeActionType,
+    ): void {
         this._getAmazonPayV2SDK().Pay.bindChangeAction(`#${buttonId}`, {
             amazonCheckoutSessionId: sessionId,
             changeAction,
@@ -40,7 +60,10 @@ export default class AmazonPayV2PaymentProcessor {
     }
 
     createButton(containerId: string, options: AmazonPayV2ButtonParameters): void {
-        this._amazonPayV2Button = this._getAmazonPayV2SDK().Pay.renderButton(`#${containerId}`, options);
+        this._amazonPayV2Button = this._getAmazonPayV2SDK().Pay.renderButton(
+            `#${containerId}`,
+            options,
+        );
     }
 
     prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>): void {
@@ -53,7 +76,7 @@ export default class AmazonPayV2PaymentProcessor {
         };
 
         this._getAmazonPayV2Button().onClick(() =>
-            this._getAmazonPayV2Button().initCheckout(requestConfig)
+            this._getAmazonPayV2Button().initCheckout(requestConfig),
         );
     }
 
@@ -76,14 +99,21 @@ export default class AmazonPayV2PaymentProcessor {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
-            throw new InvalidArgumentError('Unable to render the Amazon Pay button to an invalid HTML container element.');
+            throw new InvalidArgumentError(
+                'Unable to render the Amazon Pay button to an invalid HTML container element.',
+            );
         }
 
-        const { id: parentContainerId } = container.appendChild(
-            this._getButtonParentContainer()
-        );
+        const { id: parentContainerId } = container.appendChild(this._getButtonParentContainer());
 
-        const amazonPayV2ButtonOptions = options ?? this._getAmazonPayV2ButtonOptions(checkoutState, methodId, placement, decoupleCheckoutInitiation);
+        const amazonPayV2ButtonOptions =
+            options ??
+            this._getAmazonPayV2ButtonOptions(
+                checkoutState,
+                methodId,
+                placement,
+                decoupleCheckoutInitiation,
+            );
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
 
@@ -95,7 +125,7 @@ export default class AmazonPayV2PaymentProcessor {
      */
     isPh4Enabled(
         features: CheckoutSettings['features'],
-        storeCountryCode: StoreProfile['storeCountryCode']
+        storeCountryCode: StoreProfile['storeCountryCode'],
     ): boolean {
         const isPh4Enabled = !!features['PROJECT-3483.amazon_pay_ph4'];
         const isPh4UsOnly = !!features['INT-6885.amazon_pay_ph4_us_only'];
@@ -110,6 +140,7 @@ export default class AmazonPayV2PaymentProcessor {
     private _createAmazonPayButtonParentContainer(): HTMLDivElement {
         const uid = Math.random().toString(16).substr(-4);
         const parentContainer = document.createElement('div');
+
         parentContainer.id = `amazonpay_button_parent_container_${uid}`;
 
         return parentContainer;
@@ -124,7 +155,7 @@ export default class AmazonPayV2PaymentProcessor {
         }: InternalCheckoutSelectors,
         methodId: string,
         placement: AmazonPayV2Placement,
-        decoupleCheckoutInitiation = false
+        decoupleCheckoutInitiation = false,
     ): AmazonPayV2ButtonParameters {
         const {
             config: { merchantId, testMode },
@@ -153,9 +184,10 @@ export default class AmazonPayV2PaymentProcessor {
             merchantId,
             ledgerCurrency,
             checkoutLanguage,
-            productType: cart && getShippableItemsCount(cart) === 0 ?
-                AmazonPayV2PayOptions.PayOnly :
-                AmazonPayV2PayOptions.PayAndShip,
+            productType:
+                cart && getShippableItemsCount(cart) === 0
+                    ? AmazonPayV2PayOptions.PayOnly
+                    : AmazonPayV2PayOptions.PayAndShip,
             placement,
             buttonColor: AmazonPayV2ButtonColor.Gold,
         };
@@ -217,6 +249,9 @@ export default class AmazonPayV2PaymentProcessor {
     }
 
     private _getOrThrow<T>(value?: T): T {
-        return guard(value, () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+        return guard(
+            value,
+            () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+        );
     }
 }

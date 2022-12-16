@@ -1,4 +1,11 @@
-import { EmbeddedCheckoutCompleteEvent, EmbeddedCheckoutErrorEvent, EmbeddedCheckoutFrameErrorEvent, EmbeddedCheckoutFrameLoadedEvent, EmbeddedCheckoutLoadedEvent, EmbeddedCheckoutSignedOutEvent } from './embedded-checkout-events';
+import {
+    EmbeddedCheckoutCompleteEvent,
+    EmbeddedCheckoutErrorEvent,
+    EmbeddedCheckoutFrameErrorEvent,
+    EmbeddedCheckoutFrameLoadedEvent,
+    EmbeddedCheckoutLoadedEvent,
+    EmbeddedCheckoutSignedOutEvent,
+} from './embedded-checkout-events';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
 
 export default interface EmbeddedCheckoutOptions {

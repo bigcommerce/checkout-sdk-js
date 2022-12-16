@@ -2,6 +2,118 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.312.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.312.0...v1.312.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6406 Fix payload for offline payment method ([#1735](https://github.com/bigcommerce/checkout-sdk-js/issues/1735)) ([9465d7d](https://github.com/bigcommerce/checkout-sdk-js/commit/9465d7d9f532c65d50d15f7e42839be70befebb1))
+* **payment:** ADYEN-629 added adyen credit card es translation fix ([85e9cbf](https://github.com/bigcommerce/checkout-sdk-js/commit/85e9cbfa52d90a9a711519daf6cd1e608c8582b8))
+
+## [1.312.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.311.2...v1.312.0) (2022-12-15)
+
+
+### Features
+
+* **payment:** BOLT-408 Add BODL event for customer suggestion init ([fecf8c9](https://github.com/bigcommerce/checkout-sdk-js/commit/fecf8c9155e2ce691407713b32b30f364b4fea90))
+
+### [1.311.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.311.1...v1.311.2) (2022-12-14)
+
+### [1.311.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.311.0...v1.311.1) (2022-12-14)
+
+## [1.311.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.3...v1.311.0) (2022-12-14)
+
+
+### Features
+
+* **payment:** STRIPE-165 V3 Initialize payment for vaulted cards ([#1641](https://github.com/bigcommerce/checkout-sdk-js/issues/1641)) ([1c07aad](https://github.com/bigcommerce/checkout-sdk-js/commit/1c07aadfd41ae21b265db9ee2fda400cbcb16c06))
+
+### [1.310.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.2...v1.310.3) (2022-12-13)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-6406 Refactor offline payment method ([#1724](https://github.com/bigcommerce/checkout-sdk-js/issues/1724)) ([18fa217](https://github.com/bigcommerce/checkout-sdk-js/commit/18fa2176b800e648b1ba26ed424b4ced8d964a52))
+
+### [1.310.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.1...v1.310.2) (2022-12-13)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-6394 Refactor credit card payment method ([#1710](https://github.com/bigcommerce/checkout-sdk-js/issues/1710)) ([7eb83cd](https://github.com/bigcommerce/checkout-sdk-js/commit/7eb83cd6db9bcd2280c92f6609902e0aa95e9e18))
+
+### [1.310.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.310.0...v1.310.1) (2022-12-09)
+
+## [1.310.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.6...v1.310.0) (2022-12-09)
+
+
+### Features
+
+* **payment:** INT-6727 add Klarna support for greece ([#1688](https://github.com/bigcommerce/checkout-sdk-js/issues/1688)) ([7a039ba](https://github.com/bigcommerce/checkout-sdk-js/commit/7a039ba34671492f1633ca6fc9ebed12ab142ceb))
+
+
+### Bug Fixes
+
+* **payment:** INT-6928 [Mollie] No Ability To Use A Different Card To Pay ([#1702](https://github.com/bigcommerce/checkout-sdk-js/issues/1702)) ([5555568](https://github.com/bigcommerce/checkout-sdk-js/commit/555556811a82c728f691c90a303342a388cb0858))
+
+### [1.309.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.5...v1.309.6) (2022-12-08)
+
+### [1.309.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.4...v1.309.5) (2022-12-07)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-6405 Refactor no payment data required method ([#1717](https://github.com/bigcommerce/checkout-sdk-js/issues/1717)) ([5e627c6](https://github.com/bigcommerce/checkout-sdk-js/commit/5e627c64f77da6480b3bc0aaca702740ea58327c))
+
+### [1.309.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.3...v1.309.4) (2022-12-07)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-7107 hosted-form clean-up ([#1713](https://github.com/bigcommerce/checkout-sdk-js/issues/1713)) ([5c19c4e](https://github.com/bigcommerce/checkout-sdk-js/commit/5c19c4ea319e5a84eea42f9f81883d91b20f5770))
+
+### [1.309.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.2...v1.309.3) (2022-12-06)
+
+### [1.309.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.1...v1.309.2) (2022-12-05)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-160 Fixed no order created for successful Stripe payment ([#1690](https://github.com/bigcommerce/checkout-sdk-js/issues/1690)) ([0d74194](https://github.com/bigcommerce/checkout-sdk-js/commit/0d74194ae55715767ced60fa4c1749ab3426e8ee))
+
+### [1.309.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.309.0...v1.309.1) (2022-11-28)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-7107 Refactor `hosted-form` ([#1707](https://github.com/bigcommerce/checkout-sdk-js/issues/1707)) ([d28eb54](https://github.com/bigcommerce/checkout-sdk-js/commit/d28eb543ce84c0f379454bdb0fdc14be0ad16b22))
+
+## [1.309.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.4...v1.309.0) (2022-11-28)
+
+
+### Features
+
+* **payment:** INT-6716 SquareV2: Add payment strategy ([#1642](https://github.com/bigcommerce/checkout-sdk-js/issues/1642)) ([6af5062](https://github.com/bigcommerce/checkout-sdk-js/commit/6af5062c53392e825e937b4fccc4bc47e9b72cda))
+
+### [1.308.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.3...v1.308.4) (2022-11-24)
+
+### [1.308.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.2...v1.308.3) (2022-11-24)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-167 Adding Postal Code to stripe card element if not obtained in billing ([c5558cd](https://github.com/bigcommerce/checkout-sdk-js/commit/c5558cd75dc221752823d2cc39e95dbc36cb9e66))
+* **payment:** STRIPE-167 update documentation links for stripeupe ([b25fb3c](https://github.com/bigcommerce/checkout-sdk-js/commit/b25fb3c6b87a1ab8ea056daa637dad0f78b9977f))
+
+### [1.308.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.1...v1.308.2) (2022-11-22)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-6397 Refactor external payment method ([#1697](https://github.com/bigcommerce/checkout-sdk-js/issues/1697)) ([5cc2346](https://github.com/bigcommerce/checkout-sdk-js/commit/5cc23465b741a5b8cc3c9666033d49597009a99f))
+
+### [1.308.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.308.0...v1.308.1) (2022-11-22)
+
 ## [1.308.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.307.1...v1.308.0) (2022-11-14)
 
 

@@ -41,6 +41,6 @@ describe('mapFromPaymentErrorResponse()', () => {
     });
 
     it('concatenates all errors, ignoring empty ones', () => {
-        expect(error.message).toEqual('Invalid number Invalid account.');
+        expect(error.message).toBe('Invalid number Invalid account.');
     });
 });

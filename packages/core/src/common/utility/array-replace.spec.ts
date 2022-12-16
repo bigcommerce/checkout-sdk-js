@@ -6,8 +6,7 @@ describe('arrayReplace()', () => {
         const newArray = [3, 4];
         const result = arrayReplace(currentArray, newArray);
 
-        expect(result)
-            .toBe(newArray);
+        expect(result).toBe(newArray);
     });
 
     it('retains current array if new array is same as current array', () => {
@@ -15,8 +14,7 @@ describe('arrayReplace()', () => {
         const newArray = [1, 2];
         const result = arrayReplace(currentArray, newArray);
 
-        expect(result)
-            .toBe(currentArray);
+        expect(result).toBe(currentArray);
     });
 
     it('recursively retains current array if new array is same as current array', () => {
@@ -24,10 +22,8 @@ describe('arrayReplace()', () => {
         const newArray = [2, ['a', 'b']];
         const result = arrayReplace(currentArray, newArray);
 
-        expect(result)
-            .toEqual([2, ['a', 'b']]);
-        expect(result[1])
-            .toBe(currentArray[1]);
+        expect(result).toEqual([2, ['a', 'b']]);
+        expect(result[1]).toBe(currentArray[1]);
     });
 
     it('retains entity in current array if it is same as entity in new array in same position', () => {
@@ -35,12 +31,9 @@ describe('arrayReplace()', () => {
         const newArray = [{ id: 1 }, { id: 3 }];
         const result = arrayReplace(currentArray, newArray);
 
-        expect(result)
-            .toEqual([{ id: 1 }, { id: 3 }]);
-        expect(result[0])
-            .toBe(currentArray[0]);
-        expect(result[1])
-            .toBe(newArray[1]);
+        expect(result).toEqual([{ id: 1 }, { id: 3 }]);
+        expect(result[0]).toBe(currentArray[0]);
+        expect(result[1]).toBe(newArray[1]);
     });
 
     it('recursively retains entity in current array if it is same as entity in new array in same position', () => {
@@ -60,12 +53,9 @@ describe('arrayReplace()', () => {
             matchObject: (a, b) => a.identifier === b.identifier,
         });
 
-        expect(result)
-            .toEqual([{ identifier: 1 }, { identifier: 3 }]);
-        expect(result[0])
-            .toBe(currentArray[0]);
-        expect(result[1])
-            .toBe(newArray[1]);
+        expect(result).toEqual([{ identifier: 1 }, { identifier: 3 }]);
+        expect(result[0]).toBe(currentArray[0]);
+        expect(result[1]).toBe(newArray[1]);
     });
 
     it('does not assume objects are equal if `id` is undefined', () => {
@@ -153,13 +143,9 @@ describe('arrayReplace()', () => {
 
         const result = arrayReplace(currentArray, newArray);
 
-        expect(result)
-            .toEqual(newArray);
-        expect(result[0].shippingAddress)
-            .toBe(currentArray[0].shippingAddress);
-        expect(result[0].lineItemIds)
-            .toBe(currentArray[0].lineItemIds);
-        expect(result[0].availableShippingOptions)
-            .toBe(newArray[0].availableShippingOptions);
+        expect(result).toEqual(newArray);
+        expect(result[0].shippingAddress).toBe(currentArray[0].shippingAddress);
+        expect(result[0].lineItemIds).toBe(currentArray[0].lineItemIds);
+        expect(result[0].availableShippingOptions).toBe(newArray[0].availableShippingOptions);
     });
 });

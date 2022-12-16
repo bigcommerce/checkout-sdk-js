@@ -1,15 +1,19 @@
-import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 import { Country } from '../geography';
 
 import { LoadShippingCountriesAction, ShippingCountryActionType } from './shipping-country-actions';
-import ShippingCountryState, { DEFAULT_STATE, ShippingCountryErrorsState, ShippingCountryStatusesState } from './shipping-country-state';
+import ShippingCountryState, {
+    DEFAULT_STATE,
+    ShippingCountryErrorsState,
+    ShippingCountryStatusesState,
+} from './shipping-country-state';
 
 export default function shippingCountryReducer(
     state: ShippingCountryState = DEFAULT_STATE,
-    action: Action
+    action: Action,
 ): ShippingCountryState {
     const reducer = combineReducers<ShippingCountryState>({
         data: dataReducer,
@@ -22,47 +26,47 @@ export default function shippingCountryReducer(
 
 function dataReducer(
     data: Country[] | undefined,
-    action: LoadShippingCountriesAction
+    action: LoadShippingCountriesAction,
 ): Country[] | undefined {
     switch (action.type) {
-    case ShippingCountryActionType.LoadShippingCountriesSucceeded:
-        return arrayReplace(data, action.payload);
+        case ShippingCountryActionType.LoadShippingCountriesSucceeded:
+            return arrayReplace(data, action.payload);
 
-    default:
-        return data;
+        default:
+            return data;
     }
 }
 
 function errorsReducer(
     errors: ShippingCountryErrorsState = DEFAULT_STATE.errors,
-    action: LoadShippingCountriesAction
+    action: LoadShippingCountriesAction,
 ): ShippingCountryErrorsState {
     switch (action.type) {
-    case ShippingCountryActionType.LoadShippingCountriesRequested:
-    case ShippingCountryActionType.LoadShippingCountriesSucceeded:
-        return objectSet(errors, 'loadError', undefined);
+        case ShippingCountryActionType.LoadShippingCountriesRequested:
+        case ShippingCountryActionType.LoadShippingCountriesSucceeded:
+            return objectSet(errors, 'loadError', undefined);
 
-    case ShippingCountryActionType.LoadShippingCountriesFailed:
-        return objectSet(errors, 'loadError', action.payload);
+        case ShippingCountryActionType.LoadShippingCountriesFailed:
+            return objectSet(errors, 'loadError', action.payload);
 
-    default:
-        return errors;
+        default:
+            return errors;
     }
 }
 
 function statusesReducer(
     statuses: ShippingCountryStatusesState = DEFAULT_STATE.statuses,
-    action: LoadShippingCountriesAction
+    action: LoadShippingCountriesAction,
 ): ShippingCountryStatusesState {
     switch (action.type) {
-    case ShippingCountryActionType.LoadShippingCountriesRequested:
-        return objectSet(statuses, 'isLoading', true);
+        case ShippingCountryActionType.LoadShippingCountriesRequested:
+            return objectSet(statuses, 'isLoading', true);
 
-    case ShippingCountryActionType.LoadShippingCountriesSucceeded:
-    case ShippingCountryActionType.LoadShippingCountriesFailed:
-        return objectSet(statuses, 'isLoading', false);
+        case ShippingCountryActionType.LoadShippingCountriesSucceeded:
+        case ShippingCountryActionType.LoadShippingCountriesFailed:
+            return objectSet(statuses, 'isLoading', false);
 
-    default:
-        return statuses;
+        default:
+            return statuses;
     }
 }

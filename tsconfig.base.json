@@ -24,15 +24,34 @@
                 "packages/apple-pay-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"],
+            "@bigcommerce/checkout-sdk/credit-card-integration": [
+                "packages/credit-card-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/external-integration": [
+                "packages/external-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/legacy-integration": [
+                "packages/legacy-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/no-payment-integration": [
+                "packages/no-payment-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/offline-integration": [
+                "packages/offline-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/offsite-integration": [
+                "packages/offsite-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/payment-integration-api": [
                 "packages/payment-integration-api/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/payment-integrations-test-utils": [
                 "packages/payment-integrations-test-utils/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/workspace-tools": [
-                "packages/workspace-tools/src/index.ts"
-            ]
+            "@bigcommerce/checkout-sdk/squarev2-integration": [
+                "packages/squarev2-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"]
         }
     }
 }

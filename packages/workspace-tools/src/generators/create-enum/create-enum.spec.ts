@@ -11,8 +11,7 @@ describe('createEnum()', () => {
             outputMemberName: 'Type',
         };
 
-        expect(await createEnum(options))
-            .toMatchSnapshot();
+        expect(await createEnum(options)).toMatchSnapshot();
     });
 
     it('handles scenario where no matching member is found', async () => {
@@ -23,7 +22,6 @@ describe('createEnum()', () => {
             outputMemberName: 'Type',
         };
 
-        expect(await createEnum(options))
-            .toMatchSnapshot();
+        expect(await createEnum(options)).toMatchSnapshot();
     });
 });

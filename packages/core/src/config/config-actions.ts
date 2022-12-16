@@ -9,9 +9,9 @@ export enum ConfigActionType {
 }
 
 export type LoadConfigAction =
-    LoadConfigRequestedAction |
-    LoadConfigSucceededAction |
-    LoadConfigFailedAction;
+    | LoadConfigRequestedAction
+    | LoadConfigSucceededAction
+    | LoadConfigFailedAction;
 
 export interface LoadConfigRequestedAction extends Action {
     type: ConfigActionType.LoadConfigRequested;

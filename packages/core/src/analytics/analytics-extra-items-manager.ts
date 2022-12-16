@@ -1,25 +1,24 @@
 import { LineItemMap } from '../cart';
+
 import { ExtraItemsData } from './analytics-step-tracker';
 
 const ORDER_ITEMS_STORAGE_KEY = 'ORDER_ITEMS';
 
 export default class AnalyticsExtraItemsManager {
-    constructor(
-        private storage: StorageFallback,
-    ) {}
+    constructor(private storage: StorageFallback) {}
 
     saveExtraItemsData(id: string, lineItems: LineItemMap): ExtraItemsData {
-        const data = [
-            ...lineItems.physicalItems,
-            ...lineItems.digitalItems,
-        ].reduce<ExtraItemsData>((result, item) => {
-            result[item.productId] = {
-                brand: item.brand ? item.brand : '',
-                category: item.categoryNames ? item.categoryNames.join(', ') : '',
-            };
+        const data = [...lineItems.physicalItems, ...lineItems.digitalItems].reduce<ExtraItemsData>(
+            (result, item) => {
+                result[item.productId] = {
+                    brand: item.brand ? item.brand : '',
+                    category: item.categoryNames ? item.categoryNames.join(', ') : '',
+                };
 
-            return result;
-        }, {});
+                return result;
+            },
+            {},
+        );
 
         try {
             this.storage.setItem(this.getStorageKey(id), JSON.stringify(data));

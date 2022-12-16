@@ -1,7 +1,12 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutRequestSender,
+    CheckoutStore,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
@@ -34,28 +39,25 @@ describe('SquareCustomerStrategy', () => {
             paymentMethods: getPaymentMethodsState(),
         });
 
-        jest.spyOn(store, 'dispatch')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
 
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-            .mockReturnValue(paymentMethodMock);
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+            paymentMethodMock,
+        );
 
         requestSender = createRequestSender();
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender))
+            new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
 
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(requestSender),
-            checkoutActionCreator
+            checkoutActionCreator,
         );
 
-        strategy = new SquareCustomerStrategy(
-            store,
-            remoteCheckoutActionCreator
-        );
+        strategy = new SquareCustomerStrategy(store, remoteCheckoutActionCreator);
 
         container = document.createElement('div');
         container.setAttribute('id', 'login');
@@ -72,7 +74,7 @@ describe('SquareCustomerStrategy', () => {
 
     describe('#signIn()', () => {
         it('throws error if trying to sign in programmatically', () => {
-            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
+            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
         });
     });
 
@@ -84,8 +86,7 @@ describe('SquareCustomerStrategy', () => {
 
             jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(paymentId);
 
-            jest.spyOn(remoteCheckoutActionCreator, 'signOut')
-                .mockReturnValue('data');
+            jest.spyOn(remoteCheckoutActionCreator, 'signOut').mockReturnValue('data');
         });
 
         it('throws error if trying to sign out programmatically', async () => {
@@ -104,9 +105,11 @@ describe('SquareCustomerStrategy', () => {
         it('runs continue callback automatically on execute payment method checkout', async () => {
             const mockCallback = jest.fn();
 
-            await strategy.executePaymentMethodCheckout({ continueWithCheckoutCallback: mockCallback });
+            await strategy.executePaymentMethodCheckout({
+                continueWithCheckoutCallback: mockCallback,
+            });
 
-            expect(mockCallback.mock.calls.length).toBe(1);
+            expect(mockCallback.mock.calls).toHaveLength(1);
         });
     });
 });

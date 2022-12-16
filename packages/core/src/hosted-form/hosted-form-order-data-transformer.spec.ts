@@ -11,13 +11,11 @@ describe('HostedFormOrderDataTransformer', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         transformer = new HostedFormOrderDataTransformer(store);
 
-        jest.spyOn(store.getState().payment, 'getPaymentToken')
-            .mockReturnValue('auth-token');
+        jest.spyOn(store.getState().payment, 'getPaymentToken').mockReturnValue('auth-token');
 
-        jest.spyOn(store.getState().instruments, 'getInstrumentsMeta')
-            .mockReturnValue({
-                vaultAccessToken: 'vault-token',
-            });
+        jest.spyOn(store.getState().instruments, 'getInstrumentsMeta').mockReturnValue({
+            vaultAccessToken: 'vault-token',
+        });
     });
 
     it('transforms payload', () => {
@@ -26,8 +24,8 @@ describe('HostedFormOrderDataTransformer', () => {
             paymentData: { shouldSaveInstrument: true },
         });
 
-        expect(Object.keys(result))
-            .toEqual(expect.arrayContaining([
+        expect(Object.keys(result)).toEqual(
+            expect.arrayContaining([
                 'authToken',
                 'checkout',
                 'config',
@@ -36,7 +34,8 @@ describe('HostedFormOrderDataTransformer', () => {
                 'payment',
                 'paymentMethod',
                 'paymentMethodMeta',
-            ]));
+            ]),
+        );
     });
 
     it('includes vault access token if paying with stored instrument', () => {
@@ -45,8 +44,7 @@ describe('HostedFormOrderDataTransformer', () => {
             paymentData: { instrumentId: '123' },
         });
 
-        expect(result.authToken)
-            .toEqual('auth-token, vault-token');
+        expect(result.authToken).toBe('auth-token, vault-token');
     });
 
     it('does not include vault access token if not paying with stored instrument', () => {
@@ -62,8 +60,7 @@ describe('HostedFormOrderDataTransformer', () => {
             },
         });
 
-        expect(result.authToken)
-            .toEqual('auth-token');
+        expect(result.authToken).toBe('auth-token');
     });
 
     it('returns AdditionalAction object within response if received as a parameter', () => {
@@ -79,7 +76,7 @@ describe('HostedFormOrderDataTransformer', () => {
                 methodId: 'authorizenet',
                 paymentData: { instrumentId: '123' },
             },
-            additionalActionMock
+            additionalActionMock,
         );
 
         expect(result.additionalAction).toEqual(additionalActionMock);

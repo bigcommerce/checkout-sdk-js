@@ -1,7 +1,25 @@
-import { NotInitializedError, NotInitializedErrorType, UnsupportedBrowserError } from '../../../common/error/errors';
+import {
+    NotInitializedError,
+    NotInitializedErrorType,
+    UnsupportedBrowserError,
+} from '../../../common/error/errors';
 import { PaypalHostWindow } from '../paypal';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeError, BraintreeHostedFields, BraintreeHostedFieldsCreatorConfig, BraintreeModule, BraintreePaypal, BraintreePaypalCheckout, BraintreeThreeDSecure, BraintreeVenmoCheckout, BraintreeVisaCheckout, GooglePayBraintreeSDK, PAYPAL_COMPONENTS } from './braintree';
+import {
+    BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeError,
+    BraintreeHostedFields,
+    BraintreeHostedFieldsCreatorConfig,
+    BraintreeModule,
+    BraintreePaypal,
+    BraintreePaypalCheckout,
+    BraintreeThreeDSecure,
+    BraintreeVenmoCheckout,
+    BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
+    PAYPAL_COMPONENTS,
+} from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -19,9 +37,7 @@ export default class BraintreeSDKCreator {
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
     private _window: PaypalHostWindow;
 
-    constructor(
-        private _braintreeScriptLoader: BraintreeScriptLoader
-    ) {
+    constructor(private _braintreeScriptLoader: BraintreeScriptLoader) {
         this._window = window;
     }
 
@@ -35,8 +51,9 @@ export default class BraintreeSDKCreator {
         }
 
         if (!this._client) {
-            this._client = this._braintreeScriptLoader.loadClient()
-                .then(client => client.create({ authorization: this._clientToken }));
+            this._client = this._braintreeScriptLoader
+                .loadClient()
+                .then((client) => client.create({ authorization: this._clientToken }));
         }
 
         return this._client;
@@ -47,8 +64,7 @@ export default class BraintreeSDKCreator {
             this._paypal = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadPaypal(),
-            ])
-                .then(([client, paypal]) => paypal.create({ client }));
+            ]).then(([client, paypal]) => paypal.create({ client }));
         }
 
         return this._paypal;
@@ -57,13 +73,16 @@ export default class BraintreeSDKCreator {
     async getPaypalCheckout(
         config: { currency: string },
         onSuccess: (instance: BraintreePaypalCheckout) => void,
-        onError: (error: BraintreeError) => void
+        onError: (error: BraintreeError) => void,
     ): Promise<BraintreePaypalCheckout> {
         const client = await this.getClient();
         const paypalCheckout = await this._braintreeScriptLoader.loadPaypalCheckout();
 
         const paypalCheckoutConfig = { client };
-        const paypalCheckoutCallback = (error: BraintreeError, braintreePaypalCheckout: BraintreePaypalCheckout) => {
+        const paypalCheckoutCallback = (
+            error: BraintreeError,
+            braintreePaypalCheckout: BraintreePaypalCheckout,
+        ) => {
             if (error) {
                 return onError(error);
             }
@@ -88,7 +107,7 @@ export default class BraintreeSDKCreator {
 
     async getVenmoCheckout(
         onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
-        onError: (error: BraintreeError | UnsupportedBrowserError) => void
+        onError: (error: BraintreeError | UnsupportedBrowserError) => void,
     ): Promise<BraintreeVenmoCheckout> {
         if (!this._venmoCheckout) {
             const client = await this.getClient();
@@ -101,7 +120,10 @@ export default class BraintreeSDKCreator {
                 paymentMethodUsage: 'multi_use',
             };
 
-            const venmoCheckoutCallback = (error: BraintreeError, braintreeVenmoCheckout: BraintreeVenmoCheckout): void => {
+            const venmoCheckoutCallback = (
+                error: BraintreeError,
+                braintreeVenmoCheckout: BraintreeVenmoCheckout,
+            ): void => {
                 if (error) {
                     return onError(error);
                 }
@@ -121,11 +143,9 @@ export default class BraintreeSDKCreator {
 
     get3DS(): Promise<BraintreeThreeDSecure> {
         if (!this._3ds) {
-            this._3ds = Promise.all([
-                this.getClient(),
-                this._braintreeScriptLoader.load3DS(),
-            ])
-                .then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2}));
+            this._3ds = Promise.all([this.getClient(), this._braintreeScriptLoader.load3DS()]).then(
+                ([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }),
+            );
         }
 
         return this._3ds;
@@ -140,8 +160,10 @@ export default class BraintreeSDKCreator {
                 this.getClient(),
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
-                .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
-                .catch(error => {
+                .then(([client, dataCollector]) =>
+                    dataCollector.create({ client, kount: true, ...options }),
+                )
+                .catch((error) => {
                     if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
                         return { deviceData: undefined, teardown: () => Promise.resolve() };
                     }
@@ -160,8 +182,7 @@ export default class BraintreeSDKCreator {
             this._visaCheckout = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadVisaCheckout(),
-            ])
-                .then(([client, visaCheckout]) => visaCheckout.create({ client }));
+            ]).then(([client, visaCheckout]) => visaCheckout.create({ client }));
         }
 
         return this._visaCheckout;
@@ -169,18 +190,17 @@ export default class BraintreeSDKCreator {
 
     getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
         if (!this._googlePay) {
-            this._googlePay = Promise.all ([
+            this._googlePay = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadGooglePayment(),
-            ])
-                .then(([client, googlePay]) => googlePay.create({ client }));
+            ]).then(([client, googlePay]) => googlePay.create({ client }));
         }
 
         return this._googlePay;
     }
 
     async createHostedFields(
-        options: Pick<BraintreeHostedFieldsCreatorConfig, 'fields' | 'styles'>
+        options: Pick<BraintreeHostedFieldsCreatorConfig, 'fields' | 'styles'>,
     ): Promise<BraintreeHostedFields> {
         const [client, hostedFields] = await Promise.all([
             this.getClient(),
@@ -210,8 +230,6 @@ export default class BraintreeSDKCreator {
     }
 
     private _teardown(module?: Promise<BraintreeModule>) {
-        return module ?
-            module.then(mod => mod.teardown()) :
-            Promise.resolve();
+        return module ? module.then((mod) => mod.teardown()) : Promise.resolve();
     }
 }

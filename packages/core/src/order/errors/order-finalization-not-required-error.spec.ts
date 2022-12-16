@@ -4,6 +4,6 @@ describe('OrderFinalizationNotRequiredError', () => {
     it('returns error name', () => {
         const error = new OrderFinalizationNotRequiredError();
 
-        expect(error.name).toEqual('OrderFinalizationNotRequiredError');
+        expect(error.name).toBe('OrderFinalizationNotRequiredError');
     });
 });

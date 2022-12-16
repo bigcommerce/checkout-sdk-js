@@ -119,7 +119,7 @@ ___
 
 ### creditCard
 
-• `Optional` **creditCard**: [`CreditCardPaymentInitializeOptions`](CreditCardPaymentInitializeOptions.md)
+• `Optional` **creditCard**: `CreditCardPaymentInitializeOptions`
 
 **`alpha`**
 Please note that this option is currently in an early stage of

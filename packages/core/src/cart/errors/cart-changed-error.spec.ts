@@ -9,7 +9,7 @@ describe('CartChangedError', () => {
             outstandingBalance: 0,
         });
 
-        expect(error.name).toEqual('CartChangedError');
+        expect(error.name).toBe('CartChangedError');
         expect(error.data.previous).toEqual(getCheckout());
         expect(error.data.updated).toEqual({
             ...getCheckout(),

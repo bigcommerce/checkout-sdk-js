@@ -8,13 +8,10 @@ import joinIncludes from './join-includes';
  */
 export default function mergeIncludes<T extends string>(
     baseIncludes: T[],
-    includesDictionary?: { [key in T]?: boolean }
+    includesDictionary?: { [key in T]?: boolean },
 ): string {
-    const deletions = keys(pickBy(includesDictionary, on => !on));
+    const deletions = keys(pickBy(includesDictionary, (on) => !on));
     const additions = keys(filter(includesDictionary));
 
-    return joinIncludes([
-            ...difference(baseIncludes, deletions),
-            ...additions,
-        ]);
+    return joinIncludes([...difference(baseIncludes, deletions), ...additions]);
 }

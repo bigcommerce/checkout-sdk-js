@@ -5,17 +5,17 @@ import isPlainObject from './is-plain-object';
 const cloneDeep = memoize(<T>(input: T): T => {
     if (Array.isArray(input)) {
         // Fixed in later versions of typescript https://github.com/microsoft/TypeScript/issues/36390
-        return (input as any[]).map((value: T[keyof T]) => (
-            cloneDeepSafe(value)
-        )) as any;
+        return (input as any[]).map((value: T[keyof T]) => cloneDeepSafe(value)) as any;
     }
 
     if (isPlainObject(input)) {
-        return (Object.keys(input) as Array<keyof T>)
-            .reduce((result, key) => ({
+        return (Object.keys(input) as Array<keyof T>).reduce(
+            (result, key) => ({
                 ...result,
                 [key]: cloneDeepSafe(input[key]),
-            }), {}) as T;
+            }),
+            {},
+        ) as T;
     }
 
     return input;
@@ -33,9 +33,7 @@ cloneDeep.cache = new WeakMap() as any;
  * non-object argument.
  */
 const cloneDeepSafe = <T>(input: T): T => {
-    return typeof input === 'object' && input !== null ?
-        cloneDeep(input) :
-        input;
+    return typeof input === 'object' && input !== null ? cloneDeep(input) : input;
 };
 
 /**

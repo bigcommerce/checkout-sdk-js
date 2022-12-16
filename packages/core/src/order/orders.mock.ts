@@ -5,7 +5,12 @@ import { getCurrency } from '../currency/currencies.mock';
 
 import { getAwaitingOrder, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
-import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderConsignment, OrderShippingConsignment } from './order';
+import Order, {
+    GatewayOrderPayment,
+    GiftCertificateOrderPayment,
+    OrderConsignment,
+    OrderShippingConsignment,
+} from './order';
 import OrderState, { OrderMetaState } from './order-state';
 
 export function getOrder(): Order {
@@ -14,10 +19,7 @@ export function getOrder(): Order {
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         consignments: getOrderConsignment(),
-        coupons: [
-            getCoupon(),
-            getShippingCoupon(),
-        ],
+        coupons: [getCoupon(), getShippingCoupon()],
         currency: getCurrency(),
         customerMessage: '',
         customerCanBeCreated: true,
@@ -29,23 +31,16 @@ export function getOrder(): Order {
         isDownloadable: false,
         isTaxIncluded: false,
         lineItems: {
-            physicalItems: [
-                getPhysicalItem(),
-            ],
+            physicalItems: [getPhysicalItem()],
             digitalItems: [],
-            giftCertificates: [
-                getGiftCertificateItem(),
-            ],
+            giftCertificates: [getGiftCertificateItem()],
             customItems: [],
         },
         orderAmount: 190,
         orderAmountAsInteger: 19000,
         giftWrappingCostTotal: 0,
         orderId: 295,
-        payments: [
-            getGatewayOrderPayment(),
-            getGiftCertificateOrderPayment(),
-        ],
+        payments: [getGatewayOrderPayment(), getGiftCertificateOrderPayment()],
         shippingCostTotal: 15,
         shippingCostBeforeDiscount: 20,
         status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
@@ -62,11 +57,7 @@ export function getOrder(): Order {
 
 export function getOrderMeta(): OrderMetaState {
     const { token } = getSubmitOrderResponseHeaders();
-    const {
-        token: orderToken,
-        callbackUrl,
-        payment,
-    } = getAwaitingOrder();
+    const { token: orderToken, callbackUrl, payment } = getAwaitingOrder();
 
     return {
         token,
@@ -111,7 +102,7 @@ export function getOrderState(): OrderState {
 
 export function getOrderConsignment(): OrderConsignment {
     return {
-      shipping: [getOrderShippingConsignment()],
+        shipping: [getOrderShippingConsignment()],
     };
 }
 

@@ -4,8 +4,18 @@ import { omit } from 'lodash';
 import { RequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
-import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
+import {
+    getCompleteOrderResponseBody,
+    getSubmitOrderResponseBody,
+    getSubmitOrderResponseHeaders,
+} from './internal-orders.mock';
+import {
+    FinalizeOrderAction,
+    LoadOrderAction,
+    LoadOrderPaymentsAction,
+    OrderActionType,
+    SubmitOrderAction,
+} from './order-actions';
 import orderReducer from './order-reducer';
 import OrderState from './order-state';
 import { getOrder } from './orders.mock';
@@ -25,9 +35,11 @@ describe('orderReducer()', () => {
             type: OrderActionType.LoadOrderRequested,
         };
 
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isLoading: true },
-        }));
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                statuses: { isLoading: true },
+            }),
+        );
     });
 
     it('returns new data if it is fetched successfully', () => {
@@ -36,23 +48,27 @@ describe('orderReducer()', () => {
             payload: getOrder(),
         };
 
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'coupons']),
-            statuses: { isLoading: false },
-        }));
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                data: omit(action.payload, ['billingAddress', 'coupons']),
+                statuses: { isLoading: false },
+            }),
+        );
     });
 
     it('returns error if it is not fetched successfully', () => {
         const response = getErrorResponse();
         const action = createErrorAction(
             OrderActionType.LoadOrderFailed,
-            new RequestErrorFactory().createError(response)
+            new RequestErrorFactory().createError(response),
         );
 
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { loadError: action.payload },
-            statuses: { isLoading: false },
-        }));
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                errors: { loadError: action.payload },
+                statuses: { isLoading: false },
+            }),
+        );
     });
 
     it('returns new data if it is submitted successfully', () => {
@@ -67,16 +83,18 @@ describe('orderReducer()', () => {
             payload: response.data,
         };
 
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: {
-                callbackUrl: response.data.order.callbackUrl,
-                deviceFingerprint: response.meta.deviceFingerprint,
-                orderToken: response.data.order.token,
-                // tslint:disable-next-line:no-non-null-assertion
-                payment: action.payload!.order.payment,
-                token: headers.token,
-            },
-        }));
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                meta: {
+                    callbackUrl: response.data.order.callbackUrl,
+                    deviceFingerprint: response.meta.deviceFingerprint,
+                    orderToken: response.data.order.token,
+                    // tslint:disable-next-line:no-non-null-assertion
+                    payment: action.payload!.order.payment,
+                    token: headers.token,
+                },
+            }),
+        );
     });
 
     it('returns new data if it is finalized successfully', () => {
@@ -87,12 +105,14 @@ describe('orderReducer()', () => {
             payload: response.data,
         };
 
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: {
-                // tslint:disable-next-line:no-non-null-assertion
-                payment: action.payload!.order.payment,
-            },
-        }));
+        expect(orderReducer(initialState, action)).toEqual(
+            expect.objectContaining({
+                meta: {
+                    // tslint:disable-next-line:no-non-null-assertion
+                    payment: action.payload!.order.payment,
+                },
+            }),
+        );
     });
 
     describe('loadOrderPayments', () => {
@@ -101,9 +121,11 @@ describe('orderReducer()', () => {
                 type: OrderActionType.LoadOrderPaymentsRequested,
             };
 
-            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-                statuses: { isLoading: true },
-            }));
+            expect(orderReducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    statuses: { isLoading: true },
+                }),
+            );
         });
 
         it('returns new data if it is fetched successfully', () => {
@@ -112,23 +134,27 @@ describe('orderReducer()', () => {
                 payload: getOrder(),
             };
 
-            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: omit(action.payload, ['billingAddress', 'coupons']),
-                statuses: { isLoading: false },
-            }));
+            expect(orderReducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    data: omit(action.payload, ['billingAddress', 'coupons']),
+                    statuses: { isLoading: false },
+                }),
+            );
         });
 
         it('returns error if it is not fetched successfully', () => {
             const response = getErrorResponse();
             const action = createErrorAction(
                 OrderActionType.LoadOrderPaymentsFailed,
-                new RequestErrorFactory().createError(response)
+                new RequestErrorFactory().createError(response),
             );
 
-            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-                errors: { loadError: action.payload },
-                statuses: { isLoading: false },
-            }));
+            expect(orderReducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    errors: { loadError: action.payload },
+                    statuses: { isLoading: false },
+                }),
+            );
         });
     });
 });

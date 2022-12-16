@@ -17,26 +17,31 @@ export default class ConvergePaymentStrategy extends CreditCardPaymentStrategy {
         orderActionCreator: OrderActionCreator,
         paymentActionCreator: PaymentActionCreator,
         hostedFormFactory: HostedFormFactory,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
     ) {
         super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return super.execute(payload, options)
-            .catch(error => {
-                if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
-                    return Promise.reject(error);
-                }
+    execute(
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+    ): Promise<InternalCheckoutSelectors> {
+        return super.execute(payload, options).catch((error) => {
+            if (
+                !(error instanceof RequestError) ||
+                !some(error.body.errors, { code: 'three_d_secure_required' })
+            ) {
+                return Promise.reject(error);
+            }
 
-                return new Promise(() => {
-                    this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                        PaReq: error.body.three_ds_result.payer_auth_request,
-                        TermUrl: error.body.three_ds_result.callback_url,
-                        MD: error.body.three_ds_result.merchant_data,
-                    });
+            return new Promise(() => {
+                this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                    PaReq: error.body.three_ds_result.payer_auth_request,
+                    TermUrl: error.body.three_ds_result.callback_url,
+                    MD: error.body.three_ds_result.merchant_data,
                 });
             });
+        });
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -44,7 +49,9 @@ export default class ConvergePaymentStrategy extends CreditCardPaymentStrategy {
         const order = state.order.getOrder();
 
         if (order && state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
+            return this._store.dispatch(
+                this._orderActionCreator.finalizeOrder(order.orderId, options),
+            );
         }
 
         return Promise.reject(new OrderFinalizationNotRequiredError());

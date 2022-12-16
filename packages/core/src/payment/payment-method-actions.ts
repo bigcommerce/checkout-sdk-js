@@ -16,14 +16,14 @@ export enum PaymentMethodActionType {
 export type PaymentMethodAction = LoadPaymentMethodAction | LoadPaymentMethodsAction;
 
 export type LoadPaymentMethodAction =
-    LoadPaymentMethodRequestedAction |
-    LoadPaymentMethodSucceededAction |
-    LoadPaymentMethodFailedAction;
+    | LoadPaymentMethodRequestedAction
+    | LoadPaymentMethodSucceededAction
+    | LoadPaymentMethodFailedAction;
 
 export type LoadPaymentMethodsAction =
-    LoadPaymentMethodsRequestedAction |
-    LoadPaymentMethodsSucceededAction |
-    LoadPaymentMethodsFailedAction;
+    | LoadPaymentMethodsRequestedAction
+    | LoadPaymentMethodsSucceededAction
+    | LoadPaymentMethodsFailedAction;
 
 export interface LoadPaymentMethodRequestedAction extends Action {
     type: PaymentMethodActionType.LoadPaymentMethodRequested;
@@ -41,7 +41,8 @@ export interface LoadPaymentMethodsRequestedAction extends Action {
     type: PaymentMethodActionType.LoadPaymentMethodsRequested;
 }
 
-export interface LoadPaymentMethodsSucceededAction extends Action<PaymentMethod[], PaymentMethodMeta> {
+export interface LoadPaymentMethodsSucceededAction
+    extends Action<PaymentMethod[], PaymentMethodMeta> {
     type: PaymentMethodActionType.LoadPaymentMethodsSucceeded;
 }
 

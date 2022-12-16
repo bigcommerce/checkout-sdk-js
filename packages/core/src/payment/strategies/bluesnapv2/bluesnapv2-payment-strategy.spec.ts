@@ -3,13 +3,30 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { NotInitializedError } from '../../../common/error/errors';
+import {
+    FinalizeOrderAction,
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+    SubmitOrderAction,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
+import {
+    getIncompleteOrder,
+    getOrderRequestBody,
+    getSubmittedOrder,
+} from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -23,7 +40,6 @@ import * as paymentStatusTypes from '../../payment-status-types';
 import { getPaymentRequestBody } from '../../payments.mock';
 
 import BlueSnapV2PaymentStrategy from './bluesnapv2-payment-strategy';
-import { NotInitializedError } from "../../../common/error/errors";
 
 describe('BlueSnapV2PaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
@@ -46,19 +62,23 @@ describe('BlueSnapV2PaymentStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
         );
         paymentRequestTransformer = new PaymentRequestTransformer();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient());
-        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader()));
+        paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
+            createSpamProtection(createScriptLoader()),
+        );
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
             orderActionCreator,
             paymentRequestTransformer,
-            paymentHumanVerificationHandler
+            paymentHumanVerificationHandler,
         );
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
+        initializeOffsitePaymentAction = of(
+            createAction(PaymentActionType.InitializeOffsitePaymentRequested),
+        );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         initializeOptions = {
@@ -79,14 +99,13 @@ describe('BlueSnapV2PaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'finalizeOrder')
-            .mockReturnValue(finalizeOrderAction);
+        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
-        jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
-            .mockReturnValue(initializeOffsitePaymentAction);
+        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment').mockReturnValue(
+            initializeOffsitePaymentAction,
+        );
 
         strategy = new BlueSnapV2PaymentStrategy(store, orderActionCreator, paymentActionCreator);
     });
@@ -103,31 +122,33 @@ describe('BlueSnapV2PaymentStrategy', () => {
         await strategy.initialize(initializeOptions);
         await strategy.execute(payload, options);
 
-        expect(paymentActionCreator.initializeOffsitePayment)
-            .toHaveBeenCalledWith({
-                methodId: options.methodId,
-                gatewayId: options.gatewayId,
-                shouldSaveInstrument: false,
-                target: 'bluesnapv2_hosted_payment_page',
-                promise: expect.any(Promise),
-            });
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith({
+            methodId: options.methodId,
+            gatewayId: options.gatewayId,
+            shouldSaveInstrument: false,
+            target: 'bluesnapv2_hosted_payment_page',
+            promise: expect.any(Promise),
+        });
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 
     it('returns cancel error if the user cancels flow', async () => {
-        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
-            .mockRestore();
+        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment').mockRestore();
 
-        jest.spyOn(paymentRequestTransformer, 'transform')
-            .mockReturnValue({ ...getPaymentRequestBody(), paymentMethod: getBlueSnapV2() });
+        jest.spyOn(paymentRequestTransformer, 'transform').mockReturnValue({
+            ...getPaymentRequestBody(),
+            paymentMethod: getBlueSnapV2(),
+        });
 
-        jest.spyOn(paymentRequestSender, 'initializeOffsitePayment')
-            .mockReturnValue(new Promise(noop));
+        jest.spyOn(paymentRequestSender, 'initializeOffsitePayment').mockReturnValue(
+            new Promise(noop),
+        );
 
         await strategy.initialize(initializeOptions);
+
         const promise = strategy.execute(payload, options);
 
-        await new Promise(resolve => process.nextTick(resolve));
+        await new Promise((resolve) => process.nextTick(resolve));
         cancelPayment();
 
         return expect(promise).rejects.toThrow(PaymentMethodCancelledError);
@@ -136,11 +157,11 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('finalizes order if order is created and payment is acknowledged', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(
+            paymentStatusTypes.ACKNOWLEDGE,
+        );
 
         await strategy.finalize(options);
 
@@ -151,11 +172,9 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
 
-        jest.spyOn(state.payment, 'getPaymentStatus')
-            .mockReturnValue(paymentStatusTypes.FINALIZE);
+        jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize(options);
 
@@ -166,8 +185,7 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(getIncompleteOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getIncompleteOrder());
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
@@ -177,12 +195,13 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('does not finalize order if order is not finalized or acknowledged', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(merge({}, getSubmittedOrder(), {
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(
+            merge({}, getSubmittedOrder(), {
                 payment: {
                     status: paymentStatusTypes.INITIALIZE,
                 },
-            }));
+            }),
+        );
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
@@ -192,8 +211,7 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('throws error if unable to finalize due to missing data', () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder')
-            .mockReturnValue(null);
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         return expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
     });
@@ -203,44 +221,69 @@ describe('BlueSnapV2PaymentStrategy', () => {
 
         return expect(strategy.execute(payload, options)).resolves.toEqual(store.getState());
     });
+
     it('throws error is unable to execute due to invalid payment', async () => {
         await strategy.initialize(initializeOptions);
         payload.payment = undefined;
 
-        return expect(strategy.execute(payload)).rejects.toBeInstanceOf(PaymentArgumentInvalidError);
+        return expect(strategy.execute(payload)).rejects.toBeInstanceOf(
+            PaymentArgumentInvalidError,
+        );
     });
+
     it('throws error is unable to execute due to _initializeOptions un set', async () => {
         await strategy.initialize();
 
         return expect(strategy.execute(payload)).rejects.toBeInstanceOf(NotInitializedError);
     });
+
     it('deinitialize payment strategy', async () => {
         await strategy.initialize(initializeOptions);
+
         const promise = strategy.deinitialize();
 
         return expect(promise).resolves.toBe(store.getState());
     });
+
     it('create iframe with styleprops', async () => {
-        const _iframe:HTMLIFrameElement = strategy['_createIframe'].call('','bluesnapv2_hosted_payment_page', {border: '1px solid gray', height: '40vh', width: '100%',padding: '3px',});
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const _iframe: HTMLIFrameElement = strategy._createIframe.call(
+            '',
+            'bluesnapv2_hosted_payment_page',
+            { border: '1px solid gray', height: '40vh', width: '100%', padding: '3px' },
+        );
+
         expect(_iframe).toHaveProperty('style');
-        expect(_iframe.name).toEqual('bluesnapv2_hosted_payment_page');
-        expect(_iframe.style.height).toEqual('40vh');
-        expect(_iframe.style.border).toEqual('1px solid gray');
-        expect(_iframe.style.width).toEqual('100%');
+        expect(_iframe.name).toBe('bluesnapv2_hosted_payment_page');
+        expect(_iframe.style.height).toBe('40vh');
+        expect(_iframe.style.border).toBe('1px solid gray');
+        expect(_iframe.style.width).toBe('100%');
         expect(_iframe.style.padding).toBeFalsy();
     });
+
     it('execute with styleprops', async () => {
         initializeOptions = merge(initializeOptions, {
             bluesnapv2: {
                 style: {
-                    border: '1px solid gray', height: '40vh', width: '100%',
-                }
+                    border: '1px solid gray',
+                    height: '40vh',
+                    width: '100%',
+                },
             },
         });
         await strategy.initialize(initializeOptions);
 
-        const iframeCreator = jest.spyOn(BlueSnapV2PaymentStrategy.prototype as any, '_createIframe');
+        const iframeCreator = jest.spyOn(
+            BlueSnapV2PaymentStrategy.prototype as any,
+            '_createIframe',
+        );
+
         await expect(strategy.execute(payload, options)).resolves.toEqual(store.getState());
-        expect(iframeCreator).toHaveBeenCalledWith('bluesnapv2_hosted_payment_page', { border: '1px solid gray', height: '40vh', width: '100%' });
+        expect(iframeCreator).toHaveBeenCalledWith('bluesnapv2_hosted_payment_page', {
+            border: '1px solid gray',
+            height: '40vh',
+            width: '100%',
+        });
     });
 });

@@ -16,22 +16,20 @@ export type CountrySelectorFactory = (state: CountryState) => CountrySelector;
 export function createCountrySelectorFactory(): CountrySelectorFactory {
     const getCountries = createSelector(
         (state: CountryState) => state.data,
-        countries => () => countries
+        (countries) => () => countries,
     );
 
     const getLoadError = createSelector(
         (state: CountryState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isLoading = createSelector(
         (state: CountryState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: CountryState = DEFAULT_STATE
-    ): CountrySelector => {
+    return memoizeOne((state: CountryState = DEFAULT_STATE): CountrySelector => {
         return {
             getCountries: getCountries(state),
             getLoadError: getLoadError(state),

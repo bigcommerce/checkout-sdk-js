@@ -5,11 +5,12 @@ import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http
 import { Subscriptions } from './subscriptions';
 
 export default class SubscriptionsRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    updateSubscriptions(subscriptions: Subscriptions, { timeout }: RequestOptions = {}): Promise<Response<Subscriptions>> {
+    updateSubscriptions(
+        subscriptions: Subscriptions,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Subscriptions>> {
         const url = '/api/storefront/subscriptions';
         const headers = {
             Accept: ContentType.JsonV1,

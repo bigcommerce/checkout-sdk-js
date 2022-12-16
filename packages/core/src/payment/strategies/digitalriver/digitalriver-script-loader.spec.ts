@@ -16,7 +16,11 @@ describe('DigitalRiverScriptLoader', () => {
         windowMock = {} as DigitalRiverWindow;
         scriptLoader = {} as ScriptLoader;
         stylesheetLoader = {} as StylesheetLoader;
-        digitalRiverScriptLoader = new DigitalRiverScriptLoader(scriptLoader, stylesheetLoader, windowMock);
+        digitalRiverScriptLoader = new DigitalRiverScriptLoader(
+            scriptLoader,
+            stylesheetLoader,
+            windowMock,
+        );
     });
 
     describe('#load()', () => {
@@ -26,9 +30,7 @@ describe('DigitalRiverScriptLoader', () => {
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
-                windowMock.DigitalRiver = jest.fn(
-                    () => digitalRiverJs
-                );
+                windowMock.DigitalRiver = jest.fn(() => digitalRiverJs);
 
                 return Promise.resolve();
             });
@@ -47,18 +49,22 @@ describe('DigitalRiverScriptLoader', () => {
             expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
         });
 
-        it('it returns a DigitalRiverJS instance', async () => {
-            expect(await digitalRiverScriptLoader.load('pk_test1234', 'en-US')).toBe(digitalRiverJs);
+        it('returns a DigitalRiverJS instance', async () => {
+            expect(await digitalRiverScriptLoader.load('pk_test1234', 'en-US')).toBe(
+                digitalRiverJs,
+            );
         });
 
-        it('it returns a DigitalRiver undefined instance', async () => {
+        it('returns a DigitalRiver undefined instance', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 windowMock.DigitalRiver = undefined;
 
                 return Promise.resolve();
             });
 
-            return expect(digitalRiverScriptLoader.load('pk_test1234', 'en-US')).rejects.toThrow(new PaymentMethodClientUnavailableError());
+            return expect(digitalRiverScriptLoader.load('pk_test1234', 'en-US')).rejects.toThrow(
+                new PaymentMethodClientUnavailableError(),
+            );
         });
     });
 });

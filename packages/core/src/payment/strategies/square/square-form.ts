@@ -4,10 +4,17 @@ export default interface SquarePaymentForm {
     build(): void;
     requestCardNonce(): void;
     setPostalCode(postalCode: string): void;
-    verifyBuyer(source?: string, verificationDetails?: VerificationDetails, callback?: VerifyBuyerResponse ): void;
+    verifyBuyer(
+        source?: string,
+        verificationDetails?: VerificationDetails,
+        callback?: VerifyBuyerResponse,
+    ): void;
 }
 
-export type VerifyBuyerResponse = (errors: SquareVerificationError, verificationResult: SquareVerificationResult) => void;
+export type VerifyBuyerResponse = (
+    errors: SquareVerificationError,
+    verificationResult: SquareVerificationResult,
+) => void;
 
 export interface SquareVerificationError {
     type: string;
@@ -31,7 +38,7 @@ export interface VerificationDetails {
     billingContact?: Contact;
 }
 
-export type SquarePaymentFormConstructor = new(options: SquareFormOptions) => SquarePaymentForm;
+export type SquarePaymentFormConstructor = new (options: SquareFormOptions) => SquarePaymentForm;
 
 export type SquareScriptCallBack = (options: SquareFormOptions) => SquarePaymentForm;
 
@@ -131,7 +138,8 @@ export interface SquareFormCallbacks {
         nonce?: string,
         cardData?: CardData,
         billingContact?: Contact,
-        shippingContact?: Contact): void;
+        shippingContact?: Contact,
+    ): void;
     methodsSupported?(methods: { [key: string]: boolean }): void;
     createPaymentRequest?(): void;
 }

@@ -1,15 +1,19 @@
 import { noop } from 'lodash';
+
 import { BoltCallbacks, BoltCheckout, BoltClient, BoltEmbedded, BoltTransaction } from './bolt';
 
-export function getBoltClientScriptMock(shouldSucceed = false, isValidTransactionReference = true): BoltCheckout {
+export function getBoltClientScriptMock(
+    shouldSucceed = false,
+    isValidTransactionReference = true,
+): BoltCheckout {
     return {
-        /* eslint-disable */
         configure: jest.fn((_cart: object, _hints: {}, callbacks?: BoltCallbacks) => {
             /* eslint-enable */
             return getConfiguredBoltMock(
                 shouldSucceed,
                 isValidTransactionReference,
-                callbacks || { success: noop, close: noop });
+                callbacks || { success: noop, close: noop },
+            );
         }),
         getTransactionReference: jest.fn(),
         hasBoltAccount: jest.fn(),
@@ -30,14 +34,18 @@ export function getBoltEmbeddedScriptMock(): BoltEmbedded {
     };
 }
 
-export function getConfiguredBoltMock(shouldSucceed: boolean, isValidTransactionReference: boolean, callbacks: BoltCallbacks): BoltClient {
+export function getConfiguredBoltMock(
+    shouldSucceed: boolean,
+    isValidTransactionReference: boolean,
+    callbacks: BoltCallbacks,
+): BoltClient {
     const mockTransaction: BoltTransaction = {
         reference: isValidTransactionReference ? 'transactionReference' : '',
         id: 'id',
         status: 'complete',
         type: 'authorization',
         processor: 'vantiv',
-        date : 1234567890,
+        date: 1234567890,
         authorization: {
             status: 'approved',
             reason: 'reason',
@@ -48,10 +56,8 @@ export function getConfiguredBoltMock(shouldSucceed: boolean, isValidTransaction
         open: jest.fn(() => {
             if (shouldSucceed) {
                 callbacks.success(mockTransaction, jest.fn());
-            } else {
-                if (callbacks.close) {
-                    callbacks.close();
-                }
+            } else if (callbacks.close) {
+                callbacks.close();
             }
         }),
     };

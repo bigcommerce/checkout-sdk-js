@@ -4,11 +4,13 @@ import { Checkout } from '../checkout';
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class SpamProtectionRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    validate(checkoutId: string, token: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    validate(
+        checkoutId: string,
+        token: string,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/spam-protection`;
         const headers = {
             Accept: ContentType.JsonV1,

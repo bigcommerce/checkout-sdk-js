@@ -26,18 +26,16 @@ describe('HostedInputInitializer', () => {
         initializer = new HostedInputInitializer(
             factory as HostedInputFactory,
             storage as HostedInputStorage,
-            eventListener
+            eventListener,
         );
 
         container = document.createElement('div');
         container.id = 'input-container';
         document.body.appendChild(container);
 
-        jest.spyOn(input, 'attach')
-            .mockImplementation();
+        jest.spyOn(input, 'attach').mockImplementation();
 
-        jest.spyOn(factory, 'create')
-            .mockReturnValue(input);
+        jest.spyOn(factory, 'create').mockReturnValue(input);
     });
 
     afterEach(() => {
@@ -61,16 +59,15 @@ describe('HostedInputInitializer', () => {
 
         await initializer.initialize('input-container');
 
-        expect(factory.create)
-            .toHaveBeenCalledWith(
-                expect.any(HTMLFormElement),
-                HostedFieldType.CardNumber,
-                { default: { color: 'rgb(0, 0, 0)' } },
-                [],
-                'Card name',
-                'Name',
-                getCardInstrument()
-            );
+        expect(factory.create).toHaveBeenCalledWith(
+            expect.any(HTMLFormElement),
+            HostedFieldType.CardNumber,
+            { default: { color: 'rgb(0, 0, 0)' } },
+            [],
+            'Card name',
+            'Name',
+            getCardInstrument(),
+        );
     });
 
     it('attaches input to container', async () => {
@@ -83,8 +80,7 @@ describe('HostedInputInitializer', () => {
 
         await initializer.initialize('input-container');
 
-        expect(input.attach)
-            .toHaveBeenCalled();
+        expect(input.attach).toHaveBeenCalled();
     });
 
     it('stores nonce into storage', async () => {
@@ -97,8 +93,7 @@ describe('HostedInputInitializer', () => {
 
         await initializer.initialize('input-container', 'abc');
 
-        expect(storage.setNonce)
-            .toHaveBeenCalledWith('abc');
+        expect(storage.setNonce).toHaveBeenCalledWith('abc');
     });
 
     it('returns newly created input', async () => {
@@ -109,15 +104,15 @@ describe('HostedInputInitializer', () => {
             });
         });
 
-        expect(await initializer.initialize('input-container'))
-            .toEqual(input);
+        expect(await initializer.initialize('input-container')).toEqual(input);
     });
 
     it('throws error if container cannot be found', () => {
         container.remove();
 
-        expect(() => initializer.initialize('input-container'))
-            .toThrowError(InvalidHostedFormConfigError);
+        expect(() => initializer.initialize('input-container')).toThrow(
+            InvalidHostedFormConfigError,
+        );
     });
 
     it('normalises parent origin for input factory', async () => {
@@ -130,7 +125,6 @@ describe('HostedInputInitializer', () => {
 
         await initializer.initialize('input-container');
 
-        expect(factory.normalizeParentOrigin)
-            .toHaveBeenCalled();
+        expect(factory.normalizeParentOrigin).toHaveBeenCalled();
     });
 });

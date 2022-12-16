@@ -24,7 +24,7 @@ export default interface ConfigSelector {
 
 export type ConfigSelectorFactory = (
     state: ConfigState,
-    formState: FormFieldsState
+    formState: FormFieldsState,
 ) => ConfigSelector;
 
 interface ConfigSelectorDependencies {
@@ -32,15 +32,14 @@ interface ConfigSelectorDependencies {
 }
 
 export function createConfigSelectorFactory(): ConfigSelectorFactory {
-
     const getConfig = createSelector(
         (state: ConfigState) => state.data,
-        data => () => data
+        (data) => () => data,
     );
 
     const getFlashMessages = createSelector(
         (state: ConfigState) => state.data,
-        data => (filterType?: FlashMessageType) => {
+        (data) => (filterType?: FlashMessageType) => {
             if (!data) {
                 return;
             }
@@ -51,79 +50,81 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
                 return;
             }
 
-            return filterType !== undefined ?
-                flashMessages.filter(({ type }) => filterType === type) :
-                flashMessages;
-        }
+            return filterType !== undefined
+                ? flashMessages.filter(({ type }) => filterType === type)
+                : flashMessages;
+        },
     );
 
     const getStoreConfig = createSelector(
         (state: ConfigState) => state.data,
         (_: ConfigState, { formState }: ConfigSelectorDependencies) => formState && formState.data,
-        (data, formFields) => () => data && formFields ? ({
-            ...data.storeConfig,
-            formFields,
-        }) : undefined
+        (data, formFields) => () =>
+            data && formFields
+                ? {
+                      ...data.storeConfig,
+                      formFields,
+                  }
+                : undefined,
     );
 
-    const getStoreConfigOrThrow = createSelector(
-        getStoreConfig,
-        getStoreConfig => () => {
-          return guard(getStoreConfig(), () => new MissingDataError(MissingDataErrorType.MissingCheckoutConfig));
-        }
-    );
+    const getStoreConfigOrThrow = createSelector(getStoreConfig, (getStoreConfig) => () => {
+        return guard(
+            getStoreConfig(),
+            () => new MissingDataError(MissingDataErrorType.MissingCheckoutConfig),
+        );
+    });
 
     const getContextConfig = createSelector(
         (state: ConfigState) => state.data && state.data.context,
-        data => () => data
+        (data) => () => data,
     );
 
     const getExternalSource = createSelector(
         (state: ConfigState) => state.meta && state.meta.externalSource,
-        data => () => data
+        (data) => () => data,
     );
 
     const getHost = createSelector(
         (state: ConfigState) => state.meta?.host,
-        data => () => data
+        (data) => () => data,
     );
 
     const getLocale = createSelector(
         (state: ConfigState) => state.meta?.locale,
-        data => () => data
+        (data) => () => data,
     );
 
     const getVariantIdentificationToken = createSelector(
         (state: ConfigState) => state.meta && state.meta.variantIdentificationToken,
-        data => () => data
+        (data) => () => data,
     );
 
     const getLoadError = createSelector(
         (state: ConfigState) => state.errors.loadError,
-        error => () => error
+        (error) => () => error,
     );
 
     const isLoading = createSelector(
         (state: ConfigState) => !!state.statuses.isLoading,
-        status => () => status
+        (status) => () => status,
     );
 
-    return memoizeOne((
-        state: ConfigState = DEFAULT_STATE,
-        formState: FormFieldsState
-    ): ConfigSelector => {
-        return {
-            getConfig: getConfig(state),
-            getFlashMessages: getFlashMessages(state),
-            getStoreConfig: getStoreConfig(state, { formState }),
-            getStoreConfigOrThrow: getStoreConfigOrThrow(state, { formState }),
-            getContextConfig: getContextConfig(state),
-            getExternalSource: getExternalSource(state),
-            getHost: getHost(state),
-            getLocale: getLocale(state),
-            getVariantIdentificationToken: getVariantIdentificationToken(state),
-            getLoadError: getLoadError(state),
-            isLoading: isLoading(state),
-        };
-    });
+    return memoizeOne(
+        (state: ConfigState = DEFAULT_STATE, formState: FormFieldsState): ConfigSelector => {
+            return {
+                getConfig: getConfig(state),
+                getFlashMessages: getFlashMessages(state),
+                getStoreConfig: getStoreConfig(state, { formState }),
+                getStoreConfigOrThrow: getStoreConfigOrThrow(state, { formState }),
+                getContextConfig: getContextConfig(state),
+                getExternalSource: getExternalSource(state),
+                getHost: getHost(state),
+                getLocale: getLocale(state),
+                getVariantIdentificationToken: getVariantIdentificationToken(state),
+                getLoadError: getLoadError(state),
+                isLoading: isLoading(state),
+            };
+        },
+    );
 }

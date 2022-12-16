@@ -1,5 +1,9 @@
 import { CheckoutStore } from '../../../../checkout';
-import { InvalidArgumentError, NotInitializedError, NotInitializedErrorType } from '../../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    NotInitializedError,
+    NotInitializedErrorType,
+} from '../../../../common/error/errors';
 import { HostedForm, HostedFormFactory } from '../../../../hosted-form';
 import { OrderActionCreator } from '../../../../order';
 import { PaymentArgumentInvalidError } from '../../../errors';
@@ -15,7 +19,7 @@ export class CardSubStrategy implements SubStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _hostedFormFactory: HostedFormFactory,
-        private _ppsdkStepHandler: StepHandler
+        private _ppsdkStepHandler: StepHandler,
     ) {}
 
     async execute(settings: SubStrategySettings): Promise<void> {
@@ -37,16 +41,15 @@ export class CardSubStrategy implements SubStrategy {
 
         const { response } = payload;
 
-        const humanVerificationCallback = async (additionalAction: PaymentAdditionalAction): Promise<void> => await this.execute({ additionalAction, ...settings });
+        const humanVerificationCallback = async (
+            additionalAction: PaymentAdditionalAction,
+        ): Promise<void> => this.execute({ additionalAction, ...settings });
 
-        await this._ppsdkStepHandler.handle(
-            response,
-            {
-                continue: {
-                    humanVerification: humanVerificationCallback,
-                },
-            }
-        );
+        await this._ppsdkStepHandler.handle(response, {
+            continue: {
+                humanVerification: humanVerificationCallback,
+            },
+        });
 
         await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
     }
@@ -54,7 +57,8 @@ export class CardSubStrategy implements SubStrategy {
     async initialize(options?: PaymentInitializeOptions): Promise<void> {
         const formOptions = options && options.creditCard && options.creditCard.form;
         const { config } = this._store.getState();
-        const { paymentSettings: { bigpayBaseUrl: host = '' } = {} } = config.getStoreConfig() || {};
+        const { paymentSettings: { bigpayBaseUrl: host = '' } = {} } =
+            config.getStoreConfig() || {};
 
         if (!formOptions) {
             throw new InvalidArgumentError();

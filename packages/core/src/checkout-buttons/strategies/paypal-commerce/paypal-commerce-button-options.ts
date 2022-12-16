@@ -1,5 +1,4 @@
 import { BuyNowCartRequestBody } from '../../../cart';
-
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal-commerce';
 
 export interface PaypalCommerceButtonInitializeOptions {
@@ -23,7 +22,7 @@ export interface PaypalCommerceButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 
     /**
      * A callback that gets called when payment complete on paypal side.

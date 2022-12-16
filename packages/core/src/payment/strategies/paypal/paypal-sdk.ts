@@ -42,7 +42,6 @@ export interface PaypalButtonOptions {
     onAuthorize?(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
     createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
     onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
-
 }
 
 export interface PaypalClientToken {

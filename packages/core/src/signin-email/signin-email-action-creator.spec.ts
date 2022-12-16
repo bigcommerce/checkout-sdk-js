@@ -20,59 +20,74 @@ describe('SubscriptionsActionCreator', () => {
         errorResponse = getErrorResponse();
         signInEmailRequestSender = new SignInEmailRequestSender(createRequestSender());
 
-        jest.spyOn(signInEmailRequestSender, 'sendSignInEmail').mockImplementation(() => Promise.resolve(response));
-
-        signInEmailActionCreator = new SignInEmailActionCreator(
-            signInEmailRequestSender
+        jest.spyOn(signInEmailRequestSender, 'sendSignInEmail').mockImplementation(() =>
+            Promise.resolve(response),
         );
+
+        signInEmailActionCreator = new SignInEmailActionCreator(signInEmailRequestSender);
     });
 
     describe('#sendSignInEmail()', () => {
         describe('when store has a signed-in shopper', () => {
             it('emits billing actions if able to continue as guest', async () => {
-                const actions = await from(signInEmailActionCreator.sendSignInEmail({
-                    email: 'f',
-                }))
+                const actions = await from(
+                    signInEmailActionCreator.sendSignInEmail({
+                        email: 'f',
+                    }),
+                )
                     .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
                     { type: SignInEmailActionType.SendSignInEmailRequested },
-                    { type: SignInEmailActionType.SendSignInEmailSucceeded, payload: response.body },
+                    {
+                        type: SignInEmailActionType.SendSignInEmailSucceeded,
+                        payload: response.body,
+                    },
                 ]);
             });
 
             it('emits error actions if unable to continue as guest', async () => {
-                jest.spyOn(signInEmailRequestSender, 'sendSignInEmail')
-                    .mockReturnValue(Promise.reject(getErrorResponse()));
+                jest.spyOn(signInEmailRequestSender, 'sendSignInEmail').mockReturnValue(
+                    Promise.reject(getErrorResponse()),
+                );
 
-                const errorHandler = jest.fn(action => of(action));
+                const errorHandler = jest.fn((action) => of(action));
 
-                const actions = await from(signInEmailActionCreator.sendSignInEmail({
-                    email: 'f',
-                }))
-                    .pipe(
-                        catchError(errorHandler),
-                        toArray()
-                    )
+                const actions = await from(
+                    signInEmailActionCreator.sendSignInEmail({
+                        email: 'f',
+                    }),
+                )
+                    .pipe(catchError(errorHandler), toArray())
                     .toPromise();
 
                 expect(errorHandler).toHaveBeenCalled();
                 expect(actions).toEqual([
                     { type: SignInEmailActionType.SendSignInEmailRequested },
-                    { type: SignInEmailActionType.SendSignInEmailFailed, payload: errorResponse, error: true },
+                    {
+                        type: SignInEmailActionType.SendSignInEmailFailed,
+                        payload: errorResponse,
+                        error: true,
+                    },
                 ]);
             });
 
             it('sends request to create billing address', async () => {
-                await from(signInEmailActionCreator.sendSignInEmail({
-                    email: 'f',
-                    redirectUrl: 'f.c',
-                }, {}))
-                    .toPromise();
+                await from(
+                    signInEmailActionCreator.sendSignInEmail(
+                        {
+                            email: 'f',
+                            redirectUrl: 'f.c',
+                        },
+                        {},
+                    ),
+                ).toPromise();
 
-                expect(signInEmailRequestSender.sendSignInEmail)
-                    .toHaveBeenCalledWith({ email: 'f', redirectUrl: 'f.c' }, {});
+                expect(signInEmailRequestSender.sendSignInEmail).toHaveBeenCalledWith(
+                    { email: 'f', redirectUrl: 'f.c' },
+                    {},
+                );
             });
         });
     });

@@ -7,9 +7,7 @@ import { PickupOptionAPIRequestBody, PickupOptionResponse } from './pickup-optio
 const url = '/api/storefront/pickup-options';
 
 export default class PickupOptionRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
     fetchPickupOptions(query: PickupOptionAPIRequestBody): Promise<Response<PickupOptionResponse>> {
         return this._requestSender.post(url, {

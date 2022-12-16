@@ -3,31 +3,33 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { Masterpass, MasterpassHostWindow } from './masterpass';
+
 interface MasterpassScriptLoaderParams {
     useMasterpassSrc: boolean;
     language: string;
     testMode?: boolean;
     checkoutId?: string;
-  }
-export default class MasterpassScriptLoader {
+}
 
+export default class MasterpassScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
-        public _window: MasterpassHostWindow = window
+        public _window: MasterpassHostWindow = window,
     ) {}
 
-    async load({ useMasterpassSrc, language, testMode, checkoutId }: MasterpassScriptLoaderParams): Promise<Masterpass> {
-
+    async load({
+        useMasterpassSrc,
+        language,
+        testMode,
+        checkoutId,
+    }: MasterpassScriptLoaderParams): Promise<Masterpass> {
         if (useMasterpassSrc) {
             const subdomain = testMode ? 'sandbox.' : '';
-            const params = [
-                `locale=${language}`,
-                `checkoutid=${checkoutId}`,
-            ];
+            const params = [`locale=${language}`, `checkoutid=${checkoutId}`];
 
             const sourceUrl = [
-               `https://${subdomain}src.mastercard.com/srci/integration/merchant.js`,
-               params.join('&'),
+                `https://${subdomain}src.mastercard.com/srci/integration/merchant.js`,
+                params.join('&'),
             ].join('?');
 
             await this._scriptLoader.loadScript(sourceUrl);
@@ -37,10 +39,11 @@ export default class MasterpassScriptLoader {
             }
 
             return this._window.masterpass;
-
         }
 
-        await this._scriptLoader.loadScript(`//${testMode ? 'sandbox.' : ''}masterpass.com/integration/merchant.js`);
+        await this._scriptLoader.loadScript(
+            `//${testMode ? 'sandbox.' : ''}masterpass.com/integration/merchant.js`,
+        );
 
         if (!this._window.masterpass) {
             throw new PaymentMethodClientUnavailableError();

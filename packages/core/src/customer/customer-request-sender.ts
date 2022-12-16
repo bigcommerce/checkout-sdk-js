@@ -8,29 +8,50 @@ import CustomerCredentials from './customer-credentials';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 
 export default class CustomerRequestSender {
-    constructor(
-        private _requestSender: RequestSender
-    ) {}
+    constructor(private _requestSender: RequestSender) {}
 
-    createAccount(customerAccount: CustomerAccountInternalRequestBody, { timeout }: RequestOptions = {}): Promise<Response<{}>> {
+    createAccount(
+        customerAccount: CustomerAccountInternalRequestBody,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<{}>> {
         const url = '/api/storefront/customer';
 
-        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS, body: customerAccount });
+        return this._requestSender.post(url, {
+            timeout,
+            headers: SDK_VERSION_HEADERS,
+            body: customerAccount,
+        });
     }
 
-    createAddress(customerAddress: CustomerAddressRequestBody, { timeout }: RequestOptions = {}): Promise<Response<Customer>> {
+    createAddress(
+        customerAddress: CustomerAddressRequestBody,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<Customer>> {
         const url = `/api/storefront/customer-address`;
 
-        return this._requestSender.post<Customer>(url, { timeout, headers: SDK_VERSION_HEADERS, body: customerAddress });
+        return this._requestSender.post<Customer>(url, {
+            timeout,
+            headers: SDK_VERSION_HEADERS,
+            body: customerAddress,
+        });
     }
 
-    signInCustomer(credentials: CustomerCredentials, { timeout }: RequestOptions = {}): Promise<Response<InternalCustomerResponseBody>> {
+    signInCustomer(
+        credentials: CustomerCredentials,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<InternalCustomerResponseBody>> {
         const url = '/internalapi/v1/checkout/customer';
 
-        return this._requestSender.post(url, { timeout, headers: SDK_VERSION_HEADERS, body: credentials });
+        return this._requestSender.post(url, {
+            timeout,
+            headers: SDK_VERSION_HEADERS,
+            body: credentials,
+        });
     }
 
-    signOutCustomer({ timeout }: RequestOptions = {}): Promise<Response<InternalCustomerResponseBody>> {
+    signOutCustomer({ timeout }: RequestOptions = {}): Promise<
+        Response<InternalCustomerResponseBody>
+    > {
         const url = '/internalapi/v1/checkout/customer';
 
         return this._requestSender.delete(url, { timeout, headers: SDK_VERSION_HEADERS });

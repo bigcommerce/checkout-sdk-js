@@ -7,9 +7,13 @@ import { ShopperCurrency, StoreProfile } from '../config';
 import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 
-import { isGoogleAnalyticsAvailable, isPayloadSizeLimitReached, sendGoogleAnalytics } from './analytics-tracker-ga';
+import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
+import {
+    isGoogleAnalyticsAvailable,
+    isPayloadSizeLimitReached,
+    sendGoogleAnalytics,
+} from './analytics-tracker-ga';
 import { AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
@@ -36,28 +40,25 @@ const ANALYTIC_STEPS: { [key: string]: AnalyticStepId } = {
 export default class AnalyticsStepTracker implements StepTracker {
     private _checkoutStarted = false;
     private _completedSteps: { [key: string]: boolean } = {};
-    private _viewedSteps: { [key in AnalyticStepId]?: boolean; } = {};
-    private _analyticStepOrder: AnalyticStepType[] = [
-        'customer',
-        'shipping',
-        'billing',
-        'payment',
-    ];
+    private _viewedSteps: { [key in AnalyticStepId]?: boolean } = {};
+    private _analyticStepOrder: AnalyticStepType[] = ['customer', 'shipping', 'billing', 'payment'];
 
     constructor(
         private checkoutService: CheckoutService,
         private analyticsExtraItemsManager: AnalyticsExtraItemsManager,
         private analytics: AnalyticsTracker,
-        { checkoutSteps }: StepTrackerConfig = {}
+        { checkoutSteps }: StepTrackerConfig = {},
     ) {
         if (checkoutSteps !== undefined) {
-            if (checkoutSteps.some(value => !(value in ANALYTIC_STEPS))) {
+            if (checkoutSteps.some((value) => !(value in ANALYTIC_STEPS))) {
                 throw new InvalidArgumentError(
-                    `Invalid checkout steps provided. Valid values are: ${keys(ANALYTIC_STEPS).join(', ')}.`
+                    `Invalid checkout steps provided. Valid values are: ${keys(ANALYTIC_STEPS).join(
+                        ', ',
+                    )}.`,
                 );
             }
-            this._analyticStepOrder = checkoutSteps;
 
+            this._analyticStepOrder = checkoutSteps;
         }
     }
 
@@ -77,24 +78,23 @@ export default class AnalyticsStepTracker implements StepTracker {
             grandTotal,
             shippingCostTotal,
             taxTotal,
-            cart: {
-                lineItems,
-                discountAmount,
-                id,
-            },
+            cart: { lineItems, discountAmount, id },
         } = checkout;
 
         const extraItemsData = this.analyticsExtraItemsManager.saveExtraItemsData(id, lineItems);
 
-        this.analytics.track('Checkout Started', this.getTrackingPayload({
-            revenue: grandTotal,
-            shipping: shippingCostTotal,
-            tax: taxTotal,
-            discount: discountAmount,
-            coupons,
-            lineItems,
-            extraItemsData,
-        }));
+        this.analytics.track(
+            'Checkout Started',
+            this.getTrackingPayload({
+                revenue: grandTotal,
+                shipping: shippingCostTotal,
+                tax: taxTotal,
+                discount: discountAmount,
+                coupons,
+                lineItems,
+                extraItemsData,
+            }),
+        );
 
         this._checkoutStarted = true;
     }
@@ -128,8 +128,8 @@ export default class AnalyticsStepTracker implements StepTracker {
             return;
         }
 
-        const isMissingOrdersExperimentEnabled = this.checkoutService.getState().data
-            .getConfig()?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
+        const isMissingOrdersExperimentEnabled = this.checkoutService.getState().data.getConfig()
+            ?.checkoutSettings.features['DATA-6891.missing_orders_within_GA'];
 
         const payload = this.getTrackingPayload({
             orderId,
@@ -142,31 +142,29 @@ export default class AnalyticsStepTracker implements StepTracker {
             lineItems,
         });
 
-        if (isMissingOrdersExperimentEnabled && isGoogleAnalyticsAvailable() && isPayloadSizeLimitReached(payload)) {
-            sendGoogleAnalytics(
-                'transaction',
-                {
+        if (
+            isMissingOrdersExperimentEnabled &&
+            isGoogleAnalyticsAvailable() &&
+            isPayloadSizeLimitReached(payload)
+        ) {
+            sendGoogleAnalytics('transaction', {
+                '&ti': payload.orderId,
+                '&ta': payload.affiliation,
+                '&tr': payload.revenue,
+                '&ts': payload.shipping,
+                '&tt': payload.tax,
+                '&tcc': payload.coupon,
+                '&cu': payload.currency,
+            });
+            payload.products.forEach((product) => {
+                sendGoogleAnalytics('item', {
                     '&ti': payload.orderId,
-                    '&ta': payload.affiliation,
-                    '&tr': payload.revenue,
-                    '&ts': payload.shipping,
-                    '&tt': payload.tax,
-                    '&tcc': payload.coupon,
-                    '&cu': payload.currency,
-                }
-            );
-            payload.products.forEach(product => {
-                sendGoogleAnalytics(
-                    'item',
-                    {
-                        '&ti': payload.orderId,
-                        '&in': product.name,
-                        '&ic': product.sku,
-                        '&iv': `${product.category}`,
-                        '&ip': product.price,
-                        '&iq': product.quantity,
-                    }
-                );
+                    '&in': product.name,
+                    '&ic': product.sku,
+                    '&iv': `${product.category}`,
+                    '&ip': product.price,
+                    '&iq': product.quantity,
+                });
             });
 
             // TODO: decide how to send large orders to Segment without sending to GA again
@@ -257,9 +255,8 @@ export default class AnalyticsStepTracker implements StepTracker {
         this.analytics.track('Checkout Step Completed', payload);
 
         const shippingMethodId = shippingMethod ? shippingMethod.id : '';
-        const completedStepId = stepId === AnalyticStepId.SHIPPING ?
-            `${stepId}-${shippingMethodId}` :
-            stepId;
+        const completedStepId =
+            stepId === AnalyticStepId.SHIPPING ? `${stepId}-${shippingMethodId}` : stepId;
 
         this._completedSteps[completedStepId] = true;
     }
@@ -293,7 +290,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             shipping: this.toShopperCurrency(shipping),
             tax: this.toShopperCurrency(tax),
             discount: this.toShopperCurrency(discount),
-            coupon: (coupons || []).map(coupon => coupon.code.toUpperCase()).join(','),
+            coupon: (coupons || []).map((coupon) => coupon.code.toUpperCase()).join(','),
             currency: code,
             products: this.getProducts(extraItemsData, lineItems),
         };
@@ -303,11 +300,14 @@ export default class AnalyticsStepTracker implements StepTracker {
         const shippingOption = this.getSelectedShippingOption();
         const shippingMethodId = shippingOption ? shippingOption.id : '';
 
-        return Object.prototype.hasOwnProperty.call(this._completedSteps, stepId) ||
-            (
-                stepId === AnalyticStepId.SHIPPING &&
-                Object.prototype.hasOwnProperty.call(this._completedSteps, `${stepId}-${shippingMethodId}`)
-            );
+        return (
+            Object.prototype.hasOwnProperty.call(this._completedSteps, stepId) ||
+            (stepId === AnalyticStepId.SHIPPING &&
+                Object.prototype.hasOwnProperty.call(
+                    this._completedSteps,
+                    `${stepId}-${shippingMethodId}`,
+                ))
+        );
     }
 
     private hasStepViewed(stepId: AnalyticStepId): boolean {
@@ -332,26 +332,34 @@ export default class AnalyticsStepTracker implements StepTracker {
     }
 
     private getOrder(): Order | undefined {
-        const { data: { getOrder } } = this.checkoutService.getState();
+        const {
+            data: { getOrder },
+        } = this.checkoutService.getState();
 
         return getOrder();
     }
 
     private getCheckout(): Checkout | undefined {
-        const { data: { getCheckout } } = this.checkoutService.getState();
+        const {
+            data: { getCheckout },
+        } = this.checkoutService.getState();
 
         return getCheckout();
     }
 
     private getShopperCurrency(): ShopperCurrency | undefined {
-        const { data: { getConfig } } = this.checkoutService.getState();
+        const {
+            data: { getConfig },
+        } = this.checkoutService.getState();
         const config = getConfig();
 
         return config && config.shopperCurrency;
     }
 
     private getStoreProfile(): StoreProfile | undefined {
-        const { data: { getConfig } } = this.checkoutService.getState();
+        const {
+            data: { getConfig },
+        } = this.checkoutService.getState();
         const config = getConfig();
 
         return config && config.storeProfile;
@@ -367,22 +375,20 @@ export default class AnalyticsStepTracker implements StepTracker {
         const { data } = this.checkoutService.getState();
         const shippingOption = data.getSelectedShippingOption();
 
-        return (shippingOption && shippingOption.id && shippingOption.description) ?
-            shippingOption :
-            null;
+        return shippingOption && shippingOption.id && shippingOption.description
+            ? shippingOption
+            : null;
     }
 
     private getPaymentMethodName(): string {
         const { data } = this.checkoutService.getState();
         const paymentMethod = data.getSelectedPaymentMethod();
 
-        return (paymentMethod && paymentMethod.config) ?
-            paymentMethod.config.displayName || '' :
-            '';
+        return paymentMethod && paymentMethod.config ? paymentMethod.config.displayName || '' : '';
     }
 
     private getProducts(itemsData: ExtraItemsData, lineItems: LineItemMap): AnalyticsProduct[] {
-        const customItems: AnalyticsProduct[] = (lineItems.customItems || []).map(item => ({
+        const customItems: AnalyticsProduct[] = (lineItems.customItems || []).map((item) => ({
             product_id: item.id,
             sku: item.sku,
             price: item.listPrice,
@@ -390,7 +396,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             name: item.name,
         }));
 
-        const giftCertificateItems: AnalyticsProduct[] = lineItems.giftCertificates.map(item => {
+        const giftCertificateItems: AnalyticsProduct[] = lineItems.giftCertificates.map((item) => {
             return {
                 product_id: item.id,
                 price: this.toShopperCurrency(item.amount),
@@ -402,11 +408,11 @@ export default class AnalyticsStepTracker implements StepTracker {
         const physicalAndDigitalItems: AnalyticsProduct[] = [
             ...lineItems.physicalItems,
             ...lineItems.digitalItems,
-        ].map(item => {
+        ].map((item) => {
             let itemAttributes;
 
             if (item.options && item.options.length) {
-                itemAttributes = item.options.map(option => `${option.name}:${option.value}`);
+                itemAttributes = item.options.map((option) => `${option.name}:${option.value}`);
                 itemAttributes.sort();
             }
 
@@ -423,11 +429,7 @@ export default class AnalyticsStepTracker implements StepTracker {
             };
         });
 
-        return [
-            ...customItems,
-            ...physicalAndDigitalItems,
-            ...giftCertificateItems,
-        ];
+        return [...customItems, ...physicalAndDigitalItems, ...giftCertificateItems];
     }
 }
 

@@ -39,7 +39,10 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
     };
 }
 
-export function getStripeUPEInitializeOptionsMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, style: {[key: string]: string} = {fieldText: '#ccc'}): PaymentInitializeOptions {
+export function getStripeUPEInitializeOptionsMock(
+    stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
+    style: { [key: string]: string } = { fieldText: '#ccc' },
+): PaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,
         gatewayId,
@@ -50,7 +53,10 @@ export function getStripeUPEInitializeOptionsMock(stripePaymentMethodType: Strip
     };
 }
 
-export function getStripeUPEOrderRequestBodyMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, shouldSaveInstrument = false): OrderRequestBody {
+export function getStripeUPEOrderRequestBodyMock(
+    stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
+    shouldSaveInstrument = false,
+): OrderRequestBody {
     return {
         payment: {
             methodId: stripePaymentMethodType,
@@ -61,7 +67,10 @@ export function getStripeUPEOrderRequestBodyMock(stripePaymentMethodType: Stripe
     };
 }
 
-export function getStripeUPEWithLinkOrderRequestBodyMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, shouldSaveInstrument = false): OrderRequestBody {
+export function getStripeUPEWithLinkOrderRequestBodyMock(
+    stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
+    shouldSaveInstrument = false,
+): OrderRequestBody {
     return {
         payment: {
             gatewayId: 'stripeupe',
@@ -73,7 +82,10 @@ export function getStripeUPEWithLinkOrderRequestBodyMock(stripePaymentMethodType
     };
 }
 
-export function getStripeUPEOrderRequestBodyVaultMock(stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard, shouldSetAsDefaultInstrument = false): OrderRequestBody {
+export function getStripeUPEOrderRequestBodyVaultMock(
+    stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
+    shouldSetAsDefaultInstrument = false,
+): OrderRequestBody {
     return {
         payment: {
             methodId: stripePaymentMethodType,

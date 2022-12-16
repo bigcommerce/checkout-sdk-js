@@ -1,9 +1,19 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
-import { createPaymentClient, PaymentActionCreator, PaymentRequestSender, PaymentRequestTransformer } from '../..';
+import {
+    createPaymentClient,
+    PaymentActionCreator,
+    PaymentRequestSender,
+    PaymentRequestTransformer,
+} from '../..';
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator,
+    createCheckoutStore,
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getConfig, getConfigState } from '../../../config/configs.mock';
@@ -22,8 +32,8 @@ describe('GooglePayAdyenV2PaymentProcessor', () => {
     let paymentActionCreator: PaymentActionCreator;
     let orderActionCreator: OrderActionCreator;
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
-    const createFromAction = jest.fn((action, {onAdditionalDetails}) => {
-        onAdditionalDetails({action});
+    const createFromAction = jest.fn((action, { onAdditionalDetails }) => {
+        onAdditionalDetails({ action });
     });
 
     beforeEach(() => {
@@ -34,27 +44,30 @@ describe('GooglePayAdyenV2PaymentProcessor', () => {
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
         });
+
         const scriptLoader = createScriptLoader();
         const paymentClient = createPaymentClient(store);
 
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(
-                new CheckoutRequestSender(requestSender)
-            )
+            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
             new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader))
+            new PaymentHumanVerificationHandler(createSpamProtection(scriptLoader)),
         );
         requestSender = createRequestSender();
         adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader());
 
-        jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue({createFromAction});
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(getGooglePayAdyenV2());
-        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(getConfig().storeConfig);
+        jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue({ createFromAction });
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            getGooglePayAdyenV2(),
+        );
+        jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(
+            getConfig().storeConfig,
+        );
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
     });
 
@@ -62,14 +75,16 @@ describe('GooglePayAdyenV2PaymentProcessor', () => {
         processor = new GooglePayAdyenV2PaymentProcessor(
             store,
             paymentActionCreator,
-            adyenV2ScriptLoader
+            adyenV2ScriptLoader,
         );
-        processor.initialize({methodId: 'googlepayadyenv2'});
-        expect(adyenV2ScriptLoader.load).toBeCalled();
+        processor.initialize({ methodId: 'googlepayadyenv2' });
+
+        expect(adyenV2ScriptLoader.load).toHaveBeenCalled();
     });
 
     it('#processAdditionalAction', async () => {
-        processor.initialize({methodId: 'googlepayadyenv2'});
+        processor.initialize({ methodId: 'googlepayadyenv2' });
+
         const err: RequestError = new RequestError({
             body: {
                 errors: [{ code: 'additional_action_required' }],
@@ -83,16 +98,17 @@ describe('GooglePayAdyenV2PaymentProcessor', () => {
         });
 
         await processor.processAdditionalAction(err);
-        expect(createFromAction).toBeCalledTimes(1);
+
+        expect(createFromAction).toHaveBeenCalledTimes(1);
     });
 
     it('#processAdditionalAction failed', async () => {
-        processor.initialize({methodId: 'googlepayadyenv2'});
+        processor.initialize({ methodId: 'googlepayadyenv2' });
 
         try {
-            await processor.processAdditionalAction({code: 'processAdditionalAction'});
+            await processor.processAdditionalAction({ code: 'processAdditionalAction' });
         } catch (error) {
-            expect(error).toStrictEqual({code: 'processAdditionalAction'});
+            expect(error).toStrictEqual({ code: 'processAdditionalAction' });
         }
     });
 });

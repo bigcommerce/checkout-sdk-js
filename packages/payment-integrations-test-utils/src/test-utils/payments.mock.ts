@@ -1,26 +1,41 @@
 import {
     CreditCardInstrument,
     Payment,
-    VaultedInstrument,
+    PaymentMethod,
     PaymentResponseBody,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+    VaultedInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function getPayment(): Payment {
     return {
-        methodId: "authorizenet",
+        methodId: 'authorizenet',
         paymentData: getCreditCardInstrument(),
+    };
+}
+
+export function getPaymentMethod(): PaymentMethod {
+    return {
+        id: 'authorizenet',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [],
+        config: {
+            displayName: 'Authorizenet',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
     };
 }
 
 export function getCreditCardInstrument(): CreditCardInstrument {
     return {
         ccExpiry: {
-            month: "10",
-            year: "2020",
+            month: '10',
+            year: '2020',
         },
-        ccName: "BigCommerce",
-        ccNumber: "4111111111111111",
-        ccCvv: "123",
+        ccName: 'BigCommerce',
+        ccNumber: '4111111111111111',
+        ccCvv: '123',
     };
 }
 
@@ -39,8 +54,6 @@ export function getErrorPaymentResponseBody(): PaymentResponseBody {
         three_ds_result: {},
         fraud_review: true,
         transaction_type: 'purchase',
-        errors: [
-            { code: 'insufficient_funds', message: 'Insufficient funds' },
-        ],
+        errors: [{ code: 'insufficient_funds', message: 'Insufficient funds' }],
     };
 }

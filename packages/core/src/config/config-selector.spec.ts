@@ -2,7 +2,10 @@ import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
 import { FlashMessage } from './config';
-import ConfigSelector, { createConfigSelectorFactory, ConfigSelectorFactory } from './config-selector';
+import ConfigSelector, {
+    ConfigSelectorFactory,
+    createConfigSelectorFactory,
+} from './config-selector';
 import ConfigState from './config-state';
 
 describe('ConfigSelector', () => {
@@ -71,22 +74,19 @@ describe('ConfigSelector', () => {
         it('returns all the flash messages', () => {
             configSelector = createConfigSelector(configStateWithMessages, state.formFields);
 
-            expect(configSelector.getFlashMessages())
-                .toEqual(flashMessages);
+            expect(configSelector.getFlashMessages()).toEqual(flashMessages);
         });
 
         it('returns the flash message matching the provided filter', () => {
             configSelector = createConfigSelector(configStateWithMessages, state.formFields);
 
-            expect(configSelector.getFlashMessages('error'))
-                .toEqual([flashMessages[1]]);
+            expect(configSelector.getFlashMessages('error')).toEqual([flashMessages[1]]);
         });
 
         it('returns empty array when no messages available', () => {
             configSelector = createConfigSelector(state.config, state.formFields);
 
-            expect(configSelector.getFlashMessages())
-                .toEqual([]);
+            expect(configSelector.getFlashMessages()).toEqual([]);
         });
     });
 
@@ -94,10 +94,13 @@ describe('ConfigSelector', () => {
         it('returns the external source', () => {
             const externalSource = 'Partner';
 
-            configSelector = createConfigSelector({
-                ...state.config,
-                meta: { externalSource },
-            }, state.formFields);
+            configSelector = createConfigSelector(
+                {
+                    ...state.config,
+                    meta: { externalSource },
+                },
+                state.formFields,
+            );
 
             expect(configSelector.getExternalSource()).toEqual(externalSource);
         });
@@ -107,10 +110,13 @@ describe('ConfigSelector', () => {
         it('returns error if unable to load config', () => {
             const loadError = new Error();
 
-            configSelector = createConfigSelector({
-                ...state.config,
-                errors: { loadError },
-            }, state.formFields);
+            configSelector = createConfigSelector(
+                {
+                    ...state.config,
+                    errors: { loadError },
+                },
+                state.formFields,
+            );
 
             expect(configSelector.getLoadError()).toEqual(loadError);
         });
@@ -124,18 +130,21 @@ describe('ConfigSelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading config', () => {
-            configSelector = createConfigSelector({
-                ...state.config,
-                statuses: { isLoading: true },
-            }, state.formFields);
+            configSelector = createConfigSelector(
+                {
+                    ...state.config,
+                    statuses: { isLoading: true },
+                },
+                state.formFields,
+            );
 
-            expect(configSelector.isLoading()).toEqual(true);
+            expect(configSelector.isLoading()).toBe(true);
         });
 
         it('returns false if not loading config', () => {
             configSelector = createConfigSelector(state.config, state.formFields);
 
-            expect(configSelector.isLoading()).toEqual(false);
+            expect(configSelector.isLoading()).toBe(false);
         });
     });
 });

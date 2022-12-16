@@ -1,21 +1,21 @@
 import {
-    PhysicalItem,
     DigitalItem,
     GiftCertificateItem,
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+    PhysicalItem,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function getPhysicalItem(): PhysicalItem {
     return {
-        id: "666",
+        id: '666',
         variantId: 71,
         productId: 103,
-        sku: "CLC",
-        name: "Canvas Laundry Cart",
-        url: "/canvas-laundry-cart/",
+        sku: 'CLC',
+        name: 'Canvas Laundry Cart',
+        url: '/canvas-laundry-cart/',
         quantity: 1,
-        brand: "OFS",
+        brand: 'OFS',
         isTaxable: true,
-        imageUrl: "/images/canvas-laundry-cart.jpg",
+        imageUrl: '/images/canvas-laundry-cart.jpg',
         discounts: [],
         discountAmount: 10,
         couponAmount: 0,
@@ -29,77 +29,70 @@ export function getPhysicalItem(): PhysicalItem {
         addedByPromotion: false,
         options: [
             {
-                name: "n",
+                name: 'n',
                 nameId: 1,
-                value: "v",
+                value: 'v',
                 valueId: 3,
             },
         ],
-        categories: [
-            [{ name: "Cat 1" }],
-            [{ name: "Furniture" }, { name: "Bed" }],
-        ],
-        categoryNames: ["Cat 1"],
+        categories: [[{ name: 'Cat 1' }], [{ name: 'Furniture' }, { name: 'Bed' }]],
+        categoryNames: ['Cat 1'],
     };
 }
 
 export function getDigitalItem(): DigitalItem {
     return {
-        id: "667",
+        id: '667',
         variantId: 72,
         productId: 104,
-        sku: "CLX",
-        name: "Digital Book",
-        url: "/digital-book/",
+        sku: 'CLX',
+        name: 'Digital Book',
+        url: '/digital-book/',
         quantity: 1,
-        brand: "Digitalia",
+        brand: 'Digitalia',
         isTaxable: true,
-        imageUrl: "/images/digital-book.jpg",
+        imageUrl: '/images/digital-book.jpg',
         discounts: [],
         discountAmount: 0,
         couponAmount: 0,
         listPrice: 200,
         salePrice: 200,
         comparisonPrice: 200,
-        downloadPageUrl: "url.php",
+        downloadPageUrl: 'url.php',
         downloadFileUrls: [],
-        downloadSize: "",
+        downloadSize: '',
         extendedListPrice: 200,
         extendedSalePrice: 200,
         extendedComparisonPrice: 200,
         addedByPromotion: false,
         options: [
             {
-                name: "m",
+                name: 'm',
                 nameId: 1,
-                value: "l",
+                value: 'l',
                 valueId: 3,
             },
         ],
-        categories: [
-            [{ name: "Cat 1" }],
-            [{ name: "Cat 2" }],
-            [{ name: "Cat 3" }],
-        ],
-        categoryNames: ["Ebooks", "Audio Books"],
+        categories: [[{ name: 'Cat 1' }], [{ name: 'Cat 2' }], [{ name: 'Cat 3' }]],
+        categoryNames: ['Ebooks', 'Audio Books'],
     };
 }
 
 export function getGiftCertificateItem(): GiftCertificateItem {
     return {
-        id: "bd391ead-8c58-4105-b00e-d75d233b429a",
-        name: "$100 Gift Certificate",
-        message: "message",
+        id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+        name: '$100 Gift Certificate',
+        message: 'message',
         amount: 100,
         taxable: false,
-        theme: "General",
+        theme: 'General',
         sender: {
-            name: "pablo",
-            email: "pa@blo.com",
+            name: 'pablo',
+            email: 'pa@blo.com',
         },
         recipient: {
-            name: "luis",
-            email: "lu@is.com",
+            name: 'luis',
+            email: 'lu@is.com',
         },
     };
 }

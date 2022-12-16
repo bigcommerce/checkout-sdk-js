@@ -40,7 +40,7 @@ describe('FormSelector', () => {
             const forms = formSelector.getShippingAddressFields(countries, '');
             const country = find(forms, { name: 'countryCode' });
 
-            expect(country!.fieldType).toEqual('dropdown');
+            expect(country!.fieldType).toBe('dropdown');
             expect(country!.options!.items).toEqual([
                 { value: 'AU', label: 'Australia' },
                 { value: 'JP', label: 'Japan' },
@@ -51,7 +51,7 @@ describe('FormSelector', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
             const country = find(forms, { name: 'countryCode' });
 
-            expect(country!.default).toEqual('JP');
+            expect(country!.default).toBe('JP');
         });
 
         it('includes the provinces for the selected country', () => {
@@ -59,10 +59,8 @@ describe('FormSelector', () => {
             const province = find(forms, { name: 'stateOrProvinceCode' });
 
             expect(province!.required).toBe(true);
-            expect(province!.fieldType).toEqual('dropdown');
-            expect(province!.options!.items).toEqual([
-                { value: 'NSW', label: 'New South Wales' },
-            ]);
+            expect(province!.fieldType).toBe('dropdown');
+            expect(province!.options!.items).toEqual([{ value: 'NSW', label: 'New South Wales' }]);
         });
 
         it('does not make provinces required if we do not have them in the countries list', () => {
@@ -70,17 +68,16 @@ describe('FormSelector', () => {
             const province = find(forms, { name: 'stateOrProvince' });
 
             expect(province!.required).toBe(false);
-            expect(province!.fieldType).not.toEqual('dropdown');
+            expect(province!.fieldType).not.toBe('dropdown');
         });
 
         it('make provinces required if requireState flag is on', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
             const province = find(forms, { name: 'stateOrProvinceCode' });
+
             expect(province!.required).toBe(true);
-            expect(province!.fieldType).toEqual('dropdown');
-            expect(province!.options!.items).toEqual([
-                { value: 'NSW', label: 'New South Wales' },
-            ]);
+            expect(province!.fieldType).toBe('dropdown');
+            expect(province!.options!.items).toEqual([{ value: 'NSW', label: 'New South Wales' }]);
         });
 
         it('makes postcode required for countries that require it', () => {
@@ -130,7 +127,7 @@ describe('FormSelector', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'US');
             const country = find(forms, { name: 'countryCode' });
 
-            expect(country!.default).toEqual('US');
+            expect(country!.default).toBe('US');
         });
 
         it('includes the provinces for the selected country', () => {
@@ -148,8 +145,9 @@ describe('FormSelector', () => {
         it('make provinces optional when requireState flag is off', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'US');
             const province = find(forms, { name: 'stateOrProvinceCode' });
+
             expect(province!.required).toBe(false);
-            expect(province!.fieldType).toEqual('dropdown');
+            expect(province!.fieldType).toBe('dropdown');
             expect(province!.options!.items).toEqual([
                 { value: 'CA', label: 'California' },
                 { value: 'TX', label: 'Texas' },

@@ -1,4 +1,9 @@
-import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+import {
+    createRequestSender,
+    createTimeout,
+    RequestSender,
+    Response,
+} from '@bigcommerce/request-sender';
 
 import { SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -142,7 +147,10 @@ describe('CustomerRequestSender', () => {
             const output = await customerRequestSender.signOutCustomer();
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', { timeout: undefined, headers: SDK_VERSION_HEADERS });
+            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
+                timeout: undefined,
+                headers: SDK_VERSION_HEADERS,
+            });
         });
 
         it('signs out customer with timeout', async () => {
@@ -150,7 +158,10 @@ describe('CustomerRequestSender', () => {
             const output = await customerRequestSender.signOutCustomer(options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', options);
+            expect(requestSender.delete).toHaveBeenCalledWith(
+                '/internalapi/v1/checkout/customer',
+                options,
+            );
         });
     });
 });

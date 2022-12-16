@@ -25,16 +25,15 @@ const isParameters = (x: unknown): x is Parameters => {
     return isArray(availableMethods);
 };
 
-export const isHumanVerification = (body: PaymentsAPIResponse['body']): body is HumanVerification => (
+export const isHumanVerification = (body: PaymentsAPIResponse['body']): body is HumanVerification =>
     get(body, 'type') === 'continue' &&
     get(body, 'code') === 'resubmit_with_human_verification' &&
-    isParameters(get(body, 'parameters'))
-);
+    isParameters(get(body, 'parameters'));
 
 export const handleHumanVerification = async (
     { available_methods }: Parameters,
     humanVerificationHandler?: PaymentHumanVerificationHandler,
-    callback?: (additionalAction: PaymentAdditionalAction) => Promise<void>
+    callback?: (additionalAction: PaymentAdditionalAction) => Promise<void>,
 ): Promise<void> => {
     if (!callback) {
         throw new Error('PPSDK human verification callback function is missing.');
@@ -51,7 +50,10 @@ export const handleHumanVerification = async (
     // Only one method is expected because google recaptcha only is supported
     const { id, parameters } = available_methods[0];
 
-    const additionalAction: PaymentAdditionalAction = await humanVerificationHandler.handle(id, parameters.key);
+    const additionalAction: PaymentAdditionalAction = await humanVerificationHandler.handle(
+        id,
+        parameters.key,
+    );
 
-    return await callback(additionalAction);
+    return callback(additionalAction);
 };

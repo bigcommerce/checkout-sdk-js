@@ -2,7 +2,11 @@ import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+} from '../common/error/errors';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
@@ -20,10 +24,14 @@ const checkoutcomStrategies: {
     ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
     fawry: PaymentStrategyType.CHECKOUTCOM_FAWRY,
 };
-export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, PaymentStrategyType> {
+
+export default class PaymentStrategyRegistry extends Registry<
+    PaymentStrategy,
+    PaymentStrategyType
+> {
     constructor(
         private _store: ReadableDataStore<InternalCheckoutSelectors>,
-        options?: PaymentStrategyRegistryOptions
+        options?: PaymentStrategyRegistryOptions,
     ) {
         super(options);
     }
@@ -36,7 +44,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
         const token = this._getToken(paymentMethod);
 
         const cacheToken = [paymentMethod.gateway, paymentMethod.id]
-            .filter(value => value !== undefined && value !== null)
+            .filter((value) => value !== undefined && value !== null)
             .join('-');
 
         return this.get(token, cacheToken);
@@ -87,12 +95,10 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
             return PaymentStrategyType.OFFSITE;
         }
 
-        return PaymentStrategyType.CREDIT_CARD;
+        throw new InvalidArgumentError(`'${methodId}' is not registered.`);
     }
 
-    private _hasFactoryForMethod(
-        methodId: string
-    ): methodId is PaymentStrategyType {
+    private _hasFactoryForMethod(methodId: string): methodId is PaymentStrategyType {
         return this._hasFactory(methodId);
     }
 
@@ -105,12 +111,17 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
 
         const { clientSidePaymentProviders } = config.paymentSettings;
 
-        if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen' || paymentMethod.gateway === 'barclaycard') {
+        if (
+            !clientSidePaymentProviders ||
+            paymentMethod.gateway === 'adyen' ||
+            paymentMethod.gateway === 'barclaycard'
+        ) {
             return false;
         }
 
-        return !some(clientSidePaymentProviders, id =>
-            paymentMethod.id === id || paymentMethod.gateway === id
+        return !some(
+            clientSidePaymentProviders,
+            (id) => paymentMethod.id === id || paymentMethod.gateway === id,
         );
     }
 }

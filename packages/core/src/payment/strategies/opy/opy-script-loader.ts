@@ -13,10 +13,7 @@ const SOURCES = {
 };
 
 export default class OpyScriptLoader {
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        private _window: OpyHostWindow = window
-    ) { }
+    constructor(private _scriptLoader: ScriptLoader, private _window: OpyHostWindow = window) {}
 
     async loadOpyWidget(region = OpyRegion.AU): Promise<OpyWidget> {
         await this._scriptLoader.loadScript(SOURCES[region]);
