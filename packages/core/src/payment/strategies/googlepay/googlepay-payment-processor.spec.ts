@@ -523,17 +523,23 @@ describe('GooglePayPaymentProcessor', () => {
                 createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
             };
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getGooglePay());
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve(store.getState()));
-            jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(Promise.resolve(getGooglePayPaymentDataRequestMock()));
-        })
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                getGooglePay(),
+            );
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+                Promise.resolve(store.getState()),
+            );
+            jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(
+                Promise.resolve(getGooglePayPaymentDataRequestMock()),
+            );
+        });
 
         it('should updates payment data request', async () => {
             const googlePaymentDataMock = getGooglePayPaymentDataRequestMock();
             const payloadToUpdate = {
                 currencyCode: 'EUR',
                 totalPrice: '1.02',
-            }
+            };
 
             googlePaymentDataMock.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
             googlePaymentDataMock.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
@@ -544,8 +550,7 @@ describe('GooglePayPaymentProcessor', () => {
 
             await processor.displayWallet();
 
-            expect(clientMock.loadPaymentData).toBeCalledWith(googlePaymentDataMock);
-
+            expect(clientMock.loadPaymentData).toHaveBeenCalledWith(googlePaymentDataMock);
         });
-    })
+    });
 });

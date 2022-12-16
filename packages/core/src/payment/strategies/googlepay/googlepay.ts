@@ -206,4 +206,4 @@ export interface GooglePayPaymentDataRequestV2 {
     };
 }
 
-export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>
+export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>;

@@ -77,7 +77,9 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         }
 
         const currencyCode = checkout?.cart.currency.code || '';
-        const totalPrice = checkout?.outstandingBalance ? round(checkout.outstandingBalance, 2).toFixed(2) : '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
 
         const googlePayBraintreePaymentDataRequest: GooglePayBraintreeDataRequest = {
             merchantInfo: {

@@ -22,5 +22,5 @@ export interface GooglePayButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    }
+    };
 }

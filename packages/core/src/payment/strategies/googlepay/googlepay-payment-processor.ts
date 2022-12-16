@@ -8,7 +8,7 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-} from '../../../common/error/errors'
+} from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import { ConsignmentActionCreator } from '../../../shipping';
@@ -72,7 +72,7 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
-    updatePaymentDataRequest(payloadToUpdate: { currencyCode: string; totalPrice: string; }) {
+    updatePaymentDataRequest(payloadToUpdate: { currencyCode: string; totalPrice: string }) {
         const paymentDataRequest = this._getPaymentDataRequest();
 
         paymentDataRequest.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
@@ -89,7 +89,9 @@ export default class GooglePayPaymentProcessor {
         return this._googlePayClient.loadPaymentData(this._getPaymentDataRequest());
     }
 
-    handleSuccess(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> | Promise<any> {
+    handleSuccess(
+        paymentData: GooglePaymentData,
+    ): Promise<InternalCheckoutSelectors> | Promise<any> {
         return this._googlePayInitializer
             .parseResponse(paymentData)
             .then((tokenizePayload) => this._postForm(tokenizePayload))
@@ -177,7 +179,9 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _getCheckout(state: InternalCheckoutSelectors): Checkout | undefined {
-        if (this._isBuyNowFlow) return;
+        if (this._isBuyNowFlow) {
+            return;
+        }
 
         const checkout = state.checkout.getCheckout();
 
@@ -291,7 +295,7 @@ export default class GooglePayPaymentProcessor {
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),
-                ...buyNowCartId && { cart_id: buyNowCartId }
+                ...(buyNowCartId && { cart_id: buyNowCartId }),
             },
         });
     }
@@ -301,9 +305,9 @@ export default class GooglePayPaymentProcessor {
     ): Promise<InternalCheckoutSelectors> | undefined {
         const remoteBillingAddress = this._store.getState().billingAddress.getBillingAddress();
 
-            if (!remoteBillingAddress) {
-                throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
-            }
+        if (!remoteBillingAddress) {
+            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+        }
 
         const googlePayAddressMapped = this._mapGooglePayAddressToBillingAddress(
             paymentData,

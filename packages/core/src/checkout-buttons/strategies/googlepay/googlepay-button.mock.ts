@@ -34,14 +34,16 @@ export enum Mode {
 
 const buyNowCartRequestBody: BuyNowCartRequestBody = {
     source: 'BUY_NOW',
-    lineItems: [{
-        productId: 1,
-        quantity: 2,
-        optionSelections: {
-            optionId: 11,
-            optionValue: 11,
+    lineItems: [
+        {
+            productId: 1,
+            quantity: 2,
+            optionSelections: {
+                optionId: 11,
+                optionValue: 11,
+            },
         },
-    }],
+    ],
 };
 
 const buyNowOptions = {
@@ -49,7 +51,6 @@ const buyNowOptions = {
         getBuyNowCartRequestBody: () => buyNowCartRequestBody,
     },
 };
-
 
 export function getCheckoutButtonOptions(
     methodId: CheckoutButtonMethodType,
@@ -63,7 +64,10 @@ export function getCheckoutButtonOptions(
     const googlepayauthorizenet = { googlepayauthorizenet: { buttonType: ButtonType.Short } };
     const googlepaybnz = { googlepaybnz: { buttonType: ButtonType.Short } };
     const googlepaybraintree = { googlepaybraintree: { buttonType: ButtonType.Short } };
-    const googlepaybraintreeWithBuyNow = { googlepaybraintree: { buttonType: ButtonType.Short, ...buyNowOptions }, currencyCode: 'USD' };
+    const googlepaybraintreeWithBuyNow = {
+        googlepaybraintree: { buttonType: ButtonType.Short, ...buyNowOptions },
+        currencyCode: 'USD',
+    };
     const googlepaycheckoutcom = { googlepaycheckoutcom: { buttonType: ButtonType.Short } };
     const googlepaycybersourcev2 = { googlepaycybersourcev2: { buttonType: ButtonType.Short } };
     const googlepayorbital = { googlepayorbital: { buttonType: ButtonType.Short } };
