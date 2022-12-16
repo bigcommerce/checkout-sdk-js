@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.312.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.312.0...v1.312.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-6406 Fix payload for offline payment method ([#1735](https://github.com/bigcommerce/checkout-sdk-js/issues/1735)) ([9465d7d](https://github.com/bigcommerce/checkout-sdk-js/commit/9465d7d9f532c65d50d15f7e42839be70befebb1))
+* **payment:** ADYEN-629 added adyen credit card es translation fix ([85e9cbf](https://github.com/bigcommerce/checkout-sdk-js/commit/85e9cbfa52d90a9a711519daf6cd1e608c8582b8))
+
 ## [1.312.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.311.2...v1.312.0) (2022-12-15)
 
 
