@@ -89,9 +89,7 @@ export default class GooglePayPaymentProcessor {
         return this._googlePayClient.loadPaymentData(this._getPaymentDataRequest());
     }
 
-    handleSuccess(
-        paymentData: GooglePaymentData,
-    ): Promise<InternalCheckoutSelectors> | Promise<any> {
+    handleSuccess(paymentData: GooglePaymentData): Promise<InternalCheckoutSelectors> {
         return this._googlePayInitializer
             .parseResponse(paymentData)
             .then((tokenizePayload) => this._postForm(tokenizePayload))
@@ -276,11 +274,9 @@ export default class GooglePayPaymentProcessor {
 
     private _postForm(postPaymentData: TokenizePayload): Promise<Response<void>> {
         const cardInformation = postPaymentData.details;
-        let buyNowCartId: string | undefined;
-
-        if (this._isBuyNowFlow) {
-            buyNowCartId = this._store.getState().cart.getCartOrThrow().id;
-        }
+        const buyNowCartId = this._isBuyNowFlow
+            ? this._store.getState().cart.getCartOrThrow().id
+            : undefined;
 
         return this._requestSender.post('/checkout.php', {
             headers: {
@@ -302,7 +298,7 @@ export default class GooglePayPaymentProcessor {
 
     private _updateBillingAddress(
         paymentData: GooglePaymentData,
-    ): Promise<InternalCheckoutSelectors> | undefined {
+    ): Promise<InternalCheckoutSelectors> {
         const remoteBillingAddress = this._store.getState().billingAddress.getBillingAddress();
 
         if (!remoteBillingAddress) {

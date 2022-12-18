@@ -54,7 +54,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         if (hasBuyNowCartOptions) {
             if (!currencyCode) {
                 throw new InvalidArgumentError(
-                    `Unable to initialize payment because "options.googlepaybraintree.currencyCode" argument is not provided.`,
+                    `Unable to initialize payment because "options.currencyCode" argument is not provided.`,
                 );
             }
         } else {
@@ -90,9 +90,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
+        const handleValidButtonClick = (event: Event) =>
+            this._handleWalletButtonClick(event, { buyNowInitializeOptions }, currencyCode);
+
         const googlePayButton = this._googlePayPaymentProcessor.createButton(
-            (event: Event) =>
-                this._handleWalletButtonClick(event, { buyNowInitializeOptions }, currencyCode),
+            handleValidButtonClick,
             buttonType,
             buttonColor,
         );
