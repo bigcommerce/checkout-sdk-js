@@ -32,7 +32,6 @@ service.initializePayment({
 ### Methods
 
 - [onError](StripeUPEPaymentInitializeOptions.md#onerror)
-- [render](StripeUPEPaymentInitializeOptions.md#render)
 
 ## Properties
 
@@ -65,16 +64,6 @@ Checkout styles from store theme
 | Name | Type |
 | :------ | :------ |
 | `error?` | `Error` |
-
-#### Returns
-
-`void`
-
-___
-
-### render
-
-▸ **render**(): `void`
 
 #### Returns
 
