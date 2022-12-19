@@ -7,7 +7,6 @@ import {
     MissingDataError,
     MissingDataErrorType,
 } from '../common/error/errors';
-import StandardError from '../common/error/errors/standard-error';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
