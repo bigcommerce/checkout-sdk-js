@@ -40,7 +40,6 @@ import {
     StripeUPEClient,
 } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { StripeUPEPaymentInitializeOptions } from './';
 
 const APM_REDIRECT = [
     StripePaymentMethodType.SOFORT,
@@ -113,9 +112,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         this._isMounted = true;
                     }
                 } else {
-                    this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
-                        stripeupe.onError?.(error),
-                    );
+                    this._loadStripeElement(
+                        stripeupe.containerId,
+                        stripeupe.style,
+                        gatewayId,
+                        methodId,
+                    ).catch((error) => stripeupe.onError?.(error));
                 }
             },
             (state) => {
@@ -333,11 +335,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _loadStripeElement(
-        stripeupe: StripeUPEPaymentInitializeOptions,
+        containerId: string,
+        style: { [key: string]: string } | undefined,
         gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render } = stripeupe;
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
@@ -421,10 +423,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 );
             }
         }
-
-        stripeElement.on('ready', () => {
-            render();
-        });
     }
 
     private async _processAdditionalAction(
