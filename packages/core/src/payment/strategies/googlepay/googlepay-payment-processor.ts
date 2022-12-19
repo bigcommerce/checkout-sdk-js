@@ -176,7 +176,7 @@ export default class GooglePayPaymentProcessor {
         };
     }
 
-    private _getCheckout(state: InternalCheckoutSelectors): Checkout | undefined {
+    private _getCheckout(state: InternalCheckoutSelectors): Checkout | void {
         if (this._isBuyNowFlow) {
             return;
         }

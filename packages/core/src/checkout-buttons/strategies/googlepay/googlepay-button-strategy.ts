@@ -186,10 +186,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private async _createBuyNowCart({ buyNowInitializeOptions }: BuyNowInitializeOptions) {
-        if (
-            typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function' &&
-            this._cartRequestSender
-        ) {
+        if (typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
             const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
 
             if (!cartRequestBody) {
@@ -222,7 +219,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
         if (this._buyNowCart && currencyCode) {
-            const payloadToUpdate: { currencyCode: string; totalPrice: string } = {
+            const payloadToUpdate = {
                 currencyCode,
                 totalPrice: String(cart.cartAmount),
             };

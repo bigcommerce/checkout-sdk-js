@@ -12,7 +12,7 @@ export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
 export interface GooglePayInitializer {
     initialize(
-        checkout: Checkout | undefined,
+        checkout: Checkout | void,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
         publishableKey?: string,
