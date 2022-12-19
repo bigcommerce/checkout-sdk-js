@@ -7,6 +7,7 @@ import {
     MissingDataError,
     MissingDataErrorType,
 } from '../common/error/errors';
+import StandardError from '../common/error/errors/standard-error';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
@@ -14,7 +15,6 @@ import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategyType from './payment-strategy-type';
 import { isPPSDKPaymentMethod } from './ppsdk-payment-method';
 import { PaymentStrategy } from './strategies';
-import StandardError from "../common/error/errors/standard-error";
 
 const checkoutcomStrategies: {
     [key: string]: PaymentStrategyType;

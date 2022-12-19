@@ -113,9 +113,7 @@ describe('PaymentStrategyRegistry', () => {
 
             registry = new PaymentStrategyRegistry(store);
 
-            expect(() => registry.getByMethod({ ...getSquare(), id: 'squarev2' })).toThrow(
-                Error,
-            );
+            expect(() => registry.getByMethod({ ...getSquare(), id: 'squarev2' })).toThrow(Error);
             expect(() => registry.getByMethod({ ...getSquare(), id: 'squarev2' })).not.toThrow(
                 InvalidArgumentError,
             );

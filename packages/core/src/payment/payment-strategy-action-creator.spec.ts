@@ -6,11 +6,11 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     createCreditCardPaymentStrategy,
     CreditCardPaymentStrategy as CreditCardPaymentStrategyV2,
 } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { createNoPaymentStrategy } from '@bigcommerce/checkout-sdk/no-payment-integration';
 import {
     OrderFinalizationNotRequiredError as OrderFinalizationNotRequiredErrorV2,
     PaymentStrategyResolveId,
