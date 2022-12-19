@@ -150,7 +150,8 @@ export interface PaypalCheckoutButtonOptions {
     onError(error: Error): void;
     onShippingAddressChange(
         data: ShippingAddressChangeCallbackPayload,
-        actions: any): Promise<void>;
+        actions: any
+    ): Promise<void>;
     onShippingOptionsChange(data: ShippingOptionChangeCallbackPayload): Promise<void>;
     onApprove(data: ApproveCallbackPayload, actions: ApproveCallbackActions): Promise<boolean>;
     onComplete(data: CompleteCallbackDataPayload): void;
