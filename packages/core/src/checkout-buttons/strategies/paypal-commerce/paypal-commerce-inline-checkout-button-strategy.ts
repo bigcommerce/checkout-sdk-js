@@ -98,8 +98,8 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             fundingSource,
             style,
             createOrder: () => this._createOrder(methodId),
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this._onShippingAddressChange(data),
+            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload, actions: any) =>
+                this._onShippingAddressChange(data, actions),
             onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
                 this._onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
@@ -134,6 +134,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
     private async _onShippingAddressChange(
         data: ShippingAddressChangeCallbackPayload,
+        actions: any,
     ): Promise<void> {
         const address = this._getAddress({
             city: data.shippingAddress.city,
@@ -141,6 +142,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
             postalCode: data.shippingAddress.postal_code,
             stateOrProvinceCode: data.shippingAddress.state,
         });
+        console.log('ACTIONS', actions);
 
         // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
         // on this stage we don't have access to valid customer's address accept shipping data
