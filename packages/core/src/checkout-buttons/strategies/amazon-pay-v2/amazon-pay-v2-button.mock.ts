@@ -1,14 +1,30 @@
+import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 export enum Mode {
     Full,
+    BuyNowFlow,
     UndefinedContainer,
     InvalidContainer,
     UndefinedMethodId,
     UndefinedAmazonPay,
 }
+
+const buyNowCartRequestBody: BuyNowCartRequestBody = {
+    source: 'BUY_NOW',
+    lineItems: [
+        {
+            productId: 1,
+            quantity: 2,
+            optionSelections: {
+                optionId: 11,
+                optionValue: 11,
+            },
+        },
+    ],
+};
 
 export function getAmazonPayV2CheckoutButtonOptions(
     mode: Mode = Mode.Full,
@@ -18,6 +34,12 @@ export function getAmazonPayV2CheckoutButtonOptions(
     const undefinedContainerId = { containerId: '' };
     const invalidContainerId = { containerId: 'invalid_container' };
     const amazonPayV2Options = { containerId, amazonpay: getAmazonPayV2ButtonParamsMock() };
+
+    const amazonPayV2BuyNowOptions = {
+        buyNowInitializeOptions: {
+            getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
+        },
+    };
 
     switch (mode) {
         case Mode.UndefinedContainer:
@@ -34,6 +56,9 @@ export function getAmazonPayV2CheckoutButtonOptions(
 
         case Mode.UndefinedAmazonPay:
             return { ...getAmazonPayV2CheckoutButtonOptions(Mode.Full), amazonpay: undefined };
+
+        case Mode.BuyNowFlow:
+            return { ...methodId, containerId, amazonpay: { ...amazonPayV2BuyNowOptions } };
 
         default:
             return { ...methodId, containerId };

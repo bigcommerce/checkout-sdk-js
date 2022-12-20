@@ -2,6 +2,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethod } from '../../';
 import { getConfig, getConfigState } from '../../../../src/config/configs.mock';
+import { BuyNowCartRequestBody } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -20,11 +21,13 @@ import {
     AmazonPayV2NewButtonParams,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
+    AmazonPayV2Price,
     AmazonPayV2SDK,
 } from './amazon-pay-v2';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 import {
+    getAmazonPayBaseButtonParamsMock,
     getAmazonPayV2ButtonParamsMock,
     getAmazonPayV2Ph4ButtonParamsMock,
     getAmazonPayV2SDKMock,
@@ -238,6 +241,101 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
     });
 
+    describe('#prepareCheckoutWithCreationRequestConfig', () => {
+        const containerId = 'amazonpay-container';
+        let amazonPayV2ButtonParams: Required<AmazonPayV2NewButtonParams>;
+        let createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>;
+        let estimatedOrderAmount: AmazonPayV2Price;
+        let productType: AmazonPayV2PayOptions;
+
+        beforeEach(() => {
+            amazonPayV2ButtonParams =
+                getAmazonPayV2Ph4ButtonParamsMock() as Required<AmazonPayV2NewButtonParams>;
+
+            const { publicKeyId, createCheckoutSessionConfig: signedPayload } =
+                amazonPayV2ButtonParams;
+
+            createCheckoutSessionConfig = {
+                publicKeyId,
+                ...signedPayload,
+            };
+
+            estimatedOrderAmount = amazonPayV2ButtonParams.estimatedOrderAmount;
+            productType = amazonPayV2ButtonParams.productType;
+        });
+
+        describe('should initiate checkout successfully:', () => {
+            beforeEach(async () => {
+                await processor.initialize(amazonPayV2Mock);
+                processor.createButton(containerId, amazonPayV2ButtonParams);
+            });
+
+            test('onClick is called to define custom actions', () => {
+                processor.prepareCheckoutWithCreationRequestConfig(() =>
+                    Promise.resolve({
+                        createCheckoutSessionConfig,
+                        estimatedOrderAmount,
+                        productType,
+                    }),
+                );
+
+                const amazonPayV2Button: AmazonPayV2Button = (
+                    amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+                ).mock.results[0].value;
+
+                expect(amazonPayV2Button.onClick).toHaveBeenCalledTimes(1);
+            });
+
+            test('config does not include publicKeyId because it has an environment prefix', async () => {
+                const expectedConfig = {
+                    createCheckoutSessionConfig:
+                        amazonPayV2ButtonParams.createCheckoutSessionConfig,
+                    estimatedOrderAmount,
+                    productType,
+                };
+
+                processor.prepareCheckoutWithCreationRequestConfig(() => {
+                    return Promise.resolve({
+                        createCheckoutSessionConfig,
+                        estimatedOrderAmount,
+                        productType,
+                    });
+                });
+
+                const amazonPayV2Button: AmazonPayV2Button = (
+                    amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+                ).mock.results[0].value;
+                const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
+
+                await customActions();
+
+                expect(amazonPayV2Button.initCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
+            });
+
+            test('config includes publicKeyId because it does not have an environment prefix', async () => {
+                const expectedConfig = {
+                    createCheckoutSessionConfig,
+                    estimatedOrderAmount,
+                    productType,
+                };
+
+                createCheckoutSessionConfig.publicKeyId = 'foo';
+                processor.prepareCheckoutWithCreationRequestConfig(() =>
+                    Promise.resolve(expectedConfig),
+                );
+
+                const amazonPayV2Button: AmazonPayV2Button = (
+                    amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+                ).mock.results[0].value;
+                const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
+
+                await customActions();
+
+                expect(amazonPayV2Button.initCheckout).toHaveBeenNthCalledWith(1, expectedConfig);
+            });
+        });
+    });
+
     describe('#renderAmazonPayButton', () => {
         const CONTAINER_ID = 'container_passed_by_the_client';
         const renderAmazonPayButton = (
@@ -328,6 +426,20 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
 
         describe('should use the new button params from API Version 2:', () => {
+            const buyNowRequestBody: BuyNowCartRequestBody = {
+                source: 'BUY_NOW',
+                lineItems: [
+                    {
+                        productId: 1,
+                        quantity: 2,
+                        optionSelections: {
+                            optionId: 11,
+                            optionValue: 11,
+                        },
+                    },
+                ],
+            };
+
             beforeEach(() => {
                 const storeConfigMock = getConfig().storeConfig;
 
@@ -337,6 +449,26 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
                 jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
                     storeConfigMock,
+                );
+            });
+
+            test('should return the correct basic amazon config for Buy Now flow', async () => {
+                const expectedOptions =
+                    getAmazonPayBaseButtonParamsMock() as AmazonPayV2ButtonParams;
+
+                const storeConfigMock = getConfig().storeConfig;
+
+                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+                    storeConfigMock,
+                );
+
+                await processor.initialize(amazonPayV2Mock);
+                processor.setCartRequestBody(buyNowRequestBody);
+                renderAmazonPayButton();
+
+                expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(
+                    expectedContainerId,
+                    expectedOptions,
                 );
             });
 
