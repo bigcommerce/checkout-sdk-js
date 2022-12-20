@@ -110,6 +110,7 @@ import {
     KlarnaV2ScriptLoader,
     KlarnaV2TokenUpdater,
 } from './strategies/klarnav2';
+import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { MonerisPaymentStrategy } from './strategies/moneris';
@@ -697,6 +698,11 @@ export default function createPaymentStrategyRegistry(
                 formPoster,
                 paymentMethodActionCreator,
             ),
+    );
+
+    registry.register(
+        PaymentStrategyType.LEGACY,
+        () => new LegacyPaymentStrategy(store, orderActionCreator),
     );
 
     registry.register(
