@@ -36,6 +36,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId, paypalcommerceinline } = options;
+        console.log('INIT');
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -136,20 +137,21 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         data: ShippingAddressChangeCallbackPayload,
         actions: any,
     ): Promise<void> {
+        return actions.reject();
         const address = this._getAddress({
             city: data.shippingAddress.city,
             countryCode: data.shippingAddress.country_code,
             postalCode: data.shippingAddress.postal_code,
             stateOrProvinceCode: data.shippingAddress.state,
         });
-        console.log('ACTIONS', actions);
+        console.log('ACTIONS!!!!', actions);
 
         // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
         // on this stage we don't have access to valid customer's address accept shipping data
         await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
         await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
 
-        const shippingOption = this._getShippingOptionOrThrow();
+        const shippingOption = this._getShippingOptionOrThrow('', actions);
 
         await this._store.dispatch(
             this._consignmentActionCreator.selectShippingOption(shippingOption.id),
@@ -276,7 +278,10 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         );
     }
 
-    private _getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
+    private _getShippingOptionOrThrow(
+        selectedShippingOptionId?: string,
+        actions?: any,
+    ): ShippingOption {
         const state = this._store.getState();
         const consignment = state.consignments.getConsignmentsOrThrow()[0];
 
@@ -294,6 +299,7 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const shippingOptionToSelect = selectedShippingOption || recommendedShippingOption;
 
         if (!shippingOptionToSelect) {
+            actions.reject('HELLO');
             throw new Error("Your order can't be shipped to this address");
         }
 
