@@ -117,6 +117,8 @@ export default class BoltPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
+        this._embeddedField?.unmount();
+
         this._boltClient = undefined;
         this._boltEmbedded = undefined;
 

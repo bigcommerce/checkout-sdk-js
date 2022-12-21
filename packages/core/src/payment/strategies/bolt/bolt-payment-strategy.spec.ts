@@ -657,11 +657,22 @@ describe('BoltPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('deinitializes strategy', async () => {
+        it('deinitializes Bolt client script strategy', async () => {
             await strategy.initialize(boltClientScriptInitializationOptions);
             await strategy.deinitialize();
 
             expect(await strategy.deinitialize()).toEqual(store.getState());
+            expect(boltEmbeddedField.unmount).not.toHaveBeenCalled();
+        });
+
+        it('deinitializes Bolt embedded one click strategy', async () => {
+            paymentMethodMock.initializationData.embeddedOneClickEnabled = true;
+            await strategy.initialize(boltEmbeddedScriptInitializationOptions);
+
+            const deinitializeResult = await strategy.deinitialize();
+
+            expect(boltEmbeddedField.unmount).toHaveBeenCalled();
+            expect(deinitializeResult).toEqual(store.getState());
         });
     });
 
