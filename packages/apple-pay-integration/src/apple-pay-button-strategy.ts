@@ -2,7 +2,8 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 
 import {
-    AddressRequestBody, BuyNowCartCreationError,
+    AddressRequestBody,
+    BuyNowCartCreationError,
     Cart,
     Checkout,
     CheckoutButtonInitializeOptions,
@@ -15,11 +16,13 @@ import {
     PaymentMethod,
     PaymentMethodCancelledError,
     ShippingOption,
-    StoreConfig
-} from "@bigcommerce/checkout-sdk/payment-integration-api";
+    StoreConfig,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import ApplePayButtonInitializeOptions,
-{ WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
+{
+    WithApplePayButtonInitializeOptions
+} from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 // import { BuyNowCartCreationError } from "../../core/src/cart/errors";
 
@@ -125,7 +128,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
                 merchantCapabilities: ['supports3DS'],
                 total: { label: 'Your Merchant Name', amount: '10.00' },
-            }
+            };
             // @ts-ignore
             const applePaySession = this._sessionFactory.create(requestMock);
             applePaySession.begin();
@@ -146,27 +149,27 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             } catch (error) {
                 throw new BuyNowCartCreationError();
             }
-            const state = this._paymentIntegrationService.getState();
-            const cart = state.getCartOrThrow();
-            const config = state.getStoreConfigOrThrow();
-            const checkout = state.getCheckoutOrThrow();
+            const state1 = this._paymentIntegrationService.getState();
+            const cart1 = state1.getCartOrThrow();
+            const config1 = state1.getStoreConfigOrThrow();
+            const checkout1 = state1.getCheckoutOrThrow();
 
-            console.log('DATA', state, cart, config, checkout);
+            console.log('DATA', state1, cart1, config1, checkout1);
 
             if (!this._paymentMethod || !this._paymentMethod.initializationData) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
-            console.log('REQUEST', request);
-            const applePaySession1 = this._sessionFactory.create(request);
+            const request1 = this._getBaseRequest(cart1, checkout1, config1, this._paymentMethod);
+            console.log('REQUEST', request1);
+            const applePaySession1 = this._sessionFactory.create(request1);
             console.log('APPLEPAY SESSION', applePaySession);
 
-            this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
+            this._handleApplePayEvents(applePaySession, this._paymentMethod, config1);
 
             applePaySession1.begin();
         } else {
-        // -------
+            // -------
 
             const state = this._paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
