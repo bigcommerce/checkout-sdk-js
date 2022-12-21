@@ -51,6 +51,16 @@ export default class PaymentStrategyRegistry extends Registry<
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
+        const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
+
+        if (
+            paymentMethod.id === 'squarev2' &&
+            features &&
+            features['PROJECT-4113.squarev2_web_payments_sdk']
+        ) {
+            throw new Error('SquareV2 requires using registryV2');
+        }
+
         if (isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
