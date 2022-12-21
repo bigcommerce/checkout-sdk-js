@@ -18,8 +18,7 @@ import {
     ShippingOption,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import ApplePayButtonInitializeOptions,
-{
+import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
