@@ -168,25 +168,25 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         } else {
         // -------
 
-        const state = this._paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-        const config = state.getStoreConfigOrThrow();
-        const checkout = state.getCheckoutOrThrow();
+            const state = this._paymentIntegrationService.getState();
+            const cart = state.getCartOrThrow();
+            const config = state.getStoreConfigOrThrow();
+            const checkout = state.getCheckoutOrThrow();
 
-        console.log('DATA', state, cart, config, checkout);
+            console.log('DATA', state, cart, config, checkout);
 
-        if (!this._paymentMethod || !this._paymentMethod.initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+            if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
 
-        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
-        console.log('REQUEST', request);
-        const applePaySession = this._sessionFactory.create(request);
-        console.log('APPLEPAY SESSION', applePaySession);
+            const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+            console.log('REQUEST', request);
+            const applePaySession = this._sessionFactory.create(request);
+            console.log('APPLEPAY SESSION', applePaySession);
 
-        this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
+            this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
-        applePaySession.begin();
+            applePaySession.begin();
         }
     }
 
