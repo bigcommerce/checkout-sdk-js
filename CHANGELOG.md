@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.314.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.313.2...v1.314.0) (2022-12-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-0000 Enforce RegistryV2 for SquareV2 ([#1737](https://github.com/bigcommerce/checkout-sdk-js/issues/1737)) ([9af5b64](https://github.com/bigcommerce/checkout-sdk-js/commit/9af5b64a7271fddc772afd61bfd524abcf864922))
+
 ### [1.313.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.313.1...v1.313.2) (2022-12-20)
 
 ### [1.313.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.313.0...v1.313.1) (2022-12-19)
