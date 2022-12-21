@@ -18,11 +18,11 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import ApplePayButtonInitializeOptions, {
+import  {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
-import { BuyNowCartCreationError } from "../../core/src/cart/errors";
+// import { BuyNowCartCreationError } from "../../core/src/cart/errors";
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -39,7 +39,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
-    private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
+    // private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -65,7 +65,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         console.log('buyNowInitializeOptions', buyNowInitializeOptions);
 
-        this._buyNowInitializeOptions = buyNowInitializeOptions;
+        // this._buyNowInitializeOptions = buyNowInitializeOptions;
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
@@ -115,40 +115,58 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
     private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
-        // --------
-        if (
-            this._buyNowInitializeOptions &&
-            typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
-        ) {
-            const requestMock = {
-                countryCode: 'US',
-                currencyCode: 'USD',
-                supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
-                merchantCapabilities: ['supports3DS'],
-                total: { label: 'Your Merchant Name', amount: '10.00' },
-            }
-            const applePaySession = this._sessionFactory.create(requestMock);
-            applePaySession.begin();
-            applePaySession.abort();
-
-            const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
-
-            if (!cartRequestBody) {
-                throw new MissingDataError(MissingDataErrorType.MissingCart);
-            }
-
-            try {
-                const { body: cart } = await this._paymentIntegrationService.createBuyNowCart(
-                    cartRequestBody,
-                );
-
-                await this._paymentIntegrationService.loadDefinedCheckout(cart.id);
-            } catch (error) {
-                throw new BuyNowCartCreationError();
-            }
-
-        } else {
-        // -------
+        // // --------
+        // if (
+        //     this._buyNowInitializeOptions &&
+        //     typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        // ) {
+        //     const requestMock = {
+        //         countryCode: 'US',
+        //         currencyCode: 'USD',
+        //         supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+        //         merchantCapabilities: ['supports3DS'],
+        //         total: { label: 'Your Merchant Name', amount: '10.00' },
+        //     }
+        //     const applePaySession = this._sessionFactory.create(requestMock);
+        //     applePaySession.begin();
+        //     applePaySession.abort();
+        //
+        //     const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
+        //
+        //     if (!cartRequestBody) {
+        //         throw new MissingDataError(MissingDataErrorType.MissingCart);
+        //     }
+        //
+        //     try {
+        //         const { body: cart } = await this._paymentIntegrationService.createBuyNowCart(
+        //             cartRequestBody,
+        //         );
+        //
+        //         await this._paymentIntegrationService.loadDefinedCheckout(cart.id);
+        //     } catch (error) {
+        //         throw new BuyNowCartCreationError();
+        //     }
+        //     const state = this._paymentIntegrationService.getState();
+        //     const cart = state.getCartOrThrow();
+        //     const config = state.getStoreConfigOrThrow();
+        //     const checkout = state.getCheckoutOrThrow();
+        //
+        //     console.log('DATA', state, cart, config, checkout);
+        //
+        //     if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+        //         throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        //     }
+        //
+        //     const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+        //     console.log('REQUEST', request);
+        //     const applePaySession1 = this._sessionFactory.create(request);
+        //     console.log('APPLEPAY SESSION', applePaySession);
+        //
+        //     this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
+        //
+        //     applePaySession1.begin();
+        // } else {
+        // // -------
 
         const state = this._paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
@@ -169,7 +187,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
         applePaySession.begin();
-        }
+        // }
     }
 
     private _getBaseRequest(
