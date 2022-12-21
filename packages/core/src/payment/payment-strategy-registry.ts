@@ -1,12 +1,7 @@
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-} from '../common/error/errors';
+import { InvalidArgumentError } from '../common/error/errors';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
@@ -97,10 +92,6 @@ export default class PaymentStrategyRegistry extends Registry<
             return PaymentStrategyType.OFFLINE;
         }
 
-        if (this._isLegacyMethod(paymentMethod)) {
-            return PaymentStrategyType.LEGACY;
-        }
-
         if (paymentMethod.type === paymentMethodTypes.HOSTED) {
             return PaymentStrategyType.OFFSITE;
         }
@@ -110,29 +101,6 @@ export default class PaymentStrategyRegistry extends Registry<
 
     private _hasFactoryForMethod(methodId: string): methodId is PaymentStrategyType {
         return this._hasFactory(methodId);
-    }
-
-    private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
-        const config = this._store.getState().config.getStoreConfig();
-
-        if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        const { clientSidePaymentProviders } = config.paymentSettings;
-
-        if (
-            !clientSidePaymentProviders ||
-            paymentMethod.gateway === 'adyen' ||
-            paymentMethod.gateway === 'barclaycard'
-        ) {
-            return false;
-        }
-
-        return !some(
-            clientSidePaymentProviders,
-            (id) => paymentMethod.id === id || paymentMethod.gateway === id,
-        );
     }
 }
 
