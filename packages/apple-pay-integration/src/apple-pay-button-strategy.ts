@@ -18,9 +18,7 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import  {
-    WithApplePayButtonInitializeOptions,
-} from './apple-pay-button-initialize-options';
+import  { WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 // import { BuyNowCartCreationError } from "../../core/src/cart/errors";
 
