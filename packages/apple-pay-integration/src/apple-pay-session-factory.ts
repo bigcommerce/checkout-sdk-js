@@ -13,7 +13,7 @@ export function assertApplePayWindow(window: Window): asserts window is ApplePay
 }
 
 export default class ApplePaySessionFactory {
-    create(request: ApplePayJS.ApplePayPaymentRequest): ApplePaySession {
+    create(request: { total: { amount: string; label: string }; countryCode: string; supportedNetworks: string[]; merchantCapabilities: string[]; currencyCode: string }): ApplePaySession {
         assertApplePayWindow(window);
         console.log('SESSION', request);
         return new ApplePaySession(1, request);
