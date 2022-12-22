@@ -120,7 +120,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             this._buyNowInitializeOptions &&
             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
         ) {
-            const requestMock:ApplePayJS.ApplePayPaymentRequest = {
+            const requestMock: ApplePayJS.ApplePayPaymentRequest = {
                 countryCode: 'US',
                 currencyCode: 'USD',
                 supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
