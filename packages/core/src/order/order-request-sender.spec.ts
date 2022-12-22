@@ -1,5 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
+import { CartConsistencyError } from '../cart/errors';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -152,6 +153,31 @@ describe('OrderRequestSender', () => {
                 await orderRequestSender.submitOrder(payload);
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderTaxProviderUnavailableError);
+            }
+        });
+
+        it('throws `CartConsistencyError` if error type is `cart_has_changed`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 409,
+                    title: 'Checkout could not be processed',
+                    type: 'cart_has_changed',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            try {
+                const payload = {
+                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    useStoreCredit: false,
+                };
+
+                await orderRequestSender.submitOrder(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(CartConsistencyError);
             }
         });
 
