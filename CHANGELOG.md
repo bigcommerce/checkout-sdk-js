@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.315.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.314.2...v1.315.0) (2022-12-22)
+
+
+### Features
+
+* **payment:** INT-6957 Sezzle - Use window.location.replace to redirect ([#1696](https://github.com/bigcommerce/checkout-sdk-js/issues/1696)) ([ef7962c](https://github.com/bigcommerce/checkout-sdk-js/commit/ef7962c3b51118813a96808390bac54048c02d7d))
+
 ### [1.314.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.314.1...v1.314.2) (2022-12-21)
 
 ### [1.314.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.314.0...v1.314.1) (2022-12-21)
