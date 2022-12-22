@@ -65,7 +65,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         console.log('buyNowInitializeOptions', buyNowInitializeOptions);
 
-        // this._buyNowInitializeOptions = buyNowInitializeOptions;
+        this._buyNowInitializeOptions = buyNowInitializeOptions;
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
@@ -127,7 +127,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 merchantCapabilities: ['supports3DS'],
                 total: { label: 'Your Merchant Name', amount: '10.00' },
             };
-            // @ts-ignore
+
             const applePaySession = this._sessionFactory.create(requestMock);
             applePaySession.begin();
             applePaySession.abort();
