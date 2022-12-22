@@ -255,7 +255,7 @@ export default class PaypalCommerceCustomerStrategy implements CustomerStrategy 
 
         try {
             // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address accept shipping data
+            // on this stage we don't have access to valid customer's address except shipping data
             await this._store.dispatch(this._billingAddressActionCreator.updateAddress(address));
             await this._store.dispatch(this._consignmentActionCreator.updateAddress(address));
 
