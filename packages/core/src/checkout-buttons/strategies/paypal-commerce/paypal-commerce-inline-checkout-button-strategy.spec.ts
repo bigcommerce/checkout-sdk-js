@@ -377,8 +377,10 @@ describe('PaypalCommerceInlineCheckoutButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 initializationOptions.methodId,
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
     });

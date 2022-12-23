@@ -1,7 +1,7 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
 import { Cart } from '../../../cart';
-import { PaymentMethod } from '../../../payment';
+import { HostedInstrument, PaymentMethod, VaultedInstrument } from '../../../payment';
 import {
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
@@ -45,6 +45,7 @@ export default class PaypalCommerceHostedForm {
         options: PaypalCommerceFormOptions,
         cart: Cart,
         paymentMethod: PaymentMethod<PaypalCommerceInitializationData>,
+        getInstrumentParams?: () => HostedInstrument | VaultedInstrument,
     ) {
         await this._paypalCommercePaymentProcessor.initialize(paymentMethod, cart.currency.code);
 
@@ -65,7 +66,12 @@ export default class PaypalCommerceHostedForm {
             inputSubmitRequest: this._handleInputSubmitRequest,
         };
 
-        await this._paypalCommercePaymentProcessor.renderHostedFields(cart.id, params, events);
+        await this._paypalCommercePaymentProcessor.renderHostedFields(
+            cart.id,
+            params,
+            events,
+            getInstrumentParams,
+        );
 
         if (this._isPaypalCommerceFormFieldsMap(options.fields)) {
             this._cardNameField = new PaypalCommerceRegularField(

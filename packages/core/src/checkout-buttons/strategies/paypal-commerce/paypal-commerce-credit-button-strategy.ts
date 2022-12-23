@@ -412,7 +412,9 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
             ? 'paypalcommercecreditcheckout'
             : 'paypalcommercecredit';
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cartId, providerId);
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder(providerId, {
+            cartId,
+        });
 
         return orderId;
     }

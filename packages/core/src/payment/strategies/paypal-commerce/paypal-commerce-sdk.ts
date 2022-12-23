@@ -357,3 +357,10 @@ export interface UpdateOrderPayload {
     cartId: string;
     selectedShippingOption?: ShippingOption;
 }
+
+export interface PayPalCreateOrderRequestBody {
+    cartId: string;
+    instrumentId?: string;
+    shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
+}

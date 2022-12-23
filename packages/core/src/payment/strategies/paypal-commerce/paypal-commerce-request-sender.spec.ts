@@ -141,5 +141,57 @@ describe('PaypalCommerceRequestSender', () => {
                 }),
             );
         });
+
+        it('creates an order providing extra data to save vaulting instrument for paypal commerce', async () => {
+            paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
+            await paypalCommerceRequestSender.createOrder('paypalcommerce', {
+                cartId: 'abc',
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+            });
+
+            const headers = {
+                'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
+            };
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommerce',
+                {
+                    headers,
+                    body: {
+                        cartId: 'abc',
+                        shouldSaveInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
+                    },
+                },
+            );
+        });
+
+        it('creates an order providing extra data to use vaulting instrument for paypal commerce', async () => {
+            paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
+            await paypalCommerceRequestSender.createOrder('paypalcommerce', {
+                cartId: 'abc',
+                instrumentId: 'instrumentId',
+            });
+
+            const headers = {
+                'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                'Content-Type': ContentType.Json,
+                ...SDK_VERSION_HEADERS,
+            };
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                '/api/storefront/payment/paypalcommerce',
+                {
+                    headers,
+                    body: {
+                        cartId: 'abc',
+                        instrumentId: 'instrumentId',
+                    },
+                },
+            );
+        });
     });
 });
