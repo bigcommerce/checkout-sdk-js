@@ -42,6 +42,7 @@ information in order to initialize the customer step of checkout.
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
+- [paypalcommerce](BaseCustomerInitializeOptions.md#paypalcommerce)
 - [stripeupe](BaseCustomerInitializeOptions.md#stripeupe)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
@@ -210,6 +211,15 @@ The parameters of the request, if required.
 #### Inherited from
 
 [CustomerRequestOptions](CustomerRequestOptions.md).[params](CustomerRequestOptions.md#params)
+
+___
+
+### paypalcommerce
+
+• `Optional` **paypalcommerce**: [`PaypalCommerceCustomerInitializeOptions`](PaypalCommerceCustomerInitializeOptions.md)
+
+The options that are required to initialize the PayPalCommerce payment method.
+They can be omitted unless you need to support PayPalCommerce.
 
 ___
 

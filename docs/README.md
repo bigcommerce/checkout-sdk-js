@@ -292,6 +292,7 @@
 - [PaypalCommerceButtonInitializeOptions](interfaces/PaypalCommerceButtonInitializeOptions.md)
 - [PaypalCommerceCreditButtonInitializeOptions](interfaces/PaypalCommerceCreditButtonInitializeOptions.md)
 - [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
+- [PaypalCommerceCustomerInitializeOptions](interfaces/PaypalCommerceCustomerInitializeOptions.md)
 - [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/PaypalCommerceFormFieldCardTypeChangeEventData.md)
 - [PaypalCommerceFormFieldKeyboardEventData](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
 - [PaypalCommerceFormFieldOptions](interfaces/PaypalCommerceFormFieldOptions.md)
