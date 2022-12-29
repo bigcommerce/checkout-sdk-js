@@ -92,10 +92,6 @@ export default class PaymentStrategyRegistry extends Registry<
             return PaymentStrategyType.OFFLINE;
         }
 
-        if (paymentMethod.type === paymentMethodTypes.HOSTED) {
-            return PaymentStrategyType.OFFSITE;
-        }
-
         throw new InvalidArgumentError(`'${methodId}' is not registered.`);
     }
 
