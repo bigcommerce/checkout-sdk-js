@@ -390,7 +390,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             appearance,
         });
 
-        const { postalCode } = state.shippingAddress.getShippingAddressOrThrow();
+        const {
+            billingAddress: { getBillingAddress },
+            shippingAddress: { getShippingAddress },
+        } = state;
+        const { postalCode } = getShippingAddress() || getBillingAddress() || {};
 
         const stripeElement: StripeElement =
             this._stripeElements.getElement(StripeElementType.PAYMENT) ||
