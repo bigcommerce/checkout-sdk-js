@@ -63,7 +63,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
             const email = this._getCustomerEmail();
             const hasBoltAccount = await this._hasBoltAccount(email);
 
-            onInit(hasBoltAccount);
+            onInit(hasBoltAccount, email);
         }
 
         return this._store.getState();
