@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.316.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.316.1...v1.316.2) (2022-12-30)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-281 Fixed error when making purchases with only digital products ([#1747](https://github.com/bigcommerce/checkout-sdk-js/issues/1747)) ([d9cfce4](https://github.com/bigcommerce/checkout-sdk-js/commit/d9cfce4064903cae7dd4d8066e92bc4148a49ab3))
+
 ### [1.316.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.316.0...v1.316.1) (2022-12-29)
 
 
