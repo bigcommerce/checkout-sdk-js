@@ -79,6 +79,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             if (styles) {
                 appearance = {
+                    labels: 'floating',
                     variables: {
                         colorPrimary: styles.fieldInnerShadow,
                         colorBackground: styles.fieldBackground,
@@ -90,8 +91,20 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     rules: {
                         '.Input': {
                             borderColor: styles.fieldBorder,
-                            color: styles.fieldText,
-                            boxShadow: styles.fieldInnerShadow,
+                            color: '#333',
+                            boxShadow: 'inset 0 1px 1px #ebebeb',
+                            fontSize: '14px',
+                            padding: '5px 10px 7px 10px',
+                            backgroundColor: '#fcfcfc',
+                            fontWeight: '500',
+                        },
+                        '.Label--floating': {
+                            fontSize: '11px',
+                            marginTop: '1px',
+                        },
+                        '.Label--resting': {
+                            fontSize: '0.99rem !important',
+                            marginTop: '1px',
                         },
                     },
                 };

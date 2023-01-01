@@ -225,11 +225,24 @@ describe('StripeUPEPaymentStrategy', () => {
                 locale: 'en',
                 clientSecret: 'myToken',
                 appearance: {
+                    labels: 'floating',
                     rules: {
                         '.Input': {
                             borderColor: testColor,
-                            boxShadow: testColor,
-                            color: testColor,
+                            boxShadow: 'inset 0 1px 1px #ebebeb',
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '5px 10px 7px 10px',
+                            backgroundColor: '#fcfcfc',
+                            fontWeight: '500',
+                        },
+                        '.Label--floating': {
+                            fontSize: '11px',
+                            marginTop: '1px',
+                        },
+                        '.Label--resting': {
+                            fontSize: '0.99rem !important',
+                            marginTop: '1px',
                         },
                     },
                     variables: {
