@@ -41,7 +41,7 @@ export interface StripeElement {
      * in addition to some Element-specific keys.
      * https://stripe.com/docs/js/element/events/on_change?type=paymentElement
      */
-    on(event: 'change', handler: (event: StripeEventType) => void): void;
+    on(event: 'change' | 'ready', handler: (event: StripeEventType) => void): void;
 }
 
 export interface StripeEvent {

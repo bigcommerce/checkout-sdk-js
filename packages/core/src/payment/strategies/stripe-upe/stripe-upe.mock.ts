@@ -49,6 +49,7 @@ export function getStripeUPEInitializeOptionsMock(
         stripeupe: {
             containerId: `stripe-${stripePaymentMethodType}-component-field`,
             style,
+            render: jest.fn(),
         },
     };
 }
