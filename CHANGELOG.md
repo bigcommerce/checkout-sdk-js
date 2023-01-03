@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.317.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.316.4...v1.317.0) (2023-01-03)
+
+
+### Features
+
+* **payment:** PAYPAL-1808 passing vaulting data to order creation request for PayPal Commerce CC ([#1734](https://github.com/bigcommerce/checkout-sdk-js/issues/1734)) ([a1c1c1f](https://github.com/bigcommerce/checkout-sdk-js/commit/a1c1c1fbe14372f4043a59040437f6b90309b288))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 fixed the issue with checkout-sdk build after last pr merge ([#1753](https://github.com/bigcommerce/checkout-sdk-js/issues/1753)) ([fe61144](https://github.com/bigcommerce/checkout-sdk-js/commit/fe6114464f5f4b07059197dc3ff4723b52b80171))
+
 ### [1.316.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.316.3...v1.316.4) (2023-01-03)
 
 
