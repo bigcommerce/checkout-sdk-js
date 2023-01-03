@@ -364,10 +364,9 @@ export default class PaypalCommerceCustomerStrategy implements CustomerStrategy 
     private async _createOrder(): Promise<string> {
         const cart = this._store.getState().cart.getCartOrThrow();
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder(
-            cart.id,
-            'paypalcommerce',
-        );
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder('paypalcommerce', {
+            cartId: cart.id,
+        });
 
         return orderId;
     }

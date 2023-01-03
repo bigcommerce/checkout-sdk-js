@@ -373,10 +373,9 @@ describe('PaypalCommerceCustomerStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
-                'paypalcommerce',
-            );
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith('paypalcommerce', {
+                cartId: cartMock.id,
+            });
         });
     });
 
