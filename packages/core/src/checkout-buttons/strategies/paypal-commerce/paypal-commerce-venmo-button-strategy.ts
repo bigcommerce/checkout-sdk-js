@@ -159,7 +159,9 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
             ? 'paypalcommercevenmocheckout'
             : 'paypalcommercevenmo';
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cartId, providerId);
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder(providerId, {
+            cartId,
+        });
 
         return orderId;
     }

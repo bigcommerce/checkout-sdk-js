@@ -127,7 +127,9 @@ export default class PaypalCommerceInlineCheckoutButtonStrategy implements Check
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder(cart.id, methodId);
+        const { orderId } = await this._paypalCommerceRequestSender.createOrder(methodId, {
+            cartId: cart.id,
+        });
 
         return orderId;
     }

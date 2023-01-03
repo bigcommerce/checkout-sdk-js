@@ -553,8 +553,10 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                    cartMock.id,
                     'paypalcommercecredit',
+                    {
+                        cartId: cartMock.id,
+                    },
                 );
             });
 
@@ -576,8 +578,10 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                    cartMock.id,
                     'paypalcommercecreditcheckout',
+                    {
+                        cartId: cartMock.id,
+                    },
                 );
             });
 
@@ -598,8 +602,10 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                    buyNowCartMock.id,
                     'paypalcommercecredit',
+                    {
+                        cartId: buyNowCartMock.id,
+                    },
                 );
             });
 

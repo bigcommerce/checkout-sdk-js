@@ -373,8 +373,10 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 'paypalcommercevenmo',
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
 
@@ -396,8 +398,10 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 'paypalcommercevenmocheckout',
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
 
@@ -418,8 +422,10 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                buyNowCartMock.id,
                 'paypalcommercevenmo',
+                {
+                    cartId: buyNowCartMock.id,
+                },
             );
         });
 
