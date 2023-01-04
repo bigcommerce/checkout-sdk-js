@@ -130,7 +130,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
             const applePaySession = this._sessionFactory.create(requestMock);
             applePaySession.begin();
-            applePaySession.abort();
 
             const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
 
@@ -162,6 +161,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             console.log('REQUEST', request1);
             const applePaySession1 = this._sessionFactory.create(request1);
             console.log('APPLEPAY SESSION', applePaySession);
+
+            applePaySession.abort();
 
             this._handleApplePayEvents(applePaySession, this._paymentMethod, config1);
 
