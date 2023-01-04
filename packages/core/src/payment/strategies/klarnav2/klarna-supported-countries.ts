@@ -3,6 +3,7 @@ export const supportedCountries = [
     'BE',
     'CA',
     'CH',
+    'CZ',
     'DE',
     'DK',
     'ES',
