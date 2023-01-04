@@ -164,7 +164,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
             applePaySession.abort();
 
-            this._handleApplePayEvents(applePaySession, this._paymentMethod, config1);
+            this._handleApplePayEvents(applePaySession1, this._paymentMethod, config1);
 
             applePaySession1.begin();
         } else {
