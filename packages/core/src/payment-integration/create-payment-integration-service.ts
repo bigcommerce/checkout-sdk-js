@@ -11,6 +11,7 @@ import {
     CheckoutValidator,
 } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { CustomerActionCreator, CustomerRequestSender } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -23,7 +24,12 @@ import {
     PaymentRequestTransformer,
 } from '../payment';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
+import {
+    createSpamProtection,
+    PaymentHumanVerificationHandler,
+    SpamProtectionActionCreator,
+    SpamProtectionRequestSender,
+} from '../spam-protection';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
@@ -77,6 +83,15 @@ export default function createPaymentIntegrationService(
         new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
     );
 
+    const customerActionCreator = new CustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+        checkoutActionCreator,
+        new SpamProtectionActionCreator(
+            createSpamProtection(createScriptLoader()),
+            new SpamProtectionRequestSender(requestSender),
+        ),
+    );
+
     return new DefaultPaymentIntegrationService(
         store,
         storeProjectionFactory,
@@ -87,5 +102,6 @@ export default function createPaymentIntegrationService(
         consignmentActionCreator,
         paymentMethodActionCreator,
         paymentActionCreator,
+        customerActionCreator,
     );
 }
