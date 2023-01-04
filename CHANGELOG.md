@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.318.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.317.1...v1.318.0) (2023-01-04)
+
+
+### Features
+
+* **payment:** INT-6729 add Klarna support for Czech Republic ([375c759](https://github.com/bigcommerce/checkout-sdk-js/commit/375c75900d6b232a60b2550087a11c16bdfadbc3))
+
 ### [1.317.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.317.0...v1.317.1) (2023-01-04)
 
 ## [1.317.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.316.4...v1.317.0) (2023-01-03)
