@@ -39,6 +39,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _applePayButtonContainer?: HTMLElement;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -80,6 +81,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         this._applePayButton = this._createButton(containerId, buttonClassName);
+        // @ts-ignore
+        this._applePayButtonContainer = this._applePayButton.parentElement;
+        console.log('CONTAINER', this._applePayButtonContainer);
+        this._applePayButtonContainer?.addEventListener('click', this._handleWalletButtonContainerClick.bind(this));
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
         return Promise.resolve();
@@ -113,83 +118,149 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return button;
     }
 
-    private async _handleWalletButtonClick(event: Event) {
+    private async _handleWalletButtonContainerClick(event: Event) {
         event.preventDefault();
-        // --------
         if (
             this._buyNowInitializeOptions &&
             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
         ) {
-            const requestMock: ApplePayJS.ApplePayPaymentRequest = {
-                countryCode: 'US',
-                currencyCode: 'USD',
-                supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
-                merchantCapabilities: ['supports3DS'],
-                total: { label: 'Your Merchant Name', amount: '10.00' },
-            };
-
-            const applePaySession = this._sessionFactory.create(requestMock);
-            applePaySession.begin();
-
+            console.log('CONSOLE1');
             const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
+            console.log('CONSOLE2', cartRequestBody);
 
             if (!cartRequestBody) {
                 throw new MissingDataError(MissingDataErrorType.MissingCart);
             }
-
+            console.log('CONSOLE3');
             try {
                 const { body: cart } = await this._paymentIntegrationService.createBuyNowCart(
                     cartRequestBody,
                 );
-
+                console.log('CONSOLE4', cart);
                 await this._paymentIntegrationService.loadDefinedCheckout(cart.id);
+                this._handleWalletButtonClick();
+
             } catch (error) {
+                console.log('ERROR', error);
                 throw new BuyNowCartCreationError();
-            }
-            const state1 = this._paymentIntegrationService.getState();
-            const cart1 = state1.getCartOrThrow();
-            const config1 = state1.getStoreConfigOrThrow();
-            const checkout1 = state1.getCheckoutOrThrow();
+            };
+        }
+    }
 
-            console.log('DATA', state1, cart1, config1, checkout1);
-
-            if (!this._paymentMethod || !this._paymentMethod.initializationData) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            const request1 = this._getBaseRequest(cart1, checkout1, config1, this._paymentMethod);
-            console.log('REQUEST', request1);
-            const applePaySession1 = this._sessionFactory.create(request1);
-            console.log('APPLEPAY SESSION', applePaySession);
-
-            applePaySession.abort();
-
-            this._handleApplePayEvents(applePaySession1, this._paymentMethod, config1);
-
-            applePaySession1.begin();
-        } else {
+    private _handleWalletButtonClick() {
+        // event.preventDefault();
+        // --------
+        // if (
+        //     this._buyNowInitializeOptions &&
+        //     typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        // ) {
+        //     const requestMock: ApplePayJS.ApplePayPaymentRequest = {
+        //         countryCode: 'US',
+        //         currencyCode: 'USD',
+        //         supportedNetworks: ['visa', 'masterCard', 'amex', 'discover'],
+        //         merchantCapabilities: ['supports3DS'],
+        //         total: { label: 'Your Merchant Name', amount: '10.00' },
+        //     };
+        //
+        //     const applePaySession = this._sessionFactory.create(requestMock);
+        //     applePaySession.begin();
+        //
+        //     const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
+        //
+        //     if (!cartRequestBody) {
+        //         throw new MissingDataError(MissingDataErrorType.MissingCart);
+        //     }
+        //
+        //     try {
+        //         const { body: cart } = await this._paymentIntegrationService.createBuyNowCart(
+        //             cartRequestBody,
+        //         );
+        //
+        //         await this._paymentIntegrationService.loadDefinedCheckout(cart.id);
+        //     } catch (error) {
+        //         throw new BuyNowCartCreationError();
+        //     }
+        //     const state1 = this._paymentIntegrationService.getState();
+        //     const cart1 = state1.getCartOrThrow();
+        //     const config1 = state1.getStoreConfigOrThrow();
+        //     const checkout1 = state1.getCheckoutOrThrow();
+        //
+        //     console.log('DATA', state1, cart1, config1, checkout1);
+        //
+        //     if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+        //         throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        //     }
+        //
+        //     const request1 = this._getBaseRequest(cart1, checkout1, config1, this._paymentMethod);
+        //     console.log('REQUEST', request1);
+        //     const applePaySession1 = this._sessionFactory.create(request1);
+        //     console.log('APPLEPAY SESSION', applePaySession);
+        //
+        //     applePaySession.abort();
+        //
+        //     this._handleApplePayEvents(applePaySession1, this._paymentMethod, config1);
+        //
+        //     applePaySession1.begin();
+        // } else {
             // -------
 
             const state = this._paymentIntegrationService.getState();
+            console.log('STATE', state);
             const cart = state.getCartOrThrow();
             const config = state.getStoreConfigOrThrow();
             const checkout = state.getCheckoutOrThrow();
 
-            console.log('DATA', state, cart, config, checkout);
+            console.log('DATA', state, config);
 
             if (!this._paymentMethod || !this._paymentMethod.initializationData) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
             const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+        // const request: ApplePayJS.ApplePayPaymentRequest = {
+        //     countryCode: 'US',
+        //     currencyCode: 'USD',
+        //     lineItems: [],
+        //     merchantCapabilities: ['supports3DS'],
+        //     requiredBillingContactFields: ['postalAddress'],
+        //     requiredShippingContactFields: ['email', 'phone', 'postalAddress'],
+        //     supportedNetworks: ['visa', 'mastercard', 'amex', 'discover'],
+        //     total: {
+        //         amount: '0',
+        //         label: 'LABEL!'
+        //     }
+        // };
             console.log('REQUEST', request);
+            console.log('REQUEST1', request);
             const applePaySession = this._sessionFactory.create(request);
             console.log('APPLEPAY SESSION', applePaySession);
 
             this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
             applePaySession.begin();
-        }
+//--------------------
+//         if (
+//             this._buyNowInitializeOptions &&
+//             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+//         ) {
+//             const cartRequestBody = this._buyNowInitializeOptions.getBuyNowCartRequestBody();
+//
+//             if (!cartRequestBody) {
+//                 throw new MissingDataError(MissingDataErrorType.MissingCart);
+//             }
+//
+//             try {
+//                 const { body: cart } = await this._paymentIntegrationService.createBuyNowCart(
+//                     cartRequestBody,
+//                 );
+//
+//                 await this._paymentIntegrationService.loadDefinedCheckout(cart.id);
+//             } catch (error) {
+//                 throw new BuyNowCartCreationError();
+//             };
+//         }
+        //-----------------------
+        // }
     }
 
     private _getBaseRequest(

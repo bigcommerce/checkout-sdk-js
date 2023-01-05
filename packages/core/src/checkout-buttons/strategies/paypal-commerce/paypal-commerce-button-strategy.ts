@@ -96,6 +96,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 currencyCode,
                 paypalcommerce.initializesOnCheckoutPage,
             );
+            console.log('STATE', state.config.getConfig());
         }
 
         this._renderButton(containerId, methodId, paypalcommerce);
