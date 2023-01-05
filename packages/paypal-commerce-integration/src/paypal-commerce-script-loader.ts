@@ -18,11 +18,11 @@ import {
 const PAYPAL_SDK_VERSION = '5.0.5';
 
 export default class PayPalCommerceScriptLoader {
-    private _window: PayPalCommerceHostWindow;
-    private _paypalSdk?: PayPalSDK;
+    private window: PayPalCommerceHostWindow;
+    private paypalSdk?: PayPalSDK;
 
-    constructor(private _scriptLoader: ScriptLoader) {
-        this._window = window;
+    constructor(private scriptLoader: ScriptLoader) {
+        this.window = window;
     }
 
     async getPayPalSDK(
@@ -30,9 +30,9 @@ export default class PayPalCommerceScriptLoader {
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
     ): Promise<PayPalSDK> {
-        if (!this._paypalSdk) {
-            this._paypalSdk = await this.loadPayPalSDK(
-                this._getPayPalSdkScriptConfigOrThrow(
+        if (!this.paypalSdk) {
+            this.paypalSdk = await this.loadPayPalSDK(
+                this.getPayPalSdkScriptConfigOrThrow(
                     paymentMethod,
                     currencyCode,
                     initializesOnCheckoutPage,
@@ -40,32 +40,32 @@ export default class PayPalCommerceScriptLoader {
             );
         }
 
-        return this._paypalSdk;
+        return this.paypalSdk;
     }
 
     private async loadPayPalSDK(
         paypalSdkScriptConfig: PayPalCommerceScriptParams,
     ): Promise<PayPalSDK> {
-        if (!this._window.paypalLoadScript) {
+        if (!this.window.paypalLoadScript) {
             const scriptSrc = `https://unpkg.com/@paypal/paypal-js@${PAYPAL_SDK_VERSION}/dist/iife/paypal-js.min.js`;
 
-            await this._scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
+            await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
 
-            if (!this._window.paypalLoadScript) {
+            if (!this.window.paypalLoadScript) {
                 throw new PaymentMethodClientUnavailableError();
             }
         }
 
-        await this._window.paypalLoadScript(paypalSdkScriptConfig);
+        await this.window.paypalLoadScript(paypalSdkScriptConfig);
 
-        if (!this._window.paypal) {
+        if (!this.window.paypal) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this._window.paypal;
+        return this.window.paypal;
     }
 
-    private _getPayPalSdkScriptConfigOrThrow(
+    private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
         initializesOnCheckoutPage = true,

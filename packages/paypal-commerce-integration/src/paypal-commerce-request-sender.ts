@@ -13,7 +13,7 @@ import {
 } from './paypal-commerce-types';
 
 export default class PayPalCommerceRequestSender {
-    constructor(private _requestSender: RequestSender) {}
+    constructor(private requestSender: RequestSender) {}
 
     async createOrder(
         providerId: string,
@@ -27,7 +27,7 @@ export default class PayPalCommerceRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this._requestSender.post<PayPalOrderData>(url, { headers, body });
+        const res = await this.requestSender.post<PayPalOrderData>(url, { headers, body });
 
         return res.body;
     }
@@ -41,7 +41,7 @@ export default class PayPalCommerceRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this._requestSender.put(url, { headers, body });
+        const res = await this.requestSender.put(url, { headers, body });
 
         return res.body;
     }

@@ -13,18 +13,8 @@ export interface PayPalCommerceSDKFunding {
     PAYPAL: string;
     CREDIT: string;
     PAYLATER: string;
-    BANCONTACT: string;
-    GIROPAY: string;
-    P24: string;
-    EPS: string;
-    IDEAL: string;
-    MYBANK: string;
     OXXO: string;
-    SOFORT: string;
     SEPA: string;
-    BLIK: string;
-    TRUSTLY: string;
-    VERKKOPANKKI: string;
     VENMO: string;
 }
 
@@ -59,8 +49,8 @@ export interface PayPalCommerceScriptParams {
 }
 
 export enum PayPalCommerceIntent {
-    authorize = 'authorize',
-    capture = 'capture',
+    AUTHORIZE = 'authorize',
+    CAPTURE = 'capture',
 }
 
 export type ComponentsScriptType = Array<
@@ -259,29 +249,29 @@ export interface CompleteCallbackDataPayload {
 }
 
 export enum StyleButtonLabel {
-    paypal = 'paypal',
-    checkout = 'checkout',
-    buynow = 'buynow',
-    pay = 'pay',
-    installment = 'installment',
+    PAYPAL = 'paypal',
+    CHECKOUT = 'checkout',
+    BUYNOW = 'buynow',
+    PAY = 'pay',
+    INSTALLMENT = 'installment',
 }
 
 export enum StyleButtonLayout {
-    vertical = 'vertical',
-    horizontal = 'horizontal',
+    VERTICAL = 'vertical',
+    HORIZONTAL = 'horizontal',
 }
 
 export enum StyleButtonColor {
-    gold = 'gold',
-    blue = 'blue',
-    silver = 'silver',
-    black = 'black',
-    white = 'white',
+    GOLD = 'gold',
+    BLUE = 'blue',
+    SILVER = 'silver',
+    BLACK = 'black',
+    WHITE = 'white',
 }
 
 export enum StyleButtonShape {
-    pill = 'pill',
-    rect = 'rect',
+    PILL = 'pill',
+    RECT = 'rect',
 }
 
 export interface PayPalButtonStyleOptions {

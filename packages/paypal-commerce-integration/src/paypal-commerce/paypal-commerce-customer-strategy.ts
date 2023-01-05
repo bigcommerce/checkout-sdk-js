@@ -32,14 +32,14 @@ import PaypalCommerceCustomerInitializeOptions, {
 } from './paypal-commerce-customer-initialize-options';
 
 export default class PayPalCommerceCustomerStrategy implements CustomerStrategy {
-    private _onError = noop;
-    private _paypalSdk?: PayPalSDK;
+    private onError = noop;
+    private paypalSdk?: PayPalSDK;
 
     constructor(
-        private _formPoster: FormPoster,
-        private _paymentIntegrationService: PaymentIntegrationService,
-        private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private _paypalCommerceScriptLoader: PaypalCommerceScriptLoader,
+        private formPoster: FormPoster,
+        private paymentIntegrationService: PaymentIntegrationService,
+        private paypalCommerceRequestSender: PaypalCommerceRequestSender,
+        private paypalCommerceScriptLoader: PaypalCommerceScriptLoader,
     ) {}
 
     async initialize(
@@ -59,20 +59,20 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             );
         }
 
-        this._onError = paypalcommerce.onError || noop;
+        this.onError = paypalcommerce.onError || noop;
 
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
-        const state = this._paymentIntegrationService.getState();
+        const state = this.paymentIntegrationService.getState();
         const currencyCode = state.getCartOrThrow().currency.code;
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        this._paypalSdk = await this._paypalCommerceScriptLoader.getPayPalSDK(
+        this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
         );
 
-        this._renderButton(methodId, paypalcommerce);
+        this.renderButton(methodId, paypalcommerce);
     }
 
     deinitialize(): Promise<void> {
@@ -80,13 +80,13 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
     }
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
-        await this._paymentIntegrationService.signInCustomer(credentials, options);
+        await this.paymentIntegrationService.signInCustomer(credentials, options);
 
         return Promise.resolve();
     }
 
     async signOut(options?: RequestOptions): Promise<void> {
-        await this._paymentIntegrationService.signOutCustomer(options);
+        await this.paymentIntegrationService.signOutCustomer(options);
 
         return Promise.resolve();
     }
@@ -97,14 +97,14 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         return Promise.resolve();
     }
 
-    private _renderButton(
+    private renderButton(
         methodId: string,
         paypalcommerce: PaypalCommerceCustomerInitializeOptions,
     ): void {
-        const paypalSdk = this._getPayPalSdkOrThrow();
+        const paypalSdk = this.getPayPalSdkOrThrow();
         const { container, onComplete } = paypalcommerce;
 
-        const state = this._paymentIntegrationService.getState();
+        const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
 
@@ -122,16 +122,16 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
 
         const hostedCheckoutCallbacks = {
             onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this._onShippingAddressChange(data),
+                this.onShippingAddressChange(data),
             onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this._onShippingOptionsChange(data),
+                this.onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
-                this._onHostedCheckoutApprove(data, actions, methodId, onComplete),
+                this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
 
         const regularCallbacks = {
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this._tokenizePayment(methodId, orderID),
+                this.tokenizePayment(methodId, orderID),
         };
 
         const paypalCallbacks = isHostedCheckoutEnabled
@@ -143,7 +143,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             style: {
                 height: 40,
             },
-            createOrder: () => this._createOrder(),
+            createOrder: () => this.createOrder(),
             ...paypalCallbacks,
         };
 
@@ -152,16 +152,16 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         if (paypalButton.isEligible()) {
             paypalButton.render(`#${container}`);
         } else {
-            this._removeElement(container);
+            this.removeElement(container);
         }
     }
 
-    private _tokenizePayment(methodId: string, orderId?: string): void {
+    private tokenizePayment(methodId: string, orderId?: string): void {
         if (!orderId) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
-        return this._formPoster.postForm('/checkout.php', {
+        return this.formPoster.postForm('/checkout.php', {
             action: 'set_external_checkout',
             order_id: orderId,
             payment_type: 'paypal',
@@ -169,7 +169,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         });
     }
 
-    private async _onHostedCheckoutApprove(
+    private async onHostedCheckoutApprove(
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
         methodId: string,
@@ -179,7 +179,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
 
-        const cart = this._paymentIntegrationService.getState().getCartOrThrow();
+        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
         const orderDetails = actions.order.get();
 
         try {
@@ -187,7 +187,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
                 const { payer, purchase_units } = orderDetails;
                 const shippingAddress = purchase_units[0]?.shipping?.address || {};
 
-                const address = this._getAddress({
+                const address = this.getAddress({
                     firstName: payer.name.given_name,
                     lastName: payer.name.surname,
                     email: payer.email_address,
@@ -198,13 +198,13 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
                     stateOrProvinceCode: shippingAddress.admin_area_1,
                 });
 
-                await this._paymentIntegrationService.updateBillingAddress(address);
-                await this._paymentIntegrationService.updateShippingAddress(address);
-                await this._updateOrder();
+                await this.paymentIntegrationService.updateBillingAddress(address);
+                await this.paymentIntegrationService.updateShippingAddress(address);
+                await this.updateOrder();
             } else {
                 const { payer } = orderDetails;
 
-                const address = this._getAddress({
+                const address = this.getAddress({
                     firstName: payer.name.given_name,
                     lastName: payer.name.surname,
                     email: payer.email_address,
@@ -215,24 +215,24 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
                     stateOrProvinceCode: payer.address.admin_area_1,
                 });
 
-                await this._paymentIntegrationService.updateBillingAddress(address);
+                await this.paymentIntegrationService.updateBillingAddress(address);
             }
 
-            await this._paymentIntegrationService.submitOrder({}, { params: { methodId } });
-            await this._submitPayment(methodId, data.orderID);
+            await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
+            await this.submitPayment(methodId, data.orderID);
 
             if (onComplete) {
                 onComplete();
             }
         } catch (error) {
-            this._handleError(error);
+            this.handleError(error);
         }
     }
 
-    private async _onShippingAddressChange(
+    private async onShippingAddressChange(
         data: ShippingAddressChangeCallbackPayload,
     ): Promise<void> {
-        const address = this._getAddress({
+        const address = this.getAddress({
             city: data.shippingAddress.city,
             countryCode: data.shippingAddress.country_code,
             postalCode: data.shippingAddress.postal_code,
@@ -242,32 +242,32 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         try {
             // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
             // on this stage we don't have access to valid customer's address except shipping data
-            await this._paymentIntegrationService.updateBillingAddress(address);
-            await this._paymentIntegrationService.updateShippingAddress(address);
+            await this.paymentIntegrationService.updateBillingAddress(address);
+            await this.paymentIntegrationService.updateShippingAddress(address);
 
-            const shippingOption = this._getShippingOptionOrThrow();
+            const shippingOption = this.getShippingOptionOrThrow();
 
-            await this._paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this._updateOrder();
+            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
+            await this.updateOrder();
         } catch (error) {
-            this._handleError(error);
+            this.handleError(error);
         }
     }
 
-    private async _onShippingOptionsChange(
+    private async onShippingOptionsChange(
         data: ShippingOptionChangeCallbackPayload,
     ): Promise<void> {
-        const shippingOption = this._getShippingOptionOrThrow(data.selectedShippingOption.id);
+        const shippingOption = this.getShippingOptionOrThrow(data.selectedShippingOption.id);
 
         try {
-            await this._paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this._updateOrder();
+            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
+            await this.updateOrder();
         } catch (error) {
-            this._handleError(error);
+            this.handleError(error);
         }
     }
 
-    private async _submitPayment(methodId: string, orderId: string): Promise<void> {
+    private async submitPayment(methodId: string, orderId: string): Promise<void> {
         const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
@@ -280,22 +280,22 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             },
         };
 
-        await this._paymentIntegrationService.submitPayment({ methodId, paymentData });
+        await this.paymentIntegrationService.submitPayment({ methodId, paymentData });
     }
 
-    private async _updateOrder(): Promise<void> {
-        const state = this._paymentIntegrationService.getState();
+    private async updateOrder(): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const consignment = state.getConsignmentsOrThrow()[0];
 
-        await this._paypalCommerceRequestSender.updateOrder({
+        await this.paypalCommerceRequestSender.updateOrder({
             availableShippingOptions: consignment.availableShippingOptions,
             cartId: cart.id,
             selectedShippingOption: consignment.selectedShippingOption,
         });
     }
 
-    private _getAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
+    private getAddress(address?: Partial<BillingAddressRequestBody>): BillingAddressRequestBody {
         return {
             firstName: address?.firstName || '',
             lastName: address?.lastName || '',
@@ -313,8 +313,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         };
     }
 
-    private _getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
-        const consignment = this._paymentIntegrationService.getState().getConsignmentsOrThrow()[0];
+    private getShippingOptionOrThrow(selectedShippingOptionId?: string): ShippingOption {
+        const consignment = this.paymentIntegrationService.getState().getConsignmentsOrThrow()[0];
         const availableShippingOptions = consignment.availableShippingOptions || [];
 
         const recommendedShippingOption = availableShippingOptions.find(
@@ -335,25 +335,25 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         return shippingOptionToSelect;
     }
 
-    private async _createOrder(): Promise<string> {
-        const cart = this._paymentIntegrationService.getState().getCartOrThrow();
+    private async createOrder(): Promise<string> {
+        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
 
-        const { orderId } = await this._paypalCommerceRequestSender.createOrder('paypalcommerce', {
+        const { orderId } = await this.paypalCommerceRequestSender.createOrder('paypalcommerce', {
             cartId: cart.id,
         });
 
         return orderId;
     }
 
-    private _getPayPalSdkOrThrow(): PayPalSDK {
-        if (!this._paypalSdk) {
+    private getPayPalSdkOrThrow(): PayPalSDK {
+        if (!this.paypalSdk) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this._paypalSdk;
+        return this.paypalSdk;
     }
 
-    private _removeElement(elementId?: string): void {
+    private removeElement(elementId?: string): void {
         const element = elementId && document.getElementById(elementId);
 
         if (element) {
@@ -361,9 +361,9 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         }
     }
 
-    private _handleError(error: Error) {
-        if (typeof this._onError === 'function') {
-            this._onError(error);
+    private handleError(error: Error) {
+        if (typeof this.onError === 'function') {
+            this.onError(error);
         } else {
             throw error;
         }
