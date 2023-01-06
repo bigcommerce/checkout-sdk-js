@@ -113,7 +113,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
     private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
-        // --------
+        // -----------
         if (
             this._buyNowInitializeOptions &&
             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
