@@ -8,8 +8,32 @@ export function getShippingStripeUPEJsMock(): StripeUPEClient {
                 mount: jest.fn(),
                 unmount: jest.fn(),
                 on: jest.fn(),
+                destroy: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
+            update: jest.fn(),
+            fetchUpdates: jest.fn(),
+        })),
+        confirmPayment: jest.fn(),
+        confirmCardPayment: jest.fn(),
+    };
+}
+
+export function getShippingStripeUPEJsMockWithAnElementCreated(): StripeUPEClient {
+    return {
+        elements: jest.fn(() => ({
+            create: jest.fn(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn(),
+                destroy: jest.fn(),
+            })),
+            getElement: jest.fn(() => ({
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn(),
+                destroy: jest.fn(),
+            })),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
         })),

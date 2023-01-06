@@ -21,6 +21,7 @@ import {
 } from '../../../payment/strategies/stripe-upe';
 import {
     getShippingStripeUPEJsMock,
+    getShippingStripeUPEJsMockWithAnElementCreated,
     getStripeUPEShippingInitializeOptionsMock,
 } from '../../../shipping/strategies/stripe-upe/stripe-upe-shipping.mock';
 import ConsignmentActionCreator from '../../consignment-action-creator';
@@ -105,6 +106,22 @@ describe('StripeUPEShippingStrategy', () => {
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
+        it('destroys and create an instance of StripeUPEClient and StripeElements', async () => {
+            stripeUPEJsMock = getShippingStripeUPEJsMockWithAnElementCreated();
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValue(stripeUPEJsMock);
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+            expect(
+                (stripeUPEJsMock.elements as jest.Mock).mock.results[0].value.getElement.mock
+                    .results[0].value.destroy,
+            ).toHaveBeenCalledTimes(1);
         });
 
         it('loads a single instance of StripeUPEClient and StripeElements when shipping data is provided', async () => {
