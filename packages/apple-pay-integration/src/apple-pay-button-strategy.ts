@@ -139,7 +139,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
             await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
 
-            const state = await this._paymentIntegrationService.getState();
+            const state = this._paymentIntegrationService.getState();
 
             console.log({
                 cart: state.getCartOrThrow(),
