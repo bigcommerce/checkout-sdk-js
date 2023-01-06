@@ -146,7 +146,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 config: state.getStoreConfig(),
                 checkout: state.getCheckoutOrThrow(),
                 buyNowCart,
-            })
+            });
         } else {
             const state = this._paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
@@ -187,7 +187,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 label: 'Your Merchant Name',
                 amount: '10.00',
             },
-        }
+        };
     }
 
     private _getBaseRequest(
@@ -210,15 +210,15 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
         const total: ApplePayJS.ApplePayLineItem = requiresShipping
             ? {
-                label: storeName,
-                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                type: 'pending',
-            }
+                  label: storeName,
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                  type: 'pending',
+                }
             : {
-                label: storeName,
-                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                type: 'final',
-            };
+                    label: storeName,
+                    amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                    type: 'final',
+                };
 
         const request: ApplePayJS.ApplePayPaymentRequest = {
             requiredBillingContactFields: ['postalAddress'],
@@ -254,9 +254,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return request;
     }
 
-    private _handleApplePayEvents(
-        applePaySession: ApplePaySession,
-    ) {
+    private _handleApplePayEvents(applePaySession: ApplePaySession) {
         const paymentMethod = this._getPaymentMethodOrThrow();
 
         applePaySession.onvalidatemerchant = async (event) => {
