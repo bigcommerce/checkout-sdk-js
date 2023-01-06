@@ -87,5 +87,6 @@ export default function createPaymentIntegrationService(
         consignmentActionCreator,
         paymentMethodActionCreator,
         paymentActionCreator,
+        requestSender,
     );
 }
