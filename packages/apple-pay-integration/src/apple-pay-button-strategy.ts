@@ -210,15 +210,15 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
         const total: ApplePayJS.ApplePayLineItem = requiresShipping
             ? {
-                label: storeName,
-                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                type: 'pending',
-            }
+                  label: storeName,
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                  type: 'pending',
+              }
             : {
-                label: storeName,
-                amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
-                type: 'final',
-            };
+                  label: storeName,
+                  amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
+                  type: 'final',
+              };
 
         const request: ApplePayJS.ApplePayPaymentRequest = {
             requiredBillingContactFields: ['postalAddress'],
@@ -319,13 +319,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         );
         const shippingOptions: ApplePayJS.ApplePayShippingMethod[] = selectedOption
             ? [
-                {
-                    label: selectedOption.description,
-                    amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
-                    detail: selectedOption.additionalDescription,
-                    identifier: selectedOption.id,
-                },
-            ]
+                  {
+                      label: selectedOption.description,
+                      amount: `${selectedOption.cost.toFixed(decimalPlaces)}`,
+                      detail: selectedOption.additionalDescription,
+                      identifier: selectedOption.id,
+                  },
+              ]
             : [];
 
         unselectedOptions?.forEach((option) =>
@@ -445,9 +445,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return this._paymentIntegrationService.selectShippingOption(optionId);
     }
 
-    private async _onValidateMerchant(
-        event: ApplePayJS.ApplePayValidateMerchantEvent,
-    ) {
+    private async _onValidateMerchant(event: ApplePayJS.ApplePayValidateMerchantEvent) {
         const paymentMethod = this._getPaymentMethodOrThrow();
 
         const body = [
@@ -492,7 +490,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                     },
                 },
             },
-            ...this._buyNowCart && { cartId: this._buyNowCart.id },
+            ...(this._buyNowCart && { cartId: this._buyNowCart.id }),
         };
 
         const transformedBillingAddress = this._transformContactToAddress(billingContact);
