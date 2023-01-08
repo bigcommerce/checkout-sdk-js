@@ -546,13 +546,13 @@ ___
 
 ### getSubmitOrderError
 
-▸ **getSubmitOrderError**(): `undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md)
+▸ **getSubmitOrderError**(): `undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md)
 
 Returns an error if unable to submit the current order.
 
 #### Returns
 
-`undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md)
+`undefined` \| `Error` \| [`CartChangedError`](../classes/CartChangedError.md) \| [`CartConsistencyError`](../classes/CartConsistencyError.md)
 
 The error object if unable to submit, otherwise undefined.
 

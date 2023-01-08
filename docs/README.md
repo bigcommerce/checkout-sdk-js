@@ -37,6 +37,7 @@
 ### Classes
 
 - [CartChangedError](classes/CartChangedError.md)
+- [CartConsistencyError](classes/CartConsistencyError.md)
 - [CheckoutButtonErrorSelector](classes/CheckoutButtonErrorSelector.md)
 - [CheckoutButtonInitializer](classes/CheckoutButtonInitializer.md)
 - [CheckoutButtonStatusSelector](classes/CheckoutButtonStatusSelector.md)

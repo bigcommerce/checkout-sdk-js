@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.319.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.318.0...v1.319.0) (2023-01-08)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7148 Throw `CartConsistencyError` when server detects inconsistent projection data ([654be3e](https://github.com/bigcommerce/checkout-sdk-js/commit/654be3e89efc6f02ebaa8ea27e20093fe79d397c))
+
 ## [1.318.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.317.1...v1.318.0) (2023-01-04)
 
 
