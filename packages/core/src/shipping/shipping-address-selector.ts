@@ -9,8 +9,9 @@ import ConsignmentState, { DEFAULT_STATE } from './consignment-state';
 
 export default interface ShippingAddressSelector {
     getShippingAddress(): Address | undefined;
-    getShippingAddresses(): Address[];
     getShippingAddressOrThrow(): Address;
+    getShippingAddresses(): Address[];
+    getShippingAddressesOrThrow(): Address[];
 }
 
 export type ShippingAddressSelectorFactory = (state: ConsignmentState) => ShippingAddressSelector;
@@ -50,11 +51,22 @@ export function createShippingAddressSelectorFactory(): ShippingAddressSelectorF
         },
     );
 
+    const getShippingAddressesOrThrow = createSelector(
+        getShippingAddresses,
+        (getShippingAddresses) => () => {
+            return guard(
+                getShippingAddresses(),
+                () => new MissingDataError(MissingDataErrorType.MissingShippingAddress),
+            );
+        },
+    );
+
     return memoizeOne((state: ConsignmentState = DEFAULT_STATE): ShippingAddressSelector => {
         return {
             getShippingAddress: getShippingAddress(state),
-            getShippingAddresses: getShippingAddresses(state),
             getShippingAddressOrThrow: getShippingAddressOrThrow(state),
+            getShippingAddresses: getShippingAddresses(state),
+            getShippingAddressesOrThrow: getShippingAddressesOrThrow(state),
         };
     });
 }

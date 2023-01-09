@@ -52,8 +52,9 @@ export default interface PaymentIntegrationSelectors {
     getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
 
     getShippingAddress(): ShippingAddress | undefined;
-    getShippingAddresses(): ShippingAddress[];
     getShippingAddressOrThrow(): ShippingAddress;
+    getShippingAddresses(): ShippingAddress[];
+    getShippingAddressesOrThrow(): ShippingAddress[];
 
     isPaymentDataRequired(useStoreCredit?: boolean): boolean;
     isPaymentMethodInitialized(methodId: string): boolean;
