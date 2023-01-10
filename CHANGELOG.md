@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.320.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.319.1...v1.320.0) (2023-01-10)
+
+
+### Features
+
+* **payment:** PAYMENTS-8378 Send multiple addresses to trusted_shipping_address endpoint in case of multi-shipping ([#1745](https://github.com/bigcommerce/checkout-sdk-js/issues/1745)) ([902016b](https://github.com/bigcommerce/checkout-sdk-js/commit/902016b98423f22dc91648ca71baa8a9caf71b9d))
+* **payment:** PAYMENTS-8378 Update bigpay-client-js version to 5.21.0 ([#1764](https://github.com/bigcommerce/checkout-sdk-js/issues/1764)) ([410f40d](https://github.com/bigcommerce/checkout-sdk-js/commit/410f40d6af6f3b8c1ab18bef43f2402fd81d5a7f))
+
 ### [1.319.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.319.0...v1.319.1) (2023-01-09)
 
 ## [1.319.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.318.0...v1.319.0) (2023-01-08)
