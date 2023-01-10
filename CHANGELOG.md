@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.321.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.320.1...v1.321.0) (2023-01-10)
+
+
+### Features
+
+* **payment:** BOLT-437 Modify analytics event for Bolt suggestion on customer step ([e1a2e9e](https://github.com/bigcommerce/checkout-sdk-js/commit/e1a2e9efa89bb706f4e29ee275b7d04bda93d103))
+
 ### [1.320.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.320.0...v1.320.1) (2023-01-10)
 
 
