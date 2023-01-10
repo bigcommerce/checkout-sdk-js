@@ -180,7 +180,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         }
 
         const cart = this.paymentIntegrationService.getState().getCartOrThrow();
-        const orderDetails = actions.order.get();
+        const orderDetails = await actions.order.get();
 
         try {
             if (cart.lineItems.physicalItems.length > 0) {

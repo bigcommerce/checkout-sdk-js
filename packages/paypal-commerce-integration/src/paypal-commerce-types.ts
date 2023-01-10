@@ -215,7 +215,7 @@ export interface ApproveCallbackPayload {
 
 export interface ApproveCallbackActions {
     order: {
-        get: () => PayPalOrderDetails;
+        get: () => Promise<PayPalOrderDetails>;
     };
 }
 
