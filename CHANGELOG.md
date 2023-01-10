@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.320.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.320.0...v1.320.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* **payment:** BOLT-362 fix Bolt track.js error in console ([ccf5144](https://github.com/bigcommerce/checkout-sdk-js/commit/ccf5144f817a476349a020976f6d1f5f44a802d6))
+
 ## [1.320.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.319.1...v1.320.0) (2023-01-10)
 
 
