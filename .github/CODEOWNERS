@@ -1,7 +1,7 @@
 * @bigcommerce/checkout
-* @bigcommerce/kyiv-payments-team
 /packages/adyen @bigcommerce/kyiv-payments-team
 /packages/apple-pay @bigcommerce/checkout
 /packages/core @bigcommerce/checkout
 /packages/payment-integration @bigcommerce/checkout
 /packages/payment-integration-test-utils @bigcommerce/checkout
+/packages/paypal-commerce @bigcommerce/kyiv-payments-team

@@ -311,6 +311,7 @@ export interface PaypalCommerceHostWindow extends Window {
 }
 
 export type FundingType = string[];
+
 export type EnableFundingType = FundingType | string;
 
 export enum PayPalCommerceIntent {

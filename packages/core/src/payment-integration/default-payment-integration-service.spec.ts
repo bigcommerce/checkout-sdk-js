@@ -11,6 +11,7 @@ import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
+import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
@@ -49,6 +50,7 @@ describe('DefaultPaymentIntegrationService', () => {
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
     >;
+    let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
@@ -104,6 +106,11 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        customerActionCreator = {
+            signInCustomer: jest.fn(async () => () => createAction('SIGN_IN_CUSTOMER')),
+            signOutCustomer: jest.fn(async () => () => createAction('SIGN_OUT_CUSTOMER')),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -114,6 +121,7 @@ describe('DefaultPaymentIntegrationService', () => {
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
             paymentActionCreator as PaymentActionCreator,
+            customerActionCreator as CustomerActionCreator,
         );
     });
 
@@ -253,6 +261,29 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(store.dispatch).toHaveBeenCalledWith(
                 consignmentActionCreator.selectShippingOption('1', {}),
             );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#signInCustomer', () => {
+        it('sign in customer', async () => {
+            const credentials = { email: 'test@test.com', password: '123' };
+            const output = await subject.signInCustomer(credentials, {});
+
+            expect(customerActionCreator.signInCustomer).toHaveBeenCalledWith(credentials, {});
+            expect(store.dispatch).toHaveBeenCalledWith(
+                customerActionCreator.signInCustomer(credentials, {}),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#signOutCustomer', () => {
+        it('sign out customer', async () => {
+            const output = await subject.signOutCustomer({});
+
+            expect(customerActionCreator.signOutCustomer).toHaveBeenCalledWith({});
+            expect(store.dispatch).toHaveBeenCalledWith(customerActionCreator.signOutCustomer({}));
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });
