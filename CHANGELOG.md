@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.322.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.321.0...v1.322.0) (2023-01-11)
+
+
+### Features
+
+* **payment:** PAYPAL-1864 created paypal commerce package ([#1751](https://github.com/bigcommerce/checkout-sdk-js/issues/1751)) ([9ba7826](https://github.com/bigcommerce/checkout-sdk-js/commit/9ba7826f19110e09c0be847dfb67a8f16229e48d))
+
 ## [1.321.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.320.1...v1.321.0) (2023-01-10)
 
 

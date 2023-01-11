@@ -281,6 +281,7 @@
 - [OrderRequestBody](interfaces/OrderRequestBody.md)
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
+- [PayPalCommerceCustomerInitializeOptions](interfaces/PayPalCommerceCustomerInitializeOptions.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
 - [PaymentMethod](interfaces/PaymentMethod.md)
 - [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
@@ -378,6 +379,7 @@
 - [WithCreditCardPaymentInitializeOptions](interfaces/WithCreditCardPaymentInitializeOptions.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
+- [WithPayPalCommerceCustomerInitializeOptions](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
 - [WithSquareV2PaymentInitializeOptions](interfaces/WithSquareV2PaymentInitializeOptions.md)
 - [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
@@ -549,7 +551,7 @@ ___
 
 ### CustomerInitializeOptions
 
-Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md)
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
 
 ___
 

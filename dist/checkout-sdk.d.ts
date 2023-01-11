@@ -4558,7 +4558,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -6010,6 +6010,28 @@ declare interface PasswordRequirements {
     numeric: string;
     minlength: number;
     error: string;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout to support PayPalCommerce.
+ */
+declare interface PayPalCommerceCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
 }
 
 declare interface PayPalInstrument extends BaseAccountInstrument {
@@ -7682,6 +7704,14 @@ declare interface WithDocumentInstrument {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WithPayPalCommerceCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using PayPalCommerce.
+     */
+    paypalcommerce?: PayPalCommerceCustomerInitializeOptions;
 }
 
 declare interface WithSquareV2PaymentInitializeOptions {
