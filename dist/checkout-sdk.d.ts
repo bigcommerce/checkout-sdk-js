@@ -1177,11 +1177,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     googlepaystripeupe?: GooglePayCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the PayPalCommerce payment method.
-     * They can be omitted unless you need to support PayPalCommerce.
-     */
-    paypalcommerce?: PaypalCommerceCustomerInitializeOptions;
-    /**
      * The options that are required to initialize the Customer Stripe Upe payment method.
      * They can be omitted unless you need to support Customer Stripe Upe.
      */
@@ -6349,28 +6344,6 @@ declare interface PaypalCommerceCreditCardPaymentInitializeOptions {
      * The form is data for Credit Card Form
      */
     form: PaypalCommerceFormOptions;
-}
-
-/**
- * A set of options that are required to initialize the customer step of
- * checkout to support PayPalCommerce.
- */
-declare interface PaypalCommerceCustomerInitializeOptions {
-    /**
-     * The ID of a container which the checkout button should be inserted into.
-     */
-    container: string;
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the address options provided by the widget.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error?: Error): void;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
 }
 
 declare type PaypalCommerceFormFieldBlurEventData = PaypalCommerceFormFieldKeyboardEventData;
