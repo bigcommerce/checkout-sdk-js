@@ -6,7 +6,7 @@ enum PaymentStrategyType {
     AFFIRM = 'affirm',
     AFTERPAY = 'afterpay',
     AUTHORIZENET_GOOGLE_PAY = 'googlepayauthorizenet',
-    AMAZONPAYV2 = 'amazonpay',
+    AMAZONPAY = 'amazonpay',
     APPLEPAY = 'applepay',
     BARCLAYS = 'barclays',
     BLUESNAPV2 = 'bluesnapv2',

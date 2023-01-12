@@ -194,7 +194,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             );
 
-            const strategy = registry.get(PaymentStrategyType.AMAZONPAYV2);
+            const strategy = registry.get(PaymentStrategyType.AMAZONPAY);
 
             jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
 
@@ -324,7 +324,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('does not deinitialize if strategy is not initialized', async () => {
-            const strategy = registry.get(PaymentStrategyType.AMAZONPAYV2);
+            const strategy = registry.get(PaymentStrategyType.AMAZONPAY);
 
             jest.spyOn(strategy, 'deinitialize').mockReturnValue(Promise.resolve(store.getState()));
 

@@ -63,7 +63,7 @@ describe('PaymentStrategyRegistry', () => {
     describe('#getByMethod()', () => {
         beforeEach(() => {
             registry.register(
-                PaymentStrategyType.AMAZONPAYV2,
+                PaymentStrategyType.AMAZONPAY,
                 () => new AmazonPayV2PaymentStrategy(store),
             );
             registry.register(

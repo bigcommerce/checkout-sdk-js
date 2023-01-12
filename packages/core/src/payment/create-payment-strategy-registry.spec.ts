@@ -88,7 +88,7 @@ describe('CreatePaymentStrategyRegistry', () => {
     });
 
     it('can instantiate amazonpay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.AMAZONPAYV2);
+        const paymentStrategy = registry.get(PaymentStrategyType.AMAZONPAY);
 
         expect(paymentStrategy).toBeInstanceOf(AmazonPayV2PaymentStrategy);
     });

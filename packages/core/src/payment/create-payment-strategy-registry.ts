@@ -283,7 +283,7 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.AMAZONPAYV2,
+        PaymentStrategyType.AMAZONPAY,
         () =>
             new AmazonPayV2PaymentStrategy(
                 store,
