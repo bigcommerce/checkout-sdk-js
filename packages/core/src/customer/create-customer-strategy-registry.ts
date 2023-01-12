@@ -46,10 +46,6 @@ import {
     GooglePayStripeUPEInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
-import {
-    PaypalCommerceRequestSender,
-    PaypalCommerceScriptLoader,
-} from '../payment/strategies/paypal-commerce';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
@@ -75,7 +71,6 @@ import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
-import { PaypalCommerceCustomerStrategy } from './strategies/paypalcommerce';
 import { SquareCustomerStrategy } from './strategies/square';
 import { StripeUPECustomerStrategy } from './strategies/stripe-upe';
 
@@ -129,8 +124,6 @@ export default function createCustomerStrategyRegistry(
         new PaymentRequestTransformer(),
         new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
     );
-    const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
-    const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
 
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
@@ -350,23 +343,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 orderActionCreator,
                 new ApplePaySessionFactory(),
-            ),
-    );
-
-    registry.register(
-        'paypalcommerce',
-        () =>
-            new PaypalCommerceCustomerStrategy(
-                store,
-                customerActionCreator,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                orderActionCreator,
             ),
     );
 
