@@ -23,6 +23,7 @@ import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import { RequestSender } from '@bigcommerce/request-sender';
 
 describe('DefaultPaymentIntegrationService', () => {
     let subject: PaymentIntegrationService;
@@ -51,6 +52,7 @@ describe('DefaultPaymentIntegrationService', () => {
         'submitPayment' | 'initializeOffsitePayment'
     >;
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
+    let requestSender: Pick<any, any>;
 
     beforeEach(() => {
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
@@ -111,6 +113,8 @@ describe('DefaultPaymentIntegrationService', () => {
             signOutCustomer: jest.fn(async () => () => createAction('SIGN_OUT_CUSTOMER')),
         };
 
+        requestSender = {};
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -122,6 +126,7 @@ describe('DefaultPaymentIntegrationService', () => {
             paymentMethodActionCreator as PaymentMethodActionCreator,
             paymentActionCreator as PaymentActionCreator,
             customerActionCreator as CustomerActionCreator,
+            requestSender as RequestSender,
         );
     });
 

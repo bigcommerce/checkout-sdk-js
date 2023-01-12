@@ -103,5 +103,6 @@ export default function createPaymentIntegrationService(
         paymentMethodActionCreator,
         paymentActionCreator,
         customerActionCreator,
+        requestSender,
     );
 }
