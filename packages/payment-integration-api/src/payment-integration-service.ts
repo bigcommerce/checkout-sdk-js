@@ -7,9 +7,13 @@ import { InitializeOffsitePaymentConfig, Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
+import { BuyNowCartRequestBody } from '../src';
+import { Response } from '@bigcommerce/request-sender';
+import { Cart } from '../src/cart';
 
 export default interface PaymentIntegrationService {
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;
+    createBuyNowCart(body: BuyNowCartRequestBody): Promise<Response<Cart>>;
 
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
@@ -25,6 +29,8 @@ export default interface PaymentIntegrationService {
     loadCheckout(id?: string): Promise<PaymentIntegrationSelectors>;
 
     loadDefaultCheckout(): Promise<PaymentIntegrationSelectors>;
+
+    loadDefinedCheckout(cartID: string): Promise<PaymentIntegrationSelectors>;
 
     loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors>;
 

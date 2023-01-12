@@ -86,6 +86,12 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
+    async loadDefinedCheckout(cartID: string): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._checkoutActionCreator.loadCheckout(cartID));
+
+        return this._storeProjection.getState();
+    }
+
     async loadPaymentMethod(methodId: string): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId));
 
