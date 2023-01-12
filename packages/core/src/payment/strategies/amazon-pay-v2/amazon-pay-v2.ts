@@ -1,5 +1,4 @@
 import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
-import { BuyNowCartRequestBody } from '../../../cart';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 
@@ -62,17 +61,17 @@ export interface AmazonPayV2ButtonConfig {
     /**
      * Amazon Pay merchant account identifier.
      */
-    merchantId?: string;
+    merchantId: string;
 
     /**
      * Placement of the Amazon Pay button on your website.
      */
-    placement?: AmazonPayV2Placement;
+    placement: AmazonPayV2Placement;
 
     /**
      * Ledger currency provided during registration for the given merchant identifier.
      */
-    ledgerCurrency?: AmazonPayV2LedgerCurrency;
+    ledgerCurrency: AmazonPayV2LedgerCurrency;
 
     /**
      * Product type selected for checkout. Default is 'PayAndShip'.
@@ -94,13 +93,6 @@ export interface AmazonPayV2ButtonConfig {
      * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
-
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
 }
 
 export interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {

@@ -17,6 +17,7 @@ import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
+import { isWithBuyNowFeatures } from './amazon-pay-v2-button-options';
 import AmazonPayV2ConfigRequestSender from './amazon-pay-v2-config-request-sender';
 import AmazonPayV2ConfigCreationError from './errors/amazon-pay-v2-config-creation-error';
 
@@ -50,11 +51,14 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
         }
 
-        const initializeAmazonButtonOptions = amazonpay?.buyNowInitializeOptions
+        const initializeAmazonButtonOptions = isWithBuyNowFeatures(amazonpay)
             ? undefined
             : amazonpay;
 
-        if (typeof amazonpay?.buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
+        if (
+            isWithBuyNowFeatures(amazonpay) &&
+            typeof amazonpay?.buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function'
+        ) {
             this._buyNowCartRequestBody =
                 amazonpay.buyNowInitializeOptions.getBuyNowCartRequestBody();
 
