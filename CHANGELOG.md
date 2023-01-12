@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.323.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.322.0...v1.323.0) (2023-01-12)
+
+
+### Features
+
+* **payment:** PAYPAL-1633 added Buy Now feature for googlepaybraintree ([875acac](https://github.com/bigcommerce/checkout-sdk-js/commit/875acac29cf4518fccdaf815371f26727d55ff24))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1633 additional parameter ([51218e0](https://github.com/bigcommerce/checkout-sdk-js/commit/51218e066e0ae57b72c289d4c80d3a1238d04ea9))
+* **payment:** PAYPAL-1633 update after review ([d13800a](https://github.com/bigcommerce/checkout-sdk-js/commit/d13800a2cb62eead6f595da1cd8fe29669afc0c5))
+* **payment:** PAYPAL-1635 fix after review ([d849dd0](https://github.com/bigcommerce/checkout-sdk-js/commit/d849dd00acf9e7a9e107fdc19c88ae30406397c1))
+* **payment:** PAYPAL-1635 fix after review ([827a149](https://github.com/bigcommerce/checkout-sdk-js/commit/827a149ecf8ad0a8a8ab47d83f96e911e938a01b))
+* **payment:** PAYPAL-1635 lint ([64a49ba](https://github.com/bigcommerce/checkout-sdk-js/commit/64a49baa61fcc5714f76daafe9e25d79133537c2))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1633 fix after review ([b5ab80f](https://github.com/bigcommerce/checkout-sdk-js/commit/b5ab80fbc807136ef84212f2a49e89fce3421dc6))
+* **payment:** PAYPAL-1633 fix after review ([9430894](https://github.com/bigcommerce/checkout-sdk-js/commit/9430894212c6125f09cbc1ee095191172fc2f03a))
+
 ## [1.322.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.321.0...v1.322.0) (2023-01-11)
 
 

@@ -617,6 +617,12 @@ declare interface GooglePayButtonInitializeOptions {
      *  short: Google Pay payment button without the "Buy with" text.
      */
     buttonType?: ButtonType;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface LineItem {
