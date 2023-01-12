@@ -217,11 +217,13 @@ export default class AmazonPayV2PaymentProcessor {
             checkoutLanguage,
             placement,
             buttonColor: AmazonPayV2ButtonColor.Gold,
-            sandbox: !!testMode,
         };
 
         if (this._buyNowCartRequestBody) {
-            return buttonBaseConfig;
+            return {
+                ...buttonBaseConfig,
+                sandbox: !!testMode,
+            };
         }
 
         const cart = getCart();

@@ -58,7 +58,6 @@ export function getAmazonPayV2Ph4ButtonParamsMock(): AmazonPayV2ButtonParameters
             payloadJSON: 'payload',
             signature: 'xxxx',
         },
-        sandbox: true,
     };
 }
 
