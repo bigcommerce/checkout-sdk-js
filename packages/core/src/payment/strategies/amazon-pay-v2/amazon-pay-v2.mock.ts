@@ -3,6 +3,7 @@ import { getAmazonPayV2 } from '../../payment-methods.mock';
 
 import {
     AmazonPayV2ButtonColor,
+    AmazonPayV2ButtonConfig,
     AmazonPayV2ButtonParameters,
     AmazonPayV2CheckoutLanguage,
     AmazonPayV2LedgerCurrency,
@@ -57,6 +58,17 @@ export function getAmazonPayV2Ph4ButtonParamsMock(): AmazonPayV2ButtonParameters
             payloadJSON: 'payload',
             signature: 'xxxx',
         },
+    };
+}
+
+export function getAmazonPayBaseButtonParamsMock(): AmazonPayV2ButtonConfig {
+    return {
+        merchantId: 'checkout_amazonpay',
+        ledgerCurrency: AmazonPayV2LedgerCurrency.USD,
+        checkoutLanguage: AmazonPayV2CheckoutLanguage.en_US,
+        placement: AmazonPayV2Placement.Checkout,
+        buttonColor: AmazonPayV2ButtonColor.Gold,
+        sandbox: true,
     };
 }
 
