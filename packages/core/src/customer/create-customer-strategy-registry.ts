@@ -66,7 +66,10 @@ import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
-import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
+import {
+    BraintreePaypalCustomerStrategy,
+    BraintreeVisaCheckoutCustomerStrategy,
+} from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
@@ -125,6 +128,7 @@ export default function createCustomerStrategyRegistry(
         new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
     );
 
+    const braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
@@ -185,6 +189,20 @@ export default function createCustomerStrategyRegistry(
                 createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
                 new VisaCheckoutScriptLoader(scriptLoader),
                 formPoster,
+            ),
+    );
+
+    registry.register(
+        'braintreepaypal',
+        () =>
+            new BraintreePaypalCustomerStrategy(
+                store,
+                checkoutActionCreator,
+                customerActionCreator,
+                paymentMethodActionCreator,
+                braintreeSDKCreator,
+                formPoster,
+                window,
             ),
     );
 
@@ -263,9 +281,7 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(
                     store,
-                    new GooglePayBraintreeInitializer(
-                        new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-                    ),
+                    new GooglePayBraintreeInitializer(braintreeSDKCreator),
                 ),
                 formPoster,
             ),
