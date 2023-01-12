@@ -509,4 +509,48 @@ describe('GooglePayPaymentProcessor', () => {
             });
         });
     });
+
+    describe('#updatePaymentDataRequest', () => {
+        beforeEach(() => {
+            const googlePayIsReadyToPayResponse = {
+                result: true,
+            };
+            const googlePaymentDataMock = getGooglePaymentDataMock();
+
+            clientMock = {
+                isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
+                loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
+                createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
+            };
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                getGooglePay(),
+            );
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+                Promise.resolve(store.getState()),
+            );
+            jest.spyOn(googlePayInitializer, 'initialize').mockReturnValue(
+                Promise.resolve(getGooglePayPaymentDataRequestMock()),
+            );
+        });
+
+        it('should updates payment data request', async () => {
+            const googlePaymentDataMock = getGooglePayPaymentDataRequestMock();
+            const payloadToUpdate = {
+                currencyCode: 'EUR',
+                totalPrice: '1.02',
+            };
+
+            googlePaymentDataMock.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
+            googlePaymentDataMock.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
+
+            await processor.initialize('googlepay');
+
+            processor.updatePaymentDataRequest(payloadToUpdate);
+
+            await processor.displayWallet();
+
+            expect(clientMock.loadPaymentData).toHaveBeenCalledWith(googlePaymentDataMock);
+        });
+    });
 });
