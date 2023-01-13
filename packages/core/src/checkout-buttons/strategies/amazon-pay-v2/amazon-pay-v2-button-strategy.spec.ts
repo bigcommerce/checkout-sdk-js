@@ -8,10 +8,7 @@ import {
     CheckoutStore,
     createCheckoutStore,
 } from '../../../checkout';
-import {
-    AmazonPayV2ConfigRequestSender,
-    getCheckoutRequestConfig,
-} from '../../../checkout-buttons/strategies/amazon-pay-v2';
+import { AmazonPayV2ConfigRequestSender } from '../../../checkout-buttons/strategies/amazon-pay-v2';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -26,6 +23,7 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import AmazonPayV2ButtonStrategy from './amazon-pay-v2-button-strategy';
 import { getAmazonPayV2CheckoutButtonOptions, Mode } from './amazon-pay-v2-button.mock';
+import { getCheckoutRequestConfig } from './amazon-pay-v2-config-request-sender-mock';
 
 describe('AmazonPayV2ButtonStrategy', () => {
     let checkoutButtonOptions: CheckoutButtonInitializeOptions;

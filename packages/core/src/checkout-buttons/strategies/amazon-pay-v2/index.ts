@@ -4,4 +4,3 @@ export {
     default as AmazonPayV2ConfigRequestSender,
     CheckoutConfig,
 } from './amazon-pay-v2-config-request-sender';
-export { getCheckoutRequestConfig } from './amazon-pay-v2-config-request-sender-mock';
