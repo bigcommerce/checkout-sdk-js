@@ -8,7 +8,7 @@ import {
     CheckoutStore,
     createCheckoutStore,
 } from '../../../checkout';
-import { AmazonPayV2ConfigRequestSender } from '../../../checkout-buttons/strategies/amazon-pay-v2';
+import { AmazonPayV2RequestSender } from '../../../checkout-buttons/strategies/amazon-pay-v2';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
@@ -33,7 +33,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
     let store: CheckoutStore;
     let strategy: AmazonPayV2ButtonStrategy;
     let cartRequestSender: CartRequestSender;
-    let amazonPayV2ConfigRequestSender: AmazonPayV2ConfigRequestSender;
+    let amazonPayV2RequestSender: AmazonPayV2RequestSender;
 
     const cart = getCart();
 
@@ -52,7 +52,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
 
         cartRequestSender = new CartRequestSender(requestSender);
 
-        amazonPayV2ConfigRequestSender = new AmazonPayV2ConfigRequestSender(requestSender);
+        amazonPayV2RequestSender = new AmazonPayV2RequestSender(requestSender);
 
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
@@ -70,7 +70,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
 
         jest.spyOn(paymentProcessor, 'renderAmazonPayButton').mockResolvedValue('foo');
 
-        jest.spyOn(amazonPayV2ConfigRequestSender, 'createCheckoutConfig').mockResolvedValue({
+        jest.spyOn(amazonPayV2RequestSender, 'createCheckoutConfig').mockResolvedValue({
             body: getCheckoutRequestConfig(),
         });
 
@@ -89,7 +89,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
             checkoutActionCreator,
             paymentProcessor,
             cartRequestSender,
-            amazonPayV2ConfigRequestSender,
+            amazonPayV2RequestSender,
         );
     });
 
@@ -165,7 +165,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
                     checkoutActionCreator,
                     paymentProcessor,
                     cartRequestSender,
-                    amazonPayV2ConfigRequestSender,
+                    amazonPayV2RequestSender,
                 );
 
                 const initialize = strategy.initialize(checkoutButtonOptions);

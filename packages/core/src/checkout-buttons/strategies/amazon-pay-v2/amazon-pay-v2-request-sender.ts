@@ -8,7 +8,7 @@ export interface CheckoutConfig {
     public_key: string;
 }
 
-export default class AmazonPayV2ConfigRequestSender {
+export default class AmazonPayV2RequestSender {
     constructor(private _requestSender: RequestSender) {}
 
     createCheckoutConfig(cartId: string | number): Promise<Response<CheckoutConfig>> {

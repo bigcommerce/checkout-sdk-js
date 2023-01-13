@@ -3,11 +3,11 @@ import { AmazonPayV2ButtonParameters } from '../../../payment/strategies/amazon-
 
 export function isWithBuyNowFeatures(
     options?: AmazonPayV2ButtonInitializeOptions,
-): options is WithBuyNowFeatures {
-    return !!(options as WithBuyNowFeatures)?.buyNowInitializeOptions;
+): options is WithBuyNowFeature {
+    return !!(options as WithBuyNowFeature)?.buyNowInitializeOptions;
 }
 
-export interface WithBuyNowFeatures {
+export interface WithBuyNowFeature {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -19,4 +19,4 @@ export interface WithBuyNowFeatures {
 /**
  * The required config to render the AmazonPayV2 button.
  */
-export type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters | WithBuyNowFeatures;
+export type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters | WithBuyNowFeature;

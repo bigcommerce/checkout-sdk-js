@@ -18,7 +18,7 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import { isWithBuyNowFeatures } from './amazon-pay-v2-button-options';
-import AmazonPayV2ConfigRequestSender from './amazon-pay-v2-config-request-sender';
+import AmazonPayV2RequestSender from './amazon-pay-v2-request-sender';
 import AmazonPayV2ConfigCreationError from './errors/amazon-pay-v2-config-creation-error';
 
 export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy {
@@ -29,7 +29,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
         private _checkoutActionCreator: CheckoutActionCreator,
         private _amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor,
         private _cartRequestSender: CartRequestSender,
-        private _amazonPayV2ConfigRequestSender: AmazonPayV2ConfigRequestSender,
+        private _amazonPayV2ConfigRequestSender: AmazonPayV2RequestSender,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
