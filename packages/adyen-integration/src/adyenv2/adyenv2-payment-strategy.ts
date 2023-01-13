@@ -180,6 +180,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         shouldSaveInstrument,
                         shouldSetAsDefaultInstrument,
                     );
+
+                    return;
                 }
             }
         }
