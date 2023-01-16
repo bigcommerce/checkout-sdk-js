@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.324.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.0...v1.324.1) (2023-01-16)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-688 fixed 3ds2 redirect for vaulted cards ([ea27e60](https://github.com/bigcommerce/checkout-sdk-js/commit/ea27e607783b805f6b049ac596defa15cec6a38c))
+
 ## [1.324.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.323.1...v1.324.0) (2023-01-16)
 
 
