@@ -1108,6 +1108,11 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
      * The options that are required to initialize the customer step of checkout
+     * when using Braintree PayPal provided.
+     */
+    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
@@ -1805,6 +1810,19 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+}
+
+declare interface BraintreePaypalCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
