@@ -75,7 +75,7 @@ export default class AmazonPayV2PaymentProcessor {
         const requestConfig = this._prepareRequestConfig(createCheckoutSessionConfig);
 
         this._getAmazonPayV2Button().onClick(() => {
-            return this._getAmazonPayV2Button().initCheckout(requestConfig);
+            this._getAmazonPayV2Button().initCheckout(requestConfig);
         });
     }
 
@@ -94,7 +94,7 @@ export default class AmazonPayV2PaymentProcessor {
                 config.productType,
             );
 
-            return this._getAmazonPayV2Button().initCheckout(requestConfig);
+            this._getAmazonPayV2Button().initCheckout(requestConfig);
         });
     }
 
