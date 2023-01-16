@@ -1,0 +1,16 @@
+import { StandardError } from '../../../common/error/errors';
+import { BraintreeError } from '../../../payment/strategies/braintree';
+
+export default interface BraintreePaypalCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
+}
