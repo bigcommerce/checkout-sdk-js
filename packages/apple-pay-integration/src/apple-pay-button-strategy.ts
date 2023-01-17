@@ -112,7 +112,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
     private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
-        const isPhysicalItem = true;
+        // const isPhysicalItem = true;
 
         if (
             this._buyNowInitializeOptions &&
@@ -132,9 +132,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 requiredShippingContactFields: ['email', 'phone'],
             };
 
-            if (isPhysicalItem) {
+            // if (isPhysicalItem) {
                 request.requiredShippingContactFields?.push('postalAddress');
-            }
+            // }
 
             console.log('REQUEST 1', request);
 
@@ -295,16 +295,15 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 newLineItems: request.lineItems,
             });
 
-
             applePaySession.onshippingcontactselected = async (event) => {
                 console.log('SHIPPING');
                 return this._handleShippingContactSelected(applePaySession, storeName, event);
-            }
+            };
 
             applePaySession.onshippingmethodselected = async (event) => {
                 console.log('SHIPPING1');
                 return this._handleShippingMethodSelected(applePaySession, storeName, event);
-            }
+            };
         };
 
 
