@@ -133,7 +133,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             };
 
             // if (isPhysicalItem) {
-                request.requiredShippingContactFields?.push('postalAddress');
+            request.requiredShippingContactFields?.push('postalAddress');
             // }
 
             console.log('REQUEST 1', request);
@@ -305,7 +305,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 return this._handleShippingMethodSelected(applePaySession, storeName, event);
             };
         };
-
 
         applePaySession.oncancel = async () => {
             try {
