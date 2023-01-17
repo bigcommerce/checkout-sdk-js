@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.324.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.1...v1.324.2) (2023-01-17)
+
+
+### Bug Fixes
+
+* **payment:** INT-7103 SquareV2: Assume that `postalCode` is valid unless it changes ([#1765](https://github.com/bigcommerce/checkout-sdk-js/issues/1765)) ([8526331](https://github.com/bigcommerce/checkout-sdk-js/commit/85263312ac4eb9dfb4d45aef19ed6f0b47e7b7e5))
+
 ### [1.324.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.0...v1.324.1) (2023-01-16)
 
 
