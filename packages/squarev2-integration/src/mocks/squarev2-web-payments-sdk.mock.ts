@@ -1,8 +1,9 @@
 import {
     Card,
-    CardFieldNames,
+    CardFieldNamesValues,
     CardInputEvent,
     CardInputEventTypes,
+    CardInputEventTypesValues,
     Payments,
     SqEvent,
 } from '../types';
@@ -28,8 +29,8 @@ export function getSquareV2MockFunctions() {
             },
         );
     const simulateEvent = (
-        type: CardInputEventTypes,
-        field: CardFieldNames,
+        type: CardInputEventTypesValues,
+        field: CardFieldNamesValues,
         isCompletelyValid: boolean,
     ) => {
         const callback = listeners[type];

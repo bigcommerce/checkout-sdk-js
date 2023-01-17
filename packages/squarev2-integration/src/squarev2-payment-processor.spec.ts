@@ -10,7 +10,7 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 import { getSquareV2MockFunctions } from './mocks/squarev2-web-payments-sdk.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2ScriptLoader from './squarev2-script-loader';
-import { CardFieldNames, CardInputEventTypes, Square } from './types';
+import { Square } from './types';
 
 describe('SquareV2PaymentProcessor', () => {
     let squareV2ScriptLoader: SquareV2ScriptLoader;
@@ -106,11 +106,7 @@ describe('SquareV2PaymentProcessor', () => {
                 containerId: 'card-container',
                 onValidationChange,
             });
-            squareV2MockFunctions.simulateEvent(
-                'focusClassAdded' as CardInputEventTypes,
-                'cardNumber' as CardFieldNames,
-                true,
-            );
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
 
             expect(onValidationChange).toHaveBeenCalledTimes(1);
             expect(onValidationChange).toHaveBeenCalledWith(false);
@@ -123,26 +119,10 @@ describe('SquareV2PaymentProcessor', () => {
                 containerId: 'card-container',
                 onValidationChange,
             });
-            squareV2MockFunctions.simulateEvent(
-                'focusClassAdded' as CardInputEventTypes,
-                'cardNumber' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'focusClassRemoved' as CardInputEventTypes,
-                'expirationDate' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'errorClassRemoved' as CardInputEventTypes,
-                'cvv' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'postalCodeChanged' as CardInputEventTypes,
-                'postalCode' as CardFieldNames,
-                true,
-            );
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
+            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
+            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
+            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
 
             expect(onValidationChange).toHaveBeenCalledTimes(2);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
@@ -156,36 +136,32 @@ describe('SquareV2PaymentProcessor', () => {
                 containerId: 'card-container',
                 onValidationChange,
             });
-            squareV2MockFunctions.simulateEvent(
-                'focusClassAdded' as CardInputEventTypes,
-                'cardNumber' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'focusClassRemoved' as CardInputEventTypes,
-                'expirationDate' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'errorClassRemoved' as CardInputEventTypes,
-                'cvv' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'postalCodeChanged' as CardInputEventTypes,
-                'postalCode' as CardFieldNames,
-                true,
-            );
-            squareV2MockFunctions.simulateEvent(
-                'cardBrandChanged' as CardInputEventTypes,
-                'cardNumber' as CardFieldNames,
-                false,
-            );
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
+            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
+            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
+            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
+            squareV2MockFunctions.simulateEvent('cardBrandChanged', 'cardNumber', false);
 
             expect(onValidationChange).toHaveBeenCalledTimes(3);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
             expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
             expect(onValidationChange).toHaveBeenNthCalledWith(3, false);
+        });
+
+        it("should exempt postalCode from validation if it hasn't been rendered yet", async () => {
+            const onValidationChange = jest.fn();
+
+            await processor.initializeCard({
+                containerId: 'card-container',
+                onValidationChange,
+            });
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
+            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
+            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
+
+            expect(onValidationChange).toHaveBeenCalledTimes(2);
+            expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
+            expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
         });
     });
 

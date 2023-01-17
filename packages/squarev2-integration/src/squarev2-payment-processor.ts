@@ -129,12 +129,7 @@ export default class SquareV2PaymentProcessor {
         card: Card,
         observer: Required<SquareV2PaymentInitializeOptions>['onValidationChange'],
     ): Subscription {
-        const invalidFields = new Set<string>([
-            'cardNumber',
-            'expirationDate',
-            'cvv',
-            'postalCode',
-        ]);
+        const invalidFields = new Set<string>(['cardNumber', 'expirationDate', 'cvv']);
         const eventObservables = [
             'focusClassAdded',
             'focusClassRemoved',
