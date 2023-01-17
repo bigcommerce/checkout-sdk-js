@@ -147,6 +147,36 @@ describe('PaypalCommerceHostedForm', () => {
                 },
             },
             expectEvents,
+            undefined,
+        );
+    });
+
+    it('render hosted fields with form fields with extra instrument data callback', async () => {
+        const getInstrumentDataCallback = expect.any(Function);
+
+        await hostedForm.initialize(
+            formOptions,
+            cart,
+            paymentMethodMock.initializationData,
+            getInstrumentDataCallback,
+        );
+
+        expect(paypalCommercePaymentProcessor.renderHostedFields).toHaveBeenCalledWith(
+            cart.id,
+            {
+                fields: {
+                    cvv: { selector: '#cardCode', placeholder: 'Card code' },
+                    expirationDate: { selector: '#cardExpiry', placeholder: 'Card expiry' },
+                    number: { selector: '#cardNumber', placeholder: 'Card number' },
+                },
+                styles: {
+                    input: { color: '#000' },
+                    '.invalid': { color: '#f00', 'font-weight': 'bold' },
+                    ':focus': { color: '#00f' },
+                },
+            },
+            expectEvents,
+            getInstrumentDataCallback,
         );
     });
 
@@ -185,6 +215,7 @@ describe('PaypalCommerceHostedForm', () => {
                 },
             },
             expectEvents,
+            undefined,
         );
     });
 

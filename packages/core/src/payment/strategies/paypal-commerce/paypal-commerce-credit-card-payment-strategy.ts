@@ -7,6 +7,9 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
+import isHostedInstrumentLike from '../../is-hosted-intrument-like';
+import isVaultedInstrument from '../../is-vaulted-instrument';
+import { HostedInstrument, PaymentInstrument, VaultedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -19,6 +22,8 @@ import {
 } from './index';
 
 export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentStrategy {
+    private executionPaymentData: PaymentInstrument | undefined;
+
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -47,7 +52,12 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await this._paypalCommerceHostedForm.initialize(paypalcommerce.form, cart, paymentMethod);
+        await this._paypalCommerceHostedForm.initialize(
+            paypalcommerce.form,
+            cart,
+            paymentMethod,
+            this._getInstrumentParams.bind(this),
+        );
 
         return this._store.getState();
     }
@@ -63,6 +73,8 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         }
 
         this._paypalCommerceHostedForm.validate();
+
+        this.executionPaymentData = payload.payment?.paymentData;
 
         const {
             paymentMethods: { getPaymentMethodOrThrow },
@@ -99,6 +111,32 @@ export default class PaypalCommerceCreditCardPaymentStrategy implements PaymentS
         this._paypalCommerceHostedForm.deinitialize();
 
         return Promise.resolve(this._store.getState());
+    }
+
+    private _getInstrumentParams(): HostedInstrument | VaultedInstrument {
+        if (!this.executionPaymentData) {
+            return {};
+        }
+
+        if (isHostedInstrumentLike(this.executionPaymentData)) {
+            const { shouldSaveInstrument, shouldSetAsDefaultInstrument } =
+                this.executionPaymentData;
+
+            return {
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            };
+        }
+
+        if (isVaultedInstrument(this.executionPaymentData)) {
+            const { instrumentId } = this.executionPaymentData;
+
+            return {
+                instrumentId,
+            };
+        }
+
+        return {};
     }
 
     private _isPaypalCommerceOptionsPayments(

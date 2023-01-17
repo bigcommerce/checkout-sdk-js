@@ -29,21 +29,14 @@ export default class BoltScriptLoader {
             );
         }
 
-        const options: LoadScriptOptions = {
-            async: true,
-            attributes: {
-                id: 'bolt-connect',
-                'data-publishable-key': publishableKey,
-            },
-        };
-
         await Promise.all([
             this._scriptLoader.loadScript(
                 `//${this.getDomainURL(!!testMode, developerModeParams)}/connect-bigcommerce.js`,
-                options,
+                this._getScriptOptions('bolt-connect', publishableKey),
             ),
             this._scriptLoader.loadScript(
                 `//${this.getDomainURL(!!testMode, developerModeParams)}/track.js`,
+                this._getScriptOptions('bolt-track', publishableKey),
             ),
         ]);
 
@@ -94,5 +87,15 @@ export default class BoltScriptLoader {
         }
 
         return 'connect-sandbox.bolt.com';
+    }
+
+    private _getScriptOptions(id: string, publishableKey: string): LoadScriptOptions {
+        return {
+            async: true,
+            attributes: {
+                id,
+                'data-publishable-key': publishableKey,
+            },
+        };
     }
 }

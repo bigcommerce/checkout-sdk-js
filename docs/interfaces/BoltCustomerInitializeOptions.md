@@ -15,7 +15,7 @@ checkout to support Bolt.
 
 ### onInit
 
-▸ `Optional` **onInit**(`hasBoltAccount`): `void`
+▸ `Optional` **onInit**(`hasBoltAccount`, `email?`): `void`
 
 A callback that gets called on initialize the strategy
 
@@ -24,6 +24,7 @@ A callback that gets called on initialize the strategy
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `hasBoltAccount` | `boolean` | The hasBoltAccount variable handle the result of checking user account availability on Bolt. |
+| `email?` | `string` | Email address which was used for checking user account availability on Bolt. |
 
 #### Returns
 

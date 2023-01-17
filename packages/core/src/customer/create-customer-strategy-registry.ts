@@ -66,7 +66,10 @@ import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
-import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
+import {
+    BraintreePaypalCustomerStrategy,
+    BraintreeVisaCheckoutCustomerStrategy,
+} from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
@@ -106,7 +109,26 @@ export default function createCustomerStrategyRegistry(
         checkoutActionCreator,
         spamProtectionActionCreator,
     );
+    const billingAddressActionCreator = new BillingAddressActionCreator(
+        new BillingAddressRequestSender(requestSender),
+        new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
+    );
+    const consignmentActionCreator = new ConsignmentActionCreator(
+        new ConsignmentRequestSender(requestSender),
+        new CheckoutRequestSender(requestSender),
+    );
+    const orderActionCreator = new OrderActionCreator(
+        new OrderRequestSender(requestSender),
+        new CheckoutValidator(checkoutRequestSender),
+    );
+    const paymentActionCreator = new PaymentActionCreator(
+        new PaymentRequestSender(paymentClient),
+        orderActionCreator,
+        new PaymentRequestTransformer(),
+        new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
+    );
 
+    const braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
@@ -167,6 +189,20 @@ export default function createCustomerStrategyRegistry(
                 createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
                 new VisaCheckoutScriptLoader(scriptLoader),
                 formPoster,
+            ),
+    );
+
+    registry.register(
+        'braintreepaypal',
+        () =>
+            new BraintreePaypalCustomerStrategy(
+                store,
+                checkoutActionCreator,
+                customerActionCreator,
+                paymentMethodActionCreator,
+                braintreeSDKCreator,
+                formPoster,
+                window,
             ),
     );
 
@@ -245,9 +281,7 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(
                     store,
-                    new GooglePayBraintreeInitializer(
-                        new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-                    ),
+                    new GooglePayBraintreeInitializer(braintreeSDKCreator),
                 ),
                 formPoster,
             ),
@@ -319,28 +353,11 @@ export default function createCustomerStrategyRegistry(
                 checkoutActionCreator,
                 requestSender,
                 paymentMethodActionCreator,
-                new ConsignmentActionCreator(
-                    new ConsignmentRequestSender(requestSender),
-                    new CheckoutRequestSender(requestSender),
-                ),
-                new BillingAddressActionCreator(
-                    new BillingAddressRequestSender(requestSender),
-                    new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
-                ),
-                new PaymentActionCreator(
-                    new PaymentRequestSender(paymentClient),
-                    new OrderActionCreator(
-                        new OrderRequestSender(requestSender),
-                        new CheckoutValidator(checkoutRequestSender),
-                    ),
-                    new PaymentRequestTransformer(),
-                    new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-                ),
+                consignmentActionCreator,
+                billingAddressActionCreator,
+                paymentActionCreator,
                 remoteCheckoutActionCreator,
-                new OrderActionCreator(
-                    new OrderRequestSender(requestSender),
-                    new CheckoutValidator(checkoutRequestSender),
-                ),
+                orderActionCreator,
                 new ApplePaySessionFactory(),
             ),
     );

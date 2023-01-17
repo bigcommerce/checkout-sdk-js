@@ -1,12 +1,7 @@
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-} from '../common/error/errors';
+import { InvalidArgumentError } from '../common/error/errors';
 import { Registry, RegistryOptions } from '../common/registry';
 
 import PaymentMethod from './payment-method';
@@ -51,6 +46,16 @@ export default class PaymentStrategyRegistry extends Registry<
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
+        const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
+
+        if (
+            paymentMethod.id === 'squarev2' &&
+            features &&
+            features['PROJECT-4113.squarev2_web_payments_sdk']
+        ) {
+            throw new Error('SquareV2 requires using registryV2');
+        }
+
         if (isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
@@ -87,42 +92,11 @@ export default class PaymentStrategyRegistry extends Registry<
             return PaymentStrategyType.OFFLINE;
         }
 
-        if (this._isLegacyMethod(paymentMethod)) {
-            return PaymentStrategyType.LEGACY;
-        }
-
-        if (paymentMethod.type === paymentMethodTypes.HOSTED) {
-            return PaymentStrategyType.OFFSITE;
-        }
-
         throw new InvalidArgumentError(`'${methodId}' is not registered.`);
     }
 
     private _hasFactoryForMethod(methodId: string): methodId is PaymentStrategyType {
         return this._hasFactory(methodId);
-    }
-
-    private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
-        const config = this._store.getState().config.getStoreConfig();
-
-        if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        const { clientSidePaymentProviders } = config.paymentSettings;
-
-        if (
-            !clientSidePaymentProviders ||
-            paymentMethod.gateway === 'adyen' ||
-            paymentMethod.gateway === 'barclaycard'
-        ) {
-            return false;
-        }
-
-        return !some(
-            clientSidePaymentProviders,
-            (id) => paymentMethod.id === id || paymentMethod.gateway === id,
-        );
     }
 }
 

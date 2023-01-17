@@ -311,6 +311,7 @@ export interface PaypalCommerceHostWindow extends Window {
 }
 
 export type FundingType = string[];
+
 export type EnableFundingType = FundingType | string;
 
 export enum PayPalCommerceIntent {
@@ -356,4 +357,11 @@ export interface UpdateOrderPayload {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
     selectedShippingOption?: ShippingOption;
+}
+
+export interface PayPalCreateOrderRequestBody {
+    cartId: string;
+    instrumentId?: string;
+    shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
 }

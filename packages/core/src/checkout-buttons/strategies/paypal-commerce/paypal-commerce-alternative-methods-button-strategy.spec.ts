@@ -411,8 +411,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 'paypalcommercealternativemethod',
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
 
@@ -434,8 +436,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 'paypalcommercealternativemethodscheckout',
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
 
@@ -456,8 +460,10 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                buyNowCartMock.id,
                 'paypalcommercealternativemethod',
+                {
+                    cartId: buyNowCartMock.id,
+                },
             );
         });
 

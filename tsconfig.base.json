@@ -48,6 +48,12 @@
             "@bigcommerce/checkout-sdk/payment-integrations-test-utils": [
                 "packages/payment-integrations-test-utils/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/paypal-commerce-integration": [
+                "packages/paypal-commerce-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/sezzle-integration": [
+                "packages/sezzle-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/squarev2-integration": [
                 "packages/squarev2-integration/src/index.ts"
             ],

@@ -8,6 +8,7 @@
 
 - [buttonColor](GooglePayButtonInitializeOptions.md#buttoncolor)
 - [buttonType](GooglePayButtonInitializeOptions.md#buttontype)
+- [buyNowInitializeOptions](GooglePayButtonInitializeOptions.md#buynowinitializeoptions)
 
 ## Properties
 
@@ -29,3 +30,17 @@ The size of the GooglePay button that will be inserted.
  long: "Buy with Google Pay" button (default). A translated button label may appear
         if a language specified in the viewer's browser matches an available language.
  short: Google Pay payment button without the "Buy with" text.
+
+___
+
+### buyNowInitializeOptions
+
+• `Optional` **buyNowInitializeOptions**: `Object`
+
+The options that are required to initialize Buy Now functionality.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |

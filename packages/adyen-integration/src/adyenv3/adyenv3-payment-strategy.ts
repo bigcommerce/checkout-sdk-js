@@ -170,6 +170,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     shouldSaveInstrument,
                     shouldSetAsDefaultInstrument,
                 );
+
+                return;
             }
         }
 

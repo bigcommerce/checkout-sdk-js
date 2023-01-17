@@ -1,6 +1,6 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
-import { CartChangedError } from '../cart/errors';
+import { CartChangedError, CartConsistencyError } from '../cart/errors';
 import { RequestError } from '../common/error/errors';
 import { createSelector, createShallowEqualSelector } from '../common/selector';
 import { Omit } from '../common/types';
@@ -37,7 +37,7 @@ export default interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | undefined;
+    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | undefined;
 
     /**
      * Returns an error if unable to finalize the current order.

@@ -17,6 +17,7 @@ import {
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
+import PaymentMethod from './payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import {
     PaymentStrategyActionType,
@@ -70,15 +71,7 @@ export default class PaymentStrategyActionCreator {
                             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                         }
 
-                        try {
-                            strategy = this._strategyRegistry.getByMethod(method);
-                        } catch {
-                            strategy = this._strategyRegistryV2.get({
-                                id: method.id,
-                                gateway: method.gateway,
-                                type: method.type,
-                            });
-                        }
+                        strategy = this._getStrategy(method);
                     } else {
                         strategy = this._strategyRegistryV2.get({
                             id: PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED,
@@ -122,17 +115,7 @@ export default class PaymentStrategyActionCreator {
                         throw new OrderFinalizationNotRequiredError();
                     }
 
-                    let strategy: PaymentStrategy | PaymentStrategyV2;
-
-                    try {
-                        strategy = this._strategyRegistry.getByMethod(method);
-                    } catch {
-                        strategy = this._strategyRegistryV2.get({
-                            id: method.id,
-                            gateway: method.gateway,
-                            type: method.type,
-                        });
-                    }
+                    const strategy = this._getStrategy(method);
 
                     await strategy.finalize({
                         ...options,
@@ -174,17 +157,7 @@ export default class PaymentStrategyActionCreator {
                     return empty();
                 }
 
-                let strategy: PaymentStrategy | PaymentStrategyV2;
-
-                try {
-                    strategy = this._strategyRegistry.getByMethod(method);
-                } catch {
-                    strategy = this._strategyRegistryV2.get({
-                        id: method.id,
-                        gateway: method.gateway,
-                        type: method.type,
-                    });
-                }
+                const strategy = this._getStrategy(method);
 
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({
                     ...options,
@@ -231,17 +204,7 @@ export default class PaymentStrategyActionCreator {
                     return empty();
                 }
 
-                let strategy: PaymentStrategy | PaymentStrategyV2;
-
-                try {
-                    strategy = this._strategyRegistry.getByMethod(method);
-                } catch {
-                    strategy = this._strategyRegistryV2.get({
-                        id: method.id,
-                        gateway: method.gateway,
-                        type: method.type,
-                    });
-                }
+                const strategy = this._getStrategy(method);
 
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.deinitialize({
                     ...options,
@@ -293,6 +256,22 @@ export default class PaymentStrategyActionCreator {
                 throwErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta),
             ),
         );
+    }
+
+    private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {
+        let strategy: PaymentStrategy | PaymentStrategyV2;
+
+        try {
+            strategy = this._strategyRegistry.getByMethod(method);
+        } catch {
+            strategy = this._strategyRegistryV2.get({
+                id: method.id,
+                gateway: method.gateway,
+                type: method.type,
+            });
+        }
+
+        return strategy;
     }
 
     private _loadOrderPaymentsIfNeeded(

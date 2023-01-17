@@ -11,7 +11,4 @@ const createExternalPaymentStrategy: PaymentStrategyFactory<ExternalPaymentStrat
     paymentIntegrationService,
 ) => new ExternalPaymentStrategy(createFormPoster(), paymentIntegrationService);
 
-export default toResolvableModule(createExternalPaymentStrategy, [
-    { id: 'laybuy' },
-    { id: 'sezzle' },
-]);
+export default toResolvableModule(createExternalPaymentStrategy, [{ id: 'laybuy' }]);

@@ -1,7 +1,7 @@
 import PaymentMethodConfig from './payment-method-config';
 import InitializationStrategy from './payment-method-initialization-strategy';
 
-export default interface PaymentMethod {
+export default interface PaymentMethod<T = any> {
     id: string;
     config: PaymentMethodConfig;
     method: string;
@@ -11,7 +11,7 @@ export default interface PaymentMethod {
     gateway?: string;
     logoUrl?: string;
     nonce?: string;
-    initializationData?: any;
+    initializationData?: T;
     returnUrl?: string;
     initializationStrategy?: InitializationStrategy;
 }

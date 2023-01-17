@@ -28,6 +28,7 @@ export function getBoltEmbeddedScriptMock(): BoltEmbedded {
         create: jest.fn((_formName: string) => {
             return {
                 mount: jest.fn(),
+                unmount: jest.fn(),
                 tokenize: jest.fn(),
             };
         }),

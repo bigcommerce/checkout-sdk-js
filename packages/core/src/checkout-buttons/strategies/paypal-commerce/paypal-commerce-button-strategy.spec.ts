@@ -512,10 +512,9 @@ describe('PaypalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
-                'paypalcommerce',
-            );
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith('paypalcommerce', {
+                cartId: cartMock.id,
+            });
         });
 
         it('creates an order with paypalcommercecheckout as provider id if its initializes on checkout page', async () => {
@@ -536,8 +535,10 @@ describe('PaypalCommerceButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                cartMock.id,
                 'paypalcommercecheckout',
+                {
+                    cartId: cartMock.id,
+                },
             );
         });
 
@@ -557,10 +558,9 @@ describe('PaypalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                buyNowCartMock.id,
-                'paypalcommerce',
-            );
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith('paypalcommerce', {
+                cartId: buyNowCartMock.id,
+            });
         });
 
         it('throws an error if orderId is not provided by PayPal on approve', async () => {

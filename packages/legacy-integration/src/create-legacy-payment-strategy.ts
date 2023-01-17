@@ -9,4 +9,4 @@ const createLegacyPaymentStrategy: PaymentStrategyFactory<LegacyPaymentStrategy>
     paymentIntegrationService,
 ) => new LegacyPaymentStrategy(paymentIntegrationService);
 
-export default toResolvableModule(createLegacyPaymentStrategy, [{ id: 'legacy' }]);
+export default toResolvableModule(createLegacyPaymentStrategy, [{ id: 'testgateway' }]);

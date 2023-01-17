@@ -1,4 +1,5 @@
 import { BillingAddressRequestBody } from './billing';
+import { CustomerCredentials } from './customer';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
 import { InitializeOffsitePaymentConfig, Payment } from './payment';
@@ -45,4 +46,11 @@ export default interface PaymentIntegrationService {
     updateShippingAddress(
         payload: ShippingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors>;
+
+    signInCustomer(
+        credentials: CustomerCredentials,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
+
+    signOutCustomer(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 }

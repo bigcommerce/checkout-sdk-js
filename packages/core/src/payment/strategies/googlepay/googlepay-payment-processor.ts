@@ -2,7 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator, BillingAddressUpdateRequestBody } from '../../../billing';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     MissingDataError,
     MissingDataErrorType,
@@ -34,6 +34,7 @@ export default class GooglePayPaymentProcessor {
     private _googlePayClient?: GooglePayClient;
     private _methodId?: string;
     private _paymentDataRequest?: GooglePayPaymentDataRequestV2;
+    private _isBuyNowFlow = false;
 
     constructor(
         private _store: CheckoutStore,
@@ -71,6 +72,15 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
+    updatePaymentDataRequest(payloadToUpdate: { currencyCode: string; totalPrice: string }) {
+        const paymentDataRequest = this._getPaymentDataRequest();
+
+        paymentDataRequest.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
+        paymentDataRequest.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
+
+        this._paymentDataRequest = paymentDataRequest;
+    }
+
     displayWallet(): Promise<GooglePaymentData> {
         if (!this._googlePayClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -94,6 +104,10 @@ export default class GooglePayPaymentProcessor {
         );
     }
 
+    updateBuyNowFlowFlag(isBuyNowFlow: boolean): void {
+        this._isBuyNowFlow = isBuyNowFlow;
+    }
+
     private _configureWallet(): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
@@ -105,16 +119,12 @@ export default class GooglePayPaymentProcessor {
         return this._store
             .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId, options))
             .then((state) => {
+                const checkout = this._getCheckout(state);
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-                const checkout = state.checkout.getCheckout();
                 const hasShippingAddress = !!state.shippingAddress.getShippingAddress();
 
                 if (!paymentMethod) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                if (!checkout) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
                 const { testMode } = paymentMethod.config;
@@ -164,6 +174,20 @@ export default class GooglePayPaymentProcessor {
             type: cardInformation.cardType,
             number: cardInformation.lastFour,
         };
+    }
+
+    private _getCheckout(state: InternalCheckoutSelectors): Checkout | void {
+        if (this._isBuyNowFlow) {
+            return;
+        }
+
+        const checkout = state.checkout.getCheckout();
+
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        return checkout;
     }
 
     private _getPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
@@ -250,6 +274,9 @@ export default class GooglePayPaymentProcessor {
 
     private _postForm(postPaymentData: TokenizePayload): Promise<Response<void>> {
         const cardInformation = postPaymentData.details;
+        const buyNowCartId = this._isBuyNowFlow
+            ? this._store.getState().cart.getCartOrThrow().id
+            : undefined;
 
         return this._requestSender.post('/checkout.php', {
             headers: {
@@ -264,6 +291,7 @@ export default class GooglePayPaymentProcessor {
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),
+                ...(buyNowCartId && { cart_id: buyNowCartId }),
             },
         });
     }

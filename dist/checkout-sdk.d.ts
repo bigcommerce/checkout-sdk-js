@@ -1108,6 +1108,11 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
      * The options that are required to initialize the customer step of checkout
+     * when using Braintree PayPal provided.
+     */
+    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
@@ -1493,8 +1498,9 @@ declare interface BoltCustomerInitializeOptions {
      * A callback that gets called on initialize the strategy
      *
      * @param hasBoltAccount - The hasBoltAccount variable handle the result of checking user account availability on Bolt.
+     * @param email - Email address which was used for checking user account availability on Bolt.
      */
-    onInit?(hasBoltAccount: boolean): void;
+    onInit?(hasBoltAccount: boolean, email?: string): void;
 }
 
 /**
@@ -1806,6 +1812,19 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     };
 }
 
+declare interface BraintreePaypalCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
+}
+
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
     instrumentId: string;
 }
@@ -2091,6 +2110,14 @@ declare class CartChangedError extends StandardError {
         updated: ComparableCheckout;
     };
     constructor(previous: ComparableCheckout, updated: ComparableCheckout);
+}
+
+/**
+ * This error is thrown when the server detects inconsistency in cart data since it is last requested,
+ * for example, product prices or eligible discounts have changed.
+ */
+declare class CartConsistencyError extends StandardError {
+    constructor(message?: string);
 }
 
 declare interface ChasePayCustomerInitializeOptions {
@@ -3435,7 +3462,7 @@ declare interface CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | CartChangedError | undefined;
+    getSubmitOrderError(): Error | CartChangedError | CartConsistencyError | undefined;
     /**
      * Returns an error if unable to finalize the current order.
      *
@@ -4544,7 +4571,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -4950,6 +4977,12 @@ declare interface GooglePayButtonInitializeOptions {
      *  short: Google Pay payment button without the "Buy with" text.
      */
     buttonType?: ButtonType;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface GooglePayCustomerInitializeOptions {
@@ -5996,6 +6029,28 @@ declare interface PasswordRequirements {
     numeric: string;
     minlength: number;
     error: string;
+}
+
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout to support PayPalCommerce.
+ */
+declare interface PayPalCommerceCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
 }
 
 declare interface PayPalInstrument extends BaseAccountInstrument {
@@ -7297,6 +7352,7 @@ declare interface StripeUPEPaymentInitializeOptions {
         [key: string]: string;
     };
     onError?(error?: Error): void;
+    render(): void;
 }
 
 /**
@@ -7645,6 +7701,14 @@ declare interface WithDocumentInstrument {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WithPayPalCommerceCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using PayPalCommerce.
+     */
+    paypalcommerce?: PayPalCommerceCustomerInitializeOptions;
 }
 
 declare interface WithSquareV2PaymentInitializeOptions {

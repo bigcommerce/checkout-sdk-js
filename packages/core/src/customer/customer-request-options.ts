@@ -3,7 +3,10 @@ import { RequestOptions } from '../common/http-request';
 import { AmazonPayCustomerInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
 import { BoltCustomerInitializeOptions } from './strategies/bolt';
-import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/braintree';
+import {
+    BraintreePaypalCustomerInitializeOptions,
+    BraintreeVisaCheckoutCustomerInitializeOptions,
+} from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
@@ -46,6 +49,12 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Braintree PayPal provided.
+     */
+    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout

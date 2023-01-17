@@ -574,13 +574,15 @@ describe('MolliePaymentStrategy', () => {
             await strategy.initialize(options);
 
             jest.runAllTimers();
-            expect(mollieClient.createComponent).toBeCalledTimes(4);
-            expect(mollieElement.mount).toBeCalledTimes(4);
+
+            expect(mollieClient.createComponent).toHaveBeenCalledTimes(4);
+            expect(mollieElement.mount).toHaveBeenCalledTimes(4);
+
             jest.spyOn(document, 'getElementById');
 
             await strategy.deinitialize(initializeOptions);
 
-            expect(mollieElement.unmount).toBeCalledTimes(4);
+            expect(mollieElement.unmount).toHaveBeenCalledTimes(4);
         });
     });
 

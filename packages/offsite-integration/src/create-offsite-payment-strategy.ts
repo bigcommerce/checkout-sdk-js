@@ -9,4 +9,4 @@ const createOffsitePaymentStrategy: PaymentStrategyFactory<OffsitePaymentStrateg
     paymentIntegrationService,
 ) => new OffsitePaymentStrategy(paymentIntegrationService);
 
-export default toResolvableModule(createOffsitePaymentStrategy, [{ id: 'offsite' }]);
+export default toResolvableModule(createOffsitePaymentStrategy, [{ type: 'PAYMENT_TYPE_HOSTED' }]);

@@ -201,6 +201,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayAdyenV2Initializer()),
+                cartRequestSender,
             ),
     );
 
@@ -212,6 +213,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
+                cartRequestSender,
             ),
     );
 
@@ -223,6 +225,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
+                cartRequestSender,
             ),
     );
 
@@ -234,6 +237,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
+                cartRequestSender,
             ),
     );
 
@@ -248,6 +252,7 @@ export default function createCheckoutButtonRegistry(
                     store,
                     new GooglePayBraintreeInitializer(braintreeSdkCreator),
                 ),
+                cartRequestSender,
             ),
     );
 
@@ -262,6 +267,7 @@ export default function createCheckoutButtonRegistry(
                     store,
                     new GooglePayCheckoutcomInitializer(requestSender),
                 ),
+                cartRequestSender,
             ),
     );
 
@@ -273,6 +279,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
+                cartRequestSender,
             ),
     );
 
@@ -284,6 +291,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
+                cartRequestSender,
             ),
     );
 
@@ -295,6 +303,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
+                cartRequestSender,
             ),
     );
 
@@ -306,6 +315,7 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
+                cartRequestSender,
             ),
     );
 

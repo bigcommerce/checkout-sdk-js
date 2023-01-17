@@ -23,7 +23,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
     constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
     initialize(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
@@ -68,13 +68,18 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
     }
 
     private _createGooglePayPayload(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         initializationData: any,
         hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
         if (!initializationData.platformToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+
+        const currencyCode = checkout?.cart.currency.code || '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
 
         const googlePayBraintreePaymentDataRequest: GooglePayBraintreeDataRequest = {
             merchantInfo: {
@@ -83,9 +88,9 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 merchantId: initializationData.googleMerchantId,
             },
             transactionInfo: {
-                currencyCode: checkout.cart.currency.code,
+                currencyCode,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(checkout.outstandingBalance, 2).toFixed(2),
+                totalPrice,
             },
             cardRequirements: {
                 billingAddressRequired: true,

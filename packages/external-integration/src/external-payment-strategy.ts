@@ -8,7 +8,6 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { AdditionalActionRequired, isAdditionalActionRequired } from './is-additional-action';
@@ -32,29 +31,23 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
         try {
             await this._paymentIntegrationService.submitPayment({ ...payment, paymentData });
         } catch (error) {
-            if (isRequestError(error)) {
-                const { body } = error;
-
-                if (isAdditionalActionRequired(body)) {
-                    if (!this._isAdditionalActionRequired(body)) {
-                        return Promise.reject(error);
-                    }
-
-                    const {
-                        additional_action_required: {
-                            data: { redirect_url },
-                        },
-                    } = body;
-
-                    return new Promise(() => {
-                        if (error instanceof RequestError) {
-                            this._formPoster.postForm(redirect_url, {});
-                        }
-                    });
-                }
+            if (
+                !isRequestError(error) ||
+                !isAdditionalActionRequired(error.body) ||
+                !this._isAdditionalActionRequired(error.body)
+            ) {
+                return Promise.reject(error);
             }
 
-            throw error;
+            const {
+                body: {
+                    additional_action_required: {
+                        data: { redirect_url },
+                    },
+                },
+            } = error;
+
+            return new Promise(() => this.redirectUrl(redirect_url));
         }
     }
 
@@ -68,6 +61,10 @@ export default class ExternalPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
+    }
+
+    protected redirectUrl(redirect_url: string): void {
+        return this._formPoster.postForm(redirect_url, {});
     }
 
     private _isAdditionalActionRequired(body: AdditionalActionRequired): boolean {

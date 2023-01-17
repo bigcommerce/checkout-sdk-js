@@ -14,6 +14,7 @@ import {
 import { BillingAddressActionCreator } from '../billing';
 import { CheckoutActionCreator, CheckoutStore } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
+import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import PaymentActionCreator from '../payment/payment-action-creator';
@@ -35,6 +36,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
+        private _customerActionCreator: CustomerActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -132,6 +134,23 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(
             this._consignmentActionCreator.selectShippingOption(id, options),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async signInCustomer(
+        credentials: CustomerCredentials,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._customerActionCreator.signInCustomer(credentials, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async signOutCustomer(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._customerActionCreator.signOutCustomer(options));
 
         return this._storeProjection.getState();
     }

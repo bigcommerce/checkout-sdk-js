@@ -101,7 +101,7 @@ workflows:
             - build
             - ci/validate-commits
       - ci/build-js-artifact:
-          context: "Artifact Bucket Access"
+          context: "GCR + Artifact Bucket Access"
           dist_directory: dist-cdn
           prepare_dist_directory:
             - attach_workspace:

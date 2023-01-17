@@ -27,6 +27,7 @@ export interface BoltEmbedded {
 
 export interface BoltEmbededField {
     mount(element: string): void;
+    unmount(): void;
     tokenize(): Promise<BoltEmbeddedTokenize | Error>;
 }
 

@@ -9,7 +9,7 @@ import {
     NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
-import { PaymentMethod } from '../../../payment';
+import { HostedInstrument, PaymentMethod, VaultedInstrument } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
@@ -213,6 +213,7 @@ export default class PaypalCommercePaymentProcessor {
         cartId: string,
         params: ParamsRenderHostedFields,
         events?: EventsHostedFields,
+        getInstrumentParams?: () => HostedInstrument | VaultedInstrument,
     ): Promise<void> {
         if (!this._paypal || !this._paypal.HostedFields) {
             throw new PaymentMethodClientUnavailableError();
@@ -228,7 +229,20 @@ export default class PaypalCommercePaymentProcessor {
             fields,
             styles,
             paymentsSDK: true,
-            createOrder: () => this._setupPayment(cartId, { isCreditCard: true }),
+            createOrder: async () => {
+                const providerId = 'paypalcommercecreditcardscheckout';
+                const orderCreationRequestBody =
+                    getInstrumentParams && typeof getInstrumentParams === 'function'
+                        ? { cartId, ...getInstrumentParams() }
+                        : { cartId };
+
+                const { orderId } = await this._paypalCommerceRequestSender.createOrder(
+                    providerId,
+                    orderCreationRequestBody,
+                );
+
+                return orderId;
+            },
         });
 
         if (events) {
