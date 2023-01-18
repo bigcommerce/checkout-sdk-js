@@ -6,6 +6,7 @@ export class MockApplePaySession {
 
     begin = jest.fn();
     oncancel = jest.fn();
+    onpaymentmethodselected = jest.fn();
 
     completeShippingContactSelection = jest.fn();
 
@@ -20,7 +21,6 @@ export class MockApplePaySession {
     onvalidatemerchant(event: ApplePayJS.ApplePayValidateMerchantEvent) {
         return event;
     }
-
     onpaymentauthorized(event?: ApplePayJS.ApplePayPaymentAuthorizedEvent) {
         return event;
     }

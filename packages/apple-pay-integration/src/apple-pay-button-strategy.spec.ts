@@ -17,7 +17,7 @@ import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-optio
 import ApplePayButtonMethodType from './apple-pay-button-method-type';
 import ApplePayButtonStrategy from './apple-pay-button-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
-import { getApplePayButtonInitializationOptions } from './mocks/apple-pay-button.mock';
+import {buyNowCartMock, getApplePayButtonInitializationOptions} from './mocks/apple-pay-button.mock';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
 import { getContactAddress } from './mocks/apple-pay-wallet-button-mock';
@@ -198,8 +198,9 @@ describe('ApplePayButtonStrategy', () => {
         });
 
         it('gets shipping contact selected successfully', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCartMock);
+            jest.spyOn(paymentIntegrationService, 'loadDefinedCheckout').mockReturnValue(getCheckout());
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
-
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
             if (CheckoutButtonInitializeOptions.applepay) {
@@ -213,6 +214,7 @@ describe('ApplePayButtonStrategy', () => {
                     } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
                     await applePaySession.onshippingcontactselected(event);
+                    await applePaySession.onpaymentmethodselected();
 
                     expect(applePaySession.completeShippingContactSelection).toHaveBeenCalled();
                 }
@@ -221,6 +223,8 @@ describe('ApplePayButtonStrategy', () => {
 
         it('throws error if call to update address fails', async () => {
             jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockRejectedValue(false);
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCartMock);
+            jest.spyOn(paymentIntegrationService, 'loadDefinedCheckout').mockReturnValue(getCheckout());
 
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
 
@@ -237,6 +241,7 @@ describe('ApplePayButtonStrategy', () => {
                     } as ApplePayJS.ApplePayShippingContactSelectedEvent;
 
                     try {
+                        await applePaySession.onpaymentmethodselected();
                         await applePaySession.onshippingcontactselected(event);
                     } catch (error) {
                         expect(error).toBeInstanceOf(Error);
@@ -246,6 +251,8 @@ describe('ApplePayButtonStrategy', () => {
         });
 
         it('gets shipping method selected successfully', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCartMock);
+            jest.spyOn(paymentIntegrationService, 'loadDefinedCheckout').mockReturnValue(getCheckout());
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
@@ -265,6 +272,7 @@ describe('ApplePayButtonStrategy', () => {
                         },
                     } as ApplePayJS.ApplePayShippingMethodSelectedEvent;
 
+                    await applePaySession.onpaymentmethodselected();
                     await applePaySession.onshippingmethodselected(event);
 
                     expect(applePaySession.completeShippingMethodSelection).toHaveBeenCalled();
@@ -274,6 +282,8 @@ describe('ApplePayButtonStrategy', () => {
 
         it('gets shipping contact selected successfully with a selected shipping option', async () => {
             jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCartMock);
+            jest.spyOn(paymentIntegrationService, 'loadDefinedCheckout').mockReturnValue(getCheckout());
 
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             const newCheckout = {
@@ -323,7 +333,7 @@ describe('ApplePayButtonStrategy', () => {
                     const event = {
                         shippingContact: getContactAddress(),
                     } as ApplePayJS.ApplePayShippingContactSelectedEvent;
-
+                    await applePaySession.onpaymentmethodselected();
                     await applePaySession.onshippingcontactselected(event);
 
                     expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();

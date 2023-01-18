@@ -37,6 +37,8 @@ const updateShippingAddress = jest.fn();
 const signInCustomer = jest.fn();
 const signOutCustomer = jest.fn();
 const selectShippingOption = jest.fn();
+const createBuyNowCart = jest.fn();
+const loadDefinedCheckout = jest.fn();
 
 const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
     return {
@@ -56,6 +58,8 @@ const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
         signInCustomer,
         signOutCustomer,
         selectShippingOption,
+        createBuyNowCart,
+        loadDefinedCheckout,
     };
 });
 

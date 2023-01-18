@@ -113,7 +113,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
         // const isPhysicalItem = true;
-
         if (
             this._buyNowInitializeOptions &&
             typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
@@ -257,21 +256,19 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 throw new Error('Merchant validation failed');
             }
         };
-
         applePaySession.onpaymentmethodselected = async () => {
-            console.log('ON SELECTED');
             try {
                 const cartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
 
                 if (!cartRequestBody) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
-
                 const { body: buyNowCart } = await this._paymentIntegrationService.createBuyNowCart(
                     cartRequestBody,
                 );
-
+                console.log('LOG 4', buyNowCart);
                 await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
+                console.log('LOG5');
             } catch (error) {
                 console.log('ERROR', error);
                 throw new BuyNowCartCreationError();
@@ -294,6 +291,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 newTotal: request.total,
                 newLineItems: request.lineItems,
             });
+            console.log('LOG2');
 
             applePaySession.onshippingcontactselected = async (event) => {
                 console.log('SHIPPING');
@@ -330,6 +328,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const shippingAddress = this._transformContactToAddress(event.shippingContact);
 
         try {
+            console.log('UPDATE SHIPPING');
             await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
         } catch (error) {
             console.log('ERROR SHIPPING', error);
