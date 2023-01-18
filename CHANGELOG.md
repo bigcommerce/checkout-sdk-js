@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.325.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.3...v1.325.0) (2023-01-18)
+
+
+### Features
+
+* **payment:** PAYPAL-1908 Make an ability to use Overlay from core package in integration checkout-sdk packages ([fcd5e0a](https://github.com/bigcommerce/checkout-sdk-js/commit/fcd5e0a883a6f236501627b254e71e2aa5b8ee0e))
+
 ### [1.324.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.2...v1.324.3) (2023-01-18)
 
 
