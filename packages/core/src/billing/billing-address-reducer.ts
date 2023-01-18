@@ -2,8 +2,8 @@ import { Action, combineReducers, composeReducers } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
-import { objectMerge, objectSet, replace } from '../common/utility';
-import { OrderAction, OrderActionType } from '../order';
+import { objectSet, replace } from '../common/utility';
+import { OrderAction } from '../order';
 import { SubscriptionsActionType, UpdateSubscriptionsAction } from '../subscription';
 
 import BillingAddress from './billing-address';
@@ -36,8 +36,6 @@ function dataReducer(
         case BillingAddressActionType.ContinueAsGuestSucceeded:
         case CheckoutActionType.LoadCheckoutSucceeded:
             return replace(data, action.payload && action.payload.billingAddress);
-        case OrderActionType.LoadOrderSucceeded:
-            return objectMerge(data, action.payload && action.payload.billingAddress);
 
         default:
             return data;

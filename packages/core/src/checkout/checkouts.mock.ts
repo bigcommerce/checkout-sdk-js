@@ -123,6 +123,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         giftCertificates: getGiftCertificatesState(),
         instruments: getInstrumentsState(),
         order: { errors: {}, statuses: {} },
+        orderBillingAddress: {},
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
         paymentStrategies: { data: {}, errors: {}, statuses: {} },
