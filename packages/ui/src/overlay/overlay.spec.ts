@@ -1,6 +1,5 @@
 import Overlay from './overlay';
 
-// tslint:disable:no-non-null-assertion
 describe('Overlay', () => {
     let overlay: Overlay;
 
@@ -25,7 +24,7 @@ describe('Overlay', () => {
 
             const element = document.getElementById('overlay');
 
-            expect(element).toBeTruthy();
+            expect(element).not.toBeNull();
         });
 
         it('shows styles', () => {
@@ -33,7 +32,7 @@ describe('Overlay', () => {
 
             const styles = document.getElementById('overlay--styles');
 
-            expect(styles).toBeTruthy();
+            expect(styles).not.toBeNull();
         });
 
         it('triggers click handler if it is provided', () => {
@@ -107,7 +106,7 @@ describe('Overlay', () => {
 
             const element = document.querySelector('.checkoutOverlay--layout');
 
-            expect(element).toBeTruthy();
+            expect(element).not.toBeNull();
         });
 
         it('shows close element', () => {
@@ -115,7 +114,7 @@ describe('Overlay', () => {
 
             const element = document.querySelector('.checkoutOverlay--close');
 
-            expect(element).toBeTruthy();
+            expect(element).not.toBeNull();
         });
 
         it('triggers click handler if it is provided', () => {
@@ -178,7 +177,7 @@ describe('Overlay', () => {
 
             const modal = document.querySelector('.checkoutOverlay--overlayText');
 
-            expect(modal).toBeTruthy();
+            expect(modal).not.toBeNull();
         });
 
         it('shows inner element', () => {
@@ -186,7 +185,7 @@ describe('Overlay', () => {
 
             const innerElement = document.getElementById('innerElement');
 
-            expect(innerElement).toBeTruthy();
+            expect(innerElement).not.toBeNull();
         });
 
         it('shows Document Fragment of inner elements', () => {
@@ -210,9 +209,33 @@ describe('Overlay', () => {
             const element = document.getElementById('innerElement');
             const element2 = document.getElementById('innerElement2');
 
-            expect(element).toBeTruthy();
-            expect(element2).toBeTruthy();
+            expect(element).not.toBeNull();
+            expect(element2).not.toBeNull();
+        });
+    });
+
+    describe('Multiple overlays', () => {
+        beforeEach(() => {
+            overlay = new Overlay({
+                id: 'overlay',
+            });
+        });
+
+        afterEach(() => {
+            const element = document.getElementById('overlay');
+
+            if (element) {
+                element.parentElement!.removeChild(element);
+            }
+        });
+
+        it('show multiple overlays', () => {
+            overlay.show();
+            overlay.show();
+
+            const elements = document.querySelectorAll('#overlay');
+
+            expect(elements).toHaveLength(1);
         });
     });
 });
-// tslint:enable:no-non-null-assertion

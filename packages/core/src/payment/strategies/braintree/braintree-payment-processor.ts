@@ -1,9 +1,10 @@
 import { supportsPopups } from '@braintree/browser-detection';
 import { isEmpty } from 'lodash';
 
+import { Overlay } from '@bigcommerce/checkout-sdk/ui';
+
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { Overlay } from '../../../common/overlay';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
 import {

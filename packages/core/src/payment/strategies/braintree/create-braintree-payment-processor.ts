@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { Overlay } from '../../../common/overlay';
+import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import BraintreeHostedForm from './braintree-hosted-form';
 import BraintreePaymentProcessor from './braintree-payment-processor';
