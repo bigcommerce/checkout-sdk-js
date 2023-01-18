@@ -63,6 +63,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions } = applepay;
 
         this._buyNowInitializeOptions = buyNowInitializeOptions;
+        console.log('BUY NOW', this._buyNowInitializeOptions, buyNowInitializeOptions);
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
@@ -259,6 +260,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         applePaySession.onpaymentmethodselected = async () => {
             try {
                 const cartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
+                console.log('CART REQUEST BODY', cartRequestBody, this._buyNowInitializeOptions);
 
                 if (!cartRequestBody) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
@@ -268,9 +270,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 );
                 console.log('LOG 4', buyNowCart);
                 await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
-                console.log('LOG5');
+                console.log('LOG 5');
             } catch (error) {
-                console.log('ERROR', error);
+                console.log('ERROR111', error);
                 throw new BuyNowCartCreationError();
             }
 

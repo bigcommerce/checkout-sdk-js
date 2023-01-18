@@ -11,6 +11,7 @@ export class MockApplePaySession {
     completeShippingContactSelection = jest.fn();
 
     completeShippingMethodSelection = jest.fn();
+    completePaymentMethodSelection = jest.fn();
 
     abort = jest.fn();
 
