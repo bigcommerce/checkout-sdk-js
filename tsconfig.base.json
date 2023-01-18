@@ -24,6 +24,9 @@
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/bluesnap-direct-integration": [
+                "packages/bluesnap-direct-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/core": ["packages/core/src/index.ts"],
             "@bigcommerce/checkout-sdk/credit-card-integration": [
                 "packages/credit-card-integration/src/index.ts"

@@ -4,6 +4,7 @@
         "adyen-integration": "packages/adyen-integration",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
+        "bluesnap-direct-integration": "packages/bluesnap-direct-integration",
         "core": "packages/core",
         "credit-card-integration": "packages/credit-card-integration",
         "external-integration": "packages/external-integration",

@@ -6,3 +6,4 @@
 /packages/payment-integration-test-utils @bigcommerce/checkout
 /packages/paypal-commerce-integration @bigcommerce/kyiv-payments-team
 /packages/squarev2-integration @bigcommerce/apex-leads
+/packages/bluesnap-direct-integration @bigcommerce/apex-leads
