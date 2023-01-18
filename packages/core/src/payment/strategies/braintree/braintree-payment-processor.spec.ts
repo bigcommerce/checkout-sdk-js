@@ -1,9 +1,10 @@
 import braintreeBrowserDetection from '@braintree/browser-detection';
 import { noop } from 'lodash';
 
+import { Overlay } from '@bigcommerce/checkout-sdk/ui';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
-import { Overlay } from '../../../common/overlay';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 

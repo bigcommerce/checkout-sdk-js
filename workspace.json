@@ -15,6 +15,7 @@
         "paypal-commerce-integration": "packages/paypal-commerce-integration",
         "sezzle-integration": "packages/sezzle-integration",
         "squarev2-integration": "packages/squarev2-integration",
+        "ui": "packages/ui",
         "workspace-tools": "packages/workspace-tools"
     }
 }

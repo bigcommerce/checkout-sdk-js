@@ -57,6 +57,7 @@
             "@bigcommerce/checkout-sdk/squarev2-integration": [
                 "packages/squarev2-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"]
         }
     }

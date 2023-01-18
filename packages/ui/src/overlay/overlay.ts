@@ -66,8 +66,8 @@ export default class Overlay {
             background = 'rgba(0, 0, 0, 0.8)',
             id = 'checkoutOverlay',
             transitionDuration = 400,
-            hasCloseButton,
-            innerHtml,
+            hasCloseButton = false,
+            innerHtml = null,
         } = options || {};
         let mainElement = element;
         let closeElement: HTMLElement | undefined;
@@ -157,6 +157,7 @@ export default class Overlay {
     private _removeAfterTransition(): void {
         const handleTransition: (event: Event) => void = (event) => {
             // NOTE: `event` is not correctly typed in this version of TS
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             if ((event as TransitionEvent).propertyName !== 'opacity') {
                 return;
             }
