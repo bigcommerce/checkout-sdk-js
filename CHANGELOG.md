@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.324.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.2...v1.324.3) (2023-01-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 updated kyiv-payments-team codeowners data ([#1778](https://github.com/bigcommerce/checkout-sdk-js/issues/1778)) ([060cc64](https://github.com/bigcommerce/checkout-sdk-js/commit/060cc641d01bc8b32d0346416c52b0e2d8c431c6))
+
 ### [1.324.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.1...v1.324.2) (2023-01-17)
 
 
