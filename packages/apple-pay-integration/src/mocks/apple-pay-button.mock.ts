@@ -2,12 +2,24 @@ import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payme
 
 import { WithApplePayButtonInitializeOptions } from '../apple-pay-button-initialize-options';
 import ApplePayButtonMethodType from '../apple-pay-button-method-type';
-import BuyNowCartRequestBody from "../../../core/src/cart/buy-now-cart-request-body";
 import {Cart} from "@bigcommerce/checkout-sdk/core";
 import {getCurrency} from "../../../core/src/currency/currencies.mock";
 import {getCoupon, getShippingCoupon} from "../../../core/src/coupon/coupons.mock";
 import {getDiscount} from "../../../core/src/discount/discounts.mock";
 import {getDigitalItem, getGiftCertificateItem, getPhysicalItem} from "../../../core/src/cart/line-items.mock";
+
+interface LineItem {
+    productId: number;
+    quantity: number;
+    optionSelections?: {
+        optionId: number;
+        optionValue: number | string;
+    };
+}
+export default interface BuyNowCartRequestBody {
+    source: 'BUY_NOW';
+    lineItems: LineItem[];
+}
 
 const buyNowCartRequestBody: BuyNowCartRequestBody = {
     source: 'BUY_NOW',
