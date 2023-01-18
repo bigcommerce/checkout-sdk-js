@@ -356,7 +356,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 onChange: (componentState) => this._updateComponentState(componentState),
                 ...(billingAddress ? { data: this._mapAdyenPlaceholderData(billingAddress) } : {}),
             });
-
+            console.log(123);
             try {
                 paymentComponent.mount(`#${adyenv3.containerId}`);
             } catch (error) {
