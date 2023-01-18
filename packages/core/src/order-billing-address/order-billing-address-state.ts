@@ -1,4 +1,4 @@
-import { BillingAddress } from "../billing";
+import { BillingAddress } from '../billing';
 
 export type OrderBillingAddress = Omit<BillingAddress, 'id'>;
 

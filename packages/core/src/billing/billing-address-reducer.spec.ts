@@ -4,8 +4,6 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { OrderActionType } from '../order';
-import { getOrder } from '../order/orders.mock';
 import { SubscriptionsActionType } from '../subscription';
 
 import { BillingAddressActionType } from './billing-address-actions';
@@ -27,17 +25,6 @@ describe('billingAddressReducer', () => {
             data: action.payload && action.payload.billingAddress,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
-        });
-    });
-
-    it('returns billing address when order loads', () => {
-        const action = createAction(OrderActionType.LoadOrderSucceeded, getOrder());
-        const output = billingAddressReducer(initialState, action);
-
-        expect(output).toEqual({
-            data: action.payload && action.payload.billingAddress,
-            errors: {},
-            statuses: {},
         });
     });
 

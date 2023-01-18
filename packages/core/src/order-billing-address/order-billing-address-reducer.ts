@@ -1,11 +1,16 @@
 import { Action, combineReducers } from '@bigcommerce/data-store';
+
 import { replace } from '../common/utility';
 import { OrderAction, OrderActionType } from '../order';
-import OrderBillingAddressState, { DEFAULT_STATE, OrderBillingAddress } from "./order-billing-address-state";
+
+import OrderBillingAddressState, {
+    DEFAULT_STATE,
+    OrderBillingAddress,
+} from './order-billing-address-state';
 
 export default function orderBillingAddressReducer(
     state: OrderBillingAddressState = DEFAULT_STATE,
-    action: Action
+    action: Action,
 ): OrderBillingAddressState {
     const reducer = combineReducers<OrderBillingAddressState>({
         data: dataReducer,
@@ -20,7 +25,6 @@ function dataReducer(
 ): OrderBillingAddress | undefined {
     switch (action.type) {
         case OrderActionType.LoadOrderSucceeded:
-            console.log(action.type, 'lolol');
             return replace(data, action.payload && action.payload.billingAddress);
 
         default:
