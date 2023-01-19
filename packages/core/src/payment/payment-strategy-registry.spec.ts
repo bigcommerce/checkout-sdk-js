@@ -5,7 +5,7 @@ import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import {
-    getAmazonPay,
+    getAmazonPayV2,
     getBankDeposit,
     getBraintree,
     getPPSDK,
@@ -46,7 +46,7 @@ describe('PaymentStrategyRegistry', () => {
     class OfflinePaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class AmazonPayPaymentStrategy extends BasePaymentStrategy {}
+    class AmazonPayV2PaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
     class PPSDKPaymentStrategy extends BasePaymentStrategy {}
@@ -63,8 +63,8 @@ describe('PaymentStrategyRegistry', () => {
     describe('#getByMethod()', () => {
         beforeEach(() => {
             registry.register(
-                PaymentStrategyType.AMAZON,
-                () => new AmazonPayPaymentStrategy(store),
+                PaymentStrategyType.AMAZONPAY,
+                () => new AmazonPayV2PaymentStrategy(store),
             );
             registry.register(
                 PaymentStrategyType.CREDIT_CARD,
@@ -80,7 +80,9 @@ describe('PaymentStrategyRegistry', () => {
         });
 
         it('returns strategy if registered with method name', () => {
-            expect(registry.getByMethod(getAmazonPay())).toBeInstanceOf(AmazonPayPaymentStrategy);
+            expect(registry.getByMethod(getAmazonPayV2())).toBeInstanceOf(
+                AmazonPayV2PaymentStrategy,
+            );
         });
 
         it('throws error if none is registered with method name (expected V1 behavior)', () => {

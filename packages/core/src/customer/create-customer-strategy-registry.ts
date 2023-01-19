@@ -21,7 +21,6 @@ import {
     PaymentRequestTransformer,
 } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
-import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
 import { BoltScriptLoader } from '../payment/strategies/bolt';
@@ -62,7 +61,6 @@ import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
-import { AmazonPayCustomerStrategy } from './strategies/amazon';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
@@ -151,18 +149,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        'amazon',
-        () =>
-            new AmazonPayCustomerStrategy(
-                store,
-                paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
-                remoteCheckoutRequestSender,
-                new AmazonPayScriptLoader(scriptLoader),
             ),
     );
 

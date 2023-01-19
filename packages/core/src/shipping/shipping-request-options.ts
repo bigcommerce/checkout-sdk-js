@@ -1,6 +1,5 @@
 import { RequestOptions } from '../common/http-request';
 
-import { AmazonPayShippingInitializeOptions } from './strategies/amazon';
 import { AmazonPayV2ShippingInitializeOptions } from './strategies/amazon-pay-v2';
 import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
 
@@ -28,12 +27,6 @@ export interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
  * step of checkout.
  */
 export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
-    /**
-     * The options that are required to initialize the shipping step of checkout
-     * when using Amazon Pay.
-     */
-    amazon?: AmazonPayShippingInitializeOptions;
-
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using AmazonPayV2.

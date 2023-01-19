@@ -47,7 +47,6 @@ import { AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AdyenV3ScriptLoader } from './strategies/adyenv3';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
-import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import {
     AmazonPayV2PaymentStrategy,
     createAmazonPayV2PaymentProcessor,
@@ -284,19 +283,7 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.AMAZON,
-        () =>
-            new AmazonPayPaymentStrategy(
-                store,
-                orderActionCreator,
-                billingAddressActionCreator,
-                remoteCheckoutActionCreator,
-                new AmazonPayScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.AMAZONPAYV2,
+        PaymentStrategyType.AMAZONPAY,
         () =>
             new AmazonPayV2PaymentStrategy(
                 store,
