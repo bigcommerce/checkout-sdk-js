@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.324.2-alpha.150a7dbed9f68cc93de9c93422aa2f16137c93da](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.1...v1.324.2-alpha.150a7dbed9f68cc93de9c93422aa2f16137c93da) (2023-01-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1763 fixed an issue when we could not proceed checkout after trying to place order with an empty CVV for stored card ([150a7db](https://github.com/bigcommerce/checkout-sdk-js/commit/150a7dbed9f68cc93de9c93422aa2f16137c93da))
+
 ### [1.324.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.0...v1.324.1) (2023-01-16)
 
 
