@@ -571,7 +571,7 @@ declare interface LineItemSocialData {
 
 declare interface Order {
     baseAmount: number;
-    billingAddress: BillingAddress;
+    billingAddress: OrderBillingAddress;
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;
@@ -597,6 +597,10 @@ declare interface Order {
     taxes: Tax[];
     taxTotal: number;
     channelId: number;
+}
+
+declare interface OrderBillingAddress extends Address {
+    email?: string;
 }
 
 declare interface OrderConsignment {
@@ -714,7 +718,7 @@ export declare function mapToInternalCoupon(coupon: Coupon): InternalCoupon;
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export declare function mapToInternalCustomer(customer: Customer, billingAddress: BillingAddress): InternalCustomer;
+export declare function mapToInternalCustomer(customer: Customer, billingAddress: OrderBillingAddress): InternalCustomer;
 
 /**
  * @deprecated This mapper is only for internal use only. It is required during

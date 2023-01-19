@@ -44,7 +44,7 @@ ___
 
 ### billingAddress
 
-• **billingAddress**: [`BillingAddress`](BillingAddress.md)
+• **billingAddress**: [`OrderBillingAddress`](OrderBillingAddress.md)
 
 ___
 

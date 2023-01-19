@@ -12,6 +12,8 @@
 
   ↳↳ [`CustomerAddress`](CustomerAddress.md)
 
+  ↳↳ [`OrderBillingAddress`](OrderBillingAddress.md)
+
 ## Table of contents
 
 ### Properties

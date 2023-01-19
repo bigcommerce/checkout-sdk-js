@@ -280,6 +280,7 @@
 - [OptionsResponse](interfaces/OptionsResponse.md)
 - [OpyPaymentInitializeOptions](interfaces/OpyPaymentInitializeOptions.md)
 - [Order](interfaces/Order.md)
+- [OrderBillingAddress](interfaces/OrderBillingAddress.md)
 - [OrderConsignment](interfaces/OrderConsignment.md)
 - [OrderPayment](interfaces/OrderPayment.md)
 - [OrderPaymentRequestBody](interfaces/OrderPaymentRequestBody.md)
