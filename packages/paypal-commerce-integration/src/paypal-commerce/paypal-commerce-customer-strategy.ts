@@ -16,8 +16,8 @@ import {
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import PaypalCommerceRequestSender from '../paypal-commerce-request-sender';
-import PaypalCommerceScriptLoader from '../paypal-commerce-script-loader';
+import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
+import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
@@ -38,8 +38,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
     constructor(
         private formPoster: FormPoster,
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceRequestSender: PaypalCommerceRequestSender,
-        private paypalCommerceScriptLoader: PaypalCommerceScriptLoader,
+        private paypalCommerceRequestSender: PayPalCommerceRequestSender,
+        private paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
     ) {}
 
     async initialize(

@@ -175,7 +175,7 @@ export interface PayPalCommerceButtonsOptions {
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
     ): Promise<boolean | void> | void;
-    onComplete?(data: CompleteCallbackDataPayload): void;
+    onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
     onError?(error: Error): void;
     onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
     onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
