@@ -1,10 +1,10 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
-import { BillingAddressSelector } from '../billing';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
 import { guard } from '../common/utility';
 import { CouponSelector } from '../coupon';
+import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 
 import Order from './order';
 import OrderState, { DEFAULT_STATE, OrderMetaState } from './order-state';
@@ -20,12 +20,12 @@ export default interface OrderSelector {
 
 export type OrderSelectorFactory = (
     state: OrderState,
-    billingAddress: BillingAddressSelector,
+    billingAddress: OrderBillingAddressSelector,
     coupons: CouponSelector,
 ) => OrderSelector;
 
 interface OrderSelectorDependencies {
-    billingAddress: BillingAddressSelector;
+    billingAddress: OrderBillingAddressSelector;
     coupons: CouponSelector;
 }
 
@@ -33,7 +33,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
     const getOrder = createSelector(
         (state: OrderState) => state.data,
         (_: OrderState, { billingAddress }: OrderSelectorDependencies) =>
-            billingAddress.getBillingAddress(),
+            billingAddress.getOrderBillingAddress(),
         (_: OrderState, { coupons }: OrderSelectorDependencies) => coupons.getCoupons(),
         (data, billingAddress, coupons = []) =>
             () => {
@@ -81,7 +81,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
     return memoizeOne(
         (
             state: OrderState = DEFAULT_STATE,
-            billingAddress: BillingAddressSelector,
+            billingAddress: OrderBillingAddressSelector,
             coupons: CouponSelector,
         ): OrderSelector => {
             return {
